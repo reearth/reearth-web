@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { styled } from "@reearth/theme";
 
 import AssetCard from "@reearth/components/atoms/AssetCard";
+import AssetListItem from "@reearth/components/atoms/AssetListItem";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Flex from "@reearth/components/atoms/Flex";
@@ -81,12 +82,18 @@ const AssetContainer: React.FC<Props> = ({
         <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
         <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
       </NavBar>
-      <AssetWrapper wrap="wrap" justify="space-between" layoutType={layoutType}>
+      <AssetWrapper
+        wrap={layoutType === "list" ? "nowrap" : "wrap"}
+        justify="space-between"
+        layoutType={layoutType}>
         {layoutType === "list"
           ? assets?.map(a => (
-              <ListItem key={a.id}>
-                <p>{a.name}</p>
-              </ListItem>
+              <AssetListItem
+                key={a.id}
+                asset={a}
+                checked={selectedAssets?.includes(a)}
+                fileType={fileType}
+              />
             ))
           : layoutType === "grid-small"
           ? assets?.map(a => (
@@ -138,7 +145,7 @@ const AssetWrapper = styled(Flex)<{ layoutType?: LayoutTypes }>`
 `;
 
 const StyledUploadButton = styled(Button)`
-  margin: 0 auto 15px auto;
+  margin: 0 auto ${metricsSizes["m"]}px auto;
 `;
 
 const NavBar = styled(Flex)`
@@ -154,17 +161,6 @@ const StyledIcon = styled(Icon)`
 
   &:hover {
     background: ${props => props.theme.colors.bg[5]};
-  }
-`;
-
-const ListItem = styled(Flex)`
-  background: ${({ theme }) => theme.assetCard.bg};
-  padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
-  width: 100%;
-  cursor: pointer;
-
-  &:hover {
-    background: ${({ theme }) => theme.assetCard.bgHover};
   }
 `;
 
