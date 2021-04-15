@@ -30,7 +30,7 @@ export type Props = {
   fileType?: "image" | "video" | "file";
 };
 
-export type layoutTypes = "grid" | "grid-small" | "list";
+export type LayoutTypes = "grid" | "grid-small" | "list";
 
 const AssetContainer: React.FC<Props> = ({
   assets,
@@ -42,7 +42,7 @@ const AssetContainer: React.FC<Props> = ({
   fileType,
 }) => {
   const intl = useIntl();
-  const [layoutType, setLayoutType] = useState<layoutTypes>("grid");
+  const [layoutType, setLayoutType] = useState<LayoutTypes>("grid");
 
   const handleAssetsSelect = (asset: Asset) => {
     selectedAssets?.includes(asset)
@@ -81,34 +81,36 @@ const AssetContainer: React.FC<Props> = ({
         <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
         <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
       </NavBar>
-      <AssetWrapper>
-        {layoutType === "list" ? (
-          <h1>list</h1>
-        ) : layoutType === "grid-small" ? (
-          assets?.map(a => (
-            <AssetCard
-              key={a.id}
-              name={a.name}
-              cardSize={"small"}
-              url={a.url}
-              isImage={fileType === "image"}
-              onCheck={() => handleAssetsSelect(a)}
-              checked={selectedAssets?.includes(a)}
-            />
-          ))
-        ) : (
-          assets?.map(a => (
-            <AssetCard
-              key={a.id}
-              name={a.name}
-              cardSize={"medium"}
-              url={a.url}
-              isImage={fileType === "image"}
-              onCheck={() => handleAssetsSelect(a)}
-              checked={selectedAssets?.includes(a)}
-            />
-          ))
-        )}
+      <AssetWrapper wrap="wrap" justify="space-between" layoutType={layoutType}>
+        {layoutType === "list"
+          ? assets?.map(a => (
+              <ListItem key={a.id}>
+                <p>{a.name}</p>
+              </ListItem>
+            ))
+          : layoutType === "grid-small"
+          ? assets?.map(a => (
+              <AssetCard
+                key={a.id}
+                name={a.name}
+                cardSize={"small"}
+                url={a.url}
+                isImage={fileType === "image"}
+                onCheck={() => handleAssetsSelect(a)}
+                checked={selectedAssets?.includes(a)}
+              />
+            ))
+          : assets?.map(a => (
+              <AssetCard
+                key={a.id}
+                name={a.name}
+                cardSize={"medium"}
+                url={a.url}
+                isImage={fileType === "image"}
+                onCheck={() => handleAssetsSelect(a)}
+                checked={selectedAssets?.includes(a)}
+              />
+            ))}
       </AssetWrapper>
       <Divider margin="0" />
     </Wrapper>
@@ -120,10 +122,8 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+const AssetWrapper = styled(Flex)<{ layoutType?: LayoutTypes }>`
+  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
   height: 458px;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -133,7 +133,7 @@ const AssetWrapper = styled.div`
 
   &::after {
     content: "";
-    flex: auto;
+    flex: ${({ layoutType }) => (layoutType === "grid" ? "0 33%" : "auto")};
   }
 `;
 
@@ -143,7 +143,6 @@ const StyledUploadButton = styled(Button)`
 
 const NavBar = styled(Flex)`
   margin: ${metricsSizes["s"]}px;
-  // background: lightblue;
 `;
 
 const StyledIcon = styled(Icon)`
@@ -151,9 +150,21 @@ const StyledIcon = styled(Icon)`
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
   color: ${props => props.theme.colors.text.main};
+  cursor: pointer;
 
   &:hover {
     background: ${props => props.theme.colors.bg[5]};
+  }
+`;
+
+const ListItem = styled(Flex)`
+  background: ${({ theme }) => theme.assetCard.bg};
+  padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
+  width: 100%;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.assetCard.bgHover};
   }
 `;
 
