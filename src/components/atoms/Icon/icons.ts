@@ -24,6 +24,11 @@ import DatasetAdd from "./Icons/datasetAdd.svg";
 import File from "./Icons/fileIcon.svg";
 import PcIcon from "./Icons/pcIcon.svg";
 
+// Asset
+import AssetGrid from "./Icons/assetGrid.svg";
+import AssetGridSmall from "./Icons/assetGridSmall.svg";
+import AssetList from "./Icons/assetList.svg";
+
 // Titles/Sections
 import Scene from "./Icons/sceneIcon.svg";
 import Infobox from "./Icons/infoboxIcon.svg";
@@ -119,6 +124,9 @@ export default {
   datasetAdd: DatasetAdd,
   file: File,
   computer: PcIcon,
+  assetGrid: AssetGrid,
+  assetGridSmall: AssetGridSmall,
+  assetList: AssetList,
   scene: Scene,
   dashboard: Dashboard,
   earthEditor: EarthEditor,
