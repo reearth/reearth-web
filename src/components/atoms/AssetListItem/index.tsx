@@ -1,4 +1,6 @@
 import React from "react";
+import { check } from "prettier";
+
 import Icon from "@reearth/components/atoms/Icon";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
@@ -18,13 +20,14 @@ export type Asset = {
 export type Props = {
   asset: Asset;
   checked?: boolean;
-  fileType?: "image" | "video" | "file";
+  isImage?: boolean;
+  onCheck?: (checked: boolean) => void;
 };
 
-const AssetListItem: React.FC<Props> = ({ asset, checked, fileType }) => {
+const AssetListItem: React.FC<Props> = ({ asset, checked, isImage, onCheck }) => {
   return (
-    <ListItem key={asset.id} align="center" checked={checked}>
-      <Icon icon={fileType === "file" ? "file" : "image"} size={16} />
+    <ListItem key={asset.id} align="center" checked={checked} onClick={() => onCheck?.(!check)}>
+      <Icon icon={isImage ? "image" : "file"} size={16} />
       <ListItemName size="m" customColor>
         {asset.name}
       </ListItemName>

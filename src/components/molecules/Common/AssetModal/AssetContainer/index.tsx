@@ -6,6 +6,7 @@ import AssetListItem from "@reearth/components/atoms/AssetListItem";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Flex from "@reearth/components/atoms/Flex";
+import Text from "@reearth/components/atoms/Text";
 import Divider from "@reearth/components/atoms/Divider";
 import useFileInput from "use-file-input";
 import { useIntl } from "react-intl";
@@ -82,44 +83,63 @@ const AssetContainer: React.FC<Props> = ({
         <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
         <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
       </NavBar>
-      <AssetWrapper
-        wrap={layoutType === "list" ? "nowrap" : "wrap"}
-        justify="space-between"
-        layoutType={layoutType}>
-        {layoutType === "list"
-          ? assets?.map(a => (
-              <AssetListItem
-                key={a.id}
-                asset={a}
-                checked={selectedAssets?.includes(a)}
-                fileType={fileType}
-              />
-            ))
-          : layoutType === "grid-small"
-          ? assets?.map(a => (
-              <AssetCard
-                key={a.id}
-                name={a.name}
-                cardSize={"small"}
-                url={a.url}
-                isImage={fileType === "image"}
-                onCheck={() => handleAssetsSelect(a)}
-                checked={selectedAssets?.includes(a)}
-              />
-            ))
-          : assets?.map(a => (
-              <AssetCard
-                key={a.id}
-                name={a.name}
-                cardSize={"medium"}
-                url={a.url}
-                isImage={fileType === "image"}
-                onCheck={() => handleAssetsSelect(a)}
-                checked={selectedAssets?.includes(a)}
-              />
-            ))}
+      <AssetWrapper direction="column" justify="space-between">
+        {!assets || assets.length < 1 ? (
+          <Template align="center" justify="center">
+            <TemplateText size="m">
+              {fileType === "image"
+                ? intl.formatMessage({
+                    defaultMessage:
+                      "You haven't uploaded any image assets yet. Click the upload button above and select an image from your computer.",
+                  })
+                : intl.formatMessage({
+                    defaultMessage:
+                      "You haven't uploaded any file assets yet. Click the upload button above and select a compatible file from your computer.",
+                  })}
+            </TemplateText>
+          </Template>
+        ) : (
+          <AssetList
+            wrap={layoutType === "list" ? "nowrap" : "wrap"}
+            justify="flex-start"
+            layoutType={layoutType}>
+            {layoutType === "list"
+              ? assets?.map(a => (
+                  <AssetListItem
+                    key={a.id}
+                    asset={a}
+                    isImage={fileType === "image"}
+                    onCheck={() => handleAssetsSelect(a)}
+                    checked={selectedAssets?.includes(a)}
+                  />
+                ))
+              : layoutType === "grid-small"
+              ? assets?.map(a => (
+                  <AssetCard
+                    key={a.id}
+                    name={a.name}
+                    cardSize={"small"}
+                    url={a.url}
+                    isImage={fileType === "image"}
+                    onCheck={() => handleAssetsSelect(a)}
+                    checked={selectedAssets?.includes(a)}
+                  />
+                ))
+              : assets?.map(a => (
+                  <AssetCard
+                    key={a.id}
+                    name={a.name}
+                    cardSize={"medium"}
+                    url={a.url}
+                    isImage={fileType === "image"}
+                    onCheck={() => handleAssetsSelect(a)}
+                    checked={selectedAssets?.includes(a)}
+                  />
+                ))}
+          </AssetList>
+        )}
+        <Divider margin="0" />
       </AssetWrapper>
-      <Divider margin="0" />
     </Wrapper>
   );
 };
@@ -129,9 +149,13 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled(Flex)<{ layoutType?: LayoutTypes }>`
-  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
+const AssetWrapper = styled(Flex)`
   height: 458px;
+`;
+
+const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
+  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
+  max-height: 458px;
   overflow-y: scroll;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -153,7 +177,7 @@ const NavBar = styled(Flex)`
 `;
 
 const StyledIcon = styled(Icon)`
-  margin-right: 8px;
+  margin-right: ${metricsSizes["s"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
   color: ${props => props.theme.colors.text.main};
@@ -162,6 +186,14 @@ const StyledIcon = styled(Icon)`
   &:hover {
     background: ${props => props.theme.colors.bg[5]};
   }
+`;
+
+const Template = styled(Flex)`
+  height: 458px;
+`;
+
+const TemplateText = styled(Text)`
+  width: 390px;
 `;
 
 export default AssetContainer;
