@@ -48,6 +48,34 @@ const AssetContainer: React.FC<Props> = ({
   const intl = useIntl();
   const [layoutType, setLayoutType] = useState<LayoutTypes>("grid");
 
+  const [filterSelected, selectFilter] = useState("time");
+  const [filteredAssets, setAssets] = useState(assets);
+  const filterOptions = [
+    { key: "time", label: "Date added" },
+    { key: "size", label: "File size" },
+    { key: "name", label: "Alphabetically" },
+  ];
+
+  const filterFunction = useCallback((f: string) => {
+    return (a: Asset, a2: Asset) => {
+      const type = f as keyof typeof a;
+      return a[type] < a2[type] ? -1 : a.size > a2.size ? 1 : 0;
+    };
+  }, []);
+
+  const handleFilterChange = useCallback(
+    (f: string) => {
+      if (!assets) return;
+      const newArray = [...assets].sort(filterFunction(f));
+      setAssets(f !== "time" ? [...newArray] : [...assets]);
+    },
+    [assets, filterFunction],
+  );
+
+  useEffect(() => {
+    handleFilterChange(filterSelected);
+  }, [filterSelected, handleFilterChange]);
+
   const handleAssetsSelect = (asset: Asset) => {
     selectedAssets?.includes(asset)
       ? selectAsset?.(selectedAssets?.filter(a => a !== asset))
@@ -64,40 +92,6 @@ const AssetContainer: React.FC<Props> = ({
   const handleUploadToAsset = useCallback(() => {
     handleFileSelect();
   }, [handleFileSelect]);
-
-  const [filterSelected, selectFilter] = useState("time");
-  const [filteredAssets, setAssets] = useState(assets);
-  const filterOptions = [
-    { key: "time", label: "Date added" },
-    { key: "size", label: "File size" },
-    { key: "name", label: "Alphabetically" },
-  ];
-
-  const filterFunction = useCallback((f: string) => {
-    return (a: Asset, a2: Asset) => {
-      const type = f as keyof typeof a;
-      if (a[type] < a2[type]) {
-        return -1;
-      }
-      if (a.size > a2.size) {
-        return 1;
-      }
-      return 0;
-    };
-  }, []);
-
-  const handleFilterChange = useCallback(
-    (f: string) => {
-      if (!assets) return;
-      const newArray = [...assets].sort(filterFunction(f));
-      setAssets(f !== "time" ? [...newArray] : [...assets]);
-    },
-    [assets, filterFunction],
-  );
-
-  useEffect(() => {
-    handleFilterChange(filterSelected);
-  }, [filterSelected, handleFilterChange]);
 
   return (
     <Wrapper>
