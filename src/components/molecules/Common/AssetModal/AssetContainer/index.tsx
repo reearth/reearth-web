@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { styled } from "@reearth/theme";
 
 import AssetCard from "@reearth/components/atoms/AssetCard";
@@ -11,6 +11,8 @@ import Divider from "@reearth/components/atoms/Divider";
 import useFileInput from "use-file-input";
 import { useIntl } from "react-intl";
 import { metricsSizes } from "@reearth/theme/metrics";
+
+import SelectField from "@reearth/components/molecules/Settings/SelectField";
 
 export type Asset = {
   id: string;
@@ -63,6 +65,40 @@ const AssetContainer: React.FC<Props> = ({
     handleFileSelect();
   }, [handleFileSelect]);
 
+  const [filterSelected, selectFilter] = useState("time");
+  const [filteredAssets, setAssets] = useState(assets);
+  const filterOptions = [
+    { key: "time", label: "Date added" },
+    { key: "size", label: "File size" },
+    { key: "name", label: "Alphabetically" },
+  ];
+
+  const filterFunction = useCallback((f: string) => {
+    return (a: Asset, a2: Asset) => {
+      const type = f as keyof typeof a;
+      if (a[type] < a2[type]) {
+        return -1;
+      }
+      if (a.size > a2.size) {
+        return 1;
+      }
+      return 0;
+    };
+  }, []);
+
+  const handleFilterChange = useCallback(
+    (f: string) => {
+      if (!assets) return;
+      const newArray = [...assets].sort(filterFunction(f));
+      setAssets(f !== "time" ? [...newArray] : [...assets]);
+    },
+    [assets, filterFunction],
+  );
+
+  useEffect(() => {
+    handleFilterChange(filterSelected);
+  }, [filterSelected, handleFilterChange]);
+
   return (
     <Wrapper>
       <StyledUploadButton
@@ -78,13 +114,18 @@ const AssetContainer: React.FC<Props> = ({
         onClick={handleUploadToAsset}
       />
       <Divider margin="0" />
-      <NavBar align="center" justify="center">
-        <StyledIcon icon="assetList" onClick={() => setLayoutType("list")} />
-        <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
-        <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
+      <NavBar align="center" justify="space-between">
+        <SelectWrapper>
+          <SelectField value={filterSelected} items={filterOptions} onChange={selectFilter} />
+        </SelectWrapper>
+        <Flex>
+          <StyledIcon icon="assetList" onClick={() => setLayoutType("list")} />
+          <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
+          <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
+        </Flex>
       </NavBar>
       <AssetWrapper direction="column" justify="space-between">
-        {!assets || assets.length < 1 ? (
+        {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
               {fileType === "image"
@@ -104,7 +145,7 @@ const AssetContainer: React.FC<Props> = ({
             justify="flex-start"
             layoutType={layoutType}>
             {layoutType === "list"
-              ? assets?.map(a => (
+              ? filteredAssets?.map(a => (
                   <AssetListItem
                     key={a.id}
                     asset={a}
@@ -114,7 +155,7 @@ const AssetContainer: React.FC<Props> = ({
                   />
                 ))
               : layoutType === "grid-small"
-              ? assets?.map(a => (
+              ? filteredAssets?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}
@@ -125,7 +166,7 @@ const AssetContainer: React.FC<Props> = ({
                     checked={selectedAssets?.includes(a)}
                   />
                 ))
-              : assets?.map(a => (
+              : filteredAssets?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}
@@ -174,6 +215,13 @@ const StyledUploadButton = styled(Button)`
 
 const NavBar = styled(Flex)`
   margin: ${metricsSizes["s"]}px;
+  flex: 1;
+  // width: 100%;
+`;
+
+const SelectWrapper = styled.div`
+  // flex: 1;
+  // width: 100%;
 `;
 
 const StyledIcon = styled(Icon)`
