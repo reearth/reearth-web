@@ -29,26 +29,29 @@ export type Props = {
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (file: File) => void;
+  initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
 };
 
-export type LayoutTypes = "grid" | "grid-small" | "list";
+export type LayoutTypes = "medium" | "small" | "list";
 
 export type FilterTypes = "time" | "size" | "name";
 
 const AssetContainer: React.FC<Props> = ({
   assets,
   isMultipleSelectable = false,
-  onCreateAsset,
   accept,
+  onCreateAsset,
+  initialAsset,
   selectedAssets,
   selectAsset,
   fileType,
 }) => {
   const intl = useIntl();
-  const [layoutType, setLayoutType] = useState<LayoutTypes>("grid");
+  const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
+  const [currentSaved, setCurrentSaved] = useState(initialAsset);
   const [reverse, setReverse] = useState(false);
 
   const [filterSelected, selectFilter] = useState<FilterTypes>("time");
@@ -89,11 +92,12 @@ const AssetContainer: React.FC<Props> = ({
     (f: string) => {
       selectFilter(f as FilterTypes);
       setReverse(false);
+      setCurrentSaved(initialAsset);
       if (!assets) return;
       const newArray = [...assets].sort(filterFunction(f));
       setAssets(f !== "time" ? [...newArray] : [...assets]);
     },
-    [assets, filterFunction],
+    [assets, filterFunction, initialAsset],
   );
 
   useEffect(() => {
@@ -147,8 +151,8 @@ const AssetContainer: React.FC<Props> = ({
 
         <LayoutButtons justify="center">
           <StyledIcon icon="assetList" onClick={() => setLayoutType("list")} />
-          <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
-          <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
+          <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("small")} />
+          <StyledIcon icon="assetGrid" onClick={() => setLayoutType("medium")} />
         </LayoutButtons>
         <SearchBar />
       </NavBar>
@@ -170,7 +174,7 @@ const AssetContainer: React.FC<Props> = ({
         ) : (
           <AssetList
             wrap={layoutType === "list" ? "nowrap" : "wrap"}
-            justify="flex-start"
+            justify="space-between"
             layoutType={layoutType}>
             {layoutType === "list"
               ? filteredAssets?.map(a => (
@@ -179,30 +183,20 @@ const AssetContainer: React.FC<Props> = ({
                     asset={a}
                     isImage={fileType === "image"}
                     onCheck={() => handleAssetsSelect(a)}
-                    checked={selectedAssets?.includes(a)}
-                  />
-                ))
-              : layoutType === "grid-small"
-              ? filteredAssets?.map(a => (
-                  <AssetCard
-                    key={a.id}
-                    name={a.name}
-                    cardSize={"small"}
-                    url={a.url}
-                    isImage={fileType === "image"}
-                    onCheck={() => handleAssetsSelect(a)}
-                    checked={selectedAssets?.includes(a)}
+                    selected={selectedAssets?.includes(a)}
+                    checked={currentSaved === a}
                   />
                 ))
               : filteredAssets?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}
-                    cardSize={"medium"}
+                    cardSize={layoutType}
                     url={a.url}
                     isImage={fileType === "image"}
                     onCheck={() => handleAssetsSelect(a)}
-                    checked={selectedAssets?.includes(a)}
+                    selected={selectedAssets?.includes(a)}
+                    checked={currentSaved === a}
                   />
                 ))}
           </AssetList>
@@ -233,7 +227,7 @@ const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
 
   &::after {
     content: "";
-    flex: ${({ layoutType }) => (layoutType === "grid" ? "0 33%" : "auto")};
+    flex: ${({ layoutType }) => (layoutType === "medium" ? "0 33%" : "auto")};
   }
 `;
 

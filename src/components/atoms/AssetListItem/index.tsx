@@ -5,7 +5,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Asset = {
@@ -19,15 +19,21 @@ export type Asset = {
 
 export type Props = {
   asset: Asset;
+  selected?: boolean;
   checked?: boolean;
   isImage?: boolean;
   onCheck?: (checked: boolean) => void;
 };
 
-const AssetListItem: React.FC<Props> = ({ asset, checked, isImage, onCheck }) => {
+const AssetListItem: React.FC<Props> = ({ asset, selected, checked, isImage, onCheck }) => {
+  const theme = useTheme();
   return (
-    <ListItem key={asset.id} align="center" checked={checked} onClick={() => onCheck?.(!check)}>
-      <Icon icon={isImage ? "image" : "file"} size={16} />
+    <ListItem key={asset.id} align="center" selected={selected} onClick={() => onCheck?.(!check)}>
+      <Icon
+        icon={checked ? "checkCircle" : isImage ? "image" : "file"}
+        size={16}
+        color={checked ? theme.assetCard.highlight : theme.assetCard.text}
+      />
       <ListItemName size="m" customColor>
         {asset.name}
       </ListItemName>
@@ -40,18 +46,19 @@ const AssetListItem: React.FC<Props> = ({ asset, checked, isImage, onCheck }) =>
 
 export default AssetListItem;
 
-const ListItem = styled(Flex)<{ checked?: boolean }>`
+const ListItem = styled(Flex)<{ selected?: boolean }>`
   background: ${({ theme }) => theme.assetCard.bg};
+  box-shadow: 0 6px 6px -8px ${props => props.theme.colors.other.black};
   border: 1px solid
-    ${props => (props.checked ? `${props.theme.assetCard.highlight}` : "transparent")};
+    ${({ selected, theme }) => (selected ? `${theme.assetCard.highlight}` : "transparent")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
   margin-bottom: ${metricsSizes["l"]}px;
   cursor: pointer;
-  color: ${props => props.theme.colors.text.main};
+  color: ${({ theme }) => theme.colors.text.main};
 
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};
-    color: ${props => props.theme.colors.text.strong};
+    color: ${({ theme }) => theme.colors.text.strong};
   }
 `;
 

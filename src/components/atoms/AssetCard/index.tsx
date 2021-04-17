@@ -14,41 +14,49 @@ export type Props = {
   isImage?: boolean;
   cardSize?: CardSize;
   checked?: boolean;
+  selected?: boolean;
   onCheck?: (checked: boolean) => void;
 };
 
 const AssetCard: React.FC<Props> = ({
   className,
-  cardSize,
-  checked,
-  onCheck,
+  name,
   url,
   isImage,
-  name,
+  cardSize,
+  checked,
+  selected,
+  onCheck,
 }) => {
   return (
     <Wrapper
       className={className}
       direction="column"
-      checked={checked}
+      selected={selected}
       cardSize={cardSize}
       onClick={() => onCheck?.(!check)}>
-      {checked && <StyledIcon icon="checkCircle" alt="checked" size={20} />}
       <ImgWrapper cardSize={cardSize} url={url}>
         {!isImage && <Icon icon="file" />}
       </ImgWrapper>
       <FileName size={cardSize === "large" ? "m" : "xs"} cardSize={cardSize} customColor>
         {name}
       </FileName>
+      {checked && (
+        <StyledIcon
+          icon="checkCircle"
+          alt="checked"
+          size={cardSize === "small" ? "18px" : "24px"}
+        />
+      )}
     </Wrapper>
   );
 };
 
-const Wrapper = styled(Flex)<{ checked?: boolean; cardSize?: CardSize }>`
+const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   background: ${props => props.theme.assetCard.bg};
   box-shadow: 0 6px 6px -6px ${props => props.theme.colors.other.black};
   border: 1px solid
-    ${props => (props.checked ? `${props.theme.assetCard.highlight}` : "transparent")};
+    ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
   margin: ${({ cardSize }) => (cardSize === "small" ? "5px" : "10px")};
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};
@@ -88,8 +96,8 @@ const FileName = styled(Text)<{ cardSize?: CardSize }>`
 
 const StyledIcon = styled(Icon)`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  bottom: 7px;
+  right: 7px;
   color: ${({ theme }) => theme.assetCard.highlight};
 `;
 
