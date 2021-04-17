@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { styled } from "@reearth/theme";
 
 import AssetCard from "@reearth/components/atoms/AssetCard";
@@ -52,12 +52,12 @@ const AssetContainer: React.FC<Props> = ({
   const [reverse, setReverse] = useState(false);
 
   const [filterSelected, selectFilter] = useState<FilterTypes>("time");
-  const [filteredAssets, setAssets] = useState(assets);
   const filterOptions = [
     { key: "time", label: "Date added" },
     { key: "size", label: "File size" },
     { key: "name", label: "Alphabetical" },
   ];
+  const [filteredAssets, setAssets] = useState(assets);
 
   const filterFunction = useCallback((f: string) => {
     return (a: Asset, a2: Asset) => {
@@ -88,12 +88,18 @@ const AssetContainer: React.FC<Props> = ({
   const handleFilterChange = useCallback(
     (f: string) => {
       selectFilter(f as FilterTypes);
+      setReverse(false);
       if (!assets) return;
       const newArray = [...assets].sort(filterFunction(f));
       setAssets(f !== "time" ? [...newArray] : [...assets]);
     },
     [assets, filterFunction],
   );
+
+  useEffect(() => {
+    if (!assets) return;
+    handleFilterChange(filterSelected);
+  }, [handleFilterChange, filterSelected, assets]);
 
   const handleAssetsSelect = (asset: Asset) => {
     selectedAssets?.includes(asset)
