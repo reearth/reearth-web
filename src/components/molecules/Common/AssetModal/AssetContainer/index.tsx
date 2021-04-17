@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { styled } from "@reearth/theme";
 
 import AssetCard from "@reearth/components/atoms/AssetCard";
@@ -36,6 +36,8 @@ export type Props = {
 
 export type LayoutTypes = "grid" | "grid-small" | "list";
 
+export type FilterTypes = "time" | "size" | "name";
+
 const AssetContainer: React.FC<Props> = ({
   assets,
   isMultipleSelectable = false,
@@ -47,13 +49,14 @@ const AssetContainer: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const [layoutType, setLayoutType] = useState<LayoutTypes>("grid");
+  const [reverse, setReverse] = useState(false);
 
-  const [filterSelected, selectFilter] = useState("time");
+  const [filterSelected, selectFilter] = useState<FilterTypes>("time");
   const [filteredAssets, setAssets] = useState(assets);
   const filterOptions = [
     { key: "time", label: "Date added" },
     { key: "size", label: "File size" },
-    { key: "name", label: "Alphabetically" },
+    { key: "name", label: "Alphabetical" },
   ];
 
   const filterFunction = useCallback((f: string) => {
@@ -63,18 +66,28 @@ const AssetContainer: React.FC<Props> = ({
     };
   }, []);
 
+  const iconChoice =
+    filterSelected === "name"
+      ? reverse
+        ? "filterNameReverse"
+        : "filterName"
+      : filterSelected === "size"
+      ? reverse
+        ? "filterSizeReverse"
+        : "filterSize"
+      : reverse
+      ? "filterTimeReverse"
+      : "filterTime";
+
   const handleFilterChange = useCallback(
     (f: string) => {
+      selectFilter(f as FilterTypes);
       if (!assets) return;
       const newArray = [...assets].sort(filterFunction(f));
       setAssets(f !== "time" ? [...newArray] : [...assets]);
     },
     [assets, filterFunction],
   );
-
-  useEffect(() => {
-    handleFilterChange(filterSelected);
-  }, [filterSelected, handleFilterChange]);
 
   const handleAssetsSelect = (asset: Asset) => {
     selectedAssets?.includes(asset)
@@ -93,6 +106,12 @@ const AssetContainer: React.FC<Props> = ({
     handleFileSelect();
   }, [handleFileSelect]);
 
+  const handleReverse = useCallback(() => {
+    setReverse(!reverse);
+    if (!filteredAssets) return;
+    filteredAssets.reverse();
+  }, [filteredAssets, reverse]);
+
   return (
     <Wrapper>
       <StyledUploadButton
@@ -109,14 +128,17 @@ const AssetContainer: React.FC<Props> = ({
       />
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
-        <SelectWrapper>
-          <SelectField value={filterSelected} items={filterOptions} onChange={selectFilter} />
+        <SelectWrapper direction="row" justify="space-between" align="center">
+          <SelectField value={filterSelected} items={filterOptions} onChange={handleFilterChange} />
+          <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
-        <Flex>
+
+        <LayoutButtons justify="center">
           <StyledIcon icon="assetList" onClick={() => setLayoutType("list")} />
           <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("grid-small")} />
           <StyledIcon icon="assetGrid" onClick={() => setLayoutType("grid")} />
-        </Flex>
+        </LayoutButtons>
+        <SearchBar />
       </NavBar>
       <AssetWrapper direction="column" justify="space-between">
         {!filteredAssets || filteredAssets.length < 1 ? (
@@ -213,13 +235,22 @@ const NavBar = styled(Flex)`
   // width: 100%;
 `;
 
-const SelectWrapper = styled.div`
-  // flex: 1;
-  // width: 100%;
+const SelectWrapper = styled(Flex)`
+  flex: 2;
+`;
+
+const LayoutButtons = styled(Flex)`
+  flex: 3;
+`;
+
+const SearchBar = styled.div`
+  flex: 5;
+  // background: red;
+  height: 20px;
 `;
 
 const StyledIcon = styled(Icon)`
-  margin-right: ${metricsSizes["s"]}px;
+  margin-left: ${metricsSizes["s"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
   color: ${props => props.theme.colors.text.main};

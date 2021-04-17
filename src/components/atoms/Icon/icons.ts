@@ -28,6 +28,12 @@ import PcIcon from "./Icons/pcIcon.svg";
 import AssetGrid from "./Icons/assetGrid.svg";
 import AssetGridSmall from "./Icons/assetGridSmall.svg";
 import AssetList from "./Icons/assetList.svg";
+import FilterName from "./Icons/filterName.svg";
+import FilterNameReverse from "./Icons/filterNameReverse.svg";
+import FilterSize from "./Icons/filterSize.svg";
+import FilterSizeReverse from "./Icons/filterSizeReverse.svg";
+import FilterTime from "./Icons/filterTime.svg";
+import FilterTimeReverse from "./Icons/filterTimeReverse.svg";
 
 // Titles/Sections
 import Scene from "./Icons/sceneIcon.svg";
@@ -127,6 +133,12 @@ export default {
   assetGrid: AssetGrid,
   assetGridSmall: AssetGridSmall,
   assetList: AssetList,
+  filterName: FilterName,
+  filterNameReverse: FilterNameReverse,
+  filterSize: FilterSize,
+  filterSizeReverse: FilterSizeReverse,
+  filterTime: FilterTime,
+  filterTimeReverse: FilterTimeReverse,
   scene: Scene,
   dashboard: Dashboard,
   earthEditor: EarthEditor,
