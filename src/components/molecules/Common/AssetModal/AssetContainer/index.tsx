@@ -62,7 +62,13 @@ const AssetContainer: React.FC<Props> = ({
   const filterFunction = useCallback((f: string) => {
     return (a: Asset, a2: Asset) => {
       const type = f as keyof typeof a;
-      return a[type] < a2[type] ? -1 : a.size > a2.size ? 1 : 0;
+      return type === "name"
+        ? a.name.localeCompare(a2.name)
+        : a[type] < a2[type]
+        ? -1
+        : a[type] > a2[type]
+        ? 1
+        : 0;
     };
   }, []);
 
