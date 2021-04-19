@@ -150,9 +150,21 @@ const AssetContainer: React.FC<Props> = ({
         </SelectWrapper>
 
         <LayoutButtons justify="center">
-          <StyledIcon icon="assetList" onClick={() => setLayoutType("list")} />
-          <StyledIcon icon="assetGridSmall" onClick={() => setLayoutType("small")} />
-          <StyledIcon icon="assetGrid" onClick={() => setLayoutType("medium")} />
+          <StyledIcon
+            icon="assetList"
+            onClick={() => setLayoutType("list")}
+            selected={layoutType === "list"}
+          />
+          <StyledIcon
+            icon="assetGridSmall"
+            onClick={() => setLayoutType("small")}
+            selected={layoutType === "small"}
+          />
+          <StyledIcon
+            icon="assetGrid"
+            onClick={() => setLayoutType("medium")}
+            selected={layoutType === "medium"}
+          />
         </LayoutButtons>
         <SearchBar />
       </NavBar>
@@ -238,7 +250,6 @@ const StyledUploadButton = styled(Button)`
 const NavBar = styled(Flex)`
   margin: ${metricsSizes["s"]}px;
   flex: 1;
-  // width: 100%;
 `;
 
 const SelectWrapper = styled(Flex)`
@@ -251,19 +262,20 @@ const LayoutButtons = styled(Flex)`
 
 const SearchBar = styled.div`
   flex: 5;
-  // background: red;
   height: 20px;
 `;
 
-const StyledIcon = styled(Icon)`
+const StyledIcon = styled(Icon)<{ selected?: boolean }>`
   margin-left: ${metricsSizes["s"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
-  color: ${props => props.theme.colors.text.main};
+  color: ${({ theme }) => theme.colors.text.main};
   cursor: pointer;
+  ${({ selected, theme }) => selected && `background: ${theme.colors.bg[5]};`}
 
   &:hover {
-    background: ${props => props.theme.colors.bg[5]};
+    background: ${({ theme }) => theme.colors.bg[5]};
+    color: ${({ theme }) => theme.colors.text.strong};
   }
 `;
 
