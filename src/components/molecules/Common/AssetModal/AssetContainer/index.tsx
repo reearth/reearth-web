@@ -54,6 +54,7 @@ const AssetContainer: React.FC<Props> = ({
   const [currentSaved, setCurrentSaved] = useState(initialAsset);
   const [reverse, setReverse] = useState(false);
 
+  const [searchResults, setSearchResults] = useState<Asset[]>();
   const [filterSelected, selectFilter] = useState<FilterTypes>("time");
   const filterOptions = [
     { key: "time", label: "Date added" },
@@ -128,6 +129,18 @@ const AssetContainer: React.FC<Props> = ({
     filteredAssets.reverse();
   }, [filteredAssets, reverse]);
 
+  const handleSearch = useCallback(
+    (value: string) => {
+      if (!value) {
+        setSearchResults(undefined);
+      } else {
+        if (!filteredAssets) return;
+        setSearchResults(filteredAssets.filter(a => a.name.toLowerCase().includes(value)));
+      }
+    },
+    [filteredAssets],
+  );
+
   return (
     <Wrapper>
       <StyledUploadButton
@@ -166,7 +179,7 @@ const AssetContainer: React.FC<Props> = ({
             selected={layoutType === "medium"}
           />
         </LayoutButtons>
-        <SearchBar />
+        <SearchBar onChange={e => handleSearch(e.currentTarget.value)} />
       </NavBar>
       <AssetWrapper direction="column" justify="space-between">
         {!filteredAssets || filteredAssets.length < 1 ? (
@@ -189,7 +202,7 @@ const AssetContainer: React.FC<Props> = ({
             justify="space-between"
             layoutType={layoutType}>
             {layoutType === "list"
-              ? filteredAssets?.map(a => (
+              ? (searchResults || filteredAssets)?.map(a => (
                   <AssetListItem
                     key={a.id}
                     asset={a}
@@ -199,7 +212,7 @@ const AssetContainer: React.FC<Props> = ({
                     checked={currentSaved === a}
                   />
                 ))
-              : filteredAssets?.map(a => (
+              : (searchResults || filteredAssets)?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}
@@ -260,7 +273,7 @@ const LayoutButtons = styled(Flex)`
   flex: 3;
 `;
 
-const SearchBar = styled.div`
+const SearchBar = styled.input`
   flex: 5;
   height: 20px;
 `;
