@@ -2,9 +2,10 @@ import React, { useState, useRef, useCallback, useLayoutEffect } from "react";
 import { useClickAway } from "react-use";
 import { usePopper } from "react-popper";
 import { useMergeRefs } from "use-callback-ref";
+import { useIntl } from "react-intl";
+
 import { styled, css, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import colors from "@reearth/theme/colors";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 
@@ -48,6 +49,7 @@ const Select = <Value extends string | number>(
   }: Props<Value>,
   ref: React.Ref<HTMLDivElement>,
 ) => {
+  const intl = useIntl();
   const [open, setOpen] = useState(false);
   const [focusedValue, setFocusedValue] = useState(selectedValue);
 
@@ -219,8 +221,8 @@ const Select = <Value extends string | number>(
         <Selected
           inactive={inactive}
           size="xs"
-          color={inactive ? "" : theme.properties.contentsText}>
-          {selectedLabel}
+          color={!selectedValue ? theme.colors.text.weak : theme.properties.contentsText}>
+          {selectedLabel || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />
       </SelectWrapper>
@@ -277,8 +279,6 @@ const SelectWrapper = styled.div`
 const Selected = styled(Text)<{ inactive: boolean }>`
   flex: 1;
   padding: 3px;
-  color: ${({ inactive, theme }) =>
-    inactive ? colors.outline.main : theme.properties.contentsText};
 `;
 
 const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`

@@ -349,6 +349,10 @@ const Input = styled.input<{ type?: string }>`
   &:focus {
     border-color: ${({ theme }) => theme.properties.focusBorder};
   }
+
+  ::placeholder {
+    color: ${({ theme }) => theme.properties.text};
+  }
 `;
 
 const PickerText = styled(Text)`

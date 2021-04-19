@@ -164,7 +164,7 @@ const PropertyField: React.FC<Props> = ({
     <FormItemWrapper
       schema={schema}
       direction={schema?.ui === "multiline" ? "column" : "row"}
-      align={schema?.ui === "multiline" ? "flex-start" : "center"}>
+      align={schema?.ui === "multiline" || schema?.type === "typography" ? "flex-start" : "center"}>
       <StyledPropertyTitleWrapper>
         <PropertyTitle
           title={schema?.name || schema?.id || field?.id || ""}
