@@ -196,6 +196,7 @@ const PropertyItem: React.FC<Props> = ({
             const condsf = f.only && item.schemaFields.find(f2 => f2.id === f.only?.field);
             const condv =
               condf?.value ??
+              condf?.mergedValue ??
               condsf?.defaultValue ??
               (condsf?.type ? zeroValues[condsf.type] : undefined);
             return {
