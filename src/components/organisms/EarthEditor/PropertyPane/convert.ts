@@ -37,6 +37,7 @@ export type Pane = {
   title?: string;
   items?: Item[];
   enabled?: boolean;
+  group?: boolean;
 };
 
 const linkableType: ValueType[] = ["bool", "string", "number", "latlng", "url"];

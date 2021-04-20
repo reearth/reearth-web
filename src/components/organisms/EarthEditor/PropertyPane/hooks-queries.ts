@@ -118,11 +118,7 @@ export default ({
       ? layerPropertyData.layer.linkedDatasetId ?? undefined
       : undefined;
   const isInfoboxCreatable =
-    !!selectedLayer &&
-    mode === "infobox" &&
-    !layerPropertyData?.layer?.infobox &&
-    (layerPropertyData?.layer?.__typename !== "LayerItem" ||
-      !layerPropertyData?.layer.linkedDatasetId);
+    !!selectedLayer && mode === "infobox" && !layerPropertyData?.layer?.infobox;
   const selectedWidget = useMemo(
     () =>
       selectedWidgetId
@@ -142,6 +138,7 @@ export default ({
         mode: "scene",
         propertyId,
         items,
+        title: layerPropertyData?.layer?.name,
       };
     }
 
@@ -157,6 +154,7 @@ export default ({
         mode: "widget",
         propertyId: w?.property?.id,
         items: convert(w?.property, null),
+        title: layerPropertyData?.layer?.name,
         enabled: !!w?.enabled,
       };
     }
@@ -166,9 +164,10 @@ export default ({
       mode,
       propertyId,
       items,
+      title: layerPropertyData?.layer?.name,
+      group: layerPropertyData?.layer?.__typename === "LayerGroup",
     };
-  }, [items, mode, propertyId, scene?.widgets, selectedWidgetId]);
-
+  }, [items, mode, propertyId, scene?.widgets, selectedWidgetId, layerPropertyData?.layer]);
   const datasetSchemas = useMemo(() => convertLinkableDatasets(linkableDatasets), [
     linkableDatasets,
   ]);

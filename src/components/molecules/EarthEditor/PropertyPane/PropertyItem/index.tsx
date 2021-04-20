@@ -76,6 +76,8 @@ export type Item = Group | GroupList;
 export type Props = {
   className?: string;
   item?: Item;
+  title?: string;
+  group?: boolean;
   defaultItemName?: string;
   onItemAdd?: (schemaGroupId: string) => void;
   onItemMove?: (schemaGroupId: string, itemId: string, from: number, to: number) => void;
@@ -118,6 +120,8 @@ export type Props = {
 const PropertyItem: React.FC<Props> = ({
   className,
   item,
+  title,
+  group,
   defaultItemName,
   onItemAdd,
   onItemMove,
@@ -239,7 +243,9 @@ const PropertyItem: React.FC<Props> = ({
   }, [item, onRemovePane, intl]);
 
   return (
-    <GroupWrapper className={className} name={item?.title}>
+    <GroupWrapper
+      className={className}
+      name={group ? intl.formatMessage({ defaultMessage: "Template" }) : title || item?.title}>
       {isList && !!item && (
         <StyledPropertyList
           name={item.title || (item.id === "default" ? defaultItemName : "")}

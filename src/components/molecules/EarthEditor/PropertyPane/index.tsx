@@ -1,6 +1,8 @@
 import React from "react";
 
 import Wrapper from "@reearth/components/atoms/PropertyPane";
+import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
+import Text from "@reearth/components/atoms/Text";
 import Button from "@reearth/components/atoms/Button";
 import { partitionObject } from "@reearth/util/util";
 import { ExtendedFuncProps } from "@reearth/types";
@@ -23,7 +25,7 @@ import PropertyItem, {
   Asset as AssetType,
 } from "./PropertyItem";
 import WidgetToggleButton from "./WidgetToggleSwitch";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { useIntl } from "react-intl";
 
 export type Item = ItemItem;
@@ -53,6 +55,7 @@ export type Props = {
   mode: Mode;
   items?: ItemItem[];
   title?: string;
+  group?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
   onCreateAsset?: (file: File) => void;
@@ -104,6 +107,7 @@ const PropertyPane: React.FC<Props> = ({
   onWidgetActivate,
   ...props
 }) => {
+  const theme = useTheme();
   const intl = useIntl();
   const visibleItems = items?.filter(i => {
     if (!i.only) return true;
@@ -143,6 +147,15 @@ const PropertyPane: React.FC<Props> = ({
               text={intl.formatMessage({ defaultMessage: "Create Infobox" })}
               onClick={onCreateInfobox}
             />
+          )}
+          {props.group && (
+            <GroupWrapper
+              className={className}
+              name={intl.formatMessage({ defaultMessage: "Dataset" })}>
+              <Text size="xs" color={theme.colors.text.strong}>
+                {props.title}
+              </Text>
+            </GroupWrapper>
           )}
           {visibleItems?.map(item => (
             <PropertyItem
