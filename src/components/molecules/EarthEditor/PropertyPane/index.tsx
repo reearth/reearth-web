@@ -148,7 +148,7 @@ const PropertyPane: React.FC<Props> = ({
               onClick={onCreateInfobox}
             />
           )}
-          {props.group && (
+          {mode === "layer" && props.group && (
             <GroupWrapper
               className={className}
               name={intl.formatMessage({ defaultMessage: "Dataset" })}>
@@ -162,6 +162,7 @@ const PropertyPane: React.FC<Props> = ({
               key={`${propertyId}/${item.id || item.schemaGroup}`}
               item={item}
               onRemovePane={onRemovePane}
+              mode={mode}
               {...events}
               {...otherProps}
             />

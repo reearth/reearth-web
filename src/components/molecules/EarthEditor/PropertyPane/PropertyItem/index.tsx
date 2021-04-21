@@ -23,6 +23,7 @@ import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
 import { metricsSizes } from "@reearth/theme/metrics";
+import { Mode } from "../";
 
 export type {
   Dataset,
@@ -78,6 +79,7 @@ export type Props = {
   item?: Item;
   title?: string;
   group?: boolean;
+  mode?: Mode;
   defaultItemName?: string;
   onItemAdd?: (schemaGroupId: string) => void;
   onItemMove?: (schemaGroupId: string, itemId: string, from: number, to: number) => void;
@@ -122,6 +124,7 @@ const PropertyItem: React.FC<Props> = ({
   item,
   title,
   group,
+  mode,
   defaultItemName,
   onItemAdd,
   onItemMove,
@@ -246,7 +249,13 @@ const PropertyItem: React.FC<Props> = ({
   return (
     <GroupWrapper
       className={className}
-      name={group ? intl.formatMessage({ defaultMessage: "Template" }) : title || item?.title}>
+      name={
+        mode === "layer" && group
+          ? intl.formatMessage({ defaultMessage: "Template" })
+          : group
+          ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
+          : title || item?.title
+      }>
       {isList && !!item && (
         <StyledPropertyList
           name={item.title || (item.id === "default" ? defaultItemName : "")}
