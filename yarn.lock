@@ -14125,6 +14125,16 @@ quick-lru@^4.0.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-4.0.1.tgz#5b8878f113a58217848c6482026c73e1ba57727f"
   integrity sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==
 
+quickjs-emscripten-sync@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/quickjs-emscripten-sync/-/quickjs-emscripten-sync-1.0.0.tgz#35a6ba4f196ed7654c68efef641dd88f8a0fd381"
+  integrity sha512-XcQ6HqXpyRMMhp1E/FBSPrXdoqu+wydTEro3dGg685jyzFvRvoBOi5r74YBDVA6sIrbNBCHWIsdVEiWWhc3t6Q==
+
+quickjs-emscripten@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/quickjs-emscripten/-/quickjs-emscripten-0.11.0.tgz#c444899ee43d27fbd0668f3699b83a9d882cdc2d"
+  integrity sha512-adOtvmMDEQD9fsFZXgV+vfnAAjPuvEvYv5QpiS3SXM0fj7NOMkY7uSJ61SdWADcT5xa6n6P7JdYIievqODsDyA==
+
 ramda@^0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.21.0.tgz#a001abedb3ff61077d4ff1d577d44de77e8d0a35"
