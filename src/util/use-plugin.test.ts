@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
+import { enableFetchMocks } from "jest-fetch-mock";
 import usePlugin from "./use-plugin";
-
 test("works", async () => {
   const expose = {
     hoge: {
@@ -59,4 +59,26 @@ test("skip", async () => {
   expect(result.current.exposed).toEqual(undefined);
 
   unmount(); // test wheter vm can be disposed without errors
+});
+
+test("src", async () => {
+  enableFetchMocks();
+  fetchMock.doMockIf("/plugin.js", "module.exports = 1010;");
+
+  const { result, waitForNextUpdate, unmount } = renderHook(() =>
+    usePlugin({
+      src: "/plugin.js",
+      expose: {
+        module: {
+          exports: undefined,
+        },
+      },
+    }),
+  );
+
+  await waitForNextUpdate();
+
+  expect(result.current.evalCode?.("module.exports")).toBe(1010);
+
+  unmount();
 });
