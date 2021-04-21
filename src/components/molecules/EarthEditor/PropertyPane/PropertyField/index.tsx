@@ -252,7 +252,6 @@ const FormItemWrapper = styled(Flex)<{ schema?: SchemaField }>`
 const StyledPropertyTitleWrapper = styled.div`
   flex: 1;
   font-size: 12px;
-  line-height: 110%;
   margin-right: ${metricsSizes.s}px;
 `;
 

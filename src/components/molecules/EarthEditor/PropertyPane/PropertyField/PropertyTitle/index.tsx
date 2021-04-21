@@ -35,7 +35,7 @@ const titleColor = (params: Pick<Props, "isLinked" | "isOverridden">): string =>
   const { isLinked, isOverridden } = params;
 
   if (isOverridden) {
-    return colors.danger.main;
+    return colors.functional.attention;
   } else if (isLinked) {
     return colors.primary.main;
   } else {

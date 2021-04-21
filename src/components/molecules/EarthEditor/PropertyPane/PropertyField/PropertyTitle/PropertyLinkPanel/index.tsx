@@ -2,14 +2,16 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 import { styled, useTheme } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import Slide from "@reearth/components/atoms/Slide";
 import Icon from "@reearth/components/atoms/Icon";
+import Divider from "@reearth/components/atoms/Divider";
 import List from "./List";
 import Header from "./Header";
 import useHooks from "./hooks";
 import { DatasetSchema, Type } from "./types";
 import Text from "@reearth/components/atoms/Text";
+import Flex from "@reearth/components/atoms/Flex";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export { DatasetSchema, Dataset, DatasetField, Type } from "./types";
 
@@ -63,7 +65,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
     selectedSchema,
     selectedDatasetPath,
     clear,
-    unlink,
+    // unlink,
   } = useHooks({
     onDatasetPickerOpen,
     linkedDataset,
@@ -79,63 +81,66 @@ const PropertyLinkPanel: React.FC<Props> = ({
   const theme = useTheme();
 
   return (
-    <Wrapper size="xs" color={theme.main.text} className={className}>
+    <Wrapper className={className}>
       <Slide pos={pos}>
         <FirstSlidePage>
+          {!linkDisabled && !isOverridden && (
+            <>
+              <Link align="center" justify="space-between" onClick={startDatasetSelection}>
+                <Text size="xs" color={theme.colors.primary.main}>
+                  {intl.formatMessage({ defaultMessage: "Link to dataset" })}
+                </Text>
+                <Icon icon="arrowRight" size={16} color={theme.colors.primary.main} />
+              </Link>
+              <Divider margin="0" />
+            </>
+          )}
+          {/* {linkedDataset && (
+            <Link onClick={unlink}>
+              <Text size="xs" customColor>
+                {intl.formatMessage({ defaultMessage: "Unlink the dataset" })}
+              </Text>
+              <Icon icon="cancel" size={16} />
+            </Link>
+          )} */}
           <LinkedData>
-            <LinkedDataHeader>
-              {intl.formatMessage({ defaultMessage: "Linked Dataset" })}
-            </LinkedDataHeader>
-            <LinkedDataDetail size="2xs" color={theme.main.strongText}>
-              {selectedDatasetPath?.length ? (
-                <>
+            <LinkedDataDetail>
+              {
+                selectedDatasetPath?.length ? (
                   <LinkedDataDetailContent>
-                    <div>{selectedDatasetPath[selectedDatasetPath.length - 1]}</div>
-                    {selectedDatasetPath && (
-                      <DataPath isOverridden={isOverridden}>
-                        {selectedDatasetPath.join(" / ")}
-                      </DataPath>
-                    )}
                     {isOverridden && (
-                      <DataHint>{intl.formatMessage({ defaultMessage: "Overridden" })}</DataHint>
+                      <Text size="xs" color={theme.colors.functional.attention}>
+                        {intl.formatMessage({ defaultMessage: "Overridden" })}
+                      </Text>
                     )}
+                    {selectedDatasetPath && (
+                      <DataPath size="xs">{selectedDatasetPath.join("/")}</DataPath>
+                    )}
+                    <Text size="xs">{selectedDatasetPath[selectedDatasetPath.length - 1]}</Text>
                   </LinkedDataDetailContent>
-                  <StyledIcon icon="link" size={15} />
-                </>
-              ) : (
-                <div>
-                  {linkDisabled
-                    ? intl.formatMessage({
-                        defaultMessage: "This field cannot be linked to any dataset",
-                      })
-                    : intl.formatMessage({ defaultMessage: "No linked dataset" })}
-                </div>
-              )}
+                ) : (
+                  ""
+                )
+                // (
+                //   <Text size="xs">
+                //     {linkDisabled
+                //       ? intl.formatMessage({
+                //           defaultMessage: "This field cannot be linked to any dataset",
+                //         })
+                //       : intl.formatMessage({ defaultMessage: "No linked dataset" })}
+                //   </Text>
+                // )
+              }
             </LinkedDataDetail>
           </LinkedData>
-          {!linkDisabled && (
-            <Link color={!linkedDataset ? "linked" : undefined} onClick={startDatasetSelection}>
-              <div>
-                {linkedDataset
-                  ? intl.formatMessage({ defaultMessage: "Link to other datasets" })
-                  : intl.formatMessage({ defaultMessage: "Link to datasets" })}
-              </div>
-              <StyledIcon icon="arrowRight" size={15} />
-            </Link>
-          )}
-          {linkedDataset && (
-            <Link onClick={unlink}>
-              <div>{intl.formatMessage({ defaultMessage: "Unlink the dataset" })}</div>
-              <StyledIcon icon="cancel" size={15} />
-            </Link>
-          )}
-          <Link onClick={clear} color="overridden">
-            <div>
+          <Divider margin="0" />
+          <Link align="center" justify="space-between" onClick={clear}>
+            <Text size="xs" color={theme.colors.danger.main}>
               {isOverridden
                 ? intl.formatMessage({ defaultMessage: "Reset this field" })
                 : intl.formatMessage({ defaultMessage: "Clear this field" })}
-            </div>
-            <StyledIcon icon="cancel" size={15} />
+            </Text>
+            <Icon icon="fieldClear" size={16} color={theme.colors.danger.main} />
           </Link>
         </FirstSlidePage>
         {!fixedDatasetSchemaId && (
@@ -174,13 +179,13 @@ const PropertyLinkPanel: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled(Text)`
-  background-color: #2b2a2f;
+const Wrapper = styled(Flex)`
+  background-color: ${({ theme }) => theme.colors.bg["3"]};
   border-radius: 5px;
-  border: 1px solid #414141;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   width: 200px;
   height: 200px;
+  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
 `;
 
 const SlidePage = styled.div`
@@ -204,13 +209,13 @@ const LinkedData = styled.div`
   flex: auto;
 `;
 
-const LinkedDataHeader = styled.div`
-  font-weight: bold;
-  padding-bottom: 10px;
-  color: #fff;
-`;
+// const LinkedDataHeader = styled.div`
+//   font-weight: bold;
+//   padding-bottom: 10px;
+//   color: #fff;
+// `;
 
-const LinkedDataDetail = styled(Text)`
+const LinkedDataDetail = styled.div`
   display: flex;
   padding: 12px 0;
   justify-content: flex-start;
@@ -218,31 +223,28 @@ const LinkedDataDetail = styled(Text)`
 `;
 
 const LinkedDataDetailContent = styled.div`
-  flex: auto;
+  width: 135px;
+
+  * {
+    margin: 4px 0;
+  }
 `;
 
-const DataPath = styled.div<{ isOverridden?: boolean }>`
-  color: ${({ isOverridden }) => (isOverridden ? "#FF3C53" : "#00a0e8")};
+const DataPath = styled(Text)`
   text-decoration: underline;
-  font-size: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const DataHint = styled.div`
-  font-size: 6px;
-`;
+// const DataHint = styled.div`
+//   font-size: 6px;
+// `;
 
-const Link = styled.div<{ color?: "linked" | "overridden" }>`
-  display: flex;
+const Link = styled(Flex)`
   cursor: pointer;
   user-select: none;
-  padding: 10px;
-  color: ${({ color }) =>
-    color === "linked" ? colors.primary.main : color === "overridden" ? colors.danger.main : null};
-  border-top: 1px solid #3a3a3a;
-`;
-
-const StyledIcon = styled(Icon)`
-  margin-left: auto;
+  padding: ${metricsSizes["s"]}px;
 `;
 
 export default PropertyLinkPanel;
