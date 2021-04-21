@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import { styled } from "@reearth/theme";
 
 import Select from "@reearth/components/atoms/Select";
@@ -42,10 +43,16 @@ const FontFamilyField: React.FC<Props> = ({
   disabled,
   onChange,
 }) => {
+  const intl = useIntl();
   const inactive = !!linked || !!overridden || !!disabled;
 
   return (
-    <Select className={className} value={selectedKey} inactive={inactive} onChange={onChange}>
+    <Select
+      className={className}
+      value={selectedKey}
+      inactive={inactive}
+      onChange={onChange}
+      placeholder={intl.formatMessage({ defaultMessage: "Font family" })}>
       {safeFontItems.map(({ key, label }) => (
         <StyledOption
           key={key}

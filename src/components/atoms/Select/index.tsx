@@ -27,6 +27,7 @@ type OptionElement<Value extends string | number> = React.ReactElement<OptionPro
 export type Props<Value extends string | number> = {
   className?: string;
   value?: Value;
+  placeholder?: string;
   inactive?: boolean;
   fullWidth?: boolean;
   onChange?: (value: Value) => void;
@@ -42,6 +43,7 @@ const Select = <Value extends string | number>(
   {
     className,
     value: selectedValue,
+    placeholder,
     inactive = false,
     fullWidth = false,
     onChange,
@@ -222,7 +224,7 @@ const Select = <Value extends string | number>(
           inactive={inactive}
           size="xs"
           color={!selectedValue ? theme.colors.text.weak : theme.properties.contentsText}>
-          {selectedLabel || intl.formatMessage({ defaultMessage: "not set" })}
+          {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />
       </SelectWrapper>

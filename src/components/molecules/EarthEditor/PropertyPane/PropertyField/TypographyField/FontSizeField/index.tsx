@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import { styled } from "@reearth/theme";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -30,6 +31,7 @@ const FontSizeField: React.FC<Props> = ({
   disabled,
   onChange,
 }) => {
+  const intl = useIntl();
   const inactive = !!linked || !!overridden || !!disabled;
 
   return (
@@ -37,7 +39,8 @@ const FontSizeField: React.FC<Props> = ({
       className={className}
       value={selectedKey}
       inactive={inactive}
-      onChange={onChange}>
+      onChange={onChange}
+      placeholder={intl.formatMessage({ defaultMessage: "Font size" })}>
       {sizeItems.map(({ key, label }) => (
         <Option key={key} linked={linked} overridden={overridden} value={key} label={String(label)}>
           <OptionCheck size="xs">
