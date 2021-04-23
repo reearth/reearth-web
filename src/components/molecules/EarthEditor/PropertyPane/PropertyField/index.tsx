@@ -45,7 +45,7 @@ export type SchemaField<T extends ValueType = ValueType> = {
   suffix?: string;
   name?: string;
   description?: string;
-  notLinkable?: boolean;
+  isLinkable?: boolean;
   ui?:
     | "color"
     | "multiline"
@@ -88,9 +88,8 @@ export type Props<T extends ValueType = ValueType> = {
   schema?: SchemaField;
   linkedDatasetSchemaId?: string;
   linkedDatasetId?: string;
-  isDatasetLinkable?: boolean;
   hidden?: boolean;
-  notLinkable?: boolean;
+  isLinkable?: boolean;
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
@@ -122,7 +121,8 @@ const PropertyField: React.FC<Props> = ({
   onLink,
   onUnlink,
   datasetSchemas,
-  isDatasetLinkable,
+  // isDatasetLinkable,
+  isLinkable,
   onDatasetPickerOpen,
   linkedDatasetSchemaId,
   linkedDatasetId,
@@ -169,12 +169,12 @@ const PropertyField: React.FC<Props> = ({
         <PropertyTitle
           title={schema?.name || schema?.id || field?.id || ""}
           description={schema?.description}
-          isDatasetLinkable={isDatasetLinkable}
+          // isDatasetLinkable={isDatasetLinkable}
           isLinked={commonProps.linked}
           isOverridden={commonProps.overridden}
+          isLinkable={isLinkable ?? schema?.isLinkable}
           linkedDataset={field?.link}
           datasetSchemas={datasetSchemas}
-          linkDisabled={!schema || schema?.notLinkable}
           linkableType={schema?.type}
           onDatasetPickerOpen={onDatasetPickerOpen}
           fixedDatasetSchemaId={linkedDatasetSchemaId}

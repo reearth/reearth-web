@@ -65,7 +65,6 @@ export type Props = {
   onWidgetActivate?: (enabled: boolean) => Promise<void>;
 } & Pick<
   PropertyItemProps,
-  | "isDatasetLinkable"
   | "datasetSchemas"
   | "linkedDatasetSchemaId"
   | "linkedDatasetId"
@@ -73,7 +72,7 @@ export type Props = {
   | "onIsCapturingChange"
   | "camera"
   | "onCameraChange"
-  | "notLinkable"
+  | "isLinkable"
   | "onDatasetPickerOpen"
   | "defaultItemName"
   | "layers"

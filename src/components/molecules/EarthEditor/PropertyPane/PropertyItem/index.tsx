@@ -97,14 +97,13 @@ export type Props = {
 } & Pick<
   FieldProps,
   | "datasetSchemas"
-  | "isDatasetLinkable"
   | "linkedDatasetSchemaId"
   | "linkedDatasetId"
   | "isCapturing"
   | "onIsCapturingChange"
   | "camera"
   | "onCameraChange"
-  | "notLinkable"
+  | "isLinkable"
   | "onDatasetPickerOpen"
   | "layers"
   | "assets"
@@ -273,7 +272,7 @@ const PropertyItem: React.FC<Props> = ({
       {!!item &&
         schemaFields?.map(f => {
           if (layerMode && f.schemaField.id === item.nameField) return null;
-
+          console.log(f, "ffff");
           return (
             <PropertyField
               key={f.schemaField.id}

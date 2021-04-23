@@ -12,7 +12,7 @@ export default ({
   datasetSchemas,
   fixedDatasetSchemaId,
   fixedDatasetId,
-  isDatasetLinkable,
+  isLinkable,
 }: {
   linkedDataset?: {
     schema: string;
@@ -31,7 +31,7 @@ export default ({
   datasetSchemas?: DatasetSchema[];
   fixedDatasetSchemaId?: string;
   fixedDatasetId?: string;
-  isDatasetLinkable?: boolean;
+  isLinkable?: boolean;
 }) => {
   const [selected, select] = useState<{
     source?: string;
@@ -118,7 +118,7 @@ export default ({
 
   useEffect(() => {
     setPos(0);
-  }, [isDatasetLinkable, fixedDatasetSchemaId]);
+  }, [isLinkable, fixedDatasetSchemaId]);
 
   return {
     selected,

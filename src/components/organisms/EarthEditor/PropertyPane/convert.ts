@@ -88,7 +88,7 @@ const toItem = (
           ui: toUi(f.ui),
           min: f.min ?? undefined,
           max: f.max ?? undefined,
-          notLinkable: !linkableType.includes(t),
+          isLinkable: linkableType.includes(t),
         };
       })
       .filter((f): f is SchemaField => !!f),
