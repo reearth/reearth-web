@@ -347,12 +347,11 @@ src:
                 '730907263': Installed
                 '3480550112': Install
             PluginSection:
-              '3060204202': Under Construction. Coming Soon.
               PluginInstall:
-                '149186996': Uploaded plugin
-                '311550959': Private GitHub repository
-                '1361263844': Public GitHub repository
+                '152450576': Uploaded plugins
                 '1889877734': Plugins lists
+                '1942751261': Private GitHub repository
+                '2511713296': Public GitHub repository
                 '3129492077': Zip file from PC
               PluginList:
                 '1933254449': Advanced options

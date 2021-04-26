@@ -14,14 +14,14 @@ Default.args = {
   items: [
     {
       id: "hogehoge",
-      thumbnail: `sample.svg`,
+      thumbnail: `${process.env.PUBLIC_URL}/sample.png`,
       title: "Storytelling",
       isInstalled: true,
       bodyMarkdown: "# Hoge\n## Fuag",
     },
     {
       id: "fugafuga",
-      thumbnail: `sample.svg`,
+      thumbnail: `${process.env.PUBLIC_URL}/sample.png`,
       title: "Storytelling",
       isInstalled: true,
       bodyMarkdown: "# Hoge\n## Fuag",
