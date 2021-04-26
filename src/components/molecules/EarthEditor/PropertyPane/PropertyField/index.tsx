@@ -46,6 +46,7 @@ export type SchemaField<T extends ValueType = ValueType> = {
   name?: string;
   description?: string;
   isLinkable?: boolean;
+  group?: boolean;
   ui?:
     | "color"
     | "multiline"
@@ -90,6 +91,7 @@ export type Props<T extends ValueType = ValueType> = {
   linkedDatasetId?: string;
   hidden?: boolean;
   isLinkable?: boolean;
+  group?: boolean;
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
@@ -123,6 +125,7 @@ const PropertyField: React.FC<Props> = ({
   datasetSchemas,
   // isDatasetLinkable,
   isLinkable,
+  group,
   onDatasetPickerOpen,
   linkedDatasetSchemaId,
   linkedDatasetId,
@@ -140,11 +143,20 @@ const PropertyField: React.FC<Props> = ({
     schema?.id,
   );
 
+  const linkedField =
+    !!field?.link ||
+    (group && !!field?.value) ||
+    (!group &&
+      !!field?.mergedValue &&
+      !!field.value &&
+      JSON.stringify(field.mergedValue) !== JSON.stringify(field.value)) ||
+    (!!field?.mergedValue && !field?.value);
+
   const commonProps: FieldProps<any> = {
-    linked: !!field?.link,
-    disabled: !!field?.link && !field?.link.inherited,
+    linked: linkedField,
+    // disabled: !!field?.link && !field?.link.inherited,
     overridden: !!field?.overridden,
-    value: field?.mergedValue ?? field?.value ?? schema?.defaultValue,
+    value: field?.value ?? field?.mergedValue ?? schema?.defaultValue,
     onChange: useCallback(
       (value: ValueTypes[keyof ValueTypes] | null) => {
         if (!onChange || !schema) return;

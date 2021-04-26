@@ -29,6 +29,7 @@ export type Props<Value extends string | number> = {
   value?: Value;
   placeholder?: string;
   inactive?: boolean;
+  color?: string;
   fullWidth?: boolean;
   onChange?: (value: Value) => void;
   children?: OptionElement<Value>[];
@@ -45,6 +46,7 @@ const Select = <Value extends string | number>(
     value: selectedValue,
     placeholder,
     inactive = false,
+    color,
     fullWidth = false,
     onChange,
     children,
@@ -185,7 +187,10 @@ const Select = <Value extends string | number>(
   const handleListItemClick = useCallback(
     (value: Value, onClick: OptionProps<Value>["onClick"]) => (e: React.MouseEvent) => {
       e.stopPropagation();
+      console.log("HEY");
+      console.log(inactive, "INACTIVE");
       if (!inactive) {
+        console.log("HEY2");
         onChange?.(value);
       }
       closeList();
@@ -223,7 +228,7 @@ const Select = <Value extends string | number>(
         <Selected
           inactive={inactive}
           size="xs"
-          color={!selectedValue ? theme.colors.text.weak : theme.properties.contentsText}>
+          color={!selectedValue ? theme.colors.text.weak : color}>
           {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />

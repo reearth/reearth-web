@@ -11,6 +11,7 @@ import "react-colorful/dist/index.css";
 import Text from "@reearth/components/atoms/Text";
 
 import { FieldProps } from "../types";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = FieldProps<string>;
 
@@ -27,14 +28,13 @@ const getHexString = (value?: ColorInput) => {
   return color.getAlpha() === 1 ? color.toHexString() : color.toHex8String();
 };
 
-const ColorField: React.FC<Props> = ({ value, onChange }) => {
+const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) => {
   const intl = useIntl();
   const [colorState, setColor] = useState<string | null>(null);
   const [rgba, setRgba] = useState<RGBA>(tinycolor().toRgb());
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (value) {
       setColor(value);
@@ -120,6 +120,7 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
   const handleSave = useCallback(() => {
     if (!onChange) return;
     if (colorState != value) {
+      console.log("H#H#H");
       onChange(colorState);
     }
     setOpen(false);
@@ -177,6 +178,8 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
           onChange={handleHexInput}
           onKeyPress={handleKeyPress}
           onBlur={handleHexSave}
+          overridden={overridden}
+          linked={linked}
         />
       </InputWrapper>
       <PickerWrapper ref={pickerRef} open={open} style={styles.popper} {...attributes.popper}>
@@ -190,6 +193,8 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               min={0}
               max={255}
               onChange={handleRgbaInput}
+              overridden={overridden}
+              linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
               Red
@@ -203,6 +208,8 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               min={0}
               max={255}
               onChange={handleRgbaInput}
+              overridden={overridden}
+              linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
               Green
@@ -216,6 +223,8 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               min={0}
               max={255}
               onChange={handleRgbaInput}
+              overridden={overridden}
+              linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
               Blue
@@ -227,6 +236,8 @@ const ColorField: React.FC<Props> = ({ value, onChange }) => {
               type="number"
               value={rgba.a ? Math.round(rgba.a * 100) : undefined}
               onChange={handleRgbaInput}
+              overridden={overridden}
+              linked={linked}
             />
             <PickerText size="2xs" color={theme.properties.contentsFloatText}>
               Alpha
@@ -336,13 +347,18 @@ const Field = styled.div`
   flex: 1;
 `;
 
-const Input = styled.input<{ type?: string }>`
+const Input = styled.input<{ type?: string; overridden?: boolean; linked?: boolean }>`
   width: 100%;
   height: 30px;
-  padding: 6px 0 6px 6px;
+  padding: 6px ${metricsSizes["s"]}px;
   background: ${props => props.theme.properties.bg};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.properties.contentsText};
+  color: ${({ linked, overridden, theme }) =>
+    overridden
+      ? colors.functional.attention
+      : linked
+      ? colors.primary.main
+      : theme.properties.contentsText};
   outline: none;
   border: 1px solid ${({ theme }) => theme.properties.border};
 
@@ -352,6 +368,14 @@ const Input = styled.input<{ type?: string }>`
 
   ::placeholder {
     color: ${({ theme }) => theme.properties.text};
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  &[type="number"] {
+    -moz-appearance: textfield;
   }
 `;
 

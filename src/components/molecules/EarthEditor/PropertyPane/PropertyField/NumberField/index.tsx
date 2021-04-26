@@ -147,7 +147,7 @@ const StyledInput = styled.input<InputProps>`
   outline: none;
   color: ${({ inactive, linked, overridden, theme }) =>
     overridden
-      ? colors.danger.main
+      ? colors.functional.attention
       : linked
       ? colors.primary.main
       : inactive

@@ -17,32 +17,22 @@ type Props = {
   className?: string;
   value?: FontSize;
   items?: { key: string; label: string; icon?: string }[];
-  linked?: boolean;
-  overridden?: boolean;
-  disabled?: boolean;
+  color?: string;
   onChange?: (value: FontSize) => void;
 };
 
-const FontSizeField: React.FC<Props> = ({
-  className,
-  value: selectedKey,
-  linked,
-  overridden,
-  disabled,
-  onChange,
-}) => {
+const FontSizeField: React.FC<Props> = ({ className, value: selectedKey, color, onChange }) => {
   const intl = useIntl();
-  const inactive = !!linked || !!overridden || !!disabled;
 
   return (
     <Select<FontSize>
       className={className}
       value={selectedKey}
-      inactive={inactive}
       onChange={onChange}
-      placeholder={intl.formatMessage({ defaultMessage: "Font size" })}>
+      placeholder={intl.formatMessage({ defaultMessage: "Font size" })}
+      color={color}>
       {sizeItems.map(({ key, label }) => (
-        <Option key={key} linked={linked} overridden={overridden} value={key} label={String(label)}>
+        <Option key={key} value={key} label={String(label)}>
           <OptionCheck size="xs">
             {key === selectedKey && <Icon icon="check" size={10} />}
           </OptionCheck>

@@ -6,6 +6,7 @@ export type FieldProps<T> = {
   name?: string;
   description?: string;
   linked?: boolean;
+  group?: boolean;
   overridden?: boolean;
   disabled?: boolean;
 };
@@ -19,10 +20,10 @@ export const textColor = ({
   linked?: boolean;
   overridden?: boolean;
 }) =>
-  linked
+  overridden
+    ? colors.functional.attention
+    : linked
     ? colors.primary.main
-    : overridden
-    ? colors.danger.main
     : disabled
     ? colors.outline.main
     : undefined;

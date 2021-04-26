@@ -103,7 +103,6 @@ export default (mode: Mode) => {
         });
         return;
       }
-
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
       changeValueMutation({
@@ -390,7 +389,7 @@ export default (mode: Mode) => {
     },
     [updatePropertyItemsMutation],
   );
-
+  console.log(pane, "pane");
   return {
     pane,
     error,

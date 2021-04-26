@@ -211,6 +211,7 @@ const PropertyItem: React.FC<Props> = ({
         : [],
     [eventProps, item, selectedItem],
   );
+  // console.log(schemaFields, "SCHEMA FIELDSLKJSDFLKSJDF");
 
   const handleItemMove = useCallback(
     (from: number, to: number) => {
@@ -272,13 +273,13 @@ const PropertyItem: React.FC<Props> = ({
       {!!item &&
         schemaFields?.map(f => {
           if (layerMode && f.schemaField.id === item.nameField) return null;
-          console.log(f, "ffff");
           return (
             <PropertyField
               key={f.schemaField.id}
               field={f.field}
               schema={f.schemaField}
               hidden={f.hidden}
+              group={group}
               {...f.events}
               {...otherProps}
             />

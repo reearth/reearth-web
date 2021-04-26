@@ -68,6 +68,9 @@ const PropertyTitle: React.FC<Props> = ({
 
   useClickAway(wrapperRef, handleClose);
 
+  // console.log(title, "PARENT VALUES");
+  // console.log(hasParentValues, "PARENT VALUES");
+
   return (
     <Wrapper ref={wrapperRef}>
       <HelpButton
@@ -89,7 +92,7 @@ const PropertyTitle: React.FC<Props> = ({
         visible={visible}
         style={styles.popper}
         {...attributes.popper}>
-        <PropertyLinkPanel {...props} />
+        <PropertyLinkPanel isOverridden={isOverridden} {...props} />
       </PropertyLinkPanelWrapper>
     </Wrapper>
   );

@@ -1,17 +1,18 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import { styled, useTheme } from "@reearth/theme";
 import Slide from "@reearth/components/atoms/Slide";
 import Icon from "@reearth/components/atoms/Icon";
 import Divider from "@reearth/components/atoms/Divider";
-import List from "./List";
-import Header from "./Header";
-import useHooks from "./hooks";
-import { DatasetSchema, Type } from "./types";
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
+import List from "./List";
+import Header from "./Header";
+import { DatasetSchema, Type } from "./types";
 import { metricsSizes } from "@reearth/theme/metrics";
+import useHooks from "./hooks";
+
+import { styled, useTheme } from "@reearth/theme";
 
 export { DatasetSchema, Dataset, DatasetField, Type } from "./types";
 
@@ -82,24 +83,28 @@ const PropertyLinkPanel: React.FC<Props> = ({
     <Wrapper className={className}>
       <Slide pos={pos}>
         <FirstSlidePage>
-          {!isOverridden && isLinkable ? (
+          {!isOverridden && isLinkable && (
             <>
               <Link align="center" justify="space-between" onClick={startDatasetSelection}>
                 <Text size="xs" color={theme.colors.primary.main}>
-                  {intl.formatMessage({ defaultMessage: "Link to dataset" })}
+                  {linkedDataset
+                    ? intl.formatMessage({ defaultMessage: "Linked data" })
+                    : intl.formatMessage({ defaultMessage: "Link to dataset" })}
                 </Text>
                 <Icon icon="arrowRight" size={16} color={theme.colors.primary.main} />
               </Link>
               <Divider margin="0" />
             </>
-          ) : linkedDataset ? (
+          )}
+          {!isLinkable && linkedDataset && !isOverridden && (
             <Text
               size="xs"
               color={theme.colors.text.strong}
               otherProperties={{ padding: `${metricsSizes["s"]}px 0 0 ${metricsSizes["s"]}px` }}>
               {intl.formatMessage({ defaultMessage: "From" })}
             </Text>
-          ) : (
+          )}
+          {!isOverridden && !isLinkable && !linkedDataset && (
             <Text
               size="xs"
               color={theme.colors.text.weak}
@@ -123,22 +128,33 @@ const PropertyLinkPanel: React.FC<Props> = ({
                     {intl.formatMessage({ defaultMessage: "Overridden" })}
                   </Text>
                 )}
-                {selectedDatasetPath && (
+                {selectedDatasetPath && !isLinkable && isOverridden ? (
                   <Text
                     size="xs"
-                    color={theme.colors.primary.main}
-                    otherProperties={{
-                      textDecoration: "underline",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}>
-                    {selectedDatasetPath.join("/")}
+                    color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}>
+                    {intl.formatMessage({ defaultMessage: "Parent." })}
+                    {selectedDatasetPath[selectedDatasetPath.length - 1]}
                   </Text>
+                ) : (
+                  <>
+                    <Text
+                      size="xs"
+                      color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}
+                      otherProperties={{
+                        textDecoration: "underline",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}>
+                      {selectedDatasetPath.join("/")}
+                    </Text>
+                    <Text
+                      size="xs"
+                      color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}>
+                      {selectedDatasetPath[selectedDatasetPath.length - 1]}
+                    </Text>
+                  </>
                 )}
-                <Text size="xs" color={theme.colors.primary.main}>
-                  {selectedDatasetPath[selectedDatasetPath.length - 1]}
-                </Text>
               </LinkedDataDetailContent>
             ) : (
               ""
@@ -159,7 +175,6 @@ const PropertyLinkPanel: React.FC<Props> = ({
             <Header title="" onBack={back} />
             <List
               items={visibleDatasetSchemas}
-              showArrows
               onSelect={id => proceed({ schema: id })}
               selectedItem={selected.schema}
             />
@@ -170,7 +185,6 @@ const PropertyLinkPanel: React.FC<Props> = ({
             <Header title="" onBack={back} />
             <List
               items={selectedSchema?.datasets}
-              showArrows
               onSelect={id => proceed({ dataset: id })}
               selectedItem={selected.dataset}
             />
