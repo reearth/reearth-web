@@ -1,19 +1,19 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { styled } from "@reearth/theme";
+import useFileInput from "use-file-input";
+import { useIntl } from "react-intl";
 
-import AssetCard from "@reearth/components/atoms/AssetCard";
-import AssetListItem from "@reearth/components/atoms/AssetListItem";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import Divider from "@reearth/components/atoms/Divider";
 import SearchBar from "@reearth/components/atoms/SearchBar";
-import useFileInput from "use-file-input";
-import { useIntl } from "react-intl";
 import { metricsSizes } from "@reearth/theme/metrics";
+import { styled } from "@reearth/theme";
 
-import SelectField from "@reearth/components/molecules/Settings/SelectField";
+import AssetCard from "../AssetCard";
+import AssetListItem from "../AssetListItem";
+import AssetSelect from "../AssetSelect";
 
 export type Asset = {
   id: string;
@@ -159,7 +159,7 @@ const AssetContainer: React.FC<Props> = ({
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
-          <SelectField value={filterSelected} items={filterOptions} onChange={handleFilterChange} />
+          <AssetSelect value={filterSelected} items={filterOptions} onChange={handleFilterChange} />
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
 
