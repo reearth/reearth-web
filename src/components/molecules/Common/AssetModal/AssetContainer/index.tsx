@@ -8,6 +8,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import Divider from "@reearth/components/atoms/Divider";
+import SearchBar from "@reearth/components/atoms/SearchBar";
 import useFileInput from "use-file-input";
 import { useIntl } from "react-intl";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -179,7 +180,7 @@ const AssetContainer: React.FC<Props> = ({
             selected={layoutType === "medium"}
           />
         </LayoutButtons>
-        <SearchBar onChange={e => handleSearch(e.currentTarget.value)} />
+        <SearchBar onChange={handleSearch} />
       </NavBar>
       <AssetWrapper direction="column" justify="space-between">
         {!filteredAssets || filteredAssets.length < 1 ? (
@@ -238,7 +239,7 @@ const Wrapper = styled.div`
 `;
 
 const AssetWrapper = styled(Flex)`
-  height: 458px;
+  height: 425px;
 `;
 
 const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
@@ -257,7 +258,7 @@ const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
 `;
 
 const StyledUploadButton = styled(Button)`
-  margin: 0 auto ${metricsSizes["m"]}px auto;
+  margin: ${metricsSizes["m"]}px auto ${metricsSizes["2xl"]}px auto;
 `;
 
 const NavBar = styled(Flex)`
@@ -271,11 +272,6 @@ const SelectWrapper = styled(Flex)`
 
 const LayoutButtons = styled(Flex)`
   flex: 3;
-`;
-
-const SearchBar = styled.input`
-  flex: 5;
-  height: 20px;
 `;
 
 const StyledIcon = styled(Icon)<{ selected?: boolean }>`
