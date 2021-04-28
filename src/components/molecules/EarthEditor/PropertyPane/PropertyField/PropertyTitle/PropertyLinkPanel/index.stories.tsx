@@ -40,6 +40,7 @@ export default {
   component: PropertyLinkPanel,
 } as Meta;
 
+// NEED TO UPDATED THESE WITH NEW SYSTEM 2021/04/28
 export const Default = () => (
   <PropertyLinkPanel
     datasetSchemas={datasetSchemas}
@@ -51,7 +52,6 @@ export const Default = () => (
 export const DatasetLinkable = () => (
   <PropertyLinkPanel
     datasetSchemas={datasetSchemas}
-    isDatasetLinkable
     isOverridden
     onClear={action("onClear")}
     onUnlink={action("onUnlink")}
@@ -88,7 +88,6 @@ export const LinkedOverridden = () => (
 );
 export const NotLinkable = () => (
   <PropertyLinkPanel
-    linkDisabled
     onClear={action("onClear")}
     onUnlink={action("onUnlink")}
     onLink={action("onLink")}
