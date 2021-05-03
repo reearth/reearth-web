@@ -52,7 +52,8 @@ const StyledText = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   user-select: none;
   transition: background-color 0.1s ease;
-  color: ${({ disabled, theme }) => (disabled ? theme.text.pale : theme.text.default)};
+  color: ${({ disabled, theme, selected }) =>
+    disabled ? theme.text.pale : selected ? theme.colors.text.strong : theme.text.default};
   background-color: ${({ selected }) => (selected ? colors.primary.main : null)};
   text-overflow: ellipsis;
   white-space: nowrap;

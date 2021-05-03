@@ -102,11 +102,7 @@ const NumberField: React.FC<Props> = ({
           step="any"
         />
         {suffix && (
-          <Text
-            size="xs"
-            // color={theme.properties.contentsFloatText}
-            customColor
-            otherProperties={{ userSelect: "none" }}>
+          <Text size="xs" customColor otherProperties={{ userSelect: "none" }}>
             {suffix}
           </Text>
         )}

@@ -88,7 +88,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
               <Link align="center" justify="space-between" onClick={startDatasetSelection}>
                 <Text size="xs" color={theme.colors.primary.main}>
                   {linkedDataset
-                    ? intl.formatMessage({ defaultMessage: "Linked data" })
+                    ? intl.formatMessage({ defaultMessage: "Linkable data" })
                     : intl.formatMessage({ defaultMessage: "Link to dataset" })}
                 </Text>
                 <Icon icon="arrowRight" size={16} color={theme.colors.primary.main} />
@@ -121,21 +121,22 @@ const PropertyLinkPanel: React.FC<Props> = ({
             </Link>
           )} */}
           <LinkedData>
-            {selectedDatasetPath?.length ? (
+            {!isLinkable && selectedDatasetPath?.length ? (
               <LinkedDataDetailContent>
                 {isOverridden && (
                   <Text size="xs" color={theme.colors.functional.attention}>
                     {intl.formatMessage({ defaultMessage: "Overridden" })}
                   </Text>
                 )}
-                {selectedDatasetPath && !isLinkable && isOverridden ? (
+                {selectedDatasetPath && isOverridden && (
                   <Text
                     size="xs"
                     color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}>
                     {intl.formatMessage({ defaultMessage: "Parent." })}
                     {selectedDatasetPath[selectedDatasetPath.length - 1]}
                   </Text>
-                ) : (
+                )}
+                {linkedDataset && !isOverridden && (
                   <>
                     <Text
                       size="xs"
@@ -180,7 +181,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
             />
           </SlidePage>
         )}
-        {linkedDataset && (
+        {/* {linkedDataset && (
           <SlidePage>
             <Header title="" onBack={back} />
             <List
@@ -189,7 +190,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
               selectedItem={selected.dataset}
             />
           </SlidePage>
-        )}
+        )} */}
         <SlidePage>
           <Header title="" onBack={back} />
           <List
