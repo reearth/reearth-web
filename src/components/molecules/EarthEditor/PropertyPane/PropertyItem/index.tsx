@@ -211,7 +211,6 @@ const PropertyItem: React.FC<Props> = ({
         : [],
     [eventProps, item, selectedItem],
   );
-  // console.log(schemaFields, "SCHEMA FIELDSLKJSDFLKSJDF");
 
   const handleItemMove = useCallback(
     (from: number, to: number) => {

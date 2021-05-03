@@ -120,7 +120,6 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
   const handleSave = useCallback(() => {
     if (!onChange) return;
     if (colorState != value) {
-      console.log("H#H#H");
       onChange(colorState);
     }
     setOpen(false);

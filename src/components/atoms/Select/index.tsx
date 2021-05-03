@@ -187,10 +187,7 @@ const Select = <Value extends string | number>(
   const handleListItemClick = useCallback(
     (value: Value, onClick: OptionProps<Value>["onClick"]) => (e: React.MouseEvent) => {
       e.stopPropagation();
-      console.log("HEY");
-      console.log(inactive, "INACTIVE");
       if (!inactive) {
-        console.log("HEY2");
         onChange?.(value);
       }
       closeList();

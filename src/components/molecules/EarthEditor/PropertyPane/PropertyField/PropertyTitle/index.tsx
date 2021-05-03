@@ -68,9 +68,6 @@ const PropertyTitle: React.FC<Props> = ({
 
   useClickAway(wrapperRef, handleClose);
 
-  // console.log(title, "PARENT VALUES");
-  // console.log(hasParentValues, "PARENT VALUES");
-
   return (
     <Wrapper ref={wrapperRef}>
       <HelpButton
