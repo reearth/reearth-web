@@ -177,10 +177,11 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
         // pluginProperty:
         //   "plugin" in layer ? processProperty(layer.plugin?.scenePlugin?.property) : undefined,
         infoboxEditable: !!layer.infobox,
-        infobox:
-          layer.__typename === "LayerItem"
-            ? processMergedInfobox(layer.merged?.infobox)
-            : processInfobox(layer.infobox),
+        infobox: layer.infobox
+          ? processInfobox(layer.infobox)
+          : layer.__typename === "LayerItem"
+          ? processMergedInfobox(layer.merged?.infobox)
+          : undefined,
         layers:
           layer.__typename === "LayerGroup"
             ? layer.layers

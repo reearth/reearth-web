@@ -101,12 +101,13 @@ export default ({
   const property = sceneProperty ?? layerProperty ?? infoboxProperty ?? blockProperty;
   const propertyId = property?.id;
   const mergedProperty = layerMergedProperty ?? infoboxMergedProperty ?? blockMergedProperty;
-  console.log(
-    mergedProperty,
-    "INVESTIGATE HEREE!!!! LOOKING FOR WHY THIS HAS A VALUE WHEN NO PARENT!!!",
-  );
 
-  const items = useMemo(() => convert(property, mergedProperty), [property, mergedProperty]);
+  const items = useMemo(() => convert(property, mode === "infobox" ? undefined : mergedProperty), [
+    property,
+    mergedProperty,
+    mode,
+  ]);
+
   const loading = scenePropertyLoading || layerPropertyLoading || layerLoading;
   const error = scenePropertyError ?? layerPropertyError ?? layerError;
 

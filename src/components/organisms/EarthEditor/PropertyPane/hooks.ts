@@ -389,7 +389,7 @@ export default (mode: Mode) => {
     },
     [updatePropertyItemsMutation],
   );
-  console.log(pane, "pane");
+
   return {
     pane,
     error,
