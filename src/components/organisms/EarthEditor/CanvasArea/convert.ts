@@ -119,10 +119,31 @@ const processMergedPropertyGroup = (
 };
 
 const processMergedProperty = (
-  p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
+  mp?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
+  p?: EarthLayerFragment["property"],
 ): P | undefined => {
-  if (!p) return;
-  return p.groups.reduce<any>(
+  if (!mp) return;
+
+  if (p?.items.length) {
+    return mp.groups.reduce<any>(
+      (a, b) => ({
+        ...a,
+        [b.schemaGroupId]: b.fields.reduce<P>(
+          (e, f) => ({
+            ...e,
+            [f.fieldId]:
+              (p.items[0]?.__typename === "PropertyGroup" &&
+                p.items[0].fields.find(f2 => f2.fieldId === f.fieldId)?.value) ??
+              valueFromGQL(f.actualValue, f.type)?.value,
+          }),
+          {},
+        ),
+      }),
+      {},
+    );
+  }
+
+  return mp.groups.reduce<any>(
     (a, b) => ({
       ...a,
       [b.schemaGroupId]: processMergedPropertyGroup(b),
@@ -171,7 +192,7 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
         title: layer.name,
         property:
           layer.__typename === "LayerItem"
-            ? processMergedProperty(layer.merged?.property)
+            ? processMergedProperty(layer.merged?.property, layer.property)
             : undefined,
         pluginProperty: {},
         // pluginProperty:
