@@ -53,7 +53,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           isInfoboxCreatable={isInfoboxCreatable}
           isCapturing={isCapturing}
           camera={camera}
-          isLinkable={mode !== "scene" && mode !== "widget" && isLayerGroup}
+          isLinkable={mode === "layer" && isLayerGroup}
           linkedDatasetSchemaId={linkedDatasetSchemaId}
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
