@@ -26,7 +26,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     changeValue,
     removeField,
     link,
-    unlink,
     uploadFile,
     createAssets,
     removeFile,
@@ -65,7 +64,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onChange={changeValue}
           onRemove={removeField}
           onLink={link}
-          onUnlink={unlink}
           onUploadFile={uploadFile}
           onCreateAsset={createAssets}
           onRemoveFile={removeFile}

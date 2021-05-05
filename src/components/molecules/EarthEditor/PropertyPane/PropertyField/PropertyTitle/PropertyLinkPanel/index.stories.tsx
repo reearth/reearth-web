@@ -40,56 +40,40 @@ export default {
   component: PropertyLinkPanel,
 } as Meta;
 
-// NEED TO UPDATED THESE WITH NEW SYSTEM 2021/04/28
-export const Default = () => (
-  <PropertyLinkPanel
-    datasetSchemas={datasetSchemas}
-    onClear={action("onClear")}
-    onUnlink={action("onUnlink")}
-    onLink={action("onLink")}
-  />
-);
 export const DatasetLinkable = () => (
   <PropertyLinkPanel
     datasetSchemas={datasetSchemas}
-    isOverridden
     onClear={action("onClear")}
-    onUnlink={action("onUnlink")}
     onLink={action("onLink")}
+    isLinkable={true}
   />
 );
-export const Linked = () => (
+export const ChildLinked = () => (
   <PropertyLinkPanel
     datasetSchemas={datasetSchemas}
     linkedDataset={{
-      schema: "1",
-      dataset: "d2",
-      field: "f4",
+      schema: "File.csv",
+      dataset: "datasetnumbers1234",
+      field: "height",
     }}
     linkableType="string"
     onClear={action("onClear")}
-    onUnlink={action("onUnlink")}
     onLink={action("onLink")}
   />
 );
-export const LinkedOverridden = () => (
+export const ChildOverridden = () => (
   <PropertyLinkPanel
     datasetSchemas={datasetSchemas}
     linkedDataset={{
       schema: "1",
       dataset: "d2",
-      field: "f4",
+      field: "color",
     }}
     isOverridden
     onClear={action("onClear")}
-    onUnlink={action("onUnlink")}
     onLink={action("onLink")}
   />
 );
 export const NotLinkable = () => (
-  <PropertyLinkPanel
-    onClear={action("onClear")}
-    onUnlink={action("onUnlink")}
-    onLink={action("onLink")}
-  />
+  <PropertyLinkPanel onClear={action("onClear")} onLink={action("onLink")} />
 );

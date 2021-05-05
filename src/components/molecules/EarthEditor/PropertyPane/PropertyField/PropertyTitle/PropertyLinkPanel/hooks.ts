@@ -6,7 +6,6 @@ export default ({
   onDatasetPickerOpen,
   onClose,
   onLink,
-  onUnlink,
   onClear,
   linkableType,
   datasetSchemas,
@@ -25,7 +24,6 @@ export default ({
   onDatasetPickerOpen?: () => void;
   onClose?: () => void;
   onLink?: (ds: string, s: string | undefined, f: string) => void;
-  onUnlink?: () => void;
   onClear?: () => void;
   linkableType?: Type;
   datasetSchemas?: DatasetSchema[];
@@ -103,11 +101,6 @@ export default ({
     onClose?.();
   }, [onClear, onClose]);
 
-  const unlink = useCallback(() => {
-    onUnlink?.();
-    onClose?.();
-  }, [onClose, onUnlink]);
-
   useEffect(() => {
     select({
       schema: fixedDatasetSchemaId ?? linkedDataset?.schema,
@@ -131,6 +124,5 @@ export default ({
     selectedSchema,
     selectedDatasetPath,
     clear,
-    unlink,
   };
 };

@@ -99,7 +99,6 @@ export type Props<T extends ValueType = ValueType> = {
   onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
-  onUnlink?: (id: string) => void;
   onUploadFile?: (id: string, file: File) => void;
   onRemoveFile?: (id: string) => void;
   onCreateAsset?: (file: File) => void;
@@ -121,9 +120,7 @@ const PropertyField: React.FC<Props> = ({
   camera,
   onCameraChange,
   onLink,
-  onUnlink,
   datasetSchemas,
-  // isDatasetLinkable,
   isLinkable,
   group,
   onDatasetPickerOpen,
@@ -138,23 +135,16 @@ const PropertyField: React.FC<Props> = ({
       onUploadFile,
       onRemoveFile,
       onLink,
-      onUnlink,
     },
     schema?.id,
   );
 
-  const linkedField =
-    !!field?.link ||
-    (group && !!field?.value) ||
-    (!group &&
-      !!field?.mergedValue &&
-      !!field.value &&
-      JSON.stringify(field.mergedValue) !== JSON.stringify(field.value)) ||
-    (!!field?.mergedValue && !field?.value);
-
   const commonProps: FieldProps<any> = {
-    linked: linkedField,
-    // disabled: !!field?.link && !field?.link.inherited,
+    linked:
+      !!field?.link ||
+      (group && !!field?.value) ||
+      (!group && !!field?.mergedValue !== !!field?.value) ||
+      (!!field?.mergedValue && !field?.value),
     overridden: !!field?.overridden,
     value: field?.value ?? field?.mergedValue ?? schema?.defaultValue,
     onChange: useCallback(
@@ -181,7 +171,6 @@ const PropertyField: React.FC<Props> = ({
         <PropertyTitle
           title={schema?.name || schema?.id || field?.id || ""}
           description={schema?.description}
-          // isDatasetLinkable={isDatasetLinkable}
           isLinked={commonProps.linked}
           isOverridden={commonProps.overridden}
           isLinkable={isLinkable ?? schema?.isLinkable}

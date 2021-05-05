@@ -34,7 +34,6 @@ export type Props = {
   datasetSchemas?: DatasetSchema[];
   onDatasetPickerOpen?: () => void;
   onClear?: () => void;
-  onUnlink?: () => void;
   onLink?: (datasetSchemaId: string, datasetId: string | undefined, fieldId: string) => void;
 };
 
@@ -48,7 +47,6 @@ const PropertyLinkPanel: React.FC<Props> = ({
   linkableType,
   datasetSchemas,
   onLink,
-  onUnlink,
   onDatasetPickerOpen,
   onClear,
 }) => {
@@ -64,12 +62,10 @@ const PropertyLinkPanel: React.FC<Props> = ({
     selectedSchema,
     selectedDatasetPath,
     clear,
-    // unlink,
   } = useHooks({
     onDatasetPickerOpen,
     linkedDataset,
     onLink,
-    onUnlink,
     onClear,
     linkableType,
     datasetSchemas,
@@ -112,14 +108,6 @@ const PropertyLinkPanel: React.FC<Props> = ({
               {intl.formatMessage({ defaultMessage: "No linked data" })}
             </Text>
           )}
-          {/* {linkedDataset && (
-            <Link onClick={unlink}>
-              <Text size="xs" customColor>
-                {intl.formatMessage({ defaultMessage: "Unlink the dataset" })}
-              </Text>
-              <Icon icon="cancel" size={16} />
-            </Link>
-          )} */}
           <LinkedData>
             {!isLinkable && selectedDatasetPath?.length ? (
               <LinkedDataDetailContent>
@@ -157,9 +145,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
                   </>
                 )}
               </LinkedDataDetailContent>
-            ) : (
-              ""
-            )}
+            ) : null}
           </LinkedData>
           <Divider margin="0" />
           <Link align="center" justify="space-between" onClick={clear}>
@@ -181,16 +167,6 @@ const PropertyLinkPanel: React.FC<Props> = ({
             />
           </SlidePage>
         )}
-        {/* {linkedDataset && (
-          <SlidePage>
-            <Header title="" onBack={back} />
-            <List
-              items={selectedSchema?.datasets}
-              onSelect={id => proceed({ dataset: id })}
-              selectedItem={selected.dataset}
-            />
-          </SlidePage>
-        )} */}
         <SlidePage>
           <Header title="" onBack={back} />
           <List

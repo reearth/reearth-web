@@ -83,7 +83,6 @@ export type Props = {
       | "onChange"
       | "onRemove"
       | "onLink"
-      | "onUnlink"
       | "onUploadFile"
       | "onRemoveFile"
       | "onItemAdd"
@@ -120,7 +119,6 @@ const PropertyPane: React.FC<Props> = ({
     "onChange",
     "onRemove",
     "onLink",
-    "onUnlink",
     "onUploadFile",
     "onRemoveFile",
     "onItemAdd",

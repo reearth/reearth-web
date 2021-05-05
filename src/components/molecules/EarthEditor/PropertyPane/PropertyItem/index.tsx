@@ -110,10 +110,7 @@ export type Props = {
   | "onCreateAsset"
 > &
   ExtendedFuncProps2<
-    Pick<
-      FieldProps,
-      "onChange" | "onRemove" | "onLink" | "onUnlink" | "onUploadFile" | "onRemoveFile"
-    >,
+    Pick<FieldProps, "onChange" | "onRemove" | "onLink" | "onUploadFile" | "onRemoveFile">,
     string,
     string | undefined
   >;
@@ -136,7 +133,6 @@ const PropertyItem: React.FC<Props> = ({
     "onChange",
     "onRemove",
     "onLink",
-    "onUnlink",
     "onUploadFile",
     "onRemoveFile",
   ]);

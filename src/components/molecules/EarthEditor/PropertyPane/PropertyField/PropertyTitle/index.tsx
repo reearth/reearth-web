@@ -17,7 +17,6 @@ export type Props = {
 } & Pick<
   PropertyLinkPanelProps,
   | "onClear"
-  | "onUnlink"
   | "onLink"
   | "onDatasetPickerOpen"
   | "isLinkable"

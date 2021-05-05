@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import {
   useChangePropertyValueLatLngMutation,
   useChangePropertyValueMutation,
-  useUnlinkDatasetMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
   useCreateInfoboxMutation,
@@ -145,26 +144,6 @@ export default (mode: Mode) => {
       });
     },
     [linkDataset],
-  );
-
-  const [unlinkMutation] = useUnlinkDatasetMutation();
-  const unlink = useCallback(
-    async (
-      propertyId: string,
-      schemaItemId: string,
-      itemId: string | undefined,
-      fieldId: string,
-    ) => {
-      await unlinkMutation({
-        variables: {
-          propertyId,
-          itemId,
-          schemaItemId,
-          fieldId,
-        },
-      });
-    },
-    [unlinkMutation],
   );
 
   const [uploadFileMutation] = useUploadFileToPropertyMutation();
@@ -400,7 +379,6 @@ export default (mode: Mode) => {
     changeValue,
     removeField,
     link,
-    unlink,
     uploadFile,
     createAssets,
     removeFile,
