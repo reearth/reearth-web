@@ -1,5 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
-import useFileInput from "use-file-input";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -14,6 +13,8 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
+
+import useHooks from "./hooks";
 
 export type Asset = {
   id: string;
@@ -38,7 +39,11 @@ export type Props = {
 
 export type LayoutTypes = "medium" | "small" | "list";
 
-export type FilterTypes = "time" | "size" | "name";
+export const filterOptions: { key: "time" | "size" | "name"; label: string }[] = [
+  { key: "time", label: "Date added" },
+  { key: "size", label: "File size" },
+  { key: "name", label: "Alphabetical" },
+];
 
 const AssetContainer: React.FC<Props> = ({
   assets,
@@ -51,96 +56,28 @@ const AssetContainer: React.FC<Props> = ({
   fileType,
 }) => {
   const intl = useIntl();
-  const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
-  const [currentSaved, setCurrentSaved] = useState(initialAsset);
-  const [reverse, setReverse] = useState(false);
-
-  const [searchResults, setSearchResults] = useState<Asset[]>();
-  const [filterSelected, selectFilter] = useState<FilterTypes>("time");
-  const filterOptions = [
-    { key: "time", label: "Date added" },
-    { key: "size", label: "File size" },
-    { key: "name", label: "Alphabetical" },
-  ];
-  const [filteredAssets, setAssets] = useState(assets);
-
-  const filterFunction = useCallback((f: string) => {
-    return (a: Asset, a2: Asset) => {
-      const type = f as keyof typeof a;
-      return type === "name"
-        ? a.name.localeCompare(a2.name)
-        : a[type] < a2[type]
-        ? -1
-        : a[type] > a2[type]
-        ? 1
-        : 0;
-    };
-  }, []);
-
-  const iconChoice =
-    filterSelected === "name"
-      ? reverse
-        ? "filterNameReverse"
-        : "filterName"
-      : filterSelected === "size"
-      ? reverse
-        ? "filterSizeReverse"
-        : "filterSize"
-      : reverse
-      ? "filterTimeReverse"
-      : "filterTime";
-
-  const handleFilterChange = useCallback(
-    (f: string) => {
-      selectFilter(f as FilterTypes);
-      setReverse(false);
-      setCurrentSaved(initialAsset);
-      if (!assets) return;
-      const newArray = [...assets].sort(filterFunction(f));
-      setAssets(f !== "time" ? [...newArray] : [...assets]);
-    },
-    [assets, filterFunction, initialAsset],
-  );
-
-  useEffect(() => {
-    if (!assets) return;
-    handleFilterChange(filterSelected);
-  }, [handleFilterChange, filterSelected, assets]);
-
-  const handleAssetsSelect = (asset: Asset) => {
-    selectedAssets?.includes(asset)
-      ? selectAsset?.(selectedAssets?.filter(a => a !== asset))
-      : selectAsset?.(
-          isMultipleSelectable && selectedAssets ? [...selectedAssets, asset] : [asset],
-        );
-  };
-
-  const handleFileSelect = useFileInput(files => onCreateAsset?.(files[0]), {
+  const {
+    layoutType,
+    setLayoutType,
+    filteredAssets,
+    handleFilterChange,
+    filterSelected,
+    currentSaved,
+    searchResults,
+    iconChoice,
+    handleAssetsSelect,
+    handleUploadToAsset,
+    handleReverse,
+    handleSearch,
+  } = useHooks({
+    assets,
+    isMultipleSelectable,
     accept,
-    multiple: isMultipleSelectable,
+    onCreateAsset,
+    initialAsset,
+    selectAsset,
+    selectedAssets,
   });
-
-  const handleUploadToAsset = useCallback(() => {
-    handleFileSelect();
-  }, [handleFileSelect]);
-
-  const handleReverse = useCallback(() => {
-    setReverse(!reverse);
-    if (!filteredAssets) return;
-    filteredAssets.reverse();
-  }, [filteredAssets, reverse]);
-
-  const handleSearch = useCallback(
-    (value: string) => {
-      if (!value) {
-        setSearchResults(undefined);
-      } else {
-        if (!filteredAssets) return;
-        setSearchResults(filteredAssets.filter(a => a.name.toLowerCase().includes(value)));
-      }
-    },
-    [filteredAssets],
-  );
 
   return (
     <Wrapper>
@@ -159,7 +96,11 @@ const AssetContainer: React.FC<Props> = ({
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
-          <AssetSelect value={filterSelected} items={filterOptions} onChange={handleFilterChange} />
+          <AssetSelect<"time" | "size" | "name">
+            value={filterSelected}
+            items={filterOptions}
+            onChange={handleFilterChange}
+          />
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
 

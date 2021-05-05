@@ -17,7 +17,11 @@ export type Props<Value extends string | number = string> = {
   onChange?: (selected: Value) => void;
 };
 
-const AssetSelect: React.FC<Props> = ({ value, items, onChange }) => {
+const AssetSelect = <Value extends string | number = string>({
+  value,
+  items,
+  onChange,
+}: Props<Value>) => {
   const theme = useTheme();
   const [hidden, setHidden] = useState(true);
 
