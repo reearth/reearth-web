@@ -1,8 +1,18 @@
 import { useState, useCallback, useEffect } from "react";
 import useFileInput from "use-file-input";
-import { Asset, LayoutTypes } from "./";
 
 export type FilterTypes = "time" | "size" | "name";
+
+export type LayoutTypes = "medium" | "small" | "list";
+
+export type Asset = {
+  id: string;
+  teamId: string;
+  name: string;
+  size: number;
+  url: string;
+  contentType: string;
+};
 
 export default ({
   assets,
@@ -44,7 +54,7 @@ export default ({
       : "filterTime";
 
   const handleFilterChange = useCallback(
-    (f: "time" | "size" | "name") => {
+    (f: FilterTypes) => {
       selectFilter(f as FilterTypes);
       setReverse(false);
       setCurrentSaved(initialAsset);
@@ -59,7 +69,7 @@ export default ({
           ? 1
           : 0;
       });
-      setAssets(f !== "time" ? [...newArray] : [...assets]);
+      setAssets(f !== "time" ? newArray : [...assets]);
     },
     [assets, initialAsset],
   );

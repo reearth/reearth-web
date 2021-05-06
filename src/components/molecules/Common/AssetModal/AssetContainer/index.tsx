@@ -14,16 +14,7 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks from "./hooks";
-
-export type Asset = {
-  id: string;
-  teamId: string;
-  name: string;
-  size: number;
-  url: string;
-  contentType: string;
-};
+import useHooks, { Asset, LayoutTypes, FilterTypes } from "./hooks";
 
 export type Props = {
   className?: string;
@@ -36,14 +27,6 @@ export type Props = {
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
 };
-
-export type LayoutTypes = "medium" | "small" | "list";
-
-export const filterOptions: { key: "time" | "size" | "name"; label: string }[] = [
-  { key: "time", label: "Date added" },
-  { key: "size", label: "File size" },
-  { key: "name", label: "Alphabetical" },
-];
 
 const AssetContainer: React.FC<Props> = ({
   assets,
@@ -78,6 +61,12 @@ const AssetContainer: React.FC<Props> = ({
     selectAsset,
     selectedAssets,
   });
+
+  const filterOptions: { key: FilterTypes; label: string }[] = [
+    { key: "time", label: intl.formatMessage({ defaultMessage: "Time" }) },
+    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
+    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+  ];
 
   return (
     <Wrapper>

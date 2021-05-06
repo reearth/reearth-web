@@ -22,9 +22,12 @@ src:
           '4035057905': Image URL
           '4070151372': Select
           AssetContainer:
+            '1982191895': File size
             '2409515782': >-
               You haven't uploaded any file assets yet. Click the upload button
               above and select a compatible file from your computer.
+            '2854191800': Time
+            '2906553848': Alphabetical
             '3057159632': Upload image
             '3715622784': >-
               You haven't uploaded any image assets yet. Click the upload button
@@ -347,11 +350,12 @@ src:
                 '730907263': Installed
                 '3480550112': Install
             PluginSection:
+              '3060204202': Under Construction. Coming Soon.
               PluginInstall:
-                '152450576': Uploaded plugins
+                '149186996': Uploaded plugin
+                '311550959': Private GitHub repository
+                '1361263844': Public GitHub repository
                 '1889877734': Plugins lists
-                '1942751261': Private GitHub repository
-                '2511713296': Public GitHub repository
                 '3129492077': Zip file from PC
               PluginList:
                 '1933254449': Advanced options
