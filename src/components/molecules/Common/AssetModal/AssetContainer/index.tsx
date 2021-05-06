@@ -14,7 +14,9 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset, LayoutTypes, FilterTypes } from "./hooks";
+import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
+
+export type Asset = AssetType;
 
 export type Props = {
   className?: string;
