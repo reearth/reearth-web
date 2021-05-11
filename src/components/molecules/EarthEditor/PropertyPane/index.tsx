@@ -43,6 +43,7 @@ export type DatasetField = ItemDatasetField;
 export type DatasetType = ItemDatasetType;
 export type Layer = LayerType;
 export type Asset = AssetType;
+export type Mode = ModeType;
 
 export type Widget = {
   enabled: boolean;
