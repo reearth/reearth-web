@@ -143,7 +143,7 @@ const PropertyField: React.FC<Props> = ({
     linked:
       !!field?.link ||
       (group && !!field?.value) ||
-      (!group && !!field?.mergedValue !== !!field?.value) ||
+      (!group && field?.mergedValue && field?.value && field.mergedValue !== field.value) ||
       (!!field?.mergedValue && !field?.value),
     overridden: !!field?.overridden,
     value: field?.value ?? field?.mergedValue ?? schema?.defaultValue,
