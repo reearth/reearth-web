@@ -55,7 +55,7 @@ export type Props = {
   mode: Mode;
   items?: ItemItem[];
   title?: string;
-  group?: boolean;
+  isTemplate?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
   onCreateAsset?: (file: File) => void;
@@ -145,7 +145,7 @@ const PropertyPane: React.FC<Props> = ({
               onClick={onCreateInfobox}
             />
           )}
-          {mode === "layer" && props.group && (
+          {mode === "layer" && props.isTemplate && (
             <GroupWrapper
               className={className}
               name={intl.formatMessage({ defaultMessage: "Dataset" })}>

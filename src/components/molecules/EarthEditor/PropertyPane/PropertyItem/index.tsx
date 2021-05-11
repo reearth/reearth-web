@@ -23,7 +23,8 @@ import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
 import { metricsSizes } from "@reearth/theme/metrics";
-import { Mode } from "../";
+
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
 
 export type {
   Dataset,
@@ -78,7 +79,7 @@ export type Props = {
   className?: string;
   item?: Item;
   title?: string;
-  group?: boolean;
+  isTemplate?: boolean;
   mode?: Mode;
   defaultItemName?: string;
   onItemAdd?: (schemaGroupId: string) => void;
@@ -119,7 +120,7 @@ const PropertyItem: React.FC<Props> = ({
   className,
   item,
   title,
-  group,
+  isTemplate,
   mode,
   defaultItemName,
   onItemAdd,
@@ -245,9 +246,9 @@ const PropertyItem: React.FC<Props> = ({
     <GroupWrapper
       className={className}
       name={
-        mode === "layer" && group
+        mode === "layer" && isTemplate
           ? intl.formatMessage({ defaultMessage: "Template" })
-          : group
+          : isTemplate
           ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
           : title || item?.title
       }>
@@ -274,7 +275,7 @@ const PropertyItem: React.FC<Props> = ({
               field={f.field}
               schema={f.schemaField}
               hidden={f.hidden}
-              group={group}
+              isTemplate={isTemplate}
               {...f.events}
               {...otherProps}
             />

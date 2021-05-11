@@ -46,7 +46,7 @@ export type SchemaField<T extends ValueType = ValueType> = {
   name?: string;
   description?: string;
   isLinkable?: boolean;
-  group?: boolean;
+  isTemplate?: boolean;
   ui?:
     | "color"
     | "multiline"
@@ -91,7 +91,7 @@ export type Props<T extends ValueType = ValueType> = {
   linkedDatasetId?: string;
   hidden?: boolean;
   isLinkable?: boolean;
-  group?: boolean;
+  isTemplate?: boolean;
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
@@ -122,7 +122,7 @@ const PropertyField: React.FC<Props> = ({
   onLink,
   datasetSchemas,
   isLinkable,
-  group,
+  isTemplate,
   onDatasetPickerOpen,
   linkedDatasetSchemaId,
   linkedDatasetId,
@@ -142,8 +142,8 @@ const PropertyField: React.FC<Props> = ({
   const commonProps: FieldProps<any> = {
     linked:
       !!field?.link ||
-      (group && !!field?.value) ||
-      (!group && field?.mergedValue && field?.value && field.mergedValue !== field.value) ||
+      (isTemplate && !!field?.value) ||
+      (!isTemplate && field?.mergedValue && field?.value && field.mergedValue !== field.value) ||
       (!!field?.mergedValue && !field?.value),
     overridden: !!field?.overridden,
     value: field?.value ?? field?.mergedValue ?? schema?.defaultValue,

@@ -1,19 +1,30 @@
 import React from "react";
-import { storiesOf } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
+import { colors } from "@reearth/theme";
 
 import FontFamilyField from ".";
 
-// NEED TO UPDATE THESE 2021/4/28
-storiesOf(
-  "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontFamilyField",
-  module,
-)
-  .add("default", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("linked", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("overridden", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("disabled", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("linked & disabled", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("overridden & disabled", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("linked & overridden", () => <FontFamilyField onChange={action("onchange")} />)
-  .add("linekd & overridden & disabled", () => <FontFamilyField onChange={action("onchange")} />);
+export default {
+  title: "molecules/EarthEditor/PropertyPane/PropertyField/TypographyField/FontFamilyField",
+  component: FontFamilyField,
+} as Meta;
+
+export const Default = () => <FontFamilyField onChange={action("onchange")} />;
+export const Selected = () => (
+  <FontFamilyField value="Comic Sans MS" onChange={action("onchange")} />
+);
+export const Linked = () => (
+  <FontFamilyField
+    value="Comic Sans MS"
+    color={colors.primary.main}
+    onChange={action("onchange")}
+  />
+);
+export const Overridden = () => (
+  <FontFamilyField
+    value="Tahoma"
+    color={colors.functional.attention}
+    onChange={action("onchange")}
+  />
+);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { useIntl } from "react-intl";
 import Text from "@reearth/components/atoms/Text";
 import Divider from "@reearth/components/atoms/Divider";
@@ -23,17 +23,16 @@ const List: React.FC<Props> = ({ className, items, selectableType, onSelect, sel
   return (
     <Wrapper className={className}>
       {visibleItems.map(item => (
-        <>
+        <Fragment key={item.id}>
           <StyledText
             size="xs"
             customColor
-            key={item.id}
             onClick={() => onSelect?.(item.id)}
             selected={item.id === selectedItem}>
             {item.name || item.id}
           </StyledText>
           <Divider margin="0" />
-        </>
+        </Fragment>
       ))}
       {visibleItems.length === 0 && (
         <NoContent>{intl.formatMessage({ defaultMessage: "No selectable items" })}</NoContent>

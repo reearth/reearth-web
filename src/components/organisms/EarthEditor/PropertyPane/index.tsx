@@ -49,7 +49,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           mode={pane.mode}
           title={pane.title}
           items={pane.items}
-          group={pane.group}
+          isTemplate={pane.group}
           isInfoboxCreatable={isInfoboxCreatable}
           isCapturing={isCapturing}
           camera={camera}
