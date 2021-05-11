@@ -23,6 +23,7 @@ import PropertyItem, {
   DatasetType as ItemDatasetType,
   Layer as LayerType,
   Asset as AssetType,
+  Mode as ModeType,
 } from "./PropertyItem";
 import WidgetToggleButton from "./WidgetToggleSwitch";
 import { styled, useTheme } from "@reearth/theme";
@@ -47,12 +48,10 @@ export type Widget = {
   enabled: boolean;
 };
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
-
 export type Props = {
   className?: string;
   propertyId?: string;
-  mode: Mode;
+  mode: ModeType;
   items?: ItemItem[];
   title?: string;
   isTemplate?: boolean;
