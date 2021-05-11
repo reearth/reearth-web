@@ -55,21 +55,23 @@ export default ({
 
   const handleFilterChange = useCallback(
     (f: FilterTypes) => {
-      selectFilter(f as FilterTypes);
+      selectFilter(f);
       setReverse(false);
       setCurrentSaved(initialAsset);
       if (!assets) return;
-      const newArray = [...assets].sort((a: Asset, a2: Asset) => {
-        const type = f as keyof typeof a;
-        return type === "name"
-          ? a.name.localeCompare(a2.name)
-          : a[type] < a2[type]
-          ? -1
-          : a[type] > a2[type]
-          ? 1
-          : 0;
-      });
-      setAssets(f !== "time" ? newArray : [...assets]);
+      const newArray =
+        f === "time"
+          ? [...assets]
+          : [...assets].sort((a: Asset, a2: Asset) => {
+              return f === "name"
+                ? a.name.localeCompare(a2.name)
+                : a[f] < a2[f]
+                ? -1
+                : a[f] > a2[f]
+                ? 1
+                : 0;
+            });
+      setAssets(newArray);
     },
     [assets, initialAsset],
   );
