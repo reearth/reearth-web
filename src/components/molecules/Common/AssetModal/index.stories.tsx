@@ -66,7 +66,7 @@ const assets: Asset[] = [
     contentType: "asset-file",
   },
   {
-    url: `${process.env.PUBLIC_URL}/sample.png`,
+    url: `${process.env.PUBLIC_URL}/sample.svg`,
     name: "hoge",
     id: "hoge",
     teamId: "hoge",
@@ -74,7 +74,7 @@ const assets: Asset[] = [
     contentType: "asset-image",
   },
   {
-    url: `${process.env.PUBLIC_URL}/sample2.png`,
+    url: `${process.env.PUBLIC_URL}/sample.svg`,
     name: "hoge",
     id: "hoge",
     teamId: "hoge",
@@ -107,7 +107,7 @@ Default.args = {
 
 Selected.args = {
   assets: assets,
-  value: `${process.env.PUBLIC_URL}/sample2.png`,
+  value: `${process.env.PUBLIC_URL}/sample.svg`,
   fileType: "image",
 };
 

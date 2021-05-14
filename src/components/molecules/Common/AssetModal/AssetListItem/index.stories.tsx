@@ -4,7 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props } from ".";
 
 const imageAsset = {
-  url: `${process.env.PUBLIC_URL}/sample.png`,
+  url: `${process.env.PUBLIC_URL}/sample.svg`,
   name: "hoge",
   id: "hoge",
   teamId: "hoge",

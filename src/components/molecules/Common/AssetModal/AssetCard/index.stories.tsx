@@ -16,14 +16,14 @@ export const LargeCheckedAndSelected: Story<Props> = args => <Component {...args
 DefaultMedium.args = {
   checked: false,
   cardSize: "medium",
-  url: `${process.env.PUBLIC_URL}/sample.png`,
+  url: `${process.env.PUBLIC_URL}/sample.svg`,
   name: "hoge",
 };
 
 MediumChecked.args = {
   checked: true,
   cardSize: "medium",
-  url: `${process.env.PUBLIC_URL}/sample.png`,
+  url: `${process.env.PUBLIC_URL}/sample.svg`,
   name: "hoge",
 };
 
@@ -37,7 +37,7 @@ SmallChecked.args = {
 LargeCheckedAndSelected.args = {
   checked: true,
   cardSize: "large",
-  url: `${process.env.PUBLIC_URL}/sample.png`,
+  url: `${process.env.PUBLIC_URL}/sample.svg`,
   name: "hoge",
   selected: true,
 };

@@ -6,14 +6,14 @@ describe("Accordion should display header and body", () => {
   const items = [
     {
       id: "hogehoge",
-      thumbnail: `${process.env.PUBLIC_URL}/sample.png`,
+      thumbnail: `${process.env.PUBLIC_URL}/sample.svg`,
       title: "Sample",
       isInstalled: true,
       bodyMarkdown: "# Hoge ## Hoge",
     },
     {
       id: "fugafuga",
-      thumbnail: `${process.env.PUBLIC_URL}/sample.png`,
+      thumbnail: `${process.env.PUBLIC_URL}/sample.svg`,
       title: "Sample2",
       isInstalled: false,
       bodyMarkdown: "# Fuga ## Fuga",
