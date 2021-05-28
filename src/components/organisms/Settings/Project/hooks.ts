@@ -56,7 +56,7 @@ export default ({ projectId }: Params) => {
   );
 
   // Project Updating
-  const [updateProjectBasicAuth] = useUpdateProjectBasicAuthMutation();
+  const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProjectNameMutation] = useUpdateProjectNameMutation();
   const [updateProjectDescriptionMutation] = useUpdateProjectDescriptionMutation();
   const [updateProjectImageUrlMutation] = useUpdateProjectImageUrlMutation();
@@ -78,12 +78,15 @@ export default ({ projectId }: Params) => {
 
   const updateProjectBasicAuth = useCallback(
     (isBasicAuthActive?: boolean, basicAuthUsername?: string, basicAuthPassword?: string) => {
+      console.log("mutation called---------");
+      console.log(isBasicAuthActive);
+      console.log(basicAuthUsername);
       projectId &&
-        updateProjectBasicAuth({
+        updateProjectBasicAuthMutation({
           variables: { projectId, isBasicAuthActive, basicAuthUsername, basicAuthPassword },
         });
     },
-    [projectId, updateProjectBasicAuth],
+    [projectId, updateProjectBasicAuthMutation],
   );
 
   const updateProjectDescription = useCallback(
