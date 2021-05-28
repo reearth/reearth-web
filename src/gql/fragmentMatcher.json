@@ -8,20 +8,20 @@
       "LayerGroup",
       "LayerItem"
     ],
-    "Node": [
-      "DatasetSchemaField",
-      "Dataset",
-      "DatasetSchema",
-      "User",
-      "Scene",
-      "Asset",
-      "Property",
-      "Project",
-      "Team"
-    ],
     "Layers": [
       "LayerItem",
       "LayerGroup"
+    ],
+    "Node": [
+      "Asset",
+      "Project",
+      "Dataset",
+      "User",
+      "DatasetSchemaField",
+      "Property",
+      "Scene",
+      "DatasetSchema",
+      "Team"
     ]
   }
 }
