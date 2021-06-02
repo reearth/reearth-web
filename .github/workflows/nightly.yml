@@ -31,14 +31,27 @@ jobs:
       - name: Build
         run: yarn build
       - name: Package
-        run: mv build reearth-web && tar -zcvf nightly.tar.gz reearth-web
+        run: mv build reearth-web && tar -zcvf reearth-web_nightly.tar.gz reearth-web
       - uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: nightly.tar.gz
+          artifacts: reearth-web_nightly.tar.gz
           artifactContentType: application/gzip
           commit: ${{ env.GITHUB_SHA }}
           name: Nightly release
           prerelease: true
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
+  slack-notification:
+    if: always()
+    name: Slack Notification
+    needs:
+      - nightly
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: Gamesight/slack-workflow-status@master
+        if: always()
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
