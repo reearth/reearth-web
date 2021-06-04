@@ -84,6 +84,7 @@ const ProjectCreationModal: React.FC<Props> = ({
           large
           buttonType="primary"
           text={intl.formatMessage({ defaultMessage: "Create" })}
+          disabled={!formik.values.name}
           onClick={handleCreate}
         />
       }
