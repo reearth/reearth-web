@@ -31,6 +31,8 @@ const Project: React.FC<Props> = ({ projectId }) => {
     validAlias,
     checkProjectAlias,
     validatingAlias,
+    createAssets,
+    assets,
   } = useHooks({ projectId });
 
   return (
@@ -50,6 +52,8 @@ const Project: React.FC<Props> = ({ projectId }) => {
             updateProjectName={updateProjectName}
             updateProjectDescription={updateProjectDescription}
             updateProjectImageUrl={updateProjectImageUrl}
+            assets={assets}
+            createAssets={createAssets}
           />
           <PublishSection
             loading={loading}
