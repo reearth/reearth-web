@@ -65,7 +65,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
       {project?.isArchived && <ArchivedMessage />}
       <DangerSection
         project={project}
-        team={currentTeam}
+        teamId={currentTeam?.id}
         archiveProject={archiveProject}
         deleteProject={deleteProject}
       />
