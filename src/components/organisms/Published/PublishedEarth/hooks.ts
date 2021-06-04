@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
+import ReactGA from "react-ga";
 import { EarthLayer, EarthWidget } from "@reearth/components/molecules/EarthEditor/Earth";
 import { Block } from "@reearth/components/molecules/EarthEditor/InfoBox/InfoBox";
 import { PublishedData } from "./types";
@@ -20,6 +21,20 @@ export default (alias?: string) => {
   const selectLayer = useCallback((id?: string) => {
     changeSelectedLayerId(id);
   }, []);
+
+  const googleAnalyticsData: { enableGA?: boolean; trackingId?: string } = useMemo(
+    () => ({
+      enableGA: data?.property.googleAnalytics?.enableGA,
+      trackingId: data?.property.googleAnalitcs?.trackingId,
+    }),
+    [data?.property.googleAnalitcs?.trackingId, data?.property.googleAnalytics?.enableGA],
+  );
+
+  useEffect(() => {
+    if (!googleAnalyticsData.enableGA || !googleAnalyticsData.trackingId) return;
+    ReactGA.initialize(googleAnalyticsData.trackingId);
+    ReactGA.pageview(window.location.pathname);
+  }, [googleAnalyticsData]);
 
   const layers = useMemo<Layer[] | undefined>(
     () =>
