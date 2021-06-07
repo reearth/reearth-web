@@ -1,6 +1,7 @@
 import React from "react";
 import { useIntl } from "react-intl";
 import NavigationItem from "@reearth/components/molecules/Settings/NavigationItem";
+import Logo from "@reearth/components/molecules/Settings/Logo";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
@@ -24,11 +25,13 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
 
   return (
     <Wrapper>
+      <Logo />
       <NavigationList>
         <NavigationItem
           to="/settings/account"
           name={intl.formatMessage({ defaultMessage: "Account" })}
         />
+        <Line />
         <NavigationItem
           to={`/settings/workspaces`}
           name={intl.formatMessage({ defaultMessage: "Workspaces" })}>
@@ -44,6 +47,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
             </NavigationItem>
           )}
         </NavigationItem>
+        <Line />
         <NavigationItem
           to={`/settings/workspace/${team?.id}/projects`}
           name={intl.formatMessage({ defaultMessage: "Projects list" })}>
@@ -66,21 +70,25 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
 };
 
 const Wrapper = styled.div`
-  width: 250px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0;
-  margin-left: 10px;
-  margin-right: 80px;
+  padding: 32px;
+  box-sizing: border-box;
 `;
 
 const NavigationList = styled.ul`
   width: 100%;
   margin: 0;
   padding: 0;
-  font-size: ${fonts.sizes.l}px;
-  font-weight: bold;
+  font-size: ${fonts.sizes.m}px;
+`;
+
+const Line = styled.hr`
+  border: 1px solid ${({ theme }) => theme.colors.outline.weak};
+  margin: 0;
 `;
 
 export default Navigation;

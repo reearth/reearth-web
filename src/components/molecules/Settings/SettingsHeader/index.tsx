@@ -25,7 +25,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
         {currentProject} {title && currentProject && " / "}
         {title}
       </Text>
-      <Text size="m" otherProperties={{ marginTop: "12px" }}>
+      <Text size="m" className={theme.main.text} otherProperties={{ marginTop: "12px" }}>
         {currentWorkspace?.personal &&
           intl.formatMessage({ defaultMessage: "(Your personal workspace)" })}
       </Text>
@@ -33,8 +33,6 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
   );
 };
 
-const Wrapper = styled.div`
-  padding: 0 20px 45px 0;
-`;
+const Wrapper = styled.div``;
 
 export default SettingsHeader;

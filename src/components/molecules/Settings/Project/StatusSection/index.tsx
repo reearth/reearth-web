@@ -34,7 +34,6 @@ const StatusSection: React.FC<Props> = ({ projectStatus }) => {
 
 const Wrapper = styled.div`
   background-color: ${props => props.theme.colors.bg[3]};
-  margin-bottom: 64px;
   height: 90px;
   padding: 30px;
 `;

@@ -105,7 +105,7 @@ const Header: React.FC<Props> = ({
 
 const Wrapper = styled.header`
   width: 100%;
-  height: ${metrics.headerHeight}px;
+  min-height: ${metrics.headerHeight}px;
   background: ${props => props.theme.header.bg};
 `;
 
