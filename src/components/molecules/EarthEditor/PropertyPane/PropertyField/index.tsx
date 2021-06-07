@@ -141,10 +141,7 @@ const PropertyField: React.FC<Props> = ({
 
   const commonProps: FieldProps<any> = {
     linked:
-      !!field?.link ||
-      (isTemplate && !!field?.value) ||
-      (!isTemplate && field?.mergedValue && field?.value && field.mergedValue !== field.value) ||
-      (!!field?.mergedValue && !field?.value),
+      !!field?.link || (isTemplate && !!field?.value) || (!!field?.mergedValue && !field?.value),
     overridden: !!field?.overridden,
     value: field?.value ?? field?.mergedValue ?? schema?.defaultValue,
     onChange: useCallback(
