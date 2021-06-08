@@ -5,6 +5,7 @@ export type FieldProps<T> = {
   onChange?: (value: T | null) => void;
   name?: string;
   description?: string;
+  linkedFieldName?: string;
   linked?: boolean;
   group?: boolean;
   overridden?: boolean;

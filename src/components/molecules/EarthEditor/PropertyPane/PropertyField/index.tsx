@@ -142,8 +142,9 @@ const PropertyField: React.FC<Props> = ({
   const commonProps: FieldProps<any> = {
     linked:
       !!field?.link || (isTemplate && !!field?.value) || (!!field?.mergedValue && !field?.value),
+    linkedFieldName: field?.id,
     overridden: !!field?.overridden,
-    value: field?.value ?? field?.mergedValue ?? schema?.defaultValue,
+    value: field?.mergedValue ?? field?.value ?? schema?.defaultValue,
     onChange: useCallback(
       (value: ValueTypes[keyof ValueTypes] | null) => {
         if (!onChange || !schema) return;
@@ -169,6 +170,8 @@ const PropertyField: React.FC<Props> = ({
           title={schema?.name || schema?.id || field?.id || ""}
           description={schema?.description}
           isLinked={commonProps.linked}
+          isTemplate={isTemplate}
+          linkedFieldName={commonProps.linkedFieldName}
           isOverridden={commonProps.overridden}
           isLinkable={isLinkable ?? schema?.isLinkable}
           linkedDataset={field?.link}

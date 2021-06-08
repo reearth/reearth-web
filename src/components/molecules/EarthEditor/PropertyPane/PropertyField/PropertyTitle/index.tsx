@@ -12,6 +12,8 @@ export { Dataset, DatasetField, DatasetSchema, Type } from "./PropertyLinkPanel"
 export type Props = {
   className?: string;
   isLinked?: boolean;
+  isTemplate?: boolean;
+  linkedFieldName?: string;
   title?: string;
   description?: string;
 } & Pick<
@@ -31,6 +33,8 @@ export type Props = {
 const PropertyTitle: React.FC<Props> = ({
   className,
   isLinked,
+  isTemplate,
+  linkedFieldName,
   isOverridden,
   title,
   description,
@@ -88,7 +92,13 @@ const PropertyTitle: React.FC<Props> = ({
         visible={visible}
         style={styles.popper}
         {...attributes.popper}>
-        <PropertyLinkPanel isOverridden={isOverridden} {...props} />
+        <PropertyLinkPanel
+          isOverridden={isOverridden}
+          isLinked={isLinked}
+          isTemplate={isTemplate}
+          linkedFieldName={linkedFieldName}
+          {...props}
+        />
       </PropertyLinkPanelWrapper>
     </Wrapper>
   );

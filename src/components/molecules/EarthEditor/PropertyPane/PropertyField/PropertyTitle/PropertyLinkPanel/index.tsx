@@ -28,6 +28,9 @@ export type Props = {
   };
   isOverridden?: boolean;
   isLinkable?: boolean;
+  isLinked?: boolean;
+  isTemplate?: boolean;
+  linkedFieldName?: string;
   fixedDatasetSchemaId?: string;
   fixedDatasetId?: string;
   linkableType?: Type;
@@ -41,6 +44,9 @@ const PropertyLinkPanel: React.FC<Props> = ({
   className,
   linkedDataset,
   isLinkable,
+  isLinked,
+  isTemplate,
+  linkedFieldName,
   isOverridden,
   fixedDatasetSchemaId,
   fixedDatasetId,
@@ -92,15 +98,7 @@ const PropertyLinkPanel: React.FC<Props> = ({
               <Divider margin="0" />
             </>
           )}
-          {!isLinkable && linkedDataset && !isOverridden && (
-            <Text
-              size="xs"
-              color={theme.colors.text.strong}
-              otherProperties={{ padding: `${metricsSizes["s"]}px 0 0 ${metricsSizes["s"]}px` }}>
-              {intl.formatMessage({ defaultMessage: "From" })}
-            </Text>
-          )}
-          {!isOverridden && !isLinkable && !linkedDataset && (
+          {!isLinkable && ((!isOverridden && !isLinked) || (!linkedDataset && isTemplate)) && (
             <Text
               size="xs"
               color={theme.colors.text.weak}
@@ -108,23 +106,31 @@ const PropertyLinkPanel: React.FC<Props> = ({
               {intl.formatMessage({ defaultMessage: "No linked data" })}
             </Text>
           )}
+          {!isLinkable && isLinked && !isOverridden && !isTemplate && (
+            <Text
+              size="xs"
+              color={theme.colors.text.strong}
+              otherProperties={{ padding: `${metricsSizes["s"]}px 0 0 ${metricsSizes["s"]}px` }}>
+              {intl.formatMessage({ defaultMessage: "From" })}
+            </Text>
+          )}
           <LinkedData>
-            {!isLinkable && selectedDatasetPath?.length ? (
+            {!isLinkable && linkedFieldName ? (
               <LinkedDataDetailContent>
                 {isOverridden && (
                   <Text size="xs" color={theme.colors.functional.attention}>
                     {intl.formatMessage({ defaultMessage: "Overridden" })}
                   </Text>
                 )}
-                {selectedDatasetPath && isOverridden && (
+                {((isLinked && !linkedDataset && !isTemplate) || isOverridden) && (
                   <Text
                     size="xs"
                     color={isOverridden ? theme.colors.text.weak : theme.colors.primary.main}>
                     {intl.formatMessage({ defaultMessage: "Parent." })}
-                    {selectedDatasetPath[selectedDatasetPath.length - 1]}
+                    {linkedFieldName}
                   </Text>
                 )}
-                {linkedDataset && !isOverridden && (
+                {isLinked && !isOverridden && selectedDatasetPath && (
                   <>
                     <Text
                       size="xs"
