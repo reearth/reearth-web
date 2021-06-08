@@ -22,7 +22,7 @@ const Account: React.FC<Props> = () => {
 
   return (
     <SettingPage teamId={currentTeam?.id} projectId={currentProject?.id}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Account" })} />
+      <SettingsHeader title={intl.formatMessage({ defaultMessage: "My Account" })} />
       <ProfileSection username={me?.name} updateName={updateName} />
       <AccountSection
         email={me?.email}

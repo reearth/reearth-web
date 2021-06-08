@@ -29,12 +29,12 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
       <NavigationList>
         <NavigationItem
           to="/settings/account"
-          name={intl.formatMessage({ defaultMessage: "Account" })}
+          name={intl.formatMessage({ defaultMessage: "My Account" })}
         />
         <Line />
         <NavigationItem
           to={`/settings/workspaces`}
-          name={intl.formatMessage({ defaultMessage: "Workspaces" })}>
+          name={intl.formatMessage({ defaultMessage: "My Workspaces" })}>
           {team && (
             <NavigationItem
               to={`/settings/workspace/${team.id}`}
@@ -87,7 +87,7 @@ const NavigationList = styled.ul`
 `;
 
 const Line = styled.hr`
-  border: 1px solid ${({ theme }) => theme.colors.outline.weak};
+  border: 1px solid ${({ theme }) => theme.colors.outline.weakest};
   margin: 0;
 `;
 

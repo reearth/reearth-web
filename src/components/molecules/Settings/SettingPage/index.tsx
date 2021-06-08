@@ -45,13 +45,7 @@ const SettingPage: React.FC<Props> = ({
         </LeftWrapper>
         <RightWrapper>
           <DeviceMenu>
-            <button onClick={handleClick}>
-              {isOpen === true ? (
-                <StyledIcon icon="cancel" size={32} />
-              ) : (
-                <StyledIcon icon="menu" size={32} />
-              )}
-            </button>
+            <MenuIcon icon={isOpen ? "cancel" : "menuForDevice"} size={32} onClick={handleClick} />
             {isOpen && (
               <Menu>
                 <Navigation team={currentTeam} project={currentProject} />
@@ -102,8 +96,9 @@ const RightWrapper = styled.div`
 `;
 
 const DeviceMenu = styled.div`
+  padding: 0;
   width: 100%;
-  height: 48px;
+  height: 24px;
   display: none;
 
   @media only screen and (max-width: 1024px) {
@@ -135,6 +130,18 @@ const StyledIcon = styled(Icon)`
   margin-right: 8px;
   padding: 5px 4px 5px 8px;
   color: ${colors.text.main};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.bg[5]};
+  }
+`;
+
+const MenuIcon = styled(Icon)`
+  border-radius: 4px;
+  margin-bottom: 12px;
+  padding: 4px;
+  color: ${({ theme }) => theme.colors.text.main};
+  cursor: pointer;
 
   &:hover {
     background: ${({ theme }) => theme.colors.bg[5]};

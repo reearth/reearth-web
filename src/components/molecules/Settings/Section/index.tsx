@@ -38,8 +38,8 @@ const Wrapper = styled.div`
   max-width: 100%;
 `;
 
-const SectionHeader = styled.h4`
-  padding: 30px;
+const SectionHeader = styled.div`
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +47,7 @@ const SectionHeader = styled.h4`
 `;
 
 const SectionItem = styled.div`
-  padding: 30px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
