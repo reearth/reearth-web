@@ -119,31 +119,10 @@ const processMergedPropertyGroup = (
 };
 
 const processMergedProperty = (
-  mp?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
-  p?: EarthLayerFragment["property"],
+  p?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["property"]>,
 ): P | undefined => {
-  if (!mp) return;
-
-  if (p?.items.length) {
-    return mp.groups.reduce<any>(
-      (a, b) => ({
-        ...a,
-        [b.schemaGroupId]: b.fields.reduce<P>(
-          (e, f) => ({
-            ...e,
-            [f.fieldId]:
-              (p.items[0]?.__typename === "PropertyGroup" &&
-                p.items[0].fields.find(f2 => f2.fieldId === f.fieldId)?.value) ??
-              valueFromGQL(f.actualValue, f.type)?.value,
-          }),
-          {},
-        ),
-      }),
-      {},
-    );
-  }
-
-  return mp.groups.reduce<any>(
+  if (!p) return;
+  return p.groups.reduce<any>(
     (a, b) => ({
       ...a,
       [b.schemaGroupId]: processMergedPropertyGroup(b),
@@ -192,17 +171,16 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
         title: layer.name,
         property:
           layer.__typename === "LayerItem"
-            ? processMergedProperty(layer.merged?.property, layer.property)
+            ? processMergedProperty(layer.merged?.property)
             : undefined,
         pluginProperty: {},
         // pluginProperty:
         //   "plugin" in layer ? processProperty(layer.plugin?.scenePlugin?.property) : undefined,
         infoboxEditable: !!layer.infobox,
-        infobox: layer.infobox
-          ? processInfobox(layer.infobox)
-          : layer.__typename === "LayerItem"
-          ? processMergedInfobox(layer.merged?.infobox)
-          : undefined,
+        infobox:
+          layer.__typename === "LayerItem"
+            ? processMergedInfobox(layer.merged?.infobox)
+            : processInfobox(layer.infobox),
         layers:
           layer.__typename === "LayerGroup"
             ? layer.layers
