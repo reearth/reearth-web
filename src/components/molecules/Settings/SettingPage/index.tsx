@@ -27,7 +27,7 @@ const SettingPage: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Header
+      <StyledHeader
         {...props}
         currentTeam={currentTeam}
         icon={
@@ -44,51 +44,70 @@ const SettingPage: React.FC<Props> = ({
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>
         <RightWrapper>
-          <DeviceMenu>
-            <MenuIcon icon={isOpen ? "cancel" : "menuForDevice"} size={32} onClick={handleClick} />
-            {isOpen && (
-              <Menu>
-                <Navigation team={currentTeam} project={currentProject} />
-              </Menu>
-            )}
-          </DeviceMenu>
-          {children}
+          <Wrapper5>
+            <DeviceMenu>
+              <MenuIcon
+                icon={isOpen ? "cancel" : "menuForDevice"}
+                size={32}
+                onClick={handleClick}
+              />
+              {isOpen && (
+                <Menu>
+                  <Navigation team={currentTeam} project={currentProject} />
+                </Menu>
+              )}
+            </DeviceMenu>
+            {children}
+          </Wrapper5>
         </RightWrapper>
       </Wrapper3>
     </Wrapper>
   );
 };
 
-//这个才是整体页面
+const StyledHeader = styled(Header)`
+  position: fixed;
+  box-shadow: 0 4px 24px #1d1d1d;
+  z-index: ${props => props.theme.zIndexes.settingHeader};
+`;
+
 const Wrapper = styled.div`
   height: 100%;
   background-color: ${({ theme }) => theme.colors.bg[2]};
-  overflow: auto;
   display: flex;
   flex-direction: column;
 `;
 
-//这里是左边导航栏+右边内容
 const Wrapper3 = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
+  height: 100%;
+  padding-top: 48px;
+  overflow: auto;
 `;
 
 const LeftWrapper = styled.div`
   width: 264px;
+  height: 100%;
   background-color: ${({ theme }) => theme.colors.bg[3]};
+  position: fixed;
+
   @media only screen and (max-width: 1024px) {
     display: none;
   }
 `;
 
 const RightWrapper = styled.div`
-  flex: 1;
-  margin: 0 auto;
-  padding: 32px 32px;
-  max-width: 1200px;
+  margin-left: 264px;
+  padding: 32px 64px;
   box-sizing: border-box;
+
+  @media only screen and (max-width: 1024px) {
+    margin: 0 auto;
+  }
+`;
+
+const Wrapper5 = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
 
   > * {
     margin-bottom: 32px;
@@ -112,8 +131,9 @@ const Menu = styled.div`
   width: 264px;
   display: flex;
   justify-content: center;
+  box-shadow: 0 4px 16px #1d1d1d;
   background-color: ${({ theme }) => theme.colors.bg[4]};
-  z-index: 80; ////这里一会要加到z-index里面去
+  z-index: ${props => props.theme.zIndexes.menuForDevice};
 `;
 
 const StyledLink = styled(Link)`

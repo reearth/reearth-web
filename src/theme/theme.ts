@@ -190,6 +190,8 @@ export type Theme = {
     loading: number;
     notificationBar: number;
     splashScreen: number;
+    settingHeader: number;
+    menuForDevice: number;
   };
   descriptionBalloon: {
     bg: string;

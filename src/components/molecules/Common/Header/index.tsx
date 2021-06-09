@@ -107,6 +107,9 @@ const Wrapper = styled.header`
   width: 100%;
   min-height: ${metrics.headerHeight}px;
   background: ${props => props.theme.header.bg};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const Content = styled.div`
@@ -114,6 +117,7 @@ const Content = styled.div`
   padding: 0 20px;
   width: calc(100% - 40px);
   height: 100%;
+  align-items: center;
 `;
 
 const itemStyle = css`

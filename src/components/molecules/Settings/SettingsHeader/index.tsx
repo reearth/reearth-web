@@ -20,7 +20,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
 
   return (
     <Wrapper>
-      <Text size="xl" color={theme.main.strongText} weight="bold">
+      <Text size="xl" color={theme.main.strongText} weight="normal">
         {workspace} {workspace && (title || currentProject) && " / "}
         {currentProject} {title && currentProject && " / "}
         {title}
