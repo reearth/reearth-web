@@ -34,7 +34,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
         <Line />
         <NavigationItem
           to={`/settings/workspaces`}
-          name={intl.formatMessage({ defaultMessage: "My Workspaces" })}>
+          name={intl.formatMessage({ defaultMessage: "My Workspaces list" })}>
           {team && (
             <NavigationItem
               to={`/settings/workspace/${team.id}`}

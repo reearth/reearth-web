@@ -47,16 +47,12 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
 
 const Wrapper = styled.div<{ project: Project }>`
   background: ${props =>
-    props.project.imageUrl ? `url(${props.project.imageUrl})` : props.theme.colors.bg[4]};
+    props.project.imageUrl ? `url(${props.project.imageUrl})` : props.theme.colors.bg[3]};
   background-size: cover;
   color: ${props => props.theme.projectCell.text};
-  padding: 10px;
+  padding: 24px 16px;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
-  margin: 10px 0;
-  padding: 28px;
-  // position: relative;
-  width: 100%;
-  height: 223px;
+  height: 240px;
   cursor: pointer;
 `;
 

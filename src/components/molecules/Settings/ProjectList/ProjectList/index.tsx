@@ -44,12 +44,12 @@ const ProjectList: React.FC<Props> = ({
     <>
       {archived && (
         <StyledFlex align="center" onClick={() => setOpen(!open)}>
-          <StyledIcon icon="arrowToggle" size={15} />
+          <StyledIcon icon="arrowToggle" size={15} color={theme.main.text} />
           <Text
             size="m"
-            weight="bold"
-            color={theme.main.strongText}
-            otherProperties={{ margin: "14px 0" }}>
+            weight="normal"
+            color={theme.main.text}
+            otherProperties={{ margin: "12px 0" }}>
             {`${intl.formatMessage({ defaultMessage: "Archived Projects" })} (${
               projects?.length || 0
             })`}
@@ -57,12 +57,8 @@ const ProjectList: React.FC<Props> = ({
         </StyledFlex>
       )}
       {!archived && (
-        <Flex justify="space-between" align="center">
-          <Text
-            size="m"
-            weight="bold"
-            color={theme.main.strongText}
-            otherProperties={{ margin: "14px 0" }}>
+        <StyledFlex justify="space-between" align="center">
+          <Text size="m" weight="normal" color={theme.main.text}>
             {title ||
               `${intl.formatMessage({ defaultMessage: "Current Projects" })} (${
                 projects?.length || 0
@@ -74,7 +70,7 @@ const ProjectList: React.FC<Props> = ({
             text={intl.formatMessage({ defaultMessage: "New Project" })}
             onClick={onCreationButtonClick}
           />
-        </Flex>
+        </StyledFlex>
       )}
       {loading ? (
         <div>
@@ -82,13 +78,12 @@ const ProjectList: React.FC<Props> = ({
         </div>
       ) : (
         <>
-          <Divider />
           {open && (
-            <Flex wrap="wrap">
+            <ProjectListCotainner>
               {projects?.map(project => (
                 <ProjectCell project={project} key={project.id} onSelect={onProjectSelect} />
               ))}
-            </Flex>
+            </ProjectListCotainner>
           )}
         </>
       )}
@@ -96,17 +91,18 @@ const ProjectList: React.FC<Props> = ({
   );
 };
 
-const Divider = styled.div`
-  width: 100%;
-  margin-bottom: 10px;
-  border-bottom: 1px solid ${props => props.theme.colors.outline.weakest};
-`;
-
 const StyledIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
+const ProjectListCotainner = styled.div`
+  > * {
+    margin-bottom: 32px;
+  }
+`;
+
 const StyledFlex = styled(Flex)`
+  border-bottom: solid 1px ${({ theme }) => theme.colors.outline.weakest};
   cursor: pointer;
 `;
 

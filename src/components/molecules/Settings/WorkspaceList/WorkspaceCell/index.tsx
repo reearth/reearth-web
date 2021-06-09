@@ -26,7 +26,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
       <TopWrapper>
         <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
           {personal
-            ? "My Personal Workspace"
+            ? team.name + "'s Personal Workspace"
             : team.name
             ? team.name
             : intl.formatMessage({ defaultMessage: "No Title Workspace" })}
