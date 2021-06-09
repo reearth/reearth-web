@@ -77,16 +77,20 @@ const Menu: WidgetComponent<Property, PluginProperty> = ({ property }) => {
   const handleClick = useCallback(
     (b: Button | MenuItem) => () => {
       const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
-      if (t === "link") {
-        const link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
-        window.open(link, "_blank", "noopener");
-      } else if (t === "menu") {
+      if (t === "menu") {
         setVisibleMenuButton(v => (v === b.id ? undefined : b.id));
         return;
       } else if (t === "camera") {
         const camera =
           "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
         setCamera(camera);
+      } else {
+        let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
+        const splitLink = link?.split("/");
+        if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
+          link = "https://" + link;
+        }
+        window.open(link, "_blank", "noopener");
       }
       setVisibleMenuButton(undefined);
     },
@@ -113,8 +117,9 @@ const Menu: WidgetComponent<Property, PluginProperty> = ({ property }) => {
                 key={b.id}
                 button={b}
                 pos={p}
-                menuItems={menuItems}
                 menuVisible={visibleMenuButton === b.id}
+                menuItems={menuItems}
+                itemOnClick={handleClick}
                 onClick={handleClick(b)}
                 onClose={closeMenu}
               />
@@ -130,10 +135,11 @@ const MenuButton: React.FC<{
   button: Button;
   menuVisible?: boolean;
   menuItems?: MenuItem[];
+  itemOnClick?: (b: Button | MenuItem) => () => void;
   pos: Position;
   onClick?: () => void;
   onClose?: () => void;
-}> = ({ button: b, menuVisible, menuItems, onClick, onClose, pos }) => {
+}> = ({ button: b, menuVisible, menuItems, itemOnClick, pos, onClick, onClose }) => {
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
   const menuElement = useRef<HTMLDivElement>(null);
@@ -180,7 +186,7 @@ const MenuButton: React.FC<{
         {menuVisible && (
           <MenuWrapper ref={menuElement}>
             {menuItems?.map(i => (
-              <MenuItem tabIndex={0} key={i.id} item={i} onClick={onClick}>
+              <MenuItem tabIndex={0} key={i.id} item={i} onClick={itemOnClick?.(i)}>
                 {i.menuType !== "border" && i.menuTitle}
               </MenuItem>
             ))}
