@@ -13,6 +13,7 @@ import Text from "@reearth/components/atoms/Text";
 
 import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import useHooks from "./hooks";
+import Gdrive from "./Gdrive";
 
 interface Props {
   className?: string;
@@ -31,10 +32,15 @@ const DatasetModal: React.FC<Props> = ({
   onNotify,
 }) => {
   const intl = useIntl();
-  const { csv, dataType, disabled, onSelectCsvFile, onReturn, handleImport } = useHooks(
-    handleDatasetAdd,
-    onNotify,
-  );
+  const {
+    csv,
+    dataType,
+    disabled,
+    onSelectCsvFile,
+    onReturn,
+    handleImport,
+    handleClick,
+  } = useHooks(handleDatasetAdd, onNotify);
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {
@@ -89,13 +95,14 @@ const DatasetModal: React.FC<Props> = ({
               margin={56}
               border="dashed"
               borderColor={colors.outline.weak}
-              //onClick={onSelectCsvFile}
+              onClick={handleClick}
             />
           </Content>
         </ConnectSection>
       ) : (
         <InputSection>
-          {dataType === "csv" ? (
+          {dataType === "gdrive" && <Gdrive onReturn={onReturn} syncLoading={syncLoading} />}
+          {dataType === "csv" && (
             <>
               <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} />
               <Subtitle
@@ -113,7 +120,8 @@ const DatasetModal: React.FC<Props> = ({
                 )}
               </Content>
             </>
-          ) : (
+          )}
+          {!dataType && (
             <>
               <Button onClick={onReturn}>
                 <Icon icon={"arrowLongLeft"} size={24} />
