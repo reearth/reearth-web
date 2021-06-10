@@ -81,6 +81,16 @@ const DatasetModal: React.FC<Props> = ({
               borderColor={colors.outline.weak}
               onClick={onSelectCsvFile}
             />
+            <Card
+              id="gdrive"
+              icon="googleDrive"
+              iconSize="50px"
+              text={intl.formatMessage({ defaultMessage: "Google Drive" })}
+              margin={56}
+              border="dashed"
+              borderColor={colors.outline.weak}
+              //onClick={onSelectCsvFile}
+            />
           </Content>
         </ConnectSection>
       ) : (
