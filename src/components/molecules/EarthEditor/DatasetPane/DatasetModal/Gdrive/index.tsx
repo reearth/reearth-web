@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useIntl } from "react-intl";
 import { styled, useTheme } from "@reearth/theme";
 
@@ -18,6 +18,16 @@ export type Props = {
 const Gdrive: React.FC<Props> = ({ onReturn, syncLoading }) => {
   const intl = useIntl();
   const theme = useTheme();
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://apis.google.com/js/api.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <>
