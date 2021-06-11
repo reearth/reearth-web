@@ -2,7 +2,7 @@ import React from "react";
 import { useIntl } from "react-intl";
 import useHooks from "./hooks";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
-import AssetSection from "@reearth/components/molecules/Settings/Workspace/Asset/AssetSection";
+import AssetSection from "@reearth/components/molecules/Settings/Workspace/AssetSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 
 type Props = {

@@ -15,6 +15,7 @@ import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
+import { useCallback } from "react";
 
 export type Asset = AssetType;
 
@@ -24,6 +25,7 @@ export type Props = {
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (file: File) => void;
+  onRemove?: (id: string) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
@@ -35,6 +37,7 @@ const AssetContainer: React.FC<Props> = ({
   isMultipleSelectable = false,
   accept,
   onCreateAsset,
+  onRemove,
   initialAsset,
   selectedAssets,
   selectAsset,
@@ -70,20 +73,38 @@ const AssetContainer: React.FC<Props> = ({
     { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
 
+  const handleRemove = useCallback(() => {
+    if (selectedAssets?.length) {
+      onRemove?.(selectedAssets[0].id);
+    }
+  }, [onRemove, selectedAssets]);
+
   return (
     <Wrapper>
-      <StyledUploadButton
-        large
-        text={
-          fileType === "image"
-            ? intl.formatMessage({ defaultMessage: "Upload image" })
-            : intl.formatMessage({ defaultMessage: "Upload file" })
-        }
-        icon="upload"
-        type="button"
-        buttonType="primary"
-        onClick={handleUploadToAsset}
-      />
+      <ButtonWrapper onRemove={onRemove}>
+        <Button
+          large
+          text={
+            fileType === "image"
+              ? intl.formatMessage({ defaultMessage: "Upload image" })
+              : intl.formatMessage({ defaultMessage: "Upload file" })
+          }
+          icon="upload"
+          type="button"
+          buttonType={onRemove ? "secondary" : "primary"}
+          onClick={handleUploadToAsset}
+        />
+        {onRemove && (
+          <Button
+            large
+            text={intl.formatMessage({ defaultMessage: "Delete" })}
+            icon="bin"
+            type="button"
+            buttonType="secondary"
+            onClick={handleRemove}
+          />
+        )}
+      </ButtonWrapper>
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
@@ -140,7 +161,7 @@ const AssetContainer: React.FC<Props> = ({
                     key={a.id}
                     asset={a}
                     isImage={fileType === "image"}
-                    onCheck={() => handleAssetsSelect(a)}
+                    onCheck={() => alert(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />
@@ -166,17 +187,21 @@ const AssetContainer: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  height: 558px;
   width: 100%;
 `;
 
 const AssetWrapper = styled(Flex)`
-  height: 425px;
+  // height: 425px;
+`;
+
+const ButtonWrapper = styled.div<{ onRemove?: (id: string) => void }>`
+  display: flex;
+  justify-content: ${({ onRemove }) => (onRemove ? "flex-end" : "center")};
 `;
 
 const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
   ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
-  max-height: 458px;
+  // max-height: 458px;
   overflow-y: scroll;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -187,10 +212,6 @@ const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
     content: "";
     flex: ${({ layoutType }) => (layoutType === "medium" ? "0 33%" : "auto")};
   }
-`;
-
-const StyledUploadButton = styled(Button)`
-  margin: ${metricsSizes["m"]}px auto ${metricsSizes["2xl"]}px auto;
 `;
 
 const NavBar = styled(Flex)`
