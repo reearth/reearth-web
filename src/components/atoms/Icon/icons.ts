@@ -104,7 +104,7 @@ import Scale from "./Icons/scale.svg";
 import MapIcon from "./Icons/map.svg";
 import NoProjects from "./Icons/noProjects.svg";
 import TopPage from "./Icons/topPage.svg";
-import MenuForDevice from "./Icons/MenuForDevice.svg";
+import MenuForDevice from "./Icons/menuForDevice.svg";
 
 // Plugi-ins
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
