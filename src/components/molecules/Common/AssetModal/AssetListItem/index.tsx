@@ -10,11 +10,11 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Asset = {
   id: string;
-  teamId: string;
+  teamId?: string;
   name: string;
-  size: number;
-  url: string;
-  contentType: string;
+  size?: number;
+  url?: string;
+  contentType?: string;
 };
 
 export type Props = {
@@ -37,9 +37,11 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, isImage, onC
       <ListItemName size="m" customColor>
         {asset.name}
       </ListItemName>
-      <ListItemSize size="m" customColor>
-        {parseFloat((asset.size / 1000).toFixed(2))} KB
-      </ListItemSize>
+      {asset.size && (
+        <ListItemSize size="m" customColor>
+          {parseFloat((asset.size / 1000).toFixed(2))} KB
+        </ListItemSize>
+      )}
     </ListItem>
   );
 };
