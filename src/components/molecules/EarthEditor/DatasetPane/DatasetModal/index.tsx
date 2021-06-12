@@ -21,6 +21,12 @@ interface Props {
   syncLoading: boolean;
   onClose?: () => void;
   handleDatasetAdd?: (url: string | File, schemeId: string | null) => Promise<void>;
+  handleGoogleSheetDatasetAdd?: (
+    accessToken: string,
+    fileId: string,
+    sheetName: string,
+    schemeId: string | null,
+  ) => Promise<void>;
   onNotify?: (type: NotificationType, text: string) => void;
 }
 
@@ -29,6 +35,7 @@ const DatasetModal: React.FC<Props> = ({
   syncLoading,
   onClose,
   handleDatasetAdd,
+  handleGoogleSheetDatasetAdd,
   onNotify,
 }) => {
   const intl = useIntl();
@@ -38,9 +45,10 @@ const DatasetModal: React.FC<Props> = ({
     disabled,
     onSelectCsvFile,
     onReturn,
+    onSheetSelect,
     handleImport,
     handleClick,
-  } = useHooks(handleDatasetAdd, onNotify);
+  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onNotify);
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {
@@ -101,7 +109,9 @@ const DatasetModal: React.FC<Props> = ({
         </ConnectSection>
       ) : (
         <InputSection>
-          {dataType === "gdrive" && <Gdrive onReturn={onReturn} syncLoading={syncLoading} />}
+          {dataType === "gdrive" && (
+            <Gdrive onReturn={onReturn} onSheetSelect={onSheetSelect} syncLoading={syncLoading} />
+          )}
           {dataType === "csv" && (
             <>
               <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} />
