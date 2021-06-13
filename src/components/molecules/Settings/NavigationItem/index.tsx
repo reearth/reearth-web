@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, fonts } from "@reearth/theme";
+import { styled, fonts, useTheme } from "@reearth/theme";
 import { Link } from "@reach/router";
 
 export type Props = {
@@ -8,11 +8,14 @@ export type Props = {
 };
 
 const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
+  const theme = useTheme();
   return (
     <>
       <LinkItem
         to={to}
-        getProps={({ isCurrent }) => isCurrent && { style: { background: "#2B2A2F" } }}>
+        getProps={({ isCurrent }) =>
+          isCurrent && { style: { background: theme.colors.functional.select } }
+        }>
         {name}
       </LinkItem>
       {children && <NavigationList>{children}</NavigationList>}
