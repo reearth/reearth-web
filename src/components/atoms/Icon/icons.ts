@@ -104,6 +104,8 @@ import Scale from "./Icons/scale.svg";
 import MapIcon from "./Icons/map.svg";
 import NoProjects from "./Icons/noProjects.svg";
 import TopPage from "./Icons/topPage.svg";
+import Moon from "./Icons/moon.svg";
+import Sun from "./Icons/sun.svg";
 
 // Plugi-ins
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
@@ -198,6 +200,8 @@ export default {
   copyCode: CopyCode,
   map: MapIcon,
   noProjects: NoProjects,
+  moon: Moon,
+  sun: Sun,
   topPage: TopPage,
   install: Install,
   uploadZipPlugin: UploadZipPlugin,
