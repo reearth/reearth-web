@@ -13,6 +13,7 @@ export type Props = {
   hasPassword: boolean;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
+  updateTheme?: (lang: string) => void;
 };
 
 const items = [
@@ -20,20 +21,32 @@ const items = [
   { key: "en", label: "English" },
 ];
 
+const themeItems = [
+  { key: "DARK", label: "Dark theme", icon: "moon" },
+  { key: "LIGHT", label: "Light theme", icon: "sun" },
+];
+
 const ProfileSection: React.FC<Props> = ({
   email,
   hasPassword,
   updatePassword,
   updateLanguage,
+  updateTheme,
 }) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState<string>();
+  const [currentTheme, setCurrentTheme] = useState<string>();
 
   useEffect(() => {
     const lang = items.find(item => item.key === intl.locale);
     setCurrentLang(lang?.label);
   }, [intl.locale]);
+
+  useEffect(() => {
+    setCurrentTheme("dark");
+  }, []);
+
   const theme = useTheme();
 
   return (
@@ -59,6 +72,14 @@ const ProfileSection: React.FC<Props> = ({
           currentItem={intl.locale}
           body={currentLang}
           onSubmit={updateLanguage}
+        />
+        <EditableItem
+          title={intl.formatMessage({ defaultMessage: "Color theme" })}
+          dropdown
+          dropdownItems={themeItems}
+          currentItem={currentTheme}
+          body={currentTheme}
+          onSubmit={updateTheme}
         />
       </Section>
       <PasswordModal

@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import { useLocalState } from "@reearth/state";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 
+export type Theme = "DEFAULT" | "DARK" | "LIGHT";
+
 export default () => {
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
     currentTeam: s.currentTeam,
@@ -36,6 +38,13 @@ export default () => {
     [updateMeMutation],
   );
 
+  const updateTheme = useCallback(
+    (theme: string) => {
+      updateMeMutation({ variables: { theme: theme as Theme } });
+    },
+    [updateMeMutation],
+  );
+
   return {
     currentTeam,
     currentProject,
@@ -44,5 +53,6 @@ export default () => {
     updateName,
     updatePassword,
     updateLanguage,
+    updateTheme,
   };
 };

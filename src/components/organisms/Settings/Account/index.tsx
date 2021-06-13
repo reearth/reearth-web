@@ -18,6 +18,7 @@ const Account: React.FC<Props> = () => {
     updateName,
     updatePassword,
     updateLanguage,
+    updateTheme,
   } = useHooks();
 
   return (
@@ -30,6 +31,7 @@ const Account: React.FC<Props> = () => {
         hasPassword={hasPassword}
         updatePassword={updatePassword}
         updateLanguage={updateLanguage}
+        updateTheme={updateTheme}
       />
     </SettingPage>
   );
