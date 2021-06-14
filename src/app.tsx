@@ -3,6 +3,7 @@ import { Router, Redirect } from "@reach/router";
 import { LocationProvider } from "@reach/router";
 import { createBrowserHistory } from "history";
 import { reachify } from "redux-first-history";
+import { getQuickJS } from "quickjs-emscripten";
 
 import { Provider as ThemeProvider, styled } from "./theme";
 import { Provider as GqlProvider } from "./gql";
@@ -23,6 +24,8 @@ import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
 import DatasetSettings from "@reearth/components/pages/Settings/Project/Dataset";
 import PluginSettings from "@reearth/components/pages/Settings/Project/Plugin";
 import Preview from "./components/pages/Preview";
+
+getQuickJS();
 
 const enableWhyDidYouRender = false;
 

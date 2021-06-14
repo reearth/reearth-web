@@ -51,5 +51,13 @@ module.exports = ({ config }) => {
     "emotion-theming": path.resolve(__dirname, "..", "node_modules", "@emotion", "react"),
   };
 
+  // For quickjs-emscripten
+  // In webpack v6, you have to change this configuration as following:
+  // config.resolve.fallback = { ...config.resolve.fallback, fs: false, path: false }
+  config.node = {
+    ...config.node,
+    fs: "empty",
+  };
+
   return config;
 };

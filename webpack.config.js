@@ -164,9 +164,14 @@ module.exports = (env, args = {}) => {
       }),
     ],
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
       alias: {
         "@reearth": path.resolve(__dirname, "src/"),
+      },
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
+      // For quickjs-emscripten
+      fallback: {
+        fs: false,
+        path: false,
       },
     },
   };
