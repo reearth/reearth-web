@@ -12,7 +12,7 @@ const html = `
 </script>
 `;
 
-reearth.ui.show(html, true);
+reearth.ui.show(html, { visible: true, autoResize: true });
 reearth.ui.onmessage = (message) => {
   console.log("plugin <- iframe", message);
 };

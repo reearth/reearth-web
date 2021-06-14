@@ -1,6 +1,6 @@
 import React, { CSSProperties } from "react";
 
-import useHook from "./hooks";
+import useHook, { IFrameAPI } from "./hooks";
 import PluginIFrame from "./PluginIFrame";
 
 export type Props = {
@@ -11,10 +11,7 @@ export type Props = {
   style?: CSSProperties;
   src?: string;
   onError?: (err: any) => void;
-  onExpose?: (api: {
-    render: (html: string, visible?: boolean) => void;
-    postMessage: (message: any) => void;
-  }) => any;
+  onExpose?: (api: IFrameAPI) => any;
 };
 
 const Plugin: React.FC<Props> = ({
@@ -27,7 +24,7 @@ const Plugin: React.FC<Props> = ({
   onError,
   onExpose,
 }) => {
-  const { iFrameRef, iFrameHtml, iFrameVisible, onMessage } = useHook({
+  const { iframeAutoResize, iFrameRef, iFrameHtml, iFrameVisible, onMessage } = useHook({
     iframeCanBeVisible: canBeVisible,
     onMessageCode,
     skip,
@@ -38,10 +35,11 @@ const Plugin: React.FC<Props> = ({
 
   return (
     <PluginIFrame
+      autoResize={iframeAutoResize}
       className={className}
-      style={style}
-      ref={iFrameRef}
       html={iFrameHtml}
+      ref={iFrameRef}
+      style={style}
       visible={iFrameVisible}
       onMessage={onMessage}
     />

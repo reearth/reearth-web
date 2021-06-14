@@ -4,33 +4,41 @@ import useHook, { RefType } from "./hooks";
 export type Ref = RefType;
 
 export type Props = {
+  autoResize?: boolean;
   className?: string;
-  style?: CSSProperties;
   html?: string;
+  style?: CSSProperties;
   visible?: boolean;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
 };
 
 const PluginIFrame: React.ForwardRefRenderFunction<Ref, Props> = (
-  { className, style, html, visible, onLoad, onMessage },
+  { autoResize, className, html, style, visible, onLoad, onMessage },
   ref,
 ) => {
-  const { iframeRef, onLoad: onIFrameLoad } = useHook({ ref, html, onLoad, onMessage });
+  const { ref: iFrameRef, width, height, onLoad: onIFrameLoad } = useHook({
+    autoResize,
+    html,
+    ref,
+    onLoad,
+    onMessage,
+  });
 
   return html ? (
     <iframe
-      scrolling="no"
       frameBorder="no"
+      scrolling={autoResize ? "no" : undefined}
       data-testid="iframe"
       srcDoc=""
       key={html}
-      ref={iframeRef}
+      ref={iFrameRef}
       style={{
         ...style,
-        display: visible ? "block" : "none",
-        width: visible ? "100%" : "0px",
-        height: visible ? "100%" : "0px",
+        display: visible ? undefined : "none",
+        width: visible ? (autoResize ? width : "100%") : "0px",
+        height: visible ? (autoResize ? height : "100%") : "0px",
+        minWidth: "100%",
       }}
       className={className}
       onLoad={onIFrameLoad}></iframe>

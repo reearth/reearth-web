@@ -4,16 +4,29 @@ import Arena from "quickjs-emscripten-sync";
 
 import type { Ref as IFrameRef } from "./PluginIFrame";
 
+export type IFrameAPI = {
+  render: (html: string, options?: { visible?: boolean; autoResize?: boolean }) => void;
+  postMessage: (message: any) => void;
+};
+
 export type Options<T> = {
   src?: string;
   skip?: boolean;
   iframeCanBeVisible?: boolean;
   onMessageCode?: string;
+  isMarshalable?: (obj: any) => boolean;
   onError?: (err: any) => void;
-  onExpose?: (api: {
-    render: (html: string, visible?: boolean) => void;
-    postMessage: (message: any) => void;
-  }) => T;
+  onExpose?: (api: IFrameAPI) => T;
+};
+
+// restrict any classes
+const defaultIsMarshalable = (obj: any): boolean => {
+  return (
+    ((typeof obj !== "object" || obj === null) && typeof obj !== "function") ||
+    Array.isArray(obj) ||
+    Object.getPrototypeOf(obj) === Function.prototype ||
+    Object.getPrototypeOf(obj) === Object.prototype
+  );
 };
 
 const defaultOnError = (err: any) => {
@@ -25,6 +38,7 @@ export default function useHook<T>({
   skip,
   onMessageCode,
   iframeCanBeVisible,
+  isMarshalable = defaultIsMarshalable,
   onError = defaultOnError,
   onExpose,
 }: Options<T> = {}) {
@@ -32,7 +46,9 @@ export default function useHook<T>({
   const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
   const iFrameRef = useRef<IFrameRef>(null);
-  const [[iFrameHtml, iFrameVisible], setIFrameState] = useState<[string, boolean]>(["", false]);
+  const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
+    [string, { visible?: boolean; autoResize?: boolean } | undefined]
+  >(["", undefined]);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -84,7 +100,9 @@ export default function useHook<T>({
 
     (async () => {
       const vm = (await getQuickJS()).createVm();
-      arena.current = new Arena(vm);
+      arena.current = new Arena(vm, {
+        isMarshalable,
+      });
       setLoaded(true);
     })();
 
@@ -104,13 +122,13 @@ export default function useHook<T>({
         }
       }
     };
-  }, [onError, skip, src]);
+  }, [isMarshalable, onError, skip, src]);
 
   useEffect(() => {
     if (!arena.current || !onExpose || !loaded) return;
     const exposed = onExpose({
-      render: (html, visible) => {
-        setIFrameState([html, !!iframeCanBeVisible && !!visible]);
+      render: (html, options) => {
+        setIFrameState([html, { visible: !!iframeCanBeVisible && !!options?.visible, ...options }]);
       },
       postMessage: msg => {
         iFrameRef.current?.postMessage(msg);
@@ -122,7 +140,7 @@ export default function useHook<T>({
   useEffect(() => {
     if (!arena.current || !src || !loaded) return;
 
-    setIFrameState(s => (!s[0] && !s[1] ? s : ["", false]));
+    setIFrameState(s => (!s[0] && !s[1] ? s : ["", undefined]));
     // load JS
     (async () => {
       if (!arena.current) return;
@@ -137,9 +155,10 @@ export default function useHook<T>({
   }, [src, loaded]); // ignore onError and evalCode
 
   return {
-    iFrameRef,
+    iframeAutoResize: iFrameOptions?.autoResize,
     iFrameHtml,
-    iFrameVisible,
+    iFrameRef,
+    iFrameVisible: iFrameOptions?.visible,
     loaded,
     onMessage,
   };

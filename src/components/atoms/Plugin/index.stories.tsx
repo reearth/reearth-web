@@ -9,16 +9,17 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => (
-  <div style={{ width: "300px", height: "300px", backgroundColor: "#fff" }}>
-    <Component {...args} />
-  </div>
-);
+export const Default: Story<Props> = args => <Component {...args} />;
 
 Default.args = {
   src: `${process.env.PUBLIC_URL}/plugin.js`,
   canBeVisible: true,
   onMessageCode: `globalThis.reearth.ui.onmessage`,
+  style: {
+    width: "300px",
+    height: "300px",
+    backgroundColor: "#fff",
+  },
   onExpose: ({ render, postMessage }) => ({
     console: {
       log: console.log,

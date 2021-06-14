@@ -1,4 +1,12 @@
-import { Ref, RefObject, useCallback, useEffect, useImperativeHandle, useRef } from "react";
+import {
+  Ref,
+  RefObject,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 export type RefType = {
   postMessage: (message: any) => void;
@@ -7,30 +15,35 @@ export type RefType = {
 export default function useHook({
   html,
   ref,
+  autoResize,
   onLoad,
   onMessage,
 }: {
   html?: string;
   ref?: Ref<RefType>;
+  autoResize?: boolean;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
 } = {}): {
-  iframeRef: RefObject<HTMLIFrameElement>;
+  ref: RefObject<HTMLIFrameElement>;
   onLoad?: () => void;
+  width?: string;
+  height?: string;
 } {
   const loaded = useRef(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const iFrameRef = useRef<HTMLIFrameElement>(null);
+  const [iFrameSize, setIFrameSize] = useState<[string, string]>();
   const pendingMesages = useRef<any[]>([]);
 
   useImperativeHandle(
     ref,
     () => ({
       postMessage: (message: any) => {
-        if (!loaded.current || !iframeRef.current?.contentWindow) {
+        if (!loaded.current || !iFrameRef.current?.contentWindow) {
           pendingMesages.current.push(message);
           return;
         }
-        iframeRef.current.contentWindow.postMessage(message, "*");
+        iFrameRef.current.contentWindow.postMessage(message, "*");
       },
     }),
     [],
@@ -38,8 +51,13 @@ export default function useHook({
 
   useEffect(() => {
     const cb = (ev: MessageEvent<any>) => {
-      if (!iframeRef.current?.contentWindow) return;
-      if (ev.source === iframeRef.current.contentWindow) {
+      if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow) return;
+      if (ev.data?._reearth_resize) {
+        setIFrameSize([
+          ev.data._reearth_resize.width + "px",
+          ev.data._reearth_resize.height + "px",
+        ]);
+      } else {
         onMessage?.(ev.data);
       }
     };
@@ -47,17 +65,40 @@ export default function useHook({
     return () => {
       window.removeEventListener("message", cb);
     };
-  }, [onMessage]);
+  }, [autoResize, onMessage]);
 
   const onIframeLoad = useCallback(() => {
-    const win = iframeRef.current?.contentWindow;
-    const body = iframeRef.current?.contentDocument?.body;
-    if (!win || !body || !html) return;
+    const win = iFrameRef.current?.contentWindow;
+    const doc = iFrameRef.current?.contentDocument;
+    if (!win || !doc?.body || !html) return;
 
-    body.innerHTML = html;
+    // inject auto-resizing code
+    if (!doc.head.querySelector("script[id=_reearth_resize]")) {
+      const resize = document.createElement("script");
+      resize.id = "_reearth_resize";
+      // To include margin, getComputedStyle should be used.
+      resize.textContent = `
+        new ResizeObserver(entries => {
+          const el = document.body.parentElement;
+          const st = document.defaultView.getComputedStyle(el, "");
+          horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
+          verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
+          const resize = {
+            width: el.offsetWidth + horizontalMargin, 
+            height: el.offsetHeight + verticalMargin,
+          };
+          parent.postMessage({
+            _reearth_resize: resize
+          })
+        }).observe(document.body.parentElement);
+      `;
+      doc.head.appendChild(resize);
+    }
+
+    doc.body.innerHTML = html;
 
     // exec scripts
-    Array.from(body.querySelectorAll("script"))
+    Array.from(doc.body.querySelectorAll("script"))
       .map<[HTMLScriptElement, HTMLScriptElement]>(oldScript => {
         const newScript = document.createElement("script");
         for (const attr of Array.from(oldScript.attributes)) {
@@ -82,5 +123,10 @@ export default function useHook({
     onLoad?.();
   }, [html, onLoad]);
 
-  return { iframeRef, onLoad: onIframeLoad };
+  return {
+    ref: iFrameRef,
+    width: iFrameSize?.[0],
+    height: iFrameSize?.[1],
+    onLoad: onIframeLoad,
+  };
 }

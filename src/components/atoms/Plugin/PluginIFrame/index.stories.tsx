@@ -20,9 +20,7 @@ export const Default: Story<Props> = args => {
   };
   return (
     <div style={{ background: "#fff" }}>
-      <div style={{ width: "400px", height: "300px" }}>
-        <Component {...args} ref={ref} />
-      </div>
+      <Component {...args} ref={ref} />
       <p>
         <button onClick={postMessage}>postMessage</button>
       </p>
@@ -31,7 +29,12 @@ export const Default: Story<Props> = args => {
 };
 
 Default.args = {
+  autoResize: false,
   visible: true,
+  style: {
+    width: "400px",
+    height: "300px",
+  },
   html: `<h1>iframe</h1><script>
   window.addEventListener("message", ev => {
     if (ev.source !== parent) return;
