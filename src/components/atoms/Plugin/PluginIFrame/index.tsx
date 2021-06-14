@@ -1,5 +1,5 @@
 import React, { CSSProperties } from "react";
-import useHook, { RefType } from "./hook";
+import useHook, { RefType } from "./hooks";
 
 export type Ref = RefType;
 

@@ -4,12 +4,13 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props, Ref } from ".";
 
 export default {
-  title: "atoms/PluginIFrame",
+  title: "atoms/Plugin/PluginIFrame",
   component: Component,
   argTypes: {
     onLoad: { action: "onLoad" },
     onMessage: { action: "onMessage" },
   },
+  // parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
 export const Default: Story<Props> = args => {
