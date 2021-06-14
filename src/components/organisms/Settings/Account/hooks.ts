@@ -2,7 +2,13 @@ import { useCallback } from "react";
 import { useLocalState } from "@reearth/state";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 
-export type Theme = "DEFAULT" | "DARK" | "LIGHT";
+// export type Theme = "DEFAULT" | "DARK" | "LIGHT";
+
+export enum Theme {
+  Default = "DEFAULT",
+  Light = "LIGHT",
+  Dark = "DARK",
+}
 
 export default () => {
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
