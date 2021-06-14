@@ -20,6 +20,8 @@ const PluginIFrame: React.ForwardRefRenderFunction<Ref, Props> = (
 
   return html ? (
     <iframe
+      scrolling="no"
+      frameBorder="no"
       data-testid="iframe"
       srcDoc=""
       key={html}
