@@ -15,17 +15,21 @@ export default function useHook({
   onLoad?: () => void;
   onMessage?: (message: any) => void;
 } = {}): {
-  loaded?: boolean;
   iframeRef: RefObject<HTMLIFrameElement>;
   onLoad?: () => void;
 } {
+  const loaded = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const pendingMesages = useRef<any[]>([]);
 
   useImperativeHandle(
     ref,
     () => ({
       postMessage: (message: any) => {
-        if (!iframeRef.current?.contentWindow) return;
+        if (!loaded.current || !iframeRef.current?.contentWindow) {
+          pendingMesages.current.push(message);
+          return;
+        }
         iframeRef.current.contentWindow.postMessage(message, "*");
       },
     }),
@@ -46,9 +50,12 @@ export default function useHook({
   }, [onMessage]);
 
   const onIframeLoad = useCallback(() => {
+    const win = iframeRef.current?.contentWindow;
     const body = iframeRef.current?.contentDocument?.body;
-    if (!body || !html) return;
+    if (!win || !body || !html) return;
+
     body.innerHTML = html;
+
     // exec scripts
     Array.from(body.querySelectorAll("script"))
       .map<[HTMLScriptElement, HTMLScriptElement]>(oldScript => {
@@ -62,6 +69,16 @@ export default function useHook({
       .forEach(([oldScript, newScript]) => {
         oldScript.parentNode?.replaceChild(newScript, oldScript);
       });
+
+    // post pending messages
+    if (pendingMesages.current.length) {
+      for (const msg of pendingMesages.current) {
+        win.postMessage(msg, "*");
+      }
+      pendingMesages.current = [];
+    }
+
+    loaded.current = true;
     onLoad?.();
   }, [html, onLoad]);
 
