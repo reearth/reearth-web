@@ -13,9 +13,10 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
+import VirtualAssetCard from "../VirtualAssetCard";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
-import { useCallback } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 
 export type Asset = AssetType;
 
@@ -79,6 +80,23 @@ const AssetContainer: React.FC<Props> = ({
     }
   }, [onRemove, selectedAssets]);
 
+  const listRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    if (listRef.current?.offsetWidth) {
+      setContainerWidth(listRef.current?.offsetWidth);
+    }
+  }, [containerWidth]);
+
+  const handleResize = () => {
+    if (listRef.current?.offsetWidth) {
+      setContainerWidth(listRef.current?.offsetWidth);
+    }
+  };
+
+  window.addEventListener("resize", handleResize);
+
   return (
     <Wrapper>
       <ButtonWrapper onRemove={onRemove}>
@@ -135,7 +153,7 @@ const AssetContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper direction="column" justify="space-between">
+      <AssetWrapper ref={listRef}>
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -178,6 +196,11 @@ const AssetContainer: React.FC<Props> = ({
                     checked={currentSaved === a}
                   />
                 ))}
+            <VirtualAssetCard
+              containerWidth={containerWidth}
+              cardSize={layoutType}
+              assetsLength={assets?.length}
+            />
           </AssetList>
         )}
         <Divider margin="0" />
@@ -190,8 +213,11 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled(Flex)`
+const AssetWrapper = styled.div`
   // height: 425px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const ButtonWrapper = styled.div<{ onRemove?: (id: string) => void }>`
@@ -206,11 +232,6 @@ const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
-  }
-
-  &::after {
-    content: "";
-    flex: ${({ layoutType }) => (layoutType === "medium" ? "0 33%" : "auto")};
   }
 `;
 

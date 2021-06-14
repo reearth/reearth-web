@@ -57,16 +57,18 @@ const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   box-shadow: 0 6px 6px -6px ${props => props.theme.colors.other.black};
   border: 1px solid
     ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
-  margin: ${({ cardSize }) => (cardSize === "small" ? "5px" : "10px")};
+  /* margin: ${({ cardSize }) => (cardSize === "small" ? "5px" : "10px")}; */
+  margin: 12px;
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};
   width: ${({ cardSize }) =>
-    cardSize === "small" ? "104px" : cardSize === "medium" ? "163px" : "218px"};
+    cardSize === "small" ? "104px" : cardSize === "medium" ? "192px" : "274px"};
   height: ${({ cardSize }) =>
-    cardSize === "small" ? "104px" : cardSize === "medium" ? "168px" : "234px"};
+    cardSize === "small" ? "104px" : cardSize === "medium" ? "186px" : "257px"};
   position: relative;
   cursor: pointer;
   color: ${({ theme }) => theme.assetCard.text};
+  box-sizing: border-box;
 
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};
