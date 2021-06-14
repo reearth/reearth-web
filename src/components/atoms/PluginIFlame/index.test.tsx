@@ -11,11 +11,11 @@ test("works", async () => {
   const [promise, resolve] = deferred();
   rerender(<Component html="<h1>Hoge</h1>" onLoad={resolve} />);
   expect(screen.getByTestId("iframe")).toBeInTheDocument();
-  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument.body.innerHTML).toBe(
+  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body.innerHTML).toBe(
     "",
   );
   await promise;
-  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument.body.innerHTML).toBe(
+  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body.innerHTML).toBe(
     "<h1>Hoge</h1>",
   );
 
@@ -23,11 +23,11 @@ test("works", async () => {
   const [promise2, resolve2] = deferred();
   rerender(<Component html="<h1>Foo</h1>" onLoad={resolve2} />);
   expect(screen.getByTestId("iframe")).toBeInTheDocument();
-  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument.body.innerHTML).toBe(
+  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body.innerHTML).toBe(
     "",
   );
   await promise2;
-  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument.body.innerHTML).toBe(
+  expect((screen.getByTestId("iframe") as HTMLIFrameElement).contentDocument?.body.innerHTML).toBe(
     "<h1>Foo</h1>",
   );
 });
@@ -54,12 +54,15 @@ test("works", async () => {
 //   expect(onMessage).toBeCalledWith({ foo: "bar" });
 // });
 
-const deferred = (): [Promise<void>, () => void] => {
-  let resolve: () => void;
+const deferred = (): [Promise<void>, () => void, () => void] => {
+  let resolve: () => void = () => {};
+  let reject: () => void = () => {};
   return [
-    new Promise<void>(r => {
+    new Promise<void>((r, rj) => {
       resolve = r;
+      reject = rj;
     }),
     resolve,
+    reject,
   ];
 };

@@ -13,9 +13,9 @@ export default {
 } as Meta;
 
 export const Default: Story<Props> = args => {
-  const ref = useRef<Ref>();
+  const ref = useRef<Ref>(null);
   const postMessage = () => {
-    ref.current.postMessage({ foo: new Date().toISOString() });
+    ref.current?.postMessage({ foo: new Date().toISOString() });
   };
   return (
     <div style={{ background: "#fff" }}>

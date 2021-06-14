@@ -47,20 +47,20 @@ export default function useHook({
 
   const onIframeLoad = useCallback(() => {
     const body = iframeRef.current?.contentDocument?.body;
-    if (!body) return;
+    if (!body || !html) return;
     body.innerHTML = html;
     // exec scripts
     Array.from(body.querySelectorAll("script"))
       .map<[HTMLScriptElement, HTMLScriptElement]>(oldScript => {
         const newScript = document.createElement("script");
-        for (const attr of oldScript.attributes) {
+        for (const attr of Array.from(oldScript.attributes)) {
           newScript.setAttribute(attr.name, attr.value);
         }
         newScript.appendChild(document.createTextNode(oldScript.innerText));
         return [oldScript, newScript];
       })
       .forEach(([oldScript, newScript]) => {
-        oldScript.parentNode.replaceChild(newScript, oldScript);
+        oldScript.parentNode?.replaceChild(newScript, oldScript);
       });
     onLoad?.();
   }, [html, onLoad]);
