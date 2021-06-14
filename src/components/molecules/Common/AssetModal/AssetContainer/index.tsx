@@ -31,6 +31,7 @@ export type Props = {
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
+  isSettingPage?: boolean;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -43,6 +44,7 @@ const AssetContainer: React.FC<Props> = ({
   selectedAssets,
   selectAsset,
   fileType,
+  isSettingPage,
 }) => {
   const intl = useIntl();
   const {
@@ -134,7 +136,7 @@ const AssetContainer: React.FC<Props> = ({
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
 
-        <LayoutButtons justify="center">
+        <LayoutButtons justify="left">
           <StyledIcon
             icon="assetList"
             onClick={() => setLayoutType("list")}
@@ -153,7 +155,7 @@ const AssetContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper ref={listRef}>
+      <AssetWrapper ref={listRef} isSettingPage={isSettingPage}>
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -213,8 +215,9 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled.div`
-  // height: 425px;
+const AssetWrapper = styled.div<{ isSettingPage?: boolean }>`
+  height: ${({ isSettingPage }) => (isSettingPage ? "" : "425px")};
+  min-height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -226,8 +229,9 @@ const ButtonWrapper = styled.div<{ onRemove?: (id: string) => void }>`
 `;
 
 const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
-  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
+  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"};
   // max-height: 458px;
+
   overflow-y: scroll;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -236,7 +240,7 @@ const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
 `;
 
 const NavBar = styled(Flex)`
-  margin: ${metricsSizes["s"]}px;
+  margin: ${metricsSizes["m"]}px;
   flex: 1;
 `;
 
@@ -245,11 +249,12 @@ const SelectWrapper = styled(Flex)`
 `;
 
 const LayoutButtons = styled(Flex)`
+  margin-left: ${metricsSizes["l"]}px;
   flex: 3;
 `;
 
 const StyledIcon = styled(Icon)<{ selected?: boolean }>`
-  margin-left: ${metricsSizes["s"]}px;
+  margin-left: ${metricsSizes["m"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
   color: ${({ theme }) => theme.colors.text.main};

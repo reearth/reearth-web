@@ -26,19 +26,8 @@ const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {
       onRemove={onRemove}
       selectedAssets={selectedAssets}
       selectAsset={selectAsset}
+      isSettingPage={true}
     />
-    // <Section
-    //   title={`${intl.formatMessage({ defaultMessage: "All Assets" })} (${assets?.length})`}
-    //   actions={
-    //     <Button
-    //       large
-    //       buttonType="secondary"
-    //       text={intl.formatMessage({ defaultMessage: "Add Asset" })}
-    //       onClick={handleFileSelect}
-    //     />
-    //   }>
-    //   <StyledAssetList items={assets} onRemove={onRemove} />
-    // </Section>
   );
 };
 
