@@ -25,8 +25,8 @@ export type Props = {
   assets?: Asset[];
   isMultipleSelectable?: boolean;
   accept?: string;
-  onCreateAsset?: (file: File) => void;
-  onRemove?: (id: string) => void;
+  onCreateAsset?: (files: FileList) => void;
+  onRemove?: (assets: AssetType[]) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
@@ -78,7 +78,7 @@ const AssetContainer: React.FC<Props> = ({
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
-      onRemove?.(selectedAssets[0].id);
+      onRemove?.(selectedAssets);
     }
   }, [onRemove, selectedAssets]);
 
@@ -181,7 +181,7 @@ const AssetContainer: React.FC<Props> = ({
                     key={a.id}
                     asset={a}
                     isImage={fileType === "image"}
-                    onCheck={() => alert(a)}
+                    onCheck={() => alert(a)} //UPDATE HERREEEEEEEEEE
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />
@@ -223,7 +223,7 @@ const AssetWrapper = styled.div<{ isSettingPage?: boolean }>`
   justify-content: space-between;
 `;
 
-const ButtonWrapper = styled.div<{ onRemove?: (id: string) => void }>`
+const ButtonWrapper = styled.div<{ onRemove?: (assets: AssetType[]) => void }>`
   display: flex;
   justify-content: ${({ onRemove }) => (onRemove ? "flex-end" : "center")};
 `;

@@ -12,8 +12,8 @@ type Asset = {
 
 type Props = {
   assets?: Asset[];
-  onCreate?: (file: File) => void;
-  onRemove?: (id: string) => void;
+  onCreate?: (files: FileList) => void;
+  onRemove?: (assets: Asset[]) => void;
 };
 
 const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {
@@ -25,6 +25,7 @@ const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {
       onCreateAsset={onCreate}
       onRemove={onRemove}
       selectedAssets={selectedAssets}
+      isMultipleSelectable
       selectAsset={selectAsset}
       isSettingPage={true}
     />

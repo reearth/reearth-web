@@ -8,6 +8,15 @@ import {
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
+export type Asset = {
+  id: string;
+  teamId: string;
+  name: string;
+  size: number;
+  url: string;
+  contentType: string;
+};
+
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 type Params = {
@@ -35,28 +44,34 @@ export default (params: Params) => {
   const [createAssetMutation] = useCreateAssetMutation();
 
   const createAssets = useCallback(
-    (file: File) =>
+    (files: FileList) =>
       (async () => {
         if (teamId) {
-          await createAssetMutation({
-            variables: { teamId, file },
-            refetchQueries: ["Assets"],
-          });
+          await Promise.all(
+            Array.from(files).map(file => createAssetMutation({ variables: { teamId, file } })),
+          );
+
+          await refetch();
         }
       })(),
-    [createAssetMutation, teamId],
+    [createAssetMutation, refetch, teamId],
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
 
   const removeAsset = useCallback(
-    (assetId: string) =>
+    (assets: Asset[]) =>
       (async () => {
-        await removeAssetMutation({ variables: { assetId } });
-
-        await refetch();
+        if (teamId) {
+          await Promise.all(
+            assets.map(asset => {
+              const assetId = asset.id;
+              removeAssetMutation({ variables: { assetId }, refetchQueries: ["Assets"] });
+            }),
+          );
+        }
       })(),
-    [removeAssetMutation, refetch],
+    [removeAssetMutation, teamId],
   );
 
   return {
