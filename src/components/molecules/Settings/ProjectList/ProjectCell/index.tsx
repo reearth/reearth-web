@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useIntl } from "react-intl";
+import defaultProjectImage from "./defaultProjectImage.jpg";
 
 // Components
 import PublicationStatus, {
@@ -29,43 +30,74 @@ export type Props = {
 const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
   const intl = useIntl();
   const theme = useTheme();
+  const [isHover, setHover] = useState(false);
 
   return (
-    <Wrapper project={project} onClick={() => onSelect?.(project)}>
-      <Title size="xl" color={theme.projectCell.text}>
-        {project.name ? project.name : intl.formatMessage({ defaultMessage: "No Title Project" })}
-      </Title>
-      <Desc size="s" color={theme.projectCell.text}>
-        {project.description
-          ? project.description
-          : intl.formatMessage({ defaultMessage: "No Description..." })}
-      </Desc>
-      <PublicationStatus status={project.status} />
-    </Wrapper>
+    <StyledWrapper project={project}>
+      <Wrapper
+        project={project}
+        onClick={() => onSelect?.(project)}
+        isHover={isHover}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        <Title size="l" color={theme.projectCell.title}>
+          {project.name ? project.name : intl.formatMessage({ defaultMessage: "No Title Project" })}
+        </Title>
+        {isHover && (
+          <DescriptionWrapper>
+            <Desc size="s" color={theme.projectCell.description} isParagraph={true}>
+              {project.description
+                ? project.description
+                : intl.formatMessage({ defaultMessage: "No Description..." })}
+            </Desc>
+          </DescriptionWrapper>
+        )}
+        <PublicationStatus status={project.status} color={theme.projectCell.description} />
+      </Wrapper>
+    </StyledWrapper>
   );
 };
 
-const Wrapper = styled.div<{ project: Project }>`
+const StyledWrapper = styled.div<{ project: Project }>`
   background: ${props =>
-    props.project.imageUrl ? `url(${props.project.imageUrl})` : props.theme.colors.bg[3]};
+    props.project.imageUrl ? `url(${props.project.imageUrl})` : `url(${defaultProjectImage})`};
   background-size: cover;
-  color: ${props => props.theme.projectCell.text};
-  padding: 24px 16px;
+  background-position: center;
+  ${props => !props.project.imageUrl && "background-size: 400px 240px;"};
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
   height: 240px;
+`;
+
+const Wrapper = styled.div<{ project: Project; isHover?: boolean }>`
+  box-sizing: border-box;
+  padding: 24px 16px;
   cursor: pointer;
+  height: 100%;
+  background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const Title = styled(Text)`
   text-align: left;
-  margin-bottom: 130px;
   user-select: none;
+`;
+
+const DescriptionWrapper = styled.div`
+  margin-top: 24px;
+  flex: 1;
+  width: 90%;
 `;
 
 const Desc = styled(Text)`
   text-align: left;
   user-select: none;
-  margin-bottom: 35px;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  display: -webkit-inline-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export default ProjectCell;

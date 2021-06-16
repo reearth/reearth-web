@@ -5,7 +5,6 @@ import { useIntl } from "react-intl";
 import { styled, useTheme } from "@reearth/theme";
 import { Team as TeamType } from "../WorkspaceList";
 import Text from "@reearth/components/atoms/Text";
-import Icon from "@reearth/components/atoms/Icon";
 
 export type Team = TeamType;
 
@@ -22,16 +21,11 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
   const theme = useTheme();
 
   return (
-    <Wrapper className={className} team={team}>
+    <Wrapper className={className} team={team} onClick={() => onSelect?.(team)}>
       <TopWrapper>
         <Text size="xl" color={theme.main.text} otherProperties={{ userSelect: "none" }}>
-          {personal
-            ? team.name + "'s Personal Workspace"
-            : team.name
-            ? team.name
-            : intl.formatMessage({ defaultMessage: "No Title Workspace" })}
+          {team.name ? team.name : intl.formatMessage({ defaultMessage: "No Title Workspace" })}
         </Text>
-        <StyledIcon icon="settings" size={24} onClick={() => onSelect?.(team)} />
       </TopWrapper>
       {personal ? (
         <Text size="m" color={theme.colors.text.weak}>
@@ -69,6 +63,11 @@ const Wrapper = styled.div<{ team: Team }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.bg[4]};
+  }
 `;
 
 const TopWrapper = styled.div`
@@ -90,18 +89,6 @@ const StyledList = styled.ul`
 const StyledListItem = styled.li`
   list-style-type: none;
   margin: 8px;
-`;
-
-const StyledIcon = styled(Icon)`
-  border-radius: 4px;
-  margin-bottom: 12px;
-  padding: 4px;
-  color: ${({ theme }) => theme.colors.text.main};
-  cursor: pointer;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.bg[5]};
-  }
 `;
 
 export default WorkspaceCell;

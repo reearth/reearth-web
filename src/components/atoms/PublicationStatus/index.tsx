@@ -23,6 +23,7 @@ const PublicationStatus: React.FC<PublishStatusProps> = ({
   url,
   alias,
   size,
+  color,
 }) => {
   const intl = useIntl();
   const text =
@@ -36,7 +37,7 @@ const PublicationStatus: React.FC<PublishStatusProps> = ({
       <Text
         size={size === "lg" ? "m" : size === "md" ? "s" : "xs"}
         otherProperties={{ userSelect: "none" }}
-        customColor>
+        color={color}>
         {status === "published" && alias ? (
           <PublishLink href={`${url?.[0] ?? ""}/${alias}${url?.[1]}`} target="blank">
             {status && text}

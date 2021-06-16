@@ -121,7 +121,8 @@ export type Theme = {
     bg: string;
     border: string;
     shadow: string;
-    text: string;
+    title: string;
+    description: string;
   };
   assetCard: {
     bg: string;
