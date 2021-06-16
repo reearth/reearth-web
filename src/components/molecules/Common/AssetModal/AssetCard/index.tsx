@@ -11,7 +11,6 @@ export type Props = {
   className?: string;
   name: string;
   url: string;
-  isImage?: boolean;
   cardSize?: CardSize;
   checked?: boolean;
   selected?: boolean;
@@ -22,7 +21,6 @@ const AssetCard: React.FC<Props> = ({
   className,
   name,
   url,
-  isImage,
   cardSize,
   checked,
   selected,
@@ -35,8 +33,12 @@ const AssetCard: React.FC<Props> = ({
       selected={selected}
       cardSize={cardSize}
       onClick={() => onCheck?.(!check)}>
-      <ImgWrapper cardSize={cardSize} url={url}>
-        {!isImage && <Icon icon="file" />}
+      <ImgWrapper cardSize={cardSize}>
+        {/\.(jpg|jpeg|png|gif|GIF|JPG|PNG)$/.test(url) ? (
+          <PreviewImage url={url}></PreviewImage>
+        ) : (
+          <Icon icon="file"></Icon>
+        )}
       </ImgWrapper>
       <FileName size={cardSize === "large" ? "m" : "xs"} cardSize={cardSize} customColor>
         {name}
@@ -83,6 +85,11 @@ const ImgWrapper = styled.div<{ cardSize?: CardSize; url?: string }>`
   justify-content: center;
   height: ${({ cardSize }) =>
     cardSize === "small" ? "77px" : cardSize === "medium" ? "126px" : "175px"};
+`;
+
+const PreviewImage = styled.div<{ url?: string }>`
+  width: 100%;
+  height: 100%;
   background-image: ${props => `url(${props.url})`};
   background-size: cover;
   background-position: center;

@@ -25,12 +25,18 @@ export type Props = {
   onCheck?: (checked: boolean) => void;
 };
 
-const AssetListItem: React.FC<Props> = ({ asset, selected, checked, isImage, onCheck }) => {
+const AssetListItem: React.FC<Props> = ({ asset, selected, checked, onCheck }) => {
   const theme = useTheme();
   return (
     <ListItem key={asset.id} align="center" selected={selected} onClick={() => onCheck?.(!check)}>
       <Icon
-        icon={checked ? "checkCircle" : isImage ? "image" : "file"}
+        icon={
+          checked
+            ? "checkCircle"
+            : /\.(jpg|jpeg|png|gif|GIF|JPG|PNG)$/.test(asset.url)
+            ? "image"
+            : "file"
+        }
         size={16}
         color={checked ? theme.assetCard.highlight : theme.assetCard.text}
       />

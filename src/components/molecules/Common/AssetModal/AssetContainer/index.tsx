@@ -180,8 +180,7 @@ const AssetContainer: React.FC<Props> = ({
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    isImage={fileType === "image"}
-                    onCheck={() => alert(a)} //UPDATE HERREEEEEEEEEE
+                    onCheck={() => handleAssetsSelect(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />
@@ -192,7 +191,6 @@ const AssetContainer: React.FC<Props> = ({
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    isImage={fileType === "image"}
                     onCheck={() => handleAssetsSelect(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
