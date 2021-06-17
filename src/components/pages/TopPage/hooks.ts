@@ -15,7 +15,6 @@ export default () => {
   const [{ currentTeam }, setLocalState] = useLocalState(s => ({ currentTeam: s.currentTeam }));
 
   const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
-
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   useEffect(() => {
