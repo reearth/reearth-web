@@ -4,6 +4,7 @@ import { useNavigate } from "@reach/router";
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useLocalState } from "@reearth/state";
 import { useTeamsQuery } from "@reearth/gql";
+import { reportError } from "@reearth/sentry";
 
 export type Mode = "layer" | "widget";
 
@@ -14,7 +15,10 @@ export default () => {
 
   const [{ currentTeam }, setLocalState] = useLocalState(s => ({ currentTeam: s.currentTeam }));
 
-  const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
+  const { data, loading, error: gqlError } = useTeamsQuery({ skip: !isAuthenticated });
+  if (gqlError) {
+    reportError(gqlError);
+  }
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   useEffect(() => {
@@ -24,10 +28,10 @@ export default () => {
   }, [isAuthenticated, navigate, currentTeam, setLocalState, data, teamId]);
 
   useEffect(() => {
-    if (authError || (!loading && !data?.me)) {
+    if (authError || (loading && data?.me === null) || gqlError) {
       logout();
     }
-  }, [authError, data?.me, loading, logout]);
+  }, [authError, data?.me, gqlError, loading, logout]);
 
   return {
     isLoading,
