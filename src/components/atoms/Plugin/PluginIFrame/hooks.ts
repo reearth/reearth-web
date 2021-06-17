@@ -78,19 +78,21 @@ export default function useHook({
       resize.id = "_reearth_resize";
       // To include margin, getComputedStyle should be used.
       resize.textContent = `
-        new ResizeObserver(entries => {
-          const el = document.body.parentElement;
-          const st = document.defaultView.getComputedStyle(el, "");
-          horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
-          verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
-          const resize = {
-            width: el.offsetWidth + horizontalMargin, 
-            height: el.offsetHeight + verticalMargin,
-          };
-          parent.postMessage({
-            _reearth_resize: resize
-          })
-        }).observe(document.body.parentElement);
+        if ("ResizeObserver" in window) {
+          new window.ResizeObserver(entries => {
+            const el = document.body.parentElement;
+            const st = document.defaultView.getComputedStyle(el, "");
+            horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
+            verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
+            const resize = {
+              width: el.offsetWidth + horizontalMargin, 
+              height: el.offsetHeight + verticalMargin,
+            };
+            parent.postMessage({
+              _reearth_resize: resize
+            })
+          }).observe(document.body.parentElement);
+        }
       `;
       doc.head.appendChild(resize);
     }
