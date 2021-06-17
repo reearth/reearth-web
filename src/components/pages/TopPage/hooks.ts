@@ -24,7 +24,7 @@ export default () => {
   }, [isAuthenticated, navigate, currentTeam, setLocalState, data, teamId]);
 
   useEffect(() => {
-    if (authError || (!loading && !data?.me)) {
+    if (authError || (!loading && data?.me === null)) {
       logout();
     }
   }, [authError, data?.me, loading, logout]);
