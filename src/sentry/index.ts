@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/browser";
 
-export const initializeSentry = () => {
+export const initialize = () => {
   const sentryDSN = window.REEARTH_CONFIG?.sentryDsn;
   const sentryEnv = window.REEARTH_CONFIG?.sentryEnv;
   if (sentryDSN) {
