@@ -13,7 +13,7 @@ export type Props = {
   onMessage?: (message: any) => void;
 };
 
-const PluginIFrame: React.ForwardRefRenderFunction<Ref, Props> = (
+const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   { autoResize, className, html, style, visible, onLoad, onMessage },
   ref,
 ) => {
@@ -45,4 +45,4 @@ const PluginIFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   ) : null;
 };
 
-export default React.forwardRef(PluginIFrame);
+export default React.forwardRef(IFrame);

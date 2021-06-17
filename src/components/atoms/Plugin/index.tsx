@@ -1,7 +1,7 @@
 import React, { CSSProperties } from "react";
 
 import useHook, { IFrameAPI } from "./hooks";
-import PluginIFrame from "./PluginIFrame";
+import IFrame from "./IFrame";
 
 export type Props = {
   className?: string;
@@ -34,7 +34,7 @@ const Plugin: React.FC<Props> = ({
   });
 
   return (
-    <PluginIFrame
+    <IFrame
       autoResize={iframeAutoResize}
       className={className}
       html={iFrameHtml}

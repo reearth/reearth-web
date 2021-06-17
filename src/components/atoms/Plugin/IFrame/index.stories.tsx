@@ -4,7 +4,7 @@ import { Meta, Story } from "@storybook/react";
 import Component, { Props, Ref } from ".";
 
 export default {
-  title: "atoms/Plugin/PluginIFrame",
+  title: "atoms/Plugin/IFrame",
   component: Component,
   argTypes: {
     onLoad: { action: "onLoad" },

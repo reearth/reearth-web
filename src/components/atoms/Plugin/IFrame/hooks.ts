@@ -13,12 +13,14 @@ export type RefType = {
 };
 
 export default function useHook({
+  autoResizeMessageKey = "___iframe_auto_resize___",
   html,
   ref,
   autoResize,
   onLoad,
   onMessage,
 }: {
+  autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
   autoResize?: boolean;
@@ -52,11 +54,10 @@ export default function useHook({
   useEffect(() => {
     const cb = (ev: MessageEvent<any>) => {
       if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow) return;
-      if (ev.data?._reearth_resize) {
-        setIFrameSize([
-          ev.data._reearth_resize.width + "px",
-          ev.data._reearth_resize.height + "px",
-        ]);
+      if (ev.data?.[autoResizeMessageKey]) {
+        const { width, height } = ev.data?.[autoResizeMessageKey];
+        if (typeof width !== "string" || typeof height !== "string") return;
+        setIFrameSize([width + "px", height + "px"]);
       } else {
         onMessage?.(ev.data);
       }
@@ -65,7 +66,7 @@ export default function useHook({
     return () => {
       window.removeEventListener("message", cb);
     };
-  }, [autoResize, onMessage]);
+  }, [autoResize, autoResizeMessageKey, onMessage]);
 
   const onIframeLoad = useCallback(() => {
     const win = iFrameRef.current?.contentWindow;
@@ -89,7 +90,7 @@ export default function useHook({
               height: el.offsetHeight + verticalMargin,
             };
             parent.postMessage({
-              _reearth_resize: resize
+              [${JSON.stringify(autoResizeMessageKey)}]: resize
             })
           }).observe(document.body.parentElement);
         }
@@ -123,7 +124,7 @@ export default function useHook({
 
     loaded.current = true;
     onLoad?.();
-  }, [html, onLoad]);
+  }, [autoResizeMessageKey, html, onLoad]);
 
   return {
     ref: iFrameRef,
