@@ -8,6 +8,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { store, localSlice } from "@reearth/state";
 import fragmentMatcher from "./fragmentMatcher.json";
 import { SentryLink } from "apollo-link-sentry";
+import { reportError } from "@reearth/sentry";
 
 const Provider: React.FC = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
@@ -35,6 +36,7 @@ const Provider: React.FC = ({ children }) => {
     if (!networkError && !graphQLErrors) return;
     const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
     store.dispatch(localSlice.actions.set({ error }));
+    error && reportError(error);
   });
 
   const sentryLink = new SentryLink({ uri: endpoint });
@@ -51,13 +53,6 @@ const Provider: React.FC = ({ children }) => {
       },
     },
   });
-
-  // const testLink = new ApolloLink((operation, forward) => {
-  //   return forward(operation).map(res => {
-  //     res.data = { error: "error!!!!" };
-  //     return res;
-  //   });
-  // });
 
   const client = new ApolloClient({
     uri: endpoint,
