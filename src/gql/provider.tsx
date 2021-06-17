@@ -36,7 +36,7 @@ const Provider: React.FC = ({ children }) => {
     if (!networkError && !graphQLErrors) return;
     const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
     store.dispatch(localSlice.actions.set({ error }));
-    error && reportError(error);
+    if (error) reportError(error);
   });
 
   const sentryLink = new SentryLink({ uri: endpoint });
