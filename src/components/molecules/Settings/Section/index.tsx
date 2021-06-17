@@ -1,5 +1,4 @@
 import React from "react";
-import Field from "@reearth/components/molecules/Settings/Field";
 import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
 
@@ -15,11 +14,7 @@ const Section: React.FC<Props> = ({ title, actions, children }) => {
       {title && (
         <>
           <SectionHeader>
-            <Text
-              size="l"
-              weight="normal"
-              color={theme.main.strongText}
-              otherProperties={{ flex: 1 }}>
+            <Text size="l" weight="normal" color={theme.main.strongText}>
               {title}
             </Text>
             {actions}
@@ -27,35 +22,27 @@ const Section: React.FC<Props> = ({ title, actions, children }) => {
           <Divider />
         </>
       )}
-      <SectionItem>
-        <Field>{children}</Field>
-      </SectionItem>
+      <SectionItem>{children}</SectionItem>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
-  max-width: 100%;
-`;
+const Wrapper = styled.div``;
 
 const SectionHeader = styled.div`
   padding: 16px 24px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  justify-content: space-between;
 `;
 
 const SectionItem = styled.div`
   padding: 16px 24px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 `;
 
 const Divider = styled.div`
-  width: 100%;
-  border-bottom: 1px solid #3f3d45;
+  border-bottom: ${props => `solid 1px ${props.theme.colors.outline.weak}`};
 `;
 
 export default Section;

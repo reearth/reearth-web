@@ -32,34 +32,32 @@ const Field: React.FC<Props> = ({ className, header, action, secondaryAction, bo
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  width: 100%;
+  justify-content: space-between;
+  justify-items: center;
   color: ${colors.text.main};
 
   &:not(:last-child) {
-    margin-bottom: 40px;
+    margin-bottom: 16px;
   }
+`;
+
+const Header = styled.div`
+  width: 216px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const ActionArea = styled.div`
   display: flex;
-  align-content: center;
-`;
-
-const Header = styled.div`
-  width: 220px;
-  margin-right: 20px;
-`;
-
-const Content = styled.div`
-  flex-grow: 1;
+  align-content: flex-end;
+  align-items: flex-start;
 `;
 
 const Action = styled.div`
-  flex-grow: 1;
   display: flex;
   justify-content: flex-end;
-  margin-left: 25px;
 `;
 
 export default Field;

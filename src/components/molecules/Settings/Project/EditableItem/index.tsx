@@ -130,7 +130,7 @@ const EditableItem: React.FC<Props> = ({
 
 const StyledIcon = styled(Icon)`
   padding: 0;
-  margin-left: 15px;
+  margin-left: 16px;
   cursor: pointer;
 
   &:hover {
@@ -139,7 +139,7 @@ const StyledIcon = styled(Icon)`
 `;
 
 const SelectFieldWrapper = styled.div`
-  width: 70%;
+  width: 200px;
 `;
 
 const ButtonWrapper = styled.div`
