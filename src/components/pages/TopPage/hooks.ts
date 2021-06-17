@@ -31,7 +31,7 @@ export default () => {
     if (authError || (loading && data?.me === null) || gqlError) {
       logout();
     }
-  }, [authError, data?.me, gqlError, loading, logout]);
+  }, [authError, data?.me, gqlError, isAuthenticated, loading, logout]);
 
   return {
     isLoading,

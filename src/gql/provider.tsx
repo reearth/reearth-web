@@ -52,6 +52,13 @@ const Provider: React.FC = ({ children }) => {
     },
   });
 
+  // const testLink = new ApolloLink((operation, forward) => {
+  //   return forward(operation).map(res => {
+  //     res.data = { error: "error!!!!" };
+  //     return res;
+  //   });
+  // });
+
   const client = new ApolloClient({
     uri: endpoint,
     link: ApolloLink.from([sentryLink, errorLink, authLink, uploadLink]),
