@@ -14,7 +14,7 @@ export default () => {
 
   const [{ currentTeam }, setLocalState] = useLocalState(s => ({ currentTeam: s.currentTeam }));
 
-  const { data, loading, error: gqlError } = useTeamsQuery({ skip: !isAuthenticated });
+  const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
 
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
@@ -25,10 +25,10 @@ export default () => {
   }, [isAuthenticated, navigate, currentTeam, setLocalState, data, teamId]);
 
   useEffect(() => {
-    if (authError || (loading && data?.me === null) || gqlError) {
+    if (authError || (isAuthenticated && !loading && data?.me === null)) {
       logout();
     }
-  }, [authError, data?.me, gqlError, isAuthenticated, loading, logout]);
+  }, [authError, data?.me, isAuthenticated, loading, logout]);
 
   return {
     isLoading,
