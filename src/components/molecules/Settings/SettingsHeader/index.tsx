@@ -33,6 +33,8 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
   );
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  padding: 16px 0;
+`;
 
 export default SettingsHeader;

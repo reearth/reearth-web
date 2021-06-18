@@ -9,7 +9,7 @@ export interface Props {
 const Logo: React.FC<Props> = ({ className }) => {
   return (
     <Wrapper className={className}>
-      <Icon icon="logo" />
+      <Icon icon="logo" size="100px" />
     </Wrapper>
   );
 };
