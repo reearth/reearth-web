@@ -37,7 +37,7 @@ const Wrapper = styled.div`
   color: ${colors.text.main};
 
   &:not(:last-child) {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
 `;
 
@@ -46,6 +46,8 @@ const Header = styled.div`
 `;
 
 const Content = styled.div`
+  max-height: 264px;
+  overflow: auto;
   flex: 1;
 `;
 
