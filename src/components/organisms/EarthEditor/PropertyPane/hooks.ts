@@ -187,6 +187,7 @@ export default (mode: Mode) => {
     (files: FileList) =>
       (async () => {
         if (teamId) {
+          // TODO: support multiple file uploads
           await Promise.all(
             Array.from(files).map(file =>
               createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),

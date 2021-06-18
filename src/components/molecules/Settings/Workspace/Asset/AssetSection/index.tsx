@@ -27,7 +27,7 @@ const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {
       selectedAssets={selectedAssets}
       isMultipleSelectable
       selectAsset={selectAsset}
-      isSettingPage={true}
+      isHeightFixed={true}
     />
   );
 };

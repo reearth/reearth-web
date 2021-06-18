@@ -11,11 +11,13 @@ export type Props = {
 
 const VirtualAssetCard: React.FC<Props> = ({ assetsLength, containerWidth, cardSize }) => {
   const [virtualWidth, setVirtualWidth] = useState(0);
+  const mediumSizeSpace = 216;
+  const smallSizeSpace = 128;
 
   const handleVirtualWidth = useCallback(() => {
     if (containerWidth) {
       if (assetsLength) {
-        const cardWidth = cardSize === "medium" ? 216 : 128;
+        const cardWidth = cardSize === "medium" ? mediumSizeSpace : smallSizeSpace;
         const numInrow = Math.floor(containerWidth / cardWidth);
         const lastRowNum = assetsLength % numInrow;
         const gapWidth = (containerWidth - cardWidth * numInrow) / (numInrow - 1);
@@ -34,7 +36,7 @@ const VirtualAssetCard: React.FC<Props> = ({ assetsLength, containerWidth, cardS
     handleVirtualWidth();
   }, [containerWidth, handleVirtualWidth]);
 
-  return <Wrapper width={virtualWidth} cardSize={cardSize}></Wrapper>;
+  return <Wrapper width={virtualWidth} cardSize={cardSize} />;
 };
 
 const Wrapper = styled.div<{ width?: number; cardSize?: CardSize }>`

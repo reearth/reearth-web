@@ -22,7 +22,7 @@ const SettingPage: React.FC<Props> = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(o => !o);
   };
 
   return (

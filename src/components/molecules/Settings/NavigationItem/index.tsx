@@ -1,7 +1,7 @@
 import React from "react";
 import { styled, fonts } from "@reearth/theme";
 import { Link } from "@reach/router";
-import colors from "@reearth/theme/colors";
+import { colors } from "@reearth/theme";
 
 export type Props = {
   name: string;

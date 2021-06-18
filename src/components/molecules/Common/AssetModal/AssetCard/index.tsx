@@ -34,7 +34,7 @@ const AssetCard: React.FC<Props> = ({
       cardSize={cardSize}
       onClick={() => onCheck?.(!check)}>
       <ImgWrapper cardSize={cardSize}>
-        {/\.(jpg|jpeg|png|gif|GIF|JPG|PNG)$/.test(url) ? (
+        {/\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JEPG|PNG|SVG|WEBP)$/.test(url) ? (
           <PreviewImage url={url}></PreviewImage>
         ) : (
           <Icon icon="file"></Icon>
@@ -59,7 +59,6 @@ const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   box-shadow: 0 6px 6px -6px ${props => props.theme.colors.other.black};
   border: 1px solid
     ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
-  /* margin: ${({ cardSize }) => (cardSize === "small" ? "5px" : "10px")}; */
   margin: 12px;
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};

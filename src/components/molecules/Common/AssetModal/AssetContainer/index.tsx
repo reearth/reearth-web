@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -16,7 +16,6 @@ import AssetSelect from "../AssetSelect";
 import VirtualAssetCard from "../VirtualAssetCard";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
-import { useCallback, useRef, useState, useEffect } from "react";
 
 export type Asset = AssetType;
 
@@ -31,7 +30,7 @@ export type Props = {
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
-  isSettingPage?: boolean;
+  isHeightFixed?: boolean;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -44,7 +43,7 @@ const AssetContainer: React.FC<Props> = ({
   selectedAssets,
   selectAsset,
   fileType,
-  isSettingPage,
+  isHeightFixed,
 }) => {
   const intl = useIntl();
   const {
@@ -155,7 +154,7 @@ const AssetContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper ref={listRef} isSettingPage={isSettingPage}>
+      <AssetWrapper ref={listRef} isHeightFixed={isHeightFixed}>
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -213,8 +212,8 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled.div<{ isSettingPage?: boolean }>`
-  height: ${({ isSettingPage }) => (isSettingPage ? "" : "425px")};
+const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
+  height: ${({ isHeightFixed }) => (isHeightFixed ? "" : "425px")};
   min-height: 400px;
   display: flex;
   flex-direction: column;
@@ -228,7 +227,6 @@ const ButtonWrapper = styled.div<{ onRemove?: (assets: AssetType[]) => void }>`
 
 const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
   ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"};
-  // max-height: 458px;
 
   overflow-y: scroll;
   scrollbar-width: none;
