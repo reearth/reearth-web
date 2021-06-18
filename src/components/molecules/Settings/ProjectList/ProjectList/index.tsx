@@ -10,6 +10,7 @@ import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Project = ProjectType;
 
@@ -79,11 +80,11 @@ const ProjectList: React.FC<Props> = ({
       ) : (
         <>
           {open && (
-            <ProjectListCotainner>
+            <ProjectListContainner>
               {projects?.map(project => (
                 <ProjectCell project={project} key={project.id} onSelect={onProjectSelect} />
               ))}
-            </ProjectListCotainner>
+            </ProjectListContainner>
           )}
         </>
       )}
@@ -95,9 +96,9 @@ const StyledIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
-const ProjectListCotainner = styled.div`
+const ProjectListContainner = styled.div`
   > * {
-    margin-bottom: 32px;
+    margin-bottom: ${metricsSizes["4xl"]}px;
   }
 `;
 

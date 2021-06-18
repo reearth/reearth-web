@@ -40,7 +40,7 @@ const VirtualAssetCard: React.FC<Props> = ({ assetsLength, containerWidth, cardS
 };
 
 const Wrapper = styled.div<{ width?: number; cardSize?: CardSize }>`
-  width: ${p => p.width}px;
+  width: ${props => props.width}px;
   ${({ width }) => (width === 0 ? "display: none;" : null)};
   box-sizing: border-box;
 `;

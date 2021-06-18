@@ -34,8 +34,8 @@ const AssetCard: React.FC<Props> = ({
       cardSize={cardSize}
       onClick={() => onCheck?.(!check)}>
       <ImgWrapper cardSize={cardSize}>
-        {/\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JEPG|PNG|SVG|WEBP)$/.test(url) ? (
-          <PreviewImage url={url}></PreviewImage>
+        {/\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(url) ? (
+          <PreviewImage url={url} />
         ) : (
           <Icon icon="file"></Icon>
         )}

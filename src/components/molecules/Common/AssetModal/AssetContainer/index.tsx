@@ -100,7 +100,7 @@ const AssetContainer: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <ButtonWrapper onRemove={onRemove}>
+      <ButtonWrapper justify={onRemove ? "flex-end" : "center"}>
         <Button
           large
           text={
@@ -220,13 +220,10 @@ const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
   justify-content: space-between;
 `;
 
-const ButtonWrapper = styled.div<{ onRemove?: (assets: AssetType[]) => void }>`
-  display: flex;
-  justify-content: ${({ onRemove }) => (onRemove ? "flex-end" : "center")};
-`;
+const ButtonWrapper = styled(Flex)``;
 
 const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
-  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"};
+  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
 
   overflow-y: scroll;
   scrollbar-width: none;

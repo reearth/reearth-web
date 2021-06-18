@@ -4,6 +4,7 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import SelectField from "@reearth/components/molecules/Settings/SelectField";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled, colors } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 
 export type Props = {
@@ -130,7 +131,7 @@ const EditableItem: React.FC<Props> = ({
 
 const StyledIcon = styled(Icon)`
   padding: 0;
-  margin-left: 16px;
+  margin-left: ${metricsSizes["l"]}px;
   cursor: pointer;
 
   &:hover {

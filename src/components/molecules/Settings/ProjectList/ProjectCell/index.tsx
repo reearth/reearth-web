@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
-import defaultProjectImage from "./defaultProjectImage.jpg";
 
 // Components
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/components/atoms/PublicationStatus";
-
 import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
+
+import defaultProjectImage from "./defaultProjectImage.jpg";
 
 export type Status = StatusType;
 
@@ -61,16 +62,15 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
 const StyledWrapper = styled.div<{ project: Project }>`
   background: ${props =>
     props.project.imageUrl ? `url(${props.project.imageUrl})` : `url(${defaultProjectImage})`};
-  background-size: cover;
+  background-size: ${props => (props.project.imageUrl ? "cover" : "400px 240px")};
   background-position: center;
-  ${props => !props.project.imageUrl && "background-size: 400px 240px;"};
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
   height: 240px;
 `;
 
 const Wrapper = styled.div<{ project: Project; isHover?: boolean }>`
   box-sizing: border-box;
-  padding: 24px 16px;
+  padding: ${metricsSizes["2xl"]}px ${metricsSizes["l"]}px;
   cursor: pointer;
   height: 100%;
   background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
@@ -85,7 +85,7 @@ const Title = styled(Text)`
 `;
 
 const DescriptionWrapper = styled.div`
-  margin-top: 24px;
+  margin-top: ${metricsSizes["2xl"]}px;
   flex: 1;
   width: 90%;
 `;

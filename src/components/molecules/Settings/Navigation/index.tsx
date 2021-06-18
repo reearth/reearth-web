@@ -1,9 +1,10 @@
 import React from "react";
 import { useIntl } from "react-intl";
 import NavigationItem from "@reearth/components/molecules/Settings/NavigationItem";
-import Logo from "@reearth/components/molecules/Settings/Logo";
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
+import Divider from "@reearth/components/atoms/Divider";
+import Icon from "@reearth/components/atoms/Icon";
 
 type Team = {
   id?: string;
@@ -25,13 +26,15 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
 
   return (
     <Wrapper>
-      <Logo />
+      <LogoWrapper>
+        <Icon icon="logo" size="100px" />
+      </LogoWrapper>
       <NavigationList>
         <NavigationItem
           to="/settings/account"
           name={intl.formatMessage({ defaultMessage: "My Account" })}
         />
-        <Line />
+        <Divider margin="0" />
         <NavigationItem
           to={`/settings/workspaces`}
           name={intl.formatMessage({ defaultMessage: "My Workspaces list" })}>
@@ -47,7 +50,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
             </NavigationItem>
           )}
         </NavigationItem>
-        <Line />
+        <Divider margin="0" />
         <NavigationItem
           to={`/settings/workspace/${team?.id}/projects`}
           name={intl.formatMessage({ defaultMessage: "Projects list" })}>
@@ -79,16 +82,21 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
+const LogoWrapper = styled.div`
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${props => props.theme.main.text};
+  margin-bottom: 32px;
+`;
+
 const NavigationList = styled.ul`
   width: 100%;
   margin: 0;
   padding: 0;
   font-size: ${fonts.sizes.m}px;
-`;
-
-const Line = styled.hr`
-  border: 1px solid ${({ theme }) => theme.colors.outline.weakest};
-  margin: 0;
 `;
 
 export default Navigation;

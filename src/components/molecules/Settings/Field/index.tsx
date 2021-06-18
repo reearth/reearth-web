@@ -2,6 +2,7 @@ import React from "react";
 
 import { styled, colors } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 type Props = {
   className?: string;
@@ -37,7 +38,7 @@ const Wrapper = styled.div`
   color: ${colors.text.main};
 
   &:not(:last-child) {
-    margin-bottom: 24px;
+    margin-bottom: ${metricsSizes["2xl"]}px;
   }
 `;
 

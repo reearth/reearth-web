@@ -1,6 +1,7 @@
 import React from "react";
 import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   title?: string;
@@ -10,7 +11,7 @@ export type Props = {
 const Section: React.FC<Props> = ({ title, actions, children }) => {
   const theme = useTheme();
   return (
-    <Wrapper>
+    <>
       {title && (
         <>
           <SectionHeader>
@@ -23,20 +24,18 @@ const Section: React.FC<Props> = ({ title, actions, children }) => {
         </>
       )}
       <SectionItem>{children}</SectionItem>
-    </Wrapper>
+    </>
   );
 };
 
-const Wrapper = styled.div``;
-
 const SectionHeader = styled.div`
-  padding: 16px 24px;
+  padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   display: flex;
   justify-content: space-between;
 `;
 
 const SectionItem = styled.div`
-  padding: 16px 24px;
+  padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   display: flex;
   flex-direction: column;
 `;

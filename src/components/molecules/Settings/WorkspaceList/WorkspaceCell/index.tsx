@@ -5,6 +5,7 @@ import { useIntl } from "react-intl";
 import { styled, useTheme } from "@reearth/theme";
 import { Team as TeamType } from "../WorkspaceList";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Team = TeamType;
 
@@ -58,7 +59,7 @@ const Wrapper = styled.div<{ team: Team }>`
   background: ${props => props.theme.colors.bg[3]};
   box-sizing: border-box;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
-  padding: 16px 24px;
+  padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
   height: 240px;
   display: flex;
   flex-direction: column;
@@ -88,7 +89,7 @@ const StyledList = styled.ul`
 
 const StyledListItem = styled.li`
   list-style-type: none;
-  margin: 8px;
+  margin: ${metricsSizes["s"]}px;
 `;
 
 export default WorkspaceCell;

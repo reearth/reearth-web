@@ -105,7 +105,7 @@ const Header: React.FC<Props> = ({
 
 const Wrapper = styled.header`
   width: 100%;
-  min-height: ${metrics.headerHeight}px;
+  height: ${metrics.headerHeight}px;
   background: ${props => props.theme.header.bg};
   display: flex;
   flex-direction: column;

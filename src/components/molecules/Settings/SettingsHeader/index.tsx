@@ -2,6 +2,7 @@ import React from "react";
 import { useIntl } from "react-intl";
 import { styled, useTheme } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   title?: string;
@@ -25,7 +26,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
         {currentProject} {title && currentProject && " / "}
         {title}
       </Text>
-      <Text size="m" className={theme.main.text} otherProperties={{ marginTop: "12px" }}>
+      <Text size="m" color={theme.main.text} otherProperties={{ marginTop: "12px" }}>
         {currentWorkspace?.personal &&
           intl.formatMessage({ defaultMessage: "(Your personal workspace)" })}
       </Text>
@@ -34,7 +35,7 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
 };
 
 const Wrapper = styled.div`
-  padding: 16px 0;
+  padding: ${metricsSizes["l"]}px 0;
 `;
 
 export default SettingsHeader;

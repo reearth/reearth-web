@@ -33,7 +33,7 @@ const AssetListItem: React.FC<Props> = ({ asset, selected, checked, onCheck }) =
         icon={
           checked
             ? "checkCircle"
-            : /\.(jpg|jpeg|png|gif|GIF|JPG|PNG)$/.test(asset.url)
+            : /\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(asset.url)
             ? "image"
             : "file"
         }

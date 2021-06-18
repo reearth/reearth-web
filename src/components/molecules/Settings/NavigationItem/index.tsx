@@ -2,6 +2,7 @@ import React from "react";
 import { styled, fonts } from "@reearth/theme";
 import { Link } from "@reach/router";
 import { colors } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
   name: string;
@@ -27,7 +28,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
 
 const LinkItem = styled(Link)`
   display: flex;
-  padding: 16px 8px;
+  padding: ${metricsSizes["l"]}px ${metricsSizes["s"]}px;
   color: ${colors.text.main};
   text-decoration: none;
 
@@ -37,7 +38,7 @@ const LinkItem = styled(Link)`
 `;
 
 const NavigationList = styled.ul`
-  padding-left: 12px;
+  padding-left: ${metricsSizes["m"]}px;
   font-size: ${fonts.sizes.m}px;
 `;
 
