@@ -4,11 +4,11 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { createUploadLink } from "apollo-upload-client";
 import { useAuth0 } from "@auth0/auth0-react";
+import { SentryLink } from "apollo-link-sentry";
 
 import { store, localSlice } from "@reearth/state";
-import fragmentMatcher from "./fragmentMatcher.json";
-import { SentryLink } from "apollo-link-sentry";
 import { reportError } from "@reearth/sentry";
+import fragmentMatcher from "./fragmentMatcher.json";
 
 const Provider: React.FC = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api

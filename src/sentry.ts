@@ -1,10 +1,10 @@
 import * as Sentry from "@sentry/browser";
 
 export const initialize = () => {
-  const { sentryDSN, sentryEnv } = window.REEARTH_CONFIG ?? {};
-  if (sentryDSN) {
+  const { sentryDsn, sentryEnv } = window.REEARTH_CONFIG ?? {};
+  if (sentryDsn) {
     Sentry.init({
-      dsn: sentryDSN,
+      dsn: sentryDsn,
       environment: sentryEnv,
     });
   }
@@ -12,8 +12,4 @@ export const initialize = () => {
 
 export const reportError = (error: string) => {
   Sentry.captureException(error);
-};
-
-export default {
-  reportError,
 };

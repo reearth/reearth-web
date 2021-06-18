@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 import App from "./app";
 import loadConfig from "./config";
-import { initializeSentry } from "./sentry";
+import { initialize as initializeSentry } from "./sentry";
 
 loadConfig().finally(() => {
   initializeSentry();
