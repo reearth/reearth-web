@@ -10,6 +10,6 @@ export const initialize = () => {
   }
 };
 
-export const reportError = (error: string) => {
+export const reportError = (error: any) => {
   Sentry.captureException(error);
 };
