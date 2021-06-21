@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { difference } from "lodash-es";
 
-import { colors, styled } from "@reearth/theme";
+import { useTheme, styled } from "@reearth/theme";
 import { Typography } from "@reearth/util/value";
 
 import FontFamilyField, { SafeFontFamilies } from "./FontFamilyField";
@@ -85,7 +85,7 @@ const TypographyField: React.FC<Props> = ({
     },
     [updateTypography, fontFormatValues],
   );
-
+  const theme = useTheme();
   return (
     <Wrapper className={className}>
       <Row>
@@ -109,7 +109,7 @@ const TypographyField: React.FC<Props> = ({
       <Row>
         <ColorField
           disabled={disabled}
-          value={color || colors.text.main}
+          value={color || theme.main.text}
           onChange={handleChangeColor}
         />
       </Row>

@@ -20,9 +20,9 @@ export const textColor = ({
   overridden?: boolean;
 }) =>
   linked
-    ? colors.primary.main
+    ? colors.dark.primary.main
     : overridden
-    ? colors.danger.main
+    ? colors.dark.danger.main
     : disabled
-    ? colors.outline.main
+    ? colors.dark.outline.main
     : undefined;

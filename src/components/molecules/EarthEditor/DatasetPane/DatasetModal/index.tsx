@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
-import { styled, colors, useTheme } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 
 import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
@@ -78,7 +78,7 @@ const DatasetModal: React.FC<Props> = ({
               subtext={intl.formatMessage({ defaultMessage: "Supports CSV, JSON, GIS files" })}
               margin={56}
               border="dashed"
-              borderColor={colors.outline.weak}
+              borderColor={theme.main.border}
               onClick={onSelectCsvFile}
             />
           </Content>
