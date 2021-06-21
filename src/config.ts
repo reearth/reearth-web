@@ -6,6 +6,8 @@ export type Config = {
   auth0Audience?: string;
   googleApiKey?: string;
   googleClientId?: string;
+  sentryDsn?: string;
+  sentryEnv?: string;
 };
 
 declare global {
