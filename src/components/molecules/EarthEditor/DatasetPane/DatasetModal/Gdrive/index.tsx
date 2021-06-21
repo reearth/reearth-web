@@ -28,6 +28,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
     pickedFile,
     pickedFileSheets,
     selectedSheet,
+    handleAuthClick,
     handleSheetSelect,
     handleClientLoad,
   } = useHooks(onSheetSelect);
@@ -105,7 +106,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
                 large
                 text="Connect your google account"
                 buttonType="primary"
-                onClick={() => handleClientLoad()}
+                onClick={() => handleAuthClick()}
               />
             )}
           </Flex>

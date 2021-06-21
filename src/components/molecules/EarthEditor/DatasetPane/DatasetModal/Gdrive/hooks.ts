@@ -64,8 +64,6 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
     setIsLoading(true);
     const googleClientId = window.REEARTH_CONFIG?.googleClientId;
     await gapi.load("client:auth2", () => {
-      console.log("why");
-
       gapi.client
         .init({
           apiKey: googleApiKey,
@@ -74,14 +72,21 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
           discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
         })
         .then(function () {
-          setAccessToken(
-            gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token,
-          );
+          if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            gapi.auth2.getAuthInstance().signOut();
+          }
+          setIsLoading(false);
         });
     });
     await gapi.load("picker", () => {
       setPickerApiLoaded(true);
     });
+  };
+
+  const updateSigninStatus = (isSignedIn: boolean, accessToken: any) => {
+    if (isSignedIn) {
+      setAccessToken(accessToken);
+    }
   };
 
   const handleSheetSelect = useCallback(
@@ -96,12 +101,21 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
     [onSheetSelect, accessToken, pickedFile?.id],
   );
 
+  const handleAuthClick = () => {
+    Promise.resolve(gapi.auth2.getAuthInstance().signIn()).then(() => {
+      updateSigninStatus(
+        gapi.auth2.getAuthInstance().isSignedIn.get(),
+        gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token,
+      );
+    });
+  };
+
   useEffect(() => {
     const gDriveScript = document.createElement("script");
     gDriveScript.src = "https://apis.google.com/js/api.js";
     gDriveScript.async = true;
     gDriveScript.onload = () => {
-      setIsLoading(false);
+      handleClientLoad();
     };
     document.body.appendChild(gDriveScript);
     return () => {
@@ -114,6 +128,7 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
     pickedFile,
     pickedFileSheets,
     selectedSheet,
+    handleAuthClick,
     handleSheetSelect,
     handleClientLoad,
   };
