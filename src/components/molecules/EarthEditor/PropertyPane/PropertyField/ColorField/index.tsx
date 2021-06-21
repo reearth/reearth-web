@@ -278,7 +278,7 @@ const layerStyle = css`
   height: 100%;
 `;
 
-const check = props => ` 
+const check = (props: any) => ` 
   linear-gradient(
     45deg, 
     ${props.theme.toggleButton.bg} 25%, 
