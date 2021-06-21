@@ -11,11 +11,11 @@ import type { Camera } from "@reearth/util/value";
 import type { CommonAPI } from "..";
 import Cesium from "./Cesium";
 
-export type EngineProps = {
+export type EngineProps<SP = any> = {
   className?: string;
   isEditable?: boolean;
   isBuilt?: boolean;
-  property?: any;
+  property?: SP;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;

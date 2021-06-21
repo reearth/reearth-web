@@ -8,7 +8,10 @@ import useHooks from "./hooks";
 
 const creditContainer = document.createElement("div");
 
-const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
+export type SceneProperty = ScenePropertyType;
+export type Props = EngineProps<SceneProperty>;
+
+const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<SceneProperty>> = (
   {
     className,
     selectedLayerId: selectedEntityId,
