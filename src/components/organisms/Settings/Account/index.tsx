@@ -28,6 +28,7 @@ const Account: React.FC<Props> = () => {
       <AccountSection
         email={me?.email}
         lang={me?.lang}
+        appTheme={me?.theme}
         hasPassword={hasPassword}
         updatePassword={updatePassword}
         updateLanguage={updateLanguage}

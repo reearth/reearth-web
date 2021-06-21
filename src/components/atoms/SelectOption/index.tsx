@@ -31,8 +31,7 @@ const Option = styled.li<Props>`
       : inactive
       ? theme.selectList.border
       : theme.properties.contentsText};
-  background: ${({ focused, theme }) =>
-    focused ? theme.colors.dark.bg[4] : theme.colors.dark.bg[2]};
+  background: ${({ focused, theme }) => (focused ? theme.main.paleBg : theme.main.deepBg)};
   cursor: pointer;
 `;
 

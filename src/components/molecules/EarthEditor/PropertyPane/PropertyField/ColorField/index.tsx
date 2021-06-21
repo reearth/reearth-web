@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Button from "@reearth/components/atoms/Button";
-import { styled, css, colors, useTheme } from "@reearth/theme";
+import { styled, css, useTheme } from "@reearth/theme";
 import "./styles.css";
 
 import tinycolor, { ColorInput } from "tinycolor2";
@@ -278,20 +278,20 @@ const layerStyle = css`
   height: 100%;
 `;
 
-const check = ` 
+const check = props => ` 
   linear-gradient(
     45deg, 
-    ${colors.outline.main} 25%, 
+    ${props.theme.toggleButton.bg} 25%, 
     transparent 25%, 
     transparent 75%, 
-    ${colors.outline.main} 25%, 
-    ${colors.outline.main}
+    ${props.theme.toggleButton.bg} 25%, 
+    ${props.theme.toggleButton.bg} 
   ) 
 `;
 
 const CheckedPattern = styled.div`
-  background-color: ${({ theme }) => theme.colors.dark.outline.weak};
-  background-image: ${check}, ${check};
+  background-color: ${({ theme }) => theme.main.border};
+  background-image: ${props => check(props)}, ${props => check(props)};
   background-position: 0 0, 6px 6px;
   background-size: 12px 12px;
   ${layerStyle};

@@ -7,8 +7,10 @@ const darkTheme: Theme = {
     accent: colors.dark.primary.main,
     alert: colors.dark.functional.error,
     bg: colors.dark.bg[5],
+    lighterBg: colors.dark.bg[3],
     paleBg: colors.dark.bg[4],
     deepBg: colors.dark.bg[2],
+    deepestBg: colors.dark.bg[1],
     transparentBg: colors.general.transparentBlack,
     lightTransparentBg: colors.general.transparentLight,
     border: colors.dark.outline.weak,
@@ -17,6 +19,8 @@ const darkTheme: Theme = {
     strongText: colors.dark.text.strong,
     warning: colors.dark.functional.attention,
     danger: colors.dark.danger.main,
+    weak: colors.dark.text.weak,
+    select: colors.dark.functional.select,
   },
   dashboard: {
     bg: colors.dark.bg[2],
@@ -75,6 +79,7 @@ const darkTheme: Theme = {
     bg: colors.dark.bg[2],
     shadow: colors.dark.bg[1],
     text: colors.dark.text.strong,
+    divider: colors.dark.outline.weakest,
   },
   assetCard: {
     bg: colors.dark.bg[4],
@@ -158,6 +163,7 @@ const darkTheme: Theme = {
     textColor: colors.dark.text.main,
     selectedTextColor: colors.dark.text.strong,
     disableTextColor: colors.dark.text.weak,
+    bottomBorder: colors.dark.outline.weakest,
   },
   toggleButton: {
     bg: colors.dark.bg[4],
@@ -171,6 +177,9 @@ const darkTheme: Theme = {
     bg: colors.dark.bg[5],
     textColor: colors.dark.text.main,
     shadowColor: colors.dark.bg[1],
+  },
+  other: {
+    black: colors.dark.other.black,
   },
   pluginList: {
     bg: colors.dark.bg[3],

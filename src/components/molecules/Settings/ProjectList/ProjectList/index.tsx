@@ -99,7 +99,7 @@ const ProjectList: React.FC<Props> = ({
 const Divider = styled.div`
   width: 100%;
   margin-bottom: 10px;
-  border-bottom: 1px solid ${props => props.theme.colors.dark.outline.weakest};
+  border-bottom: 1px solid ${props => props.theme.projectCell.divider};
 `;
 
 const StyledIcon = styled(Icon)`

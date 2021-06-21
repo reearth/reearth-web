@@ -20,8 +20,10 @@ export type Theme = {
     accent: string;
     alert: string;
     bg: string;
+    lighterBg: string;
     paleBg: string;
     deepBg: string;
+    deepestBg: string;
     border: string;
     highlighted: string;
     transparentBg: string;
@@ -30,6 +32,8 @@ export type Theme = {
     strongText: string;
     warning: string;
     danger: string;
+    weak: string;
+    select: string;
   };
   dashboard: {
     bg: string;
@@ -123,6 +127,7 @@ export type Theme = {
     border: string;
     shadow: string;
     text: string;
+    divider: string;
   };
   assetCard: {
     bg: string;
@@ -171,6 +176,7 @@ export type Theme = {
     textColor: string;
     selectedTextColor: string;
     disableTextColor: string;
+    bottomBorder: string;
   };
   toggleButton: {
     bg: string;
@@ -196,6 +202,9 @@ export type Theme = {
     bg: string;
     textColor: string;
     shadowColor: string;
+  };
+  other: {
+    black: string;
   };
   pluginList: {
     bg: string;

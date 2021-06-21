@@ -9,6 +9,7 @@ import Text from "@reearth/components/atoms/Text";
 
 export type Props = {
   email?: string;
+  appTheme?: string;
   lang?: string;
   hasPassword: boolean;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
@@ -28,6 +29,7 @@ const themeItems = [
 
 const ProfileSection: React.FC<Props> = ({
   email,
+  appTheme,
   hasPassword,
   updatePassword,
   updateLanguage,
@@ -44,8 +46,8 @@ const ProfileSection: React.FC<Props> = ({
   }, [intl.locale]);
 
   useEffect(() => {
-    setCurrentTheme("dark");
-  }, []);
+    setCurrentTheme(appTheme ? appTheme.toUpperCase() : "DARK");
+  }, [appTheme]);
 
   const theme = useTheme();
 
@@ -78,7 +80,7 @@ const ProfileSection: React.FC<Props> = ({
           dropdown
           dropdownItems={themeItems}
           currentItem={currentTheme}
-          body={currentTheme}
+          body={themeItems.find(themeItem => themeItem.key === currentTheme)?.label}
           onSubmit={updateTheme}
         />
       </Section>
@@ -94,7 +96,7 @@ const ProfileSection: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.colors.dark.bg[3]};
+  background-color: ${props => props.theme.dashboard.itemBg};
   margin-bottom: 64px;
 `;
 

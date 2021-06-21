@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect, useRef, useCallback } from "react";
 import { useClickAway } from "react-use";
-import { styled, colors, useTheme } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import useDoubleClick from "@reearth/util/use-double-click";
 import Icon from "@reearth/components/atoms/Icon";
 import HelpButton from "@reearth/components/atoms/HelpButton";
@@ -297,32 +297,31 @@ const Wrapper = styled.div<{
   justify-content: start;
   align-items: center;
   cursor: pointer;
-  color: ${({ selected, disabled, type }) =>
+  color: ${({ selected, disabled, type, theme }) =>
     type === "widget" && disabled !== undefined
       ? disabled && !selected
-        ? colors.text.weak
+        ? theme.main.weak
         : selected || !disabled
-        ? colors.text.strong
-        : colors.text.main
+        ? theme.main.strongText
+        : theme.main.text
       : selected
-      ? colors.text.strong
-      : colors.text.main};
+      ? theme.main.strongText
+      : theme.main.text};
   box-sizing: border-box;
   background-color: ${({ selected, theme, hover }) =>
-    selected ? theme.layers.selectedLayer : hover ? theme.colors.dark.bg[5] : "transparent"};
+    selected ? theme.layers.selectedLayer : hover ? theme.main.bg : "transparent"};
   border: 2px solid transparent;
   border-color: ${({ dropType, selected, theme }) =>
     dropType === "bottomOfChildren" || dropType === "top" || dropType === "bottom"
       ? dropType === "top"
-        ? `${theme.colors.dark.danger.main} transparent transparent transparent`
+        ? `${theme.main.danger} transparent transparent transparent`
         : dropType === "bottom"
-        ? `transparent transparent ${theme.colors.dark.danger.main} transparent`
-        : theme.colors.dark.danger.main
+        ? `transparent transparent ${theme.main.danger} transparent`
+        : theme.main.danger
       : selected
       ? theme.layers.selectedLayer
       : "transparent"};
-  border-bottom-color: ${({ underlined, theme }) =>
-    underlined && theme.colors.dark.outline.weakest};
+  border-bottom-color: ${({ underlined, theme }) => underlined && theme.layers.bottomBorder};
   font-size: ${fonts.sizes.xs}px;
 `;
 
@@ -336,7 +335,7 @@ const ArrowIconWrapper = styled.div<{ allSiblingsDoesNotHaveChildren?: boolean }
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${colors.text.strong};
+  color: ${props => props.theme.main.strongText};
 `;
 
 const ArrowIcon = styled(Icon)<{ open?: boolean }>`

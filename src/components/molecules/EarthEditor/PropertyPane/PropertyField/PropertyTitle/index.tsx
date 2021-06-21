@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from "react";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
-import { styled, colors, css } from "@reearth/theme";
+import { styled, css } from "@reearth/theme";
 import PropertyLinkPanel, { Props as PropertyLinkPanelProps } from "./PropertyLinkPanel";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import fonts from "@reearth/theme/fonts";
@@ -30,18 +30,6 @@ export type Props = {
   | "fixedDatasetSchemaId"
   | "fixedDatasetId"
 >;
-
-const titleColor = (params: Pick<Props, "isLinked" | "isOverridden">): string => {
-  const { isLinked, isOverridden } = params;
-
-  if (isOverridden) {
-    return colors.danger.main;
-  } else if (isLinked) {
-    return colors.primary.main;
-  } else {
-    return colors.text.main;
-  }
-};
 
 // eslint-disable-next-line react/display-name
 const PropertyTitle: React.FC<Props> = ({
@@ -121,7 +109,15 @@ const Title = styled.div<{ disabled?: boolean; isLinked?: boolean; isOverridden?
   display: flex;
   height: 100%;
   font-size: ${fonts.sizes.xs}px;
-  color: ${props => titleColor(props)};
+  color: ${props => {
+    if (props.isOverridden) {
+      return props.theme.main.danger;
+    } else if (props.isLinked) {
+      return props.theme.main.accent;
+    } else {
+      return props.theme.main.text;
+    }
+  }};
   align-items: center;
   cursor: ${props => (props.disabled ? "default" : "pointer")};
 `;

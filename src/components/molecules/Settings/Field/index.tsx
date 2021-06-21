@@ -35,7 +35,6 @@ const Wrapper = styled.div`
   justify-content: center;
   width: 100%;
   color: ${({ theme }) => theme.main.text};
-
   &:not(:last-child) {
     margin-bottom: 40px;
   }

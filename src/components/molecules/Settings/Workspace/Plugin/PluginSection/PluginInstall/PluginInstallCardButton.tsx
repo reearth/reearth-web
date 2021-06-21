@@ -17,11 +17,8 @@ const PluginInstallCardButton: React.FC<Props> = ({ className, onClick, icon, te
   return (
     <StyledButton onClick={onClick} className={className}>
       <Flex direction="column" align="center">
-        <StyledIcon icon={icon} size={126} color={theme.colors.dark.text.strong} />
-        <Text
-          size="l"
-          color={theme.colors.dark.text.strong}
-          otherProperties={{ textAlign: "center" }}>
+        <StyledIcon icon={icon} size={126} color={theme.main.strongText} />
+        <Text size="l" color={theme.main.strongText} otherProperties={{ textAlign: "center" }}>
           {text}
         </Text>
       </Flex>
@@ -30,11 +27,11 @@ const PluginInstallCardButton: React.FC<Props> = ({ className, onClick, icon, te
 };
 
 const StyledButton = styled.div`
-  background-color: ${props => props.theme.colors.dark.bg[3]};
+  background-color: ${props => props.theme.main.lighterBg};
   min-width: 280px;
   border-radius: ${props => props.theme.metrics.l}px;
   &:hover {
-    background-color: ${props => props.theme.colors.dark.bg[4]};
+    background-color: ${props => props.theme.main.paleBg};
   }
   cursor: pointer;
   box-sizing: border-box;
@@ -42,8 +39,8 @@ const StyledButton = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  stroke: ${({ theme }) => theme.colors.dark.text.strong};
-  fill: ${({ theme }) => theme.colors.dark.text.strong};
+  stroke: ${({ theme }) => theme.main.strongText};
+  fill: ${({ theme }) => theme.main.strongText};
 `;
 
 export default PluginInstallCardButton;
