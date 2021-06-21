@@ -47,8 +47,6 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
 
   useEffect(() => {
     const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
-    console.log("access token: ", accessToken);
-
     if (pickerApiLoaded && accessToken) {
       setIsLoading(false);
       const picker = new google.picker.PickerBuilder()
@@ -70,7 +68,8 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
         .init({
           apiKey: googleApiKey,
           clientId: googleClientId,
-          scope: "https://www.googleapis.com/auth/spreadsheets",
+          scope:
+            "https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/documents.readonly",
           discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
         })
         .then(function () {

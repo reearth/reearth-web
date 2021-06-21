@@ -64,14 +64,14 @@ const DatasetPane: React.FC<Props> = ({
 
   const handleGoogleSheetDatasetAdd = useCallback(
     async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
-      // setDatasetSyncLoading(true);
+      setDatasetSyncLoading(true);
       try {
         await onGoogleSheetDatasetImport?.(accessToken, fileId, sheetName, schemeId);
       } finally {
-        // setDatasetSyncLoading(false);
+        setDatasetSyncLoading(false);
       }
     },
-    [onGoogleSheetDatasetImport],
+    [onGoogleSheetDatasetImport, setDatasetSyncLoading],
   );
 
   const handleDatasetAdd = useCallback(
