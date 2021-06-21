@@ -39,12 +39,12 @@ const SettingPage: React.FC<Props> = ({
         }
         center={center}
       />
-      <Wrapper3>
+      <BodyWrapper>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>
         <RightWrapper>
-          <Wrapper5>
+          <ContentWrapper>
             <DeviceMenu>
               <MenuIcon
                 icon={isOpen ? "cancel" : "menuForDevice"}
@@ -58,9 +58,9 @@ const SettingPage: React.FC<Props> = ({
               )}
             </DeviceMenu>
             {children}
-          </Wrapper5>
+          </ContentWrapper>
         </RightWrapper>
-      </Wrapper3>
+      </BodyWrapper>
     </Wrapper>
   );
 };
@@ -78,7 +78,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const Wrapper3 = styled.div`
+const BodyWrapper = styled.div`
   height: 100%;
   padding-top: 48px;
   overflow: auto;
@@ -105,7 +105,7 @@ const RightWrapper = styled.div`
   }
 `;
 
-const Wrapper5 = styled.div`
+const ContentWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
 

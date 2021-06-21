@@ -53,7 +53,7 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
             </Desc>
           </DescriptionWrapper>
         )}
-        <PublicationStatus status={project.status} color={theme.projectCell.description} />
+        <Public status={project.status} />
       </Wrapper>
     </StyledWrapper>
   );
@@ -98,6 +98,10 @@ const Desc = styled(Text)`
   display: -webkit-inline-box;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const Public = styled(PublicationStatus)`
+  color: ${props => props.theme.projectCell.description};
 `;
 
 export default ProjectCell;

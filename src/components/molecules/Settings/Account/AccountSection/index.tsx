@@ -4,7 +4,7 @@ import Section from "@reearth/components/molecules/Settings/Section";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Field from "@reearth/components/molecules/Settings/Field";
 import Icon from "@reearth/components/atoms/Icon";
-import { styled } from "@reearth/theme";
+import { styled, colors } from "@reearth/theme";
 import { useIntl } from "react-intl";
 
 export type Props = {
@@ -64,14 +64,14 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${colors.bg[3]};
 `;
 
 const StyledIcon = styled(Icon)`
   cursor: pointer;
 
   &:hover {
-    color: ${props => props.theme.colors.text.strong};
+    color: ${colors.text.strong};
   }
 `;
 
