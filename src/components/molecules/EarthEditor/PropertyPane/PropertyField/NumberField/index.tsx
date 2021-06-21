@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { styled, useTheme, metrics } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
@@ -147,11 +146,11 @@ const StyledInput = styled.input<InputProps>`
   outline: none;
   color: ${({ inactive, linked, overridden, theme }) =>
     overridden
-      ? colors.danger.main
+      ? theme.main.danger
       : linked
-      ? colors.primary.main
+      ? theme.main.accent
       : inactive
-      ? colors.outline.main
+      ? theme.text.pale
       : theme.properties.contentsText};
   width: 100%;
 

@@ -36,7 +36,7 @@ const AssetSelect = <Value extends string | number = string>({
   return (
     <Wrapper>
       <Selected align="center" justify="space-between" onClick={() => setHidden(!hidden)}>
-        <StyledText size="xs" color={theme.colors.text.main}>
+        <StyledText size="xs" color={theme.colors.dark.text.main}>
           {items.find(i => i.key === value)?.label}
         </StyledText>
         <Icon icon="arrowDown" size={9} />
@@ -78,7 +78,7 @@ const Options = styled.div<{ hidden?: boolean }>`
   margin: ${metricsSizes["2xs"]}px 0 0 0;
   box-sizing: border-box;
   z-index: ${({ theme }) => theme.zIndexes["propertyFieldPopup"]};
-  background: ${({ theme }) => theme.colors.bg[5]};
+  background: ${({ theme }) => theme.colors.dark.bg[5]};
   border: 1px solid ${({ theme }) => theme.properties.border};
   position: absolute;
   cursor: pointer;
@@ -86,10 +86,10 @@ const Options = styled.div<{ hidden?: boolean }>`
 
 const Item = styled(Flex)`
   padding: ${metricsSizes["xs"]}px ${metricsSizes["s"]}px;
-  color: ${({ theme }) => theme.colors.text.main};
+  color: ${({ theme }) => theme.colors.dark.text.main};
 
   &:hover {
-    background: ${({ theme }) => theme.colors.bg[3]};
+    background: ${({ theme }) => theme.colors.dark.bg[3]};
   }
 `;
 

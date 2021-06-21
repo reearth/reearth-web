@@ -55,7 +55,7 @@ const SectionItem = styled.div`
 
 const Divider = styled.div`
   width: 100%;
-  border-bottom: 2px solid ${props => props.theme.colors.outline.weak};
+  border-bottom: 2px solid ${props => props.theme.colors.dark.outline.weak};
 `;
 
 export default Section;

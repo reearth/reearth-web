@@ -96,7 +96,7 @@ const StyledListView = styled.div`
 `;
 
 const StyledWorkspaceCell = styled(WorkspaceCell)`
-  border: ${props => `1px solid ${props.theme.colors.brand.main}`};
+  border: ${props => `1px solid ${props.theme.main.highlighted}`};
 `;
 
 export default WorkspaceList;

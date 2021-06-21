@@ -7,9 +7,9 @@ export const commonTheme = {
   colors,
   metrics: metricsSizes,
   publishStatus: {
-    published: colors.primary.main,
-    building: colors.outline.main,
-    unpublished: colors.secondary.weakest,
+    published: colors.dark.primary.main,
+    building: colors.dark.outline.main,
+    unpublished: colors.dark.secondary.weakest,
   },
 };
 
@@ -29,6 +29,7 @@ export type Theme = {
     text: string;
     strongText: string;
     warning: string;
+    danger: string;
   };
   dashboard: {
     bg: string;

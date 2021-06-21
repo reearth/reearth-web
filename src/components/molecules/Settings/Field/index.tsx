@@ -1,6 +1,6 @@
 import React from "react";
 
-import { styled, colors } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import Text from "@reearth/components/atoms/Text";
 
 type Props = {
@@ -34,7 +34,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  color: ${colors.text.main};
+  color: ${({ theme }) => theme.main.text};
 
   &:not(:last-child) {
     margin-bottom: 40px;

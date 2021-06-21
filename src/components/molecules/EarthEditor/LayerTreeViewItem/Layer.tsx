@@ -309,19 +309,20 @@ const Wrapper = styled.div<{
       : colors.text.main};
   box-sizing: border-box;
   background-color: ${({ selected, theme, hover }) =>
-    selected ? theme.layers.selectedLayer : hover ? theme.colors.bg[5] : "transparent"};
+    selected ? theme.layers.selectedLayer : hover ? theme.colors.dark.bg[5] : "transparent"};
   border: 2px solid transparent;
   border-color: ${({ dropType, selected, theme }) =>
     dropType === "bottomOfChildren" || dropType === "top" || dropType === "bottom"
       ? dropType === "top"
-        ? `${theme.colors.danger.main} transparent transparent transparent`
+        ? `${theme.colors.dark.danger.main} transparent transparent transparent`
         : dropType === "bottom"
-        ? `transparent transparent ${theme.colors.danger.main} transparent`
-        : theme.colors.danger.main
+        ? `transparent transparent ${theme.colors.dark.danger.main} transparent`
+        : theme.colors.dark.danger.main
       : selected
       ? theme.layers.selectedLayer
       : "transparent"};
-  border-bottom-color: ${({ underlined, theme }) => underlined && theme.colors.outline.weakest};
+  border-bottom-color: ${({ underlined, theme }) =>
+    underlined && theme.colors.dark.outline.weakest};
   font-size: ${fonts.sizes.xs}px;
 `;
 

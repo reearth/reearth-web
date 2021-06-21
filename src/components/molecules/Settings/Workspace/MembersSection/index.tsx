@@ -103,7 +103,7 @@ const MembersSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.colors.dark.bg[3]};
   width: 100%;
   margin-bottom: 64px;
 `;

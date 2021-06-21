@@ -84,7 +84,7 @@ const Wrapper = styled.div`
 const StyledIcon = styled(Icon)`
   width: 25px;
   height: 25px;
-  color: ${props => props.theme.colors.text.main};
+  color: ${props => props.theme.colors.dark.text.main};
 `;
 
 const Preview = styled.div`

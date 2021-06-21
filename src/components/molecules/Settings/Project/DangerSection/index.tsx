@@ -103,7 +103,7 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.colors.dark.bg[3]};
   margin-bottom: 64px;
   border: 1px solid #ff3c53;
 `;

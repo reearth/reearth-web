@@ -14,7 +14,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
       <LinkItem
         to={to}
         getProps={({ isCurrent }) =>
-          isCurrent && { style: { background: theme.colors.functional.select } }
+          isCurrent && { style: { background: theme.colors.dark.functional.select } }
         }>
         {name}
       </LinkItem>

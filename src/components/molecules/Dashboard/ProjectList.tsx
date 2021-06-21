@@ -77,7 +77,7 @@ const Template = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  color: ${props => props.theme.colors.text.weak};
+  color: ${props => props.theme.colors.dark.text.weak};
 `;
 
 const Text = styled.p`

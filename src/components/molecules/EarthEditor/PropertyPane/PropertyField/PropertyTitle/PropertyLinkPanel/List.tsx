@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 import Icon from "@reearth/components/atoms/Icon";
 
 import { styled, css } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 
 export interface Props {
   className?: string;
@@ -55,7 +54,7 @@ const Item = styled.div<{ disabled?: boolean; selected?: boolean }>`
   position: relative;
   transition: background-color 0.1s ease;
   color: ${({ disabled, theme }) => (disabled ? theme.text.pale : theme.text.default)};
-  background-color: ${({ selected }) => (selected ? colors.primary.main : null)};
+  background-color: ${({ selected, theme }) => (selected ? theme.main.accent : null)};
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

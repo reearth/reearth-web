@@ -32,7 +32,7 @@ const ProfileSection: React.FC<Props> = ({ username, updateName }) => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.colors.bg[3]};
+  background-color: ${props => props.theme.colors.dark.bg[3]};
   margin-bottom: 64px;
 `;
 

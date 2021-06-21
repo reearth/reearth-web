@@ -47,7 +47,7 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
 
 const Wrapper = styled.div<{ project: Project }>`
   background: ${props =>
-    props.project.imageUrl ? `url(${props.project.imageUrl})` : props.theme.colors.bg[4]};
+    props.project.imageUrl ? `url(${props.project.imageUrl})` : props.theme.colors.dark.bg[4]};
   background-size: cover;
   color: ${props => props.theme.projectCell.text};
   padding: 10px;

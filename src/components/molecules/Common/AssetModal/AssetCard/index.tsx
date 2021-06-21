@@ -54,7 +54,7 @@ const AssetCard: React.FC<Props> = ({
 
 const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   background: ${props => props.theme.assetCard.bg};
-  box-shadow: 0 6px 6px -6px ${props => props.theme.colors.other.black};
+  box-shadow: 0 6px 6px -6px ${props => props.theme.colors.dark.other.black};
   border: 1px solid
     ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
   margin: ${({ cardSize }) => (cardSize === "small" ? "5px" : "10px")};
@@ -71,7 +71,7 @@ const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};
     color: ${({ theme }) => theme.assetCard.textHover};
-    box-shadow: 0 8px 7px -6px ${props => props.theme.colors.other.black};
+    box-shadow: 0 8px 7px -6px ${props => props.theme.colors.dark.other.black};
   }
 `;
 

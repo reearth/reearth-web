@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "@reach/router";
 import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import Header, { Props as HeaderProps } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
@@ -44,7 +43,7 @@ const SettingPage: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   height: 100%;
-  background-color: ${props => props.theme.colors.bg[2]};
+  background-color: ${props => props.theme.main.deepBg};
   overflow: scroll;
 `;
 
@@ -64,7 +63,7 @@ const Content = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-  color: ${colors.text.main};
+  color: ${({ theme }) => theme.main.text};
   text-decoration: none;
 
   &:hover {
@@ -76,10 +75,10 @@ const StyledIcon = styled(Icon)`
   border-radius: 5px;
   margin-right: 8px;
   padding: 5px 4px 5px 8px;
-  color: ${colors.text.main};
+  color: ${({ theme }) => theme.main.text};
 
   &:hover {
-    background: ${colors.bg[5]};
+    background: ${({ theme }) => theme.main.bg};
   }
 `;
 

@@ -4,7 +4,6 @@ import { usePopper } from "react-popper";
 import { useMergeRefs } from "use-callback-ref";
 import { styled, css, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import colors from "@reearth/theme/colors";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 
@@ -278,7 +277,7 @@ const Selected = styled(Text)<{ inactive: boolean }>`
   flex: 1;
   padding: 3px;
   color: ${({ inactive, theme }) =>
-    inactive ? colors.outline.main : theme.properties.contentsText};
+    inactive ? theme.selectList.border : theme.properties.contentsText};
 `;
 
 const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`

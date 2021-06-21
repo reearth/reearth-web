@@ -1,6 +1,5 @@
 import React from "react";
-import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
+import { styled, useTheme } from "@reearth/theme";
 
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
@@ -29,12 +28,13 @@ const TextField: React.FC<Props> = ({
   onChange,
   onClick,
 }) => {
+  const theme = useTheme();
   const color = overridden
-    ? colors.danger.main
+    ? theme.main.danger
     : linked
-    ? colors.primary.main
+    ? theme.main.accent
     : disabled
-    ? colors.outline.main
+    ? theme.text.pale
     : undefined;
 
   return (

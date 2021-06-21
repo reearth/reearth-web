@@ -130,7 +130,7 @@ const ConnectSection = styled.div`
     // margin-right: 40px;
     &:hover {
       cursor: pointer;
-      background: ${props => props.theme.colors.bg[3]};
+      background: ${props => props.theme.colors.dark.bg[3]};
     }
   }
 `;

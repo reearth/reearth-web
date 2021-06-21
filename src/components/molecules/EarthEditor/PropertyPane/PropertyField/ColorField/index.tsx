@@ -290,7 +290,7 @@ const check = `
 `;
 
 const CheckedPattern = styled.div`
-  background-color: ${({ theme }) => theme.colors.outline.weak};
+  background-color: ${({ theme }) => theme.colors.dark.outline.weak};
   background-image: ${check}, ${check};
   background-position: 0 0, 6px 6px;
   background-size: 12px 12px;

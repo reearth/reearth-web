@@ -47,7 +47,10 @@ const AssetItem: React.FC<Props> = ({
         <Text size="m" otherProperties={{ textOverflow: "ellipsis", overflow: "hidden" }}>
           {name}
         </Text>
-        <CreatedAt size="s" color={theme.colors.text.weak} otherProperties={{ textAlign: "right" }}>
+        <CreatedAt
+          size="s"
+          color={theme.colors.dark.text.weak}
+          otherProperties={{ textAlign: "right" }}>
           {createdAt && format(createdAt, "yyyy-MM-dd HH:mm")}
         </CreatedAt>
       </Meta>

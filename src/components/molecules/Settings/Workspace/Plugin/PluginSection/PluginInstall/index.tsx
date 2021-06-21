@@ -39,7 +39,7 @@ const PluginInstall: React.FC<Props> = ({ className, onMovePrevPage, onMovePage 
     <div className={className}>
       <SectionTitle>
         <StyledFlex align="center" onClick={onMovePrevPage}>
-          <Icon icon="arrowLongLeft" size={20} color={theme.colors.text.main} />
+          <Icon icon="arrowLongLeft" size={20} color={theme.colors.dark.text.main} />
           <Box mh="m">
             <Text weight="bold" size="m">
               {intl.formatMessage({ defaultMessage: "Plugins lists" })}
@@ -73,7 +73,7 @@ const PluginInstall: React.FC<Props> = ({ className, onMovePrevPage, onMovePage 
 };
 
 const SectionTitle = styled.div`
-  border-bottom: ${props => `solid 1px ${props.theme.colors.outline.weak}`};
+  border-bottom: ${props => `solid 1px ${props.theme.colors.dark.outline.weak}`};
   padding-bottom: ${props => props.theme.metrics.xl}px;
 `;
 

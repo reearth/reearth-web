@@ -48,17 +48,17 @@ export default AssetListItem;
 
 const ListItem = styled(Flex)<{ selected?: boolean }>`
   background: ${({ theme }) => theme.assetCard.bg};
-  box-shadow: 0 6px 6px -8px ${props => props.theme.colors.other.black};
+  box-shadow: 0 6px 6px -8px ${props => props.theme.colors.dark.other.black};
   border: 1px solid
     ${({ selected, theme }) => (selected ? `${theme.assetCard.highlight}` : "transparent")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
   margin-bottom: ${metricsSizes["l"]}px;
   cursor: pointer;
-  color: ${({ theme }) => theme.colors.text.main};
+  color: ${({ theme }) => theme.colors.dark.text.main};
 
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};
-    color: ${({ theme }) => theme.colors.text.strong};
+    color: ${({ theme }) => theme.colors.dark.text.strong};
   }
 `;
 

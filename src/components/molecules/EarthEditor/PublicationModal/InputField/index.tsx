@@ -42,7 +42,7 @@ const InputField: React.FC<Props> = ({
           {actioned ? <Icon icon="check" size={15} /> : button2}
         </InputLinkButton>
       </InputContent>
-      <SubMessage size="2xs" color={theme.colors.outline.main}>
+      <SubMessage size="2xs" color={theme.colors.dark.outline.main}>
         {subMessage}
       </SubMessage>
     </Wrapper>
@@ -55,7 +55,7 @@ const Wrapper = styled.div`
 
 const InputContent = styled.div`
   padding: 5px;
-  border: solid 1.5px ${props => props.theme.colors.bg[5]};
+  border: solid 1.5px ${props => props.theme.colors.dark.bg[5]};
   text-align: left;
   height: auto;
   display: flex;
@@ -68,7 +68,7 @@ const InputLinkButton = styled.button`
   flex: 0 0 auto;
   cursor: pointer;
   background: transparent;
-  color: ${props => props.theme.colors.primary.main};
+  color: ${props => props.theme.colors.dark.primary.main};
   padding: 5px 10px;
   > svg {
     font-size: 24px;
@@ -93,7 +93,7 @@ const URL = styled.a<{ disabled?: boolean }>`
   border: none;
   outline: none;
   padding: 5px 10px;
-  color: ${props => props.theme.colors.primary.main};
+  color: ${props => props.theme.colors.dark.primary.main};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

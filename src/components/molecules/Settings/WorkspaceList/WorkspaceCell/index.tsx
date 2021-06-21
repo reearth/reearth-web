@@ -49,8 +49,8 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
 };
 
 const Wrapper = styled.div<{ team: Team }>`
-  background: ${props => props.theme.colors.bg[2]};
-  color: ${props => props.theme.colors.text.strong};
+  background: ${props => props.theme.colors.dark.bg[2]};
+  color: ${props => props.theme.colors.dark.text.strong};
   padding: 10px;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
   margin: 10px 0;

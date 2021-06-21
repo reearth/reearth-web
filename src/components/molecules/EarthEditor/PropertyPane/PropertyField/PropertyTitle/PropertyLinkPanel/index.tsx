@@ -2,7 +2,6 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 import { styled, useTheme } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import Slide from "@reearth/components/atoms/Slide";
 import Icon from "@reearth/components/atoms/Icon";
 import List from "./List";
@@ -236,8 +235,8 @@ const Link = styled.div<{ color?: "linked" | "overridden" }>`
   cursor: pointer;
   user-select: none;
   padding: 10px;
-  color: ${({ color }) =>
-    color === "linked" ? colors.primary.main : color === "overridden" ? colors.danger.main : null};
+  color: ${({ color, theme }) =>
+    color === "linked" ? theme.main.accent : color === "overridden" ? theme.main.danger : null};
   border-top: 1px solid #3a3a3a;
 `;
 

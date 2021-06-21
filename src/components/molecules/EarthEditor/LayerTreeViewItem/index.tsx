@@ -99,9 +99,9 @@ const Children = styled.div<{ dropType?: DropType; expanded?: boolean }>`
   border: 2px ${({ expanded }) => (expanded ? "solid" : "none")} transparent;
   border-top-color: ${({ dropType, expanded, theme }) =>
     dropType === "topOfChildren"
-      ? theme.colors.danger.main
+      ? theme.colors.dark.danger.main
       : dropType === "bottom" && expanded
-      ? `transparent transparent ${theme.colors.danger.main} transparent`
+      ? `transparent transparent ${theme.colors.dark.danger.main} transparent`
       : "transparent"};
 `;
 

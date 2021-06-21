@@ -1,5 +1,4 @@
 import { styled } from "@reearth/theme";
-import colors from "@reearth/theme/colors";
 import fonts from "@reearth/theme/fonts";
 
 export type Props = {
@@ -18,21 +17,22 @@ const Option = styled.li<Props>`
   font-size: ${fonts.sizes.xs}px;
   color: ${({ linked, overridden, selected, inactive, theme }) =>
     selected && linked && overridden
-      ? colors.primary.main
+      ? theme.main.accent
       : selected && linked
-      ? colors.primary.main
+      ? theme.main.accent
       : selected && overridden
-      ? colors.danger.main
+      ? theme.main.danger
       : selected
       ? theme.properties.contentsText
       : linked && overridden
-      ? colors.danger.main
+      ? theme.main.danger
       : overridden
-      ? colors.primary.main
+      ? theme.main.accent
       : inactive
-      ? colors.outline.main
+      ? theme.selectList.border
       : theme.properties.contentsText};
-  background: ${({ focused, theme }) => (focused ? theme.colors.bg[4] : theme.colors.bg[2])};
+  background: ${({ focused, theme }) =>
+    focused ? theme.colors.dark.bg[4] : theme.colors.dark.bg[2]};
   cursor: pointer;
 `;
 
