@@ -47,6 +47,8 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
 
   useEffect(() => {
     const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
+    console.log("access token: ", accessToken);
+
     if (pickerApiLoaded && accessToken) {
       setIsLoading(false);
       const picker = new google.picker.PickerBuilder()
