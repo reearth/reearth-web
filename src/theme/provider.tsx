@@ -10,7 +10,7 @@ import { useAuth } from "@reearth/auth";
 const Provider: React.FC = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const { data } = useThemeQuery({ skip: !isAuthenticated });
-  console.log(data);
+
   const theme = data?.me?.theme === ("dark" as Theme) ? darkTheme : lightTheme;
   return (
     <ThemeProvider theme={theme}>

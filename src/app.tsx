@@ -45,10 +45,10 @@ const App: React.FC = () => {
     <Auth0Provider>
       <LocalStateProvider>
         <GqlProvider>
-          <LocationProvider history={reachHistory}>
-            <DndProvider>
-              <IntlProvider>
-                <ThemeProvider>
+          <ThemeProvider>
+            <LocationProvider history={reachHistory}>
+              <DndProvider>
+                <IntlProvider>
                   <Suspense fallback={<Loading />}>
                     <StyledRouter>
                       <TopPage path="/" />
@@ -67,10 +67,10 @@ const App: React.FC = () => {
                       <NotFound default />
                     </StyledRouter>
                   </Suspense>
-                </ThemeProvider>
-              </IntlProvider>
-            </DndProvider>
-          </LocationProvider>
+                </IntlProvider>
+              </DndProvider>
+            </LocationProvider>
+          </ThemeProvider>
         </GqlProvider>
       </LocalStateProvider>
     </Auth0Provider>
