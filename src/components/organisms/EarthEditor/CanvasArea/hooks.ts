@@ -176,7 +176,7 @@ export default (isBuilt?: boolean) => {
     blocks,
     isCapturing,
     camera,
-    initialLoaded: !isBuilt || (!!layerData && !!widgetData),
+    ready: !isBuilt || (!!layerData && !!widgetData),
     selectLayer,
     selectBlock,
     onBlockChange,

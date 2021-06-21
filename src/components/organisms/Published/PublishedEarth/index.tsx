@@ -1,7 +1,6 @@
 import React from "react";
 
-import Earth from "@reearth/components/molecules/Published/Earth";
-import InfoBox from "@reearth/components/molecules/EarthEditor/InfoBox/SimpleInfoBox";
+import Visualizer from "@reearth/components/molecules/Visualizer";
 
 import useHooks from "./hooks";
 
@@ -11,33 +10,19 @@ export interface Props {
 }
 
 const Published: React.FC<Props> = ({ alias }) => {
-  const {
-    sceneProperty,
-    selectedLayerId,
-    selectLayer,
-    layers,
-    widgets,
-    selectedLayer,
-    infoBoxVisible,
-    initialLoaded,
-  } = useHooks(alias);
+  const { sceneProperty, layers, widgets, selectedLayer, ready, selectLayer } = useHooks(alias);
 
   return (
     <>
-      <Earth
-        sceneProperty={sceneProperty}
-        layers={layers}
+      <Visualizer
+        engine="cesium"
+        primitives={layers}
         widgets={widgets}
+        selectedPrimitive={selectedLayer}
+        sceneProperty={sceneProperty}
+        ready={ready}
+        isBuilt
         onLayerSelect={selectLayer}
-        selectedLayerId={selectedLayerId}
-        initialLoaded={initialLoaded}
-      />
-      <InfoBox
-        infoboxKey={selectedLayer?.id}
-        visible={!!selectedLayer?.infobox && infoBoxVisible}
-        name={selectedLayer?.title}
-        property={selectedLayer?.infobox?.property}
-        blocks={selectedLayer?.infobox?.blocks}
       />
     </>
   );

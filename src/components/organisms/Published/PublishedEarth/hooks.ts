@@ -1,20 +1,12 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import ReactGA from "react-ga";
-import { EarthLayer, EarthWidget } from "@reearth/components/molecules/EarthEditor/Earth";
-import { Block } from "@reearth/components/molecules/EarthEditor/InfoBox/InfoBox";
-import { PublishedData } from "./types";
 
-export type Layer = EarthLayer & {
-  name?: string;
-  infobox?: {
-    property?: any;
-    blocks?: Block[];
-  };
-};
+import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import { PublishedData } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
-  const [initialLoaded, setInitialLoaded] = useState(false);
+  const [ready, setReady] = useState(false);
   const [selectedLayerId, changeSelectedLayerId] = useState<string>();
   const [infoBoxVisible, setInfoBoxVisible] = useState(true);
 
@@ -36,22 +28,20 @@ export default (alias?: string) => {
     ReactGA.pageview(window.location.pathname);
   }, [googleAnalyticsData]);
 
-  const layers = useMemo<Layer[] | undefined>(
+  const layers = useMemo<Primitive[] | undefined>(
     () =>
       data?.layers.map(l => ({
         id: l.id,
         title: l.name || "",
-        pluginId: l.pluginId,
-        extensionId: l.extensionId,
+        plugin: `${l.pluginId}/${l.extensionId}`,
         isVisible: true,
         property: l.property,
         infobox: l.infobox
           ? {
               property: l.infobox.property,
-              blocks: l.infobox.fields.map(f => ({
+              blocks: l.infobox.fields.map<Block>(f => ({
                 id: f.id,
-                pluginId: f.pluginId,
-                extensionId: f.extensionId,
+                plugin: `${f.pluginId}/${f.extensionId}`,
                 property: f.property,
               })),
             }
@@ -60,9 +50,9 @@ export default (alias?: string) => {
     [data],
   );
 
-  const widgets = useMemo<EarthWidget[] | undefined>(
+  const widgets = useMemo<Widget[] | undefined>(
     () =>
-      data?.widgets.map(w => ({
+      data?.widgets.map<Widget>(w => ({
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
@@ -107,19 +97,18 @@ export default (alias?: string) => {
         // TODO: display error for users
         console.error(e);
       } finally {
-        setInitialLoaded(true);
+        setReady(true);
       }
     })();
   }, [alias]);
 
   return {
     sceneProperty: data?.property,
-    selectedLayerId,
     selectLayer,
     layers,
     widgets,
     selectedLayer,
     infoBoxVisible,
-    initialLoaded,
+    ready,
   };
 };
