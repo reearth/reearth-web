@@ -2,7 +2,7 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 
 import Component, { Props } from ".";
-import { commonApi } from "../storybook";
+import { commonApi } from "../../storybook";
 
 export default {
   title: "molecules/Visualizer/Widget/Storytelling",

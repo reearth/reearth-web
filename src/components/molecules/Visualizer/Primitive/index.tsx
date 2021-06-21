@@ -18,8 +18,7 @@ export type Props<P = any, PP = any, SP = any> = {
   isBuilt?: boolean;
   isSelected?: boolean;
   sceneProperty?: SP;
-  selected?: [string | undefined, string | undefined];
-  onSelect?: () => void;
+  selected?: [id: string | undefined, reason?: string | undefined];
 };
 
 export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, SP>>;

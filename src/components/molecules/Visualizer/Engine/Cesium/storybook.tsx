@@ -15,8 +15,8 @@ export const V: React.FC<{ location?: { lat: number; lng: number } }> = ({
   return (
     <CesiumEngine
       ready
-      onLayerSelect={action("onLayerSelect")}
-      onCameraChange={action("onCameraChange")}>
+      property={{ tiles: [{ id: "default", tile_type: "default" }] }}
+      onLayerSelect={action("Cesium: onLayerSelect")}>
       <CameraFlyTo
         destination={Cartesian3.fromDegrees((l ?? location).lng, (l ?? location).lat, 10000)}
         duration={0}

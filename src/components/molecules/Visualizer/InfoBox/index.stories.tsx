@@ -23,6 +23,17 @@ Template.args = {
         },
       },
     },
+    {
+      id: "b",
+      plugin: "reearth/textblock",
+      propertyId: "propertya",
+      property: {
+        default: {
+          text: "# World!",
+          markdown: true,
+        },
+      },
+    },
   ],
   property: {
     default: {

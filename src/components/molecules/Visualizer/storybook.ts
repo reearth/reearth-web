@@ -1,5 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import type { CommonAPI, Primitive } from "..";
+import type { CommonAPI, Primitive } from ".";
 
 const primitives: Primitive[] = [
   {

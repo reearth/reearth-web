@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 
 import Menu, { Props } from ".";
-import { commonApi } from "../storybook";
+import { commonApi } from "../../storybook";
 
 export default {
   title: "molecules/Visualizer/Widget/Menu",

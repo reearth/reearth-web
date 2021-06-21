@@ -53,8 +53,8 @@ type Property = {
 const tag = "reearth_unselectable";
 
 const Marker: React.FC<PrimitiveProps<Property>> = ({
+  api,
   primitive: { id, property, isVisible },
-  onSelect,
 }) => {
   const {
     location,
@@ -63,7 +63,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
     pointSize = 10,
     style,
     image = marker,
-    imageSize = 1,
+    imageSize,
     imageHorizontalOrigin: horizontalOrigin,
     imageVerticalOrigin: verticalOrigin,
     imageCrop: crop,
@@ -109,13 +109,13 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
 
   const pixelOffset = useMemo(() => {
     const padding = 10;
-    const x = (img?.width && style == "image" ? img.width * imageSize : pointSize) / 2 + padding;
-    const y = (img?.height && style == "image" ? img.height * imageSize : pointSize) / 2 + padding;
+    const x = (img?.width && style == "image" ? img.width : pointSize) / 2 + padding;
+    const y = (img?.height && style == "image" ? img.height : pointSize) / 2 + padding;
     return new Cartesian2(
       labelHorizontal ? x * (labelRight ? -1 : 1) : 0,
       labelVertical ? y * (labelBottom ? -1 : 1) : 0,
     );
-  }, [img, imageSize, pointSize, labelHorizontal, labelRight, labelVertical, labelBottom, style]);
+  }, [img, pointSize, labelHorizontal, labelRight, labelVertical, labelBottom, style]);
 
   const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
   useEffect(() => {
@@ -140,7 +140,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
           />
         </Entity>
       )}
-      <Entity id={id} position={pos} onClick={onSelect}>
+      <Entity id={id} position={pos} onClick={() => api?.selectLayer(id)}>
         {property?.default?.style === "point" ? (
           <PointGraphics pixelSize={pointSize} color={toColor(property?.default?.pointColor)} />
         ) : (

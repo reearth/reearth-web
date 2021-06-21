@@ -6,7 +6,11 @@ import Resource, { Props } from ".";
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Resource",
   component: Resource,
-  argTypes: { onSelect: { action: "onSelect" } },
+  argTypes: {
+    api: {
+      control: false,
+    },
+  },
 } as Meta;
 
 export const Default: Story<Props> = args => (
@@ -21,7 +25,7 @@ Default.args = {
     isVisible: true,
     property: {
       default: {
-        url: "/sample.geojson",
+        url: `${process.env.PUBLIC_URL}/sample.geojson`,
       },
     },
   },

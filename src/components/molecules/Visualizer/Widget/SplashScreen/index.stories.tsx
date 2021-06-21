@@ -3,7 +3,7 @@ import { Math as CesiumMath } from "cesium";
 import { Meta, Story } from "@storybook/react";
 
 import SplashScreen, { Props } from ".";
-import { commonApi } from "../storybook";
+import { commonApi } from "../../storybook";
 
 export default {
   title: "molecules/Visualizer/Widget/SplashScreen",

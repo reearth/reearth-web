@@ -8,7 +8,7 @@ import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
 import { useDelayedCount, Durations } from "@reearth/util/use-delayed-count";
 import Text from "@reearth/components/atoms/Text";
-import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg"; // TODO: use Icon component
+import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo } from "../common";
@@ -35,8 +35,8 @@ export type Property = {
   };
 };
 
-const cameraDuration = 3000;
-const cameraExitDuration = 3000;
+const cameraDuration = 2000;
+const cameraExitDuration = 2000;
 const fovDuration = 500;
 const fovExitDuration = 599;
 const photoDuration = 1000;
@@ -51,10 +51,9 @@ const durations: Durations = [
 
 const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
   api,
-  primitive: { isVisible, property },
+  primitive: { id, isVisible, property },
   isSelected,
   selected,
-  onSelect,
 }) => {
   const {
     image,
@@ -99,7 +98,11 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
     if (prevMode === 0 && mode === 1 && camera) {
       const storytelling = selected?.[1] === "storytelling";
-      prevCamera.current = storytelling ? camera : api?.camera;
+      prevCamera.current = storytelling
+        ? { ...camera }
+        : api?.camera
+        ? { ...api.camera }
+        : undefined;
       api?.flyTo(camera, {
         duration: cameraDuration / 1000,
         easing: EasingFunction.CUBIC_IN_OUT,
@@ -110,13 +113,13 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
       prevCamera.current = undefined;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [camera, mode, prevMode]);
+  }, [mode, prevMode]); // ignore api, camera and selected
 
   useEffect(() => {
     if (isSelected && !photoOverlayImage) return;
     startTransition(!isSelected);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSelected]);
+  }, [isSelected]); // ignore photoOverlayImage and startTransition
 
   const currentFov = mode >= 2 ? camera?.fov : prevCamera.current?.fov ?? defaultFOV;
   useEffect(() => {
@@ -128,7 +131,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFov]);
+  }, [currentFov]); // ignore api
 
   const transition = useTransition(mode >= 3, mode === 2 ? photoExitDuration : photoDuration, {
     mountOnEnter: true,
@@ -143,7 +146,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
   return !isVisible ? null : (
     <>
-      <Entity position={pos} onClick={onSelect}>
+      <Entity id={id} position={pos} onClick={() => api?.selectLayer(id)}>
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}

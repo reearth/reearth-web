@@ -6,8 +6,10 @@ const block: Block = {
   plugin: "reearth/textblock",
   id: "block",
   property: {
-    title: "Text",
-    text: "texttexttext",
+    default: {
+      title: "Text",
+      text: "texttexttext",
+    },
   },
 };
 

@@ -80,7 +80,6 @@ const Visualizer: React.FC<Props> = ({
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             isSelected={selectedPrimitive?.id === primitive.id}
-            onSelect={() => props.onLayerSelect?.(primitive.id)}
           />
         ))}
       </Engine>
