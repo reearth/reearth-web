@@ -30,7 +30,6 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
     selectedSheet,
     handleAuthClick,
     handleSheetSelect,
-    handleClientLoad,
   } = useHooks(onSheetSelect);
 
   return (
@@ -53,7 +52,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
               cardSize="medium"
               icon="sheetFile"
               iconSize="50px"
-              onCheck={() => handleClientLoad()}
+              onCheck={() => handleAuthClick()}
             />
           </Flex>
           <Divider margin="24px" />
