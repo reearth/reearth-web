@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -13,7 +13,6 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
-import VirtualAssetCard from "../VirtualAssetCard";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
 
@@ -81,23 +80,6 @@ const AssetContainer: React.FC<Props> = ({
     }
   }, [onRemove, selectedAssets]);
 
-  const listRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-
-  useEffect(() => {
-    if (listRef.current?.offsetWidth) {
-      setContainerWidth(listRef.current?.offsetWidth);
-    }
-  }, [containerWidth]);
-
-  const handleResize = () => {
-    if (listRef.current?.offsetWidth) {
-      setContainerWidth(listRef.current?.offsetWidth);
-    }
-  };
-
-  window.addEventListener("resize", handleResize);
-
   return (
     <Wrapper>
       <ButtonWrapper justify={onRemove ? "flex-end" : "center"}>
@@ -154,7 +136,7 @@ const AssetContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper ref={listRef} isHeightFixed={isHeightFixed}>
+      <AssetWrapper isHeightFixed={isHeightFixed}>
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -170,10 +152,7 @@ const AssetContainer: React.FC<Props> = ({
             </TemplateText>
           </Template>
         ) : (
-          <AssetList
-            wrap={layoutType === "list" ? "nowrap" : "wrap"}
-            justify="space-between"
-            layoutType={layoutType}>
+          <AssetList layoutType={layoutType}>
             {layoutType === "list"
               ? (searchResults || filteredAssets)?.map(a => (
                   <AssetListItem
@@ -195,11 +174,6 @@ const AssetContainer: React.FC<Props> = ({
                     checked={currentSaved === a}
                   />
                 ))}
-            <VirtualAssetCard
-              containerWidth={containerWidth}
-              cardSize={layoutType}
-              assetsLength={assets?.length}
-            />
           </AssetList>
         )}
         <Divider margin="0" />
@@ -222,11 +196,24 @@ const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
 
 const ButtonWrapper = styled(Flex)``;
 
-const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
-  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
-
+const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
+  padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;
   overflow-y: scroll;
   scrollbar-width: none;
+  display: grid;
+  grid-template-columns: ${({ layoutType }) =>
+    (layoutType === "list" && "100%") ||
+    (layoutType === "medium" && "repeat(auto-fill, 192px)") ||
+    (layoutType === "small" && "repeat(auto-fill, 104px)")};
+  grid-template-rows: ${({ layoutType }) =>
+    (layoutType === "list" && "46px") ||
+    (layoutType === "medium" && "repeat(auto-fill, 186px)") ||
+    (layoutType === "small" && "repeat(auto-fill, 120px)")};
+  gap: ${({ layoutType }) =>
+    (layoutType === "list" && "12px") ||
+    (layoutType === "medium" && "24px") ||
+    (layoutType === "small" && "16px")};
+  justify-content: space-between;
   &::-webkit-scrollbar {
     display: none;
   }

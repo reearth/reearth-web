@@ -58,9 +58,10 @@ const ListItem = styled(Flex)<{ selected?: boolean }>`
   border: 1px solid
     ${({ selected, theme }) => (selected ? `${theme.assetCard.highlight}` : "transparent")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["xl"]}px;
-  margin: ${metricsSizes["s"]}px ${metricsSizes["m"]}px;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.text.main};
+  height: 46px;
+  box-sizing: border-box;
 
   &:hover {
     background: ${({ theme }) => theme.assetCard.bgHover};
