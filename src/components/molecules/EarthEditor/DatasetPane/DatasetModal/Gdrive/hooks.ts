@@ -60,14 +60,17 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
   }, [accessToken, pickerApiLoaded]);
 
   const handleClientLoad = async () => {
+    const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
     setIsLoading(true);
     const googleClientId = window.REEARTH_CONFIG?.googleClientId;
     await gapi.load("client:auth2", () => {
+      console.log("why");
+
       gapi.client
         .init({
-          client_id: googleClientId,
+          apiKey: googleApiKey,
+          clientId: googleClientId,
           scope: "https://www.googleapis.com/auth/spreadsheets",
-          immediate: false,
           discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
         })
         .then(function () {
@@ -76,7 +79,7 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
           );
         });
     });
-    gapi.load("picker", () => {
+    await gapi.load("picker", () => {
       setPickerApiLoaded(true);
     });
   };
