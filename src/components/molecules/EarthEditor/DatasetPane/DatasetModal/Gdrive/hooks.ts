@@ -69,7 +69,7 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
           apiKey: googleApiKey,
           clientId: googleClientId,
           scope:
-            "https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/documents.readonly",
+            "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/documents.readonly",
           discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
         })
         .then(function () {
