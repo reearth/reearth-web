@@ -13,7 +13,7 @@ type Asset = {
 type Props = {
   assets?: Asset[];
   onCreate?: (files: FileList) => void;
-  onRemove?: (assets: Asset[]) => void;
+  onRemove?: (assets: string[]) => void;
 };
 
 const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {

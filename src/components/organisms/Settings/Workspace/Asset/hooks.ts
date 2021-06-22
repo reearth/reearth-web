@@ -60,12 +60,11 @@ export default (params: Params) => {
   const [removeAssetMutation] = useRemoveAssetMutation();
 
   const removeAsset = useCallback(
-    (assets: Asset[]) =>
+    (assetIds: string[]) =>
       (async () => {
         if (teamId) {
           await Promise.all(
-            assets.map(asset => {
-              const assetId = asset.id;
+            assetIds.map(assetId => {
               removeAssetMutation({ variables: { assetId }, refetchQueries: ["Assets"] });
             }),
           );

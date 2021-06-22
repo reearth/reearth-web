@@ -24,7 +24,7 @@ export type Props = {
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
-  onRemove?: (assets: AssetType[]) => void;
+  onRemove?: (assets: string[]) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
@@ -76,9 +76,10 @@ const AssetContainer: React.FC<Props> = ({
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
-      onRemove?.(selectedAssets);
+      onRemove?.(selectedAssets.map(a => a.id));
+      selectAsset?.([]);
     }
-  }, [onRemove, selectedAssets]);
+  }, [onRemove, selectAsset, selectedAssets]);
 
   return (
     <Wrapper>
