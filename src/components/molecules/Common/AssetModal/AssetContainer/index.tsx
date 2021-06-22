@@ -24,7 +24,7 @@ export type Props = {
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
-  onRemove?: (assetsIds: string[]) => void;
+  onRemove?: (assetIds: string[]) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
