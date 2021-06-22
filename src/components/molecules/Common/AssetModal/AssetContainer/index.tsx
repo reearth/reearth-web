@@ -24,7 +24,7 @@ export type Props = {
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
-  onRemove?: (assets: string[]) => void;
+  onRemove?: (assetsID: string[]) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
@@ -83,7 +83,7 @@ const AssetContainer: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <ButtonWrapper justify={onRemove ? "flex-end" : "center"}>
+      <Flex justify={onRemove ? "flex-end" : "center"}>
         <Button
           large
           text={
@@ -106,7 +106,7 @@ const AssetContainer: React.FC<Props> = ({
             onClick={handleRemove}
           />
         )}
-      </ButtonWrapper>
+      </Flex>
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
@@ -194,8 +194,6 @@ const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
   flex-direction: column;
   justify-content: space-between;
 `;
-
-const ButtonWrapper = styled(Flex)``;
 
 const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
   padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;

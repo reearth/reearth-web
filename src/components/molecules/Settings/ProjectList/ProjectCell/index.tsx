@@ -36,7 +36,6 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
   return (
     <StyledWrapper project={project}>
       <Wrapper
-        project={project}
         onClick={() => onSelect?.(project)}
         isHover={isHover}
         onMouseEnter={() => setHover(true)}
@@ -68,7 +67,7 @@ const StyledWrapper = styled.div<{ project: Project }>`
   height: 240px;
 `;
 
-const Wrapper = styled.div<{ project: Project; isHover?: boolean }>`
+const Wrapper = styled.div<{ isHover?: boolean }>`
   box-sizing: border-box;
   padding: ${metricsSizes["2xl"]}px ${metricsSizes["l"]}px;
   cursor: pointer;

@@ -59,7 +59,6 @@ const Wrapper = styled(Flex)<{ selected?: boolean; cardSize?: CardSize }>`
   box-shadow: 0 6px 6px -6px ${props => props.theme.colors.other.black};
   border: 1px solid
     ${props => (props.selected ? `${props.theme.assetCard.highlight}` : "transparent")};
-  /* margin: 12px; */
   padding: ${({ cardSize }) =>
     cardSize === "small" ? "8px" : cardSize === "medium" ? "12px" : "20px"};
   width: ${({ cardSize }) =>

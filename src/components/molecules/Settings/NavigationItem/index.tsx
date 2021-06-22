@@ -1,7 +1,6 @@
 import React from "react";
-import { styled, fonts } from "@reearth/theme";
+import { styled, fonts, useTheme } from "@reearth/theme";
 import { Link } from "@reach/router";
-import { colors } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props = {
@@ -10,13 +9,14 @@ export type Props = {
 };
 
 const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
+  const theme = useTheme();
   return (
     <>
       <LinkItem
         to={to}
         getProps={({ isCurrent }) =>
           isCurrent && {
-            style: { background: colors.functional.select, color: colors.text.strong },
+            style: { background: theme.colors.functional.select, color: theme.colors.text.strong },
           }
         }>
         {name}
@@ -29,7 +29,7 @@ const NavigationItem: React.FC<Props> = ({ name, to, children }) => {
 const LinkItem = styled(Link)`
   display: flex;
   padding: ${metricsSizes["l"]}px ${metricsSizes["s"]}px;
-  color: ${colors.text.main};
+  color: ${({ theme }) => theme.colors.text.main};
   text-decoration: none;
 
   &:hover {

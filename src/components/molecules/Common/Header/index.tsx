@@ -107,9 +107,6 @@ const Wrapper = styled.header`
   width: 100%;
   height: ${metrics.headerHeight}px;
   background: ${props => props.theme.header.bg};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 `;
 
 const Content = styled.div`

@@ -11,7 +11,7 @@ export type Props = {
 const Section: React.FC<Props> = ({ title, actions, children }) => {
   const theme = useTheme();
   return (
-    <>
+    <div>
       {title && (
         <>
           <SectionHeader>
@@ -24,7 +24,7 @@ const Section: React.FC<Props> = ({ title, actions, children }) => {
         </>
       )}
       <SectionItem>{children}</SectionItem>
-    </>
+    </div>
   );
 };
 
