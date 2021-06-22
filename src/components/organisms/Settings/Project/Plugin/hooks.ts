@@ -1,6 +1,7 @@
 import { useLocalState } from "@reearth/state";
 import { useInstallablePluginsQuery } from "@reearth/gql";
 import { useMemo } from "react";
+import { PluginItem } from "@reearth/components/molecules/Settings/Workspace/Plugin/PluginSection";
 
 export default () => {
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
@@ -10,29 +11,18 @@ export default () => {
 
   const { data: rawPlugins, loading } = useInstallablePluginsQuery();
 
-  const plugins = useMemo(() => {
-    return rawPlugins?.installablePlugins.map(p => ({
-      title: p.name,
-      bodyMarkdown: p.description,
-    }));
-  }, [rawPlugins?.installablePlugins]);
-  //DELETE_ME: When plugin API is ready
-  // const samplePlugins = [
-  //   {
-  //     id: "hogehoge",
-  //     thumbnail: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
-  //     title: "Storytelling",
-  //     isInstalled: true,
-  //     bodyMarkdown: "# Hoge\n## Fuag",
-  //   },
-  //   {
-  //     id: "fugafuga",
-  //     thumbnail: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
-  //     title: "Storytelling",
-  //     isInstalled: false,
-  //     bodyMarkdown: "# Hoge\n## Fuag",
-  //   },
-  // ];
+  const plugins = useMemo((): PluginItem[] => {
+    return rawPlugins
+      ? rawPlugins?.installablePlugins.map<PluginItem>(p => ({
+          title: p.name,
+          bodyMarkdown: p.description,
+          author: p.author,
+          thumbnailUrl: p.thumbnailUrl,
+          isInstalled: false,
+        }))
+      : [];
+  }, [rawPlugins]);
 
-  return { currentTeam, currentProject, plugins: plugins, loading };
+  console.log("plugin----------", plugins);
+  return { currentTeam, currentProject, plugins, loading };
 };

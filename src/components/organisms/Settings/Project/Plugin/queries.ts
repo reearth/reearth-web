@@ -5,6 +5,8 @@ export const INSTALLABLE_PLUGINS = gql`
     installablePlugins {
       name
       description
+      thumbnailUrl
+      author
       createdAt
     }
   }

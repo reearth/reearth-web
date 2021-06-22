@@ -27,7 +27,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   const handleMouseLeave = () => {
     setHovered(false);
   };
-
+  console.log(thumbnail);
   return (
     <Wrapper align="center" justify="space-between" className={className}>
       <Flex align="center">

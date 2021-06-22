@@ -5,11 +5,11 @@ import PluginAccordionItemBody from "./PluginAccordionItem/itemBody";
 import PluginAccordionItemHeader from "./PluginAccordionItem/itemHeader";
 
 export type PluginItem = {
-  id: string;
-  thumbnail?: string;
-  title?: string;
-  isInstalled?: boolean;
+  thumbnailUrl?: string;
+  title: string;
+  isInstalled: boolean;
   bodyMarkdown?: string;
+  author: string;
 };
 
 export type PluginAccordionProps = {
@@ -19,17 +19,17 @@ export type PluginAccordionProps = {
 
 const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items }) => {
   const theme = useTheme();
-  return (
+  return items ? (
     <Accordion
       className={className}
       allowMultipleExpanded
       itemBgColor={theme.colors.bg[3]}
       items={items?.map(i => {
         return {
-          id: i.id,
+          id: i.title,
           heading: (
             <PluginAccordionItemHeader
-              thumbnail={i.thumbnail}
+              thumbnail={i.thumbnailUrl}
               title={i.title}
               isInstalled={i.isInstalled}
             />
@@ -38,7 +38,7 @@ const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items }) =
         };
       })}
     />
-  );
+  ) : null;
 };
 
 export default PluginAccordion;

@@ -7,11 +7,13 @@ import { styled, useTheme } from "@reearth/theme";
 import React from "react";
 import { useIntl } from "react-intl";
 import { PluginPageMode } from "..";
-import PluginAccordion from "../../PluginAccordion";
+import PluginAccordion, { PluginItem as PluginItemType } from "../../PluginAccordion";
+
+export type PluginItem = PluginItemType;
 
 export type Props = {
   className?: string;
-  plugins?: any[]; //FIXME: When back-end API is readly
+  plugins?: PluginItem[];
   onMoveNextPage?: (mode: PluginPageMode) => void;
 };
 
