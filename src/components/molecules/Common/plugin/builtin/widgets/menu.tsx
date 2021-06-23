@@ -241,7 +241,6 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
 `;
 
 const MenuWrapper = styled.div<{ visible?: boolean }>`
-  min-width: 200px;
   width: 100%;
   position: absolute;
   top: 0;
