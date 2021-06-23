@@ -1,28 +1,37 @@
 import { useLocalState } from "@reearth/state";
-import { useInstallablePluginsQuery } from "@reearth/gql";
+import { useInstallablePluginsQuery, useInstalledPluginsQuery } from "@reearth/gql";
 import { useMemo } from "react";
 import { PluginItem } from "@reearth/components/molecules/Settings/Workspace/Plugin/PluginSection";
 
-export default () => {
+export default (projectId: string) => {
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
     currentTeam: s.currentTeam,
     currentProject: s.currentProject,
   }));
 
-  const { data: rawPlugins, loading } = useInstallablePluginsQuery();
+  const { data: rawPluginsData, loading: pluginLoading } = useInstallablePluginsQuery();
+
+  const { data: rawSceneData, loading: sceneLoading } = useInstalledPluginsQuery({
+    variables: { projectId: projectId ?? "" },
+    skip: !projectId,
+  });
+
+  const installedPluginIds = useMemo(() => {
+    return rawSceneData?.scene?.plugins.map(p => p.plugin?.id);
+  }, [rawSceneData?.scene?.plugins]);
 
   const plugins = useMemo((): PluginItem[] => {
-    return rawPlugins
-      ? rawPlugins?.installablePlugins.map<PluginItem>(p => ({
+    return rawPluginsData
+      ? rawPluginsData?.installablePlugins.map<PluginItem>(p => ({
           title: p.name,
           bodyMarkdown: p.description,
           author: p.author,
           thumbnailUrl: p.thumbnailUrl,
-          isInstalled: false,
+          isInstalled: !!installedPluginIds?.includes(p.name), //TODO: After back-end decide how to generate plugin's id, fix here.
         }))
       : [];
-  }, [rawPlugins]);
+  }, [installedPluginIds, rawPluginsData]);
 
-  console.log("plugin----------", plugins);
+  const loading = sceneLoading || pluginLoading;
   return { currentTeam, currentProject, plugins, loading };
 };

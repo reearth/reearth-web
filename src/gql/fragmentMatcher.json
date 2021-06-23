@@ -16,8 +16,8 @@
       "LayerGroup"
     ],
     "Layer": [
-      "LayerItem",
-      "LayerGroup"
+      "LayerGroup",
+      "LayerItem"
     ],
     "PropertyItem": [
       "PropertyGroup",

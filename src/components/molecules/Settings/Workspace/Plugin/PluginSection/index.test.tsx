@@ -5,18 +5,18 @@ import PluginSection from "./index";
 
 const samplePlugins = [
   {
-    id: "hogehoge",
-    thumbnail: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
+    thumbnailUrl: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
     title: "Storytelling",
     isInstalled: true,
     bodyMarkdown: "# Hoge",
+    author: "reearth",
   },
   {
-    id: "fugafuga",
-    thumbnail: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
+    thumbnailUrl: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
     title: "Splashscreen",
     isInstalled: true,
     bodyMarkdown: "# Fuga",
+    author: "reearth",
   },
 ];
 

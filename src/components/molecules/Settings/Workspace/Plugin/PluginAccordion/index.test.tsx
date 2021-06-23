@@ -5,18 +5,18 @@ import PluginAccordion from "./index";
 describe("Accordion should display header and body", () => {
   const items = [
     {
-      id: "hogehoge",
-      thumbnail: `${process.env.PUBLIC_URL}/sample.svg`,
+      thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
       title: "Sample",
       isInstalled: true,
       bodyMarkdown: "# Hoge ## Hoge",
+      author: "reearth",
     },
     {
-      id: "fugafuga",
-      thumbnail: `${process.env.PUBLIC_URL}/sample.svg`,
+      thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
       title: "Sample2",
       isInstalled: false,
       bodyMarkdown: "# Fuga ## Fuga",
+      author: "reearth",
     },
   ];
   test("Accordion should be rendered", () => {

@@ -13,7 +13,7 @@ type Props = {
 
 const Plugin: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentTeam, currentProject, plugins, loading } = useHooks();
+  const { currentTeam, currentProject, plugins, loading } = useHooks(projectId);
 
   return (
     <SettingPage projectId={projectId}>
