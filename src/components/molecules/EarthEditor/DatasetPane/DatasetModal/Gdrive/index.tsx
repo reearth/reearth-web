@@ -36,16 +36,16 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
     <>
       <StyledIcon icon={"arrowLongLeft"} size={24} onClick={onReturn} />
       {syncLoading && <Loading />}
-      {pickedFile?.id && (
-        <>
-          <Flex justify="center" align="center">
-            <GdriveIcon size={32} icon="googleDrive" />
-            <Text size="m" color={theme.main.strongText} weight="bold">
-              {intl.formatMessage({ defaultMessage: "Connect with Google Drive" })}
-            </Text>
-          </Flex>
-          <Divider margin="24px" />
-          <Flex justify="center">
+      <Flex justify="center" direction="column" align="center">
+        <Flex justify="center" align="center">
+          <GdriveIcon size={32} icon="googleDrive" />
+          <Text size="m" color={theme.main.strongText} weight="bold">
+            {intl.formatMessage({ defaultMessage: "Connect with Google Drive" })}
+          </Text>
+        </Flex>
+        <Divider margin="24px" />
+        {pickedFile?.id && (
+          <>
             <AssetCard
               isImage={false}
               name={pickedFile.name}
@@ -54,40 +54,31 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
               iconSize="50px"
               onCheck={() => handleAuthClick()}
             />
-          </Flex>
-          <Divider margin="24px" />
-          <AssetWrapper direction="column" justify="space-between">
-            <AssetList wrap="nowrap" justify="space-between">
-              {pickedFileSheets?.map((sheetItem: GoogleSheet) => (
-                <AssetListItem
-                  key={sheetItem.properties.sheetId}
-                  asset={{ id: sheetItem.properties.sheetId, name: sheetItem.properties.title }}
-                  isImage={false}
-                  onCheck={() => {
-                    handleSheetSelect({
-                      id: sheetItem.properties.sheetId,
-                      name: sheetItem.properties.title,
-                    });
-                  }}
-                  selected={sheetItem.properties.sheetId === selectedSheet?.id}
-                />
-              ))}
-            </AssetList>
-          </AssetWrapper>
-          <Divider margin="24px" />
-        </>
-      )}
+            <Divider margin="24px" />
+            <AssetWrapper direction="column" justify="space-between">
+              <AssetList wrap="nowrap" direction="column" justify="space-between">
+                {pickedFileSheets?.map((sheetItem: GoogleSheet) => (
+                  <AssetListItem
+                    key={sheetItem.properties.sheetId}
+                    asset={{ id: sheetItem.properties.sheetId, name: sheetItem.properties.title }}
+                    isImage={false}
+                    onCheck={() => {
+                      handleSheetSelect({
+                        id: sheetItem.properties.sheetId,
+                        name: sheetItem.properties.title,
+                      });
+                    }}
+                    selected={sheetItem.properties.sheetId === selectedSheet?.id}
+                  />
+                ))}
+              </AssetList>
+            </AssetWrapper>
+            <Divider margin="24px" />
+          </>
+        )}
 
-      {!pickedFile?.id && (
-        <>
-          <Flex justify="center" align="center">
-            <GdriveIcon size={32} icon="googleDrive" />
-            <Text size="m" color={theme.main.strongText} weight="bold">
-              {intl.formatMessage({ defaultMessage: "Connect with Google Drive" })}
-            </Text>
-          </Flex>
-          <Divider margin="24px" />
-          <Flex justify="center">
+        {!pickedFile?.id && (
+          <>
             <Text
               size="m"
               color={theme.colors.text.weak}
@@ -96,8 +87,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
                 defaultMessage: "Re:earth supports Google Sheets, and CSV file to upload.",
               })}
             </Text>
-          </Flex>
-          <Flex justify="center">
+
             {isLoading ? (
               <Loading />
             ) : (
@@ -108,9 +98,9 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
                 onClick={() => handleAuthClick()}
               />
             )}
-          </Flex>
-        </>
-      )}
+          </>
+        )}
+      </Flex>
     </>
   );
 };
@@ -124,7 +114,7 @@ const StyledIcon = styled(Icon)`
 `;
 
 const AssetList = styled(Flex)`
-  flex-direction: column;
+  width: 100%;
   max-height: 458px;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -140,6 +130,7 @@ const AssetList = styled(Flex)`
 
 const AssetWrapper = styled(Flex)`
   height: 425px;
+  width: 100%;
 `;
 
 export default Gdrive;
