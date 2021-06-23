@@ -21,7 +21,7 @@ const Field: React.FC<Props> = ({ className, header, action, secondaryAction, bo
           <Text size="m">{header}</Text>
         </Header>
       )}
-      <Content>{body ? body : children && children}</Content>
+      <Content>{body ? <StyledText size="s">{body}</StyledText> : children && children}</Content>
       <ActionArea>
         {secondaryAction && <Action>{secondaryAction}</Action>}
         {action && <Action>{action}</Action>}
@@ -47,9 +47,12 @@ const Header = styled.div`
 `;
 
 const Content = styled.div`
+  flex: 1;
+`;
+
+const StyledText = styled(Text)`
   max-height: 264px;
   overflow: auto;
-  flex: 1;
 `;
 
 const ActionArea = styled.div`
