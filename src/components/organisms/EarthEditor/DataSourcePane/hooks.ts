@@ -108,9 +108,9 @@ export default () => {
         },
       });
       // re-render
-      // await client.resetStore();
+      await client.resetStore();
     },
-    [importGoogleSheetData, sceneId],
+    [client, importGoogleSheetData, sceneId],
   );
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
