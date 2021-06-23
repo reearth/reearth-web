@@ -70,8 +70,9 @@ const DatasetPane: React.FC<Props> = ({
       } finally {
         setDatasetSyncLoading(false);
       }
+      setDatasetSyncOpen(false);
     },
-    [onGoogleSheetDatasetImport, setDatasetSyncLoading],
+    [onGoogleSheetDatasetImport, setDatasetSyncLoading, setDatasetSyncOpen],
   );
 
   const handleDatasetAdd = useCallback(
