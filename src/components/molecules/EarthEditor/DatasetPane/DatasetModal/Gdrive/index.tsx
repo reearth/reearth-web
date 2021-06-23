@@ -11,7 +11,7 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import AssetCard from "@reearth/components/molecules/Common/AssetModal/AssetCard";
 import AssetListItem from "@reearth/components/molecules/Common/AssetModal/AssetListItem";
 import Button from "@reearth/components/atoms/Button";
-import useHooks, { GoolgeSheet, SheetParameter } from "./hooks";
+import useHooks, { GoogleSheet, SheetParameter } from "./hooks";
 
 export type Props = {
   onReturn: () => void;
@@ -58,7 +58,7 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
           <Divider margin="24px" />
           <AssetWrapper direction="column" justify="space-between">
             <AssetList wrap="nowrap" justify="space-between">
-              {pickedFileSheets?.map((sheetItem: GoolgeSheet) => (
+              {pickedFileSheets?.map((sheetItem: GoogleSheet) => (
                 <AssetListItem
                   key={sheetItem.properties.sheetId}
                   asset={{ id: sheetItem.properties.sheetId, name: sheetItem.properties.title }}

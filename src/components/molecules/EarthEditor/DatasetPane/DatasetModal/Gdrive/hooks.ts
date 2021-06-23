@@ -9,7 +9,7 @@ export type SheetParameter = {
   sheetName: string;
 };
 
-export type GoolgeSheet = {
+export type GoogleSheet = {
   properties: {
     gridProperties: { rowCount: number; columnCount: number };
     index: number;
@@ -28,7 +28,7 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [pickerApiLoaded, setPickerApiLoaded] = useState<boolean>(false);
   const [pickedFile, setPickedFile] = useState<File>();
-  const [pickedFileSheets, setPickedFileSheets] = useState<GoolgeSheet[]>([]);
+  const [pickedFileSheets, setPickedFileSheets] = useState<GoogleSheet[]>([]);
   const [selectedSheet, setSelectedSheet] = useState<File>();
   const [accessToken, setAccessToken] = useState("");
 
@@ -40,7 +40,7 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
           spreadsheetId: data.docs[0].id,
         })
         .then(function (response: any) {
-          setPickedFileSheets(response.result.sheets as GoolgeSheet[]);
+          setPickedFileSheets(response.result.sheets as GoogleSheet[]);
         });
     }
   };
