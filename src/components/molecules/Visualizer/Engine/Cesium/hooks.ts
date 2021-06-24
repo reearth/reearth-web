@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import { CesiumComponentRef } from "resium";
 import {
   Viewer as CesiumViewer,
-  ScreenSpaceEventType,
   ImageryProvider,
   TerrainProvider,
   createWorldTerrain,
@@ -16,9 +15,9 @@ import { Camera } from "@reearth/util/value";
 import { Ref as EngineRef } from "..";
 import useEntitySelection from "./useEntitySelection";
 import tiles from "./tiles";
-import useCamera from "./useCamera";
 import useEngineAPI from "./useEngineAPI";
 import useEngineRef from "./useEngineRef";
+import { getCamera } from "./common";
 
 declare global {
   interface Window {
@@ -56,26 +55,30 @@ export type SceneProperty = {
 };
 
 export default ({
-  ready,
   selectedLayerId,
   property,
-  camera: cameraState,
   ref,
   onLayerSelect,
   onCameraChange,
 }: {
   selectedLayerId?: string;
   property?: SceneProperty;
-  ready?: boolean;
-  camera?: Camera;
   ref: React.ForwardedRef<EngineRef>;
   onLayerSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
+  // Ensure to set Cesium Ion access token before the first rendering
+  useLayoutEffect(() => {
+    const { ion } = property?.default ?? {};
+    if (ion) {
+      Ion.defaultAccessToken = ion;
+    }
+  }, [property?.default]);
+
   // expose ref
-  useEngineRef(ref, cesium, cameraState);
+  useEngineRef(ref, cesium);
 
   // expose api
   const api = useEngineAPI(cesium);
@@ -115,36 +118,24 @@ export default ({
     [property?.default?.bgcolor],
   );
 
-  // Ensure to set Cesium Ion access token before the first rendering
-  // But it does not work well...
-  const [loaded, setLoaded] = useState(false);
+  // move to initial position at startup
   useEffect(() => {
-    if (!ready) return;
-    const { ion } = property?.default ?? {};
-    if (ion) {
-      Ion.defaultAccessToken = ion;
-    }
-    if (loaded) return;
-    setLoaded(true);
-  }, [loaded, property?.default, ready]);
+    if (!property?.default?.camera) return;
+    onCameraChange?.(property.default.camera);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ignor property?.default?.camera and onCameraChange
 
-  // manage camera
-  useCamera({
-    camera: cameraState,
-    initialCamera: property?.default?.camera,
-    viewer: cesium.current?.cesiumElement,
-    onCameraChange,
-  });
+  // call onCameraChange event after moving camera
+  const onCameraMoveEnd = useCallback(() => {
+    if (!cesium?.current?.cesiumElement) return;
+    const c = getCamera(cesium.current.cesiumElement);
+    if (c) {
+      onCameraChange?.(c);
+    }
+  }, [onCameraChange]);
 
   // manage layer selection
   const selectViewerEntity = useEntitySelection(cesium, selectedLayerId, onLayerSelect);
-
-  // init
-  useEffect(() => {
-    const v = cesium.current?.cesiumElement;
-    v?.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-    v?.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-  }, []);
 
   // E2E test
   useEffect(() => {
@@ -164,11 +155,11 @@ export default ({
 
   return {
     api,
-    loaded,
     terrainProvider,
     backgroundColor,
     imageryLayers,
     cesium,
     selectViewerEntity,
+    onCameraMoveEnd,
   };
 };

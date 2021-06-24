@@ -10,12 +10,13 @@ import {
   Cartesian2,
   Cartesian3,
   Viewer,
+  PerspectiveFrustum,
 } from "cesium";
+
 import { useCanvas, useImage } from "@reearth/util/image";
-import { FlyToCamera } from "../../commonApi";
 import { Camera } from "@reearth/util/value";
-import PerspectiveFrustum from "cesium/Source/Core/PerspectiveFrustum";
 import { tweenInterval } from "@reearth/util/raf";
+import { FlyToCamera } from "../../commonApi";
 
 const defaultImageSize = 50;
 
@@ -214,7 +215,8 @@ export const flyTo = (
   return cancel;
 };
 
-export const getCamera = (viewer: Viewer): Camera | undefined => {
+export const getCamera = (viewer: Viewer | undefined): Camera | undefined => {
+  if (!viewer) return undefined;
   const { camera } = viewer;
   if (!(camera.frustum instanceof PerspectiveFrustum)) return;
 

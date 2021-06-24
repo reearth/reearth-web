@@ -1,5 +1,5 @@
 import { RefObject, useCallback, useEffect } from "react";
-import { Entity, Viewer } from "cesium";
+import { Entity, ScreenSpaceEventType, Viewer } from "cesium";
 import { CesiumComponentRef, CesiumMovementEvent } from "resium";
 
 export default function useEntitySelection(
@@ -18,23 +18,36 @@ export default function useEntitySelection(
 
   const selectViewerEntity = useCallback(
     (_: CesiumMovementEvent, target: any) => {
+      const viewer = cesium.current?.cesiumElement;
+
       if (!(target instanceof Entity)) {
-        select();
-        onEntitySelect?.(undefined);
-        return;
+        if (viewer?.selectedEntity) {
+          select();
+          onEntitySelect?.(undefined);
+          return;
+        }
       }
 
       if (selectable(target)) {
-        select(target.id);
-        onEntitySelect?.(target.id);
+        if (viewer?.selectedEntity !== target) {
+          select(target.id);
+          onEntitySelect?.(target.id);
+        }
       }
     },
-    [onEntitySelect, select],
+    [cesium, onEntitySelect, select],
   );
 
   useEffect(() => {
     select(selectedId);
   }, [cesium, select, selectedId]);
+
+  // init
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    viewer?.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+    viewer?.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+  }, [cesium]);
 
   return selectViewerEntity;
 }
