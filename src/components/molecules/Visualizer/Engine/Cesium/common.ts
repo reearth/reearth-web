@@ -17,10 +17,12 @@ import { Camera } from "@reearth/util/value";
 import PerspectiveFrustum from "cesium/Source/Core/PerspectiveFrustum";
 import { tweenInterval } from "@reearth/util/raf";
 
+const defaultImageSize = 50;
+
 export const drawIcon = (
   c: HTMLCanvasElement,
   image: HTMLImageElement | undefined,
-  imageSize = 1,
+  imageSize: number | undefined,
   crop: "circle" | "rounded" | "none" = "none",
   shadow = false,
   shadowColor = "rgba(0, 0, 0, 0.7)",
@@ -33,8 +35,14 @@ export const drawIcon = (
 
   ctx.save();
 
-  const w = Math.floor(image.width * imageSize);
-  const h = Math.floor(image.height * imageSize);
+  const w =
+    typeof imageSize === "number"
+      ? Math.floor(image.width * imageSize)
+      : Math.min(defaultImageSize, image.width);
+  const h =
+    typeof imageSize === "number"
+      ? Math.floor(image.height * imageSize)
+      : Math.floor((w / image.width) * image.height);
   c.width = w + shadowBlur;
   c.height = h + shadowBlur;
   ctx.shadowBlur = shadowBlur;
