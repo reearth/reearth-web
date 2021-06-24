@@ -9,12 +9,12 @@ export default ({
   rootLayerId,
   dropEnabled,
   primitives,
-  onLayerSelect,
+  onPrimitiveSelect: onLayerSelect,
 }: {
   rootLayerId?: string;
   dropEnabled?: boolean;
   primitives?: Primitive[];
-  onLayerSelect?: (id?: string, reason?: string) => void;
+  onPrimitiveSelect?: (id?: string, reason?: string) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
 

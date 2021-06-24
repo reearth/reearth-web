@@ -8,7 +8,7 @@ export default {
   component: Component,
   argTypes: {
     onCameraChange: { action: "onCameraChange" },
-    onLayerSelect: { action: "onLayerSelect" },
+    onPrimitiveSelect: { action: "onPrimitiveSelect" },
   },
 } as Meta;
 
@@ -20,7 +20,7 @@ Default.args = {
   isEditable: false,
   small: false,
   ready: true,
-  selectedLayerId: undefined,
+  selectedPrimitiveId: undefined,
   property: {
     default: {
       terrain: true,

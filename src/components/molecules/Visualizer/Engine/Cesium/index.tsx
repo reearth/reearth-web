@@ -25,13 +25,13 @@ export type Props = EngineProps<SceneProperty>;
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<SceneProperty>> = (
   {
     className,
-    selectedLayerId: selectedEntityId,
+    selectedPrimitiveId: selectedEntityId,
     property,
     camera,
     small,
     ready,
     children,
-    onLayerSelect,
+    onPrimitiveSelect: onLayerSelect,
     onCameraChange,
   },
   ref,

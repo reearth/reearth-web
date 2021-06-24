@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 
 import Filled from "@reearth/components/atoms/Filled";
 import DropHolder from "@reearth/components/atoms/DropHolder";
@@ -26,21 +26,23 @@ export type Widget = WidgetType & { id: string };
 
 export type Block = BlockType;
 
-export type Props = {
-  rootLayerId?: string;
-  primitives?: Primitive[];
-  widgets?: Widget[];
-  sceneProperty?: any;
-  selectedPrimitive?: Primitive;
-  selectedBlockId?: string;
-  renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
-} & Omit<EngineProps, "children" | "property" | "selectedLayerId"> &
-  Pick<
-    InfoboxProps,
-    "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
-  >;
+export type Props<SP = any> = PropsWithChildren<
+  {
+    rootLayerId?: string;
+    primitives?: Primitive[];
+    widgets?: Widget[];
+    sceneProperty?: SP;
+    selectedPrimitive?: Primitive;
+    selectedBlockId?: string;
+    renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
+  } & Omit<EngineProps, "children" | "property" | "selectedPrimitiveId"> &
+    Pick<
+      InfoboxProps,
+      "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
+    >
+>;
 
-const Visualizer: React.FC<Props> = ({
+export default function Visualizer<SP = any>({
   rootLayerId,
   primitives,
   widgets,
@@ -55,22 +57,22 @@ const Visualizer: React.FC<Props> = ({
   onBlockInsert,
   onBlockSelect,
   ...props
-}) => {
+}: Props<SP>): JSX.Element {
   const { engineRef, wrapperRef, isDroppable, commonAPI } = useHooks({
     rootLayerId,
     dropEnabled: !props.isBuilt,
     primitives,
-    onLayerSelect: props.onLayerSelect,
+    onPrimitiveSelect: props.onPrimitiveSelect,
   });
 
   return (
     <Filled ref={wrapperRef}>
       {isDroppable && <DropHolder />}
       <Engine
-        {...props}
         property={sceneProperty}
-        selectedLayerId={selectedPrimitive?.id}
-        ref={engineRef}>
+        selectedPrimitiveId={selectedPrimitive?.id}
+        ref={engineRef}
+        {...props}>
         {primitives?.map(primitive => (
           <P
             key={primitive.id}
@@ -114,6 +116,4 @@ const Visualizer: React.FC<Props> = ({
       {children}
     </Filled>
   );
-};
-
-export default Visualizer;
+}

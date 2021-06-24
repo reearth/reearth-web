@@ -20,8 +20,8 @@ export type EngineProps<SP = any> = {
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
-  selectedLayerId?: string;
-  onLayerSelect?: (id?: string, reason?: string) => void;
+  selectedPrimitiveId?: string;
+  onPrimitiveSelect?: (id?: string, reason?: string) => void;
   onCameraChange?: (camera: Camera) => void;
 };
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;

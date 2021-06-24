@@ -22,7 +22,7 @@ const Published: React.FC<Props> = ({ alias }) => {
         sceneProperty={sceneProperty}
         ready={ready}
         isBuilt
-        onLayerSelect={selectLayer}
+        onPrimitiveSelect={selectLayer}
       />
     </>
   );

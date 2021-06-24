@@ -57,7 +57,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       camera={camera}
       isBuilt={!!isBuilt}
       ready={ready}
-      onLayerSelect={selectLayer}
+      onPrimitiveSelect={selectLayer}
       onCameraChange={onCameraChange}
       onBlockSelect={selectBlock}
       onBlockChange={onBlockChange}
