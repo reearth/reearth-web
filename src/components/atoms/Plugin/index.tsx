@@ -1,7 +1,9 @@
 import React, { CSSProperties } from "react";
 
-import useHook, { IFrameAPI } from "./hooks";
+import useHook, { IFrameAPI as IFrameAPIType } from "./hooks";
 import IFrame from "./IFrame";
+
+export type IFrameAPI = IFrameAPIType;
 
 export type Props = {
   className?: string;
@@ -24,7 +26,7 @@ const Plugin: React.FC<Props> = ({
   onError,
   onExpose,
 }) => {
-  const { iframeAutoResize, iFrameRef, iFrameHtml, iFrameVisible, onMessage } = useHook({
+  const { iFrameRef, iFrameHtml, iFrameVisible, onMessage } = useHook({
     iframeCanBeVisible: canBeVisible,
     onMessageCode,
     skip,
@@ -33,9 +35,9 @@ const Plugin: React.FC<Props> = ({
     onExpose,
   });
 
-  return (
+  return iFrameHtml ? (
     <IFrame
-      autoResize={iframeAutoResize}
+      autoResize
       className={className}
       html={iFrameHtml}
       ref={iFrameRef}
@@ -43,7 +45,7 @@ const Plugin: React.FC<Props> = ({
       visible={iFrameVisible}
       onMessage={onMessage}
     />
-  );
+  ) : null;
 };
 
 export default Plugin;

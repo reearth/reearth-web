@@ -5,7 +5,7 @@ import Arena from "quickjs-emscripten-sync";
 import type { Ref as IFrameRef } from "./IFrame";
 
 export type IFrameAPI = {
-  render: (html: string, options?: { visible?: boolean; autoResize?: boolean }) => void;
+  render: (html: string, options?: { visible?: boolean }) => void;
   postMessage: (message: any) => void;
 };
 
@@ -47,7 +47,7 @@ export default function useHook<T>({
   const [loaded, setLoaded] = useState(false);
   const iFrameRef = useRef<IFrameRef>(null);
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
-    [string, { visible?: boolean; autoResize?: boolean } | undefined]
+    [string, { visible?: boolean } | undefined]
   >(["", undefined]);
 
   const evalCode = useCallback(
@@ -155,7 +155,6 @@ export default function useHook<T>({
   }, [src, loaded]); // ignore onError and evalCode
 
   return {
-    iframeAutoResize: iFrameOptions?.autoResize,
     iFrameHtml,
     iFrameRef,
     iFrameVisible: iFrameOptions?.visible,

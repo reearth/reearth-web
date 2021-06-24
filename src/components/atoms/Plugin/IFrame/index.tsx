@@ -34,11 +34,11 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
       key={html}
       ref={iFrameRef}
       style={{
-        ...style,
         display: visible ? undefined : "none",
         width: visible ? (autoResize ? width : "100%") : "0px",
         height: visible ? (autoResize ? height : "100%") : "0px",
         minWidth: "100%",
+        ...style,
       }}
       className={className}
       onLoad={onIFrameLoad}></iframe>
