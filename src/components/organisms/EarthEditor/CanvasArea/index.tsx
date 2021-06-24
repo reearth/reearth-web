@@ -48,14 +48,15 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     <Visualizer
       className={className}
       engine="cesium"
+      isEditable={!isBuilt}
+      isBuilt={!!isBuilt}
       primitives={layers}
       widgets={widgets}
-      selectedPrimitive={selectedLayer}
+      selectedPrimitiveId={selectedLayer?.id}
       selectedBlockId={selectedBlockId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}
       camera={camera}
-      isBuilt={!!isBuilt}
       ready={ready}
       onPrimitiveSelect={selectLayer}
       onCameraChange={onCameraChange}

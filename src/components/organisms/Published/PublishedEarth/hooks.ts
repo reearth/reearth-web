@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ReactGA from "react-ga";
 
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
@@ -7,26 +7,13 @@ import { PublishedData } from "./types";
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
-  const [selectedLayerId, changeSelectedLayerId] = useState<string>();
-  const [infoBoxVisible, setInfoBoxVisible] = useState(true);
-
-  const selectLayer = useCallback((id?: string) => {
-    changeSelectedLayerId(id);
-  }, []);
-
-  const googleAnalyticsData: { enableGA?: boolean; trackingId?: string } = useMemo(
-    () => ({
-      enableGA: data?.property.googleAnalytics?.enableGA,
-      trackingId: data?.property.googleAnalytics?.trackingId,
-    }),
-    [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics?.trackingId],
-  );
 
   useEffect(() => {
-    if (!googleAnalyticsData.enableGA || !googleAnalyticsData.trackingId) return;
-    ReactGA.initialize(googleAnalyticsData.trackingId);
+    if (!data?.property.googleAnalytics?.enableGA || !data?.property.googleAnalytics?.trackingId)
+      return;
+    ReactGA.initialize(data.property.googleAnalytics.trackingId);
     ReactGA.pageview(window.location.pathname);
-  }, [googleAnalyticsData]);
+  }, [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics.trackingId]);
 
   const layers = useMemo<Primitive[] | undefined>(
     () =>
@@ -62,15 +49,6 @@ export default (alias?: string) => {
     [data],
   );
 
-  const selectedLayer = useMemo(
-    () => (selectedLayerId ? layers?.find(l => l.id === selectedLayerId) : undefined),
-    [layers, selectedLayerId],
-  );
-
-  useEffect(() => {
-    setInfoBoxVisible(!!selectedLayerId);
-  }, [selectedLayerId]);
-
   useEffect(() => {
     const url = "/data.json";
     (async () => {
@@ -104,11 +82,8 @@ export default (alias?: string) => {
 
   return {
     sceneProperty: data?.property,
-    selectLayer,
     layers,
     widgets,
-    selectedLayer,
-    infoBoxVisible,
     ready,
   };
 };

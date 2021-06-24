@@ -10,7 +10,7 @@ export interface Props {
 }
 
 const Published: React.FC<Props> = ({ alias }) => {
-  const { sceneProperty, layers, widgets, selectedLayer, ready, selectLayer } = useHooks(alias);
+  const { sceneProperty, layers, widgets, ready } = useHooks(alias);
 
   return (
     <>
@@ -18,11 +18,9 @@ const Published: React.FC<Props> = ({ alias }) => {
         engine="cesium"
         primitives={layers}
         widgets={widgets}
-        selectedPrimitive={selectedLayer}
         sceneProperty={sceneProperty}
         ready={ready}
         isBuilt
-        onPrimitiveSelect={selectLayer}
       />
     </>
   );
