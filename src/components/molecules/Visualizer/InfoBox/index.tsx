@@ -64,7 +64,6 @@ const InfoBox: React.FC<Props> = ({
   onBlockSelect,
   onBlockChange,
   onBlockMove,
-  onBlockDelete,
   renderInsertionPopUp,
   onBlockInsert,
 }) => {
@@ -74,11 +73,9 @@ const InfoBox: React.FC<Props> = ({
     onInsertionPopUpClose,
     handleBlockInsert,
   } = useHooks(onBlockInsert);
-  const intl = useIntl();
-
-  const [isReadyToRender, setIsReadyToRender] = useState(false);
-
   const theme = useTheme();
+  const intl = useIntl();
+  const [isReadyToRender, setIsReadyToRender] = useState(false);
 
   return (
     <Frame
@@ -89,7 +86,7 @@ const InfoBox: React.FC<Props> = ({
       visible={visible}
       noContent={!blocks?.length}
       styles={property?.default}
-      onClick={() => onBlockSelect?.(undefined)}
+      onClick={() => selectedBlockId && onBlockSelect?.(undefined)}
       onEnter={() => setIsReadyToRender(false)}
       onEntered={() => setIsReadyToRender(true)}
       onExit={() => setIsReadyToRender(false)}>
@@ -111,11 +108,10 @@ const InfoBox: React.FC<Props> = ({
           insertionPopUpPosition={insertionPopUpPosition?.[1]}
           infoboxProperty={property}
           sceneProperty={sceneProperty}
-          onSelect={() => b.id && onBlockSelect?.(b.id)}
+          onSelect={() => b.id && selectedBlockId !== b.id && onBlockSelect?.(b.id)}
           onChange={onBlockChange}
           onMove={onBlockMove}
           onInsert={p => onInsertionButtonClick?.(i, p)}
-          onDelete={() => b.id && onBlockDelete?.(b.id)}
         />
       ))}
       {isEditable && (blocks?.length ?? 0) === 0 && (

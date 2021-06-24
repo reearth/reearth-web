@@ -36,7 +36,6 @@ export type Props = {
     value: ValueTypes[T],
     type: T,
   ) => void;
-  onDelete?: () => void;
   onInsert?: (pos: "top" | "bottom") => void;
   onMove?: (blockId: string, fromIndex: number, toIndex: number) => void;
   onSelect?: () => void;

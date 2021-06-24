@@ -27,6 +27,7 @@ const primitives: Primitive[] = [
         height: 0,
       },
     },
+    infobox: {},
   },
   {
     id: "2",
@@ -62,7 +63,23 @@ const primitives: Primitive[] = [
   },
 ];
 
-const widgets: Widget[] = [];
+const widgets: Widget[] = [
+  {
+    id: "a",
+    plugin: "reearth/splashscreen",
+    property: {
+      overlay: {
+        overlayEnabled: true,
+        overlayDuration: 2,
+        overlayTransitionDuration: 1,
+        overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+        overlayImageW: 648,
+        overlayImageH: 432,
+        overlayBgcolor: "#fff8",
+      },
+    },
+  },
+];
 
 const Template: Story<Props> = args => <Earth {...args} />;
 
@@ -86,5 +103,13 @@ Default.args = {
 export const Selected = Template.bind({});
 Selected.args = {
   ...Default.args,
+  primitives: Default.args.primitives?.map(p => ({ ...p, infoboxEditable: true })),
   selectedPrimitiveId: primitives[1].id,
+};
+
+export const Built = Template.bind({});
+Built.args = {
+  ...Default.args,
+  isEditable: false,
+  isBuilt: true,
 };

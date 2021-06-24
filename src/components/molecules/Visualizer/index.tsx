@@ -48,7 +48,7 @@ export default function Visualizer<SP = any>({
   widgets,
   sceneProperty,
   selectedPrimitiveId: outerSelectedPrimitiveId,
-  selectedBlockId,
+  selectedBlockId: outerSelectedBlockId,
   children,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
@@ -66,13 +66,18 @@ export default function Visualizer<SP = any>({
     commonAPI,
     selectedPrimitive,
     selectedPrimitiveId,
+    selectedBlockId,
     selectPrimitive,
+    selectBlock,
   } = useHooks({
     rootLayerId,
-    dropEnabled: !props.isBuilt,
+    isEditable: props.isEditable,
+    isBuilt: props.isBuilt,
     primitives,
     selectedPrimitiveId: outerSelectedPrimitiveId,
+    selectedBlockId: outerSelectedBlockId,
     onPrimitiveSelect,
+    onBlockSelect,
   });
 
   return (
@@ -122,7 +127,7 @@ export default function Visualizer<SP = any>({
         onBlockDelete={onBlockDelete}
         onBlockMove={onBlockMove}
         onBlockInsert={onBlockInsert}
-        onBlockSelect={onBlockSelect}
+        onBlockSelect={selectBlock}
         renderInsertionPopUp={renderInfoboxInsertionPopUp}
       />
       {children}
