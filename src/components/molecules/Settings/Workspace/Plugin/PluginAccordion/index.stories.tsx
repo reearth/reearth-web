@@ -13,18 +13,18 @@ export const Default: Story<PluginAccordionProps> = args => <Component {...args}
 Default.args = {
   items: [
     {
-      id: "hogehoge",
-      thumbnail: `${process.env.PUBLIC_URL}/sample.svg`,
-      title: "Storytelling",
+      thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
+      title: "Sample",
       isInstalled: true,
-      bodyMarkdown: "# Hoge\n## Fuag",
+      bodyMarkdown: "# Hoge ## Hoge",
+      author: "reearth",
     },
     {
-      id: "fugafuga",
-      thumbnail: `${process.env.PUBLIC_URL}/sample.svg`,
-      title: "Storytelling",
-      isInstalled: true,
-      bodyMarkdown: "# Hoge\n## Fuag",
+      thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
+      title: "Sample2",
+      isInstalled: false,
+      bodyMarkdown: "# Fuga ## Fuga",
+      author: "reearth",
     },
   ],
 };
