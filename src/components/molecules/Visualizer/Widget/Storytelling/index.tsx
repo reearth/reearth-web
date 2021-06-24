@@ -49,7 +49,7 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
   });
 
   const stories = useMemo(() => {
-    const layers = storyIds && api?.getLayers(storyIds);
+    const layers = storyIds && api?.getPrimitives(storyIds);
 
     return (
       layers &&
@@ -72,7 +72,7 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
   const [layerIndex, setLayerIndex] = useState<number>();
   const currentLayerId = typeof layerIndex === "number" ? stories?.[layerIndex]?.layer : undefined;
   const selectedLayer = useMemo(
-    () => (currentLayerId ? api?.getLayer(currentLayerId) : undefined),
+    () => (currentLayerId ? api?.getPrimitive(currentLayerId) : undefined),
     [api, currentLayerId],
   );
 
@@ -84,9 +84,9 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
 
       setMenu(false);
       setLayerIndex(index);
-      api?.selectLayer(id, "storytelling");
+      api?.selectPrimitive(id, "storytelling");
 
-      const layer = api?.getLayer(id);
+      const layer = api?.getPrimitive(id);
       if (
         // Photooverlays have own camera flight and that is the priority here.
         layer?.plugin === "reearth/photooverlay" &&

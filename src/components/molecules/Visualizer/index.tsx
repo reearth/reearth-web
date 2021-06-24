@@ -32,10 +32,10 @@ export type Props<SP = any> = PropsWithChildren<
     primitives?: Primitive[];
     widgets?: Widget[];
     sceneProperty?: SP;
-    selectedPrimitive?: Primitive;
     selectedBlockId?: string;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
-  } & Omit<EngineProps, "children" | "property" | "selectedPrimitiveId"> &
+    onPrimitiveSelect?: (id?: string) => void;
+  } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
     Pick<
       InfoboxProps,
       "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
@@ -47,9 +47,10 @@ export default function Visualizer<SP = any>({
   primitives,
   widgets,
   sceneProperty,
-  selectedPrimitive,
+  selectedPrimitiveId: outerSelectedPrimitiveId,
   selectedBlockId,
   children,
+  onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
   onBlockDelete,
@@ -58,20 +59,30 @@ export default function Visualizer<SP = any>({
   onBlockSelect,
   ...props
 }: Props<SP>): JSX.Element {
-  const { engineRef, wrapperRef, isDroppable, commonAPI } = useHooks({
+  const {
+    engineRef,
+    wrapperRef,
+    isDroppable,
+    commonAPI,
+    selectedPrimitive,
+    selectedPrimitiveId,
+    selectPrimitive,
+  } = useHooks({
     rootLayerId,
     dropEnabled: !props.isBuilt,
     primitives,
-    onPrimitiveSelect: props.onPrimitiveSelect,
+    selectedPrimitiveId: outerSelectedPrimitiveId,
+    onPrimitiveSelect,
   });
 
   return (
     <Filled ref={wrapperRef}>
       {isDroppable && <DropHolder />}
       <Engine
+        ref={engineRef}
         property={sceneProperty}
         selectedPrimitiveId={selectedPrimitive?.id}
-        ref={engineRef}
+        onPrimitiveSelect={selectPrimitive}
         {...props}>
         {primitives?.map(primitive => (
           <P
@@ -82,6 +93,7 @@ export default function Visualizer<SP = any>({
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             isSelected={selectedPrimitive?.id === primitive.id}
+            selected={selectedPrimitiveId}
           />
         ))}
       </Engine>

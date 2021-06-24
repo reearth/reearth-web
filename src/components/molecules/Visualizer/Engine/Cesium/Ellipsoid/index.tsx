@@ -21,6 +21,7 @@ export type Property = {
 const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({
   api,
   primitive: { id, isVisible, property },
+  isSelected,
 }) => {
   const { radius = 1000 } = property?.default ?? {};
   const position = useMemo(() => {
@@ -41,7 +42,11 @@ const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({
   ]);
 
   return !isVisible ? null : (
-    <Entity id={id} onClick={() => api?.selectLayer(id)} position={position}>
+    <Entity
+      id={id}
+      onClick={() => api?.selectPrimitive(id)}
+      position={position}
+      selected={isSelected}>
       <EllipsoidGraphics radii={raddi} material={material} />
     </Entity>
   );

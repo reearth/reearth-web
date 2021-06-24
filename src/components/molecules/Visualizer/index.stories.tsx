@@ -75,7 +75,7 @@ Default.args = {
   sceneProperty: {
     tiles: [{ id: "default", tile_type: "default" }],
   },
-  selectedPrimitive: undefined,
+  selectedPrimitiveId: undefined,
   selectedBlockId: undefined,
   ready: true,
   isEditable: true,
@@ -86,5 +86,5 @@ Default.args = {
 export const Selected = Template.bind({});
 Selected.args = {
   ...Default.args,
-  selectedPrimitive: primitives[1],
+  selectedPrimitiveId: primitives[1].id,
 };

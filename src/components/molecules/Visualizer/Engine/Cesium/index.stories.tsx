@@ -1,6 +1,8 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 
+import { Cartesian3, Color } from "cesium";
+import { Entity } from "resium";
 import Component, { Props } from ".";
 
 export default {
@@ -35,6 +37,20 @@ Default.args = {
       ground_atmosphere: true,
     },
   },
+};
+
+export const Selected = Template.bind([]);
+Selected.args = {
+  ...Default.args,
+  children: (
+    <Entity
+      id="a"
+      point={{ color: Color.WHITE, pixelSize: 10 }}
+      position={Cartesian3.fromDegrees(0, 0, 0)}
+      selected
+    />
+  ),
+  selectedPrimitiveId: "a",
 };
 
 export const DefaultCamera = Template.bind({});

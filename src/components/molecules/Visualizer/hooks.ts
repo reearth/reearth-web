@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback } from "react";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 
 import type { Ref as EngineRef } from "./Engine";
@@ -9,12 +9,14 @@ export default ({
   rootLayerId,
   dropEnabled,
   primitives,
-  onPrimitiveSelect: onLayerSelect,
+  selectedPrimitiveId: outerSelectedPrimitiveId,
+  onPrimitiveSelect,
 }: {
   rootLayerId?: string;
   dropEnabled?: boolean;
   primitives?: Primitive[];
-  onPrimitiveSelect?: (id?: string, reason?: string) => void;
+  selectedPrimitiveId?: string;
+  onPrimitiveSelect?: (id?: string) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
@@ -41,6 +43,35 @@ export default ({
   );
   dropRef(wrapperRef);
 
+  // selection management
+  const [selectedPrimitiveId, innerSelectPrimitive] = useState<[id: string, reason?: string]>();
+  const selectedPrimitive = useMemo(
+    () =>
+      selectedPrimitiveId?.[0]
+        ? primitives?.find(p => p.id === selectedPrimitiveId?.[0])
+        : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedPrimitiveId?.[0], primitives],
+  );
+  const selectPrimitive = useCallback(
+    (id?: string, reason?: string) => {
+      innerSelectPrimitive(s =>
+        !id ? undefined : s?.[0] === id && s?.[1] === reason ? s : [id, reason],
+      );
+      onPrimitiveSelect?.(id);
+    },
+    [onPrimitiveSelect],
+  );
+  useEffect(() => {
+    if (outerSelectedPrimitiveId) {
+      selectPrimitive(outerSelectedPrimitiveId);
+    } else {
+      selectPrimitive(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outerSelectedPrimitiveId]); // ignore onPrimitiveSelect
+
+  // update cesium
   useEffect(() => {
     engineRef.current?.requestRender();
   });
@@ -48,7 +79,7 @@ export default ({
   const commonAPI = useCommonAPI({
     engineRef,
     primitives,
-    onLayerSelect,
+    onPrimitiveSelect: selectPrimitive,
   });
 
   return {
@@ -56,5 +87,8 @@ export default ({
     wrapperRef,
     isDroppable,
     commonAPI,
+    selectedPrimitiveId,
+    selectedPrimitive,
+    selectPrimitive,
   };
 };

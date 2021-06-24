@@ -38,10 +38,6 @@ export default function useEntitySelection(
     [cesium, onEntitySelect, select],
   );
 
-  useEffect(() => {
-    select(selectedId);
-  }, [cesium, select, selectedId]);
-
   // init
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;

@@ -21,6 +21,7 @@ export type Property = {
 const Rect: React.FC<PrimitiveProps<Property>> = ({
   api,
   primitive: { id, isVisible, property },
+  isSelected,
 }) => {
   const coordinates = useMemo(
     () =>
@@ -51,7 +52,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({
     [property?.default?.style, property?.default?.image, property?.default?.fillColor],
   );
   return !isVisible ? null : (
-    <Entity id={id} onClick={() => api?.selectLayer(id)}>
+    <Entity id={id} onClick={() => api?.selectPrimitive(id)} selected={isSelected}>
       <RectangleGraphics
         height={property?.default?.height}
         extrudedHeight={property?.default?.extrudedHeight}

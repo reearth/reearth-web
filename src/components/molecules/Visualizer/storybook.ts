@@ -45,11 +45,13 @@ const primitives: Primitive[] = [
 
 export const commonApi: CommonAPI = {
   flyTo: act("flyTo"),
-  getLayer: act("getLayer", id => primitives.find(p => p.id === id)),
-  getLayers: act("getLayers", layers => layers.map(id => primitives.find(p => p.id === id))),
+  getPrimitive: act("getPrimitive", id => primitives.find(p => p.id === id)),
+  getPrimitives: act("getPrimitives", layers =>
+    layers.map(id => primitives.find(p => p.id === id)),
+  ),
   getLocationFromScreenXY: act("getLocationFromScreenXY", () => undefined),
   requestRender: act("requestRender"),
-  selectLayer: act("selectLayer"),
+  selectPrimitive: act("selectLayer"),
   camera: {
     lat: 0,
     lng: 0,

@@ -9,14 +9,14 @@ test("works", () => {
   };
   const primitives = [{ id: "a" }, { id: "b" }, { id: "c" }];
   const camera = { lat: 0, lng: 0, height: 0, pitch: 0, heading: 0, roll: 0, fov: 0 };
-  const onLayerSelect = jest.fn();
+  const onPrimitiveSelect = jest.fn();
 
   const { result } = renderHook(() =>
     useCommonAPI({
       engineRef: { current: engine },
       primitives,
       camera,
-      onLayerSelect,
+      onPrimitiveSelect,
     }),
   );
 
@@ -24,21 +24,21 @@ test("works", () => {
   expect(result.current.camera).toBe(camera);
 
   // getLayer
-  expect(result.current.getLayer("d")).toBeUndefined();
-  expect(result.current.getLayer("a")).toBe(primitives[0]);
+  expect(result.current.getPrimitive("d")).toBeUndefined();
+  expect(result.current.getPrimitive("a")).toBe(primitives[0]);
 
   // getLayers
-  expect(result.current.getLayers([])).toEqual([]);
-  expect(result.current.getLayers(["d", "a"])).toEqual([undefined, primitives[0]]);
+  expect(result.current.getPrimitives([])).toEqual([]);
+  expect(result.current.getPrimitives(["d", "a"])).toEqual([undefined, primitives[0]]);
 
   // selectLayer
-  expect(onLayerSelect).toBeCalledTimes(0);
-  result.current.selectLayer("a");
-  expect(onLayerSelect).toBeCalledTimes(1);
-  expect(onLayerSelect).toBeCalledWith("a");
-  result.current.selectLayer("b", "reason");
-  expect(onLayerSelect).toBeCalledTimes(2);
-  expect(onLayerSelect).toBeCalledWith("b", "reason");
+  expect(onPrimitiveSelect).toBeCalledTimes(0);
+  result.current.selectPrimitive("a");
+  expect(onPrimitiveSelect).toBeCalledTimes(1);
+  expect(onPrimitiveSelect).toBeCalledWith("a");
+  result.current.selectPrimitive("b", "reason");
+  expect(onPrimitiveSelect).toBeCalledTimes(2);
+  expect(onPrimitiveSelect).toBeCalledWith("b", "reason");
 
   // flyTo
   expect(engine.flyTo).toBeCalledTimes(0);

@@ -19,6 +19,7 @@ export type Property = {
 const Polyline: React.FC<PrimitiveProps<Property>> = ({
   api,
   primitive: { id, isVisible, property },
+  isSelected,
 }) => {
   const { coordinates, strokeColor, strokeWidth = 1 } = property?.default ?? {};
 
@@ -30,7 +31,7 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({
   const material = useMemo(() => toColor(strokeColor), [strokeColor]);
 
   return !isVisible ? null : (
-    <Entity id={id} onClick={() => api?.selectLayer(id)}>
+    <Entity id={id} onClick={() => api?.selectPrimitive(id)} selected={isSelected}>
       <PolylineGraphics positions={positions} width={strokeWidth} material={material} />
     </Entity>
   );

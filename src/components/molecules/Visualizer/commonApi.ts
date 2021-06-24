@@ -7,9 +7,9 @@ import type { Ref as EngineRef } from "./Engine";
 export type CommonAPI = {
   primitives?: Primitive[];
   camera?: Camera;
-  selectLayer: (layerId?: string, reason?: string) => void;
-  getLayers: (layerIds: string[]) => (Primitive | undefined)[] | undefined;
-  getLayer: (layerId: string) => Primitive | undefined;
+  selectPrimitive: (layerId?: string, reason?: string) => void;
+  getPrimitives: (layerIds: string[]) => (Primitive | undefined)[] | undefined;
+  getPrimitive: (layerId: string) => Primitive | undefined;
   requestRender: () => void;
   getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
   flyTo: (camera: FlyToCamera, options?: FlyToOptions) => void;
@@ -32,23 +32,24 @@ export default function useCommonAPI({
   engineRef,
   primitives,
   camera,
-  onLayerSelect,
+  onPrimitiveSelect,
 }: {
   engineRef?: React.RefObject<EngineRef>;
   primitives?: Primitive[];
   camera?: Camera;
-  onLayerSelect?: (id?: string, reason?: string) => void;
+  onPrimitiveSelect?: (id?: string, reason?: string) => void;
 }): CommonAPI {
   return useMemo<CommonAPI>(
     () => ({
       primitives,
       camera,
-      selectLayer: (id, reason) => (reason ? onLayerSelect?.(id, reason) : onLayerSelect?.(id)),
-      getLayers: layerIds => {
+      selectPrimitive: (id, reason) =>
+        reason ? onPrimitiveSelect?.(id, reason) : onPrimitiveSelect?.(id),
+      getPrimitives: layerIds => {
         if (!primitives) return undefined;
         return layerIds.map(l => primitives.find(m => l === m.id));
       },
-      getLayer: id => primitives?.find(l => l.id === id),
+      getPrimitive: id => primitives?.find(l => l.id === id),
       getLocationFromScreenXY: (x, y) => engineRef?.current?.getLocationFromScreenXY(x, y),
       requestRender: () => {
         engineRef?.current?.requestRender();
@@ -57,6 +58,6 @@ export default function useCommonAPI({
         engineRef?.current?.flyTo?.(camera, options);
       },
     }),
-    [primitives, camera, onLayerSelect, engineRef],
+    [primitives, camera, onPrimitiveSelect, engineRef],
   );
 }
