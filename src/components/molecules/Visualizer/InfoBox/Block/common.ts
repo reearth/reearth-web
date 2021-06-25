@@ -1,7 +1,7 @@
 import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { typographyStyles } from "@reearth/util/value";
-import type { InfoboxProperty } from "../InfoBox";
+import type { InfoboxProperty } from "..";
 
 export const Title = styled.div<{ infoboxProperty?: InfoboxProperty }>`
   color: ${props => props.theme.infoBox.mainText};

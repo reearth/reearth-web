@@ -8,7 +8,7 @@ import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 
 import type { CommonAPI } from "..";
-import BlockComponent, { Block as BlockType } from "./Block";
+import Field, { Block as BlockType } from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
 
@@ -91,7 +91,7 @@ const InfoBox: React.FC<Props> = ({
       onEntered={() => setIsReadyToRender(true)}
       onExit={() => setIsReadyToRender(false)}>
       {blocks?.map((b, i) => (
-        <BlockComponent
+        <Field
           key={b.id}
           block={b}
           index={i}

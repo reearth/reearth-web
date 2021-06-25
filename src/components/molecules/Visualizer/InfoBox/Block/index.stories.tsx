@@ -1,27 +1,22 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import InfoboxBlock, { Block, Props } from ".";
 
-const block: Block = {
-  plugin: "reearth/textblock",
-  id: "block",
-  property: {
-    default: {
-      title: "Text",
-      text: "texttexttext",
-    },
-  },
-};
+import Component, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/InfoBox/Block",
-  component: InfoboxBlock,
+  title: "molecules/Visualizer/Block",
+  component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => <InfoboxBlock {...args} />;
+export const Default: Story<Props> = args => <Component {...args} />;
+
 Default.args = {
-  block,
-  isEditable: false,
+  block: {
+    plugin: "reearth/textblock",
+    property: { default: { text: "hogehoge" } },
+  },
+  isSelected: false,
   isBuilt: false,
+  isEditable: false,
 };

@@ -1,10 +1,9 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-// import { action } from "@storybook/addon-actions";
 import Text, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Block/Text",
+  title: "molecules/Visualizer/InfoBox/Block/Text",
   component: Text,
   argTypes: {
     onClick: { action: "onClick" },

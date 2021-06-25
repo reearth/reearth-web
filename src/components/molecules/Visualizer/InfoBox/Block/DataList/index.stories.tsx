@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import DataList, { Item, Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Block/DataList",
+  title: "molecules/Visualizer/InfoBox/Block/DataList",
   component: DataList,
   argTypes: {
     onClick: { action: "onClick" },

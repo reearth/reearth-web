@@ -81,7 +81,7 @@ export default ({
   useEngineRef(ref, cesium);
 
   // expose api
-  const api = useEngineAPI(cesium);
+  const engineApi = useEngineAPI(cesium);
 
   // imagery layers
   const [imageryLayers, setImageryLayers] = useState<
@@ -154,7 +154,7 @@ export default ({
   });
 
   return {
-    api,
+    engineApi,
     terrainProvider,
     backgroundColor,
     imageryLayers,

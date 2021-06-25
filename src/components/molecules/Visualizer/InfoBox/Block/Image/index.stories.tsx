@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Image, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/Block/Image",
+  title: "molecules/Visualizer/InfoBox/Block/Image",
   component: Image,
   argTypes: {
     onClick: { action: "onClick" },

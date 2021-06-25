@@ -37,7 +37,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
   ref,
 ) => {
   const {
-    api,
+    engineApi,
     terrainProvider,
     backgroundColor,
     imageryLayers,
@@ -77,7 +77,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
           display: ready ? undefined : "none",
         }}
         onClick={selectViewerEntity}>
-        <Provider value={api}>
+        <Provider value={engineApi}>
           <Camera onMoveEnd={onCameraMoveEnd} />
           <CameraFlyTo camera={camera} duration={0} />
           <Scene backgroundColor={backgroundColor} />

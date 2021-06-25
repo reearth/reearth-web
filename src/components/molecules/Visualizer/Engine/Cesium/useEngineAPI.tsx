@@ -10,7 +10,9 @@ export type CesiumAPI = {};
 export default function useEngineAPI(_cesium: React.RefObject<CesiumComponentRef<Viewer>>) {
   return useMemo<EngineAPI<CesiumAPI>>(
     () => ({
-      engineAPI: {},
+      engineAPI: {
+        cesium: {},
+      },
       builtinPrimitives,
     }),
     [],
