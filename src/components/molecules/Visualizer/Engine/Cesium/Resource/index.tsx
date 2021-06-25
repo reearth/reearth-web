@@ -26,7 +26,8 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-const Resource: React.FC<Props> = ({ primitive: { isVisible, property } }) => {
+const Resource: React.FC<Props> = ({ primitive }) => {
+  const { isVisible, property } = primitive ?? {};
   const url = property?.default?.url;
   const type = property?.default?.type;
   const ext = useMemo(

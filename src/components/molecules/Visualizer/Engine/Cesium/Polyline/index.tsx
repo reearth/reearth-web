@@ -16,11 +16,8 @@ export type Property = {
   };
 };
 
-const Polyline: React.FC<PrimitiveProps<Property>> = ({
-  api,
-  primitive: { id, isVisible, property },
-  isSelected,
-}) => {
+const Polyline: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+  const { id, isVisible, property } = primitive ?? {};
   const { coordinates, strokeColor, strokeWidth = 1 } = property?.default ?? {};
 
   const positions = useMemo(

@@ -52,11 +52,8 @@ type Property = {
 
 const tag = "reearth_unselectable";
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({
-  api,
-  primitive: { id, property, isVisible },
-  isSelected,
-}) => {
+const Marker: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+  const { id, isVisible, property } = primitive ?? {};
   const {
     location,
     height = 0,

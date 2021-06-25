@@ -51,10 +51,11 @@ const durations: Durations = [
 
 const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
   api,
-  primitive: { id, isVisible, property },
+  primitive,
   isSelected,
   selected,
 }) => {
+  const { id, isVisible, property } = primitive ?? {};
   const {
     image,
     imageSize,

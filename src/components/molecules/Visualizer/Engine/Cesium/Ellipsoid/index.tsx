@@ -18,11 +18,8 @@ export type Property = {
   };
 };
 
-const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({
-  api,
-  primitive: { id, isVisible, property },
-  isSelected,
-}) => {
+const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+  const { id, isVisible, property } = primitive ?? {};
   const { radius = 1000 } = property?.default ?? {};
   const position = useMemo(() => {
     const { position, height } = property?.default ?? {};

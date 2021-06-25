@@ -19,11 +19,8 @@ export type Property = {
   };
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({
-  api,
-  primitive: { id, isVisible, property },
-  isSelected,
-}) => {
+const Polygon: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+  const { id, isVisible, property } = primitive ?? {};
   const { polygon, fill = true, stroke, fillColor, strokeColor, strokeWidth = 1 } =
     property?.default ?? {};
 

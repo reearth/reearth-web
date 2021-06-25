@@ -28,7 +28,8 @@ export type Property = {
   }[];
 };
 
-const SplashScreen = ({ api, widget: { property }, isBuilt }: Props): JSX.Element | null => {
+const SplashScreen = ({ api, widget, isBuilt }: Props): JSX.Element | null => {
+  const { property } = widget ?? {};
   const {
     overlayEnabled: enabled,
     overlayDelay: delay = 0,

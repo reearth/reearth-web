@@ -18,11 +18,8 @@ export type Property = {
   };
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({
-  api,
-  primitive: { id, isVisible, property },
-  isSelected,
-}) => {
+const Rect: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+  const { id, isVisible, property } = primitive ?? {};
   const coordinates = useMemo(
     () =>
       property?.default?.rect
