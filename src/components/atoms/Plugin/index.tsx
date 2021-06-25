@@ -9,39 +9,45 @@ export type Props = {
   className?: string;
   canBeVisible?: boolean;
   onMessageCode?: string;
+  onUpdateCode?: string;
   skip?: boolean;
   style?: CSSProperties;
   src?: string;
+  exposed?: { [key: string]: any };
+  staticExposed?: (api: IFrameAPI) => any;
   onError?: (err: any) => void;
-  onExpose?: (api: IFrameAPI) => any;
 };
 
 const Plugin: React.FC<Props> = ({
   className,
   canBeVisible,
   onMessageCode,
+  onUpdateCode,
   skip,
   style,
   src,
+  exposed,
+  staticExposed,
   onError,
-  onExpose,
 }) => {
   const { iFrameRef, iFrameHtml, iFrameVisible, onMessage } = useHook({
     iframeCanBeVisible: canBeVisible,
     onMessageCode,
+    onUpdateCode,
     skip,
     src,
+    exposed,
+    staticExposed,
     onError,
-    onExpose,
   });
 
   return iFrameHtml ? (
     <IFrame
       autoResize
       className={className}
+      style={style}
       html={iFrameHtml}
       ref={iFrameRef}
-      style={style}
       visible={iFrameVisible}
       onMessage={onMessage}
     />

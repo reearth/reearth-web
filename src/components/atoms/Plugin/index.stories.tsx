@@ -20,10 +20,10 @@ Default.args = {
     height: "300px",
     backgroundColor: "#fff",
   },
-  onExpose: ({ render, postMessage }) => ({
-    console: {
-      log: console.log,
-    },
+  exposed: {
+    "console.log": console.log,
+  },
+  staticExposed: ({ render, postMessage }) => ({
     reearth: {
       ui: {
         show: render,

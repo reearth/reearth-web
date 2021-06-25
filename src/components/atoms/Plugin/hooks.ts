@@ -3,6 +3,7 @@ import { getQuickJS } from "quickjs-emscripten";
 import Arena from "quickjs-emscripten-sync";
 
 import type { Ref as IFrameRef } from "./IFrame";
+import { useMemo } from "react";
 
 export type IFrameAPI = {
   render: (html: string, options?: { visible?: boolean }) => void;
@@ -14,9 +15,11 @@ export type Options<T> = {
   skip?: boolean;
   iframeCanBeVisible?: boolean;
   onMessageCode?: string;
+  onUpdateCode?: string;
+  exposed?: { [key: string]: any };
   isMarshalable?: (obj: any) => boolean;
   onError?: (err: any) => void;
-  onExpose?: (api: IFrameAPI) => T;
+  staticExposed?: (api: IFrameAPI) => T;
 };
 
 // restrict any classes
@@ -37,10 +40,12 @@ export default function useHook<T>({
   src,
   skip,
   onMessageCode,
+  onUpdateCode,
   iframeCanBeVisible,
+  exposed,
   isMarshalable = defaultIsMarshalable,
   onError = defaultOnError,
-  onExpose,
+  staticExposed,
 }: Options<T> = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
@@ -94,6 +99,21 @@ export default function useHook<T>({
     [evalCode, onMessageCode],
   );
 
+  const staticExpose = useCallback(() => {
+    if (!arena.current) return;
+    const exposed = staticExposed?.({
+      render: (html, options) => {
+        setIFrameState([html, { visible: !!iframeCanBeVisible && !!options?.visible, ...options }]);
+      },
+      postMessage: msg => {
+        iFrameRef.current?.postMessage(JSON.parse(JSON.stringify(msg)));
+      },
+    });
+    if (exposed) {
+      arena.current.expose(exposed);
+    }
+  }, [iframeCanBeVisible, staticExposed]);
+
   // init and dispose of vm
   useEffect(() => {
     if (skip) return;
@@ -103,6 +123,7 @@ export default function useHook<T>({
       arena.current = new Arena(vm, {
         isMarshalable,
       });
+      staticExpose();
       setLoaded(true);
     })();
 
@@ -122,20 +143,42 @@ export default function useHook<T>({
         }
       }
     };
-  }, [isMarshalable, onError, skip, src]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMarshalable, onError, skip, src]); // ignore staticExpose
+
+  const exposer = useMemo(() => {
+    if (!arena.current || !loaded) return;
+    return arena.current.evalCode<(keys: string[], value: any) => void>(`(keys, value) => {
+      if (!keys.length) return;
+      let o = globalThis;
+      for (const k of keys.slice(0, -1)) {
+        if (typeof o !== "object") break;
+        if (typeof o?.[k] !== "object") {
+          o[k] = {};
+        }
+        o = o[k];
+      }
+      if (typeof o !== "object") return;
+      o[keys[keys.length - 1]] = value;
+    }`);
+  }, [loaded]);
 
   useEffect(() => {
-    if (!arena.current || !onExpose || !loaded) return;
-    const exposed = onExpose({
-      render: (html, options) => {
-        setIFrameState([html, { visible: !!iframeCanBeVisible && !!options?.visible, ...options }]);
-      },
-      postMessage: msg => {
-        iFrameRef.current?.postMessage(msg);
-      },
-    });
-    arena.current.expose(exposed);
-  }, [onExpose, loaded, iframeCanBeVisible]);
+    if (!arena.current || !exposer || !exposed) return;
+    for (const [k, v] of Object.entries(exposed)) {
+      const keys = k.split(".");
+      exposer(keys, v);
+    }
+
+    // call update event
+    if (onUpdateCode) {
+      const updatEvent = arena.current.evalCode(onUpdateCode);
+      if (typeof updatEvent === "function") {
+        updatEvent();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exposed, exposer]); // ignore onUpdateCode
 
   useEffect(() => {
     if (!arena.current || !src || !loaded) return;
