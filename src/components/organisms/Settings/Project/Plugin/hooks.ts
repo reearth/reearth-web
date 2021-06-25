@@ -1,6 +1,7 @@
+import { useMemo } from "react";
+
 import { useLocalState } from "@reearth/state";
 import { useInstallablePluginsQuery, useInstalledPluginsQuery } from "@reearth/gql";
-import { useMemo } from "react";
 import { PluginItem } from "@reearth/components/molecules/Settings/Workspace/Plugin/PluginSection";
 
 export default (projectId: string) => {
