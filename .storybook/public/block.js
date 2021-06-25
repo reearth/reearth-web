@@ -1,24 +1,30 @@
 const html = `
-<h1>Block</h1>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script id="l" src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<div id="map" style="width: 100%; height: 300px;"></div>
 <script>
-  addEventListener("message", e => {
-    if (e.source !== parent) return;
-    const p = document.createElement("p");
-    p.textContent = JSON.stringify(e.data);
-    document.body.appendChild(p);
-    console.log("plugin block: plugin -> iframe", e.data);
-    parent.postMessage(e.data, "*");
+  document.getElementById("l").addEventListener("load", () => {
+    const map = L.map("map");
+    const marker = L.marker();
+    const cb = (block) => {
+      if (block?.property?.location) {
+        const latlng = [block.property.location.lat, block.property.location.lng];
+        map.setView(latlng);
+        marker.setLatLng(latlng).addTo(map);
+      } else {
+        marker.remove();
+      }
+    };
+    addEventListener("message", e => {
+      if (e.source !== parent) return;
+      cb(e.data);
+    });
+    cb(${JSON.stringify(reearth.block)});
   });
 </script>
 `;
 
 reearth.ui.show(html, { visible: true });
-reearth.ui.onmessage = (message) => {
-  console.log("plugin block: plugin <- iframe", message);
-}
-
 reearth.onupdate = () => {
-  console.log("plugin block", reearth);
-  reearth.ui.postMessage(reearth.block ?? null);
+  reearth.ui.postMessage(reearth.block);
 };
-reearth.onupdate();

@@ -28,6 +28,9 @@ export const Plugin: Story<Props> = args => (
 Plugin.args = {
   block: {
     plugin: "block",
+    property: {
+      location: { lat: 100, lng: 100 },
+    },
   },
   isSelected: false,
   isBuilt: false,
