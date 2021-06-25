@@ -24,17 +24,17 @@ const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items }) =
       className={className}
       allowMultipleExpanded
       itemBgColor={theme.colors.bg[3]}
-      items={items?.map(i => {
+      items={items?.map(item => {
         return {
-          id: i.title,
+          id: item.title,
           heading: (
             <PluginAccordionItemHeader
-              thumbnail={i.thumbnailUrl}
-              title={i.title}
-              isInstalled={i.isInstalled}
+              thumbnail={item.thumbnailUrl}
+              title={item.title}
+              isInstalled={item.isInstalled}
             />
           ),
-          content: <PluginAccordionItemBody>{i.bodyMarkdown}</PluginAccordionItemBody>,
+          content: <PluginAccordionItemBody>{item.bodyMarkdown}</PluginAccordionItemBody>,
         };
       })}
     />
