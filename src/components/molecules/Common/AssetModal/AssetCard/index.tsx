@@ -37,7 +37,7 @@ const AssetCard: React.FC<Props> = ({
         {/\.(jpg|jpeg|png|gif|svg|webp|GIF|JPG|JPEG|PNG|SVG|WEBP)$/.test(url) ? (
           <PreviewImage url={url} />
         ) : (
-          <Icon icon="file"></Icon>
+          <Icon icon="file" />
         )}
       </ImgWrapper>
       <FileName size={cardSize === "large" ? "m" : "xs"} cardSize={cardSize} customColor>

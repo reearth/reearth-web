@@ -8,15 +8,6 @@ import {
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
-export type Asset = {
-  id: string;
-  teamId: string;
-  name: string;
-  size: number;
-  url: string;
-  contentType: string;
-};
-
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 type Params = {

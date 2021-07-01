@@ -5,6 +5,7 @@ import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
+import { metricsSizes } from "@reearth/theme/metrics";
 
 type Team = {
   id?: string;
@@ -78,7 +79,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px;
+  padding: ${metricsSizes["4xl"]}px;
   box-sizing: border-box;
 `;
 
@@ -89,7 +90,7 @@ const LogoWrapper = styled.div`
   align-items: center;
   justify-content: center;
   color: ${props => props.theme.main.text};
-  margin-bottom: 32px;
+  margin-bottom: ${metricsSizes["4xl"]}px;
 `;
 
 const NavigationList = styled.ul`
