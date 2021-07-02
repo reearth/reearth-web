@@ -25,8 +25,8 @@ export type File = {
 };
 
 export default (onSheetSelect: (sheet: SheetParameter) => void) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [pickerApiLoaded, setPickerApiLoaded] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pickerApiLoaded, setPickerApiLoaded] = useState(false);
   const [pickedFile, setPickedFile] = useState<File>();
   const [pickedFileSheets, setPickedFileSheets] = useState<GoogleSheet[]>([]);
   const [selectedSheet, setSelectedSheet] = useState<File>();
