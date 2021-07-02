@@ -21,7 +21,6 @@ export type Props = {
   asset: Asset;
   selected?: boolean;
   checked?: boolean;
-  isImage?: boolean;
   onCheck?: (checked: boolean) => void;
 };
 

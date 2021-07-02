@@ -47,7 +47,6 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
         {pickedFile?.id && (
           <>
             <AssetCard
-              isImage={false}
               name={pickedFile.name}
               cardSize="medium"
               icon="sheetFile"
@@ -61,7 +60,6 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
                   <AssetListItem
                     key={sheetItem.properties.sheetId}
                     asset={{ id: sheetItem.properties.sheetId, name: sheetItem.properties.title }}
-                    isImage={false}
                     onCheck={() => {
                       handleSheetSelect({
                         id: sheetItem.properties.sheetId,
