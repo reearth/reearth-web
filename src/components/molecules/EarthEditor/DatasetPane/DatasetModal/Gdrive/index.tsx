@@ -11,13 +11,13 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import AssetCard from "@reearth/components/molecules/Common/AssetModal/AssetCard";
 import AssetListItem from "@reearth/components/molecules/Common/AssetModal/AssetListItem";
 import Button from "@reearth/components/atoms/Button";
-import useHooks, { GoogleSheet, SheetParameter } from "./hooks";
+import useHooks, { GoogleSheet, SheetParameter as SheetParam } from "./hooks";
 
-export { SheetParameter };
+export type SheetParameter = SheetParam;
 
 export type Props = {
   onReturn: () => void;
-  onSheetSelect: (sheet: SheetParameter) => void;
+  onSheetSelect: (sheet: SheetParam) => void;
   syncLoading: boolean;
 };
 
