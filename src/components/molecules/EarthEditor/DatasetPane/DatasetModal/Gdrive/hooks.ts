@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 
-declare const gapi: any;
-declare const google: any;
-
 export type SheetParameter = {
   accessToken: string;
   fileId: string;
@@ -47,7 +44,7 @@ export default (onSheetSelect: (sheet: SheetParameter) => void) => {
 
   useEffect(() => {
     const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
-    if (pickerApiLoaded && accessToken) {
+    if (pickerApiLoaded && accessToken && googleApiKey) {
       setIsLoading(false);
       const picker = new google.picker.PickerBuilder()
         .addView(google.picker.ViewId.SPREADSHEETS)

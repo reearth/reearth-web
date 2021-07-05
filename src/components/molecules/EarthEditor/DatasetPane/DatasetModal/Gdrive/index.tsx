@@ -13,6 +13,8 @@ import AssetListItem from "@reearth/components/molecules/Common/AssetModal/Asset
 import Button from "@reearth/components/atoms/Button";
 import useHooks, { GoogleSheet, SheetParameter } from "./hooks";
 
+export { SheetParameter };
+
 export type Props = {
   onReturn: () => void;
   onSheetSelect: (sheet: SheetParameter) => void;
