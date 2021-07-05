@@ -13,6 +13,7 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
+import AssetDeleteModal from "@reearth/components/molecules/Settings/Workspace/Asset/AssetDeleteModal";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
 
@@ -179,6 +180,7 @@ const AssetContainer: React.FC<Props> = ({
         )}
         <Divider margin="0" />
       </AssetWrapper>
+      <AssetDeleteModal />
     </Wrapper>
   );
 };
