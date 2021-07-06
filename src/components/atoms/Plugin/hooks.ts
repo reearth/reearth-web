@@ -14,8 +14,6 @@ export type Options<T> = {
   src?: string;
   skip?: boolean;
   iframeCanBeVisible?: boolean;
-  onMessageCode?: string;
-  onUpdateCode?: string;
   exposed?: { [key: string]: any };
   isMarshalable?: (obj: any) => boolean;
   onError?: (err: any) => void;
@@ -39,8 +37,6 @@ const defaultOnError = (err: any) => {
 export default function useHook<T>({
   src,
   skip,
-  onMessageCode,
-  onUpdateCode,
   iframeCanBeVisible,
   exposed,
   isMarshalable = defaultIsMarshalable,
@@ -84,35 +80,25 @@ export default function useHook<T>({
     [onError],
   );
 
-  const onMessage = useCallback(
-    (message: any) => {
-      if (!arena.current || !onMessageCode) return;
-      try {
-        const cb = evalCode(onMessageCode);
-        if (typeof cb === "function") {
-          cb(message);
-        }
-      } catch (err) {
-        console.error("plugin error", err);
-      }
-    },
-    [evalCode, onMessageCode],
-  );
-
-  const staticExpose = useCallback(() => {
-    if (!arena.current) return;
-    const exposed = staticExposed?.({
+  const iFrameApi = useMemo<IFrameAPI>(
+    () => ({
       render: (html, options) => {
         setIFrameState([html, { visible: !!iframeCanBeVisible && !!options?.visible, ...options }]);
       },
       postMessage: msg => {
         iFrameRef.current?.postMessage(JSON.parse(JSON.stringify(msg)));
       },
-    });
+    }),
+    [iframeCanBeVisible],
+  );
+
+  const staticExpose = useCallback(() => {
+    if (!arena.current) return;
+    const exposed = staticExposed?.(iFrameApi);
     if (exposed) {
       arena.current.expose(exposed);
     }
-  }, [iframeCanBeVisible, staticExposed]);
+  }, [iFrameApi, staticExposed]);
 
   // init and dispose of vm
   useEffect(() => {
@@ -169,16 +155,7 @@ export default function useHook<T>({
       const keys = k.split(".");
       exposer(keys, v);
     }
-
-    // call update event
-    if (onUpdateCode) {
-      const updatEvent = arena.current.evalCode(onUpdateCode);
-      if (typeof updatEvent === "function") {
-        updatEvent();
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exposed, exposer]); // ignore onUpdateCode
+  }, [exposed, exposer]);
 
   useEffect(() => {
     if (!arena.current || !src || !loaded) return;
@@ -202,6 +179,5 @@ export default function useHook<T>({
     iFrameRef,
     iFrameVisible: iFrameOptions?.visible,
     loaded,
-    onMessage,
   };
 }

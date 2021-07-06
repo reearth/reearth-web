@@ -1,5 +1,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
+import { action } from "@storybook/addon-actions";
 
 import Component, { Props } from ".";
 
@@ -11,10 +12,11 @@ export default {
 
 export const Default: Story<Props> = args => <Component {...args} />;
 
+let cb: (message: any) => void | undefined;
+
 Default.args = {
-  src: `${process.env.PUBLIC_URL}/plugin.js`,
+  src: `${process.env.PUBLIC_URL}/plugins/plugin.js`,
   canBeVisible: true,
-  onMessageCode: `globalThis.reearth.ui.onmessage`,
   style: {
     width: "300px",
     height: "300px",
@@ -28,7 +30,17 @@ Default.args = {
       ui: {
         show: render,
         postMessage,
+        get onmessage() {
+          return cb;
+        },
+        set onmessage(value: (message: any) => void | undefined) {
+          cb = value;
+        },
       },
     },
   }),
+  onMessage: (message: any) => {
+    action("onMessage")(message);
+    return cb?.(message);
+  },
 };

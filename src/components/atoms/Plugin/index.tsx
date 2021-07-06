@@ -8,32 +8,28 @@ export type IFrameAPI = IFrameAPIType;
 export type Props = {
   className?: string;
   canBeVisible?: boolean;
-  onMessageCode?: string;
-  onUpdateCode?: string;
   skip?: boolean;
   style?: CSSProperties;
   src?: string;
   exposed?: { [key: string]: any };
   staticExposed?: (api: IFrameAPI) => any;
+  onMessage?: (message: any) => void;
   onError?: (err: any) => void;
 };
 
 const Plugin: React.FC<Props> = ({
   className,
   canBeVisible,
-  onMessageCode,
-  onUpdateCode,
   skip,
   style,
   src,
   exposed,
   staticExposed,
+  onMessage,
   onError,
 }) => {
-  const { iFrameRef, iFrameHtml, iFrameVisible, onMessage } = useHook({
+  const { iFrameRef, iFrameHtml, iFrameVisible } = useHook({
     iframeCanBeVisible: canBeVisible,
-    onMessageCode,
-    onUpdateCode,
     skip,
     src,
     exposed,
