@@ -3,7 +3,7 @@ import { Viewer } from "cesium";
 import type { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
-import { getLocationFromScreenXY, flyTo, getCamera } from "./common";
+import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
 import builtinPrimitives from "./builtin";
 
 export default function useEngineRef(
@@ -26,7 +26,7 @@ export default function useEngineRef(
         );
       },
       lookAt: (camera, options) => {
-        flyTo(
+        lookAt(
           cesium.current?.cesiumElement?.scene.camera,
           { ...getCamera(cesium.current?.cesiumElement), ...camera },
           options,

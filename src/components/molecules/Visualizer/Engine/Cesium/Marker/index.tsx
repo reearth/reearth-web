@@ -52,7 +52,7 @@ type Property = {
 
 const tag = "reearth_unselectable";
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
   const { id, isVisible, property } = primitive ?? {};
   const {
     location,
@@ -138,7 +138,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected
           />
         </Entity>
       )}
-      <Entity id={id} position={pos} onClick={() => api?.selectPrimitive(id)} selected={isSelected}>
+      <Entity id={id} position={pos} selected={isSelected}>
         {property?.default?.style === "point" ? (
           <PointGraphics pixelSize={pointSize} color={toColor(property?.default?.pointColor)} />
         ) : (

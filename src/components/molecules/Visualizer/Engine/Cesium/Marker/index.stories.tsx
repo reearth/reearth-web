@@ -7,11 +7,6 @@ import { V, location } from "../storybook";
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Marker",
   component: Marker,
-  argTypes: {
-    api: {
-      control: false,
-    },
-  },
 } as Meta;
 
 const Template: Story<Props> = args => (

@@ -28,8 +28,7 @@ const comps = {
 
 const Resource: React.FC<Props> = ({ primitive }) => {
   const { isVisible, property } = primitive ?? {};
-  const url = property?.default?.url;
-  const type = property?.default?.type;
+  const { url, type } = (property as Property | undefined)?.default ?? {};
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
     [type, url],

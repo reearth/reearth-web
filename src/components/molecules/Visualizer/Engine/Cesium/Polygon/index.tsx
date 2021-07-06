@@ -19,10 +19,10 @@ export type Property = {
   };
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
   const { id, isVisible, property } = primitive ?? {};
   const { polygon, fill = true, stroke, fillColor, strokeColor, strokeWidth = 1 } =
-    property?.default ?? {};
+    (property as Property | undefined)?.default ?? {};
 
   const hierarchy = useMemo(
     () =>
@@ -51,7 +51,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelecte
   ]);
 
   return !isVisible ? null : (
-    <Entity id={id} onClick={() => api?.selectPrimitive(id)} selected={isSelected}>
+    <Entity id={id} selected={isSelected}>
       <PolygonGraphics
         hierarchy={hierarchy}
         fill={fill}

@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { RectangleGraphics, Entity } from "resium";
 import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { useVisualizerContext } from "../../../context";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -20,46 +19,47 @@ export type Property = {
 };
 
 const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
-  const ctx = useVisualizerContext();
   const { id, isVisible, property } = primitive ?? {};
+  const { rect, image, style, fillColor, height, extrudedHeight } =
+    (property as Property | undefined)?.default ?? {};
   const coordinates = useMemo(
     () =>
-      property?.default?.rect
-        ? new Rectangle(
-            property.default.rect.west,
-            property.default.rect.south,
-            property.default.rect.east,
-            property.default.rect.north,
-          )
+      rect &&
+      rect.west <= rect.east &&
+      rect.south <= rect.north &&
+      rect.east >= -180 &&
+      rect.east <= 180 &&
+      rect.west >= -180 &&
+      rect.west <= 180 &&
+      rect.south >= -90 &&
+      rect.south <= 90 &&
+      rect.north >= -90 &&
+      rect.north <= 90
+        ? Rectangle.fromDegrees(rect.west, rect.south, rect.east, rect.north)
         : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [property?.default?.rect],
+    [rect],
   );
 
   const material = useMemo(
     () =>
-      property?.default?.style === "image"
-        ? property.default.image
+      style === "image"
+        ? image
           ? new ImageMaterialProperty({
-              image: property.default.image as any,
+              image,
             })
           : undefined
-        : property?.default?.fillColor
+        : fillColor
         ? Color.fromCssColorString(property.default.fillColor)
         : undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [property?.default?.style, property?.default?.image, property?.default?.fillColor],
+    [style, image, fillColor],
   );
 
-  const select = useCallback(() => {
-    ctx?.pluginAPI?.reearth.primitives.select(id);
-  }, [ctx?.pluginAPI?.reearth.primitives, id]);
-
   return !isVisible ? null : (
-    <Entity id={id} onClick={select} selected={isSelected}>
+    <Entity id={id} selected={isSelected}>
       <RectangleGraphics
-        height={property?.default?.height}
-        extrudedHeight={property?.default?.extrudedHeight}
+        height={height}
+        extrudedHeight={extrudedHeight}
         coordinates={coordinates}
         material={material}
         fill={!!material}

@@ -6,11 +6,6 @@ import Polygon, { Props } from ".";
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Polygon",
   component: Polygon,
-  argTypes: {
-    api: {
-      control: false,
-    },
-  },
 } as Meta;
 
 export const Default: Story<Props> = args => (

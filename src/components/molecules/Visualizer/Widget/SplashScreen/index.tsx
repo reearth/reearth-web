@@ -42,8 +42,8 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
     overlayImageW: imageW,
     overlayImageH: imageH,
     overlayTitle: title,
-  } = property?.overlay ?? {};
-  const camera = property?.camera?.filter(c => !!c.cameraPosition);
+  } = (property as Property | undefined)?.overlay ?? {};
+  const camera = (property as Property | undefined)?.camera?.filter(c => !!c.cameraPosition);
 
   const [cameraSequence, setCameraSequence] = useState(0);
   const [delayedCameraSequence, setDelayedCameraSequence] = useState(-1);

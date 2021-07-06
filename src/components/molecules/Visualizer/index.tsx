@@ -19,9 +19,12 @@ export type Infobox = {
 
 export type Primitive = PrimitiveType & {
   infoboxEditable?: boolean;
+  pluginProperty?: any;
 };
 
-export type Widget = WidgetType;
+export type Widget = WidgetType & {
+  pluginProperty?: any;
+};
 
 export type Block = BlockType;
 
@@ -97,6 +100,7 @@ export default function Visualizer<SP = any>({
                 key={primitive.id}
                 primitive={primitive}
                 sceneProperty={sceneProperty}
+                pluginProperty={primitive.pluginProperty}
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
                 isSelected={selectedPrimitive?.id === primitive.id}
@@ -109,6 +113,7 @@ export default function Visualizer<SP = any>({
             key={widget.id}
             widget={widget}
             sceneProperty={sceneProperty}
+            pluginProperty={widget.pluginProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
           />

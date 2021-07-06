@@ -6,11 +6,6 @@ import Polyline, { Props } from ".";
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Polyline",
   component: Polyline,
-  argTypes: {
-    api: {
-      control: false,
-    },
-  },
 } as Meta;
 
 export const Default: Story<Props> = args => (

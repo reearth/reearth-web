@@ -129,6 +129,7 @@ const processInfobox = (infobox?: EarthLayerFragment["infobox"]): LayerInfoBox |
       extensionId: f.extensionId,
       propertyId: f.propertyId ?? undefined,
       property: convertProperty(f.property),
+      // pluginProperty
     })),
   };
 };
@@ -180,7 +181,7 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
     : undefined;
 };
 
-export const convertWidgets = (data: GetEarthWidgetsQuery | undefined) => {
+export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[] | undefined => {
   if (!data || !data.node || data.node.__typename !== "Scene") {
     return undefined;
   }
@@ -190,7 +191,8 @@ export const convertWidgets = (data: GetEarthWidgetsQuery | undefined) => {
     .map(
       (widget): Widget => ({
         id: widget.id,
-        plugin: `${widget.pluginId}/${widget.extensionId}`,
+        pluginId: widget.pluginId,
+        extensionId: widget.extensionId,
         property: convertProperty(widget.property),
         pluginProperty: convertProperty(widget.plugin?.scenePlugin?.property),
       }),
@@ -232,7 +234,7 @@ export const convertToBlocks = (data?: GetBlocksQuery): I[] | undefined => {
         .map<I | undefined>(extension =>
           plugin.plugin
             ? {
-                id: `${plugin.plugin.id}_${extension.extensionId}`,
+                id: `${plugin.plugin.id}/${extension.extensionId}`,
                 icon:
                   extension.icon ||
                   // for official plugin

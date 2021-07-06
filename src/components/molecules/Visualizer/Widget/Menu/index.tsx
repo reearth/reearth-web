@@ -27,7 +27,7 @@ const pos: Position[] = ["topleft", "topright", "bottomleft", "bottomright"];
 
 const Menu = ({ widget }: Props): JSX.Element => {
   const ctx = useVisualizerContext();
-  const { buttons, menu: menuItems } = widget?.property ?? {};
+  const { buttons, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
   const buttonsByPosition = useMemo(
     () => groupBy(buttons, v => v.buttonPosition) as { [p in Position]: Button[] },
     [buttons],

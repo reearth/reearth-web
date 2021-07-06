@@ -16,7 +16,6 @@ import {
 import { useCanvas, useImage } from "@reearth/util/image";
 import { Camera } from "@reearth/util/value";
 import { tweenInterval } from "@reearth/util/raf";
-import { FlyToCamera } from "../../commonApi";
 
 const defaultImageSize = 50;
 
@@ -151,7 +150,22 @@ export const getLocationFromScreenXY = (scene: Scene | undefined | null, x: numb
 
 export const flyTo = (
   cesiumCamera?: CesiumCamera,
-  camera?: FlyToCamera,
+  camera?: {
+    /** degrees */
+    lat?: number;
+    /** degrees */
+    lng?: number;
+    /** meters */
+    height?: number;
+    /** radians */
+    heading?: number;
+    /** radians */
+    pitch?: number;
+    /** radians */
+    roll?: number;
+    /** Field of view expressed in radians */
+    fov?: number;
+  },
   options?: {
     duration?: number;
     easing?: (time: number) => number;
@@ -159,30 +173,12 @@ export const flyTo = (
 ) => {
   if (!cesiumCamera || !camera) return () => {};
 
-  const cancel = () => {
-    cancelFov?.();
-    cesiumCamera?.cancelFlight();
-  };
-  let cancelFov: () => void | undefined;
-
-  // fov animation
-  const toFov = camera.fov;
-  if (
-    typeof toFov === "number" &&
-    cesiumCamera.frustum instanceof PerspectiveFrustum &&
-    typeof cesiumCamera.frustum.fov === "number" &&
-    cesiumCamera.frustum.fov !== toFov
-  ) {
-    const fromFov = cesiumCamera.frustum.fov;
-    cancelFov = tweenInterval(
-      t => {
-        if (!(cesiumCamera.frustum instanceof PerspectiveFrustum)) return;
-        cesiumCamera.frustum.fov = (toFov - fromFov) * t + fromFov;
-      },
-      options?.easing || "inOutCubic",
-      options?.duration ?? 0,
-    );
-  }
+  const cancelFov = animateFOV({
+    fov: camera.fov,
+    camera: cesiumCamera,
+    duration: options?.duration,
+    easing: options?.easing,
+  });
 
   const position =
     typeof camera.lat === "number" &&
@@ -192,27 +188,106 @@ export const flyTo = (
       : undefined;
 
   if (position) {
-    if ("range" in camera) {
-      cesiumCamera.flyToBoundingSphere(new BoundingSphere(position), {
-        offset: new HeadingPitchRange(camera.heading, camera.pitch, camera.range),
-        duration: options?.duration,
-        easingFunction: options?.easing,
-      });
-    } else {
-      cesiumCamera.flyTo({
-        destination: position,
-        orientation: {
-          heading: camera.heading,
-          pitch: camera.pitch,
-          roll: camera.roll,
-        },
-        duration: options?.duration ?? 0,
-        easingFunction: options?.easing,
-      });
-    }
+    cesiumCamera.flyTo({
+      destination: position,
+      orientation: {
+        heading: camera.heading,
+        pitch: camera.pitch,
+        roll: camera.roll,
+      },
+      duration: options?.duration ?? 0,
+      easingFunction: options?.easing,
+    });
   }
 
-  return cancel;
+  return () => {
+    cancelFov?.();
+    cesiumCamera?.cancelFlight();
+  };
+};
+
+export const lookAt = (
+  cesiumCamera?: CesiumCamera,
+  camera?: {
+    /** degrees */
+    lat?: number;
+    /** degrees */
+    lng?: number;
+    /** meters */
+    height?: number;
+    /** radians */
+    heading?: number;
+    /** radians */
+    pitch?: number;
+    /** radians */
+    range?: number;
+    /** Field of view expressed in radians */
+    fov?: number;
+  },
+  options?: {
+    duration?: number;
+    easing?: (time: number) => number;
+  },
+) => {
+  if (!cesiumCamera || !camera) return () => {};
+
+  const cancelFov = animateFOV({
+    fov: camera.fov,
+    camera: cesiumCamera,
+    duration: options?.duration,
+    easing: options?.easing,
+  });
+
+  const position =
+    typeof camera.lat === "number" &&
+    typeof camera.lng === "number" &&
+    typeof camera.height === "number"
+      ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
+      : undefined;
+
+  if (position) {
+    cesiumCamera.flyToBoundingSphere(new BoundingSphere(position), {
+      offset: new HeadingPitchRange(camera.heading, camera.pitch, camera.range),
+      duration: options?.duration,
+      easingFunction: options?.easing,
+    });
+  }
+
+  return () => {
+    cancelFov?.();
+    cesiumCamera?.cancelFlight();
+  };
+};
+
+export const animateFOV = ({
+  fov,
+  camera,
+  easing,
+  duration,
+}: {
+  fov?: number;
+  camera: CesiumCamera;
+  easing?: (t: number) => number;
+  duration?: number;
+}): (() => void) | undefined => {
+  // fov animation
+  if (
+    typeof fov === "number" &&
+    camera.frustum instanceof PerspectiveFrustum &&
+    typeof camera.frustum.fov === "number" &&
+    camera.frustum.fov !== fov
+  ) {
+    const fromFov = camera.frustum.fov;
+    return tweenInterval(
+      t => {
+        if (!(camera.frustum instanceof PerspectiveFrustum)) return;
+        camera.frustum.fov = (fov - fromFov) * t + fromFov;
+      },
+      easing || "inOutCubic",
+      duration ?? 0,
+    );
+  }
+  return undefined;
 };
 
 export const getCamera = (viewer: Viewer | undefined): Camera | undefined => {

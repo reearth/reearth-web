@@ -64,13 +64,6 @@ export const context: VisualizerContext = {
     reearth: {
       version: "0.0.0",
       apiVersion: 0,
-      ui: {
-        show: act("ui.show"),
-        postMessage: act("ui.postMessage"),
-        on: act("ui.on"),
-        off: act("ui.off"),
-        once: act("ui.once"),
-      },
       primitives: {
         primitives,
         select: act("primitive.select"),

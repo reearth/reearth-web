@@ -11,6 +11,7 @@ import Text from "@reearth/components/atoms/Text";
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
+import { useVisualizerContext } from "../../../context";
 import { useIcon, ho, vo } from "../common";
 
 export type Props = PrimitiveProps<Property>;
@@ -49,12 +50,8 @@ const durations: Durations = [
   [photoDuration, photoExitDuration],
 ];
 
-const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
-  api,
-  primitive,
-  isSelected,
-  selected,
-}) => {
+const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected, selected }) => {
+  const ctx = useVisualizerContext();
   const { id, isVisible, property } = primitive ?? {};
   const {
     image,
@@ -91,7 +88,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
   useEffect(() => {
     if (prevMode > 0 && mode === 0 && prevCamera.current) {
-      api?.flyTo(prevCamera.current, {
+      ctx?.engine()?.flyTo(prevCamera.current, {
         duration: cameraExitDuration / 1000,
         easing: EasingFunction.CUBIC_IN_OUT,
       });
@@ -99,12 +96,13 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
     if (prevMode === 0 && mode === 1 && camera) {
       const storytelling = selected?.[1] === "storytelling";
+      const currentCamera = ctx?.pluginAPI?.reearth.visualizer.camera;
       prevCamera.current = storytelling
         ? { ...camera }
-        : api?.camera
-        ? { ...api.camera }
+        : currentCamera
+        ? { ...currentCamera }
         : undefined;
-      api?.flyTo(camera, {
+      ctx?.engine()?.flyTo(camera, {
         duration: cameraDuration / 1000,
         easing: EasingFunction.CUBIC_IN_OUT,
       });
@@ -124,7 +122,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
   const currentFov = mode >= 2 ? camera?.fov : prevCamera.current?.fov ?? defaultFOV;
   useEffect(() => {
-    api?.flyTo(
+    ctx?.engine()?.flyTo(
       { fov: currentFov },
       {
         duration: cameraDuration / 1000,
@@ -147,7 +145,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
   return !isVisible ? null : (
     <>
-      <Entity id={id} position={pos} onClick={() => api?.selectPrimitive(id)} selected={isSelected}>
+      <Entity id={id} position={pos} selected={isSelected}>
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}

@@ -16,6 +16,7 @@ export type { Primitive } from "../Block";
 
 export type Block = BlockType & {
   propertyId?: string;
+  pluginProperty?: any;
 };
 
 export type InfoboxProperty = {
@@ -116,8 +117,8 @@ const InfoBox: React.FC<Props> = ({
             isSelected={!!isEditable && !isBuilt && selectedBlockId === b.id}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            // isHovered={!!isEditable && !isBuilt && hover && !isSelected}
             infoboxProperty={property}
+            pluginProperty={b.pluginProperty}
             sceneProperty={sceneProperty}
             onChange={(...args) =>
               b.propertyId ? onBlockChange?.(b.propertyId, ...args) : undefined
