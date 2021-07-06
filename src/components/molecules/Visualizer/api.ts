@@ -66,9 +66,7 @@ export default function (
     },
   };
 
-  const emit = (type: string, type2: string, ...args: any[]) => emitters[type]?.(type2, ...args);
-
-  return [api, emit];
+  return [api, (type: string, type2: string, ...args: any[]) => emitters[type]?.(type2, ...args)];
 }
 
 function getPrimitives({

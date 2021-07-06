@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback, useMemo } from "react";
+import React, { CSSProperties, useCallback, useEffect, useMemo } from "react";
 
 import { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
 import events from "@reearth/util/event";
@@ -40,10 +40,21 @@ export default function Plugin({
 }: Props): JSX.Element | null {
   const ctx = useVisualizerContext();
 
-  const [messageEvents, onMessage, getOnmessage, setOnmessage] = useMemo(() => {
+  const [
+    uiEvents,
+    emitUiEvent,
+    getOnmessage,
+    setOnmessage,
+    reearthEvents,
+    emitReearthEvent,
+    getOnUpdate,
+    setOnUpdate,
+  ] = useMemo(() => {
     const [ev, emit, fn] = events();
     const [get, set] = fn("message");
-    return [ev, emit, get, set] as const;
+    const [ev2, emit2, fn2] = events();
+    const [getUpdate, setUpdate] = fn2("update");
+    return [ev, emit, get, set, ev2, emit2, getUpdate, setUpdate] as const;
   }, []);
 
   const handleError = useCallback(
@@ -67,15 +78,13 @@ export default function Plugin({
       const ui = {
         show: render,
         postMessage,
-        on: messageEvents.on,
-        off: messageEvents.off,
-        once: messageEvents.once,
         get onmessage() {
           return getOnmessage();
         },
         set onmessage(value: ((message: any) => void) | undefined) {
           setOnmessage(value);
         },
+        ...uiEvents,
       };
 
       return {
@@ -94,6 +103,13 @@ export default function Plugin({
               return extensionId || "";
             },
           },
+          ...reearthEvents,
+          get onupdate() {
+            return getOnUpdate();
+          },
+          set onupdate(value: (() => void) | undefined) {
+            setOnUpdate(value);
+          },
         },
       };
     },
@@ -101,12 +117,13 @@ export default function Plugin({
       ctx?.pluginAPI,
       extensionId,
       extensionType,
+      getOnUpdate,
       getOnmessage,
-      messageEvents.off,
-      messageEvents.on,
-      messageEvents.once,
       pluginId,
+      reearthEvents,
+      setOnUpdate,
       setOnmessage,
+      uiEvents,
     ],
   );
 
@@ -121,6 +138,10 @@ export default function Plugin({
     [block, primitive, widget, property, sceneProperty],
   );
 
+  useEffect(() => {
+    emitReearthEvent("update");
+  }, [exposed, emitReearthEvent]);
+
   return src ? (
     <P
       skip={!ctx}
@@ -130,7 +151,7 @@ export default function Plugin({
       staticExposed={staticExposed}
       exposed={exposed}
       onError={handleError}
-      onMessage={onMessage}
+      onMessage={emitUiEvent}
       canBeVisible={visible}
     />
   ) : null;

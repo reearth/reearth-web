@@ -17,6 +17,10 @@ export type Reearth = {
   readonly primitive?: Primitive;
   readonly widget?: Widget;
   readonly block?: Block;
+  readonly on: (type: "update", callback: () => void) => void;
+  readonly off: (type: "update", callback: () => void) => void;
+  readonly once: (type: "update", callback: () => void) => void;
+  onupdate?: () => void;
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
