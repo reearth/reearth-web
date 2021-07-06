@@ -34,6 +34,7 @@ export default function WidgetComponent<PP = any, SP = any>({
       extensionType="widget"
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
+      sceneProperty={props.sceneProperty}
       visible
       widget={props.widget}
     />

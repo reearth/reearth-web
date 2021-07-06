@@ -42,6 +42,7 @@ export default function PrimitiveComponent<PP = any, SP = any>({
       extensionType="primitive"
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
+      sceneProperty={props.sceneProperty}
       visible={false}
       primitive={props.primitive}
     />

@@ -45,6 +45,7 @@ export default function BlockComponent<PP = any, IP = any, SP = any>({
       extensionType="block"
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
+      sceneProperty={props.sceneProperty}
       visible
       primitive={props.primitive}
       block={props.block}

@@ -108,6 +108,8 @@ export type Visualizer = {
   readonly engine: string;
   /** Current camera position and state. */
   readonly camera: Camera | undefined;
+  /** Current scene property */
+  readonly property?: any;
   readonly zoomIn: (amount: number) => void;
   readonly zoomOut: (amount: number) => void;
   /** Moves the camera position to the specified destination. */

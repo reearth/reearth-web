@@ -13,8 +13,9 @@ export type Props = {
   pluginId?: string;
   extensionId?: string;
   extensionType?: string;
-  property?: any;
   visible?: boolean;
+  property?: any;
+  sceneProperty?: any;
   pluginBaseUrl?: string;
   primitive?: Primitive;
   widget?: Widget;
@@ -35,6 +36,7 @@ export default function Plugin({
   primitive,
   widget,
   block,
+  sceneProperty,
 }: Props): JSX.Element | null {
   const ctx = useVisualizerContext();
 
@@ -114,8 +116,9 @@ export default function Plugin({
       "reearth.widget": widget,
       "reearth.block": block,
       "reearth.plugin.property": property,
+      "reearth.visualizer.property": sceneProperty,
     }),
-    [block, primitive, widget, property],
+    [block, primitive, widget, property, sceneProperty],
   );
 
   return src ? (
