@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ThemeContext } from "@emotion/react";
-import rawStyled from "@emotion/styled";
+import rawStyled from "@emotion/styled/macro";
 export { css, keyframes } from "@emotion/react";
 
 import { Theme } from "./theme";
