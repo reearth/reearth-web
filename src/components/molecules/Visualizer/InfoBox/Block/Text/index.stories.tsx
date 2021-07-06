@@ -24,7 +24,7 @@ const Template: Story<Props> = args => <Text {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  block: { property: { default: { text: "aaaaaa" } } },
+  block: { id: "", property: { default: { text: "aaaaaa" } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,
@@ -32,7 +32,7 @@ Default.args = {
 
 export const Title = Template.bind({});
 Title.args = {
-  block: { property: { default: { text: "aaaaaa", title: "Title" } } },
+  block: { id: "", property: { default: { text: "aaaaaa", title: "Title" } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,
@@ -40,7 +40,7 @@ Title.args = {
 
 export const Markdown = Template.bind({});
 Markdown.args = {
-  block: { property: { default: { text: markdownText, markdown: true } } },
+  block: { id: "", property: { default: { text: markdownText, markdown: true } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,
@@ -49,6 +49,7 @@ Markdown.args = {
 export const Typography = Template.bind({});
 Typography.args = {
   block: {
+    id: "",
     property: {
       default: { text: markdownText, markdown: true, typography: { color: "red", fontSize: 16 } },
     },

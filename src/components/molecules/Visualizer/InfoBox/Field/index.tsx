@@ -5,20 +5,18 @@ import { ValueTypes, ValueType } from "@reearth/util/value";
 import Icon from "@reearth/components/atoms/Icon";
 import InsertionBar from "@reearth/components/atoms/InsertionBar";
 
-import type { CommonAPI } from "../..";
-import PluginBlock, { Props as PluginBlockProps, Block as BlockType } from "../Block";
+import PluginBlock, { Primitive, Props as PluginBlockProps, Block as BlockType } from "../Block";
 import useHooks from "./hooks";
 
-export type Block<P = any, PP = any> = BlockType<P, PP> & {
-  id: string;
-  plugin?: string;
+export type Block = BlockType & {
   propertyId?: string;
-  infoboxProperty?: any;
 };
 
+export type { Primitive } from "../Block";
+
 export type Props = {
-  api?: CommonAPI;
   block?: Block;
+  primitive?: Primitive;
   index?: number;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -43,6 +41,7 @@ export type Props = {
 
 export default function Field({
   block,
+  primitive,
   index,
   isEditable,
   isBuilt,
@@ -97,6 +96,7 @@ export default function Field({
           sceneProperty={sceneProperty}
           onChange={handleChange}
           onClick={handleClick}
+          primitive={primitive}
         />
         {isEditable && !isBuilt && !dragDisabled && hover && (
           <Handle

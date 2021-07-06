@@ -3,8 +3,9 @@ import { Meta, Story } from "@storybook/react";
 import Field, { Block, Props } from ".";
 
 const block: Block = {
-  plugin: "reearth/textblock",
   id: "block",
+  pluginId: "reearth",
+  extensionId: "textblock",
   property: {
     default: {
       title: "Text",

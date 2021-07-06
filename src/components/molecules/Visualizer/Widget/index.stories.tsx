@@ -2,25 +2,27 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 
-import Menu, { Props } from ".";
-import { Provider } from "../../context";
-import { context } from "../../storybook";
+import Widget, { Props } from ".";
+import { Provider } from "../context";
+import { context } from "../storybook";
 
 export default {
-  title: "molecules/Visualizer/Widget/Menu",
-  component: Menu,
+  title: "molecules/Visualizer/Widget",
+  component: Widget,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
 export const Default: Story<Props> = args => (
   <Provider value={context}>
-    <Menu {...args} />
+    <Widget {...args} />
   </Provider>
 );
 
 Default.args = {
   widget: {
     id: "",
+    pluginId: "reearth",
+    extensionId: "menu",
     property: {
       buttons: [
         {

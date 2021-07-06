@@ -19,9 +19,7 @@ const Template: Story<Props> = args => (
 
 export const Default = Template.bind({});
 Default.args = {
-  block: {
-    property: { default: { image: `${process.env.PUBLIC_URL}/sample.svg` } },
-  },
+  block: { id: "", property: { default: { image: `${process.env.PUBLIC_URL}/sample.svg` } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,
@@ -37,6 +35,7 @@ NoImage.args = {
 export const Title = Template.bind({});
 Title.args = {
   block: {
+    id: "",
     property: { default: { image: `${process.env.PUBLIC_URL}/sample.svg`, title: "Title" } },
   },
   isSelected: false,
@@ -47,6 +46,7 @@ Title.args = {
 export const FullSize = Template.bind({});
 FullSize.args = {
   block: {
+    id: "",
     property: { default: { image: `${process.env.PUBLIC_URL}/sample.svg`, fullSize: true } },
   },
   isSelected: false,
@@ -57,6 +57,7 @@ FullSize.args = {
 export const Cover = Template.bind({});
 Cover.args = {
   block: {
+    id: "",
     property: {
       default: {
         image: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -73,6 +74,7 @@ Cover.args = {
 export const Contain = Template.bind({});
 Contain.args = {
   block: {
+    id: "",
     property: {
       default: {
         image: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -89,6 +91,7 @@ Contain.args = {
 export const Position = Template.bind({});
 Position.args = {
   block: {
+    id: "",
     property: {
       default: {
         image: `${process.env.PUBLIC_URL}/sample.svg`,

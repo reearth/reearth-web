@@ -7,6 +7,7 @@ import { styled } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
 import { Props as WidgetProps } from "../../Widget";
+import { useVisualizerContext } from "../../context";
 import MenuButton, {
   Button as ButtonType,
   Position as PositionType,
@@ -24,7 +25,8 @@ export type Property = {
 
 const pos: Position[] = ["topleft", "topright", "bottomleft", "bottomright"];
 
-const Menu = ({ api, widget }: Props): JSX.Element => {
+const Menu = ({ widget }: Props): JSX.Element => {
+  const ctx = useVisualizerContext();
   const { buttons, menu: menuItems } = widget?.property ?? {};
   const buttonsByPosition = useMemo(
     () => groupBy(buttons, v => v.buttonPosition) as { [p in Position]: Button[] },
@@ -42,7 +44,7 @@ const Menu = ({ api, widget }: Props): JSX.Element => {
         const camera =
           "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
         if (camera) {
-          api?.flyTo(camera, { duration: 2000 });
+          ctx?.engine()?.flyTo(camera, { duration: 2000 });
         }
       } else {
         let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
@@ -54,7 +56,7 @@ const Menu = ({ api, widget }: Props): JSX.Element => {
       }
       setVisibleMenuButton(undefined);
     },
-    [api],
+    [ctx],
   );
 
   const closeMenu = useCallback(() => {

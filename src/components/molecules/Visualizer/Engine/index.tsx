@@ -8,8 +8,8 @@ import React, {
 } from "react";
 
 import type { Camera } from "@reearth/util/value";
-import type { CommonAPI } from "..";
 import Cesium from "./Cesium";
+import type { EngineRef } from "./ref";
 
 export type EngineProps<SP = any> = {
   className?: string;
@@ -26,7 +26,7 @@ export type EngineProps<SP = any> = {
 };
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;
 export type Props = PropsWithChildren<EngineProps & { engine?: Engine }>;
-export type Ref = Pick<CommonAPI, "requestRender" | "getLocationFromScreenXY" | "flyTo">;
+export type Ref = EngineRef;
 export type Engine = keyof typeof engines;
 
 // TODO: lazy loading

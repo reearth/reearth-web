@@ -10,6 +10,7 @@ import Text from "@reearth/components/atoms/Text";
 import Icon from "@reearth/components/atoms/Icon";
 
 import { Props as WidgetProps } from "../../Widget";
+import { useVisualizerContext } from "../../context";
 
 export type Props = WidgetProps<Property>;
 
@@ -35,8 +36,11 @@ const defaultRange = 50000;
 const defaultDuration = 3;
 const defaultOffset = { pitch: 0, heading: CesiumMath.toRadians(-30), range: defaultRange };
 
-const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
-  const storyIds: string[] | undefined = widget?.property?.stories
+const Storytelling = ({ widget }: Props): JSX.Element | null => {
+  const ctx = useVisualizerContext();
+
+  const storiesData = (widget?.property as Property | undefined)?.stories;
+  const storyIds: string[] | undefined = storiesData
     ?.map(s => s.layer)
     .filter((id): id is string => !!id);
   const { camera, duration = defaultDuration, autoStart, range } = widget?.property?.default ?? {};
@@ -49,11 +53,13 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
   });
 
   const stories = useMemo(() => {
-    const layers = storyIds && api?.getPrimitives(storyIds);
+    const layers =
+      storyIds &&
+      ctx?.pluginAPI?.reearth.primitives.primitives.filter(p => storyIds.includes(p.id));
 
     return (
       layers &&
-      widget?.property?.stories
+      storiesData
         ?.map(story => {
           const title = layers.find(l => l?.id === story.layer)?.title;
           if (title) {
@@ -72,31 +78,35 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
   const [layerIndex, setLayerIndex] = useState<number>();
   const currentLayerId = typeof layerIndex === "number" ? stories?.[layerIndex]?.layer : undefined;
   const selectedLayer = useMemo(
-    () => (currentLayerId ? api?.getPrimitive(currentLayerId) : undefined),
-    [api, currentLayerId],
+    () =>
+      currentLayerId
+        ? ctx?.pluginAPI?.reearth.primitives.primitives.find(p => p.id === currentLayerId)
+        : undefined,
+    [ctx?.pluginAPI?.reearth.primitives.primitives, currentLayerId],
   );
 
   const selectLayer = useCallback(
     (index: number) => {
       const story = stories?.[index];
       const id = story?.layer;
-      if (!api || !story || !id) return;
+      if (!story || !id) return;
 
       setMenu(false);
       setLayerIndex(index);
-      api?.selectPrimitive(id, "storytelling");
+      ctx?.pluginAPI?.reearth.primitives.select(id);
 
-      const layer = api?.getPrimitive(id);
+      const layer = ctx?.pluginAPI?.reearth.primitives.primitives.find(p => p.id === id);
       if (
         // Photooverlays have own camera flight and that is the priority here.
-        layer?.plugin === "reearth/photooverlay" &&
+        layer?.pluginId === "reearth" &&
+        layer.extensionId === "photooverlay" &&
         !!layer.property?.default?.camera
       ) {
         return;
       }
 
       if (story.layerCamera) {
-        api?.flyTo(story.layerCamera, {
+        ctx?.engine()?.flyTo(story.layerCamera, {
           duration: story.layerDuration ?? duration,
         });
         return;
@@ -113,7 +123,7 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
         typeof position.lng === "number" &&
         typeof position.height == "number"
       ) {
-        api?.flyTo(
+        ctx?.engine()?.flyTo(
           {
             lat: position.lat,
             lng: position.lng,
@@ -133,7 +143,7 @@ const Storytelling = ({ api, widget }: Props): JSX.Element | null => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [api, stories],
+    [ctx, stories],
   );
 
   const handleNext = useCallback(() => {

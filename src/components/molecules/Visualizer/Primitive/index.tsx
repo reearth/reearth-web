@@ -1,47 +1,49 @@
 import React, { ComponentType, useMemo } from "react";
 
-import { useEngineAPI } from "../engineApi";
-import Plugin from "../Plugin";
-import type { CommonAPI } from "..";
+import { useVisualizerContext } from "../context";
+import Plugin, { Primitive } from "../Plugin";
 
-export type Primitive<P = any, PP = any> = {
-  id: string;
-  plugin?: string;
-  property?: P;
-  pluginProperty?: PP;
-  isVisible?: boolean;
-};
+export type { Primitive } from "../Plugin";
 
-export type Props<P = any, PP = any, SP = any> = {
-  api?: CommonAPI;
-  primitive?: Primitive<P, PP>;
+export type Props<PP = any, SP = any> = {
+  primitive?: Primitive;
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
+  pluginProperty?: PP;
   sceneProperty?: SP;
   selected?: [id: string | undefined, reason?: string | undefined];
   pluginBaseUrl?: string;
 };
 
-export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, SP>>;
+export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;
 
-export const Primitive: React.FC<Props> = ({ pluginBaseUrl, ...props }) => {
-  const engineApi = useEngineAPI();
-  const Builtin = props.primitive?.plugin
-    ? engineApi?.builtinPrimitives?.[props.primitive.plugin]
-    : undefined;
-  const exposed = useMemo(() => ({ primitive: props.primitive }), [props.primitive]);
+export default function PrimitiveComponent<PP = any, SP = any>({
+  pluginBaseUrl,
+  ...props
+}: Props<PP, SP>) {
+  const ctx = useVisualizerContext();
+  const Builtin = useMemo(
+    () =>
+      props.primitive?.pluginId && props.primitive.extensionId
+        ? ctx?.engine()?.builtinPrimitives?.[
+            `${props.primitive.pluginId}/${props.primitive.extensionId}`
+          ]
+        : undefined,
+    [ctx, props.primitive?.extensionId, props.primitive?.pluginId],
+  );
 
-  return Builtin ? (
+  return !props.primitive?.isVisible ? null : Builtin ? (
     <Builtin {...props} />
   ) : (
     <Plugin
-      plugin={props.primitive?.plugin}
-      exposed={exposed}
+      pluginId={props.primitive?.pluginId}
+      extensionId={props.primitive?.extensionId}
+      extensionType="primitive"
       pluginBaseUrl={pluginBaseUrl}
-      visible
+      property={props.pluginProperty}
+      visible={false}
+      primitive={props.primitive}
     />
   );
-};
-
-export default Primitive;
+}

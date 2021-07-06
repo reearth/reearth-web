@@ -33,7 +33,7 @@ const DataList: React.FC<Props> = ({
   isEditable,
   onClick,
 }) => {
-  const items = block?.property?.items;
+  const { items } = (block?.property as Property | undefined) ?? {};
   const { title, typography } = block?.property?.default ?? {};
   const isTemplate = !title && !items;
 

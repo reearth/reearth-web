@@ -25,7 +25,8 @@ const VideoBlock: React.FC<Props> = ({
   isEditable,
   onClick,
 }) => {
-  const { url: videoUrl, fullSize, title } = block?.property?.default ?? {};
+  const { url: videoUrl, fullSize, title } =
+    (block?.property as Property | undefined)?.default ?? {};
   const { size: infoboxSize } = infoboxProperty?.default ?? {};
   const isTemplate = !videoUrl && !title;
 

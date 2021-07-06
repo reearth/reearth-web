@@ -1,15 +1,24 @@
 import React, { CSSProperties, useCallback, useMemo } from "react";
 
+import { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
+import events from "@reearth/util/event";
 import P, { IFrameAPI } from "@reearth/components/atoms/Plugin";
-import { useEngineAPI } from "../engineApi";
+import { useVisualizerContext } from "../context";
+
+export type { Primitive, Block, Widget } from "@reearth/plugin";
 
 export type Props = {
   className?: string;
   style?: CSSProperties;
-  exposed?: any;
-  plugin?: string;
+  pluginId?: string;
+  extensionId?: string;
+  extensionType?: string;
+  property?: any;
   visible?: boolean;
   pluginBaseUrl?: string;
+  primitive?: Primitive;
+  widget?: Widget;
+  block?: Block;
 };
 
 const defaultPluginBaseUrl = `${window.REEARTH_CONFIG?.api || "/api"}/plugins`;
@@ -17,56 +26,108 @@ const defaultPluginBaseUrl = `${window.REEARTH_CONFIG?.api || "/api"}/plugins`;
 export default function Plugin({
   className,
   style,
-  exposed,
-  plugin,
+  pluginId,
+  extensionId,
+  extensionType,
+  property,
   visible,
   pluginBaseUrl = defaultPluginBaseUrl,
+  primitive,
+  widget,
+  block,
 }: Props): JSX.Element | null {
-  const engineApi = useEngineAPI<{}>();
+  const ctx = useVisualizerContext();
 
-  const e = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries({ ...exposed, ...(engineApi ?? {}) }).map(([k, v]) => [`reearth.${k}`, v]),
-      ),
-    [engineApi, exposed],
-  );
-
-  const handleStaticExpose = useCallback(
-    (iFrameApi: IFrameAPI) => ({
-      console: {
-        log: console.log,
-        error: console.error,
-      },
-      reearth: {
-        ui: {
-          show: iFrameApi.render,
-          postMessage: iFrameApi.postMessage,
-        },
-      },
-    }),
-    [],
-  );
+  const [messageEvents, onMessage, getOnmessage, setOnmessage] = useMemo(() => {
+    const [ev, emit, fn] = events();
+    const [get, set] = fn("message");
+    return [ev, emit, get, set] as const;
+  }, []);
 
   const handleError = useCallback(
     (err: any) => {
-      console.error(`plugin error from ${plugin}: `, err);
+      console.error(`plugin error from ${pluginId}/${extensionId}: `, err);
     },
-    [plugin],
+    [pluginId, extensionId],
   );
 
-  const src = plugin ? `${pluginBaseUrl}/${plugin.replace(/\.\./g, "")}.js` : undefined;
+  const src =
+    pluginId && extensionId
+      ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
+      : undefined;
+
+  const staticExposed = useCallback(
+    ({ render, postMessage }: IFrameAPI): GlobalThis | undefined => {
+      const pluginAPI = ctx?.pluginAPI;
+      if (!pluginAPI) return;
+
+      // TODO: quickjs-emscripten throws "Lifetime not alive" error when iFrameApi funcs are wrapped with another function
+      const ui = {
+        show: render,
+        postMessage,
+        on: messageEvents.on,
+        off: messageEvents.off,
+        once: messageEvents.once,
+        get onmessage() {
+          return getOnmessage();
+        },
+        set onmessage(value: ((message: any) => void) | undefined) {
+          setOnmessage(value);
+        },
+      };
+
+      return {
+        ...pluginAPI,
+        reearth: {
+          ...pluginAPI.reearth,
+          ui,
+          plugin: {
+            get id() {
+              return pluginId || "";
+            },
+            get extensionType() {
+              return extensionType || "";
+            },
+            get extensionId() {
+              return extensionId || "";
+            },
+          },
+        },
+      };
+    },
+    [
+      ctx?.pluginAPI,
+      extensionId,
+      extensionType,
+      getOnmessage,
+      messageEvents.off,
+      messageEvents.on,
+      messageEvents.once,
+      pluginId,
+      setOnmessage,
+    ],
+  );
+
+  const exposed = useMemo(
+    () => ({
+      "reearth.primitive": primitive,
+      "reearth.widget": widget,
+      "reearth.block": block,
+      "reearth.plugin.property": property,
+    }),
+    [block, primitive, widget, property],
+  );
 
   return src ? (
     <P
+      skip={!ctx}
       className={className}
       style={style}
       src={src}
-      exposed={e}
-      staticExposed={handleStaticExpose}
+      staticExposed={staticExposed}
+      exposed={exposed}
       onError={handleError}
-      onMessageCode="globalThis.reearth.ui.onmessage"
-      onUpdateCode="globalThis.reearth.onupdate"
+      onMessage={onMessage}
       canBeVisible={visible}
     />
   ) : null;

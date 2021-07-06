@@ -2,7 +2,8 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 
 import Component, { Props } from ".";
-import { commonApi } from "../../storybook";
+import { Provider } from "../../context";
+import { context } from "../../storybook";
 
 export default {
   title: "molecules/Visualizer/Widget/Storytelling",
@@ -10,9 +11,17 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => <Component {...args} api={commonApi} />;
+const Template: Story<Props> = args => (
+  <Provider value={context}>
+    <Component {...args} />
+  </Provider>
+);
+
+export const Default = Template.bind({});
+
 Default.args = {
   widget: {
+    id: "",
     property: {
       stories: [
         { layer: "a", title: "a" },
@@ -25,10 +34,11 @@ Default.args = {
   isEditable: false,
 };
 
-export const AutoStart: Story<Props> = args => <Component {...args} api={commonApi} />;
+export const AutoStart = Template.bind({});
 
 AutoStart.args = {
   widget: {
+    id: "",
     property: {
       stories: [
         { layer: "a", title: "a" },

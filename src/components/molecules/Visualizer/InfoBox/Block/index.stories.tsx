@@ -2,6 +2,8 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 
 import Component, { Props } from ".";
+import { Provider } from "../../context";
+import { context } from "../../storybook";
 
 export default {
   title: "molecules/Visualizer/InfoBox/Block",
@@ -12,7 +14,9 @@ export default {
 export const Default: Story<Props> = args => <Component {...args} />;
 Default.args = {
   block: {
-    plugin: "reearth/textblock",
+    id: "",
+    pluginId: "reearth",
+    extensionId: "textblock",
     property: { default: { text: "hogehoge" } },
   },
   isSelected: false,
@@ -21,15 +25,19 @@ Default.args = {
 };
 
 export const Plugin: Story<Props> = args => (
-  <div style={{ background: "#fff" }}>
-    <Component {...args} />
-  </div>
+  <Provider value={context}>
+    <div style={{ background: "#fff" }}>
+      <Component {...args} />
+    </div>
+  </Provider>
 );
 Plugin.args = {
   block: {
-    plugin: "block",
+    id: "",
+    pluginId: "plugins",
+    extensionId: "block",
     property: {
-      location: { lat: 100, lng: 100 },
+      location: { lat: 0, lng: 100 },
     },
   },
   isSelected: false,

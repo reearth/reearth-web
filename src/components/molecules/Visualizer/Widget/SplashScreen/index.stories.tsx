@@ -3,7 +3,8 @@ import { Math as CesiumMath } from "cesium";
 import { Meta, Story } from "@storybook/react";
 
 import SplashScreen, { Props } from ".";
-import { commonApi } from "../../storybook";
+import { Provider } from "../../context";
+import { context } from "../../storybook";
 
 export default {
   title: "molecules/Visualizer/Widget/SplashScreen",
@@ -11,10 +12,15 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => <SplashScreen {...args} api={commonApi} />;
+export const Default: Story<Props> = args => (
+  <Provider value={context}>
+    <SplashScreen {...args} />
+  </Provider>
+);
 
 Default.args = {
   widget: {
+    id: "",
     property: {
       overlay: {
         overlayEnabled: true,

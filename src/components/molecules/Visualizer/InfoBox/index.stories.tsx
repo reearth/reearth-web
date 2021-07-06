@@ -14,7 +14,8 @@ Template.args = {
   blocks: [
     {
       id: "a",
-      plugin: "reearth/textblock",
+      pluginId: "reearth",
+      extensionId: "textblock",
       propertyId: "propertya",
       property: {
         default: {
@@ -25,7 +26,8 @@ Template.args = {
     },
     {
       id: "b",
-      plugin: "reearth/textblock",
+      pluginId: "reearth",
+      extensionId: "textblock",
       propertyId: "propertya",
       property: {
         default: {

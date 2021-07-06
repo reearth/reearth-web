@@ -7,12 +7,11 @@ import Text from "@reearth/components/atoms/Text";
 import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 
-import type { CommonAPI } from "..";
-import Field, { Block as BlockType } from "./Field";
+import Field, { Block, Primitive } from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
 
-export type Block = BlockType;
+export type { Block, Primitive } from "./Field";
 
 export type InfoboxProperty = {
   default?: {
@@ -24,11 +23,11 @@ export type InfoboxProperty = {
 };
 
 export type Props = {
-  api?: CommonAPI;
   className?: string;
   infoboxKey?: string;
   property?: InfoboxProperty;
   sceneProperty?: any;
+  primitive?: Primitive;
   blocks?: Block[];
   title?: string;
   isEditable?: boolean;
@@ -50,7 +49,6 @@ export type Props = {
 };
 
 const InfoBox: React.FC<Props> = ({
-  api,
   className,
   infoboxKey,
   property,
@@ -95,7 +93,6 @@ const InfoBox: React.FC<Props> = ({
           key={b.id}
           block={b}
           index={i}
-          api={api}
           isEditable={isEditable}
           isBuilt={isBuilt}
           isSelected={selectedBlockId === b.id}

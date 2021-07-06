@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { RectangleGraphics, Entity } from "resium";
 import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
+import { useVisualizerContext } from "../../../context";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -18,7 +19,8 @@ export type Property = {
   };
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }) => {
+const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
+  const ctx = useVisualizerContext();
   const { id, isVisible, property } = primitive ?? {};
   const coordinates = useMemo(
     () =>
@@ -48,8 +50,13 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ api, primitive, isSelected }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [property?.default?.style, property?.default?.image, property?.default?.fillColor],
   );
+
+  const select = useCallback(() => {
+    ctx?.pluginAPI?.reearth.primitives.select(id);
+  }, [ctx?.pluginAPI?.reearth.primitives, id]);
+
   return !isVisible ? null : (
-    <Entity id={id} onClick={() => api?.selectPrimitive(id)} selected={isSelected}>
+    <Entity id={id} onClick={select} selected={isSelected}>
       <RectangleGraphics
         height={property?.default?.height}
         extrudedHeight={property?.default?.extrudedHeight}

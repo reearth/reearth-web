@@ -32,7 +32,8 @@ const TextBlock: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const theme = useTheme();
-  const { text, title, markdown, typography } = block?.property?.default ?? {};
+  const { text, title, markdown, typography } =
+    (block?.property as Property | undefined)?.default ?? {};
   const { bgcolor: bg } = infoboxProperty?.default ?? {};
 
   const ref = useRef<HTMLTextAreaElement>(null);

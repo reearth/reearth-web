@@ -32,7 +32,7 @@ const LocationBlock: React.FC<Props> = ({
 }) => {
   const map = useRef<Map>(null);
 
-  const { location, title, fullSize } = block?.property?.default ?? {};
+  const { location, title, fullSize } = (block?.property as Property | undefined)?.default ?? {};
   const { size: infoboxSize } = infoboxProperty?.default ?? {};
 
   const handleChange = ({ lat, lng }: { lat: number; lng: number }) => {

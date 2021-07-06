@@ -4,12 +4,13 @@ import Filled from "@reearth/components/atoms/Filled";
 import DropHolder from "@reearth/components/atoms/DropHolder";
 
 import useHooks from "./hooks";
+import { Provider } from "./context";
 import Engine, { Props as EngineProps } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./InfoBox";
 
-export type { CommonAPI, FlyToCamera, FlyToOptions } from "./commonApi";
+export type { VisualizerContext } from "./context";
 
 export type Infobox = {
   blocks?: Block[];
@@ -17,12 +18,10 @@ export type Infobox = {
 };
 
 export type Primitive = PrimitiveType & {
-  title?: string;
-  infobox?: Infobox;
   infoboxEditable?: boolean;
 };
 
-export type Widget = WidgetType & { id: string };
+export type Widget = WidgetType;
 
 export type Block = BlockType;
 
@@ -63,7 +62,8 @@ export default function Visualizer<SP = any>({
     engineRef,
     wrapperRef,
     isDroppable,
-    commonAPI,
+    hiddenPrimitives,
+    visualizerContext,
     selectedPrimitive,
     selectedPrimitiveId,
     selectedBlockId,
@@ -81,56 +81,58 @@ export default function Visualizer<SP = any>({
   });
 
   return (
-    <Filled ref={wrapperRef}>
-      {isDroppable && <DropHolder />}
-      <Engine
-        ref={engineRef}
-        property={sceneProperty}
-        selectedPrimitiveId={selectedPrimitive?.id}
-        onPrimitiveSelect={selectPrimitive}
-        {...props}>
-        {primitives?.map(primitive => (
-          <P
-            key={primitive.id}
-            api={commonAPI}
-            primitive={primitive}
+    <Provider value={visualizerContext}>
+      <Filled ref={wrapperRef}>
+        {isDroppable && <DropHolder />}
+        <Engine
+          ref={engineRef}
+          property={sceneProperty}
+          selectedPrimitiveId={selectedPrimitive?.id}
+          onPrimitiveSelect={selectPrimitive}
+          {...props}>
+          {primitives
+            ?.filter(p => !hiddenPrimitives.includes(p.id))
+            .map(primitive => (
+              <P
+                key={primitive.id}
+                primitive={primitive}
+                sceneProperty={sceneProperty}
+                isEditable={props.isEditable}
+                isBuilt={props.isBuilt}
+                isSelected={selectedPrimitive?.id === primitive.id}
+                selected={selectedPrimitiveId}
+              />
+            ))}
+        </Engine>
+        {widgets?.map(widget => (
+          <W
+            key={widget.id}
+            widget={widget}
             sceneProperty={sceneProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
-            isSelected={selectedPrimitive?.id === primitive.id}
-            selected={selectedPrimitiveId}
           />
         ))}
-      </Engine>
-      {widgets?.map(widget => (
-        <W
-          key={widget.id}
-          api={commonAPI}
-          widget={widget}
+        <Infobox
+          title={selectedPrimitive?.title}
+          infoboxKey={selectedPrimitive?.id}
+          visible={!!selectedPrimitive?.infobox}
+          property={selectedPrimitive?.infobox?.property}
           sceneProperty={sceneProperty}
-          isEditable={props.isEditable}
+          primitive={selectedPrimitive}
+          blocks={selectedPrimitive?.infobox?.blocks}
+          selectedBlockId={selectedBlockId}
           isBuilt={props.isBuilt}
+          isEditable={props.isEditable && !!selectedPrimitive?.infoboxEditable}
+          onBlockChange={onBlockChange}
+          onBlockDelete={onBlockDelete}
+          onBlockMove={onBlockMove}
+          onBlockInsert={onBlockInsert}
+          onBlockSelect={selectBlock}
+          renderInsertionPopUp={renderInfoboxInsertionPopUp}
         />
-      ))}
-      <Infobox
-        api={commonAPI}
-        title={selectedPrimitive?.title}
-        infoboxKey={selectedPrimitive?.id}
-        visible={!!selectedPrimitive?.infobox}
-        property={selectedPrimitive?.infobox?.property}
-        sceneProperty={sceneProperty}
-        blocks={selectedPrimitive?.infobox?.blocks}
-        selectedBlockId={selectedBlockId}
-        isBuilt={props.isBuilt}
-        isEditable={props.isEditable && !!selectedPrimitive?.infoboxEditable}
-        onBlockChange={onBlockChange}
-        onBlockDelete={onBlockDelete}
-        onBlockMove={onBlockMove}
-        onBlockInsert={onBlockInsert}
-        onBlockSelect={selectBlock}
-        renderInsertionPopUp={renderInfoboxInsertionPopUp}
-      />
-      {children}
-    </Filled>
+        {children}
+      </Filled>
+    </Provider>
   );
 }

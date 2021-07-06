@@ -3,7 +3,6 @@ import { Meta, Story } from "@storybook/react";
 
 import Ellipsoid, { Props } from ".";
 import { V, location } from "../storybook";
-import { commonApi } from "../../../storybook";
 
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Ellipsoid",
@@ -22,7 +21,6 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  api: commonApi,
   primitive: {
     id: "",
     property: {

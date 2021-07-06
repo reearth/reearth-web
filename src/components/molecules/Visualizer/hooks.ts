@@ -1,9 +1,11 @@
-import { useRef, useEffect, useMemo, useState, useCallback } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 
+import { Camera } from "@reearth/util/value";
 import type { Ref as EngineRef } from "./Engine";
 import type { Primitive } from ".";
-import useCommonAPI from "./commonApi";
+import { VisualizerContext } from "./context";
+import api from "./api";
 
 export default ({
   rootLayerId,
@@ -12,6 +14,8 @@ export default ({
   primitives,
   selectedPrimitiveId: outerSelectedPrimitiveId,
   selectedBlockId: outerSelectedBlockId,
+  camera,
+  engineName,
   onPrimitiveSelect,
   onBlockSelect,
 }: {
@@ -21,6 +25,8 @@ export default ({
   primitives?: Primitive[];
   selectedPrimitiveId?: string;
   selectedBlockId?: string;
+  camera?: Camera;
+  engineName?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
 }) => {
@@ -68,17 +74,44 @@ export default ({
     engineRef.current?.requestRender();
   });
 
-  const commonAPI = useCommonAPI({
-    engineRef,
+  const hiddenPrimitivesSet = useMemo(() => new Set<string>(), []);
+  const [hiddenPrimitives, setHiddenPrimitives] = useState<string[]>([]);
+  const showPrimitive = useCallback(
+    (...ids: string[]) => {
+      for (const id of ids) {
+        hiddenPrimitivesSet.delete(id);
+      }
+      setHiddenPrimitives(Array.from(hiddenPrimitivesSet.values()));
+    },
+    [hiddenPrimitivesSet],
+  );
+  const hidePrimitive = useCallback(
+    (...ids: string[]) => {
+      for (const id of ids) {
+        hiddenPrimitivesSet.add(id);
+      }
+      setHiddenPrimitives(Array.from(hiddenPrimitivesSet.values()));
+    },
+    [hiddenPrimitivesSet],
+  );
+
+  const visualizerContext = useVisualizerContext({
+    engine: engineRef,
     primitives,
-    onPrimitiveSelect: selectPrimitive,
+    camera,
+    engineName,
+    selectedPrimitive,
+    selectPrimitive,
+    showPrimitive,
+    hidePrimitive,
   });
 
   return {
     engineRef,
     wrapperRef,
     isDroppable,
-    commonAPI,
+    visualizerContext,
+    hiddenPrimitives,
     selectedPrimitiveId,
     selectedPrimitive,
     selectedBlockId,
@@ -152,4 +185,68 @@ function useInnerState<T>(
   }, [value]);
 
   return [innerState, setState];
+}
+
+function useVisualizerContext({
+  engine,
+  engineName = "",
+  camera,
+  primitives = [],
+  selectedPrimitive,
+  showPrimitive,
+  hidePrimitive,
+  selectPrimitive,
+}: {
+  engine: RefObject<EngineRef>;
+  engineName?: string;
+  camera?: Camera;
+  primitives?: Primitive[];
+  selectedPrimitive: Primitive | undefined;
+  showPrimitive: (...id: string[]) => void;
+  hidePrimitive: (...id: string[]) => void;
+  selectPrimitive: (id?: string) => void;
+}): VisualizerContext {
+  const engineNameRef = useRef(engineName);
+  engineNameRef.current = engineName;
+
+  const cameraRef = useRef(camera);
+  cameraRef.current = camera;
+
+  const primitivesRef = useRef(primitives);
+  primitivesRef.current = primitives;
+
+  const selectedPrimitiveRef = useRef(selectedPrimitive);
+  selectedPrimitiveRef.current = selectedPrimitive;
+
+  const [pluginAPI, pluginAPIEmit] = useMemo(
+    () =>
+      api({
+        engine: () => engine.current,
+        engineName: () => engineNameRef.current,
+        camera: () => cameraRef.current,
+        primitives: () => primitivesRef.current,
+        selectedPrimitive: () => selectedPrimitiveRef.current,
+        hidePrimitive,
+        selectPrimitive: id => {
+          selectPrimitive?.(id);
+          pluginAPIEmit("primitives", "select");
+        },
+        showPrimitive,
+      }),
+    [engine, hidePrimitive, selectPrimitive, showPrimitive],
+  );
+
+  const ctx = useMemo(
+    (): VisualizerContext => ({
+      engine: () => engine.current,
+      pluginAPI,
+    }),
+    [engine, pluginAPI],
+  );
+
+  useEffect(() => {
+    pluginAPIEmit("visualizer", "cameramove");
+  }, [camera, pluginAPIEmit]);
+
+  return ctx;
 }

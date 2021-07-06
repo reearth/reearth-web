@@ -3,7 +3,6 @@ import { Meta, Story } from "@storybook/react";
 
 import Marker, { Props } from ".";
 import { V, location } from "../storybook";
-import { commonApi } from "../../../storybook";
 
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Marker",
@@ -20,9 +19,6 @@ const Template: Story<Props> = args => (
     <Marker {...args} />
   </V>
 );
-Template.args = {
-  api: commonApi,
-};
 
 export const Point = Template.bind({});
 Point.args = {

@@ -1,10 +1,10 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import Earth, { Primitive, Widget, Props } from ".";
+import Component, { Primitive, Widget, Props } from ".";
 
 export default {
   title: "molecules/Visualizer",
-  component: Earth,
+  component: Component,
   argTypes: {
     onBlockChange: { action: "onBlockChange" },
     onBlockDelete: { action: "onBlockDelete" },
@@ -18,7 +18,8 @@ export default {
 const primitives: Primitive[] = [
   {
     id: "1",
-    plugin: "reearth/marker",
+    pluginId: "reearth",
+    extensionId: "marker",
     title: "hoge",
     isVisible: true,
     property: {
@@ -31,7 +32,8 @@ const primitives: Primitive[] = [
   },
   {
     id: "2",
-    plugin: "reearth/marker",
+    pluginId: "reearth",
+    extensionId: "marker",
     title: "hoge",
     isVisible: true,
     property: {
@@ -44,7 +46,8 @@ const primitives: Primitive[] = [
       blocks: [
         {
           id: "1",
-          plugin: "reearth/textblock",
+          pluginId: "reearth",
+          extensionId: "textblock",
           property: {
             default: {
               text: "```\naaaaa\n```",
@@ -66,7 +69,8 @@ const primitives: Primitive[] = [
 const widgets: Widget[] = [
   {
     id: "a",
-    plugin: "reearth/splashscreen",
+    pluginId: "reearth",
+    extensionId: "splashscreen",
     property: {
       overlay: {
         overlayEnabled: true,
@@ -81,7 +85,7 @@ const widgets: Widget[] = [
   },
 ];
 
-const Template: Story<Props> = args => <Earth {...args} />;
+const Template: Story<Props> = args => <Component {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

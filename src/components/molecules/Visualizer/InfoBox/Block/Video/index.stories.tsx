@@ -15,9 +15,7 @@ const Template: Story<Props> = args => <Video {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  block: {
-    property: { default: { url: "https://www.youtube.com/watch?v=oUFJJNQGwhk" } },
-  },
+  block: { id: "", property: { default: { url: "https://www.youtube.com/watch?v=oUFJJNQGwhk" } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,
@@ -26,6 +24,7 @@ Default.args = {
 export const Title = Template.bind({});
 Title.args = {
   block: {
+    id: "",
     property: { default: { url: "https://www.youtube.com/watch?v=oUFJJNQGwhk", title: "Video" } },
   },
   isSelected: false,

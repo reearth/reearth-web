@@ -12,19 +12,12 @@ import {
 } from "cesium";
 
 import { Camera } from "@reearth/util/value";
+
 import { Ref as EngineRef } from "..";
 import useEntitySelection from "./useEntitySelection";
 import tiles from "./tiles";
-import useEngineAPI from "./useEngineAPI";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
-
-declare global {
-  interface Window {
-    REEARTH_E2E_ACCESS_TOKEN?: string;
-    REEARTH_E2E_CESIUM_VIEWER?: CesiumViewer;
-  }
-}
 
 export type SceneProperty = {
   default?: {
@@ -79,9 +72,6 @@ export default ({
 
   // expose ref
   useEngineRef(ref, cesium);
-
-  // expose api
-  const engineApi = useEngineAPI(cesium);
 
   // imagery layers
   const [imageryLayers, setImageryLayers] = useState<
@@ -154,7 +144,6 @@ export default ({
   });
 
   return {
-    engineApi,
     terrainProvider,
     backgroundColor,
     imageryLayers,

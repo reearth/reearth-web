@@ -15,7 +15,7 @@ const Template: Story<Props> = args => <Location {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  block: { property: { default: { location: { lat: 0, lng: 0 } } } },
+  block: { id: "", property: { default: { location: { lat: 0, lng: 0 } } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,
@@ -23,7 +23,7 @@ Default.args = {
 
 export const Title = Template.bind({});
 Title.args = {
-  block: { property: { default: { location: { lat: 0, lng: 0 }, title: "Location" } } },
+  block: { id: "", property: { default: { location: { lat: 0, lng: 0 }, title: "Location" } } },
   isSelected: false,
   isBuilt: false,
   isEditable: false,

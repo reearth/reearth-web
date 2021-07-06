@@ -1,25 +1,21 @@
-import React, { ComponentType, useMemo } from "react";
+import React, { ComponentType } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/util/value";
-import type { CommonAPI } from "../..";
 import builtin from "./builtin";
-import Plugin from "../../Plugin";
+import Plugin, { Block, Primitive } from "../../Plugin";
 
-export type Block<P = any, PP = any> = {
-  plugin?: string;
-  property?: P;
-  pluginProperty?: PP;
-};
+export type { Primitive, Block } from "../../Plugin";
 
-export type Props<P = any, PP = any, IP = any, SP = any> = {
-  api?: CommonAPI;
+export type Props<PP = any, IP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
   isHovered?: boolean;
-  block?: Block<P, PP>;
+  primitive?: Primitive;
+  block?: Block;
   sceneProperty?: SP;
   infoboxProperty?: IP;
+  pluginProperty?: PP;
   pluginBaseUrl?: string;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
@@ -30,17 +26,29 @@ export type Props<P = any, PP = any, IP = any, SP = any> = {
   ) => void;
 };
 
-export type Component<P = any, PP = any, IP = any, SP = any> = ComponentType<Props<P, PP, IP, SP>>;
+export type Component<PP = any, IP = any, SP = any> = ComponentType<Props<PP, IP, SP>>;
 
-const Block: React.FC<Props> = ({ pluginBaseUrl, ...props }) => {
-  const Builtin = props.block?.plugin ? builtin[props.block.plugin] : undefined;
-  const exposed = useMemo(() => ({ block: props.block }), [props.block]);
+export default function BlockComponent<PP = any, IP = any, SP = any>({
+  pluginBaseUrl,
+  ...props
+}: Props<PP, IP, SP>): JSX.Element {
+  const Builtin =
+    props.block?.pluginId && props.block.extensionId
+      ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
+      : undefined;
 
   return Builtin ? (
     <Builtin {...props} />
   ) : (
-    <Plugin plugin={props.block?.plugin} exposed={exposed} pluginBaseUrl={pluginBaseUrl} visible />
+    <Plugin
+      pluginId={props.block?.pluginId}
+      extensionId={props.block?.extensionId}
+      extensionType="block"
+      pluginBaseUrl={pluginBaseUrl}
+      property={props.pluginProperty}
+      visible
+      primitive={props.primitive}
+      block={props.block}
+    />
   );
-};
-
-export default Block;
+}

@@ -4,7 +4,6 @@ import { Math as CesiumMath } from "cesium";
 
 import { V, location } from "../storybook";
 import PhotoOverlay, { Props } from ".";
-import { commonApi } from "../../../storybook";
 
 export default {
   title: "molecules/Visualizer/Engine/Cesium/PhotoOverlay",
@@ -23,7 +22,6 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  api: commonApi,
   primitive: {
     id: "",
     isVisible: true,

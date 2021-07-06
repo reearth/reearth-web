@@ -21,17 +21,18 @@ const Template: Story<Props> = args => <DataList {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  block: { property: { items } },
+  block: { id: "", property: { items } },
 };
 
 export const Title = Template.bind({});
 Title.args = {
-  block: { property: { default: { title: "Title" }, items } },
+  block: { id: "", property: { default: { title: "Title" }, items } },
 };
 
 export const Typography: Story<Props> = Template.bind({});
 Typography.args = {
   block: {
+    id: "",
     property: {
       default: { typography: { color: "red", fontSize: 16 } },
       items,
@@ -42,17 +43,17 @@ Typography.args = {
 export const NoItems: Story<Props> = Template.bind({});
 
 export const Selected: Story<Props> = Template.bind({});
-Selected.args = { block: { property: { items } }, isSelected: true };
+Selected.args = { block: { id: "", property: { items } }, isSelected: true };
 
 export const Editable: Story<Props> = Template.bind({});
 Editable.args = {
-  block: { property: { items } },
+  block: { id: "", property: { items } },
   isSelected: true,
   isEditable: true,
 };
 
 export const Built: Story<Props> = Template.bind({});
 Built.args = {
-  block: { property: { items } },
+  block: { id: "", property: { items } },
   isBuilt: true,
 };

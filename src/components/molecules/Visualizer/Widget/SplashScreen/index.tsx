@@ -6,6 +6,7 @@ import { styled } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
 import { Props as WidgetProps } from "../../Widget";
+import { useVisualizerContext } from "../../context";
 
 export type Props = WidgetProps<Property>;
 
@@ -28,7 +29,8 @@ export type Property = {
   }[];
 };
 
-const SplashScreen = ({ api, widget, isBuilt }: Props): JSX.Element | null => {
+const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
+  const ctx = useVisualizerContext();
   const { property } = widget ?? {};
   const {
     overlayEnabled: enabled,
@@ -52,7 +54,7 @@ const SplashScreen = ({ api, widget, isBuilt }: Props): JSX.Element | null => {
     const { cameraPosition, cameraDuration, cameraDelay } = delayedCurrentCamera ?? {};
     if (!cameraPosition) return;
     const to = window.setTimeout(() => {
-      api?.flyTo(cameraPosition, {
+      ctx?.engine()?.flyTo(cameraPosition, {
         duration: (cameraDuration ?? 0) * 1000,
       });
     }, (cameraDelay ?? 0) * 1000);

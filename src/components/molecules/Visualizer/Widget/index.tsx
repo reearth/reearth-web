@@ -1,37 +1,41 @@
-import React, { ComponentType, useMemo } from "react";
+import React, { ComponentType } from "react";
 
-import Plugin from "../Plugin";
+import Plugin, { Widget } from "../Plugin";
 import builtin from "./builtin";
-import type { CommonAPI } from "..";
 
-export type Widget<P = any, PP = any> = {
-  id?: string;
-  plugin?: string;
-  property?: P;
-  pluginProperty?: PP;
-  enabled?: boolean;
-};
+export type { Widget } from "../Plugin";
 
-export type Props<P = any, PP = any, SP = any> = {
-  api?: CommonAPI;
+export type Props<PP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
-  widget?: Widget<P, PP>;
+  widget?: Widget;
   sceneProperty?: SP;
+  pluginProperty?: PP;
   pluginBaseUrl?: string;
 };
 
-export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, SP>>;
+export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;
 
-const Widget: React.FC<Props> = ({ pluginBaseUrl, ...props }) => {
-  const Builtin = props.widget?.plugin ? builtin[props.widget.plugin] : undefined;
-  const exposed = useMemo(() => ({ widget: props.widget }), [props.widget]);
+export default function WidgetComponent<PP = any, SP = any>({
+  pluginBaseUrl,
+  ...props
+}: Props<PP, SP>) {
+  const Builtin =
+    props.widget?.pluginId && props.widget.extensionId
+      ? builtin[`${props.widget.pluginId}/${props.widget.extensionId}`]
+      : undefined;
 
   return Builtin ? (
     <Builtin {...props} />
   ) : (
-    <Plugin plugin={props.widget?.plugin} exposed={exposed} pluginBaseUrl={pluginBaseUrl} visible />
+    <Plugin
+      pluginId={props.widget?.pluginId}
+      extensionId={props.widget?.extensionId}
+      extensionType="widget"
+      pluginBaseUrl={pluginBaseUrl}
+      property={props.pluginProperty}
+      visible
+      widget={props.widget}
+    />
   );
-};
-
-export default Widget;
+}

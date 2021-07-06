@@ -28,7 +28,7 @@ const ImageBlock: React.FC<Props> = ({
   isEditable,
 }) => {
   const { title, fullSize, image: src, imageSize, imagePositionX, imagePositionY } =
-    block?.property?.default ?? {};
+    (block?.property as Property | undefined)?.default ?? {};
   const { size: infoboxSize } = infoboxProperty?.default ?? {};
   const isTemplate = !src && !title;
 
