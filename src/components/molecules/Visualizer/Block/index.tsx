@@ -2,15 +2,14 @@ import React, { ComponentType } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/util/value";
 import builtin from "./builtin";
-import Plugin, { Block, Primitive } from "../../Plugin";
+import Plugin, { Block, Primitive } from "../Plugin";
 
-export type { Primitive, Block } from "../../Plugin";
+export type { Primitive, Block } from "../Plugin";
 
 export type Props<PP = any, IP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
-  isHovered?: boolean;
   primitive?: Primitive;
   block?: Block;
   sceneProperty?: SP;

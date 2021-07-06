@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import DataList, { Item, Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/InfoBox/Block/DataList",
+  title: "molecules/Visualizer/Block/DataList",
   component: DataList,
   argTypes: {
     onClick: { action: "onClick" },
@@ -41,6 +41,7 @@ Typography.args = {
 };
 
 export const NoItems: Story<Props> = Template.bind({});
+NoItems.args = { isEditable: true };
 
 export const Selected: Story<Props> = Template.bind({});
 Selected.args = { block: { id: "", property: { items } }, isSelected: true };

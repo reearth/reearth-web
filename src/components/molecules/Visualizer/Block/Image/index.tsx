@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { styled } from "@reearth/theme";
 
 import Icon from "@reearth/components/atoms/Icon";
-import { Title } from "../common";
-
+import { Border, Title } from "../common";
 import { Props as BlockProps } from "..";
 
 export type Props = BlockProps<Property>;
@@ -23,7 +22,6 @@ const ImageBlock: React.FC<Props> = ({
   block,
   infoboxProperty,
   onClick,
-  isHovered,
   isSelected,
   isEditable,
 }) => {
@@ -32,15 +30,20 @@ const ImageBlock: React.FC<Props> = ({
   const { size: infoboxSize } = infoboxProperty?.default ?? {};
   const isTemplate = !src && !title;
 
+  const [isHovered, setHovered] = useState(false);
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
+
   return (
     <Wrapper
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={onClick}
       fullSize={fullSize}
-      isSelected={isSelected}
+      infoboxSize={infoboxSize}
       isHovered={isHovered}
-      isTemplate={isTemplate}
       isEditable={isEditable}
-      infoboxSize={infoboxSize}>
+      isSelected={isSelected}>
       {title && <Title infoboxProperty={infoboxProperty}>{title}</Title>}
       {isTemplate && isEditable ? (
         <Template infoboxSize={infoboxSize}>
@@ -54,7 +57,6 @@ const ImageBlock: React.FC<Props> = ({
           imagePositionX={imagePositionX}
           imagePositionY={imagePositionY}
           isSelected={isSelected}
-          isHovered={isHovered}
           name={title}
           infoboxSize={infoboxSize}
         />
@@ -63,25 +65,11 @@ const ImageBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div<{
+const Wrapper = styled(Border)<{
   fullSize?: boolean;
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isTemplate: boolean;
-  isEditable?: boolean;
   infoboxSize?: string;
 }>`
   margin: ${({ fullSize }) => (fullSize ? "0" : "0 8px")};
-  border: 1px solid
-    ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
-      (!isTemplate && !isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
-        ? theme.infoBox.border
-        : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
-  border-radius: 6px;
   height: ${props => (props.infoboxSize === "large" ? "340px" : "200px")};
 `;
 
@@ -111,7 +99,6 @@ const Image = styled.img<{
   object-position: ${({ imagePositionX, imagePositionY }) =>
     `${imagePositionX || "center"} ${imagePositionY || "center"}`};
   outline: none;
-  border-radius: ${({ isSelected, isHovered }) => (isHovered || isSelected ? "6px" : 0)};
 `;
 
 const Template = styled.div<{ infoboxSize?: string }>`

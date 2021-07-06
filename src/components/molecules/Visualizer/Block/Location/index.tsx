@@ -1,12 +1,12 @@
-import React, { useRef } from "react";
-import L from "leaflet";
+import React, { useCallback, useRef, useState } from "react";
+import L, { LeafletMouseEvent } from "leaflet";
 import { Map, TileLayer, Marker } from "react-leaflet";
 
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
+import { Border, Title } from "../common";
 import { Props as BlockProps } from "..";
-import { Title } from "../common";
 
 import "leaflet/dist/leaflet.css";
 
@@ -20,16 +20,17 @@ export type Property = {
   };
 };
 
-const LocationBlock: React.FC<Props> = ({
+const defaultCenter = { lat: 0, lng: 0 };
+
+export default function LocationBlock({
   block,
   infoboxProperty,
   isBuilt,
-  isEditable,
-  isHovered,
   isSelected,
+  isEditable,
   onClick,
   onChange,
-}) => {
+}: Props): JSX.Element {
   const map = useRef<Map>(null);
 
   const { location, title, fullSize } = (block?.property as Property | undefined)?.default ?? {};
@@ -40,25 +41,30 @@ const LocationBlock: React.FC<Props> = ({
     onChange?.("default", "location", { lat, lng }, "latlng");
   };
 
-  const defaultCenter = { lat: 0, lng: 0 };
+  const [isHovered, setHovered] = useState(false);
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
 
   return (
     <Wrapper
       fullSize={fullSize}
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       isHovered={isHovered}
-      isSelected={isSelected}
-      isEditable={isEditable}>
+      isEditable={isEditable}
+      isSelected={isSelected}>
       {title && <Title infoboxProperty={infoboxProperty}>{title}</Title>}
-      <StyledMap
+      <Map
+        style={{
+          height: infoboxSize === "large" ? (title ? "236px" : "250px") : title ? "232px" : "250px",
+          overflow: "hidden",
+          zIndex: 1,
+        }}
         center={location ?? defaultCenter}
         zoom={13}
         ref={map}
-        onclick={(e: React.MouseEvent<HTMLElement>) => handleChange((e.target as any).latlng)}
-        title={title}
-        isSelected={isSelected}
-        isHovered={isHovered}
-        infoboxSize={infoboxSize}>
+        onclick={(e: LeafletMouseEvent) => handleChange(e.latlng)}>
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -71,47 +77,18 @@ const LocationBlock: React.FC<Props> = ({
             ondragend={e => handleChange(e.target?.getLatLng())}
           />
         )}
-      </StyledMap>
+      </Map>
     </Wrapper>
   );
-};
+}
 
-const Wrapper = styled.div<{
+const Wrapper = styled(Border)<{
   fullSize?: boolean;
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isEditable?: boolean;
 }>`
   margin: ${({ fullSize }) => (fullSize ? "0" : "0 8px")};
-  border: 1px solid
-    ${({ isSelected, isHovered, isEditable, theme }) =>
-      (!isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
-        ? theme.infoBox.border
-        : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
   border-radius: 6px;
   height: 250px;
 `;
-
-const StyledMap = styled(Map)<any>`
-  width: 100%;
-  height: ${props =>
-    props.infoboxSize === "large"
-      ? props.title
-        ? "236px"
-        : "250px"
-      : props.title
-      ? "232px"
-      : "250px"};
-  overflow: hidden;
-  z-index: 1;
-  border-radius: ${({ isSelected, isHovered }) => (isHovered || isSelected ? "6px" : 0)};
-`;
-
-export default LocationBlock;
 
 const iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fillRule="evenodd" clipRule="evenodd"

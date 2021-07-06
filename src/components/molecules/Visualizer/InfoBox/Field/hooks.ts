@@ -2,11 +2,11 @@ import { useState, useRef, useMemo } from "react";
 import { useDrag, useDrop, DropOptions } from "@reearth/util/use-dnd";
 
 export default ({
-  blockId,
+  id,
   index,
   onMove,
 }: {
-  blockId?: string;
+  id?: string;
   index?: number;
   onMove?: (blockId: string, fromIndex: number, toIndex: number) => void;
 }) => {
@@ -15,18 +15,18 @@ export default ({
   const [isHovered, setHovered] = useState<"top" | "bottom">();
 
   const { ref: dragRef, isDragging, previewRef } = useDrag<"block">(
-    blockId && typeof index === "number"
+    id && typeof index === "number"
       ? {
           type: "block",
-          id: blockId,
+          id,
           index,
         }
       : undefined,
     false,
     (_item, dropper) => {
-      if (!dropper || !onMove || !blockId || dropper.type !== "block" || typeof index !== "number")
+      if (!dropper || !onMove || !id || dropper.type !== "block" || typeof index !== "number")
         return;
-      onMove(blockId, index, dropper.index);
+      onMove(id, index, dropper.index);
     },
   );
 
@@ -34,7 +34,7 @@ export default ({
     useMemo<DropOptions<"block">>(
       () => ({
         accept: ["block"],
-        canDrop: item => item.id !== blockId,
+        canDrop: item => item.id !== id,
         hover(_item, context) {
           if (!context.canDrop || !context.position) {
             isHoveredRef.current = undefined;
@@ -52,20 +52,20 @@ export default ({
           const hovered = isHoveredRef.current;
           setHovered(undefined);
           isHoveredRef.current = undefined;
-          if (item.type !== "block" || !blockId || typeof index !== "number") return;
+          if (item.type !== "block" || !id || typeof index !== "number") return;
           const newIndex = index + (item.index <= index ? 0 : hovered === "bottom" ? 1 : 0);
           if (newIndex === item.index) {
             return; // not moved
           }
           return {
             type: "block",
-            id: blockId,
+            id: id,
             index: newIndex,
           };
         },
         wrapperRef,
       }),
-      [blockId, index],
+      [id, index],
     ),
   );
 

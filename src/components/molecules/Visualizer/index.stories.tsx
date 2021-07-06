@@ -36,6 +36,7 @@ const primitives: Primitive[] = [
     extensionId: "marker",
     title: "hoge",
     isVisible: true,
+    infoboxEditable: true,
     property: {
       default: {
         location: { lat: 34.3929, lng: 139.4428 },

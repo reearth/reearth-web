@@ -1,10 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useState } from "react";
 
 import { styled, fonts } from "@reearth/theme";
 import { Typography, typographyStyles } from "@reearth/util/value";
 import Icon from "@reearth/components/atoms/Icon";
 
-import { Title } from "../common";
+import { Border, Title } from "../common";
 import { Props as BlockProps } from "..";
 
 export type Props = BlockProps<Property>;
@@ -25,26 +25,24 @@ export type Property = {
   items?: Item[];
 };
 
-const DataList: React.FC<Props> = ({
-  block,
-  infoboxProperty,
-  isHovered,
-  isSelected,
-  isEditable,
-  onClick,
-}) => {
+const DataList: React.FC<Props> = ({ block, infoboxProperty, isSelected, isEditable, onClick }) => {
   const { items } = (block?.property as Property | undefined) ?? {};
   const { title, typography } = block?.property?.default ?? {};
   const isTemplate = !title && !items;
 
+  const [isHovered, setHovered] = useState(false);
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
+
   return (
     <Wrapper
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       typography={typography}
-      isSelected={isSelected}
       isHovered={isHovered}
-      isTemplate={isTemplate}
-      isEditable={isEditable}>
+      isEditable={isEditable}
+      isSelected={isSelected}>
       {isTemplate && isEditable ? (
         <Template>
           <StyledIcon icon="dl" isHovered={isHovered} isSelected={isSelected} size={24} />
@@ -66,27 +64,13 @@ const DataList: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div<{
+const Wrapper = styled(Border)<{
   typography?: Typography;
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isTemplate: boolean;
-  isEditable?: boolean;
 }>`
   margin: 0 8px;
   font-size: ${fonts.sizes.s}px;
   color: ${({ theme }) => theme.infoBox.mainText};
   ${({ typography }) => typographyStyles(typography)}
-  border: 1px solid
-    ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
-    (!isTemplate && !isHovered && !isSelected) || !isEditable
-      ? "transparent"
-      : isHovered
-      ? theme.infoBox.border
-      : isSelected
-      ? theme.infoBox.accent2
-      : theme.infoBox.weakText};
-  border-radius: 6px;
   min-height: 70px;
 `;
 

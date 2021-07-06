@@ -2,11 +2,11 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 
 import Component, { Props } from ".";
-import { Provider } from "../../context";
-import { context } from "../../storybook";
+import { Provider } from "../context";
+import { context } from "../storybook";
 
 export default {
-  title: "molecules/Visualizer/InfoBox/Block",
+  title: "molecules/Visualizer/Block",
   component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;

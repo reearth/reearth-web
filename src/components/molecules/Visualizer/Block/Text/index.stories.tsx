@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Text, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/InfoBox/Block/Text",
+  title: "molecules/Visualizer/Block/Text",
   component: Text,
   argTypes: {
     onClick: { action: "onClick" },
@@ -57,4 +57,11 @@ Typography.args = {
   isSelected: false,
   isBuilt: false,
   isEditable: false,
+};
+
+export const NoText = Template.bind({});
+NoText.args = {
+  isSelected: false,
+  isBuilt: false,
+  isEditable: true,
 };

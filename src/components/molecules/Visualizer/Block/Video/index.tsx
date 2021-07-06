@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Player from "react-player";
 
 import { styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 
+import { Border, Title } from "../common";
 import { Props as BlockProps } from "..";
-import { Title } from "../common";
 
 export type Props = BlockProps<Property>;
 
@@ -20,7 +20,6 @@ export type Property = {
 const VideoBlock: React.FC<Props> = ({
   block,
   infoboxProperty,
-  isHovered,
   isSelected,
   isEditable,
   onClick,
@@ -46,14 +45,19 @@ const VideoBlock: React.FC<Props> = ({
     return () => window.removeEventListener("blur", cb);
   }, [onClick, isSelected]);
 
+  const [isHovered, setHovered] = useState(false);
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
+
   return (
     <Wrapper
       onClick={onClick}
-      fullSize={fullSize}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      isEditable={isEditable}
       isSelected={isSelected}
       isHovered={isHovered}
-      isEditable={isEditable}
-      isTemplate={isTemplate}
+      fullSize={fullSize}
       infoboxSize={infoboxSize}>
       {title && <Title infoboxProperty={infoboxProperty}>{title}</Title>}
       {isTemplate && isEditable ? (
@@ -78,25 +82,11 @@ const VideoBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div<{
+const Wrapper = styled(Border)<{
   fullSize?: boolean;
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isTemplate: boolean;
-  isEditable?: boolean;
   infoboxSize?: string;
 }>`
   margin: ${({ fullSize }) => (fullSize ? "0" : "0 8px")};
-  border: 1px solid
-    ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
-      (!isTemplate && !isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
-        ? theme.infoBox.border
-        : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
-  border-radius: 6px;
   height: ${props => (props.infoboxSize === "large" ? "340px" : "200px")};
 `;
 

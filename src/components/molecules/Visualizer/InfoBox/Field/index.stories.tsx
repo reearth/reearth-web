@@ -1,18 +1,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import Field, { Block, Props } from ".";
-
-const block: Block = {
-  id: "block",
-  pluginId: "reearth",
-  extensionId: "textblock",
-  property: {
-    default: {
-      title: "Text",
-      text: "texttexttext",
-    },
-  },
-};
+import Field, { Props } from ".";
 
 export default {
   title: "molecules/Visualizer/InfoBox/Field",
@@ -20,9 +8,22 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => <Field {...args} />;
+export const Default: Story<Props> = args => (
+  <Field {...args}>
+    <h1>HogeHoge</h1>
+  </Field>
+);
 Default.args = {
-  block,
-  isEditable: false,
-  isBuilt: false,
+  id: "aaa",
+};
+
+export const Selected: Story<Props> = args => (
+  <Field {...args}>
+    <h1>HogeHoge</h1>
+  </Field>
+);
+Selected.args = {
+  id: "aaa",
+  isEditable: true,
+  isSelected: true,
 };

@@ -7,11 +7,16 @@ import Text from "@reearth/components/atoms/Text";
 import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 
-import Field, { Block, Primitive } from "./Field";
+import PluginBlock, { Block as BlockType, Primitive } from "../Block";
 import Frame from "./Frame";
+import Field from "./Field";
 import useHooks from "./hooks";
 
-export type { Block, Primitive } from "./Field";
+export type { Primitive } from "../Block";
+
+export type Block = BlockType & {
+  propertyId?: string;
+};
 
 export type InfoboxProperty = {
   default?: {
@@ -53,6 +58,7 @@ const InfoBox: React.FC<Props> = ({
   infoboxKey,
   property,
   sceneProperty,
+  primitive,
   blocks,
   title: name,
   isEditable,
@@ -91,7 +97,7 @@ const InfoBox: React.FC<Props> = ({
       {blocks?.map((b, i) => (
         <Field
           key={b.id}
-          block={b}
+          id={b.id}
           index={i}
           isEditable={isEditable}
           isBuilt={isBuilt}
@@ -103,13 +109,23 @@ const InfoBox: React.FC<Props> = ({
             renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)
           }
           insertionPopUpPosition={insertionPopUpPosition?.[1]}
-          infoboxProperty={property}
-          sceneProperty={sceneProperty}
-          onSelect={() => b.id && selectedBlockId !== b.id && onBlockSelect?.(b.id)}
-          onChange={onBlockChange}
           onMove={onBlockMove}
-          onInsert={p => onInsertionButtonClick?.(i, p)}
-        />
+          onInsert={p => onInsertionButtonClick?.(i, p)}>
+          <PluginBlock
+            block={b}
+            isSelected={!!isEditable && !isBuilt && selectedBlockId === b.id}
+            isEditable={isEditable}
+            isBuilt={isBuilt}
+            // isHovered={!!isEditable && !isBuilt && hover && !isSelected}
+            infoboxProperty={property}
+            sceneProperty={sceneProperty}
+            onChange={(...args) =>
+              b.propertyId ? onBlockChange?.(b.propertyId, ...args) : undefined
+            }
+            onClick={() => b.id && selectedBlockId !== b.id && onBlockSelect?.(b.id)}
+            primitive={primitive}
+          />
+        </Field>
       ))}
       {isEditable && (blocks?.length ?? 0) === 0 && (
         <>

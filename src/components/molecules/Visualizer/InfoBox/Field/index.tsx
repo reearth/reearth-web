@@ -1,22 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 
 import { styled } from "@reearth/theme";
-import { ValueTypes, ValueType } from "@reearth/util/value";
 import Icon from "@reearth/components/atoms/Icon";
 import InsertionBar from "@reearth/components/atoms/InsertionBar";
 
-import PluginBlock, { Primitive, Props as PluginBlockProps, Block as BlockType } from "../Block";
 import useHooks from "./hooks";
 
-export type Block = BlockType & {
-  propertyId?: string;
-};
-
-export type { Primitive } from "../Block";
-
 export type Props = {
-  block?: Block;
-  primitive?: Primitive;
+  id?: string;
   index?: number;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -24,24 +15,14 @@ export type Props = {
   insertionPopUpPosition?: "top" | "bottom";
   isInfoboxHovered?: boolean;
   dragDisabled?: boolean;
-  infoboxProperty?: any;
-  sceneProperty?: any;
   renderInsertionPopUp?: React.ReactNode;
-  onChange?: <T extends ValueType>(
-    propertyId: string,
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
   onInsert?: (pos: "top" | "bottom") => void;
   onMove?: (blockId: string, fromIndex: number, toIndex: number) => void;
-  onSelect?: () => void;
 };
 
 export default function Field({
-  block,
-  primitive,
+  children,
+  id,
   index,
   isEditable,
   isBuilt,
@@ -49,55 +30,25 @@ export default function Field({
   renderInsertionPopUp,
   insertionPopUpPosition,
   dragDisabled,
-  infoboxProperty,
-  sceneProperty,
-  onChange,
   onMove,
-  onSelect,
   onInsert,
-}: Props): JSX.Element | null {
+}: PropsWithChildren<Props>): JSX.Element | null {
   const { dragRef, dropRef, isHovered, isDragging, previewRef } = useHooks({
-    blockId: block?.id,
+    id,
     index,
     onMove,
   });
   const [hover, setHover] = useState(false);
-  const handleClick = (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (isEditable && !isBuilt) {
-      e?.stopPropagation();
-      onSelect?.();
-    }
-  };
-  const handleChange = useMemo<PluginBlockProps["onChange"]>(
-    () => (...args) => {
-      if (!block?.propertyId) return;
-      onChange?.(block.propertyId, ...args);
-    },
-    [block?.propertyId, onChange],
-  );
 
-  return !block ? null : (
+  return (
     <Wrapper ref={dropRef}>
       <BlockWrapper
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         isDragging={isDragging}
         isEditable={isEditable && !isBuilt}
-        isHovered={!!isEditable && !isBuilt && hover && !isSelected}
-        isSelected={!!isEditable && !isBuilt && !!isSelected}
         ref={previewRef}>
-        <PluginBlock
-          block={block}
-          isSelected={!!isEditable && !isBuilt && !!isSelected}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-          isHovered={!!isEditable && !isBuilt && hover && !isSelected}
-          infoboxProperty={infoboxProperty}
-          sceneProperty={sceneProperty}
-          onChange={handleChange}
-          onClick={handleClick}
-          primitive={primitive}
-        />
+        {children}
         {isEditable && !isBuilt && !dragDisabled && hover && (
           <Handle
             ref={dragRef}
@@ -146,14 +97,10 @@ const Wrapper = styled.div`
   border-radius: 6px;
 `;
 
-type BlockWrapperProps = {
+const BlockWrapper = styled.div<{
   isDragging?: boolean;
   isEditable?: boolean;
-  isHovered: boolean;
-  isSelected: boolean;
-};
-
-const BlockWrapper = styled.div<BlockWrapperProps>`
+}>`
   position: relative;
   opacity: ${props => (props.isDragging ? "0.4" : "1")};
   cursor: ${props => (props.isEditable ? "pointer" : "")};

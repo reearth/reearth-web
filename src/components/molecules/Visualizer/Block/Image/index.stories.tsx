@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Image, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/InfoBox/Block/Image",
+  title: "molecules/Visualizer/Block/Image",
   component: Image,
   argTypes: {
     onClick: { action: "onClick" },
@@ -29,7 +29,7 @@ export const NoImage = Template.bind({});
 NoImage.args = {
   isSelected: false,
   isBuilt: false,
-  isEditable: false,
+  isEditable: true,
 };
 
 export const Title = Template.bind({});

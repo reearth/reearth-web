@@ -8,6 +8,7 @@ import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
+import { Border } from "../common";
 import { Props as BlockProps } from "..";
 
 export type Props = BlockProps<Property>;
@@ -25,7 +26,6 @@ const TextBlock: React.FC<Props> = ({
   block,
   infoboxProperty,
   isSelected,
-  isHovered,
   isEditable,
   onChange,
   onClick,
@@ -80,16 +80,21 @@ const TextBlock: React.FC<Props> = ({
     }
   }, [finishEditing, isSelected, isEditing]);
 
+  const [isHovered, setHovered] = useState(false);
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
+
   return (
     <Wrapper
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={onClick}
       isSelected={isSelected}
       isHovered={isHovered}
-      isTemplate={isTemplate}
       isEditable={isEditable}>
       {isTemplate && isEditable ? (
         <Template onDoubleClick={startEditing}>
-          <StyledIcon icon="text" isHovered={isHovered} isSelected={isSelected} size={24} />
+          <StyledIcon icon="text" isSelected={isSelected} isHovered={isHovered} size={24} />
           <Text isSelected={isSelected} isHovered={isHovered}>
             {intl.formatMessage({ defaultMessage: "Double click here to write." })}
           </Text>
@@ -123,23 +128,8 @@ const TextBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div<{
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isTemplate: boolean;
-  isEditable?: boolean;
-}>`
+const Wrapper = styled(Border)`
   margin: 0 8px;
-  border: 1px solid
-    ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
-      (!isTemplate && !isHovered && !isSelected) || !isEditable
-        ? "transparent"
-        : isHovered
-        ? theme.infoBox.border
-        : isSelected
-        ? theme.infoBox.accent2
-        : theme.infoBox.weakText};
-  border-radius: 6px;
 `;
 
 const Title = styled.div`
@@ -184,12 +174,8 @@ const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
-  color: ${props =>
-    props.isHovered
-      ? props.theme.infoBox.border
-      : props.isSelected
-      ? props.theme.infoBox.accent2
-      : props.theme.infoBox.weakText};
+  color: ${({ isSelected, isHovered, theme }) =>
+    isHovered ? theme.infoBox.border : isSelected ? theme.infoBox.accent2 : theme.infoBox.weakText};
 `;
 
 export default TextBlock;

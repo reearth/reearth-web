@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import Video, { Props } from ".";
 
 export default {
-  title: "molecules/Visualizer/InfoBox/Block/Video",
+  title: "molecules/Visualizer/Block/Video",
   component: Video,
   argTypes: {
     onClick: { action: "onClick" },
@@ -36,5 +36,5 @@ export const NoVideo = Template.bind({});
 NoVideo.args = {
   isSelected: false,
   isBuilt: false,
-  isEditable: false,
+  isEditable: true,
 };
