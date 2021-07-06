@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -75,10 +75,13 @@ const AssetContainer: React.FC<Props> = ({
     { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
 
+  const [assetDeleteModalVisible, setAssetDeleteModalVisible] = useState(false);
+
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
       onRemove?.(selectedAssets.map(a => a.id));
       selectAsset?.([]);
+      setAssetDeleteModalVisible(false);
     }
   }, [onRemove, selectAsset, selectedAssets]);
 
@@ -104,7 +107,8 @@ const AssetContainer: React.FC<Props> = ({
             icon="bin"
             type="button"
             buttonType="secondary"
-            onClick={handleRemove}
+            disabled={selectedAssets?.length ? false : true}
+            onClick={() => setAssetDeleteModalVisible(true)}
           />
         )}
       </Flex>
@@ -180,7 +184,11 @@ const AssetContainer: React.FC<Props> = ({
         )}
         <Divider margin="0" />
       </AssetWrapper>
-      <AssetDeleteModal />
+      <AssetDeleteModal
+        isVisible={assetDeleteModalVisible}
+        onClose={() => setAssetDeleteModalVisible(false)}
+        handleRemove={handleRemove}
+      />
     </Wrapper>
   );
 };
