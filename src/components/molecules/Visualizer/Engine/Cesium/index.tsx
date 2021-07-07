@@ -22,6 +22,7 @@ export type Props = EngineProps<SceneProperty>;
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<SceneProperty>> = (
   {
     className,
+    style,
     selectedPrimitiveId: selectedEntityId,
     property,
     camera,
@@ -71,6 +72,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
           width: small ? "300px" : "auto",
           height: small ? "300px" : "100%",
           display: ready ? undefined : "none",
+          ...style,
         }}
         onClick={selectViewerEntity}>
         <Camera onMoveEnd={onCameraMoveEnd} />

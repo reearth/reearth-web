@@ -5,6 +5,7 @@ import React, {
   PropsWithoutRef,
   ReactNode,
   RefAttributes,
+  CSSProperties,
 } from "react";
 
 import type { Camera } from "@reearth/util/value";
@@ -13,6 +14,7 @@ import type { EngineRef } from "./ref";
 
 export type EngineProps<SP = any> = {
   className?: string;
+  style?: CSSProperties;
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SP;
