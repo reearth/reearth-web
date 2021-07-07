@@ -159,12 +159,14 @@ src:
             PropertyTitle:
               PropertyLinkPanel:
                 '70866805': Link to dataset
+                '579507252': Parent.
                 '773082751': Clear this field
                 '910188724': No selectable items
                 '1518809512': From
                 '1592005573': Overridden
                 '3068746276': Reset this field
                 '3457675054': No linked data
+                '3889579101': Linkable data
             TypographyField:
               FontFamilyField:
                 '3834040466': Font family
@@ -375,7 +377,8 @@ src:
           WorkspaceCell:
             '808766300': No Title Workspace
             '974692228': >-
-              This is your personal workspace. Your projects and resources will be managed in this workspace.
+              This is your personal workspace, your projects and resource will
+              be managed in this workspace.
             '3230245813': 'Members:'
           WorkspaceList:
             '3435539653': All workspaces
