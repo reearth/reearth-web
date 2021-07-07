@@ -25,3 +25,14 @@ Default.args = {
   pluginBaseUrl: process.env.PUBLIC_URL,
   visible: true,
 };
+
+export const Headless: Story<Props> = args => (
+  <Provider value={context}>
+    <Component {...args} />
+  </Provider>
+);
+
+Headless.args = {
+  sourceCode: `console.log("hello world");`,
+  visible: true,
+};

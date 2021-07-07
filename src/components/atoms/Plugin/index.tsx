@@ -11,6 +11,7 @@ export type Props = {
   skip?: boolean;
   style?: CSSProperties;
   src?: string;
+  sourceCode?: string;
   exposed?: { [key: string]: any };
   staticExposed?: (api: IFrameAPI) => any;
   onMessage?: (message: any) => void;
@@ -23,6 +24,7 @@ const Plugin: React.FC<Props> = ({
   skip,
   style,
   src,
+  sourceCode,
   exposed,
   staticExposed,
   onMessage,
@@ -32,6 +34,7 @@ const Plugin: React.FC<Props> = ({
     iframeCanBeVisible: canBeVisible,
     skip,
     src,
+    sourceCode,
     exposed,
     staticExposed,
     onError,

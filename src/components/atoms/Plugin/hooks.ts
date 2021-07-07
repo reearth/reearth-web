@@ -12,6 +12,7 @@ export type IFrameAPI = {
 
 export type Options<T> = {
   src?: string;
+  sourceCode?: string;
   skip?: boolean;
   iframeCanBeVisible?: boolean;
   exposed?: { [key: string]: any };
@@ -36,6 +37,7 @@ const defaultOnError = (err: any) => {
 
 export default function useHook<T>({
   src,
+  sourceCode,
   skip,
   iframeCanBeVisible,
   exposed,
@@ -129,8 +131,7 @@ export default function useHook<T>({
         }
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMarshalable, onError, skip, src]); // ignore staticExpose
+  }, [isMarshalable, onError, skip, src, sourceCode, staticExpose]);
 
   const exposer = useMemo(() => {
     if (!arena.current || !loaded) return;
@@ -158,21 +159,17 @@ export default function useHook<T>({
   }, [exposed, exposer]);
 
   useEffect(() => {
-    if (!arena.current || !src || !loaded) return;
+    if (!arena.current || !loaded || (!src && !sourceCode)) return;
 
     setIFrameState(s => (!s[0] && !s[1] ? s : ["", undefined]));
     // load JS
     (async () => {
       if (!arena.current) return;
-      const code = await (await fetch(src)).text();
-      try {
-        evalCode(code);
-      } catch (err) {
-        onError(err);
-      }
+      const code = sourceCode ?? (src ? await (await fetch(src)).text() : "");
+      evalCode(code);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src, loaded]); // ignore onError and evalCode
+  }, [src, sourceCode, loaded]); // ignore evalCode
 
   return {
     iFrameHtml,

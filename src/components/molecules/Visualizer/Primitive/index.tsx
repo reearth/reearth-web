@@ -39,6 +39,7 @@ export default function PrimitiveComponent<PP = any, SP = any>({
     <Plugin
       pluginId={props.primitive?.pluginId}
       extensionId={props.primitive?.extensionId}
+      sourceCode={(props.primitive as any)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="primitive"
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}

@@ -23,7 +23,7 @@ Default.args = {
     backgroundColor: "#fff",
   },
   exposed: {
-    "console.log": console.log,
+    "console.log": action("console.log"),
   },
   staticExposed: ({ render, postMessage }) => ({
     reearth: {
@@ -42,5 +42,14 @@ Default.args = {
   onMessage: (message: any) => {
     action("onMessage")(message);
     return cb?.(message);
+  },
+};
+
+export const SourceCode: Story<Props> = args => <Component {...args} />;
+
+SourceCode.args = {
+  sourceCode: `console.log("Hello")`,
+  exposed: {
+    "console.log": action("console.log"),
   },
 };

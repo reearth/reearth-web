@@ -42,6 +42,7 @@ export default function BlockComponent<PP = any, IP = any, SP = any>({
     <Plugin
       pluginId={props.block?.pluginId}
       extensionId={props.block?.extensionId}
+      sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="block"
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}

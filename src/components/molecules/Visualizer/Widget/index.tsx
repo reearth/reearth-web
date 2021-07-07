@@ -31,6 +31,7 @@ export default function WidgetComponent<PP = any, SP = any>({
     <Plugin
       pluginId={props.widget?.pluginId}
       extensionId={props.widget?.extensionId}
+      sourceCode={(props.widget as any)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="widget"
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
