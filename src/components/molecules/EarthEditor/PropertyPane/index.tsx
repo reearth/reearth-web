@@ -58,7 +58,7 @@ export type Props = {
   isTemplate?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
-  onCreateAsset?: (file: File) => void;
+  onCreateAsset?: (files: FileList) => void;
   onRemovePane?: () => void;
   assets?: Asset[];
   selectedWidget?: Widget;
