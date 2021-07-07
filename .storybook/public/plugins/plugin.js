@@ -13,7 +13,7 @@ const html = `
 `;
 
 reearth.ui.show(html, { visible: true });
-reearth.ui.onmessage = (message) => {
+reearth.on("message", (message) => {
   console.log("plugin <- iframe", message);
-};
+});
 reearth.ui.postMessage("foo!");

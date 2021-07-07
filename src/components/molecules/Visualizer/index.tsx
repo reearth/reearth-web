@@ -35,6 +35,7 @@ export type Props<SP = any> = PropsWithChildren<
     widgets?: Widget[];
     sceneProperty?: SP;
     selectedBlockId?: string;
+    pluginBaseUrl?: string;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
@@ -52,6 +53,7 @@ export default function Visualizer<SP = any>({
   selectedPrimitiveId: outerSelectedPrimitiveId,
   selectedBlockId: outerSelectedBlockId,
   children,
+  pluginBaseUrl,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
@@ -70,6 +72,8 @@ export default function Visualizer<SP = any>({
     selectedPrimitive,
     selectedPrimitiveId,
     selectedBlockId,
+    innerCamera,
+    setInnerCamera,
     selectPrimitive,
     selectBlock,
   } = useHooks({
@@ -92,7 +96,9 @@ export default function Visualizer<SP = any>({
           property={sceneProperty}
           selectedPrimitiveId={selectedPrimitive?.id}
           onPrimitiveSelect={selectPrimitive}
-          {...props}>
+          {...props}
+          camera={innerCamera}
+          onCameraChange={setInnerCamera}>
           {primitives
             ?.filter(p => !hiddenPrimitives.includes(p.id))
             .map(primitive => (
@@ -105,6 +111,7 @@ export default function Visualizer<SP = any>({
                 isBuilt={props.isBuilt}
                 isSelected={selectedPrimitive?.id === primitive.id}
                 selected={selectedPrimitiveId}
+                pluginBaseUrl={pluginBaseUrl}
               />
             ))}
         </Engine>
@@ -116,6 +123,7 @@ export default function Visualizer<SP = any>({
             pluginProperty={widget.pluginProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
+            pluginBaseUrl={pluginBaseUrl}
           />
         ))}
         <Infobox
@@ -135,6 +143,7 @@ export default function Visualizer<SP = any>({
           onBlockInsert={onBlockInsert}
           onBlockSelect={selectBlock}
           renderInsertionPopUp={renderInfoboxInsertionPopUp}
+          pluginBaseUrl={pluginBaseUrl}
         />
         {children}
       </Filled>

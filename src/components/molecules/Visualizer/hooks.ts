@@ -74,6 +74,11 @@ export default ({
     engineRef.current?.requestRender();
   });
 
+  const [innerCamera, setInnerCamera] = useState(camera);
+  useEffect(() => {
+    setInnerCamera(camera);
+  }, [camera]);
+
   const hiddenPrimitivesSet = useMemo(() => new Set<string>(), []);
   const [hiddenPrimitives, setHiddenPrimitives] = useState<string[]>([]);
   const showPrimitive = useCallback(
@@ -98,7 +103,7 @@ export default ({
   const visualizerContext = useVisualizerContext({
     engine: engineRef,
     primitives,
-    camera,
+    camera: innerCamera,
     engineName,
     selectedPrimitive,
     selectPrimitive,
@@ -115,6 +120,8 @@ export default ({
     selectedPrimitiveId,
     selectedPrimitive,
     selectedBlockId,
+    innerCamera,
+    setInnerCamera,
     selectPrimitive,
     selectBlock,
   };
@@ -218,7 +225,7 @@ function useVisualizerContext({
   const selectedPrimitiveRef = useRef(selectedPrimitive);
   selectedPrimitiveRef.current = selectedPrimitive;
 
-  const [pluginAPI, pluginAPIEmit] = useMemo(
+  const pluginAPI = useMemo(
     () =>
       api({
         engine: () => engine.current,
@@ -229,24 +236,20 @@ function useVisualizerContext({
         hidePrimitive,
         selectPrimitive: id => {
           selectPrimitive?.(id);
-          pluginAPIEmit("primitives", "select");
         },
         showPrimitive,
       }),
     [engine, hidePrimitive, selectPrimitive, showPrimitive],
   );
 
-  const ctx = useMemo(
-    (): VisualizerContext => ({
+  const ctx = useMemo((): VisualizerContext => {
+    return {
       engine: () => engine.current,
+      camera,
+      selectedPrimitiveId: selectedPrimitive?.id,
       pluginAPI,
-    }),
-    [engine, pluginAPI],
-  );
-
-  useEffect(() => {
-    pluginAPIEmit("visualizer", "cameramove");
-  }, [camera, pluginAPIEmit]);
+    };
+  }, [camera, engine, pluginAPI, selectedPrimitive?.id]);
 
   return ctx;
 }

@@ -31,9 +31,9 @@ const html = `
 `;
 
 reearth.ui.show(html, { visible: true });
-reearth.onupdate = () => {
+reearth.on("update", () => {
   reearth.ui.postMessage(reearth.block);
-};
-reearth.ui.onmessage = (msg) => {
+});
+reearth.on("message", msg => {
   console.log("message received:", msg);
-};
+});

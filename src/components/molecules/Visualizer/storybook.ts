@@ -1,5 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import type { VisualizerContext } from "./context";
+import type { VisualizerContext, GlobalThis } from "./context";
 import type { Primitive } from ".";
 
 const primitives: Primitive[] = [
@@ -69,9 +69,6 @@ export const context: VisualizerContext = {
         select: act("primitive.select"),
         show: act("primitive.show"),
         hide: act("primitive.hide"),
-        on: act("primitive.on"),
-        off: act("primitive.off"),
-        once: act("primitive.once"),
       },
       visualizer: {
         engine: "cesium",
@@ -88,12 +85,12 @@ export const context: VisualizerContext = {
         lookAt: act("visualizer.lookAt"),
         zoomIn: act("visualizer.zoomIn"),
         zoomOut: act("visualizer.zoomOut"),
-        on: act("visualizer.on"),
-        off: act("visualizer.off"),
-        once: act("visualizer.once"),
       },
+      on: act("reearth.on"),
+      off: act("reearth.off"),
+      once: act("reearth.once"),
     },
-  },
+  } as GlobalThis,
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

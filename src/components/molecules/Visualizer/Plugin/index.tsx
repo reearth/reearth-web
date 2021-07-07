@@ -43,6 +43,7 @@ export default function Plugin({
   const { skip, src, exposed, staticExposed, handleError, handleMessage } = useHooks({
     pluginId,
     extensionId,
+    sourceCode,
     extensionType,
     property,
     pluginBaseUrl,

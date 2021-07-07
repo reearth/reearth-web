@@ -23,15 +23,12 @@ export default function PrimitiveComponent<PP = any, SP = any>({
   ...props
 }: Props<PP, SP>) {
   const ctx = useVisualizerContext();
-  const Builtin = useMemo(
-    () =>
-      props.primitive?.pluginId && props.primitive.extensionId
-        ? ctx?.engine()?.builtinPrimitives?.[
-            `${props.primitive.pluginId}/${props.primitive.extensionId}`
-          ]
-        : undefined,
-    [ctx, props.primitive?.extensionId, props.primitive?.pluginId],
-  );
+  const Builtin = useMemo(() => {
+    const builtin = ctx?.engine()?.builtinPrimitives;
+    return props.primitive?.pluginId && props.primitive.extensionId
+      ? builtin?.[`${props.primitive.pluginId}/${props.primitive.extensionId}`]
+      : undefined;
+  }, [ctx, props.primitive?.extensionId, props.primitive?.pluginId]);
 
   return !props.primitive?.isVisible ? null : Builtin ? (
     <Builtin {...props} />

@@ -9,6 +9,7 @@ import { useVisualizerContext } from "../context";
 export default function ({
   pluginId,
   extensionId,
+  sourceCode,
   pluginBaseUrl,
   extensionType,
   primitive,
@@ -19,6 +20,7 @@ export default function ({
 }: {
   pluginId?: string;
   extensionId?: string;
+  sourceCode?: string;
   pluginBaseUrl?: string;
   extensionType?: string;
   primitive?: Primitive;
@@ -29,22 +31,11 @@ export default function ({
 }) {
   const ctx = useVisualizerContext();
 
-  const [
-    uiEvents,
-    emitUiEvent,
-    getOnmessage,
-    setOnmessage,
-    reearthEvents,
-    emitReearthEvent,
-    getOnUpdate,
-    setOnUpdate,
-  ] = useMemo(() => {
-    const [ev, emit, fn] = events();
-    const [get, set] = fn("message");
-    const [ev2, emit2, fn2] = events();
-    const [getUpdate, setUpdate] = fn2("update");
-    return [ev, emit, get, set, ev2, emit2, getUpdate, setUpdate] as const;
-  }, []);
+  const [reearthEvents, emitReearthEvent] = useMemo(() => {
+    const [ev, emit] = events();
+    return [ev, emit] as const;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pluginId, extensionId, sourceCode, pluginBaseUrl]);
 
   const handleError = useCallback(
     (err: any) => {
@@ -55,9 +46,9 @@ export default function ({
 
   const handleMessage = useCallback(
     (msg: any) => {
-      emitUiEvent?.("message", msg);
+      emitReearthEvent("message", msg);
     },
-    [emitUiEvent],
+    [emitReearthEvent],
   );
 
   const src =
@@ -83,13 +74,6 @@ export default function ({
           render(html, options);
         },
         postMessage,
-        get onmessage() {
-          return getOnmessage();
-        },
-        set onmessage(value: ((message: any) => void) | undefined) {
-          setOnmessage(value);
-        },
-        ...uiEvents,
       };
 
       return {
@@ -108,28 +92,11 @@ export default function ({
               return extensionId || "";
             },
           },
-          ...reearthEvents,
-          get onupdate() {
-            return getOnUpdate();
-          },
-          set onupdate(value: (() => void) | undefined) {
-            setOnUpdate(value);
-          },
+          ...(reearthEvents as any),
         },
       };
     },
-    [
-      ctx?.pluginAPI,
-      extensionId,
-      extensionType,
-      getOnUpdate,
-      getOnmessage,
-      pluginId,
-      reearthEvents,
-      setOnUpdate,
-      setOnmessage,
-      uiEvents,
-    ],
+    [ctx?.pluginAPI, extensionId, extensionType, pluginId, reearthEvents],
   );
 
   const exposed = useMemo(
@@ -145,8 +112,24 @@ export default function ({
   );
 
   useEffect(() => {
+    return () => {
+      emitReearthEvent("close");
+    };
+  }, [emitReearthEvent]);
+
+  useEffect(() => {
     emitReearthEvent("update");
   }, [exposed, emitReearthEvent]);
+
+  useEffect(() => {
+    emitReearthEvent("select", ctx?.selectedPrimitiveId);
+  }, [ctx?.selectedPrimitiveId, emitReearthEvent]);
+
+  useEffect(() => {
+    if (ctx?.camera) {
+      emitReearthEvent("cameramove", ctx.camera);
+    }
+  }, [ctx?.camera, emitReearthEvent]);
 
   return {
     skip: !ctx,

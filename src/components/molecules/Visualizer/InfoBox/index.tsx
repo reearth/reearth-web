@@ -40,6 +40,7 @@ export type Props = {
   isBuilt?: boolean;
   selectedBlockId?: string;
   visible?: boolean;
+  pluginBaseUrl?: string;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
     propertyId: string,
@@ -66,6 +67,7 @@ const InfoBox: React.FC<Props> = ({
   isBuilt,
   selectedBlockId,
   visible,
+  pluginBaseUrl,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
@@ -125,6 +127,7 @@ const InfoBox: React.FC<Props> = ({
             }
             onClick={() => b.id && selectedBlockId !== b.id && onBlockSelect?.(b.id)}
             primitive={primitive}
+            pluginBaseUrl={pluginBaseUrl}
           />
         </Field>
       ))}

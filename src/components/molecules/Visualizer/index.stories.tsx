@@ -135,11 +135,12 @@ export const Plugin: Story<Props> = args => {
         {
           id: "pluginprimitive",
           pluginId: "reearth",
-          extensionid: "marker",
+          extensionId: "marker",
           isVisible: true,
           property: {
             default: {
-              location: { lat: 0, lng: 100 },
+              location: { lat: 0, lng: 139 },
+              height: 0,
             },
           },
           infobox: {
@@ -147,6 +148,14 @@ export const Plugin: Story<Props> = args => {
               {
                 id: "xxx",
                 __REEARTH_SOURCECODE: sourceCode,
+              },
+              {
+                id: "yyy",
+                pluginId: "plugins",
+                extensionId: "block",
+                property: {
+                  location: { lat: 0, lng: 139 },
+                },
               },
             ],
           },
@@ -181,4 +190,5 @@ export const Plugin: Story<Props> = args => {
 Plugin.args = {
   ...Default.args,
   selectedPrimitiveId: "pluginprimitive",
+  pluginBaseUrl: process.env.PUBLIC_URL,
 };

@@ -17,10 +17,27 @@ export type Reearth = {
   readonly primitive?: Primitive;
   readonly widget?: Widget;
   readonly block?: Block;
-  readonly on: (type: "update", callback: () => void) => void;
-  readonly off: (type: "update", callback: () => void) => void;
-  readonly once: (type: "update", callback: () => void) => void;
+  readonly on: <T extends keyof ReearthEventType>(
+    type: T,
+    callback: (...args: ReearthEventType[T]) => void,
+  ) => void;
+  readonly off: <T extends keyof ReearthEventType>(
+    type: T,
+    callback: (...args: ReearthEventType[T]) => void,
+  ) => void;
+  readonly once: <T extends keyof ReearthEventType>(
+    type: T,
+    callback: (...args: ReearthEventType[T]) => void,
+  ) => void;
   onupdate?: () => void;
+};
+
+export type ReearthEventType = {
+  update: [];
+  close: [];
+  cameramove: [camera: Camera];
+  select: [id?: string];
+  message: [message: any];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -37,12 +54,8 @@ export type Primitives = {
   readonly selected?: Primitive;
   /** Selects the primitive with the specified ID; if the ID is undefined, the currently selected primitive will be deselected. */
   readonly select: (id?: string) => void;
-  onselect?: () => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
-  readonly on: (type: "select", callback: () => void) => void;
-  readonly off: (type: "select", callback: () => void) => void;
-  readonly once: (type: "select", callback: () => void) => void;
 };
 
 /** Primitive is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
@@ -97,13 +110,6 @@ export type UI = {
    * Sends a message to the iframe's window shown by the show method. Sent data will be automatically encoded as JSON and restored in the iframe's window. So any object that cannot be serialized to JSON will be ignored.
    */
   readonly postMessage: (message: any) => void;
-  /**
-   * A callback can be registered called when  any messages are received from the iframe's window shown by the show method.
-   */
-  onmessage?: (message: any) => void;
-  readonly on: (type: "message", callback: (message: any) => void) => void;
-  readonly off: (type: "message", callback: (message: any) => void) => void;
-  readonly once: (type: "message", callback: (message: any) => void) => void;
 };
 
 /** The API for the visualizer. This works regardless of the visualization engine you are using, which ensures the versatility of the plugin. It is recommended that you use this API whenever possible, and call the visualization engine's own low-layer API only when there is something you cannot do. */
@@ -120,10 +126,6 @@ export type Visualizer = {
   readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
-  oncameramove?: () => void;
-  readonly on: (type: "cameramove", callback: () => void) => void;
-  readonly off: (type: "cameramove", callback: () => void) => void;
-  readonly once: (type: "cameramove", callback: () => void) => void;
 };
 
 /** Represents the camera position and state */

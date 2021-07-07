@@ -2,13 +2,11 @@ import {
   Primitive,
   Primitives,
   Visualizer,
-  EventEmitter,
   FlyToDestination,
   CameraOptions,
   LookAtDestination,
   Camera,
 } from "@reearth/plugin";
-import events from "@reearth/util/event";
 import type { CommonGlobalThis } from "./context";
 import { EngineRef } from "./Engine/ref";
 
@@ -23,16 +21,9 @@ export type Options = {
   hidePrimitive: (...id: string[]) => void;
 };
 
-export default function (
-  options: Options,
-): [CommonGlobalThis, (type: string, type2: string, ...args: any[]) => void] {
-  const [primitives, primitivesEmit] = getPrimitives(options);
-  const [visualizer, visualizerEmit] = getVisualizer(options);
-
-  const emitters: { [type in string]?: EventEmitter } = {
-    primitives: primitivesEmit,
-    visualizer: visualizerEmit,
-  };
+export default function (options: Options): CommonGlobalThis {
+  const primitives = getPrimitives(options);
+  const visualizer = getVisualizer(options);
 
   const consolelog = (...args: any[]) => {
     console.log(...args);
@@ -63,7 +54,7 @@ export default function (
     },
   };
 
-  return [api, (type: string, type2: string, ...args: any[]) => emitters[type]?.(type2, ...args)];
+  return api;
 }
 
 function getPrimitives({
@@ -72,79 +63,55 @@ function getPrimitives({
   selectPrimitive,
   showPrimitive,
   hidePrimitive,
-}: Options): [Primitives, EventEmitter] {
-  const [event, emit, eventFn] = events();
-  const onselect = eventFn("select");
+}: Options): Primitives {
   const select = (id?: string) => selectPrimitive(id);
   const show = (...id: string[]) => showPrimitive(...id);
   const hide = (...id: string[]) => hidePrimitive(...id);
 
-  return [
-    {
-      get primitives() {
-        return primitives();
-      },
-      get selected() {
-        return selectedPrimitive();
-      },
-      get select() {
-        return select;
-      },
-      get show() {
-        return show;
-      },
-      get hide() {
-        return hide;
-      },
-      get onselect() {
-        return onselect[0]();
-      },
-      set onselect(value) {
-        onselect[1](value);
-      },
-      ...event,
+  return {
+    get primitives() {
+      return primitives();
     },
-    emit,
-  ];
+    get selected() {
+      return selectedPrimitive();
+    },
+    get select() {
+      return select;
+    },
+    get show() {
+      return show;
+    },
+    get hide() {
+      return hide;
+    },
+  };
 }
 
-function getVisualizer({ engine, engineName, camera }: Options): [Visualizer, EventEmitter] {
-  const [event, emit, eventFn] = events();
-  const oncameramove = eventFn("cameramove");
+function getVisualizer({ engine, engineName, camera }: Options): Visualizer {
   const flyTo = (dest: FlyToDestination, options?: CameraOptions) => engine()?.flyTo(dest, options);
   const lookAt = (dest: LookAtDestination, options?: CameraOptions) =>
     engine()?.lookAt(dest, options);
   const zoomIn = (amount: number) => engine()?.zoomIn(amount);
   const zoomOut = (amount: number) => engine()?.zoomOut(amount);
 
-  return [
-    {
-      get engine() {
-        return engineName();
-      },
-      get camera() {
-        return camera();
-      },
-      get flyTo() {
-        return flyTo;
-      },
-      get lookAt() {
-        return lookAt;
-      },
-      get zoomIn() {
-        return zoomIn;
-      },
-      get zoomOut() {
-        return zoomOut;
-      },
-      get oncameramove() {
-        return oncameramove[0];
-      },
-      set oncameramove(value) {
-        oncameramove[1](value);
-      },
-      ...event,
+  return {
+    get engine() {
+      return engineName();
     },
-    emit,
-  ];
+    get camera() {
+      return camera();
+    },
+    get flyTo() {
+      return flyTo;
+    },
+    get lookAt() {
+      return lookAt;
+    },
+    get zoomIn() {
+      return zoomIn;
+    },
+    get zoomOut() {
+      return zoomOut;
+    },
+  };
 }
