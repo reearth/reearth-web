@@ -17,9 +17,9 @@ export interface Props {
 
 const List: React.FC<Props> = ({ className, items, selectableType, onSelect, selectedItem }) => {
   const intl = useIntl();
+  const sType = selectableType === "url" ? "string" : selectableType;
   const visibleItems =
-    items?.filter(item => !selectableType || ("type" in item && item.type === selectableType)) ??
-    [];
+    items?.filter(item => !sType || ("type" in item && item.type === sType)) ?? [];
   return (
     <Wrapper className={className}>
       {visibleItems.map(item => (
