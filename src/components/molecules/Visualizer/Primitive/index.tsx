@@ -42,9 +42,9 @@ export default function PrimitiveComponent<PP = any, SP = any>({
       sourceCode={(props.primitive as any)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="primitive"
       pluginBaseUrl={pluginBaseUrl}
+      visible={false}
       property={props.pluginProperty}
       sceneProperty={props.sceneProperty}
-      visible={false}
       primitive={props.primitive}
     />
   );

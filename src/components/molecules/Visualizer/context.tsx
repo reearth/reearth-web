@@ -1,7 +1,11 @@
 import { createContext, useContext } from "react";
 
-import type { CommonGlobalThis } from "@reearth/plugin";
+import type { GlobalThis } from "@reearth/plugin";
 import type { Ref as EngineRef } from "./engine";
+
+export type CommonGlobalThis = Omit<GlobalThis, "reearth"> & {
+  reearth: Omit<GlobalThis["reearth"], "plugin" | "ui" | "on" | "off" | "once" | "onupdate">;
+};
 
 export type VisualizerContext = {
   engine: () => EngineRef | null;

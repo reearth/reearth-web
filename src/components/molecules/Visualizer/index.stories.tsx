@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import Component, { Primitive, Widget, Props } from ".";
 
@@ -117,4 +117,68 @@ Built.args = {
   ...Default.args,
   isEditable: false,
   isBuilt: true,
+};
+
+const initialSourceCode = `
+console.log("hello", reearth.block);
+reearth.ui.show("<style>body { margin: 0; background: #fff; }</style><h1>Hello World</h1>", { visible: true });
+`.trim();
+
+export const Plugin: Story<Props> = args => {
+  const [temporalSourceCode, setTemporalSourceCode] = useState(initialSourceCode);
+  const [sourceCode, setSourceCode] = useState(initialSourceCode);
+  const args2 = useMemo<Props>(() => {
+    return {
+      ...args,
+      primitives: [
+        ...(args.primitives ?? []),
+        {
+          id: "pluginprimitive",
+          pluginId: "reearth",
+          extensionid: "marker",
+          isVisible: true,
+          property: {
+            default: {
+              location: { lat: 0, lng: 100 },
+            },
+          },
+          infobox: {
+            blocks: [
+              {
+                id: "xxx",
+                __REEARTH_SOURCECODE: sourceCode,
+              },
+            ],
+          },
+        },
+      ],
+    };
+  }, [args, sourceCode]);
+
+  return (
+    <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
+      <Component {...args2} style={{ ...args2.style, flex: "1" }} />
+      <div
+        style={{
+          flex: "1 0",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "stretch",
+          background: "#fff",
+        }}>
+        <textarea
+          style={{ flex: "auto" }}
+          value={temporalSourceCode}
+          onChange={e => setTemporalSourceCode(e.currentTarget.value)}
+        />
+        <p>
+          <button onClick={() => setSourceCode(temporalSourceCode ?? "")}>Exec</button>
+        </p>
+      </div>
+    </div>
+  );
+};
+Plugin.args = {
+  ...Default.args,
+  selectedPrimitiveId: "pluginprimitive",
 };

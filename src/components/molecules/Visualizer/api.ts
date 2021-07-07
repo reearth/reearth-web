@@ -1,5 +1,4 @@
 import {
-  CommonGlobalThis,
   Primitive,
   Primitives,
   Visualizer,
@@ -10,6 +9,7 @@ import {
   Camera,
 } from "@reearth/plugin";
 import events from "@reearth/util/event";
+import type { CommonGlobalThis } from "./context";
 import { EngineRef } from "./Engine/ref";
 
 export type Options = {
@@ -43,12 +43,9 @@ export default function (
 
   const api: CommonGlobalThis = {
     console: {
-      get log() {
-        return consolelog;
-      },
-      get error() {
-        return consolerror;
-      },
+      // TODO: using getter occurs "Lifetime not alive" error
+      log: consolelog,
+      error: consolerror,
     },
     reearth: {
       get version() {

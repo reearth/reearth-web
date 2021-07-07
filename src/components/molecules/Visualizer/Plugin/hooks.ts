@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { clone } from "lodash-es";
 
 import type { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
 import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
@@ -71,7 +72,16 @@ export default function ({
 
       // TODO: quickjs-emscripten throws "Lifetime not alive" error when iFrameApi funcs are wrapped with another function
       const ui = {
-        show: render,
+        show: (
+          html: string,
+          options?:
+            | {
+                visible?: boolean | undefined;
+              }
+            | undefined,
+        ) => {
+          render(html, options);
+        },
         postMessage,
         get onmessage() {
           return getOnmessage();
@@ -123,12 +133,13 @@ export default function ({
   );
 
   const exposed = useMemo(
+    // TODO: object must be cloned to prevent "already registered" error from qes
     () => ({
-      "reearth.primitive": primitive,
-      "reearth.widget": widget,
-      "reearth.block": block,
-      "reearth.plugin.property": property,
-      "reearth.visualizer.property": sceneProperty,
+      "reearth.primitive": clone(primitive),
+      "reearth.widget": clone(widget),
+      "reearth.block": clone(block),
+      "reearth.plugin.property": clone(property),
+      "reearth.visualizer.property": clone(sceneProperty),
     }),
     [block, primitive, widget, property, sceneProperty],
   );

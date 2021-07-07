@@ -33,10 +33,10 @@ export default function WidgetComponent<PP = any, SP = any>({
       extensionId={props.widget?.extensionId}
       sourceCode={(props.widget as any)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="widget"
+      visible
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
       sceneProperty={props.sceneProperty}
-      visible
       widget={props.widget}
     />
   );
