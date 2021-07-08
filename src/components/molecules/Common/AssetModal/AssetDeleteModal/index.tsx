@@ -41,13 +41,13 @@ const AssetDeleteModal: React.FC<Props> = ({ isVisible, onClose, handleRemove })
       <Divider margin="0" />
       <Message size="m">
         {intl.formatMessage({
-          defaultMessage:
-            "You are about to delete assets from the workspace. Any place which use this asset will cause a error. And this is an action that cannot be undone.",
+          defaultMessage: "You are about to delete one or more assets from the current workspace.",
         })}
       </Message>
       <Message size="m">
         {intl.formatMessage({
-          defaultMessage: "Are you sure you would like to delete these assets?",
+          defaultMessage:
+            "Please make sure no selected assets are in use or else an error will occur. This cannot be undone.",
         })}
       </Message>
     </Modal>

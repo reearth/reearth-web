@@ -13,7 +13,7 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
-import AssetDeleteModal from "@reearth/components/molecules/Settings/Workspace/Asset/AssetDeleteModal";
+import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
 

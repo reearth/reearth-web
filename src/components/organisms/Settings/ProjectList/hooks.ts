@@ -35,6 +35,7 @@ export default () => {
     refetchQueries: ["Project"],
   });
   const [createScene] = useCreateSceneMutation();
+  const [createAssetMutation] = useCreateAssetMutation();
 
   const teamId = currentTeam?.id;
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
@@ -131,7 +132,6 @@ export default () => {
   });
   const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
 
-  const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
     (files: FileList) =>
       (async () => {
