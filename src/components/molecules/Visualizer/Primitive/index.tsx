@@ -10,6 +10,7 @@ export type Props<PP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
+  isHidden?: boolean;
   pluginProperty?: PP;
   sceneProperty?: SP;
   selected?: [id: string | undefined, reason?: string | undefined];
@@ -20,6 +21,7 @@ export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;
 
 export default function PrimitiveComponent<PP = any, SP = any>({
   pluginBaseUrl,
+  isHidden,
   ...props
 }: Props<PP, SP>) {
   const ctx = useVisualizerContext();
@@ -30,7 +32,7 @@ export default function PrimitiveComponent<PP = any, SP = any>({
       : undefined;
   }, [ctx, props.primitive?.extensionId, props.primitive?.pluginId]);
 
-  return !props.primitive?.isVisible ? null : Builtin ? (
+  return isHidden || !props.primitive?.isVisible ? null : Builtin ? (
     <Builtin {...props} />
   ) : (
     <Plugin

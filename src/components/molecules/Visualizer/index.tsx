@@ -99,21 +99,20 @@ export default function Visualizer<SP = any>({
           {...props}
           camera={innerCamera}
           onCameraChange={setInnerCamera}>
-          {primitives
-            ?.filter(p => !hiddenPrimitives.includes(p.id))
-            .map(primitive => (
-              <P
-                key={primitive.id}
-                primitive={primitive}
-                sceneProperty={sceneProperty}
-                pluginProperty={primitive.pluginProperty}
-                isEditable={props.isEditable}
-                isBuilt={props.isBuilt}
-                isSelected={selectedPrimitive?.id === primitive.id}
-                selected={selectedPrimitiveId}
-                pluginBaseUrl={pluginBaseUrl}
-              />
-            ))}
+          {primitives?.map(primitive => (
+            <P
+              key={primitive.id}
+              primitive={primitive}
+              sceneProperty={sceneProperty}
+              pluginProperty={primitive.pluginProperty}
+              isHidden={hiddenPrimitives.includes(primitive.id)}
+              isEditable={props.isEditable}
+              isBuilt={props.isBuilt}
+              isSelected={selectedPrimitive?.id === primitive.id}
+              selected={selectedPrimitiveId}
+              pluginBaseUrl={pluginBaseUrl}
+            />
+          ))}
         </Engine>
         {widgets?.map(widget => (
           <W
