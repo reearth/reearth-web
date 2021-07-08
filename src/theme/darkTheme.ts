@@ -80,6 +80,8 @@ const darkTheme: Theme = {
     shadow: colors.dark.bg[1],
     text: colors.dark.text.strong,
     divider: colors.dark.outline.weakest,
+    title: colors.dark.text.strong,
+    description: colors.dark.text.main,
   },
   assetCard: {
     bg: colors.dark.bg[4],

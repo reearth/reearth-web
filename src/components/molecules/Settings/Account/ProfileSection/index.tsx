@@ -32,8 +32,7 @@ const ProfileSection: React.FC<Props> = ({ username, updateName }) => {
 
 const Wrapper = styled.div`
   width: 100%;
-  background-color: ${props => props.theme.main.lighterBg};
-  margin-bottom: 64px;
+  background-color: ${props => props.theme.main.paleBg};
 `;
 
 export default ProfileSection;

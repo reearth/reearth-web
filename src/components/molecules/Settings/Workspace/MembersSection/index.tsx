@@ -105,7 +105,6 @@ const MembersSection: React.FC<Props> = ({
 const Wrapper = styled.div`
   background-color: ${props => props.theme.main.lighterBg};
   width: 100%;
-  margin-bottom: 64px;
 `;
 
 export default MembersSection;

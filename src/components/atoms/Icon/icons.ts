@@ -106,6 +106,7 @@ import NoProjects from "./Icons/noProjects.svg";
 import TopPage from "./Icons/topPage.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
+import MenuForDevice from "./Icons/menuForDevice.svg";
 
 // Plugi-ins
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
@@ -207,4 +208,5 @@ export default {
   uploadZipPlugin: UploadZipPlugin,
   privateGitHubRepo: PrivateGitHubRepo,
   publicGitHubRepo: PublicGitHubRepo,
+  menuForDevice: MenuForDevice,
 };

@@ -10,7 +10,7 @@ const lightheme: Theme = {
     lighterBg: colors.light.bg[3],
     paleBg: colors.light.bg[4],
     deepBg: colors.light.bg[2],
-    deepestBg: colors.dark.bg[1],
+    deepestBg: colors.light.bg[1],
     transparentBg: colors.light.transparentBlack,
     lightTransparentBg: colors.light.transparentLight,
     border: colors.light.outline.weak,
@@ -20,7 +20,7 @@ const lightheme: Theme = {
     warning: colors.light.functional.attention,
     danger: colors.light.danger.main,
     weak: colors.light.text.weak,
-    select: colors.dark.functional.select,
+    select: colors.light.functional.select,
   },
   dashboard: {
     bg: colors.light.bg[2],
@@ -79,7 +79,9 @@ const lightheme: Theme = {
     bg: colors.light.bg[2],
     shadow: colors.light.bg[1],
     text: colors.light.text.strong,
-    divider: colors.dark.outline.weakest,
+    divider: colors.light.outline.weakest,
+    title: colors.light.text.strong,
+    description: colors.light.text.main,
   },
   assetCard: {
     bg: colors.light.bg[4],
@@ -163,7 +165,7 @@ const lightheme: Theme = {
     textColor: colors.light.text.main,
     selectedTextColor: colors.light.text.strong,
     disableTextColor: colors.light.text.weak,
-    bottomBorder: colors.dark.outline.weakest,
+    bottomBorder: colors.light.outline.weakest,
   },
   toggleButton: {
     bg: colors.light.bg[4],
@@ -179,7 +181,7 @@ const lightheme: Theme = {
     shadowColor: colors.light.bg[1],
   },
   other: {
-    black: colors.dark.other.black,
+    black: colors.light.other.black,
   },
   pluginList: {
     bg: colors.light.bg[3],
