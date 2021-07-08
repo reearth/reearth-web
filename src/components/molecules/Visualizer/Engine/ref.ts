@@ -2,6 +2,7 @@ import { LatLngHeight } from "@reearth/util/value";
 import type { Component } from "../primitive";
 
 export type EngineRef = {
+  name: string;
   requestRender: () => void;
   getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;

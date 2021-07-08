@@ -13,6 +13,7 @@ export default function useEngineRef(
   useImperativeHandle(
     ref,
     () => ({
+      name: "cesium",
       requestRender: () => {
         cesium.current?.cesiumElement?.scene.requestRender();
       },
