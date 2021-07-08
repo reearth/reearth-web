@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -59,6 +59,9 @@ const AssetContainer: React.FC<Props> = ({
     handleUploadToAsset,
     handleReverse,
     handleSearch,
+    deleteModalVisible,
+    setDeleteModalVisible,
+    handleRemove,
   } = useHooks({
     assets,
     isMultipleSelectable,
@@ -67,6 +70,7 @@ const AssetContainer: React.FC<Props> = ({
     initialAsset,
     selectAsset,
     selectedAssets,
+    onRemove,
   });
 
   const filterOptions: { key: FilterTypes; label: string }[] = [
@@ -74,16 +78,6 @@ const AssetContainer: React.FC<Props> = ({
     { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
     { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
-
-  const [assetDeleteModalVisible, setAssetDeleteModalVisible] = useState(false);
-
-  const handleRemove = useCallback(() => {
-    if (selectedAssets?.length) {
-      onRemove?.(selectedAssets.map(a => a.id));
-      selectAsset?.([]);
-      setAssetDeleteModalVisible(false);
-    }
-  }, [onRemove, selectAsset, selectedAssets]);
 
   return (
     <Wrapper>
@@ -108,7 +102,7 @@ const AssetContainer: React.FC<Props> = ({
             type="button"
             buttonType="secondary"
             disabled={selectedAssets?.length ? false : true}
-            onClick={() => setAssetDeleteModalVisible(true)}
+            onClick={() => setDeleteModalVisible(true)}
           />
         )}
       </Flex>
@@ -185,8 +179,8 @@ const AssetContainer: React.FC<Props> = ({
         <Divider margin="0" />
       </AssetWrapper>
       <AssetDeleteModal
-        isVisible={assetDeleteModalVisible}
-        onClose={() => setAssetDeleteModalVisible(false)}
+        isVisible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
         handleRemove={handleRemove}
       />
     </Wrapper>
