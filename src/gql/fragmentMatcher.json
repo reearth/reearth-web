@@ -1,27 +1,27 @@
 {
   "possibleTypes": {
-    "Node": [
-      "Asset",
-      "Scene",
-      "DatasetSchemaField",
-      "Project",
-      "Property",
-      "Team",
-      "Dataset",
-      "DatasetSchema",
-      "User"
+    "Layers": [
+      "LayerItem",
+      "LayerGroup"
+    ],
+    "Layer": [
+      "LayerItem",
+      "LayerGroup"
     ],
     "PropertyItem": [
       "PropertyGroup",
       "PropertyGroupList"
     ],
-    "Layer": [
-      "LayerGroup",
-      "LayerItem"
-    ],
-    "Layers": [
-      "LayerItem",
-      "LayerGroup"
+    "Node": [
+      "Asset",
+      "User",
+      "DatasetSchemaField",
+      "Team",
+      "Scene",
+      "Property",
+      "DatasetSchema",
+      "Dataset",
+      "Project"
     ]
   }
 }

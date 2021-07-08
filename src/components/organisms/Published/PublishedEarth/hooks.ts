@@ -17,19 +17,23 @@ export default (alias?: string) => {
 
   const layers = useMemo<Primitive[] | undefined>(
     () =>
-      data?.layers.map(l => ({
+      data?.layers.map<Primitive>(l => ({
         id: l.id,
         title: l.name || "",
         plugin: `${l.pluginId}/${l.extensionId}`,
         isVisible: true,
         property: l.property,
+        pluginProperty: data.plugins.find(p => p.id === l.pluginId)?.property,
         infobox: l.infobox
           ? {
               property: l.infobox.property,
               blocks: l.infobox.fields.map<Block>(f => ({
                 id: f.id,
-                plugin: `${f.pluginId}/${f.extensionId}`,
+                pluginId: f.pluginId,
+                extensionId: f.extensionId,
                 property: f.property,
+                pluginProperty: data.plugins.find(p => p.id === f.pluginId)?.property,
+                // propertyId is not required
               })),
             }
           : undefined,
@@ -45,12 +49,13 @@ export default (alias?: string) => {
         extensionId: w.extensionId,
         property: w.property,
         enabled: true,
+        pluginProperty: data.plugins.find(p => p.id === w.pluginId)?.property,
       })),
     [data],
   );
 
   useEffect(() => {
-    const url = "/data.json";
+    const url = "data.json";
     (async () => {
       try {
         const d = (await fetch(url, {}).then(r => r.json())) as PublishedData | undefined;

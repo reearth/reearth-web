@@ -9,20 +9,19 @@ export interface Props {
   alias?: string;
 }
 
-const Published: React.FC<Props> = ({ alias }) => {
+const Published: React.FC<Props> = ({ className, alias }) => {
   const { sceneProperty, layers, widgets, ready } = useHooks(alias);
 
   return (
-    <>
-      <Visualizer
-        engine="cesium"
-        primitives={layers}
-        widgets={widgets}
-        sceneProperty={sceneProperty}
-        ready={ready}
-        isBuilt
-      />
-    </>
+    <Visualizer
+      className={className}
+      engine="cesium"
+      primitives={layers}
+      widgets={widgets}
+      sceneProperty={sceneProperty}
+      ready={ready}
+      isBuilt
+    />
   );
 };
 

@@ -14,41 +14,19 @@ import {
 import { valueFromGQL } from "@reearth/util/value";
 
 import { Item } from "@reearth/components/atoms/ContentPicker";
-import { Primitive, Widget } from "@reearth/components/molecules/Visualizer";
+import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
 
-type I = Item & {
+type BlockType = Item & {
   pluginId: string;
   extensionId: string;
 };
 
-export type Property = { [key in string]: any };
-
-export type LayerInfoboxField = {
-  id: string;
-  pluginId: string;
-  extensionId: string;
-  propertyId?: string;
-  property?: Property;
-};
-
-export type LayerInfoBox = {
-  property?: Property;
-  fields?: LayerInfoboxField[];
-};
-
-export type Layer = {
-  id: string;
-  pluginId: string;
-  extensionId: string;
-  property: Property | undefined;
-  pluginProperty: Property | undefined;
-  infobox: LayerInfoBox | undefined;
+export type Layer = Primitive & {
   layers: Layer[] | undefined;
-  isVisible: boolean;
-  title: string;
-  infoboxEditable: boolean;
   isParentVisible: boolean;
 };
+
+type P = { [key in string]: any };
 
 const processPropertyGroup = (p?: PropertyItemFragmentFragment | null): P | P[] | undefined => {
   if (!p) return;
@@ -85,8 +63,6 @@ export const convertProperty = (p?: PropertyFragmentFragment | null): P | undefi
     : undefined;
 };
 
-type P = { [key in string]: any };
-
 const processMergedPropertyGroup = (
   p?: MergedPropertyGroupFragmentFragment | MergedPropertyGroupCommonFragmentFragment | null,
 ): P | P[] | undefined => {
@@ -119,33 +95,34 @@ const processMergedProperty = (
   );
 };
 
-const processInfobox = (infobox?: EarthLayerFragment["infobox"]): LayerInfoBox | undefined => {
+const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Primitive["infobox"] => {
   if (!infobox) return;
   return {
     property: convertProperty(infobox.property),
-    fields: infobox.fields.map(f => ({
+    blocks: infobox.fields.map<Block>(f => ({
       id: f.id,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
       propertyId: f.propertyId ?? undefined,
       property: convertProperty(f.property),
-      // pluginProperty
+      pluginProperty: convertProperty(f.scenePlugin?.property),
     })),
   };
 };
 
 const processMergedInfobox = (
   infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
-): LayerInfoBox | undefined => {
+): Primitive["infobox"] | undefined => {
   if (!infobox) return;
   return {
     property: processMergedProperty(infobox.property),
-    fields: infobox.fields.map(f => ({
+    blocks: infobox.fields.map(f => ({
       id: f.originalId,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
       propertyId: f.property?.originalId ?? undefined,
       property: processMergedProperty(f.property),
+      pluginProperty: convertProperty(f.scenePlugin?.property),
     })),
   };
 };
@@ -162,9 +139,7 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
           layer.__typename === "LayerItem"
             ? processMergedProperty(layer.merged?.property)
             : undefined,
-        pluginProperty: {},
-        // pluginProperty:
-        //   "plugin" in layer ? processProperty(layer.plugin?.scenePlugin?.property) : undefined,
+        pluginProperty: convertProperty(layer.scenePlugin?.property),
         infoboxEditable: !!layer.infobox,
         infobox:
           layer.__typename === "LayerItem"
@@ -226,12 +201,12 @@ const flattenLayers = (l?: Layer[]): Primitive[] | undefined => {
   }, []);
 };
 
-export const convertToBlocks = (data?: GetBlocksQuery): I[] | undefined => {
+export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {
   return (data?.node?.__typename === "Scene" ? data.node.plugins : undefined)
     ?.map(plugin =>
       plugin.plugin?.extensions
         ?.filter(e => e && e.type === "BLOCK")
-        .map<I | undefined>(extension =>
+        .map<BlockType | undefined>(extension =>
           plugin.plugin
             ? {
                 id: `${plugin.plugin.id}/${extension.extensionId}`,
@@ -248,8 +223,8 @@ export const convertToBlocks = (data?: GetBlocksQuery): I[] | undefined => {
               }
             : undefined,
         )
-        .filter((b): b is I => !!b),
+        .filter((b): b is BlockType => !!b),
     )
-    .filter((a): a is I[] => !!a)
+    .filter((a): a is BlockType[] => !!a)
     .reduce((a, b) => [...a, ...b], []);
 };
