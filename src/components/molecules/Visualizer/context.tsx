@@ -5,7 +5,7 @@ import type { Ref as EngineRef } from "./engine";
 
 export type { GlobalThis } from "@reearth/plugin";
 
-export type CommonGlobalThis = Omit<GlobalThis, "reearth"> & {
+export type CommonGlobalThis = Omit<GlobalThis, "reearth" | "cesium"> & {
   reearth: Omit<
     GlobalThis["reearth"],
     "visualizer" | "primitives" | "plugin" | "ui" | "on" | "off" | "once"

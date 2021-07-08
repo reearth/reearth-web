@@ -78,6 +78,7 @@ export default function ({
 
       return {
         ...pluginAPI,
+        // ...((extensionType === "primitive" && ctx?.engine?.pluginApi) || {}), // TODO: fix "Lifetime not alive" error
         reearth: {
           ...pluginAPI.reearth,
           ui,
@@ -147,6 +148,7 @@ export default function ({
     skip: !ctx,
     src,
     exposed,
+    isMarshalable: ctx?.engine?.isMarshalable,
     staticExposed,
     handleError,
     handleMessage,

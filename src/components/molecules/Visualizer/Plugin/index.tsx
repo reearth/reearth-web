@@ -40,18 +40,20 @@ export default function Plugin({
   block,
   sceneProperty,
 }: Props): JSX.Element | null {
-  const { skip, src, exposed, staticExposed, handleError, handleMessage } = useHooks({
-    pluginId,
-    extensionId,
-    sourceCode,
-    extensionType,
-    property,
-    pluginBaseUrl,
-    primitive,
-    widget,
-    block,
-    sceneProperty,
-  });
+  const { skip, src, exposed, isMarshalable, staticExposed, handleError, handleMessage } = useHooks(
+    {
+      pluginId,
+      extensionId,
+      sourceCode,
+      extensionType,
+      property,
+      pluginBaseUrl,
+      primitive,
+      widget,
+      block,
+      sceneProperty,
+    },
+  );
 
   return !skip && (src || sourceCode) ? (
     <P
@@ -59,6 +61,7 @@ export default function Plugin({
       style={style}
       src={src}
       sourceCode={sourceCode}
+      isMarshalable={isMarshalable}
       staticExposed={staticExposed}
       exposed={exposed}
       onError={handleError}

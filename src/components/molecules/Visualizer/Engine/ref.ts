@@ -9,7 +9,9 @@ export type EngineRef = {
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  isMarshalable?: (target: any) => boolean;
   builtinPrimitives?: Record<string, Component>;
+  pluginApi?: any;
 };
 
 export type FlyToDestination = {
