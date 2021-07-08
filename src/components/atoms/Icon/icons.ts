@@ -91,6 +91,8 @@ import NewWorkspace from "./Icons/newWorkspace.svg";
 import Preview from "./Icons/preview.svg";
 import Install from "./Icons/install.svg";
 import CopyCode from "./Icons/copyCode.svg";
+import FieldClear from "./Icons/fieldClear.svg";
+import FieldLinked from "./Icons/fieldLinked.svg";
 
 // Misc
 import Logo from "./Icons/reearthLogo.svg";
@@ -201,6 +203,8 @@ export default {
   newWorkspace: NewWorkspace,
   preview: Preview,
   copyCode: CopyCode,
+  fieldLinked: FieldLinked,
+  fieldClear: FieldClear,
   map: MapIcon,
   noProjects: NoProjects,
   topPage: TopPage,
