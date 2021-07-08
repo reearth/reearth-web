@@ -13,6 +13,7 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   exposed?: { [key: string]: any };
+  isMarshalable?: (target: any) => boolean;
   staticExposed?: (api: IFrameAPI) => any;
   onMessage?: (message: any) => void;
   onError?: (err: any) => void;
@@ -26,6 +27,7 @@ const Plugin: React.FC<Props> = ({
   src,
   sourceCode,
   exposed,
+  isMarshalable,
   staticExposed,
   onMessage,
   onError,
@@ -36,6 +38,7 @@ const Plugin: React.FC<Props> = ({
     src,
     sourceCode,
     exposed,
+    isMarshalable,
     staticExposed,
     onError,
   });

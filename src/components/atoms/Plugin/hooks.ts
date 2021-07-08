@@ -41,7 +41,7 @@ export default function useHook<T>({
   skip,
   iframeCanBeVisible,
   exposed,
-  isMarshalable = defaultIsMarshalable,
+  isMarshalable,
   onError = defaultOnError,
   staticExposed,
 }: Options<T> = {}) {
@@ -109,7 +109,7 @@ export default function useHook<T>({
     (async () => {
       const vm = (await getQuickJS()).createVm();
       arena.current = new Arena(vm, {
-        isMarshalable,
+        isMarshalable: target => defaultIsMarshalable(target) || !!isMarshalable?.(target),
       });
       staticExpose();
       setLoaded(true);
