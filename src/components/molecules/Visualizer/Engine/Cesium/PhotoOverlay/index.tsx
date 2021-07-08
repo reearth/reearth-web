@@ -88,7 +88,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
 
   useEffect(() => {
     if (prevMode > 0 && mode === 0 && prevCamera.current) {
-      ctx?.engine()?.flyTo(prevCamera.current, {
+      ctx?.engine?.flyTo(prevCamera.current, {
         duration: cameraExitDuration / 1000,
         easing: EasingFunction.CUBIC_IN_OUT,
       });
@@ -96,13 +96,13 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
 
     if (prevMode === 0 && mode === 1 && camera) {
       const storytelling = selected?.[1] === "storytelling";
-      const currentCamera = ctx?.pluginAPI?.reearth.visualizer.camera;
+      const currentCamera = ctx?.engine?.getCamera();
       prevCamera.current = storytelling
         ? { ...camera }
         : currentCamera
         ? { ...currentCamera }
         : undefined;
-      ctx?.engine()?.flyTo(camera, {
+      ctx?.engine?.flyTo(camera, {
         duration: cameraDuration / 1000,
         easing: EasingFunction.CUBIC_IN_OUT,
       });
@@ -122,7 +122,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
 
   const currentFov = mode >= 2 ? camera?.fov : prevCamera.current?.fov ?? defaultFOV;
   useEffect(() => {
-    ctx?.engine()?.flyTo(
+    ctx?.engine?.flyTo(
       { fov: currentFov },
       {
         duration: cameraDuration / 1000,

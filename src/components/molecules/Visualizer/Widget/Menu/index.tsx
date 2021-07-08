@@ -34,6 +34,7 @@ const Menu = ({ widget }: Props): JSX.Element => {
   );
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
 
+  const flyTo = ctx?.engine?.flyTo;
   const handleClick = useCallback(
     (b: Button | MenuItem) => () => {
       const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
@@ -44,7 +45,7 @@ const Menu = ({ widget }: Props): JSX.Element => {
         const camera =
           "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
         if (camera) {
-          ctx?.engine()?.flyTo(camera, { duration: 2000 });
+          flyTo?.(camera, { duration: 2000 });
         }
       } else {
         let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
@@ -56,7 +57,7 @@ const Menu = ({ widget }: Props): JSX.Element => {
       }
       setVisibleMenuButton(undefined);
     },
-    [ctx],
+    [flyTo],
   );
 
   const closeMenu = useCallback(() => {

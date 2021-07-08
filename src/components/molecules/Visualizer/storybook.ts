@@ -48,14 +48,26 @@ const primitives: Primitive[] = [
 ];
 
 export const context: VisualizerContext = {
-  engine: () => ({
+  engine: {
+    name: "cesium",
+    getCamera() {
+      return {
+        lat: 0,
+        lng: 0,
+        height: 0,
+        heading: 0,
+        pitch: 0,
+        roll: 0,
+        fov: Math.PI * (60 / 180),
+      };
+    },
     flyTo: act("flyTo"),
     lookAt: act("lookAt"),
     zoomIn: act("zoomIn"),
     zoomOut: act("zoomOut"),
     requestRender: act("requestRender"),
     getLocationFromScreenXY: act("getLocationFromScreenXY", () => undefined),
-  }),
+  },
   pluginAPI: {
     console: {
       log: act("console.log"),

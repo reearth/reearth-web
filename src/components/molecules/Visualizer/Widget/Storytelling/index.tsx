@@ -52,10 +52,12 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
     setMenu(false);
   });
 
+  const flyTo = ctx?.engine?.flyTo;
+  const selectPrimitive = ctx?.pluginAPI?.reearth.primitives.select;
+  const primitives = ctx?.primitives;
+
   const stories = useMemo(() => {
-    const layers =
-      storyIds &&
-      ctx?.pluginAPI?.reearth.primitives.primitives.filter(p => storyIds.includes(p.id));
+    const layers = storyIds && primitives?.filter(p => storyIds.includes(p.id));
 
     return (
       layers &&
@@ -78,11 +80,8 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
   const [layerIndex, setLayerIndex] = useState<number>();
   const currentLayerId = typeof layerIndex === "number" ? stories?.[layerIndex]?.layer : undefined;
   const selectedLayer = useMemo(
-    () =>
-      currentLayerId
-        ? ctx?.pluginAPI?.reearth.primitives.primitives.find(p => p.id === currentLayerId)
-        : undefined,
-    [ctx?.pluginAPI?.reearth.primitives.primitives, currentLayerId],
+    () => (currentLayerId ? primitives?.find(p => p.id === currentLayerId) : undefined),
+    [primitives, currentLayerId],
   );
 
   const selectLayer = useCallback(
@@ -93,9 +92,9 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
 
       setMenu(false);
       setLayerIndex(index);
-      ctx?.pluginAPI?.reearth.primitives.select(id);
+      selectPrimitive?.(id);
 
-      const layer = ctx?.pluginAPI?.reearth.primitives.primitives.find(p => p.id === id);
+      const layer = primitives?.find(p => p.id === id);
       if (
         // Photooverlays have own camera flight and that is the priority here.
         layer?.pluginId === "reearth" &&
@@ -106,7 +105,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
       }
 
       if (story.layerCamera) {
-        ctx?.engine()?.flyTo(story.layerCamera, {
+        flyTo?.(story.layerCamera, {
           duration: story.layerDuration ?? duration,
         });
         return;
@@ -123,7 +122,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
         typeof position.lng === "number" &&
         typeof position.height == "number"
       ) {
-        ctx?.engine()?.flyTo(
+        flyTo?.(
           {
             lat: position.lat,
             lng: position.lng,
@@ -143,7 +142,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ctx, stories],
+    [flyTo, stories],
   );
 
   const handleNext = useCallback(() => {

@@ -50,17 +50,18 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
   const currentCamera = camera?.[cameraSequence];
   const delayedCurrentCamera = camera?.[delayedCameraSequence];
 
+  const flyTo = ctx?.engine?.flyTo;
   useEffect(() => {
+    if (!flyTo) return;
     const { cameraPosition, cameraDuration, cameraDelay } = delayedCurrentCamera ?? {};
     if (!cameraPosition) return;
     const to = window.setTimeout(() => {
-      ctx?.engine()?.flyTo(cameraPosition, {
+      flyTo(cameraPosition, {
         duration: (cameraDuration ?? 0) * 1000,
       });
     }, (cameraDelay ?? 0) * 1000);
     return () => clearTimeout(to);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [delayedCurrentCamera]); // ignore api
+  }, [delayedCurrentCamera, flyTo]);
 
   const [isActive, setActive] = useState(false);
   const state = useTransition(isActive, transitionDuration * 1000, {
