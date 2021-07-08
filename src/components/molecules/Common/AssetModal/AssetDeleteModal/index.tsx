@@ -46,8 +46,7 @@ const AssetDeleteModal: React.FC<Props> = ({ isVisible, onClose, handleRemove })
       </Message>
       <Message size="m">
         {intl.formatMessage({
-          defaultMessage:
-            "Please make sure no selected assets are in use or else an error will occur. This cannot be undone.",
+          defaultMessage: "Please make sure no selected assets are in use. This cannot be undone.",
         })}
       </Message>
     </Modal>
