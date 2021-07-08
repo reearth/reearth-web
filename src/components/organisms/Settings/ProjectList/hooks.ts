@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { useNavigate } from "@reach/router";
 
 import {
@@ -24,6 +25,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
 export default () => {
   const [currentTeam, setLocalState] = useLocalState(s => s.currentTeam);
   const navigate = useNavigate();
+  const intl = useIntl();
 
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
@@ -99,18 +101,18 @@ export default () => {
         },
       });
       if (project.errors || !project.data?.createProject) {
-        throw new Error("プロジェクトの作成に失敗しました。"); // TODO: translate
+        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
-        refetchQueries: ["Me"],
       });
-      if (scene.errors || !scene.data) {
-        throw new Error("プロジェクトの作成に失敗しました。"); // TODO: translate
+      if (scene.errors || !scene.data?.createScene) {
+        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
       }
       setModalShown(false);
+      refetch();
     },
-    [createNewProject, createScene, teamId],
+    [createNewProject, createScene, intl, refetch, teamId],
   );
 
   const selectProject = useCallback(
