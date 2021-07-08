@@ -102,10 +102,6 @@ const colors = {
       black: "#000000",
       white: "#FFFFFF",
     },
-
-    transparent: "transparent",
-    transparentLight: "rgba(0,0,0,0.4)",
-    transparentBlack: "rgba(0,0,0,0.7)",
   },
 
   general: {
