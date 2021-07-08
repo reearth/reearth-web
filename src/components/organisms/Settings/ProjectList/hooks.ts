@@ -8,6 +8,7 @@ import {
   useCreateSceneMutation,
   Visualizer,
   useAssetsQuery,
+  useCreateAssetMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
@@ -28,7 +29,9 @@ export default () => {
   const openModal = useCallback(() => setModalShown(true), []);
 
   const { data, loading, refetch } = useMeQuery();
-  const [createNewProject] = useCreateProjectMutation();
+  const [createNewProject] = useCreateProjectMutation({
+    refetchQueries: ["Project"],
+  });
   const [createScene] = useCreateSceneMutation();
 
   const teamId = currentTeam?.id;
@@ -125,6 +128,21 @@ export default () => {
   });
   const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
 
+  const [createAssetMutation] = useCreateAssetMutation();
+  const createAssets = useCallback(
+    (files: FileList) =>
+      (async () => {
+        if (teamId) {
+          await Promise.all(
+            Array.from(files).map(file =>
+              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
+            ),
+          );
+        }
+      })(),
+    [createAssetMutation, teamId],
+  );
+
   return {
     currentProjects,
     archivedProjects,
@@ -136,5 +154,6 @@ export default () => {
     createProject,
     selectProject,
     assets,
+    createAssets,
   };
 };
