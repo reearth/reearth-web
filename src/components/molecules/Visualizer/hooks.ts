@@ -223,7 +223,7 @@ function useVisualizerContext({
 
   const ctx = useMemo((): VisualizerContext => {
     return {
-      engine: () => engine.current,
+      engine: engine.current ?? undefined,
       camera,
       primitives,
       selectedPrimitive,

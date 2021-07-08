@@ -26,7 +26,7 @@ export default function PrimitiveComponent<PP = any, SP = any>({
 }: Props<PP, SP>) {
   const ctx = useVisualizerContext();
   const Builtin = useMemo(() => {
-    const builtin = ctx?.engine()?.builtinPrimitives;
+    const builtin = ctx?.engine?.builtinPrimitives;
     return props.primitive?.pluginId && props.primitive.extensionId
       ? builtin?.[`${props.primitive.pluginId}/${props.primitive.extensionId}`]
       : undefined;

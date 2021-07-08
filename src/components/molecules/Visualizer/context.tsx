@@ -16,7 +16,7 @@ export type CommonGlobalThis = Omit<GlobalThis, "reearth"> & {
 };
 
 export type VisualizerContext = {
-  engine: () => EngineRef | null;
+  engine?: EngineRef;
   camera?: Camera;
   primitives?: Primitive[];
   selectedPrimitive?: Primitive;
