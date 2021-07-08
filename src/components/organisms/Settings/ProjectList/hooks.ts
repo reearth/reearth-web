@@ -87,7 +87,7 @@ export default () => {
 
   // Submit Form
   const createProject = useCallback(
-    async (data: { name: string; description: string }) => {
+    async (data: { name: string; description: string; imageUrl: string | null }) => {
       if (!teamId) return;
       const project = await createNewProject({
         variables: {
@@ -95,6 +95,7 @@ export default () => {
           visualizer: Visualizer.Cesium,
           name: data.name,
           description: data.description,
+          imageUrl: data.imageUrl,
         },
       });
       if (project.errors || !project.data?.createProject) {
