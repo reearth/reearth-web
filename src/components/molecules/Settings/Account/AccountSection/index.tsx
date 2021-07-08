@@ -38,7 +38,8 @@ const ProfileSection: React.FC<Props> = ({
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState<string>();
-  const [currentTheme, setCurrentTheme] = useState<string>();
+  const [currentThemeValue, setCurrentThemeValue] = useState<string>();
+  const [currentThemeLabel, setCurrentThemeLabel] = useState<string>();
 
   useEffect(() => {
     const lang = items.find(item => item.key === intl.locale);
@@ -46,7 +47,10 @@ const ProfileSection: React.FC<Props> = ({
   }, [intl.locale]);
 
   useEffect(() => {
-    setCurrentTheme(appTheme ? appTheme.toUpperCase() : "DARK");
+    const appThemeValue = appTheme ? appTheme : "DARK";
+    setCurrentThemeValue(appThemeValue);
+    const label = themeItems.find(themeItem => themeItem.key === appThemeValue)?.label;
+    setCurrentThemeLabel(label);
   }, [appTheme]);
 
   return (
@@ -70,8 +74,8 @@ const ProfileSection: React.FC<Props> = ({
           title={intl.formatMessage({ defaultMessage: "Color theme" })}
           dropdown
           dropdownItems={themeItems}
-          currentItem={currentTheme}
-          body={themeItems.find(themeItem => themeItem.key === currentTheme)?.label}
+          currentItem={currentThemeValue}
+          body={currentThemeLabel}
           onSubmit={updateTheme}
         />
       </Section>
