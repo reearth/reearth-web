@@ -5,9 +5,11 @@ import darkTheme from "./darkTheme";
 import lightTheme from "./lightTheme";
 import GlobalStyle from "./globalstyle";
 import { Theme, useThemeQuery } from "@reearth/gql";
+import { useAuth } from "@reearth/auth";
 
 const Provider: React.FC = ({ children }) => {
-  const { data } = useThemeQuery();
+  const { isAuthenticated } = useAuth();
+  const { data } = useThemeQuery({ skip: !isAuthenticated });
 
   const theme = data?.me?.theme === ("light" as Theme) ? lightTheme : darkTheme;
   return (
