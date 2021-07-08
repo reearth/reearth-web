@@ -15,7 +15,6 @@ export default ({
   selectedPrimitiveId: outerSelectedPrimitiveId,
   selectedBlockId: outerSelectedBlockId,
   camera,
-  engineName,
   onPrimitiveSelect,
   onBlockSelect,
 }: {
@@ -26,7 +25,6 @@ export default ({
   selectedPrimitiveId?: string;
   selectedBlockId?: string;
   camera?: Camera;
-  engineName?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
 }) => {
@@ -104,7 +102,6 @@ export default ({
     engine: engineRef,
     primitives,
     camera: innerCamera,
-    engineName,
     selectedPrimitive,
     selectPrimitive,
     showPrimitive,
@@ -196,7 +193,6 @@ function useInnerState<T>(
 
 function useVisualizerContext({
   engine,
-  engineName = "",
   camera,
   primitives = [],
   selectedPrimitive,
@@ -205,7 +201,6 @@ function useVisualizerContext({
   selectPrimitive,
 }: {
   engine: RefObject<EngineRef>;
-  engineName?: string;
   camera?: Camera;
   primitives?: Primitive[];
   selectedPrimitive: Primitive | undefined;
@@ -213,26 +208,10 @@ function useVisualizerContext({
   hidePrimitive: (...id: string[]) => void;
   selectPrimitive: (id?: string) => void;
 }): VisualizerContext {
-  const engineNameRef = useRef(engineName);
-  engineNameRef.current = engineName;
-
-  const cameraRef = useRef(camera);
-  cameraRef.current = camera;
-
-  const primitivesRef = useRef(primitives);
-  primitivesRef.current = primitives;
-
-  const selectedPrimitiveRef = useRef(selectedPrimitive);
-  selectedPrimitiveRef.current = selectedPrimitive;
-
   const pluginAPI = useMemo(
     () =>
       api({
         engine: () => engine.current,
-        engineName: () => engineNameRef.current,
-        camera: () => cameraRef.current,
-        primitives: () => primitivesRef.current,
-        selectedPrimitive: () => selectedPrimitiveRef.current,
         hidePrimitive,
         selectPrimitive: id => {
           selectPrimitive?.(id);
@@ -246,10 +225,11 @@ function useVisualizerContext({
     return {
       engine: () => engine.current,
       camera,
-      selectedPrimitiveId: selectedPrimitive?.id,
+      primitives,
+      selectedPrimitive,
       pluginAPI,
     };
-  }, [camera, engine, pluginAPI, selectedPrimitive?.id]);
+  }, [camera, engine, pluginAPI, primitives, selectedPrimitive]);
 
   return ctx;
 }

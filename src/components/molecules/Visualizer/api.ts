@@ -1,21 +1,9 @@
-import {
-  Primitive,
-  Primitives,
-  Visualizer,
-  FlyToDestination,
-  CameraOptions,
-  LookAtDestination,
-  Camera,
-} from "@reearth/plugin";
+import { FlyToDestination, CameraOptions, LookAtDestination } from "@reearth/plugin";
 import type { CommonGlobalThis } from "./context";
 import { EngineRef } from "./Engine/ref";
 
 export type Options = {
   engine: () => EngineRef | null;
-  engineName: () => string;
-  camera: () => Camera | undefined;
-  primitives: () => Primitive[];
-  selectedPrimitive: () => Primitive | undefined;
   selectPrimitive: (id?: string) => void;
   showPrimitive: (...id: string[]) => void;
   hidePrimitive: (...id: string[]) => void;
@@ -32,9 +20,9 @@ export default function (options: Options): CommonGlobalThis {
     console.error(...args);
   };
 
+  // use only static values to avoid "Lifetime not alive" error
   const api: CommonGlobalThis = {
     console: {
-      // TODO: using getter occurs "Lifetime not alive" error
       log: consolelog,
       error: consolerror,
     },
@@ -45,12 +33,8 @@ export default function (options: Options): CommonGlobalThis {
       get apiVersion() {
         return 0;
       },
-      get primitives() {
-        return primitives;
-      },
-      get visualizer() {
-        return visualizer;
-      },
+      primitives,
+      visualizer,
     },
   };
 
@@ -58,36 +42,22 @@ export default function (options: Options): CommonGlobalThis {
 }
 
 function getPrimitives({
-  primitives,
-  selectedPrimitive,
   selectPrimitive,
   showPrimitive,
   hidePrimitive,
-}: Options): Primitives {
+}: Options): CommonGlobalThis["reearth"]["primitives"] {
   const select = (id?: string) => selectPrimitive(id);
   const show = (...id: string[]) => showPrimitive(...id);
   const hide = (...id: string[]) => hidePrimitive(...id);
 
   return {
-    get primitives() {
-      return primitives();
-    },
-    get selected() {
-      return selectedPrimitive();
-    },
-    get select() {
-      return select;
-    },
-    get show() {
-      return show;
-    },
-    get hide() {
-      return hide;
-    },
+    select,
+    show,
+    hide,
   };
 }
 
-function getVisualizer({ engine, engineName, camera }: Options): Visualizer {
+function getVisualizer({ engine }: Options): CommonGlobalThis["reearth"]["visualizer"] {
   const flyTo = (dest: FlyToDestination, options?: CameraOptions) => engine()?.flyTo(dest, options);
   const lookAt = (dest: LookAtDestination, options?: CameraOptions) =>
     engine()?.lookAt(dest, options);
@@ -96,22 +66,11 @@ function getVisualizer({ engine, engineName, camera }: Options): Visualizer {
 
   return {
     get engine() {
-      return engineName();
+      return engine()?.name ?? "";
     },
-    get camera() {
-      return camera();
-    },
-    get flyTo() {
-      return flyTo;
-    },
-    get lookAt() {
-      return lookAt;
-    },
-    get zoomIn() {
-      return zoomIn;
-    },
-    get zoomOut() {
-      return zoomOut;
-    },
+    flyTo,
+    lookAt,
+    zoomIn,
+    zoomOut,
   };
 }

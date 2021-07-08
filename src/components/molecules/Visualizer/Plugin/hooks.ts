@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { clone } from "lodash-es";
+import { cloneDeep } from "lodash-es";
 
 import type { GlobalThis, Primitive, Widget, Block } from "@reearth/plugin";
 import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
@@ -102,13 +102,25 @@ export default function ({
   const exposed = useMemo(
     // TODO: object must be cloned to prevent "already registered" error from qes
     () => ({
-      "reearth.primitive": clone(primitive),
-      "reearth.widget": clone(widget),
-      "reearth.block": clone(block),
-      "reearth.plugin.property": clone(property),
-      "reearth.visualizer.property": clone(sceneProperty),
+      "reearth.primitive": cloneDeep(primitive),
+      "reearth.widget": cloneDeep(widget),
+      "reearth.block": cloneDeep(block),
+      "reearth.primitives.primitives": cloneDeep(ctx?.primitives),
+      "reearth.primitives.selected": cloneDeep(ctx?.selectedPrimitive),
+      "reearth.plugin.property": cloneDeep(property),
+      "reearth.visualizer.camera": cloneDeep(ctx?.camera),
+      "reearth.visualizer.property": cloneDeep(sceneProperty),
     }),
-    [block, primitive, widget, property, sceneProperty],
+    [
+      ctx?.primitives,
+      ctx?.selectedPrimitive,
+      ctx?.camera,
+      primitive,
+      widget,
+      block,
+      property,
+      sceneProperty,
+    ],
   );
 
   useEffect(() => {
@@ -122,12 +134,12 @@ export default function ({
   }, [exposed, emitReearthEvent]);
 
   useEffect(() => {
-    emitReearthEvent("select", ctx?.selectedPrimitiveId);
-  }, [ctx?.selectedPrimitiveId, emitReearthEvent]);
+    emitReearthEvent("select", cloneDeep(ctx?.selectedPrimitive));
+  }, [ctx?.selectedPrimitive, emitReearthEvent]);
 
   useEffect(() => {
     if (ctx?.camera) {
-      emitReearthEvent("cameramove", ctx.camera);
+      emitReearthEvent("cameramove", cloneDeep(ctx.camera));
     }
   }, [ctx?.camera, emitReearthEvent]);
 

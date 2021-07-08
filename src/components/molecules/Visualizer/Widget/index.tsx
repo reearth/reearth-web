@@ -34,6 +34,7 @@ export default function WidgetComponent<PP = any, SP = any>({
       sourceCode={(props.widget as any)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="widget"
       visible
+      style={{ position: "absolute", top: 0, left: 0 }} // TODO: widget align system
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
       sceneProperty={props.sceneProperty}

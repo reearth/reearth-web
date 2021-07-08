@@ -36,7 +36,7 @@ export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: Camera];
-  select: [id?: string];
+  select: [target?: Primitive];
   message: [message: any];
 };
 

@@ -126,10 +126,23 @@ reearth.ui.show("<style>body { margin: 0; background: #fff; }</style><h1>Hello W
 
 export const Plugin: Story<Props> = args => {
   const [temporalSourceCode, setTemporalSourceCode] = useState(initialSourceCode);
-  const [sourceCode, setSourceCode] = useState(initialSourceCode);
+  const [sourceCode, setSourceCode] = useState(temporalSourceCode);
+  const [temporalMode, setTemporalMode] = useState<"block" | "widget" | "primitive">("block");
+  const [mode, setMode] = useState(temporalMode);
+
   const args2 = useMemo<Props>(() => {
     return {
       ...args,
+      widgets: [
+        ...(mode === "widget"
+          ? [
+              {
+                id: "xxx",
+                __REEARTH_SOURCECODE: sourceCode,
+              },
+            ]
+          : []),
+      ],
       primitives: [
         ...(args.primitives ?? []),
         {
@@ -145,10 +158,14 @@ export const Plugin: Story<Props> = args => {
           },
           infobox: {
             blocks: [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
-              },
+              ...(mode === "block"
+                ? [
+                    {
+                      id: "xxx",
+                      __REEARTH_SOURCECODE: sourceCode,
+                    },
+                  ]
+                : []),
               {
                 id: "yyy",
                 pluginId: "plugins",
@@ -160,9 +177,21 @@ export const Plugin: Story<Props> = args => {
             ],
           },
         },
+        ...(mode === "primitive"
+          ? [
+              {
+                id: "xxx",
+                __REEARTH_SOURCECODE: sourceCode,
+                isVisible: true,
+                property: {
+                  location: { lat: 0, lng: 130 },
+                },
+              },
+            ]
+          : []),
       ],
     };
-  }, [args, sourceCode]);
+  }, [args, mode, sourceCode]);
 
   return (
     <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
@@ -181,7 +210,22 @@ export const Plugin: Story<Props> = args => {
           onChange={e => setTemporalSourceCode(e.currentTarget.value)}
         />
         <p>
-          <button onClick={() => setSourceCode(temporalSourceCode ?? "")}>Exec</button>
+          <button
+            onClick={() => {
+              setSourceCode(temporalSourceCode ?? "");
+              setMode(temporalMode);
+            }}>
+            Exec
+          </button>
+          <select
+            value={temporalMode}
+            onChange={e =>
+              setTemporalMode(e.currentTarget.value as "block" | "widget" | "primitive")
+            }>
+            <option value="block">Block</option>
+            <option value="widget">Widget</option>
+            <option value="primitive">Primitive</option>
+          </select>
         </p>
       </div>
     </div>
