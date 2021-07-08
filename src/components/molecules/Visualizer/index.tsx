@@ -77,6 +77,7 @@ export default function Visualizer<SP = any>({
     selectPrimitive,
     selectBlock,
   } = useHooks({
+    engineType: props.engine,
     rootLayerId,
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,

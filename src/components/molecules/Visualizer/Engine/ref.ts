@@ -1,9 +1,10 @@
-import { LatLngHeight } from "@reearth/util/value";
+import { LatLngHeight, Camera } from "@reearth/util/value";
 import type { Component } from "../primitive";
 
 export type EngineRef = {
   name: string;
   requestRender: () => void;
+  getCamera: () => Camera | undefined;
   getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;

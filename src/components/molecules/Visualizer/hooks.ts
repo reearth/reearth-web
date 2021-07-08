@@ -8,6 +8,7 @@ import { VisualizerContext } from "./context";
 import api from "./api";
 
 export default ({
+  engineType,
   rootLayerId,
   isEditable,
   isBuilt,
@@ -18,6 +19,7 @@ export default ({
   onPrimitiveSelect,
   onBlockSelect,
 }: {
+  engineType?: string;
   rootLayerId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -107,6 +109,13 @@ export default ({
     showPrimitive,
     hidePrimitive,
   });
+
+  useEffect(() => {
+    const c = engineRef.current?.getCamera();
+    if (c) {
+      setInnerCamera(c);
+    }
+  }, [engineType]);
 
   return {
     engineRef,

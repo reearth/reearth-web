@@ -17,6 +17,9 @@ export default function useEngineRef(
       requestRender: () => {
         cesium.current?.cesiumElement?.scene.requestRender();
       },
+      getCamera: () => {
+        return getCamera(cesium.current?.cesiumElement);
+      },
       getLocationFromScreenXY: (x, y) =>
         getLocationFromScreenXY(cesium.current?.cesiumElement?.scene, x, y),
       flyTo: (camera, options) => {
