@@ -14,17 +14,12 @@ export type Props = {
   hasPassword: boolean;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
-  updateTheme?: (lang: string) => void;
+  updateTheme?: (theme: string) => void;
 };
 
 const items = [
   { key: "ja", label: "日本語" },
   { key: "en", label: "English" },
-];
-
-const themeItems = [
-  { key: "DARK", label: "Dark theme", icon: "moon" },
-  { key: "LIGHT", label: "Light theme", icon: "sun" },
 ];
 
 const ProfileSection: React.FC<Props> = ({
@@ -40,14 +35,17 @@ const ProfileSection: React.FC<Props> = ({
   const [currentLang, setCurrentLang] = useState<string>();
   const [currentThemeValue, setCurrentThemeValue] = useState<string>();
   const [currentThemeLabel, setCurrentThemeLabel] = useState<string>();
-
+  const themeItems = [
+    { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
+    { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
+  ];
   useEffect(() => {
     const lang = items.find(item => item.key === intl.locale);
     setCurrentLang(lang?.label);
   }, [intl.locale]);
 
   useEffect(() => {
-    const appThemeValue = appTheme ? appTheme : "DARK";
+    const appThemeValue = appTheme ?? "DARK";
     setCurrentThemeValue(appThemeValue);
     const label = themeItems.find(themeItem => themeItem.key === appThemeValue)?.label;
     setCurrentThemeLabel(label);
