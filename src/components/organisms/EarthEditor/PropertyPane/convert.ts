@@ -37,6 +37,7 @@ export type Pane = {
   title?: string;
   items?: Item[];
   enabled?: boolean;
+  group?: boolean;
 };
 
 const linkableType: ValueType[] = ["bool", "string", "number", "latlng", "url"];
@@ -87,7 +88,7 @@ const toItem = (
           ui: toUi(f.ui),
           min: f.min ?? undefined,
           max: f.max ?? undefined,
-          notLinkable: !linkableType.includes(t),
+          isLinkable: linkableType.includes(t),
         };
       })
       .filter((f): f is SchemaField => !!f),
