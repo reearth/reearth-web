@@ -104,7 +104,7 @@ const DatasetModal: React.FC<Props> = ({
                 text={intl.formatMessage({ defaultMessage: "Google Drive" })}
                 margin={56}
                 border="dashed"
-                borderColor={colors.outline.weak}
+                borderColor={theme.main.border}
                 onClick={handleClick}
               />
             )}
