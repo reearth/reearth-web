@@ -2,6 +2,8 @@ import React, { useState, useRef, useCallback, useLayoutEffect } from "react";
 import { useClickAway } from "react-use";
 import { usePopper } from "react-popper";
 import { useMergeRefs } from "use-callback-ref";
+import { useIntl } from "react-intl";
+
 import { styled, css, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import Icon from "@reearth/components/atoms/Icon";
@@ -25,7 +27,9 @@ type OptionElement<Value extends string | number> = React.ReactElement<OptionPro
 export type Props<Value extends string | number> = {
   className?: string;
   value?: Value;
+  placeholder?: string;
   inactive?: boolean;
+  color?: string;
   fullWidth?: boolean;
   onChange?: (value: Value) => void;
   children?: OptionElement<Value>[];
@@ -40,13 +44,16 @@ const Select = <Value extends string | number>(
   {
     className,
     value: selectedValue,
+    placeholder,
     inactive = false,
+    color,
     fullWidth = false,
     onChange,
     children,
   }: Props<Value>,
   ref: React.Ref<HTMLDivElement>,
 ) => {
+  const intl = useIntl();
   const [open, setOpen] = useState(false);
   const [focusedValue, setFocusedValue] = useState(selectedValue);
 
@@ -215,11 +222,8 @@ const Select = <Value extends string | number>(
       onKeyDown={handleKeyDown}
       tabIndex={0}>
       <SelectWrapper>
-        <Selected
-          inactive={inactive}
-          size="xs"
-          color={inactive ? "" : theme.properties.contentsText}>
-          {selectedLabel}
+        <Selected inactive={inactive} size="xs" color={!selectedValue ? theme.main.weak : color}>
+          {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />
       </SelectWrapper>
@@ -276,8 +280,6 @@ const SelectWrapper = styled.div`
 const Selected = styled(Text)<{ inactive: boolean }>`
   flex: 1;
   padding: 3px;
-  color: ${({ inactive, theme }) =>
-    inactive ? theme.selectList.border : theme.properties.contentsText};
 `;
 
 const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`

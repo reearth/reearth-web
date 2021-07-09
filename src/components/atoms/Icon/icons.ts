@@ -23,6 +23,8 @@ import Dataset from "./Icons/datasetIcon.svg";
 import DatasetAdd from "./Icons/datasetAdd.svg";
 import File from "./Icons/fileIcon.svg";
 import PcIcon from "./Icons/pcIcon.svg";
+import GoogleDriveIcon from "./Icons/googleDriveIcon.svg";
+import SheetFileIcon from "./Icons/sheet-file.svg";
 
 // Asset
 import AssetGrid from "./Icons/assetGrid.svg";
@@ -89,6 +91,8 @@ import NewWorkspace from "./Icons/newWorkspace.svg";
 import Preview from "./Icons/preview.svg";
 import Install from "./Icons/install.svg";
 import CopyCode from "./Icons/copyCode.svg";
+import FieldClear from "./Icons/fieldClear.svg";
+import FieldLinked from "./Icons/fieldLinked.svg";
 
 // Misc
 import Logo from "./Icons/reearthLogo.svg";
@@ -132,6 +136,8 @@ export default {
   dataset: Dataset,
   datasetAdd: DatasetAdd,
   file: File,
+  googleDrive: GoogleDriveIcon,
+  sheetFile: SheetFileIcon,
   computer: PcIcon,
   assetGrid: AssetGrid,
   assetGridSmall: AssetGridSmall,
@@ -199,6 +205,8 @@ export default {
   newWorkspace: NewWorkspace,
   preview: Preview,
   copyCode: CopyCode,
+  fieldLinked: FieldLinked,
+  fieldClear: FieldClear,
   map: MapIcon,
   noProjects: NoProjects,
   moon: Moon,

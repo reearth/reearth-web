@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { difference } from "lodash-es";
 
-import { useTheme, styled } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import { Typography } from "@reearth/util/value";
 
 import FontFamilyField, { SafeFontFamilies } from "./FontFamilyField";
@@ -9,7 +9,7 @@ import FontSizeField, { FontSize } from "./FontSizeField";
 import ColorField from "../ColorField";
 import RadioField from "../RadioField";
 import FontFormatField, { FontFormatKey } from "./FontFormatField";
-import { FieldProps } from "../types";
+import { FieldProps, textColor } from "../types";
 
 type Props = FieldProps<Typography> & {
   className?: string;
@@ -39,6 +39,7 @@ const TypographyField: React.FC<Props> = ({
   disabled,
 }) => {
   const { fontFamily, fontSize, color, textAlign, bold, italic, underline } = value ?? {};
+  const tColor = textColor({ linked, overridden });
 
   const updateTypography = useCallback(
     (typography: Partial<Typography>) => onChange?.({ ...(value ?? {}), ...typography }),
@@ -85,33 +86,21 @@ const TypographyField: React.FC<Props> = ({
     },
     [updateTypography, fontFormatValues],
   );
-  const theme = useTheme();
+
   return (
     <Wrapper className={className}>
       <Row>
         <FontFamilyField
           value={fontFamily as SafeFontFamilies}
-          linked={linked}
-          overridden={overridden}
-          disabled={disabled}
+          color={tColor}
           onChange={handleChangeFamily}
         />
       </Row>
       <Row>
-        <FontSizeField
-          value={fontSize as FontSize}
-          linked={linked}
-          overridden={overridden}
-          disabled={disabled}
-          onChange={handleChangeSize}
-        />
+        <FontSizeField value={fontSize as FontSize} color={tColor} onChange={handleChangeSize} />
       </Row>
       <Row>
-        <ColorField
-          disabled={disabled}
-          value={color || theme.main.text}
-          onChange={handleChangeColor}
-        />
+        <ColorField disabled={disabled} value={color} onChange={handleChangeColor} />
       </Row>
       <FontHorizontalAlignField
         value={textAlign}

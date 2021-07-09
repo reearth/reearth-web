@@ -4,24 +4,24 @@
       "LayerItem",
       "LayerGroup"
     ],
+    "Layer": [
+      "LayerGroup",
+      "LayerItem"
+    ],
     "PropertyItem": [
       "PropertyGroup",
       "PropertyGroupList"
     ],
     "Node": [
-      "Team",
+      "Asset",
       "Property",
       "DatasetSchemaField",
-      "Asset",
-      "Project",
-      "User",
-      "DatasetSchema",
+      "Team",
       "Scene",
+      "User",
+      "Project",
+      "DatasetSchema",
       "Dataset"
-    ],
-    "Layer": [
-      "LayerItem",
-      "LayerGroup"
     ]
   }
 }

@@ -24,18 +24,11 @@ const TextField: React.FC<Props> = ({
   multiline,
   linked,
   overridden,
-  disabled,
   onChange,
   onClick,
 }) => {
   const theme = useTheme();
-  const color = overridden
-    ? theme.main.danger
-    : linked
-    ? theme.main.accent
-    : disabled
-    ? theme.text.pale
-    : undefined;
+  const color = overridden ? theme.main.warning : linked ? theme.main.accent : undefined;
 
   return (
     <Wrapper className={className} onClick={onClick}>
@@ -43,7 +36,6 @@ const TextField: React.FC<Props> = ({
         value={value}
         placeholder={placeholder}
         onChange={onChange}
-        disabled={linked || overridden || disabled}
         multiline={multiline}
         prefix={prefix}
         suffix={suffix}

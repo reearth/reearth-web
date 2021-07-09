@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { styled, useTheme, metrics } from "@reearth/theme";
+import { styled, metrics } from "@reearth/theme";
 
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
@@ -25,8 +25,6 @@ const NumberField: React.FC<Props> = ({
   min,
   max,
 }) => {
-  const theme = useTheme();
-
   const [innerValue, setInnerValue] = useState(typeof value === "number" ? value + "" : "");
   const isEditing = useRef(false);
   const isDirty = useRef(false);
@@ -89,13 +87,10 @@ const NumberField: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <FormWrapper align="center">
+      <FormWrapper align="center" linked={linked} overridden={overridden} inactive={!!disabled}>
         <StyledInput
           type="number"
           value={innerValue ?? ""}
-          linked={linked}
-          overridden={overridden}
-          inactive={!!disabled}
           disabled={disabled}
           onChange={handleChange}
           onKeyPress={handleKeyPress}
@@ -106,10 +101,7 @@ const NumberField: React.FC<Props> = ({
           step="any"
         />
         {suffix && (
-          <Text
-            size="xs"
-            color={theme.properties.contentsFloatText}
-            otherProperties={{ userSelect: "none" }}>
+          <Text size="xs" customColor otherProperties={{ userSelect: "none" }}>
             {suffix}
           </Text>
         )}
@@ -124,34 +116,36 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const FormWrapper = styled(Flex)`
+type FormProps = Pick<Props, "linked" | "overridden"> & { inactive: boolean };
+
+const FormWrapper = styled(Flex)<FormProps>`
   border: 1px solid ${props => props.theme.properties.border};
   width: 100%;
   box-sizing: border-box;
   height: ${metrics.propertyTextInputHeight}px;
   padding-left: ${metricsSizes.s}px;
   padding-right: ${metricsSizes.s}px;
+  color: ${({ inactive, linked, overridden, theme }) =>
+    overridden
+      ? theme.main.warning
+      : linked
+      ? theme.main.accent
+      : inactive
+      ? theme.text.pale
+      : theme.properties.contentsText};
 
   &:focus-within {
     border-color: ${({ theme }) => theme.properties.contentsText};
   }
 `;
 
-type InputProps = Pick<Props, "linked" | "overridden"> & { inactive: boolean };
-
-const StyledInput = styled.input<InputProps>`
+const StyledInput = styled.input`
   display: block;
   border: none;
   background: ${props => props.theme.properties.bg};
   outline: none;
-  color: ${({ inactive, linked, overridden, theme }) =>
-    overridden
-      ? theme.main.danger
-      : linked
-      ? theme.main.accent
-      : inactive
-      ? theme.text.pale
-      : theme.properties.contentsText};
+  color: inherit;
+
   width: 100%;
 
   &::-webkit-inner-spin-button,
