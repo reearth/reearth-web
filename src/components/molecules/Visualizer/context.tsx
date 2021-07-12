@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 import type { GlobalThis, Camera, Primitive } from "@reearth/plugin";
-import type { Ref as EngineRef } from "./engine";
+import type { Ref as EngineRef } from "./Engine";
 
 export type { GlobalThis } from "@reearth/plugin";
 
