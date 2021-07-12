@@ -91,7 +91,12 @@ export default function ({
       </Button>
       <div
         ref={popperElement}
-        style={{ ...styles.popper, display: menuVisible ? styles.popper.display : "none" }}
+        style={{
+          minWidth: "200px",
+          width: "100%",
+          position: "absolute",
+          display: menuVisible ? styles.popper.display : "none",
+        }}
         {...attributes}>
         {menuVisible && (
           <MenuWrapper ref={menuElement}>
@@ -113,6 +118,7 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
 `;
 
 const MenuWrapper = styled.div<{ visible?: boolean }>`
+  width: 100%;
   position: absolute;
   top: 0;
   left: 0;

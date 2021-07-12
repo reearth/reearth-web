@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import {
   useChangePropertyValueMutation,
-  useUnlinkDatasetMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
   useCreateInfoboxMutation,
@@ -134,26 +133,6 @@ export default (mode: Mode) => {
     [linkDataset],
   );
 
-  const [unlinkMutation] = useUnlinkDatasetMutation();
-  const unlink = useCallback(
-    async (
-      propertyId: string,
-      schemaItemId: string,
-      itemId: string | undefined,
-      fieldId: string,
-    ) => {
-      await unlinkMutation({
-        variables: {
-          propertyId,
-          itemId,
-          schemaItemId,
-          fieldId,
-        },
-      });
-    },
-    [unlinkMutation],
-  );
-
   const [uploadFileMutation] = useUploadFileToPropertyMutation();
   const uploadFile = useCallback(
     (
@@ -170,13 +149,14 @@ export default (mode: Mode) => {
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
-    (file: File) =>
+    (files: FileList) =>
       (async () => {
         if (teamId) {
-          await createAssetMutation({
-            variables: { teamId, file },
-            refetchQueries: ["Assets"],
-          });
+          await Promise.all(
+            Array.from(files).map(file =>
+              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
+            ),
+          );
         }
       })(),
     [createAssetMutation, teamId],
@@ -387,7 +367,6 @@ export default (mode: Mode) => {
     changeValue,
     removeField,
     link,
-    unlink,
     uploadFile,
     createAssets,
     removeFile,

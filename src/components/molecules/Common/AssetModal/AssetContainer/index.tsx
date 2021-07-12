@@ -13,6 +13,7 @@ import { styled } from "@reearth/theme";
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
+import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
 
 import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
 
@@ -23,11 +24,13 @@ export type Props = {
   assets?: Asset[];
   isMultipleSelectable?: boolean;
   accept?: string;
-  onCreateAsset?: (file: File) => void;
+  onCreateAsset?: (files: FileList) => void;
+  onRemove?: (assetIds: string[]) => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
+  isHeightFixed?: boolean;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -35,10 +38,12 @@ const AssetContainer: React.FC<Props> = ({
   isMultipleSelectable = false,
   accept,
   onCreateAsset,
+  onRemove,
   initialAsset,
   selectedAssets,
   selectAsset,
   fileType,
+  isHeightFixed,
 }) => {
   const intl = useIntl();
   const {
@@ -54,6 +59,9 @@ const AssetContainer: React.FC<Props> = ({
     handleUploadToAsset,
     handleReverse,
     handleSearch,
+    deleteModalVisible,
+    setDeleteModalVisible,
+    handleRemove,
   } = useHooks({
     assets,
     isMultipleSelectable,
@@ -62,6 +70,7 @@ const AssetContainer: React.FC<Props> = ({
     initialAsset,
     selectAsset,
     selectedAssets,
+    onRemove,
   });
 
   const filterOptions: { key: FilterTypes; label: string }[] = [
@@ -72,18 +81,31 @@ const AssetContainer: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <StyledUploadButton
-        large
-        text={
-          fileType === "image"
-            ? intl.formatMessage({ defaultMessage: "Upload image" })
-            : intl.formatMessage({ defaultMessage: "Upload file" })
-        }
-        icon="upload"
-        type="button"
-        buttonType="primary"
-        onClick={handleUploadToAsset}
-      />
+      <Flex justify={onRemove ? "flex-end" : "center"}>
+        <Button
+          large
+          text={
+            fileType === "image"
+              ? intl.formatMessage({ defaultMessage: "Upload image" })
+              : intl.formatMessage({ defaultMessage: "Upload file" })
+          }
+          icon="upload"
+          type="button"
+          buttonType={onRemove ? "secondary" : "primary"}
+          onClick={handleUploadToAsset}
+        />
+        {onRemove && (
+          <Button
+            large
+            text={intl.formatMessage({ defaultMessage: "Delete" })}
+            icon="bin"
+            type="button"
+            buttonType="secondary"
+            disabled={selectedAssets?.length ? false : true}
+            onClick={() => setDeleteModalVisible(true)}
+          />
+        )}
+      </Flex>
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
@@ -95,7 +117,7 @@ const AssetContainer: React.FC<Props> = ({
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
 
-        <LayoutButtons justify="center">
+        <LayoutButtons justify="left">
           <StyledIcon
             icon="assetList"
             onClick={() => setLayoutType("list")}
@@ -114,7 +136,7 @@ const AssetContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper direction="column" justify="space-between">
+      <AssetWrapper isHeightFixed={isHeightFixed}>
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -130,16 +152,12 @@ const AssetContainer: React.FC<Props> = ({
             </TemplateText>
           </Template>
         ) : (
-          <AssetList
-            wrap={layoutType === "list" ? "nowrap" : "wrap"}
-            justify="space-between"
-            layoutType={layoutType}>
+          <AssetList layoutType={layoutType}>
             {layoutType === "list"
               ? (searchResults || filteredAssets)?.map(a => (
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    isImage={fileType === "image"}
                     onCheck={() => handleAssetsSelect(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
@@ -151,7 +169,6 @@ const AssetContainer: React.FC<Props> = ({
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    isImage={fileType === "image"}
                     onCheck={() => handleAssetsSelect(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
@@ -161,40 +178,52 @@ const AssetContainer: React.FC<Props> = ({
         )}
         <Divider margin="0" />
       </AssetWrapper>
+      <AssetDeleteModal
+        isVisible={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        handleRemove={handleRemove}
+      />
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
-  height: 558px;
   width: 100%;
 `;
 
-const AssetWrapper = styled(Flex)`
-  height: 425px;
+const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
+  height: ${({ isHeightFixed }) => (isHeightFixed ? "" : "425px")};
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-const AssetList = styled(Flex)<{ layoutType?: LayoutTypes }>`
-  ${({ layoutType }) => layoutType === "list" && "flex-direction: column;"}
-  max-height: 458px;
+const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
+  padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;
   overflow-y: scroll;
   scrollbar-width: none;
+  display: grid;
+  grid-template-columns: ${({ layoutType }) =>
+    (layoutType === "list" && "100%") ||
+    (layoutType === "medium" && "repeat(auto-fill, 192px)") ||
+    (layoutType === "small" && "repeat(auto-fill, 104px)")};
+  grid-template-rows: ${({ layoutType }) =>
+    (layoutType === "list" && "46px") ||
+    (layoutType === "medium" && "repeat(auto-fill, 186px)") ||
+    (layoutType === "small" && "repeat(auto-fill, 120px)")};
+  gap: ${({ layoutType }) =>
+    (layoutType === "list" && "12px") ||
+    (layoutType === "medium" && "24px") ||
+    (layoutType === "small" && "16px")};
+  justify-content: space-between;
   &::-webkit-scrollbar {
     display: none;
   }
-
-  &::after {
-    content: "";
-    flex: ${({ layoutType }) => (layoutType === "medium" ? "0 33%" : "auto")};
-  }
-`;
-
-const StyledUploadButton = styled(Button)`
-  margin: ${metricsSizes["m"]}px auto ${metricsSizes["2xl"]}px auto;
 `;
 
 const NavBar = styled(Flex)`
-  margin: ${metricsSizes["s"]}px;
+  margin: ${metricsSizes["m"]}px;
   flex: 1;
 `;
 
@@ -203,11 +232,12 @@ const SelectWrapper = styled(Flex)`
 `;
 
 const LayoutButtons = styled(Flex)`
+  margin-left: ${metricsSizes["l"]}px;
   flex: 3;
 `;
 
 const StyledIcon = styled(Icon)<{ selected?: boolean }>`
-  margin-left: ${metricsSizes["s"]}px;
+  margin-left: ${metricsSizes["m"]}px;
   border-radius: 5px;
   padding: ${metricsSizes["2xs"]}px;
   color: ${({ theme }) => theme.colors.text.main};

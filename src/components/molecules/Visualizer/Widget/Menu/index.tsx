@@ -76,16 +76,18 @@ const Menu = ({ widget }: Props): JSX.Element => {
         <Wrapper key={p} position={p}>
           {buttonsByPosition?.[p]?.map(b =>
             !b.buttonInvisible ? (
-              <MenuButton
-                key={b.id}
-                button={b}
-                pos={p}
-                menuVisible={visibleMenuButton === b.id}
-                menuItems={menuItems}
-                itemOnClick={handleClick}
-                onClick={handleClick(b)}
-                onClose={closeMenu}
-              />
+              <div style={{ position: "relative" }}>
+                <MenuButton
+                  key={b.id}
+                  button={b}
+                  pos={p}
+                  menuVisible={visibleMenuButton === b.id}
+                  menuItems={menuItems}
+                  itemOnClick={handleClick}
+                  onClick={handleClick(b)}
+                  onClose={closeMenu}
+                />
+              </div>
             ) : null,
           )}
         </Wrapper>

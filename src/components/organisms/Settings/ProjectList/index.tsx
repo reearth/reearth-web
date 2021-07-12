@@ -26,11 +26,12 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     createProject,
     selectProject,
     assets,
+    createAssets,
   } = useHooks();
 
   return (
     <SettingPage teamId={teamId}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Projects List" })} />
+      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Project List" })} />
       <MoleculeProjectList
         projects={currentProjects}
         onProjectSelect={selectProject}
@@ -42,6 +43,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         onClose={handleModalClose}
         onSubmit={createProject}
         assets={assets}
+        createAssets={createAssets}
       />
       {loading && <Loading portal overlay />}
     </SettingPage>
