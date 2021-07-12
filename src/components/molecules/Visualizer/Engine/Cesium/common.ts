@@ -291,7 +291,7 @@ export const animateFOV = ({
 };
 
 export const getCamera = (viewer: Viewer | undefined): Camera | undefined => {
-  if (!viewer) return undefined;
+  if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene) return undefined;
   const { camera } = viewer;
   if (!(camera.frustum instanceof PerspectiveFrustum)) return;
 

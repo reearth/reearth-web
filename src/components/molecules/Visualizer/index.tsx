@@ -73,9 +73,9 @@ export default function Visualizer<SP = any>({
     selectedPrimitiveId,
     selectedBlockId,
     innerCamera,
-    setInnerCamera,
     selectPrimitive,
     selectBlock,
+    updateCamera,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -84,8 +84,10 @@ export default function Visualizer<SP = any>({
     primitives,
     selectedPrimitiveId: outerSelectedPrimitiveId,
     selectedBlockId: outerSelectedBlockId,
+    camera: props.camera,
     onPrimitiveSelect,
     onBlockSelect,
+    onCameraChange: props.onCameraChange,
   });
 
   return (
@@ -99,7 +101,7 @@ export default function Visualizer<SP = any>({
           onPrimitiveSelect={selectPrimitive}
           {...props}
           camera={innerCamera}
-          onCameraChange={setInnerCamera}>
+          onCameraChange={updateCamera}>
           {primitives?.map(primitive => (
             <P
               key={primitive.id}

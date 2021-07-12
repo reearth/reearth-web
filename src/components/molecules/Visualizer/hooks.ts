@@ -18,6 +18,7 @@ export default ({
   camera,
   onPrimitiveSelect,
   onBlockSelect,
+  onCameraChange,
 }: {
   engineType?: string;
   rootLayerId?: string;
@@ -29,6 +30,7 @@ export default ({
   camera?: Camera;
   onPrimitiveSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
+  onCameraChange?: (c: Camera) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
@@ -78,6 +80,13 @@ export default ({
   useEffect(() => {
     setInnerCamera(camera);
   }, [camera]);
+  const updateCamera = useCallback(
+    (camera: Camera) => {
+      setInnerCamera(camera);
+      onCameraChange?.(camera);
+    },
+    [onCameraChange],
+  );
 
   const hiddenPrimitivesSet = useMemo(() => new Set<string>(), []);
   const [hiddenPrimitives, setHiddenPrimitives] = useState<string[]>([]);
@@ -127,9 +136,9 @@ export default ({
     selectedPrimitive,
     selectedBlockId,
     innerCamera,
-    setInnerCamera,
     selectPrimitive,
     selectBlock,
+    updateCamera,
   };
 };
 

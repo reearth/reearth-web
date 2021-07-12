@@ -71,7 +71,7 @@ export default ({
   }, [property?.default]);
 
   // expose ref
-  useEngineRef(ref, cesium);
+  const engineAPI = useEngineRef(ref, cesium);
 
   // imagery layers
   const [imageryLayers, setImageryLayers] = useState<
@@ -109,11 +109,19 @@ export default ({
   );
 
   // move to initial position at startup
+  const initialCameraFlight = useRef(false);
+
   useEffect(() => {
-    if (!property?.default?.camera) return;
-    onCameraChange?.(property.default.camera);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // ignor property?.default?.camera and onCameraChange
+    if (!property?.default?.camera || initialCameraFlight.current) return;
+    initialCameraFlight.current = true;
+    engineAPI.flyTo(property.default.camera, { duration: 0 });
+  }, [engineAPI, property?.default?.camera]);
+
+  useEffect(() => {
+    if (initialCameraFlight.current && !property) {
+      initialCameraFlight.current = false;
+    }
+  }, [property]);
 
   // call onCameraChange event after moving camera
   const onCameraMoveEnd = useCallback(() => {
