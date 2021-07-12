@@ -105,7 +105,7 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
 export function valueToGQL<T extends ValueType>(val: ValueTypes[T] | null, type: T): any {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
     return {
-      ...val,
+      ...(val as any),
       altitude: val.height,
     };
   }

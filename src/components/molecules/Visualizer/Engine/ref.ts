@@ -1,5 +1,5 @@
 import { LatLngHeight, Camera } from "@reearth/util/value";
-import type { Component } from "../primitive";
+import type { Component } from "../Primitive";
 
 export type EngineRef = {
   name: string;
