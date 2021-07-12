@@ -20,4 +20,4 @@ Note: A solid arrow indicates that the component has been imported and is being 
 
 ## How to add a new engine?
 
-Create a new component in the `engine` directory. Note that all engine components must accept `EngineProps` and expose `engineRef` as ref. That is all. The rest of the Visualizer should work without any changes.
+Create a new component in the `engine` directory, and add the new engine to `engines` in `engine/index.tsx`. Note that all engine components must accept `EngineProps` and expose `engineRef` as ref. That is all. The rest of the Visualizer should work without any changes.
