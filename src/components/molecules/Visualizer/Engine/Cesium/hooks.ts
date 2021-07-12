@@ -74,9 +74,8 @@ export default ({
   const engineAPI = useEngineRef(ref, cesium);
 
   // imagery layers
-  const [imageryLayers, setImageryLayers] = useState<
-    [string, ImageryProvider, number | undefined, number | undefined][]
-  >();
+  const [imageryLayers, setImageryLayers] =
+    useState<[string, ImageryProvider, number | undefined, number | undefined][]>();
 
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)

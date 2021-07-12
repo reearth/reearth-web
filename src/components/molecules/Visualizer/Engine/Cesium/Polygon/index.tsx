@@ -21,8 +21,14 @@ export type Property = {
 
 const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
   const { id, isVisible, property } = primitive ?? {};
-  const { polygon, fill = true, stroke, fillColor, strokeColor, strokeWidth = 1 } =
-    (property as Property | undefined)?.default ?? {};
+  const {
+    polygon,
+    fill = true,
+    stroke,
+    fillColor,
+    strokeColor,
+    strokeWidth = 1,
+  } = (property as Property | undefined)?.default ?? {};
 
   const hierarchy = useMemo(
     () =>
@@ -40,15 +46,15 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) 
     [polygon],
   );
 
-  const memoStrokeColor = useMemo(() => (stroke ? toColor(strokeColor) : undefined), [
-    stroke,
-    strokeColor,
-  ]);
+  const memoStrokeColor = useMemo(
+    () => (stroke ? toColor(strokeColor) : undefined),
+    [stroke, strokeColor],
+  );
 
-  const memoFillColor = useMemo(() => (fill && fillColor ? toColor(fillColor) : undefined), [
-    fill,
-    fillColor,
-  ]);
+  const memoFillColor = useMemo(
+    () => (fill && fillColor ? toColor(fillColor) : undefined),
+    [fill, fillColor],
+  );
 
   return !isVisible ? null : (
     <Entity id={id} selected={isSelected}>

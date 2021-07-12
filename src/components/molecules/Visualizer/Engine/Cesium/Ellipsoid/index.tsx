@@ -34,9 +34,10 @@ const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }
     return new Cartesian3(radius, radius, radius);
   }, [radius]);
 
-  const material = useMemo(() => toColor(property?.default?.fillColor), [
-    property?.default?.fillColor,
-  ]);
+  const material = useMemo(
+    () => toColor(property?.default?.fillColor),
+    [property?.default?.fillColor],
+  );
 
   return !isVisible ? null : (
     <Entity id={id} position={position} selected={isSelected}>

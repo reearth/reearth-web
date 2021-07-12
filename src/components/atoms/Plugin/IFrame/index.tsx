@@ -17,7 +17,12 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   { autoResize, className, html, style, visible, onLoad, onMessage },
   ref,
 ) => {
-  const { ref: iFrameRef, width, height, onLoad: onIFrameLoad } = useHook({
+  const {
+    ref: iFrameRef,
+    width,
+    height,
+    onLoad: onIFrameLoad,
+  } = useHook({
     autoResize,
     html,
     ref,

@@ -18,8 +18,11 @@ export type Property = {
 
 const Polyline: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
   const { id, isVisible, property } = primitive ?? {};
-  const { coordinates, strokeColor, strokeWidth = 1 } =
-    (property as Property | undefined)?.default ?? {};
+  const {
+    coordinates,
+    strokeColor,
+    strokeWidth = 1,
+  } = (property as Property | undefined)?.default ?? {};
 
   const positions = useMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
