@@ -8,7 +8,7 @@ import { Provider } from "./context";
 import Engine, { Props as EngineProps } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
-import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./InfoBox";
+import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
 
 export type { VisualizerContext } from "./context";
 
