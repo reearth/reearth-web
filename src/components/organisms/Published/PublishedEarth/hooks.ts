@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import ReactGA from "react-ga";
+import { mapValues } from "lodash-es";
 
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
 import { PublishedData } from "./types";
@@ -22,18 +23,20 @@ export default (alias?: string) => {
         title: l.name || "",
         plugin: `${l.pluginId}/${l.extensionId}`,
         isVisible: true,
-        property: l.property,
-        pluginProperty: data.plugins.find(p => p.id === l.pluginId)?.property,
+        property: processProperty(l.property),
+        pluginProperty: processProperty(data.plugins.find(p => p.id === l.pluginId)?.property),
         infobox: l.infobox
           ? {
-              property: l.infobox.property,
+              property: processProperty(l.infobox.property),
               blocks: l.infobox.fields.map<Block>(f => ({
                 id: f.id,
                 pluginId: f.pluginId,
                 extensionId: f.extensionId,
-                property: f.property,
-                pluginProperty: data.plugins.find(p => p.id === f.pluginId)?.property,
-                // propertyId is not required
+                property: processProperty(f.property),
+                pluginProperty: processProperty(
+                  data.plugins.find(p => p.id === f.pluginId)?.property,
+                ),
+                // propertyId is not required in non-editable mode
               })),
             }
           : undefined,
@@ -47,9 +50,9 @@ export default (alias?: string) => {
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: w.property,
+        property: processProperty(w.property),
         enabled: true,
-        pluginProperty: data.plugins.find(p => p.id === w.pluginId)?.property,
+        pluginProperty: processProperty(data.plugins.find(p => p.id === w.pluginId)?.property),
       })),
     [data],
   );
@@ -92,3 +95,16 @@ export default (alias?: string) => {
     ready,
   };
 };
+
+// For compability
+function processProperty(p: any): any {
+  if (typeof p !== "object") return p;
+  return mapValues(p, f =>
+    mapValues(f, v => {
+      if ("lat" in v && "lng" in v && "altitude" in v) {
+        v.height = v.altitude;
+      }
+      return v;
+    }),
+  );
+}

@@ -37,39 +37,6 @@ export const CHANGE_PROPERTY_VALUE = gql`
   ${layerFragment}
 `;
 
-export const CHANGE_PROPERTY_VALUE_LATLNG = gql`
-  mutation ChangePropertyValueLatLng(
-    $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID
-    $itemId: ID
-    $fieldId: PropertySchemaFieldID!
-    $lat: Float!
-    $lng: Float!
-  ) {
-    updatePropertyValueLatLng(
-      input: {
-        propertyId: $propertyId
-        schemaItemId: $schemaItemId
-        itemId: $itemId
-        fieldId: $fieldId
-        lat: $lat
-        lng: $lng
-      }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
-
-  ${layerFragment}
-`;
-
 export const CHANGE_PROPERTY_VALUE_LATLNGHEIGHT = gql`
   mutation ChangePropertyValueLatLngHeight(
     $propertyId: ID!

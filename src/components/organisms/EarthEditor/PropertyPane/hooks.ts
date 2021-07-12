@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 
 import {
-  useChangePropertyValueLatLngMutation,
   useChangePropertyValueMutation,
   useUnlinkDatasetMutation,
   useRemoveInfoboxFieldMutation,
@@ -80,7 +79,6 @@ export default (mode: Mode) => {
   });
 
   const [changeValueMutation] = useChangePropertyValueMutation();
-  const [changeValueLatLngMutation] = useChangePropertyValueLatLngMutation();
   const changeValue = useCallback(
     (
       propertyId: string,
@@ -90,18 +88,12 @@ export default (mode: Mode) => {
       v: ValueTypes[ValueType] | null,
       vt: ValueType,
     ) => {
-      if (vt === "latlng" && typeof v === "object" && v && "lat" in v) {
-        changeValueLatLngMutation({
-          variables: {
-            propertyId,
-            itemId,
-            schemaItemId,
-            fieldId,
-            lat: v.lat,
-            lng: v.lng,
-          },
-        });
-        return;
+      let av: any = v;
+      if (vt === "camera" && v && typeof v === "object" && "height" in v) {
+        av = {
+          ...v,
+          altitude: v.height,
+        };
       }
 
       const gvt = valueTypeToGQL(vt);
@@ -112,12 +104,12 @@ export default (mode: Mode) => {
           itemId,
           schemaItemId,
           fieldId,
-          value: v,
+          value: av,
           type: gvt,
         },
       });
     },
-    [changeValueLatLngMutation, changeValueMutation],
+    [changeValueMutation],
   );
 
   const [linkDataset] = useLinkDatasetMutation({
