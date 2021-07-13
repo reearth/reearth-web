@@ -38,45 +38,37 @@ const defaultOffset = { pitch: 0, heading: CesiumMath.toRadians(-30), range: def
 
 const Storytelling = ({ widget }: Props): JSX.Element | null => {
   const ctx = useVisualizerContext();
+  const theme = useTheme();
 
   const storiesData = (widget?.property as Property | undefined)?.stories;
-  const storyIds: string[] | undefined = storiesData
-    ?.map(s => s.layer)
-    .filter((id): id is string => !!id);
   const { camera, duration = defaultDuration, autoStart, range } = widget?.property?.default ?? {};
 
   const [menuOpen, setMenu] = useState(false);
-  const isExtraSmallWindow = useMedia("(max-width: 420px)");
   const wrapperRef = useRef(null);
   useClickAway(wrapperRef, () => {
     setMenu(false);
   });
 
+  const isExtraSmallWindow = useMedia("(max-width: 420px)");
+
   const flyTo = ctx?.engine?.flyTo;
   const selectPrimitive = ctx?.pluginAPI?.reearth.primitives.select;
   const primitives = ctx?.primitives;
-  const theme = useTheme();
 
-  const stories = useMemo(() => {
-    const layers = storyIds && primitives?.filter(p => storyIds.includes(p.id));
-
-    return (
-      layers &&
-      storiesData
-        ?.map(story => {
-          const title = layers.find(l => l?.id === story.layer)?.title;
-          if (title) {
-            return {
+  const stories = useMemo<Story[]>(() => {
+    if (!storiesData || !primitives) return [];
+    return storiesData
+      .map(story => {
+        const primitive = primitives.find(l => l.id === story.layer);
+        return primitive
+          ? {
               ...story,
-              title,
-            };
-          }
-          return undefined;
-        })
-        .filter((s): s is Story => !!s)
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storyIds]);
+              title: story.title || primitive.title,
+            }
+          : undefined;
+      })
+      .filter((s): s is Story => !!s);
+  }, [primitives, storiesData]);
 
   const [layerIndex, setLayerIndex] = useState<number>();
   const currentLayerId = typeof layerIndex === "number" ? stories?.[layerIndex]?.layer : undefined;
@@ -88,16 +80,17 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
   const selectLayer = useCallback(
     (index: number) => {
       const story = stories?.[index];
-      const id = story?.layer;
-      if (!story || !id) return;
+      if (!story) return;
 
+      const id = story?.layer;
       setMenu(false);
       setLayerIndex(index);
       selectPrimitive?.(id);
 
-      const layer = primitives?.find(p => p.id === id);
+      const layer = id ? primitives?.find(p => p.id === id) : undefined;
+
+      // Photooverlays have own camera flight and that is the priority here.
       if (
-        // Photooverlays have own camera flight and that is the priority here.
         layer?.pluginId === "reearth" &&
         layer.extensionId === "photooverlay" &&
         !!layer.property?.default?.camera
@@ -118,16 +111,12 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
         height: layer?.property?.default?.height as number | undefined,
       };
 
-      if (
-        typeof position.lat === "number" &&
-        typeof position.lng === "number" &&
-        typeof position.height == "number"
-      ) {
+      if (typeof position.lat === "number" && typeof position.lng === "number") {
         flyTo?.(
           {
             lat: position.lat,
             lng: position.lng,
-            height: position.height,
+            height: position.height ?? 0,
             ...(camera
               ? {
                   heading: camera.heading,
@@ -142,8 +131,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
         );
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [flyTo, stories],
+    [camera, duration, flyTo, primitives, range, selectPrimitive, stories],
   );
 
   const handleNext = useCallback(() => {
