@@ -35,7 +35,8 @@ const ProfileSection: React.FC<Props> = ({
   const [currentLang, setCurrentLang] = useState<string>();
   const [currentThemeValue, setCurrentThemeValue] = useState<string>();
   const [currentThemeLabel, setCurrentThemeLabel] = useState<string>();
-  const themeItems = [
+  type Theme = "DARK" | "LIGHT";
+  const themeItems: { key: Theme; label: string; icon: string }[] = [
     { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
     { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
   ];
