@@ -57,7 +57,7 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
     if (!cameraPosition) return;
     const to = window.setTimeout(() => {
       flyTo(cameraPosition, {
-        duration: (cameraDuration ?? 0) * 1000,
+        duration: cameraDuration ?? 0,
       });
     }, (cameraDelay ?? 0) * 1000);
     return () => clearTimeout(to);

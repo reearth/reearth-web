@@ -167,6 +167,7 @@ export const flyTo = (
     fov?: number;
   },
   options?: {
+    /** Seconds */
     duration?: number;
     easing?: (time: number) => number;
   },
@@ -225,6 +226,7 @@ export const lookAt = (
     fov?: number;
   },
   options?: {
+    /** Seconds */
     duration?: number;
     easing?: (time: number) => number;
   },
