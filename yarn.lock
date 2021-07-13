@@ -6372,7 +6372,7 @@ cesium-navigation@^1.0.0:
   resolved "https://registry.yarnpkg.com/cesium-navigation/-/cesium-navigation-1.0.0.tgz#5ff47befe1fd89f87483cc2ff7013e604e9920b1"
   integrity sha512-tpQEzzpBfplTgKJWxOE5BAliWYMRIgfTd/oL6tVi/G2FPt5luca7dwi8vesiWxsS90kUHTw8949i8t02m3hgaA==
 
-cesium@^1.82.1:
+cesium@^1.83.0:
   version "1.83.0"
   resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.83.0.tgz#7563d917fdeade0c05f94aa695cadf2efa5345c0"
   integrity sha512-CZWsialVDdWUo8SjpWEv0ZUeOlSuDJpy8v0vKo203Sso8umYNFFrsxwm+7u3fFB01VwO+Gp9sUdy02VvIs2jXw==
