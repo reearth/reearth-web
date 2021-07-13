@@ -15,10 +15,11 @@ declare global {
   interface Window {
     REEARTH_CONFIG?: Config;
   }
+  const REEARTH_WEB_VERSION: string | undefined;
 }
 
 export const defaultConfig: Config = {
-  version: process.env.REEARTH_WEB_VERSION || "",
+  version: REEARTH_WEB_VERSION || "",
   api: "/api",
   published: location.origin + "/p/{}",
 };

@@ -2,6 +2,8 @@ const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
+const pkg = require("../package");
+
 module.exports = ({ config }) => {
   config.externals = {
     ...config.externals,
@@ -27,6 +29,7 @@ module.exports = ({ config }) => {
     }),
     new webpack.DefinePlugin({
       CESIUM_BASE_URL: JSON.stringify("cesium"),
+      REEARTH_WEB_VERSION: pkg.version,
     }),
   );
 
