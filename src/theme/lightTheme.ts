@@ -86,7 +86,7 @@ const lightheme: Theme = {
   assetCard: {
     bg: colors.light.bg[4],
     bgHover: colors.light.bg[5],
-    highlight: colors.light.brand.main,
+    highlight: colors.light.functional.select,
     text: colors.light.text.main,
     textHover: colors.light.text.strong,
     shadow: colors.light.bg[1],
