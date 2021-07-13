@@ -67,7 +67,7 @@ PointWithRightLabel.args = {
         style: "point",
         label: true,
         labelText: "label",
-        labelPosition: "right",
+        labelPosition: "left",
         labelTypography: {
           fontSize: 15,
           color: "red",
