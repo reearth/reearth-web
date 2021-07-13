@@ -29,7 +29,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
         </Text>
       </TopWrapper>
       {personal ? (
-        <Text size="m" color={theme.colors.text.weak}>
+        <Text size="m" color={theme.main.weak}>
           {intl.formatMessage({
             defaultMessage:
               "This is your personal workspace, your projects and resource will be managed in this workspace.",
@@ -56,7 +56,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
 };
 
 const Wrapper = styled.div<{ team: Team }>`
-  background: ${props => props.theme.colors.bg[3]};
+  background: ${props => props.theme.main.lighterBg};
   box-sizing: border-box;
   box-shadow: 0 0 5px ${props => props.theme.projectCell.shadow};
   padding: ${metricsSizes["l"]}px ${metricsSizes["2xl"]}px;
@@ -67,7 +67,7 @@ const Wrapper = styled.div<{ team: Team }>`
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.bg[4]};
+    background: ${({ theme }) => theme.main.paleBg};
   }
 `;
 

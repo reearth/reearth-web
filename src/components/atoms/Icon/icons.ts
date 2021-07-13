@@ -108,6 +108,8 @@ import Scale from "./Icons/scale.svg";
 import MapIcon from "./Icons/map.svg";
 import NoProjects from "./Icons/noProjects.svg";
 import TopPage from "./Icons/topPage.svg";
+import Moon from "./Icons/moon.svg";
+import Sun from "./Icons/sun.svg";
 import MenuForDevice from "./Icons/menuForDevice.svg";
 
 // Plugi-ins
@@ -207,6 +209,8 @@ export default {
   fieldClear: FieldClear,
   map: MapIcon,
   noProjects: NoProjects,
+  moon: Moon,
+  sun: Sun,
   topPage: TopPage,
   install: Install,
   uploadZipPlugin: UploadZipPlugin,

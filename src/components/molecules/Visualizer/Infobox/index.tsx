@@ -157,7 +157,7 @@ const Infobox: React.FC<Props> = ({
 const NoContentInfo = styled.div`
   display: flex;
   justify-content: center;
-  color: ${props => props.theme.colors.text.weak};
+  color: ${props => props.theme.main.weak};
   text-align: left;
 `;
 

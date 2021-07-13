@@ -41,7 +41,7 @@ const SectionItem = styled.div`
 `;
 
 const Divider = styled.div`
-  border-bottom: ${props => `solid 1px ${props.theme.colors.outline.weak}`};
+  border-bottom: ${props => `solid 1px ${props.theme.main.border}`};
 `;
 
 export default Section;

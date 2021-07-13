@@ -46,9 +46,9 @@ const reachHistory = reachify(history);
 const App: React.FC = () => {
   return (
     <Auth0Provider>
-      <ThemeProvider>
-        <LocalStateProvider>
-          <GqlProvider>
+      <LocalStateProvider>
+        <GqlProvider>
+          <ThemeProvider>
             <LocationProvider history={reachHistory}>
               <DndProvider>
                 <IntlProvider>
@@ -73,9 +73,9 @@ const App: React.FC = () => {
                 </IntlProvider>
               </DndProvider>
             </LocationProvider>
-          </GqlProvider>
-        </LocalStateProvider>
-      </ThemeProvider>
+          </ThemeProvider>
+        </GqlProvider>
+      </LocalStateProvider>
     </Auth0Provider>
   );
 };

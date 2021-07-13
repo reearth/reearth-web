@@ -222,10 +222,7 @@ const Select = <Value extends string | number>(
       onKeyDown={handleKeyDown}
       tabIndex={0}>
       <SelectWrapper>
-        <Selected
-          inactive={inactive}
-          size="xs"
-          color={!selectedValue ? theme.colors.text.weak : color}>
+        <Selected inactive={inactive} size="xs" color={!selectedValue ? theme.main.weak : color}>
           {selectedLabel || placeholder || intl.formatMessage({ defaultMessage: "not set" })}
         </Selected>
         <StyledDownArrow icon="arrowSelect" />
@@ -304,7 +301,7 @@ const OptionList = styled.ul<{ fullWidth: boolean; open: boolean }>`
   padding: 0;
   border: solid 1px ${props => props.theme.properties.border};
   border-radius: 3px;
-  background: #363636;
+  background: ${({ theme }) => theme.selectList.option.bg};
   box-sizing: border-box;
   overflow: hidden;
   z-index: ${props => props.theme.zIndexes.dropDown};
