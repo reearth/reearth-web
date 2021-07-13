@@ -135,6 +135,7 @@ const darkTheme: Theme = {
     },
     option: {
       bottomBorder: colors.dark.text.main,
+      hoverBg: colors.dark.bg[4],
       bg: colors.dark.bg[5],
       color: colors.dark.text.main,
     },

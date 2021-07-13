@@ -135,6 +135,7 @@ const lightheme: Theme = {
     },
     option: {
       bottomBorder: colors.light.text.main,
+      hoverBg: colors.light.bg[4],
       bg: colors.light.bg[5],
       color: colors.light.text.main,
     },

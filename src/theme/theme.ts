@@ -120,6 +120,7 @@ export type Theme = {
       bottomBorder: string;
       bg: string;
       color: string;
+      hoverBg: string;
     };
   };
   projectCell: {
