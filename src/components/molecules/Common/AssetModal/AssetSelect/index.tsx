@@ -39,7 +39,7 @@ const AssetSelect = <Value extends string | number = string>({
         <StyledText size="xs" color={theme.main.text}>
           {items.find(i => i.key === value)?.label}
         </StyledText>
-        <Icon icon="arrowDown" size={9} />
+        <Icon icon="arrowDown" color={theme.main.text} size={9} />
       </Selected>
       <Options onClick={() => setHidden(!hidden)} hidden={hidden}>
         {items?.map(({ key, label }) => (

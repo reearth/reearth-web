@@ -29,7 +29,7 @@ const SearchBar: React.FC<Props> = ({
           value={value}
           onChange={e => onChange?.(e.currentTarget.value)}
         />
-        {iconPos === "right" && <Icon icon="search" size={20} />}
+        {iconPos === "right" && <Icon icon="search" color={theme.main.text} size={20} />}
       </Flex>
     </Box>
   );
