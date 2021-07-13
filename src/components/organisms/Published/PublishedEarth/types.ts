@@ -8,7 +8,10 @@ export type PublishedData = {
   widgets: Widget[];
 };
 
-export type Plugin = {};
+export type Plugin = {
+  id: string;
+  property: any;
+};
 
 export type Layer = {
   id: string;

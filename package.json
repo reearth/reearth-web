@@ -24,7 +24,8 @@
         "cypress:run": "cypress run",
         "gen": "run-p gen:*",
         "gen:gql": "graphql-codegen --config codegen.yml",
-        "gen:i18n": "extract-messages -d en -l=en,ja -o translations -f yaml 'src/**/*.tsx' --extractFromFormatMessageCall"
+        "gen:i18n": "extract-messages -d en -l=en,ja -o translations -f yaml 'src/**/*.tsx' --extractFromFormatMessageCall",
+        "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {
         "node": ">=12"
@@ -64,6 +65,7 @@
         "@graphql-codegen/typescript-react-apollo": "2.2.1",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@storybook/addon-essentials": "^6.1.17",
+        "@storybook/addon-storysource": "^6.2.9",
         "@storybook/addons": "^6.1.17",
         "@storybook/react": "^6.1.17",
         "@storybook/theming": "^6.1.17",
@@ -121,6 +123,7 @@
         "html-webpack-tags-plugin": "^3.0.0",
         "husky": "^4.3.8",
         "jest": "^26.6.3",
+        "jest-fetch-mock": "^3.0.3",
         "json-loader": "^0.5.7",
         "lint-staged": "^10.5.4",
         "npm-run-all": "^4.1.5",
@@ -173,6 +176,8 @@
         "lodash-es": "^4.17.20",
         "mini-svg-data-uri": "^1.2.3",
         "parse-domain": "^3.0.3",
+        "quickjs-emscripten": "^0.13.0",
+        "quickjs-emscripten-sync": "^1.1.0",
         "rc-slider": "9.7.1",
         "react": "^17.0.1",
         "react-accessible-accordion": "^3.3.4",

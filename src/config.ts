@@ -1,4 +1,5 @@
 export type Config = {
+  version: string;
   api: string;
   published: string;
   auth0ClientId?: string;
@@ -17,6 +18,7 @@ declare global {
 }
 
 export const defaultConfig: Config = {
+  version: process.env.REEARTH_WEB_VERSION || "",
   api: "/api",
   published: location.origin + "/p/{}",
 };
@@ -27,5 +29,6 @@ export default async function loadConfig() {
   window.REEARTH_CONFIG = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
+    version: defaultConfig.version, // prevent overwriting
   };
 }
