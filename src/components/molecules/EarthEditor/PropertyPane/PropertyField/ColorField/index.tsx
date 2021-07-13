@@ -288,20 +288,21 @@ const layerStyle = css`
   height: 100%;
 `;
 
-const check = (props: any) => ` 
-  linear-gradient(
-    45deg, 
-    ${props.theme.toggleButton.bg} 25%, 
-    transparent 25%, 
-    transparent 75%, 
-    ${props.theme.toggleButton.bg} 25%, 
-    ${props.theme.toggleButton.bg} 
-  ) 
+const check = (color: string) => ` 
+linear-gradient(
+  45deg, 
+  ${color} 25%, 
+  transparent 25%, 
+  transparent 75%, 
+  ${color} 25%, 
+  ${color} 
+) 
 `;
 
 const CheckedPattern = styled.div`
   background-color: ${({ theme }) => theme.main.border};
-  background-image: ${props => check(props)}, ${props => check(props)};
+  background-image: ${({ theme }) => check(theme.toggleButton.bg)},
+    ${({ theme }) => check(theme.toggleButton.bg)};
   background-position: 0 0, 6px 6px;
   background-size: 12px 12px;
   ${layerStyle};
