@@ -29,7 +29,7 @@ module.exports = ({ config }) => {
     }),
     new webpack.DefinePlugin({
       CESIUM_BASE_URL: JSON.stringify("cesium"),
-      REEARTH_WEB_VERSION: pkg.version,
+      REEARTH_WEB_VERSION: JSON.stringify(pkg.version),
     }),
   );
 
