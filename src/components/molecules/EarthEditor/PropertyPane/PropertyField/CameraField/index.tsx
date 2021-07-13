@@ -41,7 +41,7 @@ const CameraField: React.FC<Props> = ({
     startCapture,
     handleLatChange,
     handleLngChange,
-    handleAltitudeChange,
+    handleHeightChange,
     handleHeadingChange,
     handlePitchChange,
     handleRollChange,
@@ -61,7 +61,7 @@ const CameraField: React.FC<Props> = ({
 
   const lat = camera?.lat && Math.round(camera?.lat * 1000) / 1000;
   const lng = camera?.lng && Math.round(camera?.lng * 1000) / 1000;
-  const altitude = camera?.altitude && Math.round(camera?.altitude);
+  const height = camera?.height && Math.round(camera?.height);
   const heading = camera?.heading && Math.round(camera?.heading * 1000) / 1000;
   const pitch = camera?.pitch && Math.round(camera?.pitch * 1000) / 1000;
   const roll = camera?.roll && Math.round(camera?.roll * 1000) / 1000;
@@ -106,8 +106,8 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={altitude}
-                    onChange={handleAltitudeChange}
+                    value={height}
+                    onChange={handleHeightChange}
                     step={10 ** 6}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>

@@ -6,39 +6,36 @@ import {
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
   useChangePropertyValueMutation,
-  useChangePropertyValueLatLngMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
-import { valueTypeToGQL, ValueType, ValueTypes, Camera } from "@reearth/util/value";
+import { valueTypeToGQL, ValueType, ValueTypes, Camera, valueToGQL } from "@reearth/util/value";
 
 export default (isBuilt?: boolean) => {
-  const [
-    { sceneId, selectedLayer, selectedBlock, isCapturing, camera },
-    setLocalState,
-  ] = useLocalState(({ sceneId, selectedLayer, selectedBlock, isCapturing, camera }) => ({
-    sceneId,
-    selectedLayer,
-    selectedBlock,
-    isCapturing,
-    camera,
-  }));
+  const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
+    useLocalState(({ sceneId, selectedLayer, selectedBlock, isCapturing, camera }) => ({
+      sceneId,
+      selectedLayer,
+      selectedBlock,
+      isCapturing,
+      camera,
+    }));
 
   const selectLayer = useCallback(
     (id?: string) => setLocalState({ selectedLayer: id, selectedType: "layer" }),
     [setLocalState],
   );
-  const selectBlock = useCallback((id?: string) => setLocalState({ selectedBlock: id }), [
-    setLocalState,
-  ]);
+  const selectBlock = useCallback(
+    (id?: string) => setLocalState({ selectedBlock: id }),
+    [setLocalState],
+  );
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
   const [changePropertyValue] = useChangePropertyValueMutation();
-  const [changePropertyValueLatLng] = useChangePropertyValueLatLngMutation();
 
   const onBlockMove = useCallback(
     async (id: string, _fromIndex: number, toIndex: number) => {
@@ -75,33 +72,21 @@ export default (isBuilt?: boolean) => {
       v: ValueTypes[T],
       vt: T,
     ) => {
-      if (vt === "latlng") {
-        await changePropertyValueLatLng({
-          variables: {
-            propertyId,
-            schemaItemId,
-            fieldId: fid,
-            lat: (v as ValueTypes["latlng"]).lat,
-            lng: (v as ValueTypes["latlng"]).lng,
-          },
-        });
-        return;
-      }
-
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
 
+      const gv = valueToGQL(v, vt);
       await changePropertyValue({
         variables: {
           propertyId,
           schemaItemId,
           fieldId: fid,
-          value: v,
           type: gvt,
+          value: gv,
         },
       });
     },
-    [changePropertyValue, changePropertyValueLatLng],
+    [changePropertyValue],
   );
 
   const { data: layerData } = useGetLayersQuery({
@@ -132,10 +117,10 @@ export default (isBuilt?: boolean) => {
     [setLocalState, camera],
   );
 
-  const onFovChange = useCallback((fov: number) => camera && onCameraChange({ ...camera, fov }), [
-    camera,
-    onCameraChange,
-  ]);
+  const onFovChange = useCallback(
+    (fov: number) => camera && onCameraChange({ ...camera, fov }),
+    [camera, onCameraChange],
+  );
 
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
@@ -176,7 +161,7 @@ export default (isBuilt?: boolean) => {
     blocks,
     isCapturing,
     camera,
-    initialLoaded: !isBuilt || (!!layerData && !!widgetData),
+    ready: !isBuilt || (!!layerData && !!widgetData),
     selectLayer,
     selectBlock,
     onBlockChange,

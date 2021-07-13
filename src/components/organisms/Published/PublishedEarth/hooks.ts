@@ -1,58 +1,42 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ReactGA from "react-ga";
-import { EarthLayer, EarthWidget } from "@reearth/components/molecules/EarthEditor/Earth";
-import { Block } from "@reearth/components/molecules/EarthEditor/InfoBox/InfoBox";
-import { PublishedData } from "./types";
+import { mapValues } from "lodash-es";
 
-export type Layer = EarthLayer & {
-  name?: string;
-  infobox?: {
-    property?: any;
-    blocks?: Block[];
-  };
-};
+import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import { PublishedData } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
-  const [initialLoaded, setInitialLoaded] = useState(false);
-  const [selectedLayerId, changeSelectedLayerId] = useState<string>();
-  const [infoBoxVisible, setInfoBoxVisible] = useState(true);
-
-  const selectLayer = useCallback((id?: string) => {
-    changeSelectedLayerId(id);
-  }, []);
-
-  const googleAnalyticsData: { enableGA?: boolean; trackingId?: string } = useMemo(
-    () => ({
-      enableGA: data?.property.googleAnalytics?.enableGA,
-      trackingId: data?.property.googleAnalytics?.trackingId,
-    }),
-    [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics?.trackingId],
-  );
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!googleAnalyticsData.enableGA || !googleAnalyticsData.trackingId) return;
-    ReactGA.initialize(googleAnalyticsData.trackingId);
+    if (!data?.property.googleAnalytics?.enableGA || !data?.property.googleAnalytics?.trackingId)
+      return;
+    ReactGA.initialize(data.property.googleAnalytics.trackingId);
     ReactGA.pageview(window.location.pathname);
-  }, [googleAnalyticsData]);
+  }, [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics.trackingId]);
 
-  const layers = useMemo<Layer[] | undefined>(
+  const layers = useMemo<Primitive[] | undefined>(
     () =>
-      data?.layers.map(l => ({
+      data?.layers.map<Primitive>(l => ({
         id: l.id,
         title: l.name || "",
-        pluginId: l.pluginId,
-        extensionId: l.extensionId,
+        plugin: `${l.pluginId}/${l.extensionId}`,
         isVisible: true,
-        property: l.property,
+        property: processProperty(l.property),
+        pluginProperty: processProperty(data.plugins.find(p => p.id === l.pluginId)?.property),
         infobox: l.infobox
           ? {
-              property: l.infobox.property,
-              blocks: l.infobox.fields.map(f => ({
+              property: processProperty(l.infobox.property),
+              blocks: l.infobox.fields.map<Block>(f => ({
                 id: f.id,
                 pluginId: f.pluginId,
                 extensionId: f.extensionId,
-                property: f.property,
+                property: processProperty(f.property),
+                pluginProperty: processProperty(
+                  data.plugins.find(p => p.id === f.pluginId)?.property,
+                ),
+                // propertyId is not required in non-editable mode
               })),
             }
           : undefined,
@@ -60,26 +44,18 @@ export default (alias?: string) => {
     [data],
   );
 
-  const widgets = useMemo<EarthWidget[] | undefined>(
+  const widgets = useMemo<Widget[] | undefined>(
     () =>
-      data?.widgets.map(w => ({
+      data?.widgets.map<Widget>(w => ({
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: w.property,
+        property: processProperty(w.property),
         enabled: true,
+        pluginProperty: processProperty(data.plugins.find(p => p.id === w.pluginId)?.property),
       })),
     [data],
   );
-
-  const selectedLayer = useMemo(
-    () => (selectedLayerId ? layers?.find(l => l.id === selectedLayerId) : undefined),
-    [layers, selectedLayerId],
-  );
-
-  useEffect(() => {
-    setInfoBoxVisible(!!selectedLayerId);
-  }, [selectedLayerId]);
 
   useEffect(() => {
     const url = "data.json";
@@ -107,19 +83,28 @@ export default (alias?: string) => {
         // TODO: display error for users
         console.error(e);
       } finally {
-        setInitialLoaded(true);
+        setReady(true);
       }
     })();
   }, [alias]);
 
   return {
     sceneProperty: data?.property,
-    selectedLayerId,
-    selectLayer,
     layers,
     widgets,
-    selectedLayer,
-    infoBoxVisible,
-    initialLoaded,
+    ready,
   };
 };
+
+// For compability
+function processProperty(p: any): any {
+  if (typeof p !== "object") return p;
+  return mapValues(p, f =>
+    mapValues(f, v => {
+      if ("lat" in v && "lng" in v && "altitude" in v) {
+        v.height = v.altitude;
+      }
+      return v;
+    }),
+  );
+}

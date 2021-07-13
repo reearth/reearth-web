@@ -26,6 +26,7 @@ const mockClient = new ApolloClient({
 export const parameters = {
   layout: "fullscreen",
   controls: { expanded: true },
+  actions: { argTypesRegex: "^on[A-Z].*" },
 };
 
 export const decorators = [

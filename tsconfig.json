@@ -33,6 +33,7 @@
   },
   "include": [
     "src",
+    "bin",
     "node_modules/babel-plugin-react-intl-auto/**/*.d.ts"
   ]
 }

@@ -5,13 +5,13 @@ import { Camera } from "@reearth/util/value";
 
 type Params = {
   cameraValue: Camera | undefined;
-  onSubmit?: (value: Camera) => void;
   isCapturing?: boolean;
-  onIsCapturingChange?: (isCapturing: boolean) => void;
   cameraState?: Camera;
-  onCameraChange?: (camera: Partial<Camera>) => void;
   disabled?: boolean;
   onlyPose?: boolean;
+  onSubmit?: (value: Camera) => void;
+  onIsCapturingChange?: (isCapturing: boolean) => void;
+  onCameraChange?: (camera: Partial<Camera>) => void;
 };
 
 export default ({
@@ -96,14 +96,14 @@ export default ({
     [updateCamera],
   );
 
-  const updateAltitude = useCallback(
-    (fov: number) => updateCamera({ altitude: Math.max(500, Math.min(fov, 10 ** 10)) }),
+  const updateHeight = useCallback(
+    (fov: number) => updateCamera({ height: Math.max(500, Math.min(fov, 10 ** 10)) }),
     [updateCamera],
   );
 
-  const handleAltitudeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => updateAltitude(Number(e.target.value)),
-    [updateAltitude],
+  const handleHeightChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => updateHeight(Number(e.target.value)),
+    [updateHeight],
   );
 
   const handleHeadingChange = useCallback(
@@ -155,7 +155,7 @@ export default ({
     onCameraChange?.(
       onlyPose
         ? {
-            altitude: cameraValue.altitude,
+            height: cameraValue.height,
             heading: cameraValue.heading,
             pitch: cameraValue.pitch,
             roll: cameraValue.roll,
@@ -180,7 +180,7 @@ export default ({
     updateCamera,
     handleLatChange,
     handleLngChange,
-    handleAltitudeChange,
+    handleHeightChange,
     handleHeadingChange,
     handlePitchChange,
     handleRollChange,
