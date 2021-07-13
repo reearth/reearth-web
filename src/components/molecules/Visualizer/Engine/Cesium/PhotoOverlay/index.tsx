@@ -129,8 +129,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
         easing: EasingFunction.CUBIC_IN_OUT,
       },
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFov]); // ignore api
+  }, [ctx?.engine, currentFov]);
 
   const transition = useTransition(mode >= 3, mode === 2 ? photoExitDuration : photoDuration, {
     mountOnEnter: true,
