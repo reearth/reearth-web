@@ -101,7 +101,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
             maximumTerrainLevel={max}
           />
         ))}
-        {children}
+        {ready ? children : null}
       </Viewer>
       {!ready && <Loading />}
     </>
