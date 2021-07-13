@@ -141,6 +141,7 @@ const darkTheme: Theme = {
     },
   },
   slider: {
+    background: colors.dark.bg[2],
     border: colors.dark.primary.main,
     handle: colors.dark.primary.main,
     track: colors.dark.primary.main,

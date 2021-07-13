@@ -154,6 +154,7 @@ export type Theme = {
     text: string;
   };
   slider: {
+    background: string;
     border: string;
     handle: string;
     track: string;

@@ -141,6 +141,7 @@ const lightheme: Theme = {
     },
   },
   slider: {
+    background: colors.light.bg[2],
     border: colors.light.primary.main,
     handle: colors.light.primary.main,
     track: colors.light.primary.main,
