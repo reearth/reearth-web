@@ -29,7 +29,7 @@ const Menu = ({ widget }: Props): JSX.Element => {
   const ctx = useVisualizerContext();
   const { buttons, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
   const buttonsByPosition = useMemo(
-    () => groupBy(buttons, v => v.buttonPosition) as { [p in Position]: Button[] },
+    () => groupBy(buttons, v => v.buttonPosition || "topleft") as { [p in Position]: Button[] },
     [buttons],
   );
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
@@ -72,26 +72,28 @@ const Menu = ({ widget }: Props): JSX.Element => {
           action={() => setVisibleMenuButton(undefined)}
         />
       </ScreenSpaceEventHandler>
-      {pos.map(p => (
-        <Wrapper key={p} position={p}>
-          {buttonsByPosition?.[p]?.map(b =>
-            !b.buttonInvisible ? (
-              <div style={{ position: "relative" }}>
-                <MenuButton
-                  key={b.id}
-                  button={b}
-                  pos={p}
-                  menuVisible={visibleMenuButton === b.id}
-                  menuItems={menuItems}
-                  itemOnClick={handleClick}
-                  onClick={handleClick(b)}
-                  onClose={closeMenu}
-                />
-              </div>
-            ) : null,
-          )}
-        </Wrapper>
-      ))}
+      {pos.map(p =>
+        buttonsByPosition[p]?.length ? (
+          <Wrapper key={p} position={p}>
+            {buttonsByPosition[p]?.map(b =>
+              !b.buttonInvisible ? (
+                <div style={{ position: "relative" }}>
+                  <MenuButton
+                    key={b.id}
+                    button={b}
+                    pos={p}
+                    menuVisible={visibleMenuButton === b.id}
+                    menuItems={menuItems}
+                    itemOnClick={handleClick}
+                    onClick={handleClick(b)}
+                    onClose={closeMenu}
+                  />
+                </div>
+              ) : null,
+            )}
+          </Wrapper>
+        ) : null,
+      )}
     </>
   );
 };
