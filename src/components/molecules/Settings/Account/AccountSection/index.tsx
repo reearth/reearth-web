@@ -88,7 +88,7 @@ const ProfileSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.main.lighterBg};
+  background-color: ${({ theme }) => theme.main.paleBg};
 `;
 
 const StyledIcon = styled(Icon)`
