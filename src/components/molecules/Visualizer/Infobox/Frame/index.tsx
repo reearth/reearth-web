@@ -103,9 +103,7 @@ const InfoBox: React.FC<Props> = ({
           onClick={handleOpen}>
           {isSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
           <Text size="m" weight="bold">
-            <TitleText noContent={noContent} open={open}>
-              {title || " "}
-            </TitleText>
+            <TitleText>{title || " "}</TitleText>
           </Text>
           {!isSmallWindow && <StyledIcon icon="arrowDown" size={24} open={open} />}
         </TitleFlex>
@@ -154,15 +152,10 @@ const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
 `;
 
 const TitleFlex = styled(Flex)<{ noContent?: boolean; open?: boolean }>`
-  margin: ${metricsSizes["s"]}px auto;
+  margin: ${metricsSizes["m"]}px auto;
   text-align: center;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   box-sizing: border-box;
   cursor: pointer;
-  height: ${({ noContent, open }) => (noContent ? "auto" : open ? "30px" : "54px")};
-
   width: 75%;
 `;
 
@@ -170,8 +163,8 @@ const StyledIcon = styled(Icon)<{ open?: boolean }>`
   display: ${({ open }) => (open ? "none" : "block")};
 `;
 
-const TitleText = styled.span<{ noContent?: boolean; open?: boolean }>`
-  line-height: ${({ noContent, open }) => (noContent || open ? "30px" : "inherit")};
+const TitleText = styled.span`
+  line-height: ${metricsSizes["2xl"]}px;
 `;
 
 const CloseBtn = styled(Icon)<{ open?: boolean }>`
