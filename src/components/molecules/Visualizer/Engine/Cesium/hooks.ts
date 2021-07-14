@@ -147,7 +147,10 @@ export default ({
 
   // update
   useEffect(() => {
-    cesium.current?.cesiumElement?.scene.requestRender();
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+
+    viewer.scene.requestRender();
   });
 
   return {
