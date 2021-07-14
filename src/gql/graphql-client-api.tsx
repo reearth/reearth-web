@@ -4551,6 +4551,17 @@ export type PropertyFieldLinkFragment = (
   )> }
 );
 
+export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserDataQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'theme' | 'lang'>
+  )> }
+);
+
 export type DeleteMeMutationVariables = Exact<{
   userId: Scalars['ID'];
 }>;
@@ -4610,28 +4621,6 @@ export type TeamsQuery = (
       & Pick<Team, 'id'>
       & TeamFragment
     )> }
-  )> }
-);
-
-export type LanguageQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LanguageQuery = (
-  { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'lang'>
-  )> }
-);
-
-export type ThemeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ThemeQuery = (
-  { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'theme'>
   )> }
 );
 
@@ -8365,6 +8354,40 @@ export function useGetSceneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetSceneQueryHookResult = ReturnType<typeof useGetSceneQuery>;
 export type GetSceneLazyQueryHookResult = ReturnType<typeof useGetSceneLazyQuery>;
 export type GetSceneQueryResult = Apollo.QueryResult<GetSceneQuery, GetSceneQueryVariables>;
+export const UserDataDocument = gql`
+    query UserData {
+  me {
+    id
+    theme
+    lang
+  }
+}
+    `;
+
+/**
+ * __useUserDataQuery__
+ *
+ * To run a query within a React component, call `useUserDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserDataQuery(baseOptions?: Apollo.QueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
+        return Apollo.useQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, baseOptions);
+      }
+export function useUserDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
+          return Apollo.useLazyQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, baseOptions);
+        }
+export type UserDataQueryHookResult = ReturnType<typeof useUserDataQuery>;
+export type UserDataLazyQueryHookResult = ReturnType<typeof useUserDataLazyQuery>;
+export type UserDataQueryResult = Apollo.QueryResult<UserDataQuery, UserDataQueryVariables>;
 export const DeleteMeDocument = gql`
     mutation deleteMe($userId: ID!) {
   deleteMe(input: {userId: $userId}) {
@@ -8473,69 +8496,3 @@ export function useTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Team
 export type TeamsQueryHookResult = ReturnType<typeof useTeamsQuery>;
 export type TeamsLazyQueryHookResult = ReturnType<typeof useTeamsLazyQuery>;
 export type TeamsQueryResult = Apollo.QueryResult<TeamsQuery, TeamsQueryVariables>;
-export const LanguageDocument = gql`
-    query Language {
-  me {
-    id
-    lang
-  }
-}
-    `;
-
-/**
- * __useLanguageQuery__
- *
- * To run a query within a React component, call `useLanguageQuery` and pass it any options that fit your needs.
- * When your component renders, `useLanguageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLanguageQuery({
- *   variables: {
- *   },
- * });
- */
-export function useLanguageQuery(baseOptions?: Apollo.QueryHookOptions<LanguageQuery, LanguageQueryVariables>) {
-        return Apollo.useQuery<LanguageQuery, LanguageQueryVariables>(LanguageDocument, baseOptions);
-      }
-export function useLanguageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LanguageQuery, LanguageQueryVariables>) {
-          return Apollo.useLazyQuery<LanguageQuery, LanguageQueryVariables>(LanguageDocument, baseOptions);
-        }
-export type LanguageQueryHookResult = ReturnType<typeof useLanguageQuery>;
-export type LanguageLazyQueryHookResult = ReturnType<typeof useLanguageLazyQuery>;
-export type LanguageQueryResult = Apollo.QueryResult<LanguageQuery, LanguageQueryVariables>;
-export const ThemeDocument = gql`
-    query Theme {
-  me {
-    id
-    theme
-  }
-}
-    `;
-
-/**
- * __useThemeQuery__
- *
- * To run a query within a React component, call `useThemeQuery` and pass it any options that fit your needs.
- * When your component renders, `useThemeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useThemeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useThemeQuery(baseOptions?: Apollo.QueryHookOptions<ThemeQuery, ThemeQueryVariables>) {
-        return Apollo.useQuery<ThemeQuery, ThemeQueryVariables>(ThemeDocument, baseOptions);
-      }
-export function useThemeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThemeQuery, ThemeQueryVariables>) {
-          return Apollo.useLazyQuery<ThemeQuery, ThemeQueryVariables>(ThemeDocument, baseOptions);
-        }
-export type ThemeQueryHookResult = ReturnType<typeof useThemeQuery>;
-export type ThemeLazyQueryHookResult = ReturnType<typeof useThemeLazyQuery>;
-export type ThemeQueryResult = Apollo.QueryResult<ThemeQuery, ThemeQueryVariables>;

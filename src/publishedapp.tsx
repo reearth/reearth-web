@@ -3,7 +3,7 @@ import { LocationProvider } from "@reach/router";
 
 import { Provider as ThemeProvider } from "./theme";
 import { Provider as LocalStateProvider } from "./state";
-import { PublishedProvider as IntlProvider } from "./locale";
+import { Provider as IntlProvider } from "./locale";
 
 import PublishedPage from "@reearth/components/pages/Published";
 

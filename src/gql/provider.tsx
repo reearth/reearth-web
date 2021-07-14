@@ -3,22 +3,23 @@ import { ApolloProvider, ApolloClient, ApolloLink, InMemoryCache } from "@apollo
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { createUploadLink } from "apollo-upload-client";
-import { useAuth0 } from "@auth0/auth0-react";
 import { SentryLink } from "apollo-link-sentry";
 
+import { useAuth } from "@reearth/auth";
 import { store, localSlice } from "@reearth/state";
 import { reportError } from "@reearth/sentry";
 import fragmentMatcher from "./fragmentMatcher.json";
+import UserDataProvider from "./userdata";
 
 const Provider: React.FC = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessToken } = useAuth();
 
   const authLink = setContext(async (_, { headers }) => {
     // get the authentication token from local storage if it exists
-    const accessToken = window.REEARTH_E2E_ACCESS_TOKEN || (await getAccessTokenSilently());
+    const accessToken = window.REEARTH_E2E_ACCESS_TOKEN || (await getAccessToken());
     // return the headers to the context so httpLink can read them
     return {
       headers: {
@@ -61,7 +62,11 @@ const Provider: React.FC = ({ children }) => {
     connectToDevTools: process.env.NODE_ENV === "development",
   });
 
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return (
+    <ApolloProvider client={client}>
+      <UserDataProvider>{children}</UserDataProvider>
+    </ApolloProvider>
+  );
 };
 
 export default Provider;

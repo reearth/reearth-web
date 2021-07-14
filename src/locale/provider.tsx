@@ -1,18 +1,15 @@
 import React, { PropsWithChildren } from "react";
 import { IntlProvider } from "react-intl";
 
-import { useLanguageQuery } from "@reearth/gql";
-import { useAuth } from "@reearth/auth";
-import { Locale, defaultLocale, locales, messages } from "./locale";
+import { useUserData } from "@reearth/gql";
+import { locales, defaultLocale, messages } from "./locale";
 
 export default function Provider({ children }: PropsWithChildren<{}>) {
-  const { isAuthenticated } = useAuth();
-  const { data } = useLanguageQuery({ skip: !isAuthenticated });
-  const locale =
-    data?.me?.lang && locales.includes(data.me.lang as Locale) ? data.me.lang : defaultLocale;
+  const { lang } = useUserData() ?? {};
+  const actualLang = lang && locales.includes(lang as any) ? lang : defaultLocale;
 
   return (
-    <IntlProvider locale={locale} defaultLocale={defaultLocale} messages={messages[locale]}>
+    <IntlProvider locale={actualLang} defaultLocale={defaultLocale} messages={messages[actualLang]}>
       {children}
     </IntlProvider>
   );
