@@ -1,6 +1,4 @@
 import React, { useRef, useCallback, useState } from "react";
-// import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
-// import { ScreenSpaceEventType } from "cesium";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
@@ -98,12 +96,6 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
   useClickAway(referenceElement, () => setVisibleMenuButton(undefined));
   return (
     <>
-      {/* <ScreenSpaceEventHandler>
-        <ScreenSpaceEvent
-          type={ScreenSpaceEventType.LEFT_CLICK}
-          action={() => console.log("hello")}
-        />
-      </ScreenSpaceEventHandler> */}
       <Button tabIndex={0} button={b} onClick={handleClick(b)} ref={referenceElement}>
         {(b.buttonStyle === "icon" || b.buttonStyle === "texticon") && b.buttonIcon && (
           <StyledIcon icon={b.buttonIcon} size={25} margin={!!b.buttonTitle} />
