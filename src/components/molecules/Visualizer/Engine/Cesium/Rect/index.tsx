@@ -18,7 +18,7 @@ export type Property = {
   };
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
+const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
   const { id, isVisible, property } = primitive ?? {};
   const { rect, image, style, fillColor, height, extrudedHeight } =
     (property as Property | undefined)?.default ?? {};
@@ -56,7 +56,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => 
   );
 
   return !isVisible ? null : (
-    <Entity id={id} selected={isSelected}>
+    <Entity id={id}>
       <RectangleGraphics
         height={height}
         extrudedHeight={extrudedHeight}

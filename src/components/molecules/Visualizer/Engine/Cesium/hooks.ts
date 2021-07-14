@@ -1,20 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
-import { CesiumComponentRef } from "resium";
-import {
-  Viewer as CesiumViewer,
-  ImageryProvider,
-  TerrainProvider,
-  createWorldTerrain,
-  EllipsoidTerrainProvider,
-  Color,
-  Ion,
-} from "cesium";
+import { createWorldTerrain, Color, Entity, Ion, EllipsoidTerrainProvider } from "cesium";
+import { isEqual } from "lodash-es";
+import type { CesiumComponentRef, CesiumMovementEvent } from "resium";
+import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 
 import { Camera } from "@reearth/util/value";
 
 import { Ref as EngineRef } from "..";
-import useEntitySelection from "./useEntitySelection";
 import tiles from "./tiles";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
@@ -48,15 +41,17 @@ export type SceneProperty = {
 };
 
 export default ({
-  selectedLayerId,
-  property,
   ref,
+  property,
+  camera,
+  selectedPrimitiveId,
   onLayerSelect,
   onCameraChange,
 }: {
-  selectedLayerId?: string;
-  property?: SceneProperty;
   ref: React.ForwardedRef<EngineRef>;
+  property?: SceneProperty;
+  camera?: Camera;
+  selectedPrimitiveId?: string;
   onLayerSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
 }) => {
@@ -124,15 +119,40 @@ export default ({
 
   // call onCameraChange event after moving camera
   const onCameraMoveEnd = useCallback(() => {
-    if (!cesium?.current?.cesiumElement) return;
-    const c = getCamera(cesium.current.cesiumElement);
-    if (c) {
+    const viewer = cesium?.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+
+    const c = getCamera(viewer);
+    if (c && !isEqual(c, camera)) {
       onCameraChange?.(c);
     }
-  }, [onCameraChange]);
+  }, [onCameraChange, camera]);
 
   // manage layer selection
-  const selectViewerEntity = useEntitySelection(cesium, selectedLayerId, onLayerSelect);
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+
+    const entity = selectedPrimitiveId ? viewer.entities.getById(selectedPrimitiveId) : undefined;
+    if (viewer.selectedEntity === entity || (entity && !selectable(entity))) return;
+
+    viewer.selectedEntity = entity;
+  }, [cesium, selectedPrimitiveId]);
+
+  const selectViewerEntity = useCallback(
+    (_: CesiumMovementEvent, target: any) => {
+      const viewer = cesium.current?.cesiumElement;
+      if (
+        !viewer ||
+        viewer.isDestroyed() ||
+        (target && !selectable(target)) ||
+        viewer.selectedEntity === target
+      )
+        return;
+      onLayerSelect?.(target?.id);
+    },
+    [cesium, onLayerSelect],
+  );
 
   // E2E test
   useEffect(() => {
@@ -161,4 +181,11 @@ export default ({
     selectViewerEntity,
     onCameraMoveEnd,
   };
+};
+
+const tag = "reearth_unselectable";
+const selectable = (e: Entity | undefined) => {
+  if (!e) return false;
+  const p = e.properties;
+  return !p || !p.hasProperty(tag);
 };

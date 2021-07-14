@@ -26,12 +26,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
   {
     className,
     style,
-    selectedPrimitiveId: selectedEntityId,
     property,
     camera,
     small,
     ready,
     children,
+    selectedPrimitiveId,
     onPrimitiveSelect: onLayerSelect,
     onCameraChange,
   },
@@ -45,9 +45,10 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
     selectViewerEntity,
     onCameraMoveEnd,
   } = useHooks({
-    selectedLayerId: selectedEntityId,
-    property,
     ref,
+    property,
+    camera,
+    selectedPrimitiveId,
     onLayerSelect,
     onCameraChange,
   });

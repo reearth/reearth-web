@@ -144,7 +144,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
 
   return !isVisible ? null : (
     <>
-      <Entity id={id} position={pos} selected={isSelected}>
+      <Entity id={id} position={pos}>
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}
