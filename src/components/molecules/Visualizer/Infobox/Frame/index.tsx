@@ -98,8 +98,6 @@ const InfoBox: React.FC<Props> = ({
           flex="0 0 auto"
           justify={open ? "flex-start" : "space-evenly"}
           direction="column"
-          open={open}
-          noContent={noContent}
           onClick={handleOpen}>
           {isSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
           <Text size="m" weight="bold">
@@ -151,7 +149,7 @@ const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
   }
 `;
 
-const TitleFlex = styled(Flex)<{ noContent?: boolean; open?: boolean }>`
+const TitleFlex = styled(Flex)`
   margin: ${metricsSizes["m"]}px auto;
   text-align: center;
   box-sizing: border-box;
