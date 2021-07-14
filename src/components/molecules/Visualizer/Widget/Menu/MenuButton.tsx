@@ -35,8 +35,8 @@ export type Props = {
   button: Button;
   menuVisible?: boolean;
   menuItems?: MenuItem[];
-  itemOnClick?: (b: Button | MenuItem) => () => void;
   pos: Position;
+  itemOnClick?: (b: Button | MenuItem) => () => void;
   onClick?: () => void;
   onClose?: () => void;
 };
