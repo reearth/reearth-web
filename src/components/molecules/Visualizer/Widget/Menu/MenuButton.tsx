@@ -97,7 +97,7 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   useClickAway(referenceElement, () => setVisibleMenuButton(undefined));
   return (
-    <>
+    <Wrapper>
       <ScreenSpaceEventHandler>
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.LEFT_CLICK}
@@ -129,9 +129,18 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
           </MenuWrapper>
         )}
       </div>
-    </>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  position: relative;
+  margin-left: 5px;
+
+  &:first-of-type {
+    margin-left: 0;
+  }
+`;
 
 const StyledIcon = styled(Icon)<{ margin: boolean }>`
   vertical-align: middle;
@@ -172,10 +181,5 @@ const Button = styled.div<{ button?: Button }>`
   color: ${({ button }) => button?.buttonColor || "#fff"};
   cursor: pointer;
   align-items: center;
-  margin-left: 5px;
   user-select: none;
-
-  &:first-of-type {
-    margin-left: 0;
-  }
 `;

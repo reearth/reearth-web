@@ -28,8 +28,7 @@ import LayerField, { Layer as LayerType } from "./LayerField";
 import { FieldProps } from "./types";
 import Flex from "@reearth/components/atoms/Flex";
 
-export { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
-
+export type { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
 export type ValueType = ValueTypeType;
 export type ValueTypes = ValueTypesType;
 export type LatLng = LatLngType;

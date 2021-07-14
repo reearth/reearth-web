@@ -1,6 +1,8 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
+import { styled, useTheme } from "@reearth/theme";
+import { metricsSizes } from "@reearth/theme/metrics";
 import Slide from "@reearth/components/atoms/Slide";
 import Icon from "@reearth/components/atoms/Icon";
 import Divider from "@reearth/components/atoms/Divider";
@@ -9,13 +11,9 @@ import Flex from "@reearth/components/atoms/Flex";
 import List from "./List";
 import Header from "./Header";
 import { DatasetSchema, Type } from "./types";
-import { metricsSizes } from "@reearth/theme/metrics";
 import useHooks from "./hooks";
 
-import { styled, useTheme } from "@reearth/theme";
-
-export { DatasetSchema, Dataset, DatasetField, Type } from "./types";
-
+export type { DatasetSchema, Dataset, DatasetField, Type } from "./types";
 export type Props = {
   className?: string;
   linkedDataset?: {

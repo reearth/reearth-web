@@ -19,8 +19,6 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const pos: Position[] = ["topleft", "topright", "bottomleft", "bottomright"];
-
 const Menu = ({ widget }: Props): JSX.Element => {
   const { buttons, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
   const buttonsByPosition = useMemo(
@@ -30,14 +28,12 @@ const Menu = ({ widget }: Props): JSX.Element => {
 
   return (
     <>
-      {pos.map(p =>
-        buttonsByPosition[p]?.length ? (
-          <Wrapper key={p} position={p}>
-            {buttonsByPosition[p]?.map(b =>
+      {Object.entries(buttonsByPosition).map(([p, buttons]) =>
+        buttons?.length ? (
+          <Wrapper key={p} position={p as Position}>
+            {buttons.map(b =>
               !b.buttonInvisible ? (
-                <div style={{ position: "relative" }}>
-                  <MenuButton key={b.id} button={b} pos={p} menuItems={menuItems} />
-                </div>
+                <MenuButton key={b.id} button={b} pos={p as Position} menuItems={menuItems} />
               ) : null,
             )}
           </Wrapper>

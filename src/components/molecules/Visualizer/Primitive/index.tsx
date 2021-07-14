@@ -13,7 +13,6 @@ export type Props<PP = any, SP = any> = {
   isHidden?: boolean;
   pluginProperty?: PP;
   sceneProperty?: SP;
-  selected?: [id: string | undefined, reason?: string | undefined];
   pluginBaseUrl?: string;
 };
 
