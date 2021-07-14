@@ -34,7 +34,11 @@ export type Property = {
 
 const defaultRange = 50000;
 const defaultDuration = 3;
-const defaultOffset = { pitch: 0, heading: CesiumMath.toRadians(-30), range: defaultRange };
+const defaultOffset = {
+  heading: CesiumMath.toRadians(0),
+  pitch: CesiumMath.toRadians(-30),
+  range: defaultRange,
+};
 
 const Storytelling = ({ widget }: Props): JSX.Element | null => {
   const ctx = useVisualizerContext();
@@ -51,7 +55,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
 
-  const flyTo = ctx?.engine?.flyTo;
+  const { flyTo, lookAt } = ctx?.engine ?? {};
   const selectPrimitive = ctx?.pluginAPI?.reearth.primitives.select;
   const primitives = ctx?.primitives;
 
@@ -112,7 +116,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
       };
 
       if (typeof position.lat === "number" && typeof position.lng === "number") {
-        flyTo?.(
+        lookAt?.(
           {
             lat: position.lat,
             lng: position.lng,
@@ -131,7 +135,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
         );
       }
     },
-    [camera, duration, flyTo, primitives, range, selectPrimitive, stories],
+    [camera, duration, flyTo, lookAt, primitives, range, selectPrimitive, stories],
   );
 
   const handleNext = useCallback(() => {
