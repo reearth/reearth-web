@@ -111,8 +111,7 @@ export default function Visualizer<SP = any>({
               isHidden={hiddenPrimitives.includes(primitive.id)}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
-              isSelected={selectedPrimitive?.id === primitive.id}
-              selected={selectedPrimitiveId}
+              isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
               pluginBaseUrl={pluginBaseUrl}
             />
           ))}

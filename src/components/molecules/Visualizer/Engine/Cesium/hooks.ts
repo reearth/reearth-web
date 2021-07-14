@@ -45,14 +45,14 @@ export default ({
   property,
   camera,
   selectedPrimitiveId,
-  onLayerSelect,
+  onPrimitiveSelect,
   onCameraChange,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
   camera?: Camera;
   selectedPrimitiveId?: string;
-  onLayerSelect?: (id?: string) => void;
+  onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -145,13 +145,13 @@ export default ({
       if (
         !viewer ||
         viewer.isDestroyed() ||
-        (target && !selectable(target)) ||
-        viewer.selectedEntity === target
+        viewer.selectedEntity === target ||
+        (target && !selectable(target))
       )
         return;
-      onLayerSelect?.(target?.id);
+      onPrimitiveSelect?.(target?.id);
     },
-    [cesium, onLayerSelect],
+    [cesium, onPrimitiveSelect],
   );
 
   // E2E test

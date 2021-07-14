@@ -32,7 +32,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
     ready,
     children,
     selectedPrimitiveId,
-    onPrimitiveSelect: onLayerSelect,
+    onPrimitiveSelect,
     onCameraChange,
   },
   ref,
@@ -49,7 +49,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<ScenePropert
     property,
     camera,
     selectedPrimitiveId,
-    onLayerSelect,
+    onPrimitiveSelect,
     onCameraChange,
   });
 
