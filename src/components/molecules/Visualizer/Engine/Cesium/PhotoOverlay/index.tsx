@@ -50,7 +50,7 @@ const durations: Durations = [
   [photoDuration, photoExitDuration],
 ];
 
-const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected, selected }) => {
+const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
   const ctx = useVisualizerContext();
   const { id, isVisible, property } = primitive ?? {};
   const {
@@ -69,7 +69,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
     camera,
     photoOverlayImage,
     photoOverlayDescription,
-  } = property?.default ?? {};
+  } = (property as Property | undefined)?.default ?? {};
 
   const [canvas] = useIcon({
     image: image || defaultImage,
@@ -95,13 +95,8 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
     }
 
     if (prevMode === 0 && mode === 1 && camera) {
-      const storytelling = selected?.[1] === "storytelling";
       const currentCamera = ctx?.engine?.getCamera();
-      prevCamera.current = storytelling
-        ? { ...camera }
-        : currentCamera
-        ? { ...currentCamera }
-        : undefined;
+      prevCamera.current = currentCamera;
       ctx?.engine?.flyTo(camera, {
         duration: cameraDuration / 1000,
         easing: EasingFunction.CUBIC_IN_OUT,
