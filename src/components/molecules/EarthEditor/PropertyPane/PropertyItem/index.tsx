@@ -119,7 +119,6 @@ export type Props = {
 const PropertyItem: React.FC<Props> = ({
   className,
   item,
-  title,
   isTemplate,
   mode,
   defaultItemName,
@@ -253,7 +252,7 @@ const PropertyItem: React.FC<Props> = ({
           ? intl.formatMessage({ defaultMessage: "Template" })
           : isTemplate
           ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
-          : title || item?.title
+          : item?.title
       }>
       {isList && !!item && (
         <StyledPropertyList
