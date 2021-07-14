@@ -58,8 +58,13 @@ export default (alias?: string) => {
     [data],
   );
 
+  const actualAlias = useMemo(
+    () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
+    [alias],
+  );
+
   useEffect(() => {
-    const url = dataUrl(alias);
+    const url = dataUrl(actualAlias);
     (async () => {
       try {
         const res = await fetch(url, {});
@@ -92,9 +97,10 @@ export default (alias?: string) => {
         setReady(true);
       }
     })();
-  }, [alias]);
+  }, [actualAlias]);
 
   return {
+    alias: actualAlias,
     sceneProperty: data?.property,
     layers,
     widgets,
@@ -117,11 +123,8 @@ function processProperty(p: any): any {
 }
 
 function dataUrl(alias?: string): string {
-  if (window.location.origin === "http://localhost:3000" && window.REEARTH_CONFIG?.api) {
-    const a = alias || new URLSearchParams(window.location.search).get("alias");
-    if (a) {
-      return `${window.REEARTH_CONFIG.api}/published_data/${a}`;
-    }
+  if (alias && window.location.origin === "http://localhost:3000" && window.REEARTH_CONFIG?.api) {
+    return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
   }
   return "data.json";
 }
