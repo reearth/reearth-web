@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useIntl } from "react-intl";
+import { styled } from "@reearth/theme";
 import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import Section from "@reearth/components/molecules/Settings/Section";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Field from "@reearth/components/molecules/Settings/Field";
 import Icon from "@reearth/components/atoms/Icon";
-import { styled } from "@reearth/theme";
-import { useIntl } from "react-intl";
 
 export type Props = {
   email?: string;
@@ -22,6 +22,8 @@ const items = [
   { key: "en", label: "English" },
 ];
 
+type Theme = "DARK" | "LIGHT";
+
 const ProfileSection: React.FC<Props> = ({
   email,
   appTheme,
@@ -35,11 +37,14 @@ const ProfileSection: React.FC<Props> = ({
   const [currentLang, setCurrentLang] = useState<string>();
   const [currentThemeValue, setCurrentThemeValue] = useState<string>();
   const [currentThemeLabel, setCurrentThemeLabel] = useState<string>();
-  type Theme = "DARK" | "LIGHT";
-  const themeItems: { key: Theme; label: string; icon: string }[] = [
-    { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
-    { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
-  ];
+  const themeItems: { key: Theme; label: string; icon: string }[] = useMemo(
+    () => [
+      { key: "DARK", label: intl.formatMessage({ defaultMessage: "Dark theme" }), icon: "moon" },
+      { key: "LIGHT", label: intl.formatMessage({ defaultMessage: "Light theme" }), icon: "sun" },
+    ],
+    [intl],
+  );
+
   useEffect(() => {
     const lang = items.find(item => item.key === intl.locale);
     setCurrentLang(lang?.label);
@@ -50,7 +55,7 @@ const ProfileSection: React.FC<Props> = ({
     setCurrentThemeValue(appThemeValue);
     const label = themeItems.find(themeItem => themeItem.key === appThemeValue)?.label;
     setCurrentThemeLabel(label);
-  }, [appTheme]);
+  }, [appTheme, themeItems]);
 
   return (
     <Wrapper>

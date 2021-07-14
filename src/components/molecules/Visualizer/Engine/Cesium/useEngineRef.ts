@@ -14,32 +14,39 @@ export default function useEngineRef(
     (): EngineRef => ({
       name: "cesium",
       requestRender: () => {
-        cesium.current?.cesiumElement?.scene?.requestRender();
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.scene?.requestRender();
       },
       getCamera: () => {
-        return getCamera(cesium.current?.cesiumElement);
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return getCamera(viewer);
       },
-      getLocationFromScreenXY: (x, y) =>
-        getLocationFromScreenXY(cesium.current?.cesiumElement?.scene, x, y),
+      getLocationFromScreenXY: (x, y) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return getLocationFromScreenXY(viewer.scene, x, y);
+      },
       flyTo: (camera, options) => {
-        flyTo(
-          cesium.current?.cesiumElement?.scene?.camera,
-          { ...getCamera(cesium.current?.cesiumElement), ...camera },
-          options,
-        );
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        flyTo(viewer.scene?.camera, { ...getCamera(viewer), ...camera }, options);
       },
       lookAt: (camera, options) => {
-        lookAt(
-          cesium.current?.cesiumElement?.scene?.camera,
-          { ...getCamera(cesium.current?.cesiumElement), ...camera },
-          options,
-        );
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        lookAt(viewer.scene?.camera, { ...getCamera(viewer), ...camera }, options);
       },
       zoomIn: amount => {
-        cesium.current?.cesiumElement?.scene?.camera.zoomIn(amount);
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.scene?.camera.zoomIn(amount);
       },
       zoomOut: amount => {
-        cesium.current?.cesiumElement?.scene?.camera.zoomOut(amount);
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.zoomOut(amount);
       },
       builtinPrimitives,
     }),

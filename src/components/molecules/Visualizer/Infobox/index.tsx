@@ -125,7 +125,11 @@ const Infobox: React.FC<Props> = ({
             onChange={(...args) =>
               b.propertyId ? onBlockChange?.(b.propertyId, ...args) : undefined
             }
-            onClick={() => b.id && selectedBlockId !== b.id && onBlockSelect?.(b.id)}
+            onClick={() => {
+              if (b.id && selectedBlockId !== b.id) {
+                onBlockSelect?.(b.id);
+              }
+            }}
             primitive={primitive}
             pluginBaseUrl={pluginBaseUrl}
           />
