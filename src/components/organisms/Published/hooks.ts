@@ -99,17 +99,22 @@ export default (alias?: string) => {
   };
 };
 
-// For compability
 function processProperty(p: any): any {
   if (typeof p !== "object") return p;
-  return mapValues(p, f =>
-    mapValues(f, v => {
-      if ("lat" in v && "lng" in v && "altitude" in v) {
-        v.height = v.altitude;
-      }
-      return v;
-    }),
+  return mapValues(p, g =>
+    Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
   );
+}
+
+function processPropertyGroup(g: any): any {
+  if (typeof g !== "object") return g;
+  return mapValues(g, v => {
+    // For compability
+    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
+      v.height = v.altitude;
+    }
+    return v;
+  });
 }
 
 function dataUrl(alias?: string): string {
