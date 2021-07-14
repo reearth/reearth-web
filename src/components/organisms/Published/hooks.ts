@@ -9,12 +9,15 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
 
+  const sceneProperty = processProperty(data?.property);
+
   const layers = useMemo<Primitive[] | undefined>(
     () =>
       data?.layers?.map<Primitive>(l => ({
         id: l.id,
         title: l.name || "",
-        plugin: `${l.pluginId}/${l.extensionId}`,
+        pluginId: l.pluginId,
+        extensionId: l.extensionId,
         isVisible: true,
         property: processProperty(l.property),
         pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
@@ -91,7 +94,7 @@ export default (alias?: string) => {
 
   return {
     alias: actualAlias,
-    sceneProperty: data?.property,
+    sceneProperty,
     layers,
     widgets,
     ready,
@@ -111,7 +114,10 @@ function processPropertyGroup(g: any): any {
   return mapValues(g, v => {
     // For compability
     if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
-      v.height = v.altitude;
+      return {
+        ...v,
+        height: v.altitude,
+      };
     }
     return v;
   });
