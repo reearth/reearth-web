@@ -115,18 +115,18 @@ export default function Visualizer<SP = any>({
               pluginBaseUrl={pluginBaseUrl}
             />
           ))}
+          {widgets?.map(widget => (
+            <W
+              key={widget.id}
+              widget={widget}
+              sceneProperty={sceneProperty}
+              pluginProperty={widget.pluginProperty}
+              isEditable={props.isEditable}
+              isBuilt={props.isBuilt}
+              pluginBaseUrl={pluginBaseUrl}
+            />
+          ))}
         </Engine>
-        {widgets?.map(widget => (
-          <W
-            key={widget.id}
-            widget={widget}
-            sceneProperty={sceneProperty}
-            pluginProperty={widget.pluginProperty}
-            isEditable={props.isEditable}
-            isBuilt={props.isBuilt}
-            pluginBaseUrl={pluginBaseUrl}
-          />
-        ))}
         <Infobox
           title={selectedPrimitive?.title}
           infoboxKey={selectedPrimitive?.id}
