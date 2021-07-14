@@ -151,35 +151,24 @@ function usePrimitiveSelection({
   selectedPrimitiveId?: string;
   onPrimitiveSelect?: (id?: string) => void;
 }) {
-  const [selectedPrimitiveId, innerSelectPrimitive] = useState<[id: string, reason?: string]>();
+  const [selectedPrimitiveId, innerSelectPrimitive] = useState<string | undefined>();
 
   const selectedPrimitive = useMemo(
-    () =>
-      selectedPrimitiveId?.[0]
-        ? primitives?.find(p => p.id === selectedPrimitiveId?.[0])
-        : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedPrimitiveId?.[0], primitives],
+    () => (selectedPrimitiveId ? primitives?.find(p => p.id === selectedPrimitiveId) : undefined),
+    [selectedPrimitiveId, primitives],
   );
 
   const selectPrimitive = useCallback(
-    (id?: string, reason?: string) => {
-      innerSelectPrimitive(s =>
-        !id ? undefined : s?.[0] === id && s?.[1] === reason ? s : [id, reason],
-      );
+    (id?: string) => {
+      innerSelectPrimitive(id);
       onPrimitiveSelect?.(id);
     },
     [onPrimitiveSelect],
   );
 
   useEffect(() => {
-    if (outerSelectedPrimitiveId) {
-      selectPrimitive(outerSelectedPrimitiveId);
-    } else {
-      selectPrimitive(undefined);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [outerSelectedPrimitiveId]); // ignore onPrimitiveSelect
+    innerSelectPrimitive(outerSelectedPrimitiveId);
+  }, [outerSelectedPrimitiveId]);
 
   return {
     selectedPrimitive,

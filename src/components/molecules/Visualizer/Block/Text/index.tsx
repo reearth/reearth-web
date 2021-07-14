@@ -43,17 +43,18 @@ const TextBlock: React.FC<Props> = ({
   const isTemplate = !text && !title && !isEditing;
 
   const startEditing = useCallback(() => {
-    if (!isSelected || !isEditable) return;
-    setEditingText(text);
-  }, [isEditable, isSelected, text]);
+    if (!isEditable) return;
+    setEditingText(text ?? "");
+  }, [isEditable, text]);
 
   const finishEditing = useCallback(() => {
+    if (!isEditing) return;
     if (onChange && isDirty.current) {
       onChange("default", "text", editingText ?? "", "string");
     }
     isDirty.current = false;
     setEditingText(undefined);
-  }, [editingText, onChange]);
+  }, [editingText, onChange, isEditing]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -64,35 +65,42 @@ const TextBlock: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    isDirty.current = false;
-    setEditingText(undefined);
-  }, [text, isEditable, isSelected]);
-
-  useEffect(() => {
     if (isEditing) {
       ref.current?.focus();
     }
   }, [isEditing]);
 
+  const isSelectedPrev = useRef(false);
   useEffect(() => {
-    if (isEditing && !isSelected) {
+    if (isEditing && !isSelected && isSelectedPrev.current) {
       finishEditing();
     }
   }, [finishEditing, isSelected, isEditing]);
+  useEffect(() => {
+    isSelectedPrev.current = !!isSelected;
+  }, [isSelected]);
 
   const [isHovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      if (isEditing) return;
+      onClick?.();
+    },
+    [isEditing, onClick],
+  );
 
   return (
     <Wrapper
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={onClick}
+      onClick={handleClick}
       isSelected={isSelected}
       isHovered={isHovered}
       isEditable={isEditable}>
-      {isTemplate && isEditable ? (
+      {isTemplate && isEditable && !isEditing ? (
         <Template onDoubleClick={startEditing}>
           <StyledIcon icon="text" isSelected={isSelected} isHovered={isHovered} size={24} />
           <Text isSelected={isSelected} isHovered={isHovered}>
