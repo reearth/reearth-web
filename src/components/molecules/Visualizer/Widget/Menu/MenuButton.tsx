@@ -1,10 +1,13 @@
-import React, { useRef } from "react";
+import React, { useRef, useCallback, useState } from "react";
+// import { ScreenSpaceEvent, ScreenSpaceEventHandler } from "resium";
+// import { ScreenSpaceEventType } from "cesium";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
 import { Camera } from "@reearth/util/value";
 import { fonts, styled } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
+import { useVisualizerContext } from "../../context";
 
 export type Position = "topleft" | "topright" | "bottomleft" | "bottomright";
 
@@ -33,26 +36,17 @@ export type MenuItem = {
 
 export type Props = {
   button: Button;
-  menuVisible?: boolean;
   menuItems?: MenuItem[];
-  itemOnClick?: (b: Button | MenuItem) => () => void;
   pos: Position;
-  onClick?: () => void;
-  onClose?: () => void;
 };
 
-export default function ({
-  button: b,
-  menuVisible,
-  menuItems,
-  itemOnClick,
-  pos,
-  onClick,
-  onClose,
-}: Props): JSX.Element {
+export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
+  const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
+  const ctx = useVisualizerContext();
+  const flyTo = ctx?.engine?.flyTo;
+
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
-  const menuElement = useRef<HTMLDivElement>(null);
   const { styles, attributes } = usePopper(referenceElement.current, popperElement.current, {
     placement:
       pos === "topleft"
@@ -66,7 +60,7 @@ export default function ({
     modifiers: [
       {
         name: "eventListeners",
-        enabled: !menuVisible,
+        enabled: !visibleMenuButton,
         options: {
           scroll: false,
           resize: false,
@@ -74,18 +68,45 @@ export default function ({
       },
     ],
   });
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  useClickAway(menuElement, onClose ?? (() => {}));
 
+  const handleClick = useCallback(
+    (b: Button | MenuItem) => () => {
+      const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
+      if (t === "menu") {
+        setVisibleMenuButton(v => (v === b.id ? undefined : b.id));
+        return;
+      } else if (t === "camera") {
+        const camera =
+          "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
+        if (camera) {
+          flyTo?.(camera, { duration: 2000 });
+        }
+      } else {
+        let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
+        const splitLink = link?.split("/");
+        if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
+          link = "https://" + link;
+        }
+        window.open(link, "_blank", "noopener");
+      }
+      setVisibleMenuButton(undefined);
+    },
+    [flyTo],
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useClickAway(referenceElement, () => setVisibleMenuButton(undefined));
   return (
     <>
-      <Button tabIndex={0} button={b} onClick={onClick} ref={referenceElement}>
-        {b.buttonIcon && (
-          <StyledIcon
-            icon={b.buttonIcon}
-            size={20}
-            margin={b.buttonStyle !== "icon" && !!b.buttonTitle}
-          />
+      {/* <ScreenSpaceEventHandler>
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.LEFT_CLICK}
+          action={() => console.log("hello")}
+        />
+      </ScreenSpaceEventHandler> */}
+      <Button tabIndex={0} button={b} onClick={handleClick(b)} ref={referenceElement}>
+        {(b.buttonStyle === "icon" || b.buttonStyle === "texticon") && b.buttonIcon && (
+          <StyledIcon icon={b.buttonIcon} size={25} margin={!!b.buttonTitle} />
         )}
         {b.buttonStyle !== "icon" && b.buttonTitle}
       </Button>
@@ -95,13 +116,13 @@ export default function ({
           minWidth: "200px",
           width: "100%",
           position: "absolute",
-          display: menuVisible ? styles.popper.display : "none",
+          display: visibleMenuButton ? styles.popper.display : "none",
         }}
         {...attributes}>
-        {menuVisible && (
-          <MenuWrapper ref={menuElement}>
+        {visibleMenuButton && (
+          <MenuWrapper>
             {menuItems?.map(i => (
-              <MenuItem tabIndex={0} key={i.id} item={i} onClick={itemOnClick?.(i)}>
+              <MenuItem tabIndex={0} key={i.id} item={i} onClick={handleClick(i)}>
                 {i.menuType !== "border" && i.menuTitle}
               </MenuItem>
             ))}
@@ -123,6 +144,9 @@ const MenuWrapper = styled.div<{ visible?: boolean }>`
   top: 0;
   left: 0;
   background-color: #2b2a2f;
+  border-radius: 3px;
+  overflow-wrap: break-word;
+  hyphens: auto;
 `;
 
 const MenuItem = styled.a<{ item?: MenuItem }>`
@@ -136,7 +160,7 @@ const MenuItem = styled.a<{ item?: MenuItem }>`
 `;
 
 const Button = styled.div<{ button?: Button }>`
-  display: block;
+  display: flex;
   border-radius: 3px;
   min-width: 32px;
   height: 32px;
@@ -147,6 +171,7 @@ const Button = styled.div<{ button?: Button }>`
   background-color: ${({ button }) => button?.buttonBgcolor || "#2B2A2F"};
   color: ${({ button }) => button?.buttonColor || "#fff"};
   cursor: pointer;
+  align-items: center;
   margin-left: 5px;
   user-select: none;
 
