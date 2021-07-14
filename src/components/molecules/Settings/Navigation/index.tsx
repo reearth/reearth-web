@@ -58,6 +58,10 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
           {project && (
             <NavigationItem to={`/settings/project/${project.id}`} name={project.name as string}>
               <NavigationItem
+                to={`/settings/project/${project.id}/public`}
+                name={intl.formatMessage({ defaultMessage: "Public" })}
+              />
+              <NavigationItem
                 to={`/settings/project/${project.id}/dataset`}
                 name={intl.formatMessage({ defaultMessage: "Dataset" })}
               />

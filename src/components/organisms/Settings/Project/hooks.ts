@@ -1,22 +1,16 @@
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 import {
   useProjectQuery,
   useUpdateProjectNameMutation,
   useUpdateProjectDescriptionMutation,
   useUpdateProjectImageUrlMutation,
-  PublishmentStatus,
-  usePublishProjectMutation,
-  useCheckProjectAliasLazyQuery,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
-  useUpdateProjectBasicAuthMutation,
   useCreateAssetMutation,
   AssetsQuery,
   useAssetsQuery,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
-
-import { Status } from "@reearth/components/atoms/PublicationStatus";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -25,7 +19,6 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
-  const [projectAlias, setProjectAlias] = useState<string | undefined>();
   const [currentTeam] = useLocalState(s => s.currentTeam);
 
   const teamId = currentTeam?.id;
@@ -35,10 +28,10 @@ export default ({ projectId }: Params) => {
     skip: !teamId,
   });
 
-  const rawProject = useMemo(() => data?.projects.nodes.find(p => p?.id === projectId), [
-    data,
-    projectId,
-  ]);
+  const rawProject = useMemo(
+    () => data?.projects.nodes.find(p => p?.id === projectId),
+    [data, projectId],
+  );
   const project = useMemo(
     () =>
       rawProject?.id
@@ -61,7 +54,6 @@ export default ({ projectId }: Params) => {
   );
 
   // Project Updating
-  const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProjectNameMutation] = useUpdateProjectNameMutation();
   const [updateProjectDescriptionMutation] = useUpdateProjectDescriptionMutation();
   const [updateProjectImageUrlMutation] = useUpdateProjectImageUrlMutation();
@@ -80,16 +72,6 @@ export default ({ projectId }: Params) => {
   const deleteProject = useCallback(() => {
     projectId && deleteProjectMutation({ variables: { projectId } });
   }, [projectId, deleteProjectMutation]);
-
-  const updateProjectBasicAuth = useCallback(
-    (isBasicAuthActive?: boolean, basicAuthUsername?: string, basicAuthPassword?: string) => {
-      projectId &&
-        updateProjectBasicAuthMutation({
-          variables: { projectId, isBasicAuthActive, basicAuthUsername, basicAuthPassword },
-        });
-    },
-    [projectId, updateProjectBasicAuthMutation],
-  );
 
   const updateProjectDescription = useCallback(
     (description: string) => {
@@ -111,55 +93,6 @@ export default ({ projectId }: Params) => {
     },
     [projectId, archiveProjectMutation],
   );
-
-  // Publication
-  const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
-
-  const publishProject = useCallback(
-    async (alias: string | undefined, s: Status) => {
-      if (!projectId) return;
-      const gqlStatus =
-        s === "limited"
-          ? PublishmentStatus.Limited
-          : s == "published"
-          ? PublishmentStatus.Public
-          : PublishmentStatus.Private;
-      await publishProjectMutation({
-        variables: { projectId, alias, status: gqlStatus },
-      });
-    },
-    [projectId, publishProjectMutation],
-  );
-
-  const [validAlias, setValidAlias] = useState(false);
-  const [
-    checkProjectAliasQuery,
-    { loading: validatingAlias, data: checkProjectAliasData },
-  ] = useCheckProjectAliasLazyQuery();
-  const checkProjectAlias = useCallback(
-    (alias: string) => {
-      if (project?.alias && project.alias === alias) {
-        setValidAlias(true);
-        return;
-      }
-      return checkProjectAliasQuery({ variables: { alias } });
-    },
-    [checkProjectAliasQuery, project],
-  );
-  useEffect(() => {
-    setValidAlias(
-      !validatingAlias &&
-        !!project &&
-        !!checkProjectAliasData &&
-        (project.alias === checkProjectAliasData.checkProjectAlias.alias ||
-          checkProjectAliasData.checkProjectAlias.available),
-    );
-  }, [validatingAlias, checkProjectAliasData, project]);
-
-  useEffect(() => {
-    if (!project) return;
-    setProjectAlias(project?.alias);
-  }, [project]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -186,32 +119,12 @@ export default ({ projectId }: Params) => {
     project,
     projectId,
     currentTeam,
-    updateProjectBasicAuth,
     updateProjectName,
     updateProjectDescription,
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    projectAlias,
-    projectStatus: convertStatus(project?.publishmentStatus),
-    publishProject,
-    loading,
-    validAlias,
-    checkProjectAlias,
-    validatingAlias,
     createAssets,
     assets,
   };
-};
-
-const convertStatus = (status?: PublishmentStatus): Status | undefined => {
-  switch (status) {
-    case "PUBLIC":
-      return "published";
-    case "LIMITED":
-      return "limited";
-    case "PRIVATE":
-      return "unpublished";
-  }
-  return undefined;
 };
