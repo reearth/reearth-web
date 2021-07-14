@@ -21,7 +21,10 @@ declare global {
 export const defaultConfig: Config = {
   version: REEARTH_WEB_VERSION || "",
   api: "/api",
-  published: location.origin + "/p/{}",
+  published:
+    window.location.hostname === "localhost"
+      ? window.location.origin + "/published.html?alias={}"
+      : window.location.origin + "/p/{}",
 };
 
 export default async function loadConfig() {

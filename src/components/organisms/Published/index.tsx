@@ -1,6 +1,7 @@
 import React from "react";
 
 import Visualizer from "@reearth/components/molecules/Visualizer";
+import Error from "@reearth/components/molecules/Published/Error";
 
 import useHooks from "./hooks";
 
@@ -10,9 +11,11 @@ export interface Props {
 }
 
 const Published: React.FC<Props> = ({ className, alias }) => {
-  const { sceneProperty, layers, widgets, ready } = useHooks(alias);
+  const { alias: actualAlias, sceneProperty, layers, widgets, ready, error } = useHooks(alias);
 
-  return (
+  return error ? (
+    <Error alias={actualAlias} />
+  ) : (
     <Visualizer
       className={className}
       engine="cesium"
@@ -21,6 +24,7 @@ const Published: React.FC<Props> = ({ className, alias }) => {
       sceneProperty={sceneProperty}
       ready={ready}
       isBuilt
+      isPublished
     />
   );
 };

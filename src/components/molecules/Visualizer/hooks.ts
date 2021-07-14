@@ -1,21 +1,24 @@
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
-import { useDrop, DropOptions } from "@reearth/util/use-dnd";
+import ReactGA from "react-ga";
 
+import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
-import type { Ref as EngineRef } from "./Engine";
-import type { Primitive } from ".";
 import { VisualizerContext } from "./context";
 import api from "./api";
+import type { Ref as EngineRef, SceneProperty } from "./Engine";
+import type { Primitive } from ".";
 
 export default ({
   engineType,
   rootLayerId,
   isEditable,
   isBuilt,
+  isPublished,
   primitives,
   selectedPrimitiveId: outerSelectedPrimitiveId,
   selectedBlockId: outerSelectedBlockId,
   camera,
+  sceneProperty,
   onPrimitiveSelect,
   onBlockSelect,
   onCameraChange,
@@ -24,10 +27,12 @@ export default ({
   rootLayerId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;
+  isPublished?: boolean;
   primitives?: Primitive[];
   selectedPrimitiveId?: string;
   selectedBlockId?: string;
   camera?: Camera;
+  sceneProperty?: SceneProperty;
   onPrimitiveSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onCameraChange?: (c: Camera) => void;
@@ -108,6 +113,13 @@ export default ({
     },
     [hiddenPrimitivesSet],
   );
+
+  const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
+  useEffect(() => {
+    if (!isPublished || !enableGA || !trackingId) return;
+    ReactGA.initialize(trackingId);
+    ReactGA.pageview(window.location.pathname);
+  }, [isPublished, enableGA, trackingId]);
 
   const visualizerContext = useVisualizerContext({
     engine: engineRef,
