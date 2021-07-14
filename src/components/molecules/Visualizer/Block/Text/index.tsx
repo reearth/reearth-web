@@ -83,12 +83,20 @@ const TextBlock: React.FC<Props> = ({
   const [isHovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      if (isEditing) return;
+      onClick?.();
+    },
+    [isEditing, onClick],
+  );
 
   return (
     <Wrapper
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={isEditing ? undefined : onClick}
+      onClick={handleClick}
       isSelected={isSelected}
       isHovered={isHovered}
       isEditable={isEditable}>
