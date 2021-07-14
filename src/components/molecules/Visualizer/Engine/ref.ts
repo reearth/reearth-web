@@ -16,26 +16,41 @@ export type EngineRef = {
 };
 
 export type FlyToDestination = {
+  /** Degrees */
   lat?: number;
+  /** Degrees */
   lng?: number;
+  /** Meters */
   height?: number;
+  /** Radian */
   heading?: number;
+  /** Radian */
   pitch?: number;
+  /** Radian */
   roll?: number;
+  /** Radian */
   fov?: number;
 };
 
 export type LookAtDestination = {
+  /** Degrees */
   lat?: number;
+  /** Degrees */
   lng?: number;
+  /** Meters */
   height?: number;
+  /** Radian */
   heading?: number;
+  /** Radian */
   pitch?: number;
+  /** Radian */
   range?: number;
+  /** Radian */
   fov?: number;
 };
 
 export type CameraOptions = {
+  /** Seconds */
   duration?: number;
   easing?: (time: number) => number;
 };

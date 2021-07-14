@@ -1,5 +1,5 @@
-import { RefObject, useCallback, useEffect } from "react";
-import { Entity, ScreenSpaceEventType, Viewer } from "cesium";
+import { RefObject, useCallback } from "react";
+import { Entity, Viewer } from "cesium";
 import { CesiumComponentRef, CesiumMovementEvent } from "resium";
 
 export default function useEntitySelection(
@@ -37,13 +37,6 @@ export default function useEntitySelection(
     },
     [cesium, onEntitySelect, select],
   );
-
-  // init
-  useEffect(() => {
-    const viewer = cesium.current?.cesiumElement;
-    viewer?.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-    viewer?.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-  }, [cesium]);
 
   return selectViewerEntity;
 }
