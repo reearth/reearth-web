@@ -5,12 +5,13 @@ import DropHolder from "@reearth/components/atoms/DropHolder";
 
 import useHooks from "./hooks";
 import { Provider } from "./context";
-import Engine, { Props as EngineProps } from "./Engine";
+import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
 
 export type { VisualizerContext } from "./context";
+export type { SceneProperty } from "./Engine";
 
 export type Infobox = {
   blocks?: Block[];
@@ -28,14 +29,15 @@ export type Widget = WidgetType & {
 
 export type Block = BlockType;
 
-export type Props<SP = any> = PropsWithChildren<
+export type Props = PropsWithChildren<
   {
     rootLayerId?: string;
     primitives?: Primitive[];
     widgets?: Widget[];
-    sceneProperty?: SP;
+    sceneProperty?: SceneProperty;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
+    isPublished?: boolean;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
@@ -45,7 +47,7 @@ export type Props<SP = any> = PropsWithChildren<
     >
 >;
 
-export default function Visualizer<SP = any>({
+export default function Visualizer({
   rootLayerId,
   primitives,
   widgets,
@@ -54,6 +56,7 @@ export default function Visualizer<SP = any>({
   selectedBlockId: outerSelectedBlockId,
   children,
   pluginBaseUrl,
+  isPublished,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
@@ -62,7 +65,7 @@ export default function Visualizer<SP = any>({
   onBlockInsert,
   onBlockSelect,
   ...props
-}: Props<SP>): JSX.Element {
+}: Props): JSX.Element {
   const {
     engineRef,
     wrapperRef,
@@ -81,10 +84,12 @@ export default function Visualizer<SP = any>({
     rootLayerId,
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
+    isPublished,
     primitives,
     selectedPrimitiveId: outerSelectedPrimitiveId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
+    sceneProperty,
     onPrimitiveSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,

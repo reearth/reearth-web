@@ -7,38 +7,10 @@ import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "c
 
 import { Camera } from "@reearth/util/value";
 
-import { Ref as EngineRef } from "..";
+import type { Ref as EngineRef, SceneProperty } from "..";
 import tiles from "./tiles";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
-
-export type SceneProperty = {
-  default?: {
-    camera?: Camera;
-    terrain?: boolean;
-    skybox?: boolean;
-    bgcolor?: string;
-    ion?: string;
-  };
-  tiles?: {
-    id: string;
-    tile_type?: string;
-    tile_url?: string;
-    tile_maxLevel?: number;
-    tile_minLevel?: number;
-  }[];
-  atmosphere?: {
-    enable_sun?: boolean;
-    enable_lighting?: boolean;
-    ground_atmosphere?: boolean;
-    sky_atmosphere?: boolean;
-    fog?: boolean;
-    fog_density?: number;
-    brightness_shift?: number;
-    hue_shift?: number;
-    surturation_shift?: number;
-  };
-};
 
 export default ({
   ref,

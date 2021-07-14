@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import ReactGA from "react-ga";
 import { mapValues } from "lodash-es";
 
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
@@ -8,23 +7,20 @@ import { PublishedData } from "./types";
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!data?.property.googleAnalytics?.enableGA || !data?.property.googleAnalytics?.trackingId)
-      return;
-    ReactGA.initialize(data.property.googleAnalytics.trackingId);
-    ReactGA.pageview(window.location.pathname);
-  }, [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics.trackingId]);
+  const sceneProperty = processProperty(data?.property);
 
   const layers = useMemo<Primitive[] | undefined>(
     () =>
-      data?.layers.map<Primitive>(l => ({
+      data?.layers?.map<Primitive>(l => ({
         id: l.id,
         title: l.name || "",
-        plugin: `${l.pluginId}/${l.extensionId}`,
+        pluginId: l.pluginId,
+        extensionId: l.extensionId,
         isVisible: true,
         property: processProperty(l.property),
-        pluginProperty: processProperty(data.plugins.find(p => p.id === l.pluginId)?.property),
+        pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
         infobox: l.infobox
           ? {
               property: processProperty(l.infobox.property),
@@ -33,9 +29,7 @@ export default (alias?: string) => {
                 pluginId: f.pluginId,
                 extensionId: f.extensionId,
                 property: processProperty(f.property),
-                pluginProperty: processProperty(
-                  data.plugins.find(p => p.id === f.pluginId)?.property,
-                ),
+                pluginProperty: processProperty(data.plugins?.[f.pluginId]?.property),
                 // propertyId is not required in non-editable mode
               })),
             }
@@ -46,22 +40,32 @@ export default (alias?: string) => {
 
   const widgets = useMemo<Widget[] | undefined>(
     () =>
-      data?.widgets.map<Widget>(w => ({
+      data?.widgets?.map<Widget>(w => ({
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
         property: processProperty(w.property),
         enabled: true,
-        pluginProperty: processProperty(data.plugins.find(p => p.id === w.pluginId)?.property),
+        pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
       })),
     [data],
   );
 
+  const actualAlias = useMemo(
+    () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
+    [alias],
+  );
+
   useEffect(() => {
-    const url = "data.json";
+    const url = dataUrl(actualAlias);
     (async () => {
       try {
-        const d = (await fetch(url, {}).then(r => r.json())) as PublishedData | undefined;
+        const res = await fetch(url, {});
+        if (res.status >= 300) {
+          setError(true);
+          return;
+        }
+        const d = (await res.json()) as PublishedData | undefined;
         if (d?.schemaVersion !== 1) {
           // TODO: not supported version
           return;
@@ -86,25 +90,42 @@ export default (alias?: string) => {
         setReady(true);
       }
     })();
-  }, [alias]);
+  }, [actualAlias]);
 
   return {
-    sceneProperty: data?.property,
+    alias: actualAlias,
+    sceneProperty,
     layers,
     widgets,
     ready,
+    error,
   };
 };
 
-// For compability
 function processProperty(p: any): any {
   if (typeof p !== "object") return p;
-  return mapValues(p, f =>
-    mapValues(f, v => {
-      if ("lat" in v && "lng" in v && "altitude" in v) {
-        v.height = v.altitude;
-      }
-      return v;
-    }),
+  return mapValues(p, g =>
+    Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
   );
+}
+
+function processPropertyGroup(g: any): any {
+  if (typeof g !== "object") return g;
+  return mapValues(g, v => {
+    // For compability
+    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
+      return {
+        ...v,
+        height: v.altitude,
+      };
+    }
+    return v;
+  });
+}
+
+function dataUrl(alias?: string): string {
+  if (alias && window.location.hostname === "localhost" && window.REEARTH_CONFIG?.api) {
+    return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
+  }
+  return "data.json";
 }
