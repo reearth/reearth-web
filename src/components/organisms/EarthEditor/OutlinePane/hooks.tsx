@@ -112,7 +112,6 @@ export default () => {
 
   const selectLayer = useCallback(
     (id: string) => {
-      console.log("select layer", id);
       setLocalState({
         selectedType: "layer",
         selectedLayer: id,
