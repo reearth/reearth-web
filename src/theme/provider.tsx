@@ -1,23 +1,26 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { ThemeProvider } from "@emotion/react";
 
-import darkTheme from "./darkTheme";
-import lightTheme from "./lightTheme";
+import { useUserData } from "@reearth/gql";
+
+import type { Theme } from "./theme";
+import dark from "./darkTheme";
+import light from "./lightTheme";
 import GlobalStyle from "./globalstyle";
-import { Theme, useThemeQuery } from "@reearth/gql";
-import { useAuth } from "@reearth/auth";
 
-const Provider: React.FC = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  const { data } = useThemeQuery({ skip: !isAuthenticated });
+const defaultTheme: Theme = dark;
+const themes: Record<string, Theme> = {
+  light,
+  dark,
+};
 
-  const theme = data?.me?.theme === ("light" as Theme) ? lightTheme : darkTheme;
+export default function Provider({ children }: PropsWithChildren<{}>) {
+  const { theme } = useUserData() ?? {};
+
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme ? themes[theme] ?? defaultTheme : defaultTheme}>
       <GlobalStyle />
       {children}
     </ThemeProvider>
   );
-};
-
-export default Provider;
+}

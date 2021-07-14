@@ -1,5 +1,15 @@
 import { gql } from "@apollo/client";
 
+export const USER_DATA = gql`
+  query UserData {
+    me {
+      id
+      theme
+      lang
+    }
+  }
+`;
+
 export const DELETE_ME = gql`
   mutation deleteMe($userId: ID!) {
     deleteMe(input: { userId: $userId }) {

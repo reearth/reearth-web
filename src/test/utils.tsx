@@ -1,32 +1,33 @@
 import React from "react";
 import { render as rtlRender } from "@testing-library/react";
+import { MockedProvider as MockedGqlProvider, MockedResponse } from "@apollo/client/testing";
+
+import { USER_DATA } from "../gql/queries";
 import { Provider as IntlProvider } from "../locale";
 import { Provider as ThemeProvider } from "../theme";
-import { MockedProvider as MockedGqlProvider, MockedResponse } from "@apollo/client/testing";
-import { LANGUAGE } from "@reearth/locale/queries";
+
+export * from "@testing-library/react";
 
 const queryMocks: readonly MockedResponse<Record<string, any>>[] | undefined = [
   {
     request: {
-      query: LANGUAGE,
+      query: USER_DATA,
       variables: {},
     },
     result: {
       data: {
         me: {
           id: "whatever",
-          name: "mock",
-          email: "mock@example.com",
           lang: "en",
-          myTeam: { id: "whatever", name: "sample", __typename: "Team" },
-          auths: ["auth0"],
+          theme: "dark",
           __typename: "User",
         },
       },
     },
   },
 ];
-const render = (ui: React.ReactElement, { ...renderOptions } = {}) => {
+
+export const render = (ui: React.ReactElement, { ...renderOptions } = {}) => {
   const Wrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (
       <MockedGqlProvider mocks={queryMocks} addTypename={false}>
@@ -38,7 +39,3 @@ const render = (ui: React.ReactElement, { ...renderOptions } = {}) => {
   };
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 };
-
-export * from "@testing-library/react";
-
-export { render };
