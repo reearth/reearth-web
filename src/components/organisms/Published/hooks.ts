@@ -8,6 +8,7 @@ import { PublishedData } from "./types";
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!data?.property.googleAnalytics?.enableGA || !data?.property.googleAnalytics?.trackingId)
@@ -58,10 +59,15 @@ export default (alias?: string) => {
   );
 
   useEffect(() => {
-    const url = "data.json";
+    const url = dataUrl(alias);
     (async () => {
       try {
-        const d = (await fetch(url, {}).then(r => r.json())) as PublishedData | undefined;
+        const res = await fetch(url, {});
+        if (res.status >= 300) {
+          setError(true);
+          return;
+        }
+        const d = (await res.json()) as PublishedData | undefined;
         if (d?.schemaVersion !== 1) {
           // TODO: not supported version
           return;
@@ -93,6 +99,7 @@ export default (alias?: string) => {
     layers,
     widgets,
     ready,
+    error,
   };
 };
 
@@ -107,4 +114,14 @@ function processProperty(p: any): any {
       return v;
     }),
   );
+}
+
+function dataUrl(alias?: string): string {
+  if (window.location.origin === "http://localhost:3000" && window.REEARTH_CONFIG?.api) {
+    const a = alias || new URLSearchParams(window.location.search).get("alias");
+    if (a) {
+      return `${window.REEARTH_CONFIG.api}/published_data/${a}`;
+    }
+  }
+  return "data.json";
 }
