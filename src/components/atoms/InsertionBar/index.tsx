@@ -22,24 +22,24 @@ const InsertionBar: React.FC<Props> = ({
 }) => {
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
-  const { styles, attributes, update: updatePopper } = usePopper(
-    referenceElement.current,
-    popperElement.current,
-    {
-      placement: "bottom",
-      strategy: "fixed",
-      modifiers: [
-        {
-          name: "eventListeners",
-          enabled: false,
-          options: {
-            scroll: false,
-            resize: false,
-          },
+  const {
+    styles,
+    attributes,
+    update: updatePopper,
+  } = usePopper(referenceElement.current, popperElement.current, {
+    placement: "bottom",
+    strategy: "fixed",
+    modifiers: [
+      {
+        name: "eventListeners",
+        enabled: false,
+        options: {
+          scroll: false,
+          resize: false,
         },
-      ],
-    },
-  );
+      },
+    ],
+  });
 
   const handleClick = useCallback(() => {
     if (mode !== "visible") return;
@@ -83,9 +83,10 @@ const StyledAddButton = styled(Icon)`
   background: ${props => props.theme.infoBox.bg};
   cursor: pointer;
   display: block;
-  user-select: nocolor: ${props => props.theme.infoBox.accent};
+  user-select: none;
+  color: ${props => props.theme.infoBox.accent};
   padding: 0 3px;
-  `;
+`;
 
 const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
   display: ${props => (props.visible ? "block" : "none")};

@@ -111,23 +111,22 @@ export default function Visualizer<SP = any>({
               isHidden={hiddenPrimitives.includes(primitive.id)}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
-              isSelected={selectedPrimitive?.id === primitive.id}
-              selected={selectedPrimitiveId}
+              isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
+              pluginBaseUrl={pluginBaseUrl}
+            />
+          ))}
+          {widgets?.map(widget => (
+            <W
+              key={widget.id}
+              widget={widget}
+              sceneProperty={sceneProperty}
+              pluginProperty={widget.pluginProperty}
+              isEditable={props.isEditable}
+              isBuilt={props.isBuilt}
               pluginBaseUrl={pluginBaseUrl}
             />
           ))}
         </Engine>
-        {widgets?.map(widget => (
-          <W
-            key={widget.id}
-            widget={widget}
-            sceneProperty={sceneProperty}
-            pluginProperty={widget.pluginProperty}
-            isEditable={props.isEditable}
-            isBuilt={props.isBuilt}
-            pluginBaseUrl={pluginBaseUrl}
-          />
-        ))}
         <Infobox
           title={selectedPrimitive?.title}
           infoboxKey={selectedPrimitive?.id}

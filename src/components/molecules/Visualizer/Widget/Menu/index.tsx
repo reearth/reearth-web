@@ -23,8 +23,6 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const pos: Position[] = ["topleft", "topright", "bottomleft", "bottomright"];
-
 const Menu = ({ widget }: Props): JSX.Element => {
   const ctx = useVisualizerContext();
   const { buttons, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
@@ -37,6 +35,7 @@ const Menu = ({ widget }: Props): JSX.Element => {
   const flyTo = ctx?.engine?.flyTo;
   const handleClick = useCallback(
     (b: Button | MenuItem) => () => {
+      setVisibleMenuButton(undefined);
       const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
       if (t === "menu") {
         setVisibleMenuButton(v => (v === b.id ? undefined : b.id));
@@ -49,13 +48,15 @@ const Menu = ({ widget }: Props): JSX.Element => {
         }
       } else {
         let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
-        const splitLink = link?.split("/");
-        if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
+        if (!link) {
+          return;
+        }
+        const splitLink = link.split("/");
+        if (splitLink[0] !== "http:" && splitLink[0] !== "https:") {
           link = "https://" + link;
         }
         window.open(link, "_blank", "noopener");
       }
-      setVisibleMenuButton(undefined);
     },
     [flyTo],
   );
@@ -72,16 +73,15 @@ const Menu = ({ widget }: Props): JSX.Element => {
           action={() => setVisibleMenuButton(undefined)}
         />
       </ScreenSpaceEventHandler>
-      {pos.map(p =>
-        buttonsByPosition[p]?.length ? (
-          <Wrapper key={p} position={p}>
-            {buttonsByPosition[p]?.map(b =>
+      {Object.entries(buttonsByPosition).map(([p, buttons]) =>
+        buttons?.length ? (
+          <Wrapper key={p} position={p as Position}>
+            {buttons.map(b =>
               !b.buttonInvisible ? (
-                <div style={{ position: "relative" }}>
+                <div key={b.id} style={{ position: "relative" }}>
                   <MenuButton
-                    key={b.id}
                     button={b}
-                    pos={p}
+                    pos={p as Position}
                     menuVisible={visibleMenuButton === b.id}
                     menuItems={menuItems}
                     itemOnClick={handleClick}

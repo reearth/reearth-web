@@ -33,10 +33,17 @@ const DataList: React.FC<Props> = ({ block, infoboxProperty, isSelected, isEdita
   const [isHovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onClick?.();
+    },
+    [onClick],
+  );
 
   return (
     <Wrapper
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       typography={typography}

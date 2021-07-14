@@ -19,7 +19,7 @@ export type Property = {
   };
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
+const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
   const { id, isVisible, property } = primitive ?? {};
   const {
     polygon,
@@ -57,7 +57,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) 
   );
 
   return !isVisible ? null : (
-    <Entity id={id} selected={isSelected}>
+    <Entity id={id}>
       <PolygonGraphics
         hierarchy={hierarchy}
         fill={fill}

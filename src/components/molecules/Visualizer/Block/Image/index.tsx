@@ -39,12 +39,19 @@ const ImageBlock: React.FC<Props> = ({
   const [isHovered, setHovered] = useState(false);
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      onClick?.();
+    },
+    [onClick],
+  );
 
   return (
     <Wrapper
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={onClick}
+      onClick={handleClick}
       fullSize={fullSize}
       infoboxSize={infoboxSize}
       isHovered={isHovered}
