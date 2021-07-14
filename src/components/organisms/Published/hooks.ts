@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import ReactGA from "react-ga";
 import { mapValues } from "lodash-es";
 
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
@@ -10,22 +9,15 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!data?.property.googleAnalytics?.enableGA || !data?.property.googleAnalytics?.trackingId)
-      return;
-    ReactGA.initialize(data.property.googleAnalytics.trackingId);
-    ReactGA.pageview(window.location.pathname);
-  }, [data?.property.googleAnalytics?.enableGA, data?.property.googleAnalytics.trackingId]);
-
   const layers = useMemo<Primitive[] | undefined>(
     () =>
-      data?.layers.map<Primitive>(l => ({
+      data?.layers?.map<Primitive>(l => ({
         id: l.id,
         title: l.name || "",
         plugin: `${l.pluginId}/${l.extensionId}`,
         isVisible: true,
         property: processProperty(l.property),
-        pluginProperty: processProperty(data.plugins.find(p => p.id === l.pluginId)?.property),
+        pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
         infobox: l.infobox
           ? {
               property: processProperty(l.infobox.property),
@@ -34,9 +26,7 @@ export default (alias?: string) => {
                 pluginId: f.pluginId,
                 extensionId: f.extensionId,
                 property: processProperty(f.property),
-                pluginProperty: processProperty(
-                  data.plugins.find(p => p.id === f.pluginId)?.property,
-                ),
+                pluginProperty: processProperty(data.plugins?.[f.pluginId]?.property),
                 // propertyId is not required in non-editable mode
               })),
             }
@@ -47,13 +37,13 @@ export default (alias?: string) => {
 
   const widgets = useMemo<Widget[] | undefined>(
     () =>
-      data?.widgets.map<Widget>(w => ({
+      data?.widgets?.map<Widget>(w => ({
         id: `${data.id}/${w.pluginId}/${w.extensionId}`,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
         property: processProperty(w.property),
         enabled: true,
-        pluginProperty: processProperty(data.plugins.find(p => p.id === w.pluginId)?.property),
+        pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
       })),
     [data],
   );

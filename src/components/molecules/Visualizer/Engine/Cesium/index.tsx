@@ -15,14 +15,13 @@ import {
 import { ScreenSpaceEventType } from "cesium";
 
 import Loading from "@reearth/components/atoms/Loading";
-import { EngineProps, Ref as EngineRef } from "..";
-import useHooks, { SceneProperty as ScenePropertyType } from "./hooks";
+import useHooks from "./hooks";
 import CameraFlyTo from "./CameraFlyTo";
+import type { EngineProps, Ref as EngineRef } from "..";
 
-export type SceneProperty = ScenePropertyType;
-export type Props = EngineProps<SceneProperty>;
+export type { EngineProps as Props } from "..";
 
-const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps<SceneProperty>> = (
+const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
     className,
     style,

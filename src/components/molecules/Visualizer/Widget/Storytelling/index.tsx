@@ -61,6 +61,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
 
   const stories = useMemo<Story[]>(() => {
     if (!storiesData || !primitives) return [];
+    console.log("!!!", storiesData);
     return storiesData
       .map(story => {
         const primitive = primitives.find(l => l.id === story.layer);

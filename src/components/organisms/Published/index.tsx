@@ -24,6 +24,7 @@ const Published: React.FC<Props> = ({ className, alias }) => {
       sceneProperty={sceneProperty}
       ready={ready}
       isBuilt
+      isPublished
     />
   );
 };
