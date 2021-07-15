@@ -7,13 +7,14 @@ export const PROJECT = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
-        imageUrl
+        publicImage
         alias
         publishmentStatus
       }
@@ -54,13 +55,14 @@ export const UPDATE_PROJECT_NAME = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
-        imageUrl
+        publicImage
         alias
         publishmentStatus
       }
@@ -75,13 +77,14 @@ export const UPDATE_PROJECT_DESCRIPTION = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
-        imageUrl
+        publicImage
         alias
         publishmentStatus
       }
@@ -96,13 +99,14 @@ export const UPDATE_PROJECT_IMAGE_URL = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
-        imageUrl
+        publicImage
         alias
         publishmentStatus
       }
@@ -117,13 +121,14 @@ export const UPDATE_PROJECT_PUBLIC_TITLE = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
-        imageUrl
+        publicImage
         alias
         publishmentStatus
       }
@@ -138,13 +143,36 @@ export const UPDATE_PROJECT_PUBLIC_DESCRIPTION = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
+        publicImage
+        alias
+        publishmentStatus
+      }
+    }
+  }
+`;
+
+export const UPDATE_PROJECT_PUBLIC_IMAGE = gql`
+  mutation updateProjectPublicImage($projectId: ID!, $publicImage: Upload!) {
+    updateProject(input: { projectId: $projectId, publicImage: $publicImage }) {
+      project {
+        id
+        name
+        description
         imageUrl
+        isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
+        publicTitle
+        publicDescription
+        publicImage
         alias
         publishmentStatus
       }
@@ -159,13 +187,14 @@ export const ARCHIVE_PROJECT = gql`
         id
         name
         description
+        imageUrl
         isArchived
         isBasicAuthActive
         basicAuthUsername
         basicAuthPassword
         publicTitle
         publicDescription
-        imageUrl
+        publicImage
         alias
         publishmentStatus
       }

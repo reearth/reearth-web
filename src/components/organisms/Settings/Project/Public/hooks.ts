@@ -2,13 +2,19 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocalState } from "@reearth/state";
 import {
   useProjectQuery,
+  useAssetsQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
   usePublishProjectMutation,
+  useUpdateProjectPublicTitleMutation,
+  useUpdateProjectPublicDescriptionMutation,
+  useUpdateProjectPublicImageMutation,
+  useCreateAssetMutation,
 } from "@reearth/gql";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
+import { AssetNodes } from "../hooks";
 
 type Params = {
   projectId: string;
@@ -16,6 +22,10 @@ type Params = {
 
 export default ({ projectId }: Params) => {
   const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
+  const [updateProjectPublicTitle] = useUpdateProjectPublicTitleMutation();
+  const [updateProjectPublicDescription] = useUpdateProjectPublicDescriptionMutation();
+  const [updateProjectPublicImage] = useUpdateProjectPublicImageMutation();
+  const [createAssetMutation] = useCreateAssetMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
     currentTeam: s.currentTeam,
@@ -41,13 +51,14 @@ export default ({ projectId }: Params) => {
             id: rawProject.id,
             name: rawProject.name,
             description: rawProject.description,
-            publicTitle: rawProject.publicTitle,
-            publicDescription: rawProject.publicDescription,
+            imageUrl: rawProject.imageUrl,
+            publicTitle: rawProject.publicTitle ?? undefined,
+            publicDescription: rawProject.publicDescription ?? undefined,
+            publicImage: rawProject.publicImage ?? undefined,
             isArchived: rawProject.isArchived,
             isBasicAuthActive: rawProject.isBasicAuthActive,
             basicAuthUsername: rawProject.basicAuthUsername,
             basicAuthPassword: rawProject.basicAuthPassword,
-            imageUrl: rawProject.imageUrl,
             alias: rawProject.alias,
             publishmentStatus: rawProject.publishmentStatus,
           }
@@ -60,6 +71,7 @@ export default ({ projectId }: Params) => {
     setProjectAlias(project?.alias);
   }, [project]);
 
+  // Basic auth
   const updateProjectBasicAuth = useCallback(
     (isBasicAuthActive?: boolean, basicAuthUsername?: string, basicAuthPassword?: string) => {
       projectId &&
@@ -70,6 +82,7 @@ export default ({ projectId }: Params) => {
     [projectId, updateProjectBasicAuthMutation],
   );
 
+  // Alias
   const [checkProjectAliasQuery, { loading: validatingAlias, data: checkProjectAliasData }] =
     useCheckProjectAliasLazyQuery();
   const checkProjectAlias = useCallback(
@@ -97,6 +110,47 @@ export default ({ projectId }: Params) => {
           checkProjectAliasData.checkProjectAlias.available),
     );
   }, [validatingAlias, checkProjectAliasData, project]);
+
+  // Public
+  const updatePublicTitle = useCallback(
+    (publicTitle: string) => {
+      projectId && updateProjectPublicTitle({ variables: { projectId, publicTitle } });
+    },
+    [projectId, updateProjectPublicTitle],
+  );
+  const updatePublicDescription = useCallback(
+    (publicDescription: string) => {
+      projectId && updateProjectPublicDescription({ variables: { projectId, publicDescription } });
+    },
+    [projectId, updateProjectPublicDescription],
+  );
+  const updatePublicImage = useCallback(
+    (publicImage: string | null) => {
+      projectId && updateProjectPublicImage({ variables: { projectId, publicImage } });
+    },
+    [projectId, updateProjectPublicImage],
+  );
+
+  // Assets
+  const { data: assetsData } = useAssetsQuery({
+    variables: { teamId: teamId ?? "" },
+    skip: !teamId,
+  });
+  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+
+  const createAssets = useCallback(
+    (files: FileList) =>
+      (async () => {
+        if (teamId) {
+          await Promise.all(
+            Array.from(files).map(file =>
+              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
+            ),
+          );
+        }
+      })(),
+    [createAssetMutation, teamId],
+  );
 
   // Publication
   const publishProject = useCallback(
@@ -127,6 +181,11 @@ export default ({ projectId }: Params) => {
     checkProjectAlias,
     validatingAlias,
     loading,
+    updatePublicTitle,
+    updatePublicDescription,
+    updatePublicImage,
+    assets,
+    createAssets,
   };
 };
 

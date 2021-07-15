@@ -13,13 +13,12 @@ type Props = {
 
 const Plugin: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentTeam, currentProject, plugins } = useHooks();
+  const { currentProject, plugins } = useHooks();
 
   return (
     <SettingPage projectId={projectId}>
       <SettingsHeader
         title={intl.formatMessage({ defaultMessage: "Plugins" })}
-        currentWorkspace={currentTeam}
         currentProject={currentProject?.name}
       />
       <PluginSection

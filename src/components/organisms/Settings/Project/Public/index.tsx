@@ -4,6 +4,7 @@ import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 
 import StatusSection from "@reearth/components/molecules/Settings/Project/StatusSection";
+import PublicSection from "@reearth/components/molecules/Settings/Project/PublicSection";
 import PublishSection from "@reearth/components/molecules/Settings/Project/PublishSection";
 import BasicAuthSection from "@reearth/components/molecules/Settings/Project/BasicAuthSection";
 import useHooks from "./hooks";
@@ -26,12 +27,16 @@ const Public: React.FC<Props> = ({ projectId }) => {
     checkProjectAlias,
     validatingAlias,
     loading,
+    updatePublicTitle,
+    updatePublicDescription,
+    updatePublicImage,
+    assets,
+    createAssets,
   } = useHooks({ projectId });
 
   return (
     <SettingPage teamId={currentTeam?.id} projectId={projectId}>
       <SettingsHeader
-        currentWorkspace={currentTeam}
         currentProject={currentProject?.name}
         title={intl.formatMessage({ defaultMessage: "Public" })}
       />
@@ -43,6 +48,14 @@ const Public: React.FC<Props> = ({ projectId }) => {
             isBasicAuthActive={project?.isBasicAuthActive}
             basicAuthUsername={project?.basicAuthUsername ?? ""}
             basicAuthPassword={project?.basicAuthPassword ?? ""}
+          />
+          <PublicSection
+            currentProject={project}
+            updatePublicTitle={updatePublicTitle}
+            updatePublicDescription={updatePublicDescription}
+            updatePublicImage={updatePublicImage}
+            assets={assets}
+            createAssets={createAssets}
           />
           <PublishSection
             loading={loading}

@@ -3699,7 +3699,7 @@ export type ProjectQuery = (
     { __typename?: 'ProjectConnection' }
     & { nodes: Array<Maybe<(
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     )>> }
   ) }
 );
@@ -3735,7 +3735,7 @@ export type UpdateProjectNameMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -3752,7 +3752,7 @@ export type UpdateProjectDescriptionMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -3769,7 +3769,7 @@ export type UpdateProjectImageUrlMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -3786,7 +3786,7 @@ export type UpdateProjectPublicTitleMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -3803,7 +3803,24 @@ export type UpdateProjectPublicDescriptionMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
+    ) }
+  )> }
+);
+
+export type UpdateProjectPublicImageMutationVariables = Exact<{
+  projectId: Scalars['ID'];
+  publicImage: Scalars['Upload'];
+}>;
+
+
+export type UpdateProjectPublicImageMutation = (
+  { __typename?: 'Mutation' }
+  & { updateProject?: Maybe<(
+    { __typename?: 'ProjectPayload' }
+    & { project: (
+      { __typename?: 'Project' }
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -3820,7 +3837,7 @@ export type ArchiveProjectMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -7457,13 +7474,14 @@ export const ProjectDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7546,13 +7564,14 @@ export const UpdateProjectNameDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7592,13 +7611,14 @@ export const UpdateProjectDescriptionDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7638,13 +7658,14 @@ export const UpdateProjectImageUrlDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7684,13 +7705,14 @@ export const UpdateProjectPublicTitleDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7732,13 +7754,14 @@ export const UpdateProjectPublicDescriptionDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7771,6 +7794,53 @@ export function useUpdateProjectPublicDescriptionMutation(baseOptions?: Apollo.M
 export type UpdateProjectPublicDescriptionMutationHookResult = ReturnType<typeof useUpdateProjectPublicDescriptionMutation>;
 export type UpdateProjectPublicDescriptionMutationResult = Apollo.MutationResult<UpdateProjectPublicDescriptionMutation>;
 export type UpdateProjectPublicDescriptionMutationOptions = Apollo.BaseMutationOptions<UpdateProjectPublicDescriptionMutation, UpdateProjectPublicDescriptionMutationVariables>;
+export const UpdateProjectPublicImageDocument = gql`
+    mutation updateProjectPublicImage($projectId: ID!, $publicImage: Upload!) {
+  updateProject(input: {projectId: $projectId, publicImage: $publicImage}) {
+    project {
+      id
+      name
+      description
+      imageUrl
+      isArchived
+      isBasicAuthActive
+      basicAuthUsername
+      basicAuthPassword
+      publicTitle
+      publicDescription
+      publicImage
+      alias
+      publishmentStatus
+    }
+  }
+}
+    `;
+export type UpdateProjectPublicImageMutationFn = Apollo.MutationFunction<UpdateProjectPublicImageMutation, UpdateProjectPublicImageMutationVariables>;
+
+/**
+ * __useUpdateProjectPublicImageMutation__
+ *
+ * To run a mutation, you first call `useUpdateProjectPublicImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProjectPublicImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProjectPublicImageMutation, { data, loading, error }] = useUpdateProjectPublicImageMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      publicImage: // value for 'publicImage'
+ *   },
+ * });
+ */
+export function useUpdateProjectPublicImageMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectPublicImageMutation, UpdateProjectPublicImageMutationVariables>) {
+        return Apollo.useMutation<UpdateProjectPublicImageMutation, UpdateProjectPublicImageMutationVariables>(UpdateProjectPublicImageDocument, baseOptions);
+      }
+export type UpdateProjectPublicImageMutationHookResult = ReturnType<typeof useUpdateProjectPublicImageMutation>;
+export type UpdateProjectPublicImageMutationResult = Apollo.MutationResult<UpdateProjectPublicImageMutation>;
+export type UpdateProjectPublicImageMutationOptions = Apollo.BaseMutationOptions<UpdateProjectPublicImageMutation, UpdateProjectPublicImageMutationVariables>;
 export const ArchiveProjectDocument = gql`
     mutation archiveProject($projectId: ID!, $archived: Boolean!) {
   updateProject(input: {projectId: $projectId, archived: $archived}) {
@@ -7778,13 +7848,14 @@ export const ArchiveProjectDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }

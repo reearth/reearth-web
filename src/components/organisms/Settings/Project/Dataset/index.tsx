@@ -23,7 +23,6 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
     <SettingPage teamId={currentTeam?.id} projectId={projectId}>
       <SettingsHeader
         title={intl.formatMessage({ defaultMessage: "Dataset" })}
-        currentWorkspace={currentTeam}
         currentProject={currentProject?.name}
       />
       <DatasetSection
