@@ -12,7 +12,7 @@ type Props = {
 
 const Dataset: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentTeam, currentProject, datasetSchemas, importDataset, removeDatasetSchema } =
+  const { currentTeam, currentProject, datasetSchemas, handleRemoveDataset, handleDatasetImport } =
     useHooks(projectId);
 
   return (
@@ -24,8 +24,8 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
       {!currentProject?.isArchived ? (
         <DatasetSection
           datasetSchemas={datasetSchemas}
-          importDataset={importDataset}
-          removeDatasetSchema={removeDatasetSchema}
+          removeDatasetSchema={handleRemoveDataset}
+          onDatasetImport={handleDatasetImport}
         />
       ) : (
         <ArchivedMessage />
