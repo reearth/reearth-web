@@ -15,6 +15,7 @@ type Team = {
 type Project = {
   id?: string;
   name?: string;
+  isArchived?: boolean;
 };
 
 type Props = {
@@ -55,7 +56,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
         <NavigationItem
           to={`/settings/workspace/${team?.id}/projects`}
           name={intl.formatMessage({ defaultMessage: "Project List" })}>
-          {project && (
+          {project && !project.isArchived && (
             <NavigationItem to={`/settings/project/${project.id}`} name={project.name as string}>
               <NavigationItem
                 to={`/settings/project/${project.id}/public`}

@@ -27,7 +27,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
   return (
     <SettingPage teamId={currentTeam?.id} projectId={projectId}>
       <SettingsHeader currentWorkspace={currentTeam} currentProject={project?.name} />
-      {!project?.isArchived && (
+      {!project?.isArchived ? (
         <ProfileSection
           currentProject={project}
           updateProjectName={updateProjectName}
@@ -36,8 +36,9 @@ const Project: React.FC<Props> = ({ projectId }) => {
           assets={assets}
           createAssets={createAssets}
         />
+      ) : (
+        <ArchivedMessage />
       )}
-      {project?.isArchived && <ArchivedMessage />}
       <DangerSection
         project={project}
         teamId={currentTeam?.id}

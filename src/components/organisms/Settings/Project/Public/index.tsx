@@ -7,6 +7,7 @@ import StatusSection from "@reearth/components/molecules/Settings/Project/Status
 import PublicSection from "@reearth/components/molecules/Settings/Project/PublicSection";
 import PublishSection from "@reearth/components/molecules/Settings/Project/PublishSection";
 import BasicAuthSection from "@reearth/components/molecules/Settings/Project/BasicAuthSection";
+import ArchivedMessage from "@reearth/components/molecules/Settings/Project/ArchivedMessage";
 import useHooks from "./hooks";
 
 type Props = {
@@ -40,7 +41,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
         currentProject={currentProject?.name}
         title={intl.formatMessage({ defaultMessage: "Public" })}
       />
-      {!project?.isArchived && (
+      {!project?.isArchived ? (
         <>
           <StatusSection projectStatus={projectStatus} />
           <BasicAuthSection
@@ -67,6 +68,8 @@ const Public: React.FC<Props> = ({ projectId }) => {
             validatingAlias={validatingAlias}
           />
         </>
+      ) : (
+        <ArchivedMessage />
       )}
     </SettingPage>
   );

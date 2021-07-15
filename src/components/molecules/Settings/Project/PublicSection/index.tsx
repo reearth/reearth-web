@@ -36,9 +36,14 @@ const PublicSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Section title={intl.formatMessage({ defaultMessage: "Public Info" })}>
+      <Section
+        title={intl.formatMessage({ defaultMessage: "Public Info" })}
+        subtitle={intl.formatMessage({
+          defaultMessage:
+            "(These fields will be used for OGP as well as metadata for the public project)",
+        })}>
         <EditableItem
-          title={intl.formatMessage({ defaultMessage: "Name" })}
+          title={intl.formatMessage({ defaultMessage: "Title" })}
           body={currentProject?.publicTitle}
           onSubmit={updatePublicTitle}
         />
