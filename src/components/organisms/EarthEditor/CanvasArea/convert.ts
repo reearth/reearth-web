@@ -189,16 +189,19 @@ export const convertLayers = (data: GetLayersQuery | undefined, selectedLayerId?
   };
 };
 
-const flattenLayers = (l?: Layer[]): Primitive[] | undefined => {
-  return l?.reduce<Primitive[]>((a, b) => {
-    if (!b || !b.pluginId || !b.extensionId || !b.isVisible) {
-      return a;
-    }
-    if (b.layers?.length) {
-      return [...a, b, ...(flattenLayers(b.layers) ?? [])];
-    }
-    return [...a, b];
-  }, []);
+const flattenLayers = (l?: Layer[]): Primitive[] => {
+  return (
+    l?.reduce<Primitive[]>((a, b) => {
+      if (!b || !b.isVisible) {
+        return a;
+      }
+      if (b.layers?.length) {
+        return [...a, ...flattenLayers(b.layers)];
+      }
+      if (!b.pluginId || !b.extensionId) return a;
+      return [...a, b];
+    }, []) ?? []
+  );
 };
 
 export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {
