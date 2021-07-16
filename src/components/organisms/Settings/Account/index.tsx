@@ -28,7 +28,7 @@ const Account: React.FC<Props> = () => {
       <AccountSection
         email={me?.email}
         lang={me?.lang}
-        appTheme={me?.theme.toUpperCase()}
+        appTheme={me?.theme ? me.theme.toUpperCase() : "DARK"}
         hasPassword={hasPassword}
         updatePassword={updatePassword}
         updateLanguage={updateLanguage}
