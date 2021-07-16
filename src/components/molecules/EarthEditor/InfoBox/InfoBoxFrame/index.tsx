@@ -102,7 +102,7 @@ const InfoBox: React.FC<Props> = ({
           noContent={noContent}
           onClick={handleOpen}>
           {isSmallWindow && !noContent && <StyledIcon icon="arrowUp" size={24} open={open} />}
-          <Text size="m" weight="bold">
+          <Text size="m" weight="bold" color="inherit">
             <TitleText noContent={noContent} open={open}>
               {title || " "}
             </TitleText>
