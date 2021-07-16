@@ -58,7 +58,7 @@ const Storytelling: WidgetComponent<Property, PluginProperty> = ({ property }) =
           const title = layers.find(l => l?.id === story.layer)?.title;
           return {
             ...story,
-            title,
+            title: title || story.title,
           };
         })
         .filter((s): s is Story => !!s)
