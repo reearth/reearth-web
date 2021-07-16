@@ -11,7 +11,6 @@ import DatasetList, {
 
 type Props = {
   datasetSchemas: Item[];
-  // importDataset: (file: FileList) => void;
   removeDatasetSchema: (schemaId: string) => void;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
 };
