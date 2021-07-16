@@ -70,7 +70,7 @@ const PublishSection: React.FC<Props> = ({
   return (
     <>
       <Wrapper>
-        <Section title={intl.formatMessage({ defaultMessage: "Domain Settings" })}>
+        <Section title={intl.formatMessage({ defaultMessage: "Site settings" })}>
           <StyledText size="m" color={theme.main.strongText}>
             {intl.formatMessage({ defaultMessage: "Site name" })}
           </StyledText>
