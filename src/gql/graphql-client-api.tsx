@@ -7704,7 +7704,7 @@ export type SceneLazyQueryHookResult = ReturnType<typeof useSceneLazyQuery>;
 export type SceneQueryResult = Apollo.QueryResult<SceneQuery, SceneQueryVariables>;
 export const AssetsDocument = gql`
     query Assets($teamId: ID!) {
-  assets(teamId: $teamId, first: 0, last: 100) {
+  assets(teamId: $teamId, first: 0, last: 300) {
     edges {
       cursor
       node {
