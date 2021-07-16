@@ -81,7 +81,7 @@ const PublishSection: React.FC<Props> = ({
                 })
               : intl.formatMessage({
                   defaultMessage:
-                    "Once your project is published from the Editor page the URL details will be shown here.",
+                    "Once your project is published from the editor page the URL details will be shown here.",
                 })}
           </Text>
           {alias && (
