@@ -76,7 +76,7 @@ const PublicSection: React.FC<Props> = ({
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${props => props.theme.colors.bg[3]};
 `;
 
 export default PublicSection;
