@@ -17,7 +17,6 @@ type Props = {
 
 const DatasetSection: React.FC<Props> = ({
   datasetSchemas,
-  // importDataset,
   removeDatasetSchema,
   onDatasetImport,
 }) => {
