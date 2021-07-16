@@ -7,9 +7,7 @@ import {
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
   usePublishProjectMutation,
-  useUpdateProjectPublicTitleMutation,
-  useUpdateProjectPublicDescriptionMutation,
-  useUpdateProjectPublicImageMutation,
+  useUpdateProjectMutation,
   useCreateAssetMutation,
 } from "@reearth/gql";
 
@@ -22,9 +20,7 @@ type Params = {
 
 export default ({ projectId }: Params) => {
   const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
-  const [updateProjectPublicTitle] = useUpdateProjectPublicTitleMutation();
-  const [updateProjectPublicDescription] = useUpdateProjectPublicDescriptionMutation();
-  const [updateProjectPublicImage] = useUpdateProjectPublicImageMutation();
+  const [updateProject] = useUpdateProjectMutation();
   const [createAssetMutation] = useCreateAssetMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
@@ -114,21 +110,21 @@ export default ({ projectId }: Params) => {
   // Public
   const updatePublicTitle = useCallback(
     (publicTitle: string) => {
-      projectId && updateProjectPublicTitle({ variables: { projectId, publicTitle } });
+      projectId && updateProject({ variables: { projectId, publicTitle } });
     },
-    [projectId, updateProjectPublicTitle],
+    [projectId, updateProject],
   );
   const updatePublicDescription = useCallback(
     (publicDescription: string) => {
-      projectId && updateProjectPublicDescription({ variables: { projectId, publicDescription } });
+      projectId && updateProject({ variables: { projectId, publicDescription } });
     },
-    [projectId, updateProjectPublicDescription],
+    [projectId, updateProject],
   );
   const updatePublicImage = useCallback(
     (publicImage: string | null) => {
-      projectId && updateProjectPublicImage({ variables: { projectId, publicImage } });
+      projectId && updateProject({ variables: { projectId, publicImage } });
     },
-    [projectId, updateProjectPublicImage],
+    [projectId, updateProject],
   );
 
   // Assets

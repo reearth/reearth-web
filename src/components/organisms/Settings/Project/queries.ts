@@ -48,119 +48,27 @@ export const UPDATE_PROJECT_BASIC_AUTH = gql`
   }
 `;
 
-export const UPDATE_PROJECT_NAME = gql`
-  mutation updateProjectName($projectId: ID!, $name: String!) {
-    updateProject(input: { projectId: $projectId, name: $name }) {
-      project {
-        id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
+export const UPDATE_PROJECT = gql`
+  mutation updateProject(
+    $projectId: ID!
+    $name: String
+    $description: String
+    $imageUrl: URL
+    $publicTitle: String
+    $publicDescription: String
+    $publicImage: Upload
+  ) {
+    updateProject(
+      input: {
+        projectId: $projectId
+        name: $name
+        description: $description
+        imageUrl: $imageUrl
+        publicTitle: $publicTitle
+        publicDescription: $publicDescription
+        publicImage: $publicImage
       }
-    }
-  }
-`;
-
-export const UPDATE_PROJECT_DESCRIPTION = gql`
-  mutation updateProjectDescription($projectId: ID!, $description: String!) {
-    updateProject(input: { projectId: $projectId, description: $description }) {
-      project {
-        id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
-      }
-    }
-  }
-`;
-
-export const UPDATE_PROJECT_IMAGE_URL = gql`
-  mutation updateProjectImageUrl($projectId: ID!, $imageUrl: URL) {
-    updateProject(input: { projectId: $projectId, imageUrl: $imageUrl }) {
-      project {
-        id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
-      }
-    }
-  }
-`;
-
-export const UPDATE_PROJECT_PUBLIC_TITLE = gql`
-  mutation updateProjectPublicTitle($projectId: ID!, $publicTitle: String!) {
-    updateProject(input: { projectId: $projectId, publicTitle: $publicTitle }) {
-      project {
-        id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
-      }
-    }
-  }
-`;
-
-export const UPDATE_PROJECT_PUBLIC_DESCRIPTION = gql`
-  mutation updateProjectPublicDescription($projectId: ID!, $publicDescription: String!) {
-    updateProject(input: { projectId: $projectId, publicDescription: $publicDescription }) {
-      project {
-        id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
-      }
-    }
-  }
-`;
-
-export const UPDATE_PROJECT_PUBLIC_IMAGE = gql`
-  mutation updateProjectPublicImage($projectId: ID!, $publicImage: Upload!) {
-    updateProject(input: { projectId: $projectId, publicImage: $publicImage }) {
+    ) {
       project {
         id
         name

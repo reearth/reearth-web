@@ -1,9 +1,7 @@
 import { useCallback, useMemo } from "react";
 import {
   useProjectQuery,
-  useUpdateProjectNameMutation,
-  useUpdateProjectDescriptionMutation,
-  useUpdateProjectImageUrlMutation,
+  useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
   useCreateAssetMutation,
@@ -54,9 +52,7 @@ export default ({ projectId }: Params) => {
   );
 
   // Project Updating
-  const [updateProjectNameMutation] = useUpdateProjectNameMutation();
-  const [updateProjectDescriptionMutation] = useUpdateProjectDescriptionMutation();
-  const [updateProjectImageUrlMutation] = useUpdateProjectImageUrlMutation();
+  const [updateProjectMutation] = useUpdateProjectMutation();
   const [archiveProjectMutation] = useArchiveProjectMutation();
   const [deleteProjectMutation] = useDeleteProjectMutation({
     refetchQueries: ["Me"],
@@ -64,9 +60,9 @@ export default ({ projectId }: Params) => {
 
   const updateProjectName = useCallback(
     (name: string) => {
-      projectId && updateProjectNameMutation({ variables: { projectId, name } });
+      projectId && updateProjectMutation({ variables: { projectId, name } });
     },
-    [projectId, updateProjectNameMutation],
+    [projectId, updateProjectMutation],
   );
 
   const deleteProject = useCallback(() => {
@@ -75,16 +71,16 @@ export default ({ projectId }: Params) => {
 
   const updateProjectDescription = useCallback(
     (description: string) => {
-      projectId && updateProjectDescriptionMutation({ variables: { projectId, description } });
+      projectId && updateProjectMutation({ variables: { projectId, description } });
     },
-    [projectId, updateProjectDescriptionMutation],
+    [projectId, updateProjectMutation],
   );
 
   const updateProjectImageUrl = useCallback(
     (imageUrl: string | null) => {
-      projectId && updateProjectImageUrlMutation({ variables: { projectId, imageUrl } });
+      projectId && updateProjectMutation({ variables: { projectId, imageUrl } });
     },
-    [projectId, updateProjectImageUrlMutation],
+    [projectId, updateProjectMutation],
   );
 
   const archiveProject = useCallback(
