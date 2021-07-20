@@ -1,4 +1,5 @@
 export type Config = {
+  version?: string;
   api: string;
   published: string;
   auth0ClientId?: string;

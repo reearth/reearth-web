@@ -2031,7 +2031,14 @@ export type CreateSceneMutation = (
 export type EarthLayerItemFragment = (
   { __typename?: 'LayerItem' }
   & Pick<LayerItem, 'id' | 'linkedDatasetId'>
-  & { merged?: Maybe<(
+  & { scenePlugin?: Maybe<(
+    { __typename?: 'ScenePlugin' }
+    & { property?: Maybe<(
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+      & PropertyFragmentFragment
+    )> }
+  )>, merged?: Maybe<(
     { __typename?: 'MergedLayer' }
     & Pick<MergedLayer, 'parentId'>
     & { property?: Maybe<(
@@ -2048,6 +2055,13 @@ export type EarthLayerItemFragment = (
         & { property?: Maybe<(
           { __typename?: 'MergedProperty' }
           & MergedPropertyFragmentWithoutSchemaFragment
+        )>, scenePlugin?: Maybe<(
+          { __typename?: 'ScenePlugin' }
+          & { property?: Maybe<(
+            { __typename?: 'Property' }
+            & Pick<Property, 'id'>
+            & PropertyFragmentFragment
+          )> }
         )> }
       )> }
     )> }
@@ -2063,7 +2077,14 @@ type EarthLayer_LayerGroup_Fragment = (
   ) | (
     { __typename?: 'LayerItem' }
     & Pick<LayerItem, 'id'>
-  )>>, property?: Maybe<(
+  )>>, scenePlugin?: Maybe<(
+    { __typename?: 'ScenePlugin' }
+    & { property?: Maybe<(
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+      & PropertyFragmentFragment
+    )> }
+  )>, property?: Maybe<(
     { __typename?: 'Property' }
     & Pick<Property, 'id'>
     & PropertyFragmentWithoutSchemaFragment
@@ -2077,7 +2098,14 @@ type EarthLayer_LayerGroup_Fragment = (
     )>, fields: Array<(
       { __typename?: 'InfoboxField' }
       & Pick<InfoboxField, 'id' | 'pluginId' | 'extensionId' | 'propertyId'>
-      & { property?: Maybe<(
+      & { scenePlugin?: Maybe<(
+        { __typename?: 'ScenePlugin' }
+        & { property?: Maybe<(
+          { __typename?: 'Property' }
+          & Pick<Property, 'id'>
+          & PropertyFragmentFragment
+        )> }
+      )>, property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentWithoutSchemaFragment
@@ -2089,7 +2117,14 @@ type EarthLayer_LayerGroup_Fragment = (
 type EarthLayer_LayerItem_Fragment = (
   { __typename?: 'LayerItem' }
   & Pick<LayerItem, 'id' | 'name' | 'isVisible' | 'pluginId' | 'extensionId'>
-  & { property?: Maybe<(
+  & { scenePlugin?: Maybe<(
+    { __typename?: 'ScenePlugin' }
+    & { property?: Maybe<(
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+      & PropertyFragmentFragment
+    )> }
+  )>, property?: Maybe<(
     { __typename?: 'Property' }
     & Pick<Property, 'id'>
     & PropertyFragmentWithoutSchemaFragment
@@ -2103,7 +2138,14 @@ type EarthLayer_LayerItem_Fragment = (
     )>, fields: Array<(
       { __typename?: 'InfoboxField' }
       & Pick<InfoboxField, 'id' | 'pluginId' | 'extensionId' | 'propertyId'>
-      & { property?: Maybe<(
+      & { scenePlugin?: Maybe<(
+        { __typename?: 'ScenePlugin' }
+        & { property?: Maybe<(
+          { __typename?: 'Property' }
+          & Pick<Property, 'id'>
+          & PropertyFragmentFragment
+        )> }
+      )>, property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentWithoutSchemaFragment
@@ -4610,6 +4652,57 @@ export const PropertyFragmentWithoutSchemaFragmentDoc = gql`
   }
 }
     ${PropertyItemFragmentFragmentDoc}`;
+export const PropertySchemaItemFragmentFragmentDoc = gql`
+    fragment PropertySchemaItemFragment on PropertySchemaGroup {
+  schemaGroupId
+  title
+  translatedTitle
+  isList
+  name
+  isAvailableIf {
+    fieldId
+    type
+    value
+  }
+  fields {
+    fieldId
+    name
+    description
+    translatedName
+    translatedDescription
+    prefix
+    suffix
+    type
+    defaultValue
+    ui
+    min
+    max
+    choices {
+      key
+      label
+      translatedLabel
+    }
+    isAvailableIf {
+      fieldId
+      type
+      value
+    }
+  }
+}
+    `;
+export const PropertyFragmentFragmentDoc = gql`
+    fragment PropertyFragment on Property {
+  id
+  ...PropertyFragmentWithoutSchema
+  schema {
+    id
+    groups {
+      ...PropertySchemaItemFragment
+    }
+  }
+}
+    ${PropertyFragmentWithoutSchemaFragmentDoc}
+${PropertySchemaItemFragmentFragmentDoc}`;
 export const MergedPropertyGroupCommonFragmentFragmentDoc = gql`
     fragment MergedPropertyGroupCommonFragment on MergedPropertyGroup {
   schemaGroupId
@@ -4646,6 +4739,12 @@ export const EarthLayerItemFragmentDoc = gql`
     fragment EarthLayerItem on LayerItem {
   id
   linkedDatasetId
+  scenePlugin {
+    property {
+      id
+      ...PropertyFragment
+    }
+  }
   merged {
     parentId
     property {
@@ -4662,11 +4761,18 @@ export const EarthLayerItemFragmentDoc = gql`
         property {
           ...MergedPropertyFragmentWithoutSchema
         }
+        scenePlugin {
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
       }
     }
   }
 }
-    ${MergedPropertyFragmentWithoutSchemaFragmentDoc}`;
+    ${PropertyFragmentFragmentDoc}
+${MergedPropertyFragmentWithoutSchemaFragmentDoc}`;
 export const EarthLayerFragmentDoc = gql`
     fragment EarthLayer on Layer {
   id
@@ -4674,6 +4780,12 @@ export const EarthLayerFragmentDoc = gql`
   isVisible
   pluginId
   extensionId
+  scenePlugin {
+    property {
+      id
+      ...PropertyFragment
+    }
+  }
   property {
     id
     ...PropertyFragmentWithoutSchema
@@ -4689,6 +4801,12 @@ export const EarthLayerFragmentDoc = gql`
       pluginId
       extensionId
       propertyId
+      scenePlugin {
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
       property {
         id
         ...PropertyFragmentWithoutSchema
@@ -4703,7 +4821,8 @@ export const EarthLayerFragmentDoc = gql`
   }
   ...EarthLayerItem
 }
-    ${PropertyFragmentWithoutSchemaFragmentDoc}
+    ${PropertyFragmentFragmentDoc}
+${PropertyFragmentWithoutSchemaFragmentDoc}
 ${EarthLayerItemFragmentDoc}`;
 export const EarthLayer1FragmentDoc = gql`
     fragment EarthLayer1 on Layer {
@@ -4851,57 +4970,6 @@ export const LayerSystemLayer5FragmentDoc = gql`
 }
     ${LayerSystemLayerFragmentDoc}
 ${LayerSystemLayer4FragmentDoc}`;
-export const PropertySchemaItemFragmentFragmentDoc = gql`
-    fragment PropertySchemaItemFragment on PropertySchemaGroup {
-  schemaGroupId
-  title
-  translatedTitle
-  isList
-  name
-  isAvailableIf {
-    fieldId
-    type
-    value
-  }
-  fields {
-    fieldId
-    name
-    description
-    translatedName
-    translatedDescription
-    prefix
-    suffix
-    type
-    defaultValue
-    ui
-    min
-    max
-    choices {
-      key
-      label
-      translatedLabel
-    }
-    isAvailableIf {
-      fieldId
-      type
-      value
-    }
-  }
-}
-    `;
-export const PropertyFragmentFragmentDoc = gql`
-    fragment PropertyFragment on Property {
-  id
-  ...PropertyFragmentWithoutSchema
-  schema {
-    id
-    groups {
-      ...PropertySchemaItemFragment
-    }
-  }
-}
-    ${PropertyFragmentWithoutSchemaFragmentDoc}
-${PropertySchemaItemFragmentFragmentDoc}`;
 export const InfoboxFragmentFragmentDoc = gql`
     fragment InfoboxFragment on Infobox {
   propertyId
