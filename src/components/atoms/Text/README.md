@@ -12,14 +12,20 @@ Text for property
 import Text from "@reearth/components/atoms/Text";
 
 
-
-<Text size="m" weight="bold"> This a Text </Text>
+<Text size="m" weight="bold"> This is Text </Text>
 <Text size="l" weight="normal" color="red"> ここはテクストです </Text>
-<Text size="l" weight="normal" isParagraph={true}> if this is a paragraph, the line height should be 1.5. and if not a praragraph, it will be te default line height 1. </Text>
+<Text size="l" weight="normal" isParagraph={true}>
+  If you set the Text component as a paragraph, the line height will become 1.5. Otherwise, 	it will be the default line height of 1. 
+</Text>
 <Text size="l" weight="normal" color="red" otherProperties={{ margin: "14px 0" }}> ここはテクストです </Text>
+```
 
-## if the text inside some component, and need some hover effect for example
-  <LongBannerButton
+
+
+- If you put text inside another component and need more complex styling such as hover effects you can override the color prop in favor of passing stylings from the parent.
+
+```jsx
+<LongBannerButton
     align="center"
     justify="center"
     onClick={() => window.location.assign("http://docs.reearth.io")}>
@@ -64,7 +70,7 @@ const LongBannerButton = styled(Flex)`
 
 ### isParagraph: boolean
 
-​	if is paragraph, the line height will be 1.5, default is 1
+​	If isParagraph is true, the line height will be 1.5. Default is 1.
 
 ### weight:
 
@@ -73,7 +79,7 @@ const LongBannerButton = styled(Flex)`
 
 ### otherProperties: 
 
-CSS in line without "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle"
+​	Inline CSS, excluding: "color" | "fontFamily" | "fontSize" | "lineHeight" | "fontStyle"
 
 ### onClick : function()
 
