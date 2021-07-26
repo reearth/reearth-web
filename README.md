@@ -6,8 +6,8 @@ Any requests for new features are very welcome! Just create [an issue under Re:E
 When you find a bug, please create a bug issue with the [bug report template](https://github.com/reearth/reearth/issues/new?assignees=&labels=&template=bug_report.md&title=).
 
 
-## Discussions
-[Here](https://github.com/reearth/reearth/discussions) we have the discussion all topics.
+## Discussion
+[Here](https://github.com/reearth/reearth/discussions) we have a dedicated area for discussions on all topics.
 
 ## License
 
