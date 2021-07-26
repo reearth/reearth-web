@@ -1,5 +1,5 @@
 # reearth-web
-This is front-end repository of [Re:Earth](https://github.com/reearth/reearth)
+This is the front-end repository of [Re:Earth](https://github.com/reearth/reearth)
 
 ## Bug report and Feature requests
 If your have any requests for new features all are welcome! Just create [an issue under Re:Earth repository](https://github.com/reearth/reearth/issues)
