@@ -87,7 +87,7 @@ const AssetButton = styled(Icon)<{ active?: boolean }>`
   color: ${props => props.theme.colors.text.main};
 
   &:hover {
-    background: ${props => props.theme.colors.bg[5]};
+    background: ${props => props.theme.main.bg};
   }
 `;
 
