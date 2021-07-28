@@ -25,7 +25,7 @@ const lightheme: Theme = {
   dashboard: {
     bg: colors.light.bg[2],
     itemBg: colors.light.bg[3],
-    itemTitle: colors.dark.text.main,
+    itemTitle: colors.light.text.main,
     projectName: colors.dark.text.strong,
     projectDescription: colors.dark.text.strong,
     publicationStatus: colors.dark.text.main,
