@@ -163,7 +163,7 @@ const lightheme: Theme = {
     deepBg: colors.light.bg[2],
     hoverBg: colors.light.bg[4],
     smallText: colors.light.text.main,
-    selectedLayer: colors.light.brand.main,
+    selectedLayer: colors.light.functional.select,
     textColor: colors.light.text.main,
     selectedTextColor: colors.light.text.strong,
     disableTextColor: colors.light.text.weak,

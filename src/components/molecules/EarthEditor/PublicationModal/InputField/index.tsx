@@ -55,7 +55,7 @@ const Wrapper = styled.div`
 
 const InputContent = styled.div`
   padding: 5px;
-  border: solid 1.5px ${props => props.theme.main.bg};
+  border: solid 1.5px ${props => props.theme.main.border};
   text-align: left;
   height: auto;
   display: flex;
