@@ -7,7 +7,7 @@ import {
   Observable,
 } from "@apollo/client";
 
-import { PublishedAppProvider as ThemeProvider } from "../src/theme";
+import { Provider as ThemeProvider } from "../src/theme";
 import { Provider as IntlProvider } from "../src/locale";
 import { Provider as DndProvider } from "../src/util/use-dnd";
 import { Provider as LocalStateProvider } from "../src/state";
@@ -30,14 +30,14 @@ export const parameters = {
 
 export const decorators = [
   (storyFn: () => ReactElement) => (
-    <ThemeProvider>
-      <LocalStateProvider>
-        <ApolloProvider client={mockClient}>
+    <ApolloProvider client={mockClient}>
+      <ThemeProvider>
+        <LocalStateProvider>
           <IntlProvider>
             <DndProvider>{storyFn()}</DndProvider>
           </IntlProvider>
-        </ApolloProvider>
-      </LocalStateProvider>
-    </ThemeProvider>
+        </LocalStateProvider>
+      </ThemeProvider>
+    </ApolloProvider>
   ),
 ];
