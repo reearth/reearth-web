@@ -11,56 +11,56 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Lang: any;
-  DateTime: Date;
-  PluginExtensionID: string;
-  Cursor: string;
   Any: any;
-  TranslatedString: any;
-  Upload: any;
-  PropertySchemaFieldID: string;
-  PluginID: string;
-  PropertySchemaID: string;
+  Cursor: string;
+  DatasetSchemaFieldID: any;
+  DateTime: Date;
   FileSize: number;
+  Lang: any;
+  PluginExtensionID: string;
+  PluginID: string;
+  PropertySchemaFieldID: string;
+  PropertySchemaID: string;
+  TranslatedString: any;
   URL: string;
+  Upload: any;
 };
 
 
 
-export type PropertySchema = {
-  __typename?: 'PropertySchema';
-  id: Scalars['PropertySchemaID'];
-  groups: Array<PropertySchemaGroup>;
-  linkableFields: PropertyLinkableFields;
-};
-
-export type PropertySchemaFieldChoice = {
-  __typename?: 'PropertySchemaFieldChoice';
-  key: Scalars['String'];
-  title: Scalars['String'];
-  label: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-  allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedLabel?: Maybe<Scalars['TranslatedString']>;
-  translatedTitle: Scalars['String'];
-  translatedLabel: Scalars['String'];
-};
-
-
-export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-
-export type PropertySchemaFieldChoiceTranslatedLabelArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-export type UpdateWidgetInput = {
+export type AddDatasetSchemaInput = {
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
-  enabled?: Maybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  representativefield?: Maybe<Scalars['ID']>;
+};
+
+export type AddDatasetSchemaPayload = {
+  __typename?: 'AddDatasetSchemaPayload';
+  datasetSchema?: Maybe<DatasetSchema>;
+};
+
+export type AddDynamicDatasetInput = {
+  datasetSchemaId: Scalars['ID'];
+  author: Scalars['String'];
+  content: Scalars['String'];
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+  target?: Maybe<Scalars['String']>;
+};
+
+export type AddDynamicDatasetPayload = {
+  __typename?: 'AddDynamicDatasetPayload';
+  datasetSchema?: Maybe<DatasetSchema>;
+  dataset?: Maybe<Dataset>;
+};
+
+export type AddDynamicDatasetSchemaInput = {
+  sceneId: Scalars['ID'];
+};
+
+export type AddDynamicDatasetSchemaPayload = {
+  __typename?: 'AddDynamicDatasetSchemaPayload';
+  datasetSchema?: Maybe<DatasetSchema>;
 };
 
 export type AddInfoboxFieldInput = {
@@ -70,76 +70,50 @@ export type AddInfoboxFieldInput = {
   index?: Maybe<Scalars['Int']>;
 };
 
-export type SignupPayload = {
-  __typename?: 'SignupPayload';
-  user: User;
-  team: Team;
+export type AddInfoboxFieldPayload = {
+  __typename?: 'AddInfoboxFieldPayload';
+  infoboxField: InfoboxField;
+  layer: Layer;
 };
 
-
-export enum ListOperation {
-  Add = 'ADD',
-  Move = 'MOVE',
-  Remove = 'REMOVE'
-}
-
-export enum LayerEncodingFormat {
-  Kml = 'KML',
-  Czml = 'CZML',
-  Geojson = 'GEOJSON',
-  Shape = 'SHAPE',
-  Reearth = 'REEARTH'
-}
-
-export type MergedLayer = {
-  __typename?: 'MergedLayer';
-  originalId: Scalars['ID'];
-  parentId?: Maybe<Scalars['ID']>;
-  sceneID: Scalars['ID'];
-  property?: Maybe<MergedProperty>;
-  infobox?: Maybe<MergedInfobox>;
-  original?: Maybe<LayerItem>;
-  parent?: Maybe<LayerGroup>;
-  scene?: Maybe<Scene>;
+export type AddLayerGroupInput = {
+  parentLayerId: Scalars['ID'];
+  pluginId?: Maybe<Scalars['PluginID']>;
+  extensionId?: Maybe<Scalars['PluginExtensionID']>;
+  index?: Maybe<Scalars['Int']>;
+  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
+  representativeFieldId?: Maybe<Scalars['DatasetSchemaFieldID']>;
 };
 
-export type MergedInfoboxField = {
-  __typename?: 'MergedInfoboxField';
-  originalId: Scalars['ID'];
-  sceneID: Scalars['ID'];
+export type AddLayerGroupPayload = {
+  __typename?: 'AddLayerGroupPayload';
+  layer: LayerGroup;
+  parentLayer: LayerGroup;
+  index?: Maybe<Scalars['Int']>;
+};
+
+export type AddLayerItemInput = {
+  parentLayerId: Scalars['ID'];
   pluginId: Scalars['PluginID'];
   extensionId: Scalars['PluginExtensionID'];
-  property?: Maybe<MergedProperty>;
-  plugin?: Maybe<Plugin>;
-  extension?: Maybe<PluginExtension>;
-  scene?: Maybe<Scene>;
-  scenePlugin?: Maybe<ScenePlugin>;
-};
-
-export type UpdateTeamInput = {
-  teamId: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-export type MovePropertyItemInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
-  itemId: Scalars['ID'];
-  index: Scalars['Int'];
-};
-
-
-export type UpdateMemberOfTeamPayload = {
-  __typename?: 'UpdateMemberOfTeamPayload';
-  team: Team;
-};
-
-export type UpdatePropertyItemOperationInput = {
-  operation: ListOperation;
-  itemId?: Maybe<Scalars['ID']>;
   index?: Maybe<Scalars['Int']>;
-  nameFieldValue?: Maybe<Scalars['Any']>;
-  nameFieldType?: Maybe<ValueType>;
+  name?: Maybe<Scalars['String']>;
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+};
+
+export type AddLayerItemPayload = {
+  __typename?: 'AddLayerItemPayload';
+  layer: LayerItem;
+  parentLayer: LayerGroup;
+  index?: Maybe<Scalars['Int']>;
+};
+
+export type AddMemberToTeamInput = {
+  teamId: Scalars['ID'];
+  userId: Scalars['ID'];
+  role: Role;
 };
 
 export type AddMemberToTeamPayload = {
@@ -147,26 +121,117 @@ export type AddMemberToTeamPayload = {
   team: Team;
 };
 
-export type UploadPluginPayload = {
-  __typename?: 'UploadPluginPayload';
-  plugin: Plugin;
+export type AddPropertyItemInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId: Scalars['PropertySchemaFieldID'];
+  index?: Maybe<Scalars['Int']>;
+  nameFieldValue?: Maybe<Scalars['Any']>;
+  nameFieldType?: Maybe<ValueType>;
 };
 
-export type RemoveInfoboxPayload = {
-  __typename?: 'RemoveInfoboxPayload';
+export type AddWidgetInput = {
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
+};
+
+export type AddWidgetPayload = {
+  __typename?: 'AddWidgetPayload';
+  scene: Scene;
+  sceneWidget: SceneWidget;
+};
+
+
+export type Asset = Node & {
+  __typename?: 'Asset';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  teamId: Scalars['ID'];
+  name: Scalars['String'];
+  size: Scalars['FileSize'];
+  url: Scalars['String'];
+  contentType: Scalars['String'];
+  team?: Maybe<Team>;
+};
+
+export type AssetConnection = {
+  __typename?: 'AssetConnection';
+  edges: Array<AssetEdge>;
+  nodes: Array<Maybe<Asset>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type AssetEdge = {
+  __typename?: 'AssetEdge';
+  cursor: Scalars['Cursor'];
+  node?: Maybe<Asset>;
+};
+
+export type Camera = {
+  __typename?: 'Camera';
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
+  altitude: Scalars['Float'];
+  heading: Scalars['Float'];
+  pitch: Scalars['Float'];
+  roll: Scalars['Float'];
+  fov: Scalars['Float'];
+};
+
+export type CheckProjectAliasPayload = {
+  __typename?: 'CheckProjectAliasPayload';
+  alias: Scalars['String'];
+  available: Scalars['Boolean'];
+};
+
+export type CreateAssetInput = {
+  teamId: Scalars['ID'];
+  file: Scalars['Upload'];
+};
+
+export type CreateAssetPayload = {
+  __typename?: 'CreateAssetPayload';
+  asset: Asset;
+};
+
+export type CreateInfoboxInput = {
+  layerId: Scalars['ID'];
+};
+
+export type CreateInfoboxPayload = {
+  __typename?: 'CreateInfoboxPayload';
   layer: Layer;
 };
 
-export type PropertyFieldLink = {
-  __typename?: 'PropertyFieldLink';
-  datasetId?: Maybe<Scalars['ID']>;
-  datasetSchemaId: Scalars['ID'];
-  datasetSchemaFieldId: Scalars['ID'];
-  dataset?: Maybe<Dataset>;
-  datasetField?: Maybe<DatasetField>;
-  datasetSchema?: Maybe<DatasetSchema>;
-  datasetSchemaField?: Maybe<DatasetSchemaField>;
+export type CreateProjectInput = {
+  teamId: Scalars['ID'];
+  visualizer: Visualizer;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['URL']>;
+  alias?: Maybe<Scalars['String']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
+
+export type CreateSceneInput = {
+  projectId: Scalars['ID'];
+};
+
+export type CreateScenePayload = {
+  __typename?: 'CreateScenePayload';
+  scene: Scene;
+};
+
+export type CreateTeamInput = {
+  name: Scalars['String'];
+};
+
+export type CreateTeamPayload = {
+  __typename?: 'CreateTeamPayload';
+  team: Team;
+};
+
 
 export type Dataset = Node & {
   __typename?: 'Dataset';
@@ -178,46 +243,66 @@ export type Dataset = Node & {
   name?: Maybe<Scalars['String']>;
 };
 
-export type MergedPropertyGroup = {
-  __typename?: 'MergedPropertyGroup';
-  originalPropertyId?: Maybe<Scalars['ID']>;
-  parentPropertyId?: Maybe<Scalars['ID']>;
-  originalId?: Maybe<Scalars['ID']>;
-  parentId?: Maybe<Scalars['ID']>;
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
-  schemaId?: Maybe<Scalars['PropertySchemaID']>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
-  fields: Array<MergedPropertyField>;
-  groups: Array<MergedPropertyGroup>;
-  originalProperty?: Maybe<Property>;
-  parentProperty?: Maybe<Property>;
-  original?: Maybe<PropertyGroup>;
-  parent?: Maybe<PropertyGroup>;
-  schema?: Maybe<PropertySchema>;
-  linkedDataset?: Maybe<Dataset>;
+export type DatasetConnection = {
+  __typename?: 'DatasetConnection';
+  edges: Array<DatasetEdge>;
+  nodes: Array<Maybe<Dataset>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
-export type SyncDatasetPayload = {
-  __typename?: 'SyncDatasetPayload';
+export type DatasetEdge = {
+  __typename?: 'DatasetEdge';
+  cursor: Scalars['Cursor'];
+  node?: Maybe<Dataset>;
+};
+
+export type DatasetField = {
+  __typename?: 'DatasetField';
+  fieldId: Scalars['ID'];
+  schemaId: Scalars['ID'];
+  source: Scalars['String'];
+  type: ValueType;
+  value?: Maybe<Scalars['Any']>;
+  schema?: Maybe<DatasetSchema>;
+  field?: Maybe<DatasetSchemaField>;
+  valueRef?: Maybe<Dataset>;
+};
+
+export type DatasetSchema = Node & {
+  __typename?: 'DatasetSchema';
+  id: Scalars['ID'];
+  source: Scalars['String'];
+  name: Scalars['String'];
   sceneId: Scalars['ID'];
-  url: Scalars['String'];
-  datasetSchema: Array<DatasetSchema>;
-  dataset: Array<Dataset>;
+  fields: Array<DatasetSchemaField>;
+  representativeFieldId?: Maybe<Scalars['ID']>;
+  dynamic?: Maybe<Scalars['Boolean']>;
+  datasets: DatasetConnection;
+  scene?: Maybe<Scene>;
+  representativeField?: Maybe<DatasetSchemaField>;
 };
 
-export enum TextAlign {
-  Left = 'LEFT',
-  Center = 'CENTER',
-  Right = 'RIGHT',
-  Justify = 'JUSTIFY',
-  JustifyAll = 'JUSTIFY_ALL'
-}
 
-export type UnlinkPropertyValueInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
+export type DatasetSchemaDatasetsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+};
+
+export type DatasetSchemaConnection = {
+  __typename?: 'DatasetSchemaConnection';
+  edges: Array<DatasetSchemaEdge>;
+  nodes: Array<Maybe<DatasetSchema>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DatasetSchemaEdge = {
+  __typename?: 'DatasetSchemaEdge';
+  cursor: Scalars['Cursor'];
+  node?: Maybe<DatasetSchema>;
 };
 
 export type DatasetSchemaField = Node & {
@@ -232,117 +317,43 @@ export type DatasetSchemaField = Node & {
   ref?: Maybe<DatasetSchema>;
 };
 
+
+
+export type DeleteMeInput = {
+  userId: Scalars['ID'];
+};
+
+export type DeleteMePayload = {
+  __typename?: 'DeleteMePayload';
+  userId: Scalars['ID'];
+};
+
+export type DeleteProjectInput = {
+  projectId: Scalars['ID'];
+};
+
+export type DeleteProjectPayload = {
+  __typename?: 'DeleteProjectPayload';
+  projectId: Scalars['ID'];
+};
+
+export type DeleteTeamInput = {
+  teamId: Scalars['ID'];
+};
+
 export type DeleteTeamPayload = {
   __typename?: 'DeleteTeamPayload';
   teamId: Scalars['ID'];
 };
 
-export type UpgradePluginPayload = {
-  __typename?: 'UpgradePluginPayload';
-  scene: Scene;
-  scenePlugin: ScenePlugin;
+
+export type ImportDatasetFromGoogleSheetInput = {
+  accessToken: Scalars['String'];
+  fileId: Scalars['String'];
+  sheetName: Scalars['String'];
+  sceneId: Scalars['ID'];
+  datasetSchemaId?: Maybe<Scalars['ID']>;
 };
-
-export type Team = Node & {
-  __typename?: 'Team';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  members: Array<TeamMember>;
-  personal: Scalars['Boolean'];
-  assets: AssetConnection;
-  projects: ProjectConnection;
-};
-
-
-export type TeamAssetsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-
-export type TeamProjectsArgs = {
-  includeArchived?: Maybe<Scalars['Boolean']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-export type MoveInfoboxFieldPayload = {
-  __typename?: 'MoveInfoboxFieldPayload';
-  infoboxFieldId: Scalars['ID'];
-  layer: Layer;
-  index: Scalars['Int'];
-};
-
-export type UpdateDatasetSchemaPayload = {
-  __typename?: 'UpdateDatasetSchemaPayload';
-  datasetSchema?: Maybe<DatasetSchema>;
-};
-
-export type AddDynamicDatasetSchemaPayload = {
-  __typename?: 'AddDynamicDatasetSchemaPayload';
-  datasetSchema?: Maybe<DatasetSchema>;
-};
-
-export type AssetConnection = {
-  __typename?: 'AssetConnection';
-  edges: Array<AssetEdge>;
-  nodes: Array<Maybe<Asset>>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
-};
-
-export type CreateSceneInput = {
-  projectId: Scalars['ID'];
-};
-
-export type MoveInfoboxFieldInput = {
-  layerId: Scalars['ID'];
-  infoboxFieldId: Scalars['ID'];
-  index: Scalars['Int'];
-};
-
-
-export type PropertyField = {
-  __typename?: 'PropertyField';
-  id: Scalars['PropertySchemaFieldID'];
-  parentId: Scalars['ID'];
-  schemaId: Scalars['PropertySchemaID'];
-  fieldId: Scalars['PropertySchemaFieldID'];
-  links?: Maybe<Array<PropertyFieldLink>>;
-  type: ValueType;
-  value?: Maybe<Scalars['Any']>;
-  parent?: Maybe<Property>;
-  schema?: Maybe<PropertySchema>;
-  field?: Maybe<PropertySchemaField>;
-  actualValue?: Maybe<Scalars['Any']>;
-};
-
-export type MergedProperty = {
-  __typename?: 'MergedProperty';
-  originalId?: Maybe<Scalars['ID']>;
-  parentId?: Maybe<Scalars['ID']>;
-  schemaId?: Maybe<Scalars['PropertySchemaID']>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
-  original?: Maybe<Property>;
-  parent?: Maybe<Property>;
-  schema?: Maybe<PropertySchema>;
-  linkedDataset?: Maybe<Dataset>;
-  groups: Array<MergedPropertyGroup>;
-};
-
-export type CreateInfoboxInput = {
-  layerId: Scalars['ID'];
-};
-
-export type CreateTeamPayload = {
-  __typename?: 'CreateTeamPayload';
-  team: Team;
-};
-
 
 export type ImportDatasetInput = {
   file: Scalars['Upload'];
@@ -350,140 +361,106 @@ export type ImportDatasetInput = {
   datasetSchemaId?: Maybe<Scalars['ID']>;
 };
 
-export type DatasetEdge = {
-  __typename?: 'DatasetEdge';
-  cursor: Scalars['Cursor'];
-  node?: Maybe<Dataset>;
+export type ImportDatasetPayload = {
+  __typename?: 'ImportDatasetPayload';
+  datasetSchema: DatasetSchema;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  me?: Maybe<User>;
-  node?: Maybe<Node>;
-  nodes: Array<Maybe<Node>>;
-  propertySchema?: Maybe<PropertySchema>;
-  propertySchemas: Array<PropertySchema>;
-  plugin?: Maybe<Plugin>;
-  plugins: Array<Plugin>;
-  layer?: Maybe<Layer>;
+export type ImportLayerInput = {
+  layerId: Scalars['ID'];
+  file: Scalars['Upload'];
+  format: LayerEncodingFormat;
+};
+
+export type ImportLayerPayload = {
+  __typename?: 'ImportLayerPayload';
+  layers: Array<Layer>;
+  parentLayer: LayerGroup;
+};
+
+export type Infobox = {
+  __typename?: 'Infobox';
+  sceneId: Scalars['ID'];
+  layerId: Scalars['ID'];
+  propertyId: Scalars['ID'];
+  fields: Array<InfoboxField>;
+  linkedDatasetId?: Maybe<Scalars['ID']>;
+  layer: Layer;
+  property?: Maybe<Property>;
+  linkedDataset?: Maybe<Dataset>;
+  merged?: Maybe<MergedInfobox>;
   scene?: Maybe<Scene>;
-  assets: AssetConnection;
-  projects: ProjectConnection;
-  datasetSchemas: DatasetSchemaConnection;
-  datasets: DatasetConnection;
-  sceneLock?: Maybe<SceneLockMode>;
-  dynamicDatasetSchemas: Array<DatasetSchema>;
-  searchUser?: Maybe<SearchedUser>;
-  checkProjectAlias: CheckProjectAliasPayload;
-  installablePlugins: Array<PluginMetadata>;
 };
 
-
-export type QueryNodeArgs = {
+export type InfoboxField = {
+  __typename?: 'InfoboxField';
   id: Scalars['ID'];
-  type: NodeType;
+  sceneId: Scalars['ID'];
+  layerId: Scalars['ID'];
+  propertyId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
+  linkedDatasetId?: Maybe<Scalars['ID']>;
+  layer: Layer;
+  infobox: Infobox;
+  property?: Maybe<Property>;
+  plugin?: Maybe<Plugin>;
+  extension?: Maybe<PluginExtension>;
+  linkedDataset?: Maybe<Dataset>;
+  merged?: Maybe<MergedInfoboxField>;
+  scene?: Maybe<Scene>;
+  scenePlugin?: Maybe<ScenePlugin>;
+};
+
+export type InstallPluginInput = {
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+};
+
+export type InstallPluginPayload = {
+  __typename?: 'InstallPluginPayload';
+  scene: Scene;
+  scenePlugin: ScenePlugin;
 };
 
 
-export type QueryNodesArgs = {
-  id: Array<Scalars['ID']>;
-  type: NodeType;
+export type LatLng = {
+  __typename?: 'LatLng';
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
 };
 
-
-export type QueryPropertySchemaArgs = {
-  id: Scalars['PropertySchemaID'];
+export type LatLngHeight = {
+  __typename?: 'LatLngHeight';
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
+  height: Scalars['Float'];
 };
 
-
-export type QueryPropertySchemasArgs = {
-  id: Array<Scalars['PropertySchemaID']>;
-};
-
-
-export type QueryPluginArgs = {
-  id: Scalars['PluginID'];
-};
-
-
-export type QueryPluginsArgs = {
-  id: Array<Scalars['PluginID']>;
-};
-
-
-export type QueryLayerArgs = {
+export type Layer = {
   id: Scalars['ID'];
-};
-
-
-export type QuerySceneArgs = {
-  projectId: Scalars['ID'];
-};
-
-
-export type QueryAssetsArgs = {
-  teamId: Scalars['ID'];
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-
-export type QueryProjectsArgs = {
-  teamId: Scalars['ID'];
-  includeArchived?: Maybe<Scalars['Boolean']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-
-export type QueryDatasetSchemasArgs = {
   sceneId: Scalars['ID'];
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
+  name: Scalars['String'];
+  isVisible: Scalars['Boolean'];
+  propertyId?: Maybe<Scalars['ID']>;
+  pluginId?: Maybe<Scalars['PluginID']>;
+  extensionId?: Maybe<Scalars['PluginExtensionID']>;
+  infobox?: Maybe<Infobox>;
+  parentId?: Maybe<Scalars['ID']>;
+  parent?: Maybe<LayerGroup>;
+  property?: Maybe<Property>;
+  plugin?: Maybe<Plugin>;
+  extension?: Maybe<PluginExtension>;
+  scenePlugin?: Maybe<ScenePlugin>;
 };
 
-
-export type QueryDatasetsArgs = {
-  datasetSchemaId: Scalars['ID'];
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-
-export type QuerySceneLockArgs = {
-  sceneId: Scalars['ID'];
-};
-
-
-export type QueryDynamicDatasetSchemasArgs = {
-  sceneId: Scalars['ID'];
-};
-
-
-export type QuerySearchUserArgs = {
-  nameOrEmail: Scalars['String'];
-};
-
-
-export type QueryCheckProjectAliasArgs = {
-  alias: Scalars['String'];
-};
-
-
-export type PropertyCondition = {
-  __typename?: 'PropertyCondition';
-  fieldId: Scalars['PropertySchemaFieldID'];
-  type: ValueType;
-  value?: Maybe<Scalars['Any']>;
-};
+export enum LayerEncodingFormat {
+  Kml = 'KML',
+  Czml = 'CZML',
+  Geojson = 'GEOJSON',
+  Shape = 'SHAPE',
+  Reearth = 'REEARTH'
+}
 
 export type LayerGroup = Layer & {
   __typename?: 'LayerGroup';
@@ -509,128 +486,6 @@ export type LayerGroup = Layer & {
   scenePlugin?: Maybe<ScenePlugin>;
 };
 
-
-export type PropertyItem = PropertyGroup | PropertyGroupList;
-
-export type RemoveMemberFromTeamInput = {
-  teamId: Scalars['ID'];
-  userId: Scalars['ID'];
-};
-
-export type UpdatePropertyValueLatLngHeightInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  height: Scalars['Float'];
-};
-
-export type RemoveWidgetPayload = {
-  __typename?: 'RemoveWidgetPayload';
-  scene: Scene;
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
-};
-
-export type Rect = {
-  __typename?: 'Rect';
-  west: Scalars['Float'];
-  south: Scalars['Float'];
-  east: Scalars['Float'];
-  north: Scalars['Float'];
-};
-
-export type MoveLayerPayload = {
-  __typename?: 'MoveLayerPayload';
-  layerId: Scalars['ID'];
-  fromParentLayer: LayerGroup;
-  toParentLayer: LayerGroup;
-  index: Scalars['Int'];
-};
-
-export type DatasetSchema = Node & {
-  __typename?: 'DatasetSchema';
-  id: Scalars['ID'];
-  source: Scalars['String'];
-  name: Scalars['String'];
-  sceneId: Scalars['ID'];
-  fields: Array<DatasetSchemaField>;
-  representativeFieldId?: Maybe<Scalars['ID']>;
-  dynamic?: Maybe<Scalars['Boolean']>;
-  datasets: DatasetConnection;
-  scene?: Maybe<Scene>;
-  representativeField?: Maybe<DatasetSchemaField>;
-};
-
-
-export type DatasetSchemaDatasetsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-export type Infobox = {
-  __typename?: 'Infobox';
-  sceneId: Scalars['ID'];
-  layerId: Scalars['ID'];
-  propertyId: Scalars['ID'];
-  fields: Array<InfoboxField>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
-  layer: Layer;
-  property?: Maybe<Property>;
-  linkedDataset?: Maybe<Dataset>;
-  merged?: Maybe<MergedInfobox>;
-  scene?: Maybe<Scene>;
-};
-
-export type DeleteTeamInput = {
-  teamId: Scalars['ID'];
-};
-
-export type UpdateProjectInput = {
-  projectId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  isBasicAuthActive?: Maybe<Scalars['Boolean']>;
-  basicAuthUsername?: Maybe<Scalars['String']>;
-  basicAuthPassword?: Maybe<Scalars['String']>;
-  alias?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['URL']>;
-  publicTitle?: Maybe<Scalars['String']>;
-  publicDescription?: Maybe<Scalars['String']>;
-  publicImage?: Maybe<Scalars['Upload']>;
-  publicNoIndex?: Maybe<Scalars['Boolean']>;
-  deleteImageUrl?: Maybe<Scalars['Boolean']>;
-  deletePublicImage?: Maybe<Scalars['Boolean']>;
-};
-
-export type UpdateMePayload = {
-  __typename?: 'UpdateMePayload';
-  user: User;
-};
-
-export type ProjectConnection = {
-  __typename?: 'ProjectConnection';
-  edges: Array<ProjectEdge>;
-  nodes: Array<Maybe<Project>>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
-};
-
-export type PropertyGroup = {
-  __typename?: 'PropertyGroup';
-  id: Scalars['ID'];
-  schemaId: Scalars['PropertySchemaID'];
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
-  fields: Array<PropertyField>;
-  schema?: Maybe<PropertySchema>;
-  schemaGroup?: Maybe<PropertySchemaGroup>;
-};
-
 export type LayerItem = Layer & {
   __typename?: 'LayerItem';
   id: Scalars['ID'];
@@ -653,55 +508,68 @@ export type LayerItem = Layer & {
   scenePlugin?: Maybe<ScenePlugin>;
 };
 
-export type RemoveAssetPayload = {
-  __typename?: 'RemoveAssetPayload';
-  assetId: Scalars['ID'];
-};
-
-export type UpdateWidgetPayload = {
-  __typename?: 'UpdateWidgetPayload';
-  scene: Scene;
-  sceneWidget: SceneWidget;
-};
-
-export type CreateInfoboxPayload = {
-  __typename?: 'CreateInfoboxPayload';
-  layer: Layer;
-};
-
 export type Layers = LayerItem | LayerGroup;
 
-export type RemoveAssetInput = {
-  assetId: Scalars['ID'];
+export type LinkDatasetToPropertyValueInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  itemId?: Maybe<Scalars['ID']>;
+  fieldId: Scalars['PropertySchemaFieldID'];
+  datasetSchemaIds: Array<Scalars['ID']>;
+  datasetSchemaFieldIds: Array<Scalars['ID']>;
+  datasetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
-export type RemoveMemberFromTeamPayload = {
-  __typename?: 'RemoveMemberFromTeamPayload';
-  team: Team;
+export enum ListOperation {
+  Add = 'ADD',
+  Move = 'MOVE',
+  Remove = 'REMOVE'
+}
+
+export type MergedInfobox = {
+  __typename?: 'MergedInfobox';
+  sceneID: Scalars['ID'];
+  property?: Maybe<MergedProperty>;
+  fields: Array<MergedInfoboxField>;
+  scene?: Maybe<Scene>;
 };
 
-export type AddWidgetPayload = {
-  __typename?: 'AddWidgetPayload';
-  scene: Scene;
-  sceneWidget: SceneWidget;
+export type MergedInfoboxField = {
+  __typename?: 'MergedInfoboxField';
+  originalId: Scalars['ID'];
+  sceneID: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
+  property?: Maybe<MergedProperty>;
+  plugin?: Maybe<Plugin>;
+  extension?: Maybe<PluginExtension>;
+  scene?: Maybe<Scene>;
+  scenePlugin?: Maybe<ScenePlugin>;
 };
 
-export type PropertyItemPayload = {
-  __typename?: 'PropertyItemPayload';
-  property: Property;
-  propertyItem?: Maybe<PropertyItem>;
+export type MergedLayer = {
+  __typename?: 'MergedLayer';
+  originalId: Scalars['ID'];
+  parentId?: Maybe<Scalars['ID']>;
+  sceneID: Scalars['ID'];
+  property?: Maybe<MergedProperty>;
+  infobox?: Maybe<MergedInfobox>;
+  original?: Maybe<LayerItem>;
+  parent?: Maybe<LayerGroup>;
+  scene?: Maybe<Scene>;
 };
 
-export type ImportDatasetPayload = {
-  __typename?: 'ImportDatasetPayload';
-  datasetSchema: DatasetSchema;
-};
-
-export type TeamMember = {
-  __typename?: 'TeamMember';
-  userId: Scalars['ID'];
-  role: Role;
-  user?: Maybe<User>;
+export type MergedProperty = {
+  __typename?: 'MergedProperty';
+  originalId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']>;
+  schemaId?: Maybe<Scalars['PropertySchemaID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']>;
+  original?: Maybe<Property>;
+  parent?: Maybe<Property>;
+  schema?: Maybe<PropertySchema>;
+  linkedDataset?: Maybe<Dataset>;
+  groups: Array<MergedPropertyGroup>;
 };
 
 export type MergedPropertyField = {
@@ -717,213 +585,57 @@ export type MergedPropertyField = {
   actualValue?: Maybe<Scalars['Any']>;
 };
 
-export type CreateTeamInput = {
-  name: Scalars['String'];
-};
-
-export type UpdatePropertyValueTypographyInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  fontFamily?: Maybe<Scalars['String']>;
-  fontWeight?: Maybe<Scalars['String']>;
-  fontSize?: Maybe<Scalars['Int']>;
-  color?: Maybe<Scalars['String']>;
-  textAlign?: Maybe<TextAlign>;
-  bold?: Maybe<Scalars['Boolean']>;
-  italic?: Maybe<Scalars['Boolean']>;
-  underline?: Maybe<Scalars['Boolean']>;
-};
-
-export type AssetEdge = {
-  __typename?: 'AssetEdge';
-  cursor: Scalars['Cursor'];
-  node?: Maybe<Asset>;
-};
-
-export type Scene = Node & {
-  __typename?: 'Scene';
-  id: Scalars['ID'];
-  projectId: Scalars['ID'];
-  teamId: Scalars['ID'];
-  propertyId: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  rootLayerId: Scalars['ID'];
-  widgets: Array<SceneWidget>;
-  plugins: Array<ScenePlugin>;
-  dynamicDatasetSchemas: Array<DatasetSchema>;
-  project?: Maybe<Project>;
-  team?: Maybe<Team>;
-  property?: Maybe<Property>;
-  rootLayer?: Maybe<LayerGroup>;
-  lockMode: SceneLockMode;
-  datasetSchemas: DatasetSchemaConnection;
-};
-
-
-export type SceneDatasetSchemasArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-};
-
-export type UpdateMeInput = {
-  name?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  lang?: Maybe<Scalars['Lang']>;
-  theme?: Maybe<Theme>;
-  password?: Maybe<Scalars['String']>;
-  passwordConfirmation?: Maybe<Scalars['String']>;
-};
-
-export enum Role {
-  Reader = 'READER',
-  Writer = 'WRITER',
-  Owner = 'OWNER'
-}
-
-export type Plugin = {
-  __typename?: 'Plugin';
-  id: Scalars['PluginID'];
-  name: Scalars['String'];
-  version: Scalars['String'];
-  description: Scalars['String'];
-  author: Scalars['String'];
-  repositoryUrl: Scalars['String'];
-  propertySchemaId?: Maybe<Scalars['PropertySchemaID']>;
-  extensions: Array<PluginExtension>;
-  scenePlugin?: Maybe<ScenePlugin>;
-  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
-  translatedName: Scalars['String'];
-  translatedDescription: Scalars['String'];
-  propertySchema?: Maybe<PropertySchema>;
-};
-
-
-export type PluginScenePluginArgs = {
-  sceneId: Scalars['ID'];
-};
-
-
-export type PluginTranslatedNameArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-
-export type PluginTranslatedDescriptionArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-export type Layer = {
-  id: Scalars['ID'];
-  sceneId: Scalars['ID'];
-  name: Scalars['String'];
-  isVisible: Scalars['Boolean'];
-  propertyId?: Maybe<Scalars['ID']>;
-  pluginId?: Maybe<Scalars['PluginID']>;
-  extensionId?: Maybe<Scalars['PluginExtensionID']>;
-  infobox?: Maybe<Infobox>;
+export type MergedPropertyGroup = {
+  __typename?: 'MergedPropertyGroup';
+  originalPropertyId?: Maybe<Scalars['ID']>;
+  parentPropertyId?: Maybe<Scalars['ID']>;
+  originalId?: Maybe<Scalars['ID']>;
   parentId?: Maybe<Scalars['ID']>;
-  parent?: Maybe<LayerGroup>;
-  property?: Maybe<Property>;
-  plugin?: Maybe<Plugin>;
-  extension?: Maybe<PluginExtension>;
-  scenePlugin?: Maybe<ScenePlugin>;
+  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  schemaId?: Maybe<Scalars['PropertySchemaID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']>;
+  fields: Array<MergedPropertyField>;
+  groups: Array<MergedPropertyGroup>;
+  originalProperty?: Maybe<Property>;
+  parentProperty?: Maybe<Property>;
+  original?: Maybe<PropertyGroup>;
+  parent?: Maybe<PropertyGroup>;
+  schema?: Maybe<PropertySchema>;
+  linkedDataset?: Maybe<Dataset>;
 };
 
-export type UploadPluginInput = {
-  file: Scalars['Upload'];
+export type MoveInfoboxFieldInput = {
+  layerId: Scalars['ID'];
+  infoboxFieldId: Scalars['ID'];
+  index: Scalars['Int'];
 };
 
-export type UpdatePropertyItemInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
-  operations: Array<UpdatePropertyItemOperationInput>;
-};
-
-export type RemoveDatasetSchemaPayload = {
-  __typename?: 'RemoveDatasetSchemaPayload';
-  schemaId: Scalars['ID'];
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  startCursor?: Maybe<Scalars['Cursor']>;
-  endCursor?: Maybe<Scalars['Cursor']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-};
-
-export type CreateAssetInput = {
-  teamId: Scalars['ID'];
-  file: Scalars['Upload'];
-};
-
-export type DeleteMeInput = {
-  userId: Scalars['ID'];
-};
-
-export type InstallPluginPayload = {
-  __typename?: 'InstallPluginPayload';
-  scene: Scene;
-  scenePlugin: ScenePlugin;
-};
-
-export type RemoveInfoboxFieldPayload = {
-  __typename?: 'RemoveInfoboxFieldPayload';
+export type MoveInfoboxFieldPayload = {
+  __typename?: 'MoveInfoboxFieldPayload';
   infoboxFieldId: Scalars['ID'];
   layer: Layer;
+  index: Scalars['Int'];
 };
 
-export type DatasetConnection = {
-  __typename?: 'DatasetConnection';
-  edges: Array<DatasetEdge>;
-  nodes: Array<Maybe<Dataset>>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
-};
-
-export type PluginMetadata = {
-  __typename?: 'PluginMetadata';
-  name: Scalars['String'];
-  description: Scalars['String'];
-  author: Scalars['String'];
-  thumbnailUrl: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-};
-
-export type InfoboxField = {
-  __typename?: 'InfoboxField';
-  id: Scalars['ID'];
-  sceneId: Scalars['ID'];
+export type MoveLayerInput = {
   layerId: Scalars['ID'];
+  destLayerId?: Maybe<Scalars['ID']>;
+  index?: Maybe<Scalars['Int']>;
+};
+
+export type MoveLayerPayload = {
+  __typename?: 'MoveLayerPayload';
+  layerId: Scalars['ID'];
+  fromParentLayer: LayerGroup;
+  toParentLayer: LayerGroup;
+  index: Scalars['Int'];
+};
+
+export type MovePropertyItemInput = {
   propertyId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
-  linkedDatasetId?: Maybe<Scalars['ID']>;
-  layer: Layer;
-  infobox: Infobox;
-  property?: Maybe<Property>;
-  plugin?: Maybe<Plugin>;
-  extension?: Maybe<PluginExtension>;
-  linkedDataset?: Maybe<Dataset>;
-  merged?: Maybe<MergedInfoboxField>;
-  scene?: Maybe<Scene>;
-  scenePlugin?: Maybe<ScenePlugin>;
-};
-
-export type RemoveInfoboxInput = {
-  layerId: Scalars['ID'];
-};
-
-export type AddInfoboxFieldPayload = {
-  __typename?: 'AddInfoboxFieldPayload';
-  infoboxField: InfoboxField;
-  layer: Layer;
+  schemaItemId: Scalars['PropertySchemaFieldID'];
+  itemId: Scalars['ID'];
+  index: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -1266,36 +978,237 @@ export type MutationImportLayerArgs = {
   input: ImportLayerInput;
 };
 
-export type RemoveMyAuthInput = {
-  auth: Scalars['String'];
+export type Node = {
+  id: Scalars['ID'];
 };
 
-export type AddPropertyItemInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
-  index?: Maybe<Scalars['Int']>;
-  nameFieldValue?: Maybe<Scalars['Any']>;
-  nameFieldType?: Maybe<ValueType>;
+export enum NodeType {
+  User = 'USER',
+  Team = 'TEAM',
+  Project = 'PROJECT',
+  Plugin = 'PLUGIN',
+  Scene = 'SCENE',
+  PropertySchema = 'PROPERTY_SCHEMA',
+  Property = 'PROPERTY',
+  DatasetSchema = 'DATASET_SCHEMA',
+  Dataset = 'DATASET',
+  LayerGroup = 'LAYER_GROUP',
+  LayerItem = 'LAYER_ITEM'
+}
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  startCursor?: Maybe<Scalars['Cursor']>;
+  endCursor?: Maybe<Scalars['Cursor']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
 };
 
-export type AddLayerItemPayload = {
-  __typename?: 'AddLayerItemPayload';
-  layer: LayerItem;
-  parentLayer: LayerGroup;
-  index?: Maybe<Scalars['Int']>;
+export type Plugin = {
+  __typename?: 'Plugin';
+  id: Scalars['PluginID'];
+  name: Scalars['String'];
+  version: Scalars['String'];
+  description: Scalars['String'];
+  author: Scalars['String'];
+  repositoryUrl: Scalars['String'];
+  propertySchemaId?: Maybe<Scalars['PropertySchemaID']>;
+  extensions: Array<PluginExtension>;
+  scenePlugin?: Maybe<ScenePlugin>;
+  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
+  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
+  translatedName: Scalars['String'];
+  translatedDescription: Scalars['String'];
+  propertySchema?: Maybe<PropertySchema>;
 };
 
-export type LatLngHeight = {
-  __typename?: 'LatLngHeight';
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  height: Scalars['Float'];
-};
 
-export type UpgradePluginInput = {
+export type PluginScenePluginArgs = {
   sceneId: Scalars['ID'];
+};
+
+
+export type PluginTranslatedNameArgs = {
+  lang?: Maybe<Scalars['String']>;
+};
+
+
+export type PluginTranslatedDescriptionArgs = {
+  lang?: Maybe<Scalars['String']>;
+};
+
+export type PluginExtension = {
+  __typename?: 'PluginExtension';
+  extensionId: Scalars['PluginExtensionID'];
   pluginId: Scalars['PluginID'];
-  toPluginId: Scalars['PluginID'];
+  type: PluginExtensionType;
+  name: Scalars['String'];
+  description: Scalars['String'];
+  icon: Scalars['String'];
+  visualizer: Visualizer;
+  propertySchemaId: Scalars['PropertySchemaID'];
+  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
+  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
+  plugin?: Maybe<Plugin>;
+  sceneWidget?: Maybe<SceneWidget>;
+  propertySchema?: Maybe<PropertySchema>;
+  translatedName: Scalars['String'];
+  translatedDescription: Scalars['String'];
+};
+
+
+export type PluginExtensionSceneWidgetArgs = {
+  sceneId: Scalars['ID'];
+};
+
+
+export type PluginExtensionTranslatedNameArgs = {
+  lang?: Maybe<Scalars['String']>;
+};
+
+
+export type PluginExtensionTranslatedDescriptionArgs = {
+  lang?: Maybe<Scalars['String']>;
+};
+
+
+export enum PluginExtensionType {
+  Primitive = 'PRIMITIVE',
+  Widget = 'WIDGET',
+  Block = 'BLOCK',
+  Visualizer = 'VISUALIZER',
+  Infobox = 'INFOBOX'
+}
+
+
+export type PluginMetadata = {
+  __typename?: 'PluginMetadata';
+  name: Scalars['String'];
+  description: Scalars['String'];
+  author: Scalars['String'];
+  thumbnailUrl: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+};
+
+export type Project = Node & {
+  __typename?: 'Project';
+  id: Scalars['ID'];
+  isArchived: Scalars['Boolean'];
+  isBasicAuthActive: Scalars['Boolean'];
+  basicAuthUsername: Scalars['String'];
+  basicAuthPassword: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  publishedAt?: Maybe<Scalars['DateTime']>;
+  name: Scalars['String'];
+  description: Scalars['String'];
+  alias: Scalars['String'];
+  publicTitle: Scalars['String'];
+  publicDescription: Scalars['String'];
+  publicImage: Scalars['String'];
+  publicNoIndex: Scalars['Boolean'];
+  imageUrl?: Maybe<Scalars['URL']>;
+  teamId: Scalars['ID'];
+  visualizer: Visualizer;
+  publishmentStatus: PublishmentStatus;
+  team?: Maybe<Team>;
+  scene?: Maybe<Scene>;
+};
+
+export type ProjectConnection = {
+  __typename?: 'ProjectConnection';
+  edges: Array<ProjectEdge>;
+  nodes: Array<Maybe<Project>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type ProjectEdge = {
+  __typename?: 'ProjectEdge';
+  cursor: Scalars['Cursor'];
+  node?: Maybe<Project>;
+};
+
+export type ProjectPayload = {
+  __typename?: 'ProjectPayload';
+  project: Project;
+};
+
+export type Property = Node & {
+  __typename?: 'Property';
+  id: Scalars['ID'];
+  schemaId: Scalars['PropertySchemaID'];
+  items: Array<PropertyItem>;
+  schema?: Maybe<PropertySchema>;
+  layer?: Maybe<Layer>;
+  merged?: Maybe<MergedProperty>;
+};
+
+export type PropertyCondition = {
+  __typename?: 'PropertyCondition';
+  fieldId: Scalars['PropertySchemaFieldID'];
+  type: ValueType;
+  value?: Maybe<Scalars['Any']>;
+};
+
+export type PropertyField = {
+  __typename?: 'PropertyField';
+  id: Scalars['PropertySchemaFieldID'];
+  parentId: Scalars['ID'];
+  schemaId: Scalars['PropertySchemaID'];
+  fieldId: Scalars['PropertySchemaFieldID'];
+  links?: Maybe<Array<PropertyFieldLink>>;
+  type: ValueType;
+  value?: Maybe<Scalars['Any']>;
+  parent?: Maybe<Property>;
+  schema?: Maybe<PropertySchema>;
+  field?: Maybe<PropertySchemaField>;
+  actualValue?: Maybe<Scalars['Any']>;
+};
+
+export type PropertyFieldLink = {
+  __typename?: 'PropertyFieldLink';
+  datasetId?: Maybe<Scalars['ID']>;
+  datasetSchemaId: Scalars['ID'];
+  datasetSchemaFieldId: Scalars['ID'];
+  dataset?: Maybe<Dataset>;
+  datasetField?: Maybe<DatasetField>;
+  datasetSchema?: Maybe<DatasetSchema>;
+  datasetSchemaField?: Maybe<DatasetSchemaField>;
+};
+
+export type PropertyFieldPayload = {
+  __typename?: 'PropertyFieldPayload';
+  property: Property;
+  propertyField?: Maybe<PropertyField>;
+};
+
+export type PropertyGroup = {
+  __typename?: 'PropertyGroup';
+  id: Scalars['ID'];
+  schemaId: Scalars['PropertySchemaID'];
+  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  fields: Array<PropertyField>;
+  schema?: Maybe<PropertySchema>;
+  schemaGroup?: Maybe<PropertySchemaGroup>;
+};
+
+export type PropertyGroupList = {
+  __typename?: 'PropertyGroupList';
+  id: Scalars['ID'];
+  schemaId: Scalars['PropertySchemaID'];
+  schemaGroupId: Scalars['PropertySchemaFieldID'];
+  groups: Array<PropertyGroup>;
+  schema?: Maybe<PropertySchema>;
+  schemaGroup?: Maybe<PropertySchemaGroup>;
+};
+
+export type PropertyItem = PropertyGroup | PropertyGroupList;
+
+export type PropertyItemPayload = {
+  __typename?: 'PropertyItemPayload';
+  property: Property;
+  propertyItem?: Maybe<PropertyItem>;
 };
 
 export type PropertyLinkableFields = {
@@ -1306,6 +1219,13 @@ export type PropertyLinkableFields = {
   latlngField?: Maybe<PropertySchemaField>;
   urlField?: Maybe<PropertySchemaField>;
   schema?: Maybe<PropertySchema>;
+};
+
+export type PropertySchema = {
+  __typename?: 'PropertySchema';
+  id: Scalars['PropertySchemaID'];
+  groups: Array<PropertySchemaGroup>;
+  linkableFields: PropertyLinkableFields;
 };
 
 export type PropertySchemaField = {
@@ -1346,120 +1266,39 @@ export type PropertySchemaFieldTranslatedDescriptionArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
-export type UpdateMemberOfTeamInput = {
-  teamId: Scalars['ID'];
-  userId: Scalars['ID'];
-  role: Role;
-};
-
-export type RemoveInfoboxFieldInput = {
-  layerId: Scalars['ID'];
-  infoboxFieldId: Scalars['ID'];
-};
-
-export type ImportLayerInput = {
-  layerId: Scalars['ID'];
-  file: Scalars['Upload'];
-  format: LayerEncodingFormat;
-};
-
-export type AddDatasetSchemaInput = {
-  sceneId: Scalars['ID'];
-  name: Scalars['String'];
-  representativefield?: Maybe<Scalars['ID']>;
-};
-
-export enum SceneLockMode {
-  Free = 'FREE',
-  Pending = 'PENDING',
-  DatasetSyncing = 'DATASET_SYNCING',
-  PluginUpgrading = 'PLUGIN_UPGRADING',
-  Publishing = 'PUBLISHING'
-}
-
-export type PropertyGroupList = {
-  __typename?: 'PropertyGroupList';
-  id: Scalars['ID'];
-  schemaId: Scalars['PropertySchemaID'];
-  schemaGroupId: Scalars['PropertySchemaFieldID'];
-  groups: Array<PropertyGroup>;
-  schema?: Maybe<PropertySchema>;
-  schemaGroup?: Maybe<PropertySchemaGroup>;
-};
-
-export type AddLayerItemInput = {
-  parentLayerId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
-  index?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-};
-
-export type ImportDatasetFromGoogleSheetInput = {
-  accessToken: Scalars['String'];
-  fileId: Scalars['String'];
-  sheetName: Scalars['String'];
-  sceneId: Scalars['ID'];
-  datasetSchemaId?: Maybe<Scalars['ID']>;
-};
-
-export type ProjectEdge = {
-  __typename?: 'ProjectEdge';
-  cursor: Scalars['Cursor'];
-  node?: Maybe<Project>;
-};
-
-export type DatasetSchemaConnection = {
-  __typename?: 'DatasetSchemaConnection';
-  edges: Array<DatasetSchemaEdge>;
-  nodes: Array<Maybe<DatasetSchema>>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
+export type PropertySchemaFieldChoice = {
+  __typename?: 'PropertySchemaFieldChoice';
+  key: Scalars['String'];
+  title: Scalars['String'];
+  label: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+  allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
+  allTranslatedLabel?: Maybe<Scalars['TranslatedString']>;
+  translatedTitle: Scalars['String'];
+  translatedLabel: Scalars['String'];
 };
 
 
-export type PluginExtension = {
-  __typename?: 'PluginExtension';
-  extensionId: Scalars['PluginExtensionID'];
-  pluginId: Scalars['PluginID'];
-  type: PluginExtensionType;
-  name: Scalars['String'];
-  description: Scalars['String'];
-  icon: Scalars['String'];
-  visualizer: Visualizer;
-  propertySchemaId: Scalars['PropertySchemaID'];
-  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
-  plugin?: Maybe<Plugin>;
-  sceneWidget?: Maybe<SceneWidget>;
-  propertySchema?: Maybe<PropertySchema>;
-  translatedName: Scalars['String'];
-  translatedDescription: Scalars['String'];
-};
-
-
-export type PluginExtensionSceneWidgetArgs = {
-  sceneId: Scalars['ID'];
-};
-
-
-export type PluginExtensionTranslatedNameArgs = {
+export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
 
-export type PluginExtensionTranslatedDescriptionArgs = {
+export type PropertySchemaFieldChoiceTranslatedLabelArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
-export type Node = {
-  id: Scalars['ID'];
-};
 
-export enum Visualizer {
-  Cesium = 'CESIUM'
+export enum PropertySchemaFieldUi {
+  Layer = 'LAYER',
+  Multiline = 'MULTILINE',
+  Selection = 'SELECTION',
+  Color = 'COLOR',
+  Range = 'RANGE',
+  Image = 'IMAGE',
+  Video = 'VIDEO',
+  File = 'FILE',
+  CameraPose = 'CAMERA_POSE'
 }
 
 export type PropertySchemaGroup = {
@@ -1483,83 +1322,155 @@ export type PropertySchemaGroupTranslatedTitleArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
-export type RemoveWidgetInput = {
+
+export type PublishProjectInput = {
+  projectId: Scalars['ID'];
+  alias?: Maybe<Scalars['String']>;
+  status: PublishmentStatus;
+};
+
+export enum PublishmentStatus {
+  Public = 'PUBLIC',
+  Limited = 'LIMITED',
+  Private = 'PRIVATE'
+}
+
+export type Query = {
+  __typename?: 'Query';
+  me?: Maybe<User>;
+  node?: Maybe<Node>;
+  nodes: Array<Maybe<Node>>;
+  propertySchema?: Maybe<PropertySchema>;
+  propertySchemas: Array<PropertySchema>;
+  plugin?: Maybe<Plugin>;
+  plugins: Array<Plugin>;
+  layer?: Maybe<Layer>;
+  scene?: Maybe<Scene>;
+  assets: AssetConnection;
+  projects: ProjectConnection;
+  datasetSchemas: DatasetSchemaConnection;
+  datasets: DatasetConnection;
+  sceneLock?: Maybe<SceneLockMode>;
+  dynamicDatasetSchemas: Array<DatasetSchema>;
+  searchUser?: Maybe<SearchedUser>;
+  checkProjectAlias: CheckProjectAliasPayload;
+  installablePlugins: Array<PluginMetadata>;
+};
+
+
+export type QueryNodeArgs = {
+  id: Scalars['ID'];
+  type: NodeType;
+};
+
+
+export type QueryNodesArgs = {
+  id: Array<Scalars['ID']>;
+  type: NodeType;
+};
+
+
+export type QueryPropertySchemaArgs = {
+  id: Scalars['PropertySchemaID'];
+};
+
+
+export type QueryPropertySchemasArgs = {
+  id: Array<Scalars['PropertySchemaID']>;
+};
+
+
+export type QueryPluginArgs = {
+  id: Scalars['PluginID'];
+};
+
+
+export type QueryPluginsArgs = {
+  id: Array<Scalars['PluginID']>;
+};
+
+
+export type QueryLayerArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QuerySceneArgs = {
+  projectId: Scalars['ID'];
+};
+
+
+export type QueryAssetsArgs = {
+  teamId: Scalars['ID'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+};
+
+
+export type QueryProjectsArgs = {
+  teamId: Scalars['ID'];
+  includeArchived?: Maybe<Scalars['Boolean']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+};
+
+
+export type QueryDatasetSchemasArgs = {
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
-};
-
-export type RemoveLayerInput = {
-  layerId: Scalars['ID'];
-};
-
-export type ProjectPayload = {
-  __typename?: 'ProjectPayload';
-  project: Project;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
 };
 
 
-export enum Theme {
-  Default = 'DEFAULT',
-  Light = 'LIGHT',
-  Dark = 'DARK'
-}
-
-export type CreateScenePayload = {
-  __typename?: 'CreateScenePayload';
-  scene: Scene;
+export type QueryDatasetsArgs = {
+  datasetSchemaId: Scalars['ID'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
 };
 
-export type AddLayerGroupPayload = {
-  __typename?: 'AddLayerGroupPayload';
-  layer: LayerGroup;
-  parentLayer: LayerGroup;
-  index?: Maybe<Scalars['Int']>;
-};
 
-export type AddDynamicDatasetPayload = {
-  __typename?: 'AddDynamicDatasetPayload';
-  datasetSchema?: Maybe<DatasetSchema>;
-  dataset?: Maybe<Dataset>;
-};
-
-export enum PluginExtensionType {
-  Primitive = 'PRIMITIVE',
-  Widget = 'WIDGET',
-  Block = 'BLOCK',
-  Visualizer = 'VISUALIZER',
-  Infobox = 'INFOBOX'
-}
-
-export enum PropertySchemaFieldUi {
-  Layer = 'LAYER',
-  Multiline = 'MULTILINE',
-  Selection = 'SELECTION',
-  Color = 'COLOR',
-  Range = 'RANGE',
-  Image = 'IMAGE',
-  Video = 'VIDEO',
-  File = 'FILE',
-  CameraPose = 'CAMERA_POSE'
-}
-
-export type SyncDatasetInput = {
+export type QuerySceneLockArgs = {
   sceneId: Scalars['ID'];
-  url: Scalars['String'];
 };
 
-export type UpdatePropertyValueInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  value?: Maybe<Scalars['Any']>;
-  type: ValueType;
+
+export type QueryDynamicDatasetSchemasArgs = {
+  sceneId: Scalars['ID'];
 };
 
-export type UpdateDatasetSchemaInput = {
-  schemaId: Scalars['ID'];
-  name: Scalars['String'];
+
+export type QuerySearchUserArgs = {
+  nameOrEmail: Scalars['String'];
+};
+
+
+export type QueryCheckProjectAliasArgs = {
+  alias: Scalars['String'];
+};
+
+export type Rect = {
+  __typename?: 'Rect';
+  west: Scalars['Float'];
+  south: Scalars['Float'];
+  east: Scalars['Float'];
+  north: Scalars['Float'];
+};
+
+export type RemoveAssetInput = {
+  assetId: Scalars['ID'];
+};
+
+export type RemoveAssetPayload = {
+  __typename?: 'RemoveAssetPayload';
+  assetId: Scalars['ID'];
 };
 
 export type RemoveDatasetSchemaInput = {
@@ -1567,54 +1478,242 @@ export type RemoveDatasetSchemaInput = {
   force?: Maybe<Scalars['Boolean']>;
 };
 
-export type UpdateTeamPayload = {
-  __typename?: 'UpdateTeamPayload';
+export type RemoveDatasetSchemaPayload = {
+  __typename?: 'RemoveDatasetSchemaPayload';
+  schemaId: Scalars['ID'];
+};
+
+export type RemoveInfoboxFieldInput = {
+  layerId: Scalars['ID'];
+  infoboxFieldId: Scalars['ID'];
+};
+
+export type RemoveInfoboxFieldPayload = {
+  __typename?: 'RemoveInfoboxFieldPayload';
+  infoboxFieldId: Scalars['ID'];
+  layer: Layer;
+};
+
+export type RemoveInfoboxInput = {
+  layerId: Scalars['ID'];
+};
+
+export type RemoveInfoboxPayload = {
+  __typename?: 'RemoveInfoboxPayload';
+  layer: Layer;
+};
+
+export type RemoveLayerInput = {
+  layerId: Scalars['ID'];
+};
+
+export type RemoveLayerPayload = {
+  __typename?: 'RemoveLayerPayload';
+  layerId: Scalars['ID'];
+  parentLayer: LayerGroup;
+};
+
+export type RemoveMemberFromTeamInput = {
+  teamId: Scalars['ID'];
+  userId: Scalars['ID'];
+};
+
+export type RemoveMemberFromTeamPayload = {
+  __typename?: 'RemoveMemberFromTeamPayload';
   team: Team;
 };
 
-export type DatasetSchemaEdge = {
-  __typename?: 'DatasetSchemaEdge';
-  cursor: Scalars['Cursor'];
-  node?: Maybe<DatasetSchema>;
+export type RemoveMyAuthInput = {
+  auth: Scalars['String'];
 };
 
-export type CreateProjectInput = {
-  teamId: Scalars['ID'];
-  visualizer: Visualizer;
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['URL']>;
-  alias?: Maybe<Scalars['String']>;
-  archived?: Maybe<Scalars['Boolean']>;
+export type RemovePropertyFieldInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  itemId?: Maybe<Scalars['ID']>;
+  fieldId: Scalars['PropertySchemaFieldID'];
 };
 
-
-export type DatasetField = {
-  __typename?: 'DatasetField';
-  fieldId: Scalars['ID'];
-  schemaId: Scalars['ID'];
-  source: Scalars['String'];
-  type: ValueType;
-  value?: Maybe<Scalars['Any']>;
-  schema?: Maybe<DatasetSchema>;
-  field?: Maybe<DatasetSchemaField>;
-  valueRef?: Maybe<Dataset>;
+export type RemovePropertyItemInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId: Scalars['PropertySchemaFieldID'];
+  itemId: Scalars['ID'];
 };
 
-export type AddMemberToTeamInput = {
-  teamId: Scalars['ID'];
-  userId: Scalars['ID'];
-  role: Role;
-};
-
-export type InstallPluginInput = {
+export type RemoveWidgetInput = {
   sceneId: Scalars['ID'];
   pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
 };
 
-export type CreateAssetPayload = {
-  __typename?: 'CreateAssetPayload';
-  asset: Asset;
+export type RemoveWidgetPayload = {
+  __typename?: 'RemoveWidgetPayload';
+  scene: Scene;
+  pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
+};
+
+export enum Role {
+  Reader = 'READER',
+  Writer = 'WRITER',
+  Owner = 'OWNER'
+}
+
+export type Scene = Node & {
+  __typename?: 'Scene';
+  id: Scalars['ID'];
+  projectId: Scalars['ID'];
+  teamId: Scalars['ID'];
+  propertyId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  rootLayerId: Scalars['ID'];
+  widgets: Array<SceneWidget>;
+  plugins: Array<ScenePlugin>;
+  dynamicDatasetSchemas: Array<DatasetSchema>;
+  project?: Maybe<Project>;
+  team?: Maybe<Team>;
+  property?: Maybe<Property>;
+  rootLayer?: Maybe<LayerGroup>;
+  lockMode: SceneLockMode;
+  datasetSchemas: DatasetSchemaConnection;
+};
+
+
+export type SceneDatasetSchemasArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+};
+
+export enum SceneLockMode {
+  Free = 'FREE',
+  Pending = 'PENDING',
+  DatasetSyncing = 'DATASET_SYNCING',
+  PluginUpgrading = 'PLUGIN_UPGRADING',
+  Publishing = 'PUBLISHING'
+}
+
+export type ScenePlugin = {
+  __typename?: 'ScenePlugin';
+  pluginId: Scalars['PluginID'];
+  propertyId?: Maybe<Scalars['ID']>;
+  plugin?: Maybe<Plugin>;
+  property?: Maybe<Property>;
+};
+
+export type SceneWidget = {
+  __typename?: 'SceneWidget';
+  id: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
+  propertyId: Scalars['ID'];
+  enabled: Scalars['Boolean'];
+  plugin?: Maybe<Plugin>;
+  extension?: Maybe<PluginExtension>;
+  property?: Maybe<Property>;
+};
+
+export type SearchedUser = {
+  __typename?: 'SearchedUser';
+  userId: Scalars['ID'];
+  userName: Scalars['String'];
+  userEmail: Scalars['String'];
+};
+
+export type SignupInput = {
+  lang?: Maybe<Scalars['Lang']>;
+  theme?: Maybe<Theme>;
+  userId?: Maybe<Scalars['ID']>;
+  teamId?: Maybe<Scalars['ID']>;
+  secret?: Maybe<Scalars['String']>;
+};
+
+export type SignupPayload = {
+  __typename?: 'SignupPayload';
+  user: User;
+  team: Team;
+};
+
+export type SyncDatasetInput = {
+  sceneId: Scalars['ID'];
+  url: Scalars['String'];
+};
+
+export type SyncDatasetPayload = {
+  __typename?: 'SyncDatasetPayload';
+  sceneId: Scalars['ID'];
+  url: Scalars['String'];
+  datasetSchema: Array<DatasetSchema>;
+  dataset: Array<Dataset>;
+};
+
+export type Team = Node & {
+  __typename?: 'Team';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  members: Array<TeamMember>;
+  personal: Scalars['Boolean'];
+  assets: AssetConnection;
+  projects: ProjectConnection;
+};
+
+
+export type TeamAssetsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+};
+
+
+export type TeamProjectsArgs = {
+  includeArchived?: Maybe<Scalars['Boolean']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+};
+
+export type TeamMember = {
+  __typename?: 'TeamMember';
+  userId: Scalars['ID'];
+  role: Role;
+  user?: Maybe<User>;
+};
+
+export enum TextAlign {
+  Left = 'LEFT',
+  Center = 'CENTER',
+  Right = 'RIGHT',
+  Justify = 'JUSTIFY',
+  JustifyAll = 'JUSTIFY_ALL'
+}
+
+export enum Theme {
+  Default = 'DEFAULT',
+  Light = 'LIGHT',
+  Dark = 'DARK'
+}
+
+
+export type Typography = {
+  __typename?: 'Typography';
+  fontFamily?: Maybe<Scalars['String']>;
+  fontWeight?: Maybe<Scalars['String']>;
+  fontSize?: Maybe<Scalars['Int']>;
+  color?: Maybe<Scalars['String']>;
+  textAlign?: Maybe<TextAlign>;
+  bold?: Maybe<Scalars['Boolean']>;
+  italic?: Maybe<Scalars['Boolean']>;
+  underline?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type UninstallPluginInput = {
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
 };
 
 export type UninstallPluginPayload = {
@@ -1623,37 +1722,89 @@ export type UninstallPluginPayload = {
   scenePlugin: ScenePlugin;
 };
 
-export enum NodeType {
-  User = 'USER',
-  Team = 'TEAM',
-  Project = 'PROJECT',
-  Plugin = 'PLUGIN',
-  Scene = 'SCENE',
-  PropertySchema = 'PROPERTY_SCHEMA',
-  Property = 'PROPERTY',
-  DatasetSchema = 'DATASET_SCHEMA',
-  Dataset = 'DATASET',
-  LayerGroup = 'LAYER_GROUP',
-  LayerItem = 'LAYER_ITEM'
-}
-
-export type MergedInfobox = {
-  __typename?: 'MergedInfobox';
-  sceneID: Scalars['ID'];
-  property?: Maybe<MergedProperty>;
-  fields: Array<MergedInfoboxField>;
-  scene?: Maybe<Scene>;
+export type UnlinkPropertyValueInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  itemId?: Maybe<Scalars['ID']>;
+  fieldId: Scalars['PropertySchemaFieldID'];
 };
 
-export type AddWidgetInput = {
-  sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+export type UpdateDatasetSchemaInput = {
+  schemaId: Scalars['ID'];
+  name: Scalars['String'];
 };
 
-export type UninstallPluginInput = {
-  sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
+export type UpdateDatasetSchemaPayload = {
+  __typename?: 'UpdateDatasetSchemaPayload';
+  datasetSchema?: Maybe<DatasetSchema>;
+};
+
+export type UpdateLayerInput = {
+  layerId: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  visible?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateLayerPayload = {
+  __typename?: 'UpdateLayerPayload';
+  layer: Layer;
+};
+
+export type UpdateMeInput = {
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  lang?: Maybe<Scalars['Lang']>;
+  theme?: Maybe<Theme>;
+  password?: Maybe<Scalars['String']>;
+  passwordConfirmation?: Maybe<Scalars['String']>;
+};
+
+export type UpdateMePayload = {
+  __typename?: 'UpdateMePayload';
+  user: User;
+};
+
+export type UpdateMemberOfTeamInput = {
+  teamId: Scalars['ID'];
+  userId: Scalars['ID'];
+  role: Role;
+};
+
+export type UpdateMemberOfTeamPayload = {
+  __typename?: 'UpdateMemberOfTeamPayload';
+  team: Team;
+};
+
+export type UpdateProjectInput = {
+  projectId: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  archived?: Maybe<Scalars['Boolean']>;
+  isBasicAuthActive?: Maybe<Scalars['Boolean']>;
+  basicAuthUsername?: Maybe<Scalars['String']>;
+  basicAuthPassword?: Maybe<Scalars['String']>;
+  alias?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['URL']>;
+  publicTitle?: Maybe<Scalars['String']>;
+  publicDescription?: Maybe<Scalars['String']>;
+  publicImage?: Maybe<Scalars['String']>;
+  publicNoIndex?: Maybe<Scalars['Boolean']>;
+  deleteImageUrl?: Maybe<Scalars['Boolean']>;
+  deletePublicImage?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdatePropertyItemInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId: Scalars['PropertySchemaFieldID'];
+  operations: Array<UpdatePropertyItemOperationInput>;
+};
+
+export type UpdatePropertyItemOperationInput = {
+  operation: ListOperation;
+  itemId?: Maybe<Scalars['ID']>;
+  index?: Maybe<Scalars['Int']>;
+  nameFieldValue?: Maybe<Scalars['Any']>;
+  nameFieldType?: Maybe<ValueType>;
 };
 
 export type UpdatePropertyValueCameraInput = {
@@ -1670,113 +1821,39 @@ export type UpdatePropertyValueCameraInput = {
   fov: Scalars['Float'];
 };
 
-export type UploadFileToPropertyInput = {
+export type UpdatePropertyValueInput = {
   propertyId: Scalars['ID'];
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
-  file: Scalars['Upload'];
+  value?: Maybe<Scalars['Any']>;
+  type: ValueType;
 };
 
-export type Project = Node & {
-  __typename?: 'Project';
-  id: Scalars['ID'];
-  isArchived: Scalars['Boolean'];
-  isBasicAuthActive: Scalars['Boolean'];
-  basicAuthUsername: Scalars['String'];
-  basicAuthPassword: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  publishedAt?: Maybe<Scalars['DateTime']>;
-  name: Scalars['String'];
-  description: Scalars['String'];
-  alias: Scalars['String'];
-  publicTitle: Scalars['String'];
-  publicDescription: Scalars['String'];
-  publicImage: Scalars['String'];
-  publicNoIndex: Scalars['Boolean'];
-  imageUrl?: Maybe<Scalars['URL']>;
-  teamId: Scalars['ID'];
-  visualizer: Visualizer;
-  publishmentStatus: PublishmentStatus;
-  team?: Maybe<Team>;
-  scene?: Maybe<Scene>;
-};
-
-export type SceneWidget = {
-  __typename?: 'SceneWidget';
-  id: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
-  propertyId: Scalars['ID'];
-  enabled: Scalars['Boolean'];
-  plugin?: Maybe<Plugin>;
-  extension?: Maybe<PluginExtension>;
-  property?: Maybe<Property>;
-};
-
-export enum PublishmentStatus {
-  Public = 'PUBLIC',
-  Limited = 'LIMITED',
-  Private = 'PRIVATE'
-}
-
-export type RemovePropertyFieldInput = {
+export type UpdatePropertyValueLatLngHeightInput = {
   propertyId: Scalars['ID'];
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
+  height: Scalars['Float'];
 };
 
-export type LinkDatasetToPropertyValueInput = {
+export type UpdatePropertyValueLatLngInput = {
   propertyId: Scalars['ID'];
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
-  datasetSchemaIds: Array<Scalars['ID']>;
-  datasetSchemaFieldIds: Array<Scalars['ID']>;
-  datasetIds?: Maybe<Array<Scalars['ID']>>;
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
 };
 
-export type RemovePropertyItemInput = {
+export type UpdatePropertyValueTypographyInput = {
   propertyId: Scalars['ID'];
-  schemaItemId: Scalars['PropertySchemaFieldID'];
-  itemId: Scalars['ID'];
-};
-
-export type AddDynamicDatasetInput = {
-  datasetSchemaId: Scalars['ID'];
-  author: Scalars['String'];
-  content: Scalars['String'];
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-  target?: Maybe<Scalars['String']>;
-};
-
-export type AddDatasetSchemaPayload = {
-  __typename?: 'AddDatasetSchemaPayload';
-  datasetSchema?: Maybe<DatasetSchema>;
-};
-
-
-export type SearchedUser = {
-  __typename?: 'SearchedUser';
-  userId: Scalars['ID'];
-  userName: Scalars['String'];
-  userEmail: Scalars['String'];
-};
-
-export type AddLayerGroupInput = {
-  parentLayerId: Scalars['ID'];
-  pluginId?: Maybe<Scalars['PluginID']>;
-  extensionId?: Maybe<Scalars['PluginExtensionID']>;
-  index?: Maybe<Scalars['Int']>;
-  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type Typography = {
-  __typename?: 'Typography';
+  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  itemId?: Maybe<Scalars['ID']>;
+  fieldId: Scalars['PropertySchemaFieldID'];
   fontFamily?: Maybe<Scalars['String']>;
   fontWeight?: Maybe<Scalars['String']>;
   fontSize?: Maybe<Scalars['Int']>;
@@ -1787,90 +1864,70 @@ export type Typography = {
   underline?: Maybe<Scalars['Boolean']>;
 };
 
-export type SignupInput = {
-  lang?: Maybe<Scalars['Lang']>;
-  theme?: Maybe<Theme>;
-  userId?: Maybe<Scalars['ID']>;
-  teamId?: Maybe<Scalars['ID']>;
-  secret?: Maybe<Scalars['String']>;
-};
-
-export type DeleteProjectInput = {
-  projectId: Scalars['ID'];
-};
-
-export type UpdateLayerInput = {
-  layerId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  visible?: Maybe<Scalars['Boolean']>;
-};
-
-export type DeleteMePayload = {
-  __typename?: 'DeleteMePayload';
-  userId: Scalars['ID'];
-};
-
-export type DeleteProjectPayload = {
-  __typename?: 'DeleteProjectPayload';
-  projectId: Scalars['ID'];
-};
-
-export type LatLng = {
-  __typename?: 'LatLng';
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-};
-
-export type CheckProjectAliasPayload = {
-  __typename?: 'CheckProjectAliasPayload';
-  alias: Scalars['String'];
-  available: Scalars['Boolean'];
-};
-
-export type Property = Node & {
-  __typename?: 'Property';
-  id: Scalars['ID'];
-  schemaId: Scalars['PropertySchemaID'];
-  items: Array<PropertyItem>;
-  schema?: Maybe<PropertySchema>;
-  layer?: Maybe<Layer>;
-  merged?: Maybe<MergedProperty>;
-};
-
-export type MoveLayerInput = {
-  layerId: Scalars['ID'];
-  destLayerId?: Maybe<Scalars['ID']>;
-  index?: Maybe<Scalars['Int']>;
-};
-
-export type PropertyFieldPayload = {
-  __typename?: 'PropertyFieldPayload';
-  property: Property;
-  propertyField?: Maybe<PropertyField>;
-};
-
-export type RemoveLayerPayload = {
-  __typename?: 'RemoveLayerPayload';
-  layerId: Scalars['ID'];
-  parentLayer: LayerGroup;
-};
-
-export type UpdateLayerPayload = {
-  __typename?: 'UpdateLayerPayload';
-  layer: Layer;
-};
-
-
-export type Asset = Node & {
-  __typename?: 'Asset';
-  id: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
+export type UpdateTeamInput = {
   teamId: Scalars['ID'];
   name: Scalars['String'];
-  size: Scalars['FileSize'];
-  url: Scalars['String'];
-  contentType: Scalars['String'];
-  team?: Maybe<Team>;
+};
+
+export type UpdateTeamPayload = {
+  __typename?: 'UpdateTeamPayload';
+  team: Team;
+};
+
+export type UpdateWidgetInput = {
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+  extensionId: Scalars['PluginExtensionID'];
+  enabled?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateWidgetPayload = {
+  __typename?: 'UpdateWidgetPayload';
+  scene: Scene;
+  sceneWidget: SceneWidget;
+};
+
+export type UpgradePluginInput = {
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+  toPluginId: Scalars['PluginID'];
+};
+
+export type UpgradePluginPayload = {
+  __typename?: 'UpgradePluginPayload';
+  scene: Scene;
+  scenePlugin: ScenePlugin;
+};
+
+
+export type UploadFileToPropertyInput = {
+  propertyId: Scalars['ID'];
+  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  itemId?: Maybe<Scalars['ID']>;
+  fieldId: Scalars['PropertySchemaFieldID'];
+  file: Scalars['Upload'];
+};
+
+export type UploadPluginInput = {
+  file: Scalars['Upload'];
+};
+
+export type UploadPluginPayload = {
+  __typename?: 'UploadPluginPayload';
+  plugin: Plugin;
+};
+
+export type User = Node & {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  lang: Scalars['Lang'];
+  theme: Theme;
+  myTeamId: Scalars['ID'];
+  auths: Array<Scalars['String']>;
+  teams: Array<Team>;
+  myTeam: Team;
 };
 
 export enum ValueType {
@@ -1888,63 +1945,9 @@ export enum ValueType {
   Rect = 'RECT'
 }
 
-export type User = Node & {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  lang: Scalars['Lang'];
-  theme: Theme;
-  myTeamId: Scalars['ID'];
-  auths: Array<Scalars['String']>;
-  teams: Array<Team>;
-  myTeam: Team;
-};
-
-export type ScenePlugin = {
-  __typename?: 'ScenePlugin';
-  pluginId: Scalars['PluginID'];
-  propertyId?: Maybe<Scalars['ID']>;
-  plugin?: Maybe<Plugin>;
-  property?: Maybe<Property>;
-};
-
-export type PublishProjectInput = {
-  projectId: Scalars['ID'];
-  alias?: Maybe<Scalars['String']>;
-  status: PublishmentStatus;
-};
-
-export type UpdatePropertyValueLatLngInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-};
-
-export type AddDynamicDatasetSchemaInput = {
-  sceneId: Scalars['ID'];
-};
-
-
-export type Camera = {
-  __typename?: 'Camera';
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  altitude: Scalars['Float'];
-  heading: Scalars['Float'];
-  pitch: Scalars['Float'];
-  roll: Scalars['Float'];
-  fov: Scalars['Float'];
-};
-
-export type ImportLayerPayload = {
-  __typename?: 'ImportLayerPayload';
-  layers: Array<Layer>;
-  parentLayer: LayerGroup;
-};
+export enum Visualizer {
+  Cesium = 'CESIUM'
+}
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2238,17 +2241,23 @@ export type GetLayersQueryVariables = Exact<{
 export type GetLayersQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'id'>
@@ -2258,14 +2267,8 @@ export type GetLayersQuery = (
       & EarthLayer5_LayerGroup_Fragment
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -2280,17 +2283,23 @@ export type GetEarthWidgetsQueryVariables = Exact<{
 export type GetEarthWidgetsQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'id'>
@@ -2322,14 +2331,8 @@ export type GetEarthWidgetsQuery = (
       )> }
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -2389,17 +2392,23 @@ export type GetBlocksQueryVariables = Exact<{
 export type GetBlocksQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'id'>
@@ -2415,14 +2424,8 @@ export type GetBlocksQuery = (
       )> }
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -2579,17 +2582,23 @@ export type GetProjectQueryVariables = Exact<{
 export type GetProjectQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'teamId' | 'projectId' | 'id'>
@@ -2598,14 +2607,8 @@ export type GetProjectQuery = (
       & Pick<Project, 'id' | 'alias' | 'publishmentStatus' | 'name'>
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -2936,17 +2939,23 @@ export type GetWidgetsQueryVariables = Exact<{
 export type GetWidgetsQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'id'>
@@ -2965,14 +2974,8 @@ export type GetWidgetsQuery = (
       & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId' | 'propertyId'>
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -2987,17 +2990,23 @@ export type GetPrimitivesQueryVariables = Exact<{
 export type GetPrimitivesQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'id'>
@@ -3013,14 +3022,8 @@ export type GetPrimitivesQuery = (
       )> }
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -3466,17 +3469,23 @@ export type GetScenePropertyQueryVariables = Exact<{
 export type GetScenePropertyQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
+  ) | (
+    { __typename?: 'DatasetSchema' }
+    & Pick<DatasetSchema, 'id'>
   ) | (
     { __typename?: 'DatasetSchemaField' }
     & Pick<DatasetSchemaField, 'id'>
   ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
+    { __typename?: 'Project' }
+    & Pick<Project, 'id'>
   ) | (
-    { __typename?: 'DatasetSchema' }
-    & Pick<DatasetSchema, 'id'>
+    { __typename?: 'Property' }
+    & Pick<Property, 'id'>
   ) | (
     { __typename?: 'Scene' }
     & Pick<Scene, 'id'>
@@ -3494,14 +3503,8 @@ export type GetScenePropertyQuery = (
       )> }
     )> }
   ) | (
-    { __typename?: 'Project' }
-    & Pick<Project, 'id'>
-  ) | (
-    { __typename?: 'Property' }
-    & Pick<Property, 'id'>
-  ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -3750,7 +3753,7 @@ export type ProjectQuery = (
     { __typename?: 'ProjectConnection' }
     & { nodes: Array<Maybe<(
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     )>> }
   ) }
 );
@@ -3774,87 +3777,24 @@ export type UpdateProjectBasicAuthMutation = (
   )> }
 );
 
-export type UpdateProjectNameMutationVariables = Exact<{
+export type UpdateProjectMutationVariables = Exact<{
   projectId: Scalars['ID'];
-  name: Scalars['String'];
-}>;
-
-
-export type UpdateProjectNameMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProject?: Maybe<(
-    { __typename?: 'ProjectPayload' }
-    & { project: (
-      { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
-    ) }
-  )> }
-);
-
-export type UpdateProjectDescriptionMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  description: Scalars['String'];
-}>;
-
-
-export type UpdateProjectDescriptionMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProject?: Maybe<(
-    { __typename?: 'ProjectPayload' }
-    & { project: (
-      { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
-    ) }
-  )> }
-);
-
-export type UpdateProjectImageUrlMutationVariables = Exact<{
-  projectId: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['URL']>;
+  publicTitle?: Maybe<Scalars['String']>;
+  publicDescription?: Maybe<Scalars['String']>;
+  publicImage?: Maybe<Scalars['String']>;
 }>;
 
 
-export type UpdateProjectImageUrlMutation = (
+export type UpdateProjectMutation = (
   { __typename?: 'Mutation' }
   & { updateProject?: Maybe<(
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
-    ) }
-  )> }
-);
-
-export type UpdateProjectPublicTitleMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  publicTitle: Scalars['String'];
-}>;
-
-
-export type UpdateProjectPublicTitleMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProject?: Maybe<(
-    { __typename?: 'ProjectPayload' }
-    & { project: (
-      { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
-    ) }
-  )> }
-);
-
-export type UpdateProjectPublicDescriptionMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  publicDescription: Scalars['String'];
-}>;
-
-
-export type UpdateProjectPublicDescriptionMutation = (
-  { __typename?: 'Mutation' }
-  & { updateProject?: Maybe<(
-    { __typename?: 'ProjectPayload' }
-    & { project: (
-      { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -3871,7 +3811,7 @@ export type ArchiveProjectMutation = (
     { __typename?: 'ProjectPayload' }
     & { project: (
       { __typename?: 'Project' }
-      & Pick<Project, 'id' | 'name' | 'description' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'imageUrl' | 'alias' | 'publishmentStatus'>
+      & Pick<Project, 'id' | 'name' | 'description' | 'imageUrl' | 'isArchived' | 'isBasicAuthActive' | 'basicAuthUsername' | 'basicAuthPassword' | 'publicTitle' | 'publicDescription' | 'publicImage' | 'alias' | 'publishmentStatus'>
     ) }
   )> }
 );
@@ -4112,20 +4052,17 @@ export type GetSceneQueryVariables = Exact<{
 export type GetSceneQuery = (
   { __typename?: 'Query' }
   & { node?: Maybe<(
+    { __typename?: 'Asset' }
+    & Pick<Asset, 'id'>
+  ) | (
     { __typename?: 'Dataset' }
     & Pick<Dataset, 'id'>
-  ) | (
-    { __typename?: 'DatasetSchemaField' }
-    & Pick<DatasetSchemaField, 'id'>
-  ) | (
-    { __typename?: 'Team' }
-    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'DatasetSchema' }
     & Pick<DatasetSchema, 'id'>
   ) | (
-    { __typename?: 'Scene' }
-    & Pick<Scene, 'rootLayerId' | 'id'>
+    { __typename?: 'DatasetSchemaField' }
+    & Pick<DatasetSchemaField, 'id'>
   ) | (
     { __typename?: 'Project' }
     & Pick<Project, 'id'>
@@ -4133,8 +4070,11 @@ export type GetSceneQuery = (
     { __typename?: 'Property' }
     & Pick<Property, 'id'>
   ) | (
-    { __typename?: 'Asset' }
-    & Pick<Asset, 'id'>
+    { __typename?: 'Scene' }
+    & Pick<Scene, 'rootLayerId' | 'id'>
+  ) | (
+    { __typename?: 'Team' }
+    & Pick<Team, 'id'>
   ) | (
     { __typename?: 'User' }
     & Pick<User, 'id'>
@@ -7587,13 +7527,14 @@ export const ProjectDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -7669,238 +7610,60 @@ export function useUpdateProjectBasicAuthMutation(baseOptions?: Apollo.MutationH
 export type UpdateProjectBasicAuthMutationHookResult = ReturnType<typeof useUpdateProjectBasicAuthMutation>;
 export type UpdateProjectBasicAuthMutationResult = Apollo.MutationResult<UpdateProjectBasicAuthMutation>;
 export type UpdateProjectBasicAuthMutationOptions = Apollo.BaseMutationOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
-export const UpdateProjectNameDocument = gql`
-    mutation updateProjectName($projectId: ID!, $name: String!) {
-  updateProject(input: {projectId: $projectId, name: $name}) {
-    project {
-      id
-      name
-      description
-      isArchived
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-      publicTitle
-      publicDescription
-      imageUrl
-      alias
-      publishmentStatus
-    }
-  }
-}
-    `;
-export type UpdateProjectNameMutationFn = Apollo.MutationFunction<UpdateProjectNameMutation, UpdateProjectNameMutationVariables>;
-
-/**
- * __useUpdateProjectNameMutation__
- *
- * To run a mutation, you first call `useUpdateProjectNameMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectNameMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectNameMutation, { data, loading, error }] = useUpdateProjectNameMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useUpdateProjectNameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectNameMutation, UpdateProjectNameMutationVariables>) {
-        return Apollo.useMutation<UpdateProjectNameMutation, UpdateProjectNameMutationVariables>(UpdateProjectNameDocument, baseOptions);
-      }
-export type UpdateProjectNameMutationHookResult = ReturnType<typeof useUpdateProjectNameMutation>;
-export type UpdateProjectNameMutationResult = Apollo.MutationResult<UpdateProjectNameMutation>;
-export type UpdateProjectNameMutationOptions = Apollo.BaseMutationOptions<UpdateProjectNameMutation, UpdateProjectNameMutationVariables>;
-export const UpdateProjectDescriptionDocument = gql`
-    mutation updateProjectDescription($projectId: ID!, $description: String!) {
-  updateProject(input: {projectId: $projectId, description: $description}) {
-    project {
-      id
-      name
-      description
-      isArchived
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-      publicTitle
-      publicDescription
-      imageUrl
-      alias
-      publishmentStatus
-    }
-  }
-}
-    `;
-export type UpdateProjectDescriptionMutationFn = Apollo.MutationFunction<UpdateProjectDescriptionMutation, UpdateProjectDescriptionMutationVariables>;
-
-/**
- * __useUpdateProjectDescriptionMutation__
- *
- * To run a mutation, you first call `useUpdateProjectDescriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectDescriptionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectDescriptionMutation, { data, loading, error }] = useUpdateProjectDescriptionMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      description: // value for 'description'
- *   },
- * });
- */
-export function useUpdateProjectDescriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectDescriptionMutation, UpdateProjectDescriptionMutationVariables>) {
-        return Apollo.useMutation<UpdateProjectDescriptionMutation, UpdateProjectDescriptionMutationVariables>(UpdateProjectDescriptionDocument, baseOptions);
-      }
-export type UpdateProjectDescriptionMutationHookResult = ReturnType<typeof useUpdateProjectDescriptionMutation>;
-export type UpdateProjectDescriptionMutationResult = Apollo.MutationResult<UpdateProjectDescriptionMutation>;
-export type UpdateProjectDescriptionMutationOptions = Apollo.BaseMutationOptions<UpdateProjectDescriptionMutation, UpdateProjectDescriptionMutationVariables>;
-export const UpdateProjectImageUrlDocument = gql`
-    mutation updateProjectImageUrl($projectId: ID!, $imageUrl: URL) {
-  updateProject(input: {projectId: $projectId, imageUrl: $imageUrl}) {
-    project {
-      id
-      name
-      description
-      isArchived
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-      publicTitle
-      publicDescription
-      imageUrl
-      alias
-      publishmentStatus
-    }
-  }
-}
-    `;
-export type UpdateProjectImageUrlMutationFn = Apollo.MutationFunction<UpdateProjectImageUrlMutation, UpdateProjectImageUrlMutationVariables>;
-
-/**
- * __useUpdateProjectImageUrlMutation__
- *
- * To run a mutation, you first call `useUpdateProjectImageUrlMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectImageUrlMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectImageUrlMutation, { data, loading, error }] = useUpdateProjectImageUrlMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      imageUrl: // value for 'imageUrl'
- *   },
- * });
- */
-export function useUpdateProjectImageUrlMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectImageUrlMutation, UpdateProjectImageUrlMutationVariables>) {
-        return Apollo.useMutation<UpdateProjectImageUrlMutation, UpdateProjectImageUrlMutationVariables>(UpdateProjectImageUrlDocument, baseOptions);
-      }
-export type UpdateProjectImageUrlMutationHookResult = ReturnType<typeof useUpdateProjectImageUrlMutation>;
-export type UpdateProjectImageUrlMutationResult = Apollo.MutationResult<UpdateProjectImageUrlMutation>;
-export type UpdateProjectImageUrlMutationOptions = Apollo.BaseMutationOptions<UpdateProjectImageUrlMutation, UpdateProjectImageUrlMutationVariables>;
-export const UpdateProjectPublicTitleDocument = gql`
-    mutation updateProjectPublicTitle($projectId: ID!, $publicTitle: String!) {
-  updateProject(input: {projectId: $projectId, publicTitle: $publicTitle}) {
-    project {
-      id
-      name
-      description
-      isArchived
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-      publicTitle
-      publicDescription
-      imageUrl
-      alias
-      publishmentStatus
-    }
-  }
-}
-    `;
-export type UpdateProjectPublicTitleMutationFn = Apollo.MutationFunction<UpdateProjectPublicTitleMutation, UpdateProjectPublicTitleMutationVariables>;
-
-/**
- * __useUpdateProjectPublicTitleMutation__
- *
- * To run a mutation, you first call `useUpdateProjectPublicTitleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectPublicTitleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectPublicTitleMutation, { data, loading, error }] = useUpdateProjectPublicTitleMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      publicTitle: // value for 'publicTitle'
- *   },
- * });
- */
-export function useUpdateProjectPublicTitleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectPublicTitleMutation, UpdateProjectPublicTitleMutationVariables>) {
-        return Apollo.useMutation<UpdateProjectPublicTitleMutation, UpdateProjectPublicTitleMutationVariables>(UpdateProjectPublicTitleDocument, baseOptions);
-      }
-export type UpdateProjectPublicTitleMutationHookResult = ReturnType<typeof useUpdateProjectPublicTitleMutation>;
-export type UpdateProjectPublicTitleMutationResult = Apollo.MutationResult<UpdateProjectPublicTitleMutation>;
-export type UpdateProjectPublicTitleMutationOptions = Apollo.BaseMutationOptions<UpdateProjectPublicTitleMutation, UpdateProjectPublicTitleMutationVariables>;
-export const UpdateProjectPublicDescriptionDocument = gql`
-    mutation updateProjectPublicDescription($projectId: ID!, $publicDescription: String!) {
+export const UpdateProjectDocument = gql`
+    mutation updateProject($projectId: ID!, $name: String, $description: String, $imageUrl: URL, $publicTitle: String, $publicDescription: String, $publicImage: String) {
   updateProject(
-    input: {projectId: $projectId, publicDescription: $publicDescription}
+    input: {projectId: $projectId, name: $name, description: $description, imageUrl: $imageUrl, publicTitle: $publicTitle, publicDescription: $publicDescription, publicImage: $publicImage}
   ) {
     project {
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
   }
 }
     `;
-export type UpdateProjectPublicDescriptionMutationFn = Apollo.MutationFunction<UpdateProjectPublicDescriptionMutation, UpdateProjectPublicDescriptionMutationVariables>;
+export type UpdateProjectMutationFn = Apollo.MutationFunction<UpdateProjectMutation, UpdateProjectMutationVariables>;
 
 /**
- * __useUpdateProjectPublicDescriptionMutation__
+ * __useUpdateProjectMutation__
  *
- * To run a mutation, you first call `useUpdateProjectPublicDescriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectPublicDescriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProjectMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateProjectPublicDescriptionMutation, { data, loading, error }] = useUpdateProjectPublicDescriptionMutation({
+ * const [updateProjectMutation, { data, loading, error }] = useUpdateProjectMutation({
  *   variables: {
  *      projectId: // value for 'projectId'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *      imageUrl: // value for 'imageUrl'
+ *      publicTitle: // value for 'publicTitle'
  *      publicDescription: // value for 'publicDescription'
+ *      publicImage: // value for 'publicImage'
  *   },
  * });
  */
-export function useUpdateProjectPublicDescriptionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectPublicDescriptionMutation, UpdateProjectPublicDescriptionMutationVariables>) {
-        return Apollo.useMutation<UpdateProjectPublicDescriptionMutation, UpdateProjectPublicDescriptionMutationVariables>(UpdateProjectPublicDescriptionDocument, baseOptions);
+export function useUpdateProjectMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectMutation, UpdateProjectMutationVariables>) {
+        return Apollo.useMutation<UpdateProjectMutation, UpdateProjectMutationVariables>(UpdateProjectDocument, baseOptions);
       }
-export type UpdateProjectPublicDescriptionMutationHookResult = ReturnType<typeof useUpdateProjectPublicDescriptionMutation>;
-export type UpdateProjectPublicDescriptionMutationResult = Apollo.MutationResult<UpdateProjectPublicDescriptionMutation>;
-export type UpdateProjectPublicDescriptionMutationOptions = Apollo.BaseMutationOptions<UpdateProjectPublicDescriptionMutation, UpdateProjectPublicDescriptionMutationVariables>;
+export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
+export type UpdateProjectMutationResult = Apollo.MutationResult<UpdateProjectMutation>;
+export type UpdateProjectMutationOptions = Apollo.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;
 export const ArchiveProjectDocument = gql`
     mutation archiveProject($projectId: ID!, $archived: Boolean!) {
   updateProject(input: {projectId: $projectId, archived: $archived}) {
@@ -7908,13 +7671,14 @@ export const ArchiveProjectDocument = gql`
       id
       name
       description
+      imageUrl
       isArchived
       isBasicAuthActive
       basicAuthUsername
       basicAuthPassword
       publicTitle
       publicDescription
-      imageUrl
+      publicImage
       alias
       publishmentStatus
     }
@@ -8053,7 +7817,7 @@ export type SceneLazyQueryHookResult = ReturnType<typeof useSceneLazyQuery>;
 export type SceneQueryResult = Apollo.QueryResult<SceneQuery, SceneQueryVariables>;
 export const AssetsDocument = gql`
     query Assets($teamId: ID!) {
-  assets(teamId: $teamId, first: 0, last: 100) {
+  assets(teamId: $teamId, first: 0, last: 300) {
     edges {
       cursor
       node {

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useLocalState } from "@reearth/state";
 import { useInstallablePluginsQuery, useInstalledPluginsQuery } from "@reearth/gql";
-import { PluginItem } from "@reearth/components/molecules/Settings/Workspace/Plugin/PluginSection";
+import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 
 export default (projectId: string) => {
   const [{ currentTeam, currentProject }] = useLocalState(s => ({
