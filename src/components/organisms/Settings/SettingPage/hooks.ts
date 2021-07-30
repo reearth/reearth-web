@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import {
   useMeQuery,
   useSceneQuery,
@@ -9,6 +9,7 @@ import {
 import { useLocalState } from "@reearth/state";
 import { User } from "@reearth/components/molecules/Common/Header";
 import { useNavigate } from "@reach/router";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 
 type Params = {
   teamId?: string;
@@ -18,11 +19,14 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const [{ error, currentTeam, currentProject }, setLocalState] = useLocalState(s => ({
-    error: s.error,
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [{ error, currentTeam, currentProject, notification }, setLocalState] = useLocalState(
+    s => ({
+      error: s.error,
+      currentTeam: s.currentTeam,
+      currentProject: s.currentProject,
+      notification: s.notification,
+    }),
+  );
 
   const { refetch } = useMeQuery();
 
@@ -127,19 +131,53 @@ export default (params: Params) => {
     [createTeamMutation, setLocalState],
   );
 
-  const notificationTimeout = 5000;
+  // const notificationTimeout = 5000;
 
-  const notification = useMemo<{ type: "error"; text: string } | undefined>(() => {
-    return error ? { type: "error", text: error } : undefined;
-  }, [error]);
+  // const notification = useMemo<{ type: "error"; text: string } | undefined>(() => {
+  //   return error ? { type: "error", text: error } : undefined;
+  // }, [error]);
+
+  // useEffect(() => {
+  //   if (!error) return;
+  //   const timerID = setTimeout(() => {
+  //     setLocalState({ error: undefined });
+  //   }, notificationTimeout);
+  //   return () => clearTimeout(timerID);
+  // }, [error, setLocalState]);
+
+  // const onNotificationClose = useCallback(() => {
+  //   if (error) {
+  //     setLocalState({ error: undefined });
+  //   }
+  // }, [error, setLocalState]);
+
+  const notificationTimeout = 5000;
 
   useEffect(() => {
     if (!error) return;
+    setLocalState({
+      notification: {
+        type: "error",
+        text: error,
+      },
+    });
     const timerID = setTimeout(() => {
       setLocalState({ error: undefined });
     }, notificationTimeout);
     return () => clearTimeout(timerID);
   }, [error, setLocalState]);
+
+  useEffect(() => {
+    if (!notification?.text) return;
+    const timerID = setTimeout(
+      () =>
+        setLocalState({
+          notification: undefined,
+        }),
+      notificationTimeout,
+    );
+    return () => clearTimeout(timerID);
+  }, [notification, setLocalState]);
 
   const onNotificationClose = useCallback(() => {
     if (error) {
@@ -147,7 +185,24 @@ export default (params: Params) => {
     }
   }, [error, setLocalState]);
 
+  const onNotify = useCallback(
+    (type?: NotificationType, text?: string) => {
+      if (!type || !text) return;
+      setLocalState({
+        notification: {
+          type: type,
+          text: text,
+        },
+      });
+    },
+    [setLocalState],
+  );
+
   const back = useCallback(() => navigate(-1), [navigate]);
+
+  const handleClick = () => {
+    onNotify("info", "yoooo!");
+  };
 
   return {
     user,
@@ -163,5 +218,7 @@ export default (params: Params) => {
     back,
     notification,
     onNotificationClose,
+    onNotify,
+    handleClick,
   };
 };

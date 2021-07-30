@@ -30,7 +30,12 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     handleModalClose,
     createAssets,
     assets,
+    onNotify,
   } = useHooks(teamId);
+
+  const handleClick = () => {
+    onNotify("error", "testtest");
+  };
 
   return (
     <MoleculeDashboard
@@ -50,6 +55,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
           dashboard
         />
       }>
+      <button onClick={handleClick}>show Notification!</button>
       <Workspace team={currentTeam} />
       <QuickStart
         onCreateTeam={createTeam}

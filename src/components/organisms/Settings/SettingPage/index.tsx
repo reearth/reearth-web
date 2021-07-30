@@ -28,6 +28,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
     back,
     notification,
     onNotificationClose,
+    handleClick,
   } = useHooks({
     teamId,
     projectId,
@@ -50,6 +51,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
       notification={notification}
       onNotificationClose={onNotificationClose}>
       {children}
+      <button onClick={handleClick}>test button</button>
     </MoleculesSettingPage>
   );
 };

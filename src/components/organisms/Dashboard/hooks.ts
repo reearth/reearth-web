@@ -18,15 +18,19 @@ import { User } from "@reearth/components/molecules/Common/Header";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 
 import { Team } from "@reearth/components/molecules/Dashboard/types";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
-  const [{ error, currentTeam, currentProject }, setLocalState] = useLocalState(s => ({
-    error: s.error,
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [{ error, currentTeam, currentProject, notification }, setLocalState] = useLocalState(
+    s => ({
+      error: s.error,
+      currentTeam: s.currentTeam,
+      currentProject: s.currentProject,
+      notification: s.notification,
+    }),
+  );
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
@@ -64,6 +68,53 @@ export default (teamId?: string) => {
     [teams, setLocalState, navigate],
   );
 
+  const notificationTimeout = 5000;
+
+  useEffect(() => {
+    if (!error) return;
+    setLocalState({
+      notification: {
+        type: "error",
+        text: error,
+      },
+    });
+    const timerID = setTimeout(() => {
+      setLocalState({ error: undefined });
+    }, notificationTimeout);
+    return () => clearTimeout(timerID);
+  }, [error, setLocalState]);
+
+  useEffect(() => {
+    if (!notification?.text) return;
+    const timerID = setTimeout(
+      () =>
+        setLocalState({
+          notification: undefined,
+        }),
+      notificationTimeout,
+    );
+    return () => clearTimeout(timerID);
+  }, [notification, setLocalState]);
+
+  const onNotificationClose = useCallback(() => {
+    if (error) {
+      setLocalState({ error: undefined });
+    }
+  }, [error, setLocalState]);
+
+  const onNotify = useCallback(
+    (type?: NotificationType, text?: string) => {
+      if (!type || !text) return;
+      setLocalState({
+        notification: {
+          type: type,
+          text: text,
+        },
+      });
+    },
+    [setLocalState],
+  );
+
   const [createTeamMutation] = useCreateTeamMutation();
   const createTeam = useCallback(
     async (data: { name: string }) => {
@@ -76,29 +127,13 @@ export default (teamId?: string) => {
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
+      onNotify(
+        "info",
+        intl.formatMessage({ defaultMessage: "Succeed to create new workspace. 🎉 🎉 " }),
+      );
     },
-    [createTeamMutation, setLocalState, refetch, navigate],
+    [createTeamMutation, refetch, onNotify, intl, setLocalState, navigate],
   );
-
-  const notificationTimeout = 5000;
-
-  const notification = useMemo<{ type: "error"; text: string } | undefined>(() => {
-    return error ? { type: "error", text: error } : undefined;
-  }, [error]);
-
-  useEffect(() => {
-    if (!error) return;
-    const timerID = setTimeout(() => {
-      setLocalState({ error: undefined });
-    }, notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [error, setLocalState]);
-
-  const onNotificationClose = useCallback(() => {
-    if (error) {
-      setLocalState({ error: undefined });
-    }
-  }, [error, setLocalState]);
 
   useEffect(() => {
     // unselect project
@@ -172,8 +207,9 @@ export default (teamId?: string) => {
       }
       setModalShown(false);
       refetch();
+      onNotify("info", intl.formatMessage({ defaultMessage: "Succeed to create project. 🎉 🎉" }));
     },
-    [createNewProject, createScene, teamId, refetch, intl],
+    [teamId, createNewProject, createScene, onNotify, intl, refetch],
   );
 
   const [createAssetMutation] = useCreateAssetMutation();
@@ -212,5 +248,6 @@ export default (teamId?: string) => {
     handleModalClose,
     createAssets,
     assets,
+    onNotify,
   };
 };
