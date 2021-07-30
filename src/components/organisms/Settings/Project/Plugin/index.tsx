@@ -14,7 +14,7 @@ type Props = {
 
 const Plugin: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentProject, plugins, loading } = useHooks(projectId);
+  const { currentProject, installedPlugins, loading } = useHooks(projectId);
 
   return (
     <SettingPage projectId={projectId}>
@@ -24,8 +24,9 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       />
       {!currentProject?.isArchived ? (
         <PluginSection
-          plugins={plugins}
+          // plugins={plugins}
           loading={loading}
+          installedPlugins={installedPlugins}
           // projects={currentProjects}
           // filterQuery={query}
           // onProjectSelect={selectProject}

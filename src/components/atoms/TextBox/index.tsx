@@ -8,6 +8,7 @@ export type Props = {
   className?: string;
   value?: string;
   onChange?: (value: string) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   multiline?: boolean;
   prefix?: string;
@@ -27,6 +28,7 @@ const TextBox: React.FC<Props> = ({
   multiline,
   disabled,
   onChange,
+  onBlur,
   prefix,
   suffix,
   placeholder,
@@ -119,6 +121,7 @@ const TextBox: React.FC<Props> = ({
         <StyledInput
           value={innerValue ?? ""}
           onChange={handleChange}
+          onBlurCapture={onBlur}
           onKeyPress={handleKeyPress}
           onBlur={handleBlur}
           color={color}
