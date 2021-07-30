@@ -7,7 +7,7 @@ import {
   Observable,
 } from "@apollo/client";
 
-import { Provider as ThemeProvider } from "../src/theme";
+import { PublishedAppProvider as ThemeProvider } from "../src/theme";
 import { Provider as IntlProvider } from "../src/locale";
 import { Provider as DndProvider } from "../src/util/use-dnd";
 import { Provider as LocalStateProvider } from "../src/state";
