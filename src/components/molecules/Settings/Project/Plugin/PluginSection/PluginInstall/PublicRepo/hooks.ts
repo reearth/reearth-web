@@ -1,5 +1,15 @@
 import { useCallback, useState } from "react";
 
+export const validateUrl = (url: string): { result: boolean; message: string } => {
+  if (!url) {
+    return { result: false, message: "Error: Thie field is required" };
+  }
+  if (!/https:\/\/github\.com\/([\w-_%]|\.)+/.test(url)) {
+    return { result: false, message: "Error: Invalid GitHub repository URL" };
+  }
+  return { result: true, message: "" };
+};
+
 export default (onSend?: (repoUrl: string) => void, loading?: boolean) => {
   const [isOpen, open] = useState(false);
   const [validationErr, setValidationErr] = useState("");
@@ -20,24 +30,12 @@ export default (onSend?: (repoUrl: string) => void, loading?: boolean) => {
   }, [loading]);
 
   const handleSubmit = useCallback(() => {
-    const err = validateUrl(repoUrl);
-    if (err) return;
+    const { result: success, message } = validateUrl(repoUrl);
+    setValidationErr(message);
+    if (!success) return;
     onSend?.(repoUrl);
     handleClose();
   }, [handleClose, onSend, repoUrl]);
-
-  const validateUrl = (url: string): boolean => {
-    if (!url) {
-      setValidationErr("Error: Thie field is required");
-      return true;
-    }
-    if (!/https:\/\/github\.com\/([\w-_%]|\.)+/.test(url)) {
-      setValidationErr("Error: Invalid GitHub repository URL");
-      return true;
-    }
-    setValidationErr("");
-    return false;
-  };
 
   return {
     isOpen,
