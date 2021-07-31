@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from "react";
-import { useFormik } from "formik";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -11,63 +10,37 @@ import Text from "@reearth/components/atoms/Text";
 import PluginInstallCardButton from "../PluginInstallCardButton";
 import TextBox from "@reearth/components/atoms/TextBox";
 import Box from "@reearth/components/atoms/Box";
+import useHooks from "./hooks";
 
 export type Props = {
   className?: string;
   icon: Icons;
-  text: string;
-  // onClick?: () => void;
+  buttonText: string;
   onSend?: () => void;
+  serverSideError?: string;
+  loading?: boolean;
 };
 
-const PublicRepo: React.FC<Props> = ({ className, icon, text, onSend }) => {
-  const [isOpen, open] = useState(false);
-  const [validationErr, setValidationErr] = useState("");
-  const formik = useFormik({
-    initialValues: { repoUrl: "" },
-    onSubmit: useCallback(() => {
-      console.log("submit!");
-      onSend?.();
-    }, [onSend]),
-  });
-
-  const handleOpen = () => open(true);
-
-  const handleClose = useCallback(() => {
-    if (!formik.isSubmitting) {
-      open(false);
-      formik.resetForm();
-    }
-  }, [formik]);
-
-  const handleSubmit = useCallback(() => {
-    formik.submitForm();
-    handleClose();
-  }, [formik, handleClose]);
-
-  const handleCancel = () => console.log("cancel");
-
-  const validate = (repoUrl: string) => {
-    if (!repoUrl) {
-      setValidationErr("Error: Thie field is required");
-      return;
-    }
-    if (!/https:\/\/github\.com\/([\w-_%]|\.)+/.test(repoUrl)) {
-      setValidationErr("Error: Invalid GitHub repository URL");
-      return;
-    }
-    setValidationErr("");
-  };
-  const handleBlur = useCallback(
-    (e: React.FocusEvent<HTMLInputElement>) => {
-      console.log("blue---", e);
-      formik.handleBlur(e);
-      validate(formik.values.repoUrl);
-    },
-    [formik],
-  );
+const PublicRepo: React.FC<Props> = ({
+  className,
+  icon,
+  buttonText: text,
+  onSend,
+  serverSideError,
+  loading,
+}) => {
   const intl = useIntl();
   const theme = useTheme();
+  const {
+    isOpen,
+    validationErr,
+    repoUrl,
+    handleRepoUrlChange,
+    handleOpen,
+    handleSubmit,
+    handleClose,
+  } = useHooks(onSend, loading);
+
   return (
     <>
       <PluginInstallCardButton className={className} icon={icon} text={text} onClick={handleOpen} />
@@ -80,7 +53,7 @@ const PublicRepo: React.FC<Props> = ({ className, icon, text, onSend }) => {
             large
             buttonType="primary"
             text={intl.formatMessage({ defaultMessage: "Continue" })}
-            disabled={!formik.values.repoUrl}
+            disabled={!repoUrl}
             onClick={handleSubmit}
           />
         }
@@ -89,25 +62,26 @@ const PublicRepo: React.FC<Props> = ({ className, icon, text, onSend }) => {
             large
             buttonType="secondary"
             text={intl.formatMessage({ defaultMessage: "Cancel" })}
-            onClick={handleCancel}
+            onClick={handleClose}
           />
         }>
-        {formik.isSubmitting && <Loading overlay />}
-        {/* {({ touched }) => (
-          <form onSubmit={formik.handleSubmit}> */}
+        {loading && <Loading overlay />}
         <Text size="m" color={theme.colors.text.main}>
           {intl.formatMessage({ defaultMessage: "Repository url:" })}
         </Text>
         <Box mv="l">
-          <TextBox {...formik.getFieldProps("repoUrl")} onBlur={handleBlur} />
+          <TextBox value={repoUrl} doesChangeEveryTime onChange={handleRepoUrlChange} />
         </Box>
         {validationErr && (
           <Text size="2xs" color={theme.colors.danger.main}>
             {validationErr}
           </Text>
         )}
-        {/* </form> */}
-        {/* )} */}
+        {serverSideError && (
+          <Text size="2xs" color={theme.colors.danger.main}>
+            {serverSideError}
+          </Text>
+        )}
       </Modal>
     </>
   );

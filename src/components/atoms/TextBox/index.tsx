@@ -8,7 +8,6 @@ export type Props = {
   className?: string;
   value?: string;
   onChange?: (value: string) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   multiline?: boolean;
   prefix?: string;
@@ -20,6 +19,7 @@ export type Props = {
   backgroundColor?: string;
   borderColor?: string;
   floatedTextColor?: string;
+  doesChangeEveryTime?: boolean;
 };
 
 const TextBox: React.FC<Props> = ({
@@ -28,7 +28,6 @@ const TextBox: React.FC<Props> = ({
   multiline,
   disabled,
   onChange,
-  onBlur,
   prefix,
   suffix,
   placeholder,
@@ -38,6 +37,7 @@ const TextBox: React.FC<Props> = ({
   backgroundColor,
   borderColor,
   floatedTextColor,
+  doesChangeEveryTime = false,
 }) => {
   const isDirty = useRef(false);
   const [innerValue, setInnerValue] = useState(value);
@@ -49,6 +49,7 @@ const TextBox: React.FC<Props> = ({
       const newValue = e.currentTarget.value;
       isDirty.current = value !== newValue;
       setInnerValue(newValue);
+      doesChangeEveryTime && onChange?.(newValue);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [value],
@@ -121,7 +122,6 @@ const TextBox: React.FC<Props> = ({
         <StyledInput
           value={innerValue ?? ""}
           onChange={handleChange}
-          onBlurCapture={onBlur}
           onKeyPress={handleKeyPress}
           onBlur={handleBlur}
           color={color}
