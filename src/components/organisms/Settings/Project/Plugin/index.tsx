@@ -14,7 +14,13 @@ type Props = {
 
 const Plugin: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentProject, installedPlugins, loading } = useHooks(projectId);
+  const {
+    currentProject,
+    installedPlugins,
+    loading,
+    installFromPublicRepo,
+    installByUploadingZipFile,
+  } = useHooks(projectId);
 
   return (
     <SettingPage projectId={projectId}>
@@ -27,6 +33,8 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
           // plugins={plugins}
           loading={loading}
           installedPlugins={installedPlugins}
+          installFromPublicRepo={installFromPublicRepo}
+          installByUploadingZipFile={installByUploadingZipFile}
           // projects={currentProjects}
           // filterQuery={query}
           // onProjectSelect={selectProject}

@@ -1,21 +1,25 @@
 import { Icons } from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
 import React from "react";
+import useFileInput from "use-file-input";
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
 export type Props = {
   className?: string;
   icon: Icons;
   buttonText: string;
-  onSend?: () => void;
+  onSend?: (files: FileList) => void;
   loading?: boolean;
 };
 
+type FileType = "zip";
+
 const ZipUpload: React.FC<Props> = ({ className, icon, buttonText, onSend, loading }) => {
-  const handleClick = () => {
-    console.log("click");
-    onSend?.();
-  };
+  const accept: FileType = "zip";
+  const handleClick = useFileInput(files => onSend?.(files), {
+    accept,
+    multiple: false,
+  });
   return (
     <>
       {loading ? (

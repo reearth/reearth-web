@@ -15,9 +15,16 @@ export type Props = {
   onMovePrevPage?: () => void;
   onMovePage?: (mode: PluginPageMode) => void;
   installedPlugins?: PluginItem[];
+  installFromPublicRepo?: (repoUrl: string) => void;
+  installByUploadingZipFile?: (files: FileList) => void;
 };
 
-const PluginInstall: React.FC<Props> = ({ className, installedPlugins }) => {
+const PluginInstall: React.FC<Props> = ({
+  className,
+  installedPlugins,
+  installFromPublicRepo,
+  installByUploadingZipFile,
+}) => {
   const intl = useIntl();
   const installChoices: { text: string; mode: PluginInstallWay; icon: Icons }[] = [
     {
@@ -53,16 +60,10 @@ const PluginInstall: React.FC<Props> = ({ className, installedPlugins }) => {
         <Flex gap={28}>
           {installChoices.map(c => {
             return c.mode === "install-public-repo" ? (
-              <PublicRepo icon={c.icon} buttonText={c.text} onSend={() => console.log("send")} />
+              <PublicRepo icon={c.icon} buttonText={c.text} onSend={installFromPublicRepo} />
             ) : c.mode === "install-zip" ? (
-              <ZipUpload icon={c.icon} buttonText={c.text} onSend={() => console.log("send")} />
+              <ZipUpload icon={c.icon} buttonText={c.text} onSend={installByUploadingZipFile} />
             ) : null;
-            // <PluginInstallCardButton
-            //   key={p.mode}
-            //   icon={p.icon}
-            //   text={p.text}
-            //   onClick={() => onMovePage?.(p.mode)}
-            // />
           })}
         </Flex>
       </Box>

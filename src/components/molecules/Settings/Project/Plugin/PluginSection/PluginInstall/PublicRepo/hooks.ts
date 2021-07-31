@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-export default (onSend?: () => void, loading?: boolean) => {
+export default (onSend?: (repoUrl: string) => void, loading?: boolean) => {
   const [isOpen, open] = useState(false);
   const [validationErr, setValidationErr] = useState("");
   const [repoUrl, setRepoUrl] = useState("");
@@ -22,7 +22,7 @@ export default (onSend?: () => void, loading?: boolean) => {
   const handleSubmit = useCallback(() => {
     const err = validateUrl(repoUrl);
     if (err) return;
-    onSend?.();
+    onSend?.(repoUrl);
     handleClose();
   }, [handleClose, onSend, repoUrl]);
 

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useLocalState } from "@reearth/state";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
@@ -47,6 +47,32 @@ export default (projectId: string) => {
   //     : [];
   // }, [installedPluginIds, rawPluginsData]);
 
+  const installByUploadingZipFile = useCallback(
+    async (files: FileList) => {
+      if (currentTeam && currentProject) {
+        await Promise.all(Array.from(files).map(f => console.log(f)));
+        await new Promise(() => {});
+      }
+    },
+    [currentProject, currentTeam],
+  );
+
+  const installFromPublicRepo = useCallback(
+    async (repoUrl: string) => {
+      if (currentTeam && currentProject && repoUrl) {
+        return new Promise(() => {});
+      }
+    },
+    [currentProject, currentTeam],
+  );
+
   const loading = sceneLoading || pluginLoading;
-  return { currentTeam, currentProject, loading, installedPlugins };
+  return {
+    currentTeam,
+    currentProject,
+    loading,
+    installedPlugins,
+    installByUploadingZipFile,
+    installFromPublicRepo,
+  };
 };
