@@ -22,10 +22,12 @@ export type LocalState = {
   };
   currentProject?: { id: string; name: string; sceneId?: string; isArchived?: boolean };
   notification?: { type: "error" | "warning" | "info"; text: string };
+  isEntityDraggable: boolean;
 };
 
 const localInitialState: LocalState = {
   isCapturing: false,
+  isEntityDraggable: false,
 };
 
 export const localSlice = createSlice({

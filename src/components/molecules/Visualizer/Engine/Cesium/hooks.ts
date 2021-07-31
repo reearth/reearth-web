@@ -11,6 +11,7 @@ import type { Ref as EngineRef, SceneProperty } from "..";
 import tiles from "./tiles";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
+import useEntityDnD from "./useEntityDnD";
 
 export default ({
   ref,
@@ -19,6 +20,7 @@ export default ({
   selectedPrimitiveId,
   onPrimitiveSelect,
   onCameraChange,
+  isEntityDraggable,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -26,6 +28,7 @@ export default ({
   selectedPrimitiveId?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
+  isEntityDraggable: boolean;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
@@ -144,6 +147,12 @@ export default ({
 
     viewer.scene.requestRender();
   });
+
+  //Enable DnD Entities
+  const { entityDnD } = useEntityDnD(cesium, {});
+  useEffect(() => {
+    isEntityDraggable ? entityDnD?.enable() : entityDnD?.disable();
+  }, [entityDnD, isEntityDraggable]);
 
   return {
     terrainProvider,

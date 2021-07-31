@@ -13,6 +13,9 @@ import { useLocalState } from "@reearth/state";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 import { valueTypeToGQL, ValueType, ValueTypes, Camera, valueToGQL } from "@reearth/util/value";
+import { Entity } from "cesium";
+import { Context } from "cesium-dnd";
+import Cartesian3 from "cesium/Source/Core/Cartesian3";
 
 export default (isBuilt?: boolean) => {
   const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
@@ -149,6 +152,14 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
+  const handleDragLayer = (e: Entity, position: Cartesian3 | undefined, context: Context) => {
+    console.log("drag ----", e, position, context);
+  };
+
+  const handleDropLayer = (e: Entity, position: Cartesian3 | undefined, context: Context) => {
+    console.log("drop ----", e, position, context);
+  };
+
   return {
     sceneId,
     rootLayerId,
@@ -171,5 +182,7 @@ export default (isBuilt?: boolean) => {
     onIsCapturingChange,
     onCameraChange,
     onFovChange,
+    handleDragLayer,
+    handleDropLayer,
   };
 };

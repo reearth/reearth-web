@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import {
   Entity,
   BillboardGraphics,
@@ -22,6 +22,8 @@ import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo } from "../common";
 import marker from "./marker.svg";
+// eslint-disable-next-line no-restricted-imports
+import { useLocalState } from "@reearth/state";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -123,6 +125,31 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     }
   }, [extrudePoints]);
 
+  //TODO: never use local state  from here
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [{ isEntityDraggable }, setLocalState] = useLocalState(({ isEntityDraggable }) => ({
+    isEntityDraggable,
+  }));
+  const [isDraggable, setIsDraggable] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const TIME = 1000;
+  const handleMouseDown = () => {
+    setIsMouseDown(true);
+  };
+  const handleMouseUp = () => {
+    setIsMouseDown(false);
+    setIsDraggable(false);
+    setLocalState({ isEntityDraggable: false });
+  };
+  useEffect(() => {
+    if (!isMouseDown) return;
+    const timer = setTimeout(() => {
+      setIsDraggable(true);
+      setLocalState({ isEntityDraggable: true });
+    }, TIME);
+    return () => clearTimeout(timer);
+  }, [isMouseDown, setLocalState]);
+
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
@@ -134,7 +161,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
           />
         </Entity>
       )}
-      <Entity id={id} position={pos}>
+      <Entity id={id} position={pos} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
         {style === "point" ? (
           <PointGraphics pixelSize={pointSize} color={toColor(pointColor)} />
         ) : (
@@ -142,6 +169,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
             image={canvas}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
+            color={isDraggable ? Color.RED : Color.WHITE}
           />
         )}
         {label && (
