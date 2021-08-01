@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
-import { createWorldTerrain, Color, Entity, Ion, EllipsoidTerrainProvider } from "cesium";
+import {
+  createWorldTerrain,
+  Color,
+  Entity,
+  Ion,
+  EllipsoidTerrainProvider,
+  Cartesian3,
+} from "cesium";
 import { isEqual } from "lodash-es";
 import type { CesiumComponentRef, CesiumMovementEvent } from "resium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
@@ -12,6 +19,7 @@ import tiles from "./tiles";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
 import useEntityDnD from "./useEntityDnD";
+import { Context } from "cesium-dnd";
 
 export default ({
   ref,
@@ -20,7 +28,9 @@ export default ({
   selectedPrimitiveId,
   onPrimitiveSelect,
   onCameraChange,
-  isEntityDraggable,
+  isLayerDraggable,
+  onDragLayer,
+  onDropLayer,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -28,7 +38,9 @@ export default ({
   selectedPrimitiveId?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
-  isEntityDraggable: boolean;
+  isLayerDraggable?: boolean;
+  onDragLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
+  onDropLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
@@ -144,15 +156,18 @@ export default ({
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-
     viewer.scene.requestRender();
   });
 
   //Enable DnD Entities
-  const { entityDnD } = useEntityDnD(cesium, {});
   useEffect(() => {
-    isEntityDraggable ? entityDnD?.enable() : entityDnD?.disable();
-  }, [entityDnD, isEntityDraggable]);
+    const { entityDnD } = useEntityDnD(cesium, { onDrag: onDragLayer, onDrop: onDropLayer });
+    if (isLayerDraggable) {
+      entityDnD?.enable();
+    } else {
+      entityDnD?.disable();
+    }
+  }, [isLayerDraggable, onDragLayer, onDropLayer]);
 
   return {
     terrainProvider,

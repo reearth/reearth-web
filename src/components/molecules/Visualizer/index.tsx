@@ -9,6 +9,8 @@ import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
+import { Cartesian3, Entity } from "cesium";
+import { Context } from "cesium-dnd";
 
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
@@ -40,6 +42,8 @@ export type Props = PropsWithChildren<
     isPublished?: boolean;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
+    onDragLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
+    onDropLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
     Pick<
       InfoboxProps,
@@ -64,6 +68,8 @@ export default function Visualizer({
   onBlockMove,
   onBlockInsert,
   onBlockSelect,
+  onDragLayer,
+  onDropLayer,
   ...props
 }: Props): JSX.Element {
   const {
@@ -79,6 +85,9 @@ export default function Visualizer({
     selectPrimitive,
     selectBlock,
     updateCamera,
+    isLayerDraggable,
+    enableLayerDragging,
+    disableLayerDragging,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -106,7 +115,10 @@ export default function Visualizer({
           onPrimitiveSelect={selectPrimitive}
           {...props}
           camera={innerCamera}
-          onCameraChange={updateCamera}>
+          onCameraChange={updateCamera}
+          onDragLayer={onDragLayer}
+          onDropLayer={onDropLayer}
+          isLayerDraggable={isLayerDraggable}>
           {primitives?.map(primitive => (
             <P
               key={primitive.id}
@@ -118,6 +130,9 @@ export default function Visualizer({
               isBuilt={props.isBuilt}
               isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
               pluginBaseUrl={pluginBaseUrl}
+              enableLayerDragging={enableLayerDragging}
+              disableLayerDragging={disableLayerDragging}
+              isDraggable={isLayerDraggable}
             />
           ))}
           {widgets?.map(widget => (

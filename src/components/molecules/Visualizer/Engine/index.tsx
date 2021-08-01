@@ -11,6 +11,8 @@ import React, {
 import type { Camera } from "@reearth/util/value";
 import type { EngineRef } from "./ref";
 import Cesium from "./Cesium";
+import { Cartesian3, Entity } from "cesium";
+import { Context } from "cesium-dnd";
 
 export type SceneProperty = {
   default?: {
@@ -57,6 +59,9 @@ export type EngineProps = {
   selectedPrimitiveId?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
+  isLayerDraggable?: boolean;
+  onDragLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
+  onDropLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
 };
 
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;

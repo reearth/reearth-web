@@ -34,6 +34,8 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     onIsCapturingChange,
     onCameraChange,
     onFovChange,
+    handleDragLayer,
+    handleDropLayer,
   } = useHooks(isBuilt);
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopUp"]>
@@ -65,7 +67,9 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onBlockMove={onBlockMove}
       onBlockDelete={onBlockRemove}
       onBlockInsert={onBlockInsert}
-      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}>
+      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
+      onDragLayer={handleDragLayer}
+      onDropLayer={handleDropLayer}>
       <FovSlider
         isCapturing={isCapturing}
         onIsCapturingChange={onIsCapturingChange}
