@@ -14,6 +14,7 @@ import {
 import { useLocalState } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
   s === PublishmentStatus.Public
@@ -23,7 +24,12 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 
 export default () => {
-  const [currentTeam, setLocalState] = useLocalState(s => s.currentTeam);
+  const [{ currentTeam, notification }, setLocalState] = useLocalState(s => ({
+    error: s.error,
+    currentTeam: s.currentTeam,
+    currentProject: s.currentProject,
+    notification: s.notification,
+  }));
   const navigate = useNavigate();
   const intl = useIntl();
 
@@ -45,6 +51,53 @@ export default () => {
       setLocalState({ currentTeam: team });
     }
   }, [currentTeam, team, setLocalState]);
+
+  const notificationTimeout = 3000;
+
+  // useEffect(() => {
+  //   if (!error) return;
+  //   setLocalState({
+  //     notification: {
+  //       type: "error",
+  //       text: error,
+  //     },
+  //   });
+  //   const timerID = setTimeout(() => {
+  //     setLocalState({ error: undefined });
+  //   }, notificationTimeout);
+  //   return () => clearTimeout(timerID);
+  // }, [error, setLocalState]);
+
+  useEffect(() => {
+    if (!notification?.text) return;
+    const timerID = setTimeout(
+      () =>
+        setLocalState({
+          notification: undefined,
+        }),
+      notificationTimeout,
+    );
+    return () => clearTimeout(timerID);
+  }, [notification, setLocalState]);
+
+  // const onNotificationClose = useCallback(() => {
+  //   if (error) {
+  //     setLocalState({ error: undefined });
+  //   }
+  // }, [error, setLocalState]);
+
+  const onNotify = useCallback(
+    (type?: NotificationType, text?: string) => {
+      if (!type || !text) return;
+      setLocalState({
+        notification: {
+          type: type,
+          text: text,
+        },
+      });
+    },
+    [setLocalState],
+  );
 
   const currentProjects = (team?.projects.nodes ?? [])
     .map<Project | undefined>(project =>
@@ -111,9 +164,13 @@ export default () => {
         throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
       }
       setModalShown(false);
+      onNotify(
+        "info",
+        intl.formatMessage({ defaultMessage: "You have created a new project! 🎉" }),
+      );
       refetch();
     },
-    [createNewProject, createScene, intl, refetch, teamId],
+    [createNewProject, createScene, intl, onNotify, refetch, teamId],
   );
 
   const selectProject = useCallback(
