@@ -9,8 +9,7 @@ import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
-import { Cartesian3, Entity } from "cesium";
-import { Context } from "cesium-dnd";
+import { LatLngHeight } from "@reearth/util/value";
 
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
@@ -42,8 +41,8 @@ export type Props = PropsWithChildren<
     isPublished?: boolean;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
-    onDragLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
-    onDropLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
+    onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+    onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
     Pick<
       InfoboxProps,

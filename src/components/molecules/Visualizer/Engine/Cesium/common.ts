@@ -148,6 +148,20 @@ export const getLocationFromScreenXY = (scene: Scene | undefined | null, x: numb
   };
 };
 
+export const convertCartesian3ToLatLngHeight = (
+  scene: Scene | undefined | null,
+  pos: Cartesian3,
+) => {
+  if (!scene) return;
+
+  const cartographic = scene.globe.ellipsoid.cartesianToCartographic(pos);
+  return {
+    lat: CesiumMath.toDegrees(cartographic.latitude),
+    lng: CesiumMath.toDegrees(cartographic.longitude),
+    height: cartographic.height,
+  };
+};
+
 export const flyTo = (
   cesiumCamera?: CesiumCamera,
   camera?: {

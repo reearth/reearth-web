@@ -6,13 +6,14 @@ import {
   Entity,
   Ion,
   EllipsoidTerrainProvider,
+  Math as CesiumMath,
   Cartesian3,
 } from "cesium";
 import { isEqual } from "lodash-es";
 import type { CesiumComponentRef, CesiumMovementEvent } from "resium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 
-import { Camera } from "@reearth/util/value";
+import { Camera, LatLngHeight } from "@reearth/util/value";
 
 import type { Ref as EngineRef, SceneProperty } from "..";
 import tiles from "./tiles";
@@ -39,8 +40,8 @@ export default ({
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
   isLayerDraggable?: boolean;
-  onDragLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
-  onDropLayer?: (e: Entity, position: Cartesian3 | undefined, context: Context) => void | boolean;
+  onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+  onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
@@ -160,14 +161,47 @@ export default ({
   });
 
   //Enable DnD Entities
+
+  const handleDropLayer = useCallback(
+    (e: Entity, position: Cartesian3 | undefined, context: Context): boolean | void => {
+      console.log("drop---------", e, position, context);
+      onDropLayer?.(e.id, convertCartesian3ToPosition(position));
+    },
+    [onDropLayer],
+  );
+
+  const handleDragLayer = useCallback(
+    (e: Entity, position: Cartesian3 | undefined, context: Context): boolean | void => {
+      console.log("drag -------", e, position, context);
+      onDragLayer?.(e.id, convertCartesian3ToPosition(position));
+    },
+    [onDragLayer],
+  );
+
+  const convertCartesian3ToPosition = (
+    pos?: Cartesian3,
+  ): { lat: number; lng: number; height: number } | undefined => {
+    if (!pos) return;
+    const cartographic =
+      cesium.current?.cesiumElement?.scene.globe.ellipsoid.cartesianToCartographic(pos);
+    if (!cartographic) return;
+    return {
+      lat: CesiumMath.toDegrees(cartographic.latitude),
+      lng: CesiumMath.toDegrees(cartographic.longitude),
+      height: cartographic.height,
+    };
+  };
   useEffect(() => {
-    const { entityDnD } = useEntityDnD(cesium, { onDrag: onDragLayer, onDrop: onDropLayer });
+    const { entityDnD } = useEntityDnD(cesium, {
+      onDrag: handleDragLayer,
+      onDrop: handleDropLayer,
+    });
     if (isLayerDraggable) {
       entityDnD?.enable();
     } else {
       entityDnD?.disable();
     }
-  }, [isLayerDraggable, onDragLayer, onDropLayer]);
+  }, [handleDragLayer, handleDropLayer, isLayerDraggable, onDragLayer, onDropLayer]);
 
   return {
     terrainProvider,

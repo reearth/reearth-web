@@ -267,3 +267,44 @@ export const ADD_INFOBOX_FIELD = gql`
 
   ${layerFragment}
 `;
+
+export const UPDATE_LAYER_LATLNG = gql`
+  mutation ChangePropertyValueLatLng(
+    $propertyId: ID!
+    $schemaItemId: PropertySchemaFieldID
+    $itemId: ID
+    $fieldId: PropertySchemaFieldID!
+    $lat: Float!
+    $lng: Float!
+  ) {
+    updatePropertyValueLatLng(
+      input: {
+        propertyId: $propertyId
+        schemaItemId: $schemaItemId
+        itemId: $itemId
+        fieldId: $fieldId
+        lat: $lat
+        lng: $lng
+      }
+    ) {
+      property {
+        id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
+      }
+    }
+  }
+  ${layerFragment}
+`;
+
+export const GET_LAYER_PROPERTY = gql`
+  query GetLayerProperty($layerId: ID!) {
+    layer(id: $layerId) {
+      id
+      ...Layer1Fragment
+    }
+  }
+`;

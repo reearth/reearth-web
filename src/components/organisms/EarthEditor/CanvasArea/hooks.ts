@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import {
   useGetLayersQuery,
@@ -8,14 +8,20 @@ import {
   useChangePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
+  // useChangePropertyValueLatLngHeightMutation,
+  useGetLayerPropertyQuery,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
-import { valueTypeToGQL, ValueType, ValueTypes, Camera, valueToGQL } from "@reearth/util/value";
-import { Entity } from "cesium";
-import { Context } from "cesium-dnd";
-import Cartesian3 from "cesium/Source/Core/Cartesian3";
+import {
+  valueTypeToGQL,
+  ValueType,
+  ValueTypes,
+  Camera,
+  valueToGQL,
+  LatLngHeight,
+} from "@reearth/util/value";
 
 export default (isBuilt?: boolean) => {
   const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
@@ -26,6 +32,8 @@ export default (isBuilt?: boolean) => {
       isCapturing,
       camera,
     }));
+
+  const [draggingLayerId, setDraggingLayerId] = useState("");
 
   const selectLayer = useCallback(
     (id?: string) => setLocalState({ selectedLayer: id, selectedType: "layer" }),
@@ -152,12 +160,43 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
-  const handleDragLayer = (e: Entity, position: Cartesian3 | undefined, context: Context) => {
-    console.log("drag ----", e, position, context);
+  // const [updateLayerLatLng] = useChangePropertyValueLatLngHeightMutation();
+  const {
+    data: layerPropertyData,
+    // error,
+    // loading,
+  } = useGetLayerPropertyQuery({
+    variables: { layerId: draggingLayerId ?? "" },
+    skip: !draggingLayerId,
+  });
+
+  const handleDragLayer = (layerId: string, position: LatLngHeight | undefined) => {
+    console.log("drag ----", layerId, position);
+    setDraggingLayerId(layerId);
   };
 
-  const handleDropLayer = (e: Entity, position: Cartesian3 | undefined, context: Context) => {
-    console.log("drop ----", e, position, context);
+  const handleDropLayer = (layerId: string, position: LatLngHeight | undefined) => {
+    console.log("drop -----------", layerId, position);
+    if (layerPropertyData) {
+      const propertyId = layerPropertyData.layer?.property?.id;
+      // const fieldId = "location";
+      // const schemaItemId = "default";
+      const propertyItemId = layerPropertyData.layer?.property?.items.find(
+        i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
+      )?.id;
+      if (!propertyId || !propertyItemId) return;
+
+      //   updateLayerLatLng({
+      //     variables: {
+      //       schemaItemId,
+      //       propertyId,
+      //       fieldId,
+      //       itemId: propertyItemId,
+      //       lat,
+      //     },
+      //   });
+    }
+    setDraggingLayerId("");
   };
 
   return {
