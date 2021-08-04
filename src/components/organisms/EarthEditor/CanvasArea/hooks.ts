@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 
 import {
   useGetLayersQuery,
@@ -8,7 +8,6 @@ import {
   useChangePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
-  useGetLayerPropertyQuery,
   useChangePropertyValueLatLngMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
@@ -32,8 +31,6 @@ export default (isBuilt?: boolean) => {
       isCapturing,
       camera,
     }));
-
-  const [draggingLayerId, setDraggingLayerId] = useState("");
 
   const selectLayer = useCallback(
     (id?: string) => setLocalState({ selectedLayer: id, selectedType: "layer" }),
@@ -161,47 +158,43 @@ export default (isBuilt?: boolean) => {
   }, [isBuilt, title]);
 
   const [updateLayerLatLng] = useChangePropertyValueLatLngMutation();
-  const {
-    data: layerPropertyData,
-    // error: layerPropertyDataError,
-    // loading: layerPropertyDataLoading,
-  } = useGetLayerPropertyQuery({
-    variables: { layerId: draggingLayerId ?? "" },
-    skip: !draggingLayerId,
-  });
 
   const handleDragLayer = (layerId: string, position: LatLngHeight | undefined) => {
     console.log("drag ----", layerId, position);
-    setDraggingLayerId(layerId);
   };
 
   const handleDraggingLayer = (layerId: string, position: LatLngHeight | undefined) => {
     console.log("dragging----", layerId, position);
   };
 
-  const handleDropLayer = (layerId: string, position: LatLngHeight | undefined) => {
-    console.log("drop -----------", layerId, position);
-    if (layerPropertyData) {
-      const propertyId = layerPropertyData.layer?.property?.id;
-      const fieldId = "location";
-      const schemaItemId = "default";
-      const propertyItem = layerPropertyData.layer?.property?.items.find(
-        i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
-      );
-      if (!propertyId || !propertyItem || !position) return;
-      updateLayerLatLng({
-        variables: {
-          schemaItemId,
-          propertyId,
-          fieldId,
-          itemId: propertyItem.id,
-          lat: position?.lat,
-          lng: position?.lng,
-        },
-      });
-    }
-    setDraggingLayerId("");
-  };
+  const handleDropLayer = useCallback(
+    async (layerId: string, position: LatLngHeight | undefined) => {
+      const layerProperty =
+        layerData?.node?.__typename === "Scene"
+          ? layerData.node.rootLayer?.layers.find(l => l?.id === layerId)?.property
+          : undefined;
+      if (layerProperty) {
+        const propertyId = layerProperty.id;
+        const fieldId = "location";
+        const schemaItemId = "default";
+        const propertyItem = layerProperty.items.find(
+          i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
+        );
+        if (!propertyId || !propertyItem || !position) return;
+        await updateLayerLatLng({
+          variables: {
+            schemaItemId,
+            propertyId,
+            fieldId,
+            itemId: propertyItem.id,
+            lat: position?.lat,
+            lng: position?.lng,
+          },
+        });
+      }
+    },
+    [layerData, updateLayerLatLng],
+  );
 
   return {
     sceneId,

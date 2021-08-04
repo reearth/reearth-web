@@ -22,7 +22,6 @@ import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo } from "../common";
 import marker from "./marker.svg";
-import useHooks from "../../../Primitive/hooks";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -53,12 +52,7 @@ type Property = {
 
 const tag = "reearth_unselectable";
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({
-  primitive,
-  enableLayerDragging,
-  disableLayerDragging,
-  isDraggable,
-}) => {
+const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
   const { id, isVisible, property } = primitive ?? {};
   const {
     location,
@@ -82,11 +76,6 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
     imageShadowPositionX: shadowOffsetX,
     imageShadowPositionY: shadowOffsetY,
   } = (property as Property | undefined)?.default ?? {};
-
-  const { handleMouseUp, handleMouseDown } = useHooks({
-    enableLayerDragging,
-    disableLayerDragging,
-  });
 
   const pos = useMemo(() => {
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
@@ -137,7 +126,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
-        <Entity ref={e} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+        <Entity ref={e}>
           <PolylineGraphics
             positions={extrudePoints}
             material={Color.WHITE.withAlpha(0.4)}
@@ -145,7 +134,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
           />
         </Entity>
       )}
-      <Entity id={id} position={pos} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+      <Entity id={id} position={pos}>
         {style === "point" ? (
           <PointGraphics pixelSize={pointSize} color={toColor(pointColor)} />
         ) : (
@@ -153,7 +142,6 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
             image={canvas}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
-            color={isDraggable ? Color.RED : Color.WHITE}
           />
         )}
         {label && (
