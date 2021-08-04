@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect, useState } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import {
   Entity,
   BillboardGraphics,
@@ -22,6 +22,7 @@ import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { useIcon, ho, vo } from "../common";
 import marker from "./marker.svg";
+import useHooks from "../../../Primitive/hooks";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -82,6 +83,11 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
     imageShadowPositionY: shadowOffsetY,
   } = (property as Property | undefined)?.default ?? {};
 
+  const { handleMouseUp, handleMouseDown } = useHooks({
+    enableLayerDragging,
+    disableLayerDragging,
+  });
+
   const pos = useMemo(() => {
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
   }, [location, height]);
@@ -128,27 +134,10 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
     }
   }, [extrudePoints]);
 
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const TIME = 1000;
-  const handleMouseDown = () => {
-    setIsMouseDown(true);
-  };
-  const handleMouseUp = () => {
-    setIsMouseDown(false);
-    disableLayerDragging?.();
-  };
-  useEffect(() => {
-    if (!isMouseDown) return;
-    const timer = setTimeout(() => {
-      enableLayerDragging?.();
-    }, TIME);
-    return () => clearTimeout(timer);
-  }, [enableLayerDragging, isMouseDown]);
-
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
-        <Entity ref={e}>
+        <Entity ref={e} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
           <PolylineGraphics
             positions={extrudePoints}
             material={Color.WHITE.withAlpha(0.4)}

@@ -31,6 +31,7 @@ export default ({
   onCameraChange,
   isLayerDraggable,
   onDragLayer,
+  onDraggingLayer,
   onDropLayer,
 }: {
   ref: React.ForwardedRef<EngineRef>;
@@ -41,6 +42,7 @@ export default ({
   onCameraChange?: (camera: Camera) => void;
   isLayerDraggable?: boolean;
   onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+  onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -163,21 +165,27 @@ export default ({
   //Enable DnD Entities
 
   const handleDropLayer = useCallback(
-    (e: Entity, position: Cartesian3 | undefined, context: Context): boolean | void => {
-      console.log("drop---------", e, position, context);
+    (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
       onDropLayer?.(e.id, convertCartesian3ToPosition(position));
     },
     [onDropLayer],
   );
 
+  const handleDraggingLayer = useCallback(
+    (e: Entity, position: Cartesian3 | undefined, _context: Context): false | void => {
+      onDraggingLayer?.(e.id, convertCartesian3ToPosition(position));
+    },
+    [onDraggingLayer],
+  );
+
   const handleDragLayer = useCallback(
-    (e: Entity, position: Cartesian3 | undefined, context: Context): boolean | void => {
-      console.log("drag -------", e, position, context);
+    (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
       onDragLayer?.(e.id, convertCartesian3ToPosition(position));
     },
     [onDragLayer],
   );
 
+  const DND_INITIAL_DELAY = 200;
   const convertCartesian3ToPosition = (
     pos?: Cartesian3,
   ): { lat: number; lng: number; height: number } | undefined => {
@@ -195,13 +203,24 @@ export default ({
     const { entityDnD } = useEntityDnD(cesium, {
       onDrag: handleDragLayer,
       onDrop: handleDropLayer,
+      onDragging: handleDraggingLayer,
+      dragDelay: DND_INITIAL_DELAY,
     });
     if (isLayerDraggable) {
+      console.log("enable-----");
       entityDnD?.enable();
     } else {
+      console.log("disable-----");
       entityDnD?.disable();
     }
-  }, [handleDragLayer, handleDropLayer, isLayerDraggable, onDragLayer, onDropLayer]);
+  }, [
+    handleDragLayer,
+    handleDraggingLayer,
+    handleDropLayer,
+    isLayerDraggable,
+    onDragLayer,
+    onDropLayer,
+  ]);
 
   return {
     terrainProvider,

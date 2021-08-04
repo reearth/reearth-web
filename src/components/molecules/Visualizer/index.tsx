@@ -42,6 +42,7 @@ export type Props = PropsWithChildren<
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
     onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+    onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
     onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
     Pick<
@@ -68,6 +69,7 @@ export default function Visualizer({
   onBlockInsert,
   onBlockSelect,
   onDragLayer,
+  onDraggingLayer,
   onDropLayer,
   ...props
 }: Props): JSX.Element {
@@ -116,9 +118,15 @@ export default function Visualizer({
           camera={innerCamera}
           onCameraChange={updateCamera}
           onDragLayer={onDragLayer}
+          onDraggingLayer={onDraggingLayer}
           onDropLayer={onDropLayer}
           isLayerDraggable={isLayerDraggable}>
           {primitives?.map(primitive => (
+            // <DraggableEntity
+            //   key={primitive.id}
+            //   enableLayerDragging={enableLayerDragging}
+            //   disableLayerDragging={disableLayerDragging}
+            //   isLayerDraggable={isLayerDraggable}>
             <P
               key={primitive.id}
               primitive={primitive}
@@ -133,6 +141,7 @@ export default function Visualizer({
               disableLayerDragging={disableLayerDragging}
               isDraggable={isLayerDraggable}
             />
+            // </DraggableEntity>
           ))}
           {widgets?.map(widget => (
             <W

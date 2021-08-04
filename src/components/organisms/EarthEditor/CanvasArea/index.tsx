@@ -35,6 +35,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     onCameraChange,
     onFovChange,
     handleDragLayer,
+    handleDraggingLayer,
     handleDropLayer,
   } = useHooks(isBuilt);
   const renderInfoboxInsertionPopUp = useCallback<
@@ -69,6 +70,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onBlockInsert={onBlockInsert}
       renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
       onDragLayer={handleDragLayer}
+      onDraggingLayer={handleDraggingLayer}
       onDropLayer={handleDropLayer}>
       <FovSlider
         isCapturing={isCapturing}
