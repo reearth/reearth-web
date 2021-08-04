@@ -17,6 +17,7 @@ export type Props = {
   installedPlugins?: PluginItem[];
   installFromPublicRepo?: (repoUrl: string) => void;
   installByUploadingZipFile?: (files: FileList) => void;
+  uninstallPlugin?: (pluginId: string) => void;
 };
 
 const PluginInstall: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const PluginInstall: React.FC<Props> = ({
   installedPlugins,
   installFromPublicRepo,
   installByUploadingZipFile,
+  uninstallPlugin,
 }) => {
   const intl = useIntl();
   const installChoices: { text: string; mode: PluginInstallWay; icon: Icons }[] = [
@@ -74,7 +76,7 @@ const PluginInstall: React.FC<Props> = ({
           </Text>
         </Box>
       </SectionTitle>
-      <PluginAccordion items={installedPlugins} />
+      <PluginAccordion items={installedPlugins} uninstallPlugin={uninstallPlugin} />
     </div>
   );
 };

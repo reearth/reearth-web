@@ -11,6 +11,7 @@ export type PluginItemProps = {
   thumbnail?: string;
   title?: string;
   isInstalled?: boolean;
+  onUninstall?: () => void;
 };
 
 const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
@@ -18,6 +19,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   thumbnail,
   title,
   isInstalled,
+  onUninstall,
 }) => {
   const intl = useIntl();
   const [hovered, setHovered] = useState(false);
@@ -51,6 +53,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
         }
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onClick={isInstalled ? onUninstall : undefined}
       />
     </Wrapper>
   );

@@ -20,6 +20,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
     loading,
     installFromPublicRepo,
     installByUploadingZipFile,
+    uninstallPlugin,
   } = useHooks(projectId);
 
   return (
@@ -35,6 +36,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
           installedPlugins={installedPlugins}
           installFromPublicRepo={installFromPublicRepo}
           installByUploadingZipFile={installByUploadingZipFile}
+          uninstallPlugin={uninstallPlugin}
           // projects={currentProjects}
           // filterQuery={query}
           // onProjectSelect={selectProject}

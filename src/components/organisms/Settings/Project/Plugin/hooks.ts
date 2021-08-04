@@ -5,6 +5,8 @@ import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugi
 import {
   useInstallablePluginsQuery,
   useInstalledPluginsQuery,
+  useUninstallPluginMutation,
+  useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
 
 export default (projectId: string) => {
@@ -14,8 +16,14 @@ export default (projectId: string) => {
   }));
 
   const { loading: pluginLoading } = useInstallablePluginsQuery();
+  const [uploadPluginMutation] = useUploadPluginMutation();
+  const [uninstallPluginMutation] = useUninstallPluginMutation();
 
-  const { data: rawSceneData, loading: sceneLoading } = useInstalledPluginsQuery({
+  const {
+    data: rawSceneData,
+    loading: sceneLoading,
+    refetch: refetchInstalledPlugins,
+  } = useInstalledPluginsQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });
@@ -31,6 +39,7 @@ export default (projectId: string) => {
           author: p.plugin?.author ?? "",
           // thumbnailUrl: p.plugin?.thumbnailUrl,
           isInstalled: true,
+          pluginId: p.plugin?.id ?? "",
         }))
       : [];
   }, [rawSceneData]);
@@ -49,12 +58,18 @@ export default (projectId: string) => {
 
   const installByUploadingZipFile = useCallback(
     async (files: FileList) => {
-      if (currentTeam && currentProject) {
-        await Promise.all(Array.from(files).map(f => console.log(f)));
-        await new Promise(() => {});
-      }
+      const sceneId = rawSceneData?.scene?.id;
+      if (!sceneId) return;
+      await Promise.all(
+        Array.from(files).map(f =>
+          uploadPluginMutation({
+            variables: { sceneId: sceneId, file: f },
+          }),
+        ),
+      );
+      await refetchInstalledPlugins();
     },
-    [currentProject, currentTeam],
+    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation],
   );
 
   const installFromPublicRepo = useCallback(
@@ -66,6 +81,16 @@ export default (projectId: string) => {
     [currentProject, currentTeam],
   );
 
+  const uninstallPlugin = useCallback(
+    async (pluginId: string) => {
+      const sceneId = rawSceneData?.scene?.id;
+      if (!sceneId) return;
+      await uninstallPluginMutation({ variables: { sceneId: sceneId, pluginId: pluginId } });
+      await refetchInstalledPlugins();
+    },
+    [rawSceneData?.scene?.id, refetchInstalledPlugins, uninstallPluginMutation],
+  );
+
   const loading = sceneLoading || pluginLoading;
   return {
     currentTeam,
@@ -74,5 +99,6 @@ export default (projectId: string) => {
     installedPlugins,
     installByUploadingZipFile,
     installFromPublicRepo,
+    uninstallPlugin,
   };
 };

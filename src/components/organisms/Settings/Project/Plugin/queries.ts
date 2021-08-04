@@ -29,3 +29,29 @@ export const INSTALLED_PLUGINS = gql`
     }
   }
 `;
+
+export const UPLOAD_PLUGIN = gql`
+  mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
+    uploadPlugin(input: { sceneId: $sceneId, file: $file, url: $url }) {
+      plugin {
+        id
+        name
+        version
+        description
+        author
+      }
+      scenePlugin {
+        pluginId
+        propertyId
+      }
+    }
+  }
+`;
+
+export const UNINSTALL_PLUGIN = gql`
+  mutation uninstallPlugin($sceneId: ID!, $pluginId: PluginID!) {
+    uninstallPlugin(input: { sceneId: $sceneId, pluginId: $pluginId }) {
+      pluginId
+    }
+  }
+`;

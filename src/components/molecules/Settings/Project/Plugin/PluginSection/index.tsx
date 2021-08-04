@@ -13,6 +13,7 @@ export type Props = {
   installedPlugins?: PluginItem[];
   installFromPublicRepo?: (repoUrl: string) => void;
   installByUploadingZipFile?: (files: FileList) => void;
+  uninstallPlugin?: (pluginId: string) => void;
 };
 
 export type PluginPageMode = "list" | "install-way" | PluginInstallWay;
@@ -24,6 +25,7 @@ const PluginSection: React.FC<Props> = ({
   installedPlugins,
   installByUploadingZipFile,
   installFromPublicRepo,
+  uninstallPlugin,
 }) => {
   return (
     <>
@@ -34,6 +36,7 @@ const PluginSection: React.FC<Props> = ({
           installedPlugins={installedPlugins}
           installFromPublicRepo={installFromPublicRepo}
           installByUploadingZipFile={installByUploadingZipFile}
+          uninstallPlugin={uninstallPlugin}
         />
       )}
     </>
