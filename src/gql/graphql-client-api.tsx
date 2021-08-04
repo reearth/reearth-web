@@ -2498,24 +2498,6 @@ export type AddInfoboxFieldMutation = (
   )> }
 );
 
-export type GetLayerPropertyQueryVariables = Exact<{
-  layerId: Scalars['ID'];
-}>;
-
-
-export type GetLayerPropertyQuery = (
-  { __typename?: 'Query' }
-  & { layer?: Maybe<(
-    { __typename?: 'LayerGroup' }
-    & Pick<LayerGroup, 'id'>
-    & Layer1Fragment_LayerGroup_Fragment
-  ) | (
-    { __typename?: 'LayerItem' }
-    & Pick<LayerItem, 'id'>
-    & Layer1Fragment_LayerItem_Fragment
-  )> }
-);
-
 export type GetAllDataSetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
 }>;
@@ -3500,6 +3482,24 @@ export type UpdatePropertyItemsMutation = (
       )> }
       & PropertyFragmentFragment
     ) }
+  )> }
+);
+
+export type GetLayerPropertyQueryVariables = Exact<{
+  layerId: Scalars['ID'];
+}>;
+
+
+export type GetLayerPropertyQuery = (
+  { __typename?: 'Query' }
+  & { layer?: Maybe<(
+    { __typename?: 'LayerGroup' }
+    & Pick<LayerGroup, 'id'>
+    & Layer1Fragment_LayerGroup_Fragment
+  ) | (
+    { __typename?: 'LayerItem' }
+    & Pick<LayerItem, 'id'>
+    & Layer1Fragment_LayerItem_Fragment
   )> }
 );
 
@@ -5613,40 +5613,6 @@ export function useAddInfoboxFieldMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddInfoboxFieldMutationHookResult = ReturnType<typeof useAddInfoboxFieldMutation>;
 export type AddInfoboxFieldMutationResult = Apollo.MutationResult<AddInfoboxFieldMutation>;
 export type AddInfoboxFieldMutationOptions = Apollo.BaseMutationOptions<AddInfoboxFieldMutation, AddInfoboxFieldMutationVariables>;
-export const GetLayerPropertyDocument = gql`
-    query GetLayerProperty($layerId: ID!) {
-  layer(id: $layerId) {
-    id
-    ...Layer1Fragment
-  }
-}
-    ${Layer1FragmentFragmentDoc}`;
-
-/**
- * __useGetLayerPropertyQuery__
- *
- * To run a query within a React component, call `useGetLayerPropertyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLayerPropertyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLayerPropertyQuery({
- *   variables: {
- *      layerId: // value for 'layerId'
- *   },
- * });
- */
-export function useGetLayerPropertyQuery(baseOptions: Apollo.QueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
-        return Apollo.useQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, baseOptions);
-      }
-export function useGetLayerPropertyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
-          return Apollo.useLazyQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, baseOptions);
-        }
-export type GetLayerPropertyQueryHookResult = ReturnType<typeof useGetLayerPropertyQuery>;
-export type GetLayerPropertyLazyQueryHookResult = ReturnType<typeof useGetLayerPropertyLazyQuery>;
-export type GetLayerPropertyQueryResult = Apollo.QueryResult<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>;
 export const GetAllDataSetsDocument = gql`
     query GetAllDataSets($sceneId: ID!) {
   datasetSchemas(sceneId: $sceneId, first: 100) {
@@ -7024,6 +6990,40 @@ export function useUpdatePropertyItemsMutation(baseOptions?: Apollo.MutationHook
 export type UpdatePropertyItemsMutationHookResult = ReturnType<typeof useUpdatePropertyItemsMutation>;
 export type UpdatePropertyItemsMutationResult = Apollo.MutationResult<UpdatePropertyItemsMutation>;
 export type UpdatePropertyItemsMutationOptions = Apollo.BaseMutationOptions<UpdatePropertyItemsMutation, UpdatePropertyItemsMutationVariables>;
+export const GetLayerPropertyDocument = gql`
+    query GetLayerProperty($layerId: ID!) {
+  layer(id: $layerId) {
+    id
+    ...Layer1Fragment
+  }
+}
+    ${Layer1FragmentFragmentDoc}`;
+
+/**
+ * __useGetLayerPropertyQuery__
+ *
+ * To run a query within a React component, call `useGetLayerPropertyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLayerPropertyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLayerPropertyQuery({
+ *   variables: {
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useGetLayerPropertyQuery(baseOptions: Apollo.QueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
+        return Apollo.useQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, baseOptions);
+      }
+export function useGetLayerPropertyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
+          return Apollo.useLazyQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, baseOptions);
+        }
+export type GetLayerPropertyQueryHookResult = ReturnType<typeof useGetLayerPropertyQuery>;
+export type GetLayerPropertyLazyQueryHookResult = ReturnType<typeof useGetLayerPropertyLazyQuery>;
+export type GetLayerPropertyQueryResult = Apollo.QueryResult<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>;
 export const GetScenePropertyDocument = gql`
     query GetSceneProperty($sceneId: ID!) {
   node(id: $sceneId, type: SCENE) {

@@ -267,12 +267,3 @@ export const ADD_INFOBOX_FIELD = gql`
 
   ${layerFragment}
 `;
-
-export const GET_LAYER_PROPERTY = gql`
-  query GetLayerProperty($layerId: ID!) {
-    layer(id: $layerId) {
-      id
-      ...Layer1Fragment
-    }
-  }
-`;
