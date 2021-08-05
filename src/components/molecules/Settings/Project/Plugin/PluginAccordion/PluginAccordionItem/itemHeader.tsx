@@ -5,13 +5,14 @@ import Text from "@reearth/components/atoms/Text";
 import { fonts, styled } from "@reearth/theme";
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
+import DeleteModal from "./deleteModal";
 
 export type PluginItemProps = {
   className?: string;
   thumbnail?: string;
   title?: string;
   isInstalled?: boolean;
-  onUninstall?: () => void;
+  onUninstall: () => void;
 };
 
 const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
@@ -22,6 +23,7 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   onUninstall,
 }) => {
   const intl = useIntl();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const handleMouseEnter = () => {
     setHovered(true);
@@ -53,7 +55,13 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
         }
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={isInstalled ? onUninstall : undefined}
+        onClick={isInstalled ? () => setIsModalOpen(true) : undefined}
+      />
+      <DeleteModal
+        onCancel={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onProceed={onUninstall}
       />
     </Wrapper>
   );

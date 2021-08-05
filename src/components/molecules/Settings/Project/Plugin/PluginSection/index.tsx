@@ -13,7 +13,7 @@ export type Props = {
   installedPlugins?: PluginItem[];
   installFromPublicRepo?: (repoUrl: string) => void;
   installByUploadingZipFile?: (files: FileList) => void;
-  uninstallPlugin?: (pluginId: string) => void;
+  uninstallPlugin: (pluginId: string) => void;
 };
 
 export type PluginPageMode = "list" | "install-way" | PluginInstallWay;

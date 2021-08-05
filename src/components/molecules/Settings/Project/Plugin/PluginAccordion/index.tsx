@@ -16,7 +16,7 @@ export type PluginItem = {
 export type PluginAccordionProps = {
   className?: string;
   items?: PluginItem[];
-  uninstallPlugin?: (pluginId: string) => void;
+  uninstallPlugin: (pluginId: string) => void;
 };
 
 const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items, uninstallPlugin }) => {
@@ -34,7 +34,7 @@ const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items, uni
               thumbnail={item.thumbnailUrl}
               title={item.title}
               isInstalled={item.isInstalled}
-              onUninstall={() => uninstallPlugin?.(item.pluginId)}
+              onUninstall={() => uninstallPlugin(item.pluginId)}
             />
           ),
           content: <PluginAccordionItemBody>{item.bodyMarkdown}</PluginAccordionItemBody>,

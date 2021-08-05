@@ -17,7 +17,7 @@ export type Props = {
   installedPlugins?: PluginItem[];
   installFromPublicRepo?: (repoUrl: string) => void;
   installByUploadingZipFile?: (files: FileList) => void;
-  uninstallPlugin?: (pluginId: string) => void;
+  uninstallPlugin: (pluginId: string) => void;
 };
 
 const PluginInstall: React.FC<Props> = ({
