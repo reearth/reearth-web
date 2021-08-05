@@ -6285,10 +6285,10 @@ ccount@^1.0.0:
   resolved "https://registry.yarnpkg.com/ccount/-/ccount-1.1.0.tgz#246687debb6014735131be8abab2d93898f8d043"
   integrity sha512-vlNK021QdI7PNeiUh/lKkC/mNHHfV0m/Ad5JoI0TYtlBnJAslM/JIkm/tGC88bkLIwO6OQ5uV6ztS6kVAtCDlg==
 
-cesium-dnd@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.0.2.tgz#ebbb7234b968d881238bab597f41b4c7929155cb"
-  integrity sha512-R87IAzpaO36dh7XR4EoBqyQGDkXx0WRSFwLgWtUQqXdrXriTe52+NPG9di9rpjxQCEe761nPb2kUX49rhRvkxA==
+cesium-dnd@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.0.3.tgz#d10be77ec27e0b4ba88d0b0735a6c4aaee337c34"
+  integrity sha512-7TX7vsg5fHSVzu3Xx8P+3Rriezj0bRNUpyk+VbUk0oxze3UM44YoPWY5LUoyojLqITGoDT0LRmEJnQizHiaXtw==
 
 cesium-navigation@^1.0.0:
   version "1.0.0"
