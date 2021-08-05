@@ -31,16 +31,11 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       />
       {!currentProject?.isArchived ? (
         <PluginSection
-          // plugins={plugins}
           loading={loading}
           installedPlugins={installedPlugins}
           installFromPublicRepo={installFromPublicRepo}
           installByUploadingZipFile={installByUploadingZipFile}
           uninstallPlugin={uninstallPlugin}
-          // projects={currentProjects}
-          // filterQuery={query}
-          // onProjectSelect={selectProject}
-          // onCreationButtonClick={openModal}
         />
       ) : (
         <ArchivedMessage />

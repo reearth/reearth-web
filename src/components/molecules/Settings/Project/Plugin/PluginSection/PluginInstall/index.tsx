@@ -44,16 +44,6 @@ const PluginInstall: React.FC<Props> = ({
 
   return (
     <>
-      {/* <SectionTitle>
-        <StyledFlex align="center" onClick={onMovePrevPage}>
-        <Icon icon="arrowLongLeft" size={20} color={theme.colors.text.main} />
-        <Box mh="m">
-        <Text weight="bold" size="m">
-        {intl.formatMessage({ defaultMessage: "Plugins lists" })}
-        </Text>
-        </Box>
-        </StyledFlex>
-      </SectionTitle> */}
       <Box p="2xl">
         <Flex gap={28}>
           {installChoices.map(c => {

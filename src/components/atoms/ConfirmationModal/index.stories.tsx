@@ -12,7 +12,12 @@ export const Default: Story<Props> = args => {
   const [isOpen, setOpen] = useState(false);
   return (
     <>
-      <ConfirmationModal {...args} isOpen={isOpen} onClose={() => setOpen(false)} />
+      <ConfirmationModal
+        {...args}
+        isOpen={isOpen}
+        onClose={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+      />
       <button onClick={() => setOpen(true)}>click</button>
     </>
   );
@@ -21,6 +26,5 @@ export const Default: Story<Props> = args => {
 Default.args = {
   body: <div>Are you sure to delete this</div>,
   title: "Delete Sample",
-  onCancel: () => console.log("Cancel"),
   onProceed: () => console.log("Proceed"),
 };
