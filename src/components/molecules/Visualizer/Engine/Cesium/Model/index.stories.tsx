@@ -2,15 +2,15 @@ import React from "react";
 import { Meta, Story } from "@storybook/react";
 
 import Component, { Props } from ".";
-import { V, location } from "../storybook";
+import { V, location, SceneProperty } from "../storybook";
 
 export default {
   title: "molecules/Visualizer/Engine/Cesium/Model",
   component: Component,
 } as Meta;
 
-const Template: Story<Props> = args => (
-  <V>
+const Template: Story<Props & { sceneProperty?: SceneProperty }> = args => (
+  <V property={args.sceneProperty}>
     <Component {...args} />
   </V>
 );
@@ -18,6 +18,11 @@ const Template: Story<Props> = args => (
 export const Default = Template.bind({});
 Default.args = {
   ...Template.args,
+  sceneProperty: {
+    timeline: {
+      animation: true,
+    },
+  },
   primitive: {
     id: "",
     isVisible: true,
@@ -25,6 +30,7 @@ Default.args = {
       default: {
         location,
         scale: 1000,
+        heading: 130,
         model: `${process.env.PUBLIC_URL}/BoxAnimated.glb`,
       },
     },
@@ -34,6 +40,11 @@ Default.args = {
 export const Appearance = Template.bind({});
 Appearance.args = {
   ...Template.args,
+  sceneProperty: {
+    atmosphere: {
+      enable_shadows: true,
+    },
+  },
   primitive: {
     id: "",
     isVisible: true,
@@ -45,29 +56,13 @@ Appearance.args = {
         animation: false,
       },
       appearance: {
+        shadows: "enabled",
         color: "red",
         colorBlend: "mix",
         colorBlendAmount: 0.5,
         silhouette: true,
         silhouetteColor: "yellow",
         silhouetteSize: 10,
-      },
-    },
-  },
-};
-
-export const Rotated = Template.bind({});
-Rotated.args = {
-  ...Template.args,
-  primitive: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        scale: 1000,
-        heading: 130,
-        model: `${process.env.PUBLIC_URL}/BoxAnimated.glb`,
       },
     },
   },
