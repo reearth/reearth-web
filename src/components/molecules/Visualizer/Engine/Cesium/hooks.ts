@@ -159,8 +159,6 @@ export default ({
     viewer.scene.requestRender();
   });
 
-  //Enable DnD Entities
-
   const handleDragLayer = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
       onDragLayer?.(e.id, convertCartesian3ToPosition(position));
@@ -200,6 +198,7 @@ export default ({
     };
   };
 
+  //Enable Drag and Drop Layers
   const DELAY = 100;
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;

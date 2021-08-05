@@ -14,9 +14,6 @@ export type Props<PP = any, SP = any> = {
   pluginProperty?: PP;
   sceneProperty?: SP;
   pluginBaseUrl?: string;
-  enableLayerDragging?: () => void;
-  disableLayerDragging?: () => void;
-  isDraggable?: boolean;
 };
 
 export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;

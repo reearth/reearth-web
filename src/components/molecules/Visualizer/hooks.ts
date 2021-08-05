@@ -38,7 +38,6 @@ export default ({
   onCameraChange?: (c: Camera) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
-  const [isLayerDraggable, setIsLayerDraggable] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -139,10 +138,6 @@ export default ({
     }
   }, [engineType]);
 
-  const enableLayerDragging = () => setIsLayerDraggable(true);
-
-  const disableLayerDragging = () => setIsLayerDraggable(false);
-
   return {
     engineRef,
     wrapperRef,
@@ -156,9 +151,6 @@ export default ({
     selectPrimitive,
     selectBlock,
     updateCamera,
-    isLayerDraggable,
-    enableLayerDragging,
-    disableLayerDragging,
   };
 };
 

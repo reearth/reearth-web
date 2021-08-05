@@ -86,9 +86,6 @@ export default function Visualizer({
     selectPrimitive,
     selectBlock,
     updateCamera,
-    isLayerDraggable,
-    enableLayerDragging,
-    disableLayerDragging,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -119,14 +116,8 @@ export default function Visualizer({
           onCameraChange={updateCamera}
           onDragLayer={onDragLayer}
           onDraggingLayer={onDraggingLayer}
-          onDropLayer={onDropLayer}
-          isLayerDraggable={isLayerDraggable}>
+          onDropLayer={onDropLayer}>
           {primitives?.map(primitive => (
-            // <DraggableEntity
-            //   key={primitive.id}
-            //   enableLayerDragging={enableLayerDragging}
-            //   disableLayerDragging={disableLayerDragging}
-            //   isLayerDraggable={isLayerDraggable}>
             <P
               key={primitive.id}
               primitive={primitive}
@@ -137,11 +128,7 @@ export default function Visualizer({
               isBuilt={props.isBuilt}
               isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
               pluginBaseUrl={pluginBaseUrl}
-              enableLayerDragging={enableLayerDragging}
-              disableLayerDragging={disableLayerDragging}
-              isDraggable={isLayerDraggable}
             />
-            // </DraggableEntity>
           ))}
           {widgets?.map(widget => (
             <W
