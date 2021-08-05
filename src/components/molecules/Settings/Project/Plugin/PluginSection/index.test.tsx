@@ -1,28 +1,40 @@
 import React from "react";
 import { render } from "@reearth/test/utils";
+import { screen } from "@testing-library/react";
 
-import PluginSection from "./index";
+import PluginSection, { PluginItem } from "./index";
 
-const samplePlugins = [
+const samplePlugins: PluginItem[] = [
   {
     thumbnailUrl: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
-    title: "Storytelling",
+    title: "Example",
     isInstalled: true,
     bodyMarkdown: "# Hoge",
-    author: "reearth",
+    author: "HideBa",
+    pluginId: "example1",
   },
   {
     thumbnailUrl: "https://static.dev.reearth.io/assets/01ep431qsvnjndxhan3gwqd1rj.png",
-    title: "Splashscreen",
+    title: "Dummy",
     isInstalled: true,
     bodyMarkdown: "# Fuga",
-    author: "reearth",
+    author: "HideBa",
+    pluginId: "dummy1",
   },
 ];
 
 test("plugin section should display plugins", () => {
-  render(<PluginSection plugins={samplePlugins} />);
-  // TODO: after plug-ins have been developed uncomment here
-  // expect(screen.getByText(/Storytelling/)).toBeInTheDocument();
-  // expect(screen.getByText(/Hoge/)).toBeInTheDocument();
+  const installFromPublicRepo = jest.fn();
+  const installByUploadingZipFile = jest.fn();
+  const uninstallPlugin = jest.fn();
+  render(
+    <PluginSection
+      plugins={samplePlugins}
+      uninstallPlugin={uninstallPlugin}
+      installByUploadingZipFile={installByUploadingZipFile}
+      installFromPublicRepo={installFromPublicRepo}
+    />,
+  );
+  expect(screen.getByText(/Storytelling/)).toBeInTheDocument();
+  expect(screen.getByText(/Hoge/)).toBeInTheDocument();
 });
