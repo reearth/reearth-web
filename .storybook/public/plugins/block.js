@@ -30,7 +30,7 @@ const html = `
 </script>
 `;
 
-reearth.ui.show(html, { visible: true });
+reearth.ui.show(html);
 reearth.on("update", () => {
   reearth.ui.postMessage(reearth.block);
 });

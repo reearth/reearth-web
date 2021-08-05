@@ -84,8 +84,8 @@ export default function useHook<T>({
 
   const iFrameApi = useMemo<IFrameAPI>(
     () => ({
-      render: (html, options) => {
-        setIFrameState([html, { visible: !!iframeCanBeVisible && !!options?.visible, ...options }]);
+      render: (html, { visible = true, ...options } = {}) => {
+        setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
       },
       postMessage: msg => {
         iFrameRef.current?.postMessage(JSON.parse(JSON.stringify(msg)));
