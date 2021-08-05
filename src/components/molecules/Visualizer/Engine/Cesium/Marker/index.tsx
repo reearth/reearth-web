@@ -36,6 +36,7 @@ type Property = {
     imageSize?: number;
     imageHorizontalOrigin?: "left" | "center" | "right";
     imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
+    imageColor?: string;
     imageCrop?: "none" | "rounded" | "circle";
     imageShadow?: boolean;
     imageShadowColor?: string;
@@ -69,6 +70,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     imageSize,
     imageHorizontalOrigin: horizontalOrigin,
     imageVerticalOrigin: verticalOrigin,
+    imageColor,
     imageCrop: crop,
     imageShadow: shadow,
     imageShadowColor: shadowColor,
@@ -100,6 +102,11 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     shadowOffsetX,
     shadowOffsetY,
   });
+
+  const cesiumImageColor = useMemo(
+    () => (imageColor ? Color.fromCssColorString(imageColor) : undefined),
+    [imageColor],
+  );
 
   const pixelOffset = useMemo(() => {
     const padding = 15;
@@ -140,6 +147,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
         ) : (
           <BillboardGraphics
             image={canvas}
+            color={cesiumImageColor}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
           />
