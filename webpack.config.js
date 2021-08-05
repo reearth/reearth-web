@@ -43,6 +43,9 @@ module.exports = (env, args = {}) => {
         "/api": {
           target: "http://localhost:8080",
         },
+        "/plugins": {
+          target: "http://localhost:8080",
+        },
       },
       before(app) {
         app.get("/reearth_config.json", (_req, res) => {
@@ -169,6 +172,11 @@ module.exports = (env, args = {}) => {
         "@reearth": path.resolve(__dirname, "src/"),
       },
       extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs"],
+      // For quickjs-emscripten
+      fallback: {
+        fs: false,
+        path: false,
+      },
     },
   };
 };

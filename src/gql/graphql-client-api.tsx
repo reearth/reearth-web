@@ -13,15 +13,15 @@ export type Scalars = {
   Float: number;
   Any: any;
   Cursor: string;
-  DatasetSchemaFieldID: any;
+  DatasetSchemaFieldID: string;
   DateTime: Date;
   FileSize: number;
-  Lang: any;
+  Lang: string;
   PluginExtensionID: string;
   PluginID: string;
   PropertySchemaFieldID: string;
   PropertySchemaID: string;
-  TranslatedString: any;
+  TranslatedString: { [lang in string]?: string } | null;
   URL: string;
   Upload: any;
 };
@@ -1007,6 +1007,7 @@ export type PageInfo = {
 export type Plugin = {
   __typename?: 'Plugin';
   id: Scalars['PluginID'];
+  sceneId?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   version: Scalars['String'];
   description: Scalars['String'];
@@ -1014,6 +1015,7 @@ export type Plugin = {
   repositoryUrl: Scalars['String'];
   propertySchemaId?: Maybe<Scalars['PropertySchemaID']>;
   extensions: Array<PluginExtension>;
+  scene?: Maybe<Scene>;
   scenePlugin?: Maybe<ScenePlugin>;
   allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
   allTranslatedName?: Maybe<Scalars['TranslatedString']>;
@@ -1024,7 +1026,7 @@ export type Plugin = {
 
 
 export type PluginScenePluginArgs = {
-  sceneId: Scalars['ID'];
+  sceneId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -1718,8 +1720,8 @@ export type UninstallPluginInput = {
 
 export type UninstallPluginPayload = {
   __typename?: 'UninstallPluginPayload';
+  pluginId: Scalars['PluginID'];
   scene: Scene;
-  scenePlugin: ScenePlugin;
 };
 
 export type UnlinkPropertyValueInput = {
@@ -1909,12 +1911,16 @@ export type UploadFileToPropertyInput = {
 };
 
 export type UploadPluginInput = {
-  file: Scalars['Upload'];
+  sceneId: Scalars['ID'];
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['URL']>;
 };
 
 export type UploadPluginPayload = {
   __typename?: 'UploadPluginPayload';
   plugin: Plugin;
+  scene: Scene;
+  scenePlugin: ScenePlugin;
 };
 
 export type User = Node & {
@@ -3660,6 +3666,7 @@ export type UpdateMeMutationVariables = Exact<{
   name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   lang?: Maybe<Scalars['Lang']>;
+  theme?: Maybe<Theme>;
   password?: Maybe<Scalars['String']>;
   passwordConfirmation?: Maybe<Scalars['String']>;
 }>;
@@ -3671,7 +3678,7 @@ export type UpdateMeMutation = (
     { __typename?: 'UpdateMePayload' }
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'email' | 'lang'>
+      & Pick<User, 'id' | 'name' | 'email' | 'lang' | 'theme'>
       & { myTeam: (
         { __typename?: 'Team' }
         & Pick<Team, 'id' | 'name'>
@@ -3687,7 +3694,7 @@ export type ProfileQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email' | 'lang' | 'auths'>
+    & Pick<User, 'id' | 'name' | 'email' | 'lang' | 'theme' | 'auths'>
     & { myTeam: (
       { __typename?: 'Team' }
       & Pick<Team, 'id' | 'name'>
@@ -4591,6 +4598,17 @@ export type LanguageQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'lang'>
+  )> }
+);
+
+export type ThemeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ThemeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'theme'>
   )> }
 );
 
@@ -7268,15 +7286,16 @@ export type UpdateWidgetMutationHookResult = ReturnType<typeof useUpdateWidgetMu
 export type UpdateWidgetMutationResult = Apollo.MutationResult<UpdateWidgetMutation>;
 export type UpdateWidgetMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetMutation, UpdateWidgetMutationVariables>;
 export const UpdateMeDocument = gql`
-    mutation updateMe($name: String, $email: String, $lang: Lang, $password: String, $passwordConfirmation: String) {
+    mutation updateMe($name: String, $email: String, $lang: Lang, $theme: Theme, $password: String, $passwordConfirmation: String) {
   updateMe(
-    input: {name: $name, email: $email, lang: $lang, password: $password, passwordConfirmation: $passwordConfirmation}
+    input: {name: $name, email: $email, lang: $lang, theme: $theme, password: $password, passwordConfirmation: $passwordConfirmation}
   ) {
     user {
       id
       name
       email
       lang
+      theme
       myTeam {
         id
         name
@@ -7303,6 +7322,7 @@ export type UpdateMeMutationFn = Apollo.MutationFunction<UpdateMeMutation, Updat
  *      name: // value for 'name'
  *      email: // value for 'email'
  *      lang: // value for 'lang'
+ *      theme: // value for 'theme'
  *      password: // value for 'password'
  *      passwordConfirmation: // value for 'passwordConfirmation'
  *   },
@@ -7321,6 +7341,7 @@ export const ProfileDocument = gql`
     name
     email
     lang
+    theme
     myTeam {
       id
       name
@@ -8333,3 +8354,36 @@ export function useLanguageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<L
 export type LanguageQueryHookResult = ReturnType<typeof useLanguageQuery>;
 export type LanguageLazyQueryHookResult = ReturnType<typeof useLanguageLazyQuery>;
 export type LanguageQueryResult = Apollo.QueryResult<LanguageQuery, LanguageQueryVariables>;
+export const ThemeDocument = gql`
+    query Theme {
+  me {
+    id
+    theme
+  }
+}
+    `;
+
+/**
+ * __useThemeQuery__
+ *
+ * To run a query within a React component, call `useThemeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThemeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThemeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useThemeQuery(baseOptions?: Apollo.QueryHookOptions<ThemeQuery, ThemeQueryVariables>) {
+        return Apollo.useQuery<ThemeQuery, ThemeQueryVariables>(ThemeDocument, baseOptions);
+      }
+export function useThemeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThemeQuery, ThemeQueryVariables>) {
+          return Apollo.useLazyQuery<ThemeQuery, ThemeQueryVariables>(ThemeDocument, baseOptions);
+        }
+export type ThemeQueryHookResult = ReturnType<typeof useThemeQuery>;
+export type ThemeLazyQueryHookResult = ReturnType<typeof useThemeLazyQuery>;
+export type ThemeQueryResult = Apollo.QueryResult<ThemeQuery, ThemeQueryVariables>;

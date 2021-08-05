@@ -99,7 +99,8 @@ const TextBlock: React.FC<Props> = ({
       onClick={handleClick}
       isSelected={isSelected}
       isHovered={isHovered}
-      isEditable={isEditable}>
+      isEditable={isEditable}
+      isTemplate={isTemplate}>
       {isTemplate && isEditable && !isEditing ? (
         <Template onDoubleClick={startEditing}>
           <StyledIcon icon="text" isSelected={isSelected} isHovered={isHovered} size={24} />
@@ -136,8 +137,18 @@ const TextBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled(Border)`
+const Wrapper = styled(Border)<{ isTemplate: boolean }>`
   margin: 0 8px;
+  border: 1px solid
+    ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
+      (!isTemplate && !isHovered && !isSelected) || !isEditable
+        ? "transparent"
+        : isHovered
+        ? theme.infoBox.border
+        : isSelected
+        ? theme.main.select
+        : theme.infoBox.weakText};
+  border-radius: 6px;
 `;
 
 const Title = styled.div`
@@ -178,12 +189,12 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.infoBox.accent2 : theme.infoBox.weakText};
+    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.infoBox.border : isSelected ? theme.infoBox.accent2 : theme.infoBox.weakText};
+    isHovered ? theme.infoBox.border : isSelected ? theme.main.select : theme.infoBox.weakText};
 `;
 
 export default TextBlock;

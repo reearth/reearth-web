@@ -124,7 +124,7 @@ function processPropertyGroup(g: any): any {
 }
 
 function dataUrl(alias?: string): string {
-  if (alias && window.location.hostname === "localhost" && window.REEARTH_CONFIG?.api) {
+  if (alias && window.REEARTH_CONFIG?.api) {
     return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
   }
   return "data.json";

@@ -71,7 +71,8 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
       onDragLayer={handleDragLayer}
       onDraggingLayer={handleDraggingLayer}
-      onDropLayer={handleDropLayer}>
+      onDropLayer={handleDropLayer}
+      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>
       <FovSlider
         isCapturing={isCapturing}
         onIsCapturingChange={onIsCapturingChange}

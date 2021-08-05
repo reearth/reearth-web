@@ -39,5 +39,8 @@ module.exports = ({ config }) => {
     "emotion-theming": path.resolve(__dirname, "..", "node_modules", "@emotion", "react"),
   };
 
+  // For quickjs-emscripten
+  config.resolve.fallback = { ...config.resolve.fallback, fs: false, path: false };
+
   return config;
 };
