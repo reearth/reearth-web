@@ -1,7 +1,6 @@
 import React from "react";
 import { useIntl } from "react-intl";
 import Button from "../Button";
-import Divider from "../Divider";
 import Modal from "../Modal";
 
 export type Props = {
@@ -42,7 +41,6 @@ const ConfirmationModal: React.FC<Props> = ({
           buttonType="secondary"
         />
       }>
-      <Divider margin="0" />
       {body}
     </Modal>
   );
