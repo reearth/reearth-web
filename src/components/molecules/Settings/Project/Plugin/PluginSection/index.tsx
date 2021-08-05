@@ -11,8 +11,8 @@ export type Props = {
   plugins?: PluginItem[];
   loading?: boolean;
   installedPlugins?: PluginItem[];
-  installFromPublicRepo?: (repoUrl: string) => void;
-  installByUploadingZipFile?: (files: FileList) => void;
+  installFromPublicRepo: (repoUrl: string) => void;
+  installByUploadingZipFile: (files: FileList) => void;
   uninstallPlugin: (pluginId: string) => void;
 };
 

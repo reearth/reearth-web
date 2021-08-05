@@ -10,7 +10,7 @@ export const validateUrl = (url: string): { result: boolean; message: string } =
   return { result: true, message: "" };
 };
 
-export default (onSend?: (repoUrl: string) => void, loading?: boolean) => {
+export default (onSend: (repoUrl: string) => void, loading?: boolean) => {
   const [isOpen, open] = useState(false);
   const [validationErr, setValidationErr] = useState("");
   const [repoUrl, setRepoUrl] = useState("");
@@ -33,7 +33,7 @@ export default (onSend?: (repoUrl: string) => void, loading?: boolean) => {
     const { result: success, message } = validateUrl(repoUrl);
     setValidationErr(message);
     if (!success) return;
-    onSend?.(repoUrl);
+    onSend(repoUrl);
     handleClose();
   }, [handleClose, onSend, repoUrl]);
 

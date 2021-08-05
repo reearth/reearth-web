@@ -74,11 +74,14 @@ export default (projectId: string) => {
 
   const installFromPublicRepo = useCallback(
     async (repoUrl: string) => {
-      if (currentTeam && currentProject && repoUrl) {
-        return new Promise(() => {});
-      }
+      const sceneId = rawSceneData?.scene?.id;
+      if (!sceneId) return;
+      await uploadPluginMutation({
+        variables: { sceneId: sceneId, url: repoUrl },
+      });
+      await refetchInstalledPlugins();
     },
-    [currentProject, currentTeam],
+    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation],
   );
 
   const uninstallPlugin = useCallback(

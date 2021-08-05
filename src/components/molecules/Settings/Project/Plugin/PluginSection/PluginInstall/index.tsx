@@ -5,23 +5,19 @@ import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 import React from "react";
 import { useIntl } from "react-intl";
-import { PluginInstallWay, PluginPageMode } from "..";
+import { PluginInstallWay } from "..";
 import PluginAccordion, { PluginItem } from "../../PluginAccordion";
 import PublicRepo from "./PublicRepo";
 import ZipUpload from "./ZipUpload";
 
 export type Props = {
-  className?: string;
-  onMovePrevPage?: () => void;
-  onMovePage?: (mode: PluginPageMode) => void;
   installedPlugins?: PluginItem[];
-  installFromPublicRepo?: (repoUrl: string) => void;
-  installByUploadingZipFile?: (files: FileList) => void;
+  installFromPublicRepo: (repoUrl: string) => void;
+  installByUploadingZipFile: (files: FileList) => void;
   uninstallPlugin: (pluginId: string) => void;
 };
 
 const PluginInstall: React.FC<Props> = ({
-  className,
   installedPlugins,
   installFromPublicRepo,
   installByUploadingZipFile,
@@ -47,15 +43,15 @@ const PluginInstall: React.FC<Props> = ({
   ];
 
   return (
-    <div className={className}>
+    <>
       {/* <SectionTitle>
         <StyledFlex align="center" onClick={onMovePrevPage}>
-          <Icon icon="arrowLongLeft" size={20} color={theme.colors.text.main} />
-          <Box mh="m">
-            <Text weight="bold" size="m">
-              {intl.formatMessage({ defaultMessage: "Plugins lists" })}
-            </Text>
-          </Box>
+        <Icon icon="arrowLongLeft" size={20} color={theme.colors.text.main} />
+        <Box mh="m">
+        <Text weight="bold" size="m">
+        {intl.formatMessage({ defaultMessage: "Plugins lists" })}
+        </Text>
+        </Box>
         </StyledFlex>
       </SectionTitle> */}
       <Box p="2xl">
@@ -77,7 +73,7 @@ const PluginInstall: React.FC<Props> = ({
         </Box>
       </SectionTitle>
       <PluginAccordion items={installedPlugins} uninstallPlugin={uninstallPlugin} />
-    </div>
+    </>
   );
 };
 

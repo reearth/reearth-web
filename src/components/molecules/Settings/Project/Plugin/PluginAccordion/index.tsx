@@ -31,7 +31,7 @@ const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items, uni
           id: item.title,
           heading: (
             <PluginAccordionItemHeader
-              thumbnail={item.thumbnailUrl}
+              // thumbnail={item.thumbnailUrl}
               title={item.title}
               isInstalled={item.isInstalled}
               onUninstall={() => uninstallPlugin(item.pluginId)}

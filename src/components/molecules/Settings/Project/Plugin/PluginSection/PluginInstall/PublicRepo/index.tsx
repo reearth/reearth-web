@@ -16,7 +16,7 @@ export type Props = {
   className?: string;
   icon: Icons;
   buttonText: string;
-  onSend?: (repoUrl: string) => void;
+  onSend: (repoUrl: string) => void;
   serverSideError?: string;
   loading?: boolean;
 };

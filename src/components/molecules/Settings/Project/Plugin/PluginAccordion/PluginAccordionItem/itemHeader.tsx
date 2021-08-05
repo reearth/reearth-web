@@ -34,9 +34,11 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   return (
     <Wrapper align="center" justify="space-between" className={className}>
       <Flex align="center">
-        <Box borderRadius={8} mh="m">
-          <Thumbnail src={thumbnail} alt="plugin thumbnail" />
-        </Box>
+        {thumbnail && (
+          <Box borderRadius={8} mh="m">
+            <Thumbnail src={thumbnail} alt="plugin thumbnail" />
+          </Box>
+        )}
         <Text size="l" weight="bold">
           {title}
         </Text>
