@@ -54,7 +54,7 @@ const StyledContainer = styled.div<{
   height: 192px;
   width: 193px;
   margin: ${props => props.margin}px;
-  background-color: ${props => props.theme.main.lighterBg};
+  background-color: ${({ theme }) => theme.main.lighterBg};
   border: 1px ${props => props.border || "solid"}
     ${props => (props.borderColor ? props.borderColor : props.theme.assetCard.highlight)};
   display: flex;

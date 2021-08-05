@@ -58,15 +58,15 @@ const StyledNotificationBar = styled.div<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${props =>
-    props.type === "error"
-      ? props.theme.notification.errorBg
-      : props.type === "warning"
-      ? props.theme.notification.warningBg
-      : props.type === "success"
-      ? props.theme.notification.successBg
-      : props.theme.notification.infoBg};
-  color: ${props => props.theme.notification.text};
+  background-color: ${({ type, theme }) =>
+    type === "error"
+      ? theme.notification.errorBg
+      : type === "warning"
+      ? theme.notification.warningBg
+      : type === "success"
+      ? theme.notification.successBg
+      : theme.notification.infoBg};
+  color: ${({ theme }) => theme.notification.text};
   position: absolute;
   top: 0;
   z-index: ${props => props.theme.zIndexes.notificationBar};
