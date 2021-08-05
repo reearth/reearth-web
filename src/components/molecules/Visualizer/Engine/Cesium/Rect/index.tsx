@@ -4,6 +4,7 @@ import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 import type { Props as PrimitiveProps } from "../../../Primitive";
+import { heightReference, shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -17,13 +18,25 @@ export type Property = {
     image?: string;
     outlineColor?: string;
     outlineWidth?: number;
+    heightReference?: "none" | "clamp" | "relative";
+    shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   };
 };
 
 const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
   const { id, isVisible, property } = primitive ?? {};
-  const { rect, image, style, fillColor, height, extrudedHeight, outlineColor, outlineWidth } =
-    (property as Property | undefined)?.default ?? {};
+  const {
+    rect,
+    image,
+    style,
+    fillColor,
+    height,
+    extrudedHeight,
+    outlineColor,
+    outlineWidth,
+    heightReference: hr,
+    shadows,
+  } = (property as Property | undefined)?.default ?? {};
 
   const coordinates = useMemo(
     () =>
@@ -73,6 +86,8 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
         outline={!!outline}
         outlineColor={outline}
         outlineWidth={outlineWidth}
+        heightReference={heightReference(hr)}
+        shadows={shadowMode(shadows)}
       />
     </Entity>
   );
