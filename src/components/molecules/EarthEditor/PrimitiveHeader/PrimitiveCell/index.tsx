@@ -54,8 +54,10 @@ const StyledIcon = styled(Icon)`
   height: 20px;
   border-radius: 3px;
   cursor: pointer;
+  color: ${props => props.theme.main.text};
   &:hover {
-    background: ${props => props.theme.layers.hoverBg};
+    background: ${props => props.theme.main.lighterBg};
+    color: ${props => props.theme.main.strongText};
   }
 `;
 

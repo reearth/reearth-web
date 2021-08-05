@@ -34,15 +34,17 @@ export type Theme = {
     danger: string;
     weak: string;
     select: string;
+    link: string;
   };
   dashboard: {
     bg: string;
     itemBg: string;
-    itemTitle: string;
     projectName: string;
     projectDescription: string;
     publicationStatus: string;
-    memberName: string;
+    heroButtonText: string;
+    heroButtonTextHover: string;
+    heroButtonBg: string;
   };
   buttonPrimary: {
     bgHover: string;
@@ -214,5 +216,12 @@ export type Theme = {
   };
   pluginList: {
     bg: string;
+  };
+  notification: {
+    errorBg: string;
+    warningBg: string;
+    infoBg: string;
+    successBg: string;
+    text: string;
   };
 };

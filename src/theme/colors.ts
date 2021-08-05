@@ -3,7 +3,7 @@ const colors = {
     bg: {
       1: "#070707",
       2: "#171618",
-      3: "#232226" /* Untested/Unused */,
+      3: "#232226",
       4: "#2B2A2F",
       5: "#3F3D45",
     },
@@ -39,8 +39,9 @@ const colors = {
       success: "#00D1A2" /* Unused */,
       attention: "#D6C71C",
       error: "#FF3C53",
-      select: "#0EB28E" /* Untested/Unused */,
+      select: "#3B3CD0" /* Untested/Unused */,
       selectOutline: "#0B9F7E" /* Untested/Unused */,
+      notice: "#6E9CD2",
     },
     brand: {
       main: "#00D1A2",
@@ -61,18 +62,18 @@ const colors = {
     },
     text: {
       strong: "#272727",
-      main: "#5F5F5F",
+      main: "#434343",
       weak: "#727070",
     },
     outline: {
-      strong: "#D7D7D7",
+      strong: "#0D0D0D",
       main: "#A0A0A0",
       weak: "#8B8B8B",
       weakest: "#AAAAAA",
     },
     primary: {
-      strong: "#2AADE9",
-      main: "#079BDA",
+      strong: "#005F94",
+      main: "#007CC1",
       weak: "#008AC8",
       weakest: "#74A8BE",
     },
@@ -89,10 +90,11 @@ const colors = {
     functional: {
       link: "#0063D8",
       success: "#00D1A2",
-      attention: "#D6C71C",
+      attention: "#E17A00",
       error: "#FF3C53",
       select: "#F57C4B",
       selectOutline: "#0B9F7E" /* Does not exist on light theme */,
+      notice: "#6E9CD2",
     },
     brand: {
       main: "#00D1A2",
@@ -108,6 +110,9 @@ const colors = {
     transparent: "transparent",
     transparentLight: "rgba(0,0,0,0.4)",
     transparentBlack: "rgba(0,0,0,0.7)",
+  },
+  brand: {
+    gradient: "linear-gradient(72.17deg, #df3013 14.04%, #1e2086 86.96%)",
   },
 };
 

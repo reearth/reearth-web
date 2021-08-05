@@ -21,26 +21,28 @@ const lightheme: Theme = {
     danger: colors.light.danger.main,
     weak: colors.light.text.weak,
     select: colors.light.functional.select,
+    link: colors.light.functional.link,
   },
   dashboard: {
     bg: colors.light.bg[2],
     itemBg: colors.light.bg[3],
-    itemTitle: colors.light.text.main,
     projectName: colors.dark.text.strong,
     projectDescription: colors.dark.text.strong,
     publicationStatus: colors.dark.text.main,
-    memberName: colors.dark.text.main,
+    heroButtonText: colors.dark.text.main,
+    heroButtonTextHover: colors.dark.text.strong,
+    heroButtonBg: colors.brand.gradient,
   },
   buttonPrimary: {
-    bgHover: colors.light.primary.strong,
+    bgHover: colors.light.primary.main,
     color: colors.light.primary.main,
-    colorHover: colors.light.text.strong,
+    colorHover: colors.light.other.white,
     disabled: colors.light.primary.weakest,
   },
   buttonSecondary: {
     bgHover: colors.light.secondary.main,
     color: colors.light.secondary.main,
-    colorHover: colors.light.other.black,
+    colorHover: colors.light.other.white,
     disabled: colors.light.secondary.weakest,
   },
   buttonDanger: {
@@ -51,14 +53,14 @@ const lightheme: Theme = {
   },
   infoBox: {
     accent: colors.light.primary.main,
-    accent2: colors.light.brand.main,
+    accent2: colors.light.functional.select,
     alert: colors.light.functional.error,
     bg: colors.light.bg[3],
     deepBg: colors.light.bg[2],
     headerBg: colors.light.bg[5],
     mainText: colors.light.text.main,
     weakText: colors.light.text.weak,
-    border: colors.light.outline.main,
+    border: colors.light.outline.strong,
   },
   publishStatus: {
     building: colors.light.functional.error,
@@ -135,8 +137,8 @@ const lightheme: Theme = {
     },
     option: {
       bottomBorder: colors.light.text.main,
-      hoverBg: colors.light.bg[4],
-      bg: colors.light.bg[5],
+      hoverBg: colors.light.bg[5],
+      bg: colors.light.bg[4],
       color: colors.light.text.main,
     },
   },
@@ -187,6 +189,13 @@ const lightheme: Theme = {
   },
   pluginList: {
     bg: colors.light.bg[3],
+  },
+  notification: {
+    errorBg: colors.light.functional.error,
+    warningBg: colors.light.functional.attention,
+    infoBg: colors.light.functional.notice,
+    successBg: colors.light.functional.success,
+    text: colors.dark.text.strong,
   },
 };
 

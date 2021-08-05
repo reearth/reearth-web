@@ -21,18 +21,20 @@ const darkTheme: Theme = {
     danger: colors.dark.danger.main,
     weak: colors.dark.text.weak,
     select: colors.dark.functional.select,
+    link: colors.dark.functional.link,
   },
   dashboard: {
     bg: colors.dark.bg[2],
     itemBg: colors.dark.bg[3],
-    itemTitle: colors.dark.text.main,
     projectName: colors.dark.text.strong,
     projectDescription: colors.dark.text.strong,
     publicationStatus: colors.dark.text.main,
-    memberName: colors.dark.text.main,
+    heroButtonText: colors.dark.text.main,
+    heroButtonTextHover: colors.dark.text.strong,
+    heroButtonBg: colors.brand.gradient,
   },
   buttonPrimary: {
-    bgHover: colors.dark.primary.strong,
+    bgHover: colors.dark.primary.main,
     color: colors.dark.primary.main,
     colorHover: colors.dark.text.strong,
     disabled: colors.dark.primary.weakest,
@@ -40,7 +42,7 @@ const darkTheme: Theme = {
   buttonSecondary: {
     bgHover: colors.dark.secondary.main,
     color: colors.dark.secondary.main,
-    colorHover: colors.dark.other.black,
+    colorHover: colors.dark.other.white,
     disabled: colors.dark.secondary.weakest,
   },
   buttonDanger: {
@@ -51,7 +53,7 @@ const darkTheme: Theme = {
   },
   infoBox: {
     accent: colors.dark.primary.main,
-    accent2: colors.dark.brand.main,
+    accent2: colors.dark.functional.select,
     alert: colors.dark.functional.error,
     bg: colors.dark.bg[3],
     deepBg: colors.dark.bg[2],
@@ -86,7 +88,7 @@ const darkTheme: Theme = {
   assetCard: {
     bg: colors.dark.bg[4],
     bgHover: colors.dark.bg[5],
-    highlight: colors.dark.brand.main,
+    highlight: colors.dark.functional.select,
     text: colors.dark.text.main,
     textHover: colors.dark.text.strong,
     shadow: colors.dark.bg[1],
@@ -135,8 +137,8 @@ const darkTheme: Theme = {
     },
     option: {
       bottomBorder: colors.dark.text.main,
-      hoverBg: colors.dark.bg[4],
-      bg: colors.dark.bg[5],
+      hoverBg: colors.dark.bg[5],
+      bg: colors.dark.bg[4],
       color: colors.dark.text.main,
     },
   },
@@ -163,7 +165,7 @@ const darkTheme: Theme = {
     deepBg: colors.dark.bg[2],
     hoverBg: colors.dark.bg[4],
     smallText: colors.dark.text.main,
-    selectedLayer: colors.dark.brand.main,
+    selectedLayer: colors.dark.functional.select,
     textColor: colors.dark.text.main,
     selectedTextColor: colors.dark.text.strong,
     disableTextColor: colors.dark.text.weak,
@@ -187,6 +189,13 @@ const darkTheme: Theme = {
   },
   pluginList: {
     bg: colors.dark.bg[3],
+  },
+  notification: {
+    errorBg: colors.dark.functional.error,
+    warningBg: colors.dark.functional.attention,
+    infoBg: colors.dark.functional.notice,
+    successBg: colors.dark.functional.success,
+    text: colors.dark.text.strong,
   },
 };
 
