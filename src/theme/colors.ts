@@ -43,10 +43,6 @@ const colors = {
       selectOutline: "#0B9F7E" /* Untested/Unused */,
       notice: "#6E9CD2",
     },
-    brand: {
-      main: "#00D1A2",
-      weak: "#00755B",
-    },
     other: {
       black: "#000000",
       white: "#FFFFFF",
@@ -67,7 +63,7 @@ const colors = {
     },
     outline: {
       strong: "#0D0D0D",
-      main: "#A0A0A0",
+      main: "#727272",
       weak: "#8B8B8B",
       weakest: "#AAAAAA",
     },
@@ -95,10 +91,6 @@ const colors = {
       select: "#F57C4B",
       selectOutline: "#0B9F7E" /* Does not exist on light theme */,
       notice: "#6E9CD2",
-    },
-    brand: {
-      main: "#00D1A2",
-      weak: "#00755B",
     },
     other: {
       black: "#000000",
