@@ -35,6 +35,8 @@ export type Theme = {
     weak: string;
     select: string;
     link: string;
+    brandBlue: string;
+    brandRed: string;
   };
   dashboard: {
     bg: string;
@@ -44,7 +46,6 @@ export type Theme = {
     publicationStatus: string;
     heroButtonText: string;
     heroButtonTextHover: string;
-    heroButtonBg: string;
   };
   buttonPrimary: {
     bgHover: string;

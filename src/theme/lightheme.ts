@@ -22,6 +22,8 @@ const lightheme: Theme = {
     weak: colors.light.text.weak,
     select: colors.light.functional.select,
     link: colors.light.functional.link,
+    brandBlue: colors.brand.ReearthBlue,
+    brandRed: colors.brand.ReearthRed,
   },
   dashboard: {
     bg: colors.light.bg[2],
@@ -31,7 +33,6 @@ const lightheme: Theme = {
     publicationStatus: colors.dark.text.main,
     heroButtonText: colors.dark.text.main,
     heroButtonTextHover: colors.dark.text.strong,
-    heroButtonBg: colors.brand.gradient,
   },
   buttonPrimary: {
     bgHover: colors.light.primary.main,

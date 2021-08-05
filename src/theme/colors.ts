@@ -104,7 +104,8 @@ const colors = {
     transparentBlack: "rgba(0,0,0,0.7)",
   },
   brand: {
-    gradient: "linear-gradient(72.17deg, #df3013 14.04%, #1e2086 86.96%)",
+    ReearthBlue: "#1e2086",
+    ReearthRed: "#df3013",
   },
 };
 
