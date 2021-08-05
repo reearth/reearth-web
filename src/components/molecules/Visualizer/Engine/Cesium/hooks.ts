@@ -19,8 +19,7 @@ import type { Ref as EngineRef, SceneProperty } from "..";
 import tiles from "./tiles";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
-import useEntityDnD from "./useEntityDnD";
-import { Context } from "cesium-dnd";
+import CesiumDnD, { Context } from "cesium-dnd";
 
 export default ({
   ref,
@@ -179,6 +178,10 @@ export default ({
   const handleDropLayer = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
       onDropLayer?.(e.id, convertCartesian3ToPosition(position));
+      //TODO: remove here since cesium-dnd must take care of this
+      if (cesium.current?.cesiumElement?.scene.screenSpaceCameraController) {
+        cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = true;
+      }
     },
     [onDropLayer],
   );
@@ -197,14 +200,15 @@ export default ({
     };
   };
 
-  const DND_INITIAL_DELAY = 400;
+  const DELAY = 100;
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { entityDnD } = useEntityDnD(cesium, {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    new CesiumDnD(viewer, {
       onDrag: handleDragLayer,
       onDrop: handleDropLayer,
       onDragging: handleDraggingLayer,
-      dragDelay: DND_INITIAL_DELAY,
+      dragDelay: DELAY,
     });
   }, [handleDragLayer, handleDraggingLayer, handleDropLayer]);
 

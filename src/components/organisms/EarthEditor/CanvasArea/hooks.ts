@@ -12,7 +12,13 @@ import {
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
-import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
+import {
+  convertLayers,
+  convertWidgets,
+  convertToBlocks,
+  convertProperty,
+  convertLayersWithRawProperty,
+} from "./convert";
 import {
   valueTypeToGQL,
   ValueType,
@@ -159,41 +165,38 @@ export default (isBuilt?: boolean) => {
 
   const [updateLayerLatLng] = useChangePropertyValueLatLngMutation();
 
-  const handleDragLayer = (layerId: string, position: LatLngHeight | undefined) => {
-    console.log("drag ----", layerId, position);
-  };
+  const layersWithRawProperty = convertLayersWithRawProperty(layerData);
 
-  const handleDraggingLayer = (layerId: string, position: LatLngHeight | undefined) => {
-    console.log("dragging----", layerId, position);
-  };
+  const handleDragLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
+
+  const handleDraggingLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
 
   const handleDropLayer = useCallback(
     async (layerId: string, position: LatLngHeight | undefined) => {
-      const layerProperty =
-        layerData?.node?.__typename === "Scene"
-          ? layerData.node.rootLayer?.layers.find(l => l?.id === layerId)?.property
+      const layerProperty = layersWithRawProperty?.find(l => l.id === layerId)?.property;
+      const propertyId = layerProperty?.id;
+      const fieldId = "location";
+      const schemaItemId = "default";
+      const propertyItem =
+        layerProperty && "items" in layerProperty
+          ? layerProperty?.items.find(
+              i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
+            )
           : undefined;
-      if (layerProperty) {
-        const propertyId = layerProperty.id;
-        const fieldId = "location";
-        const schemaItemId = "default";
-        const propertyItem = layerProperty.items.find(
-          i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
-        );
-        if (!propertyId || !propertyItem || !position) return;
-        await updateLayerLatLng({
-          variables: {
-            schemaItemId,
-            propertyId,
-            fieldId,
-            itemId: propertyItem.id,
-            lat: position?.lat,
-            lng: position?.lng,
-          },
-        });
-      }
+      if (!propertyId || !position) return;
+      await updateLayerLatLng({
+        variables: {
+          propertyId,
+          itemId: propertyItem?.id,
+          schemaItemId,
+          fieldId,
+          lat: position?.lat,
+          lng: position?.lng,
+        },
+      });
+      // }
     },
-    [layerData, updateLayerLatLng],
+    [layersWithRawProperty, updateLayerLatLng],
   );
 
   return {
