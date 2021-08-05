@@ -33,14 +33,16 @@ export default (projectId: string) => {
   // }, [rawSceneData?.scene?.plugins]);
   const installedPlugins = useMemo(() => {
     return rawSceneData
-      ? rawSceneData?.scene?.plugins.map<PluginItem>(p => ({
-          title: p.plugin?.name ?? "",
-          bodyMarkdown: p.plugin?.description ?? "",
-          author: p.plugin?.author ?? "",
-          // thumbnailUrl: p.plugin?.thumbnailUrl,
-          isInstalled: true,
-          pluginId: p.plugin?.id ?? "",
-        }))
+      ? rawSceneData?.scene?.plugins
+          .filter(p => p.plugin?.id !== "reearth")
+          .map<PluginItem>(p => ({
+            title: p.plugin?.name ?? "",
+            bodyMarkdown: p.plugin?.description ?? "",
+            author: p.plugin?.author ?? "",
+            // thumbnailUrl: p.plugin?.thumbnailUrl,
+            isInstalled: true,
+            pluginId: p.plugin?.id ?? "",
+          }))
       : [];
   }, [rawSceneData]);
 
