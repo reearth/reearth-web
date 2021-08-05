@@ -15,13 +15,16 @@ export type Property = {
     style?: "color" | "image";
     fillColor?: string;
     image?: string;
+    outlineColor?: string;
+    outlineWidth?: number;
   };
 };
 
 const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
   const { id, isVisible, property } = primitive ?? {};
-  const { rect, image, style, fillColor, height, extrudedHeight } =
+  const { rect, image, style, fillColor, height, extrudedHeight, outlineColor, outlineWidth } =
     (property as Property | undefined)?.default ?? {};
+
   const coordinates = useMemo(
     () =>
       rect &&
@@ -49,10 +52,14 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
             })
           : undefined
         : fillColor
-        ? Color.fromCssColorString(property.default.fillColor)
+        ? Color.fromCssColorString(fillColor)
         : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [style, image, fillColor],
+  );
+
+  const outline = useMemo(
+    () => (outlineColor ? Color.fromCssColorString(outlineColor) : undefined),
+    [outlineColor],
   );
 
   return !isVisible ? null : (
@@ -63,6 +70,9 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
         coordinates={coordinates}
         material={material}
         fill={!!material}
+        outline={!!outline}
+        outlineColor={outline}
+        outlineWidth={outlineWidth}
       />
     </Entity>
   );
