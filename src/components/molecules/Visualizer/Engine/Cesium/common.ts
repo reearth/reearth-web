@@ -9,8 +9,9 @@ import {
   Scene,
   Cartesian2,
   Cartesian3,
-  Viewer,
+  CesiumWidget,
   PerspectiveFrustum,
+  Viewer,
 } from "cesium";
 
 import { useCanvas, useImage } from "@reearth/util/image";
@@ -292,7 +293,7 @@ export const animateFOV = ({
   return undefined;
 };
 
-export const getCamera = (viewer: Viewer | undefined): Camera | undefined => {
+export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | undefined => {
   if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene) return undefined;
   const { camera } = viewer;
   if (!(camera.frustum instanceof PerspectiveFrustum)) return;
