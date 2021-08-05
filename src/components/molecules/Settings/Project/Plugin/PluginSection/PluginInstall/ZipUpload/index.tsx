@@ -12,10 +12,8 @@ export type Props = {
   loading?: boolean;
 };
 
-type FileType = "zip";
-
 const ZipUpload: React.FC<Props> = ({ className, icon, buttonText, onSend, loading }) => {
-  const accept: FileType = "zip";
+  const accept = ".zip";
   const handleClick = useFileInput(files => onSend?.(files), {
     accept,
     multiple: false,
