@@ -1,6 +1,7 @@
 export type Config = {
   version?: string;
   api: string;
+  plugins: string;
   published: string;
   auth0ClientId?: string;
   auth0Domain?: string;
@@ -19,10 +20,8 @@ declare global {
 
 export const defaultConfig: Config = {
   api: "/api",
-  published:
-    window.location.hostname === "localhost"
-      ? window.location.origin + "/published.html?alias={}"
-      : window.location.origin + "/p/{}",
+  plugins: "/plugins",
+  published: "/published.html?alias={}",
 };
 
 export default async function loadConfig() {
