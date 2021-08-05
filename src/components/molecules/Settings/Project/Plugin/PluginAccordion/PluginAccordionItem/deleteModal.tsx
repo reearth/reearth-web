@@ -21,7 +21,7 @@ const DeleteModal: React.FC<Props> = ({ onCancel, onProceed, onClose, isOpen }) 
       title=""
       body={
         <>
-          <Icon icon="alert" size={24} color={theme.colors.danger.main} />
+          <Icon icon="alert" size={24} color={theme.main.danger} />
           <Box mt={"2xl"}>
             <Text size="m">
               {intl.formatMessage({

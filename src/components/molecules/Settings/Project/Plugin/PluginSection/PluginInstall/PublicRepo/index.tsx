@@ -66,19 +66,19 @@ const PublicRepo: React.FC<Props> = ({
           />
         }>
         {loading && <Loading overlay />}
-        <Text size="m" color={theme.colors.text.main}>
+        <Text size="m" color={theme.main.text}>
           {intl.formatMessage({ defaultMessage: "Repository url:" })}
         </Text>
         <Box mv="l">
           <TextBox value={repoUrl} doesChangeEveryTime onChange={handleRepoUrlChange} />
         </Box>
         {validationErr && (
-          <Text size="2xs" color={theme.colors.danger.main}>
+          <Text size="2xs" color={theme.main.danger}>
             {validationErr}
           </Text>
         )}
         {serverSideError && (
-          <Text size="2xs" color={theme.colors.danger.main}>
+          <Text size="2xs" color={theme.main.danger}>
             {serverSideError}
           </Text>
         )}
