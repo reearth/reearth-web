@@ -83,7 +83,7 @@ const lightheme: Theme = {
     text: colors.dark.text.strong,
     divider: colors.light.outline.weakest,
     title: colors.dark.text.strong,
-    description: colors.dark.text.main,
+    description: colors.dark.text.strong,
   },
   assetCard: {
     bg: colors.light.bg[4],
