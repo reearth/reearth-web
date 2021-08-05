@@ -18,6 +18,7 @@ Default.args = {
       isInstalled: true,
       bodyMarkdown: "# Hoge ## Hoge",
       author: "reearth",
+      pluginId: "id1",
     },
     {
       thumbnailUrl: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -25,6 +26,7 @@ Default.args = {
       isInstalled: false,
       bodyMarkdown: "# Fuga ## Fuga",
       author: "reearth",
+      pluginId: "id2",
     },
   ],
 };
