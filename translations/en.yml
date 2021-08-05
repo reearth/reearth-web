@@ -241,6 +241,9 @@ src:
             '1766832403': Email address
             '2237029987': Password
             '3198092477': Account
+            '3923994153': >-
+              Light theme is still in beta. Some UI may still not be supported
+              (ie. public projects will not use light theme).
           PasswordModal:
             '539787951': Set your password now
             '740918511': New password (for confirmation)

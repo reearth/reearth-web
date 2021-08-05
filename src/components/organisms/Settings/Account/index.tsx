@@ -18,19 +18,24 @@ const Account: React.FC<Props> = () => {
     updateName,
     updatePassword,
     updateLanguage,
+    updateTheme,
   } = useHooks();
 
   return (
     <SettingPage teamId={currentTeam?.id} projectId={currentProject?.id}>
       <SettingsHeader title={intl.formatMessage({ defaultMessage: "Account" })} />
       <ProfileSection username={me?.name} updateName={updateName} />
-      <AccountSection
-        email={me?.email}
-        lang={me?.lang}
-        hasPassword={hasPassword}
-        updatePassword={updatePassword}
-        updateLanguage={updateLanguage}
-      />
+      {me && (
+        <AccountSection
+          email={me?.email}
+          lang={me?.lang}
+          appTheme={me?.theme ? me.theme.toUpperCase() : "DARK"}
+          hasPassword={hasPassword}
+          updatePassword={updatePassword}
+          updateLanguage={updateLanguage}
+          updateTheme={updateTheme}
+        />
+      )}
     </SettingPage>
   );
 };

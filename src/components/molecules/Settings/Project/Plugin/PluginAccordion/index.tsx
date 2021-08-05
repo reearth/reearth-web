@@ -25,7 +25,7 @@ const PluginAccordion: React.FC<PluginAccordionProps> = ({ className, items, uni
     <Accordion
       className={className}
       allowMultipleExpanded
-      itemBgColor={theme.colors.bg[3]}
+      itemBgColor={theme.main.lighterBg}
       items={items?.map(item => {
         return {
           id: item.title,

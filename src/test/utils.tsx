@@ -11,11 +11,11 @@ const render = (
 ) => {
   const Wrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (
-      <ThemeProvider>
-        <MockedGqlProvider mocks={queryMocks} addTypename={false}>
+      <MockedGqlProvider mocks={queryMocks} addTypename={false}>
+        <ThemeProvider>
           <IntlProvider>{children}</IntlProvider>
-        </MockedGqlProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </MockedGqlProvider>
     );
   };
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });

@@ -68,7 +68,7 @@ const PluginInstall: React.FC<Props> = ({
 };
 
 const SectionTitle = styled.div`
-  border-bottom: ${props => `solid 1px ${props.theme.colors.outline.weak}`};
+  border-bottom: ${props => `solid 1px ${props.theme.main.border}`};
   padding-bottom: ${props => props.theme.metrics.xl}px;
 `;
 
