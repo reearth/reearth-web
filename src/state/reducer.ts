@@ -7,8 +7,8 @@ export type LocalState = {
   sceneId?: string;
   rootLayerId?: string;
   selectedLayer?: string;
-  selectedWidget?: { pluginId: string; extensionId: string };
-  selectedType?: "scene" | "layer" | "widget";
+  selectedWidget?: { pluginId: string; extensionId: string; widgetId: string };
+  selectedType?: "scene" | "layer" | "widgets" | "widget";
   selectedBlock?: string;
   isCapturing: boolean;
   camera?: Camera;

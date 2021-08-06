@@ -300,8 +300,7 @@ export default (mode: Mode) => {
         await updateWidgetMutation({
           variables: {
             sceneId,
-            pluginId: selectedWidgetId.pluginId,
-            extensionId: selectedWidgetId.extensionId,
+            widgetId: selectedWidgetId.widgetId,
             enabled: false,
           },
           refetchQueries: ["GetEarthWidgets"],
@@ -316,8 +315,7 @@ export default (mode: Mode) => {
         await updateWidgetMutation({
           variables: {
             sceneId,
-            pluginId: selectedWidgetId.pluginId,
-            extensionId: selectedWidgetId.extensionId,
+            widgetId: selectedWidgetId.widgetId,
             enabled: true,
           },
           refetchQueries: ["GetEarthWidgets"],

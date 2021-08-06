@@ -37,6 +37,7 @@ const RightMenu: React.FC = () => {
   const intl = useIntl();
   const layerLabel = intl.formatMessage({ defaultMessage: "Layer" });
   const widgetLabel = intl.formatMessage({ defaultMessage: "Widget" });
+  const widgetsLabel = intl.formatMessage({ defaultMessage: "Widgets" });
   const sceneLabel = intl.formatMessage({ defaultMessage: "Scene" });
   const labels = {
     [property]:
@@ -44,6 +45,8 @@ const RightMenu: React.FC = () => {
         ? layerLabel
         : selectedLayerType === "widget"
         ? widgetLabel
+        : selectedLayerType === "widgets"
+        ? widgetsLabel
         : sceneLabel,
     infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
     export: intl.formatMessage({ defaultMessage: "Export" }),
@@ -81,6 +84,8 @@ const RightMenu: React.FC = () => {
               <PropertyPane mode="layer" />
             ) : selectedLayerType === "widget" ? (
               <PropertyPane mode="widget" />
+            ) : selectedLayerType === "widgets" ? (
+              <PropertyPane mode="widgets" />
             ) : (
               // Scene全体のProperty
               <PropertyPane mode="scene" />

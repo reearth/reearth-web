@@ -131,6 +131,14 @@ const PropertyPane: React.FC<Props> = ({
     <>
       {mode === "widget" && (
         <WidgetToggleButton
+          mode={mode}
+          checked={!!selectedWidget?.enabled}
+          onChange={() => onWidgetActivate?.(!selectedWidget?.enabled)}
+        />
+      )}
+      {mode === "widgets" && (
+        <WidgetToggleButton
+          mode={mode}
           checked={!!selectedWidget?.enabled}
           onChange={() => onWidgetActivate?.(!selectedWidget?.enabled)}
         />

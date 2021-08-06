@@ -27,13 +27,14 @@ export type LayerItem = {
 
 export type Widget = {
   id: string;
+  widgetId?: string;
   title: string;
   description?: string;
   enabled?: boolean;
   icon?: string;
 };
 
-export type ItemType = "root" | "scene" | "layer" | "widget";
+export type ItemType = "root" | "scene" | "layer" | "widgets" | "widget";
 export type ItemEx = { type: ItemType };
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 
@@ -47,6 +48,7 @@ export default ({
   selectedType,
   onLayerSelect,
   onSceneSelect,
+  onWidgetsSelect,
   onWidgetSelect,
   onLayerMove,
   onLayerRemove,
@@ -68,6 +70,7 @@ export default ({
   onLayerImport?: (file: File, format: Format) => void;
   onLayerRemove?: (id: string) => void;
   onSceneSelect?: () => void;
+  onWidgetsSelect?: () => void;
   onWidgetSelect?: (id: string) => void;
   onLayerMove?: (
     src: string,
@@ -94,6 +97,8 @@ export default ({
 
       if (item.content.type === "scene") {
         onSceneSelect?.();
+      } else if (item.id === "widgets") {
+        onWidgetsSelect?.();
       } else if (item.content.type === "widget") {
         onWidgetSelect?.(item.id);
       } else if (item.content.type === "layer") {
@@ -104,7 +109,7 @@ export default ({
         );
       }
     },
-    [onLayerSelect, onSceneSelect, onWidgetSelect],
+    [onLayerSelect, onSceneSelect, onWidgetsSelect, onWidgetSelect],
   );
 
   const drop = useCallback(
@@ -179,11 +184,10 @@ export default ({
           droppable: false,
           droppableIntoChildren: false,
           expandable: true,
-          selectable: false,
+          selectable: true,
           children: widgets?.map(w => ({
-            id: w.id,
+            id: `${w.id}/${w.widgetId}`,
             content: {
-              id: w.id,
               type: "widget",
               title: w.title,
               description: w.description,
@@ -201,6 +205,7 @@ export default ({
     }),
     [sceneTitle, sceneDescription, widgetTitle, widgets],
   );
+
   const layersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
     () =>
       rootLayerId

@@ -6,15 +6,20 @@ import ToggleButton from "@reearth/components/atoms/ToggleButton";
 import Text from "@reearth/components/atoms/Text";
 
 export type Props = {
+  mode?: "widgets" | "widget";
   checked?: boolean;
   onChange?: () => Promise<void> | undefined;
 };
 
-const WidgetToggleButton: React.FC<Props> = props => {
+const WidgetToggleButton: React.FC<Props> = ({ mode, ...props }) => {
   const intl = useIntl();
   return (
     <ToggleWrapper>
-      <Text size="xs">{intl.formatMessage({ defaultMessage: "Enable" })}</Text>
+      <Text size="xs">
+        {mode === "widgets"
+          ? intl.formatMessage({ defaultMessage: "Enable Editor Mode" })
+          : intl.formatMessage({ defaultMessage: "Enable" })}
+      </Text>
       <ToggleButton {...props} />
     </ToggleWrapper>
   );

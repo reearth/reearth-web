@@ -176,12 +176,23 @@ export const GET_WIDGETS = gql`
               translatedName
               icon
               type
+              widgetLayout {
+                extendable
+                extended
+                floating
+                defaultLocation {
+                  zone
+                  section
+                  area
+                }
+              }
             }
           }
         }
         widgets {
           id
           enabled
+          extended
           pluginId
           extensionId
           propertyId

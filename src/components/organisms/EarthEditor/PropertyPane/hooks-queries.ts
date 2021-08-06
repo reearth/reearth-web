@@ -9,7 +9,7 @@ import {
 } from "@reearth/gql";
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -26,7 +26,7 @@ export default ({
   rootLayerId?: string;
   selectedLayer?: string;
   selectedBlock?: string;
-  selectedWidgetId?: { pluginId: string; extensionId: string };
+  selectedWidgetId?: { pluginId: string; extensionId: string; widgetId: string };
   teamId?: string;
   mode: Mode;
 }) => {
@@ -151,7 +151,12 @@ export default ({
           w.extensionId === selectedWidgetId.extensionId,
       );
       return {
-        id: selectedWidgetId.pluginId + "/" + selectedWidgetId.extensionId,
+        id:
+          selectedWidgetId.pluginId +
+          "/" +
+          selectedWidgetId.extensionId +
+          "/" +
+          selectedWidgetId.widgetId,
         mode: "widget",
         propertyId: w?.property?.id,
         items: convert(w?.property, null),
@@ -169,9 +174,10 @@ export default ({
       group: layerPropertyData?.layer?.__typename === "LayerGroup",
     };
   }, [items, mode, propertyId, scene?.widgets, selectedWidgetId, layerPropertyData?.layer]);
-  const datasetSchemas = useMemo(() => convertLinkableDatasets(linkableDatasets), [
-    linkableDatasets,
-  ]);
+  const datasetSchemas = useMemo(
+    () => convertLinkableDatasets(linkableDatasets),
+    [linkableDatasets],
+  );
 
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
 

@@ -1045,6 +1045,7 @@ export type PluginExtension = {
   name: Scalars['String'];
   description: Scalars['String'];
   icon: Scalars['String'];
+  widgetLayout?: Maybe<WidgetLayout>;
   visualizer: Visualizer;
   propertySchemaId: Scalars['PropertySchemaID'];
   allTranslatedName?: Maybe<Scalars['TranslatedString']>;
@@ -1542,15 +1543,13 @@ export type RemovePropertyItemInput = {
 
 export type RemoveWidgetInput = {
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
 };
 
 export type RemoveWidgetPayload = {
   __typename?: 'RemoveWidgetPayload';
   scene: Scene;
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
 };
 
 export enum Role {
@@ -1570,6 +1569,7 @@ export type Scene = Node & {
   rootLayerId: Scalars['ID'];
   widgets: Array<SceneWidget>;
   plugins: Array<ScenePlugin>;
+  widgetAlignSystem?: Maybe<WidgetAlignSystem>;
   dynamicDatasetSchemas: Array<DatasetSchema>;
   project?: Maybe<Project>;
   team?: Maybe<Team>;
@@ -1610,6 +1610,7 @@ export type SceneWidget = {
   extensionId: Scalars['PluginExtensionID'];
   propertyId: Scalars['ID'];
   enabled: Scalars['Boolean'];
+  extended?: Maybe<Scalars['Boolean']>;
   plugin?: Maybe<Plugin>;
   extension?: Maybe<PluginExtension>;
   property?: Maybe<Property>;
@@ -1876,9 +1877,9 @@ export type UpdateTeamPayload = {
 
 export type UpdateWidgetInput = {
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
   enabled?: Maybe<Scalars['Boolean']>;
+  layout?: Maybe<WidgetLayoutInput>;
 };
 
 export type UpdateWidgetPayload = {
@@ -1947,6 +1948,77 @@ export enum ValueType {
 
 export enum Visualizer {
   Cesium = 'CESIUM'
+}
+
+export type WidgetAlignSystem = {
+  __typename?: 'WidgetAlignSystem';
+  inner?: Maybe<WidgetZone>;
+  outer?: Maybe<WidgetZone>;
+};
+
+export type WidgetArea = {
+  __typename?: 'WidgetArea';
+  widgetIds: Array<Scalars['ID']>;
+  align?: Maybe<Scalars['String']>;
+};
+
+export enum WidgetAreaType {
+  Top = 'TOP',
+  Middle = 'MIDDLE',
+  Bottom = 'BOTTOM'
+}
+
+export type WidgetLayout = {
+  __typename?: 'WidgetLayout';
+  extendable?: Maybe<Scalars['Boolean']>;
+  extended?: Maybe<Scalars['Boolean']>;
+  floating: Scalars['Boolean'];
+  defaultLocation?: Maybe<WidgetLocation>;
+};
+
+export type WidgetLayoutInput = {
+  extended?: Maybe<Scalars['Boolean']>;
+  location?: Maybe<WidgetLocationInput>;
+  index?: Maybe<Scalars['Int']>;
+  align?: Maybe<Scalars['String']>;
+};
+
+export type WidgetLocation = {
+  __typename?: 'WidgetLocation';
+  zone?: Maybe<WidgetZoneType>;
+  section?: Maybe<WidgetSectionType>;
+  area?: Maybe<WidgetAreaType>;
+};
+
+export type WidgetLocationInput = {
+  zone: Scalars['String'];
+  section: Scalars['String'];
+  area: Scalars['String'];
+};
+
+export type WidgetSection = {
+  __typename?: 'WidgetSection';
+  top?: Maybe<WidgetArea>;
+  middle?: Maybe<WidgetArea>;
+  bottom?: Maybe<WidgetArea>;
+};
+
+export enum WidgetSectionType {
+  Left = 'LEFT',
+  Center = 'CENTER',
+  Right = 'RIGHT'
+}
+
+export type WidgetZone = {
+  __typename?: 'WidgetZone';
+  left?: Maybe<WidgetSection>;
+  center?: Maybe<WidgetSection>;
+  right?: Maybe<WidgetSection>;
+};
+
+export enum WidgetZoneType {
+  Inner = 'INNER',
+  Outer = 'OUTER'
 }
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -2354,7 +2426,7 @@ export type GetEarthWidgetsQuery = (
       & PropertyFragmentFragment
     )>, widgets: Array<(
       { __typename?: 'SceneWidget' }
-      & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId'>
+      & Pick<SceneWidget, 'id' | 'enabled' | 'extended' | 'pluginId' | 'extensionId'>
       & { plugin?: Maybe<(
         { __typename?: 'Plugin' }
         & Pick<Plugin, 'id'>
@@ -2366,11 +2438,24 @@ export type GetEarthWidgetsQuery = (
             & PropertyFragmentFragment
           )> }
         )> }
+      )>, extension?: Maybe<(
+        { __typename?: 'PluginExtension' }
+        & { widgetLayout?: Maybe<(
+          { __typename?: 'WidgetLayout' }
+          & Pick<WidgetLayout, 'floating' | 'extendable' | 'extended'>
+          & { defaultLocation?: Maybe<(
+            { __typename?: 'WidgetLocation' }
+            & Pick<WidgetLocation, 'zone' | 'section' | 'area'>
+          )> }
+        )> }
       )>, property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentFragment
       )> }
+    )>, widgetAlignSystem?: Maybe<(
+      { __typename?: 'WidgetAlignSystem' }
+      & WidgetAlignSystemFragmentFragment
     )> }
   ) | (
     { __typename?: 'Team' }
@@ -3009,11 +3094,19 @@ export type GetWidgetsQuery = (
         & { extensions: Array<(
           { __typename?: 'PluginExtension' }
           & Pick<PluginExtension, 'extensionId' | 'description' | 'name' | 'translatedDescription' | 'translatedName' | 'icon' | 'type'>
+          & { widgetLayout?: Maybe<(
+            { __typename?: 'WidgetLayout' }
+            & Pick<WidgetLayout, 'extendable' | 'extended' | 'floating'>
+            & { defaultLocation?: Maybe<(
+              { __typename?: 'WidgetLocation' }
+              & Pick<WidgetLocation, 'zone' | 'section' | 'area'>
+            )> }
+          )> }
         )> }
       )> }
     )>, widgets: Array<(
       { __typename?: 'SceneWidget' }
-      & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId' | 'propertyId'>
+      & Pick<SceneWidget, 'id' | 'enabled' | 'extended' | 'pluginId' | 'extensionId' | 'propertyId'>
     )> }
   ) | (
     { __typename?: 'Team' }
@@ -3613,8 +3706,7 @@ export type AddWidgetMutation = (
 
 export type RemoveWidgetMutationVariables = Exact<{
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
 }>;
 
 
@@ -3635,9 +3727,9 @@ export type RemoveWidgetMutation = (
 
 export type UpdateWidgetMutationVariables = Exact<{
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
   enabled?: Maybe<Scalars['Boolean']>;
+  layout?: Maybe<WidgetLayoutInput>;
 }>;
 
 
@@ -4091,6 +4183,50 @@ export type GetSceneQuery = (
     { __typename?: 'User' }
     & Pick<User, 'id'>
   )> }
+);
+
+export type WidgetAlignSystemFragmentFragment = (
+  { __typename?: 'WidgetAlignSystem' }
+  & { outer?: Maybe<(
+    { __typename?: 'WidgetZone' }
+    & WidgetZoneFragmentFragment
+  )>, inner?: Maybe<(
+    { __typename?: 'WidgetZone' }
+    & WidgetZoneFragmentFragment
+  )> }
+);
+
+export type WidgetZoneFragmentFragment = (
+  { __typename?: 'WidgetZone' }
+  & { left?: Maybe<(
+    { __typename?: 'WidgetSection' }
+    & WidgetSectionFragmentFragment
+  )>, center?: Maybe<(
+    { __typename?: 'WidgetSection' }
+    & WidgetSectionFragmentFragment
+  )>, right?: Maybe<(
+    { __typename?: 'WidgetSection' }
+    & WidgetSectionFragmentFragment
+  )> }
+);
+
+export type WidgetSectionFragmentFragment = (
+  { __typename?: 'WidgetSection' }
+  & { top?: Maybe<(
+    { __typename?: 'WidgetArea' }
+    & WidgetAreaFragmentFragment
+  )>, middle?: Maybe<(
+    { __typename?: 'WidgetArea' }
+    & WidgetAreaFragmentFragment
+  )>, bottom?: Maybe<(
+    { __typename?: 'WidgetArea' }
+    & WidgetAreaFragmentFragment
+  )> }
+);
+
+export type WidgetAreaFragmentFragment = (
+  { __typename?: 'WidgetArea' }
+  & Pick<WidgetArea, 'widgetIds' | 'align'>
 );
 
 export type InfoboxFragmentFragment = (
@@ -4985,6 +5121,48 @@ export const LayerSystemLayer5FragmentDoc = gql`
 }
     ${LayerSystemLayerFragmentDoc}
 ${LayerSystemLayer4FragmentDoc}`;
+export const WidgetAreaFragmentFragmentDoc = gql`
+    fragment WidgetAreaFragment on WidgetArea {
+  widgetIds
+  align
+}
+    `;
+export const WidgetSectionFragmentFragmentDoc = gql`
+    fragment WidgetSectionFragment on WidgetSection {
+  top {
+    ...WidgetAreaFragment
+  }
+  middle {
+    ...WidgetAreaFragment
+  }
+  bottom {
+    ...WidgetAreaFragment
+  }
+}
+    ${WidgetAreaFragmentFragmentDoc}`;
+export const WidgetZoneFragmentFragmentDoc = gql`
+    fragment WidgetZoneFragment on WidgetZone {
+  left {
+    ...WidgetSectionFragment
+  }
+  center {
+    ...WidgetSectionFragment
+  }
+  right {
+    ...WidgetSectionFragment
+  }
+}
+    ${WidgetSectionFragmentFragmentDoc}`;
+export const WidgetAlignSystemFragmentFragmentDoc = gql`
+    fragment WidgetAlignSystemFragment on WidgetAlignSystem {
+  outer {
+    ...WidgetZoneFragment
+  }
+  inner {
+    ...WidgetZoneFragment
+  }
+}
+    ${WidgetZoneFragmentFragmentDoc}`;
 export const InfoboxFragmentFragmentDoc = gql`
     fragment InfoboxFragment on Infobox {
   propertyId
@@ -5417,6 +5595,7 @@ export const GetEarthWidgetsDocument = gql`
       widgets {
         id
         enabled
+        extended
         pluginId
         extensionId
         plugin {
@@ -5428,15 +5607,31 @@ export const GetEarthWidgetsDocument = gql`
             }
           }
         }
+        extension {
+          widgetLayout {
+            floating
+            extendable
+            extended
+            defaultLocation {
+              zone
+              section
+              area
+            }
+          }
+        }
         property {
           id
           ...PropertyFragment
         }
       }
+      widgetAlignSystem {
+        ...WidgetAlignSystemFragment
+      }
     }
   }
 }
-    ${PropertyFragmentFragmentDoc}`;
+    ${PropertyFragmentFragmentDoc}
+${WidgetAlignSystemFragmentFragmentDoc}`;
 
 /**
  * __useGetEarthWidgetsQuery__
@@ -6277,12 +6472,23 @@ export const GetWidgetsDocument = gql`
             translatedName
             icon
             type
+            widgetLayout {
+              extendable
+              extended
+              floating
+              defaultLocation {
+                zone
+                section
+                area
+              }
+            }
           }
         }
       }
       widgets {
         id
         enabled
+        extended
         pluginId
         extensionId
         propertyId
@@ -7189,10 +7395,8 @@ export type AddWidgetMutationHookResult = ReturnType<typeof useAddWidgetMutation
 export type AddWidgetMutationResult = Apollo.MutationResult<AddWidgetMutation>;
 export type AddWidgetMutationOptions = Apollo.BaseMutationOptions<AddWidgetMutation, AddWidgetMutationVariables>;
 export const RemoveWidgetDocument = gql`
-    mutation removeWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!) {
-  removeWidget(
-    input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
-  ) {
+    mutation removeWidget($sceneId: ID!, $widgetId: ID!) {
+  removeWidget(input: {sceneId: $sceneId, widgetId: $widgetId}) {
     scene {
       id
       widgets {
@@ -7222,8 +7426,7 @@ export type RemoveWidgetMutationFn = Apollo.MutationFunction<RemoveWidgetMutatio
  * const [removeWidgetMutation, { data, loading, error }] = useRemoveWidgetMutation({
  *   variables: {
  *      sceneId: // value for 'sceneId'
- *      pluginId: // value for 'pluginId'
- *      extensionId: // value for 'extensionId'
+ *      widgetId: // value for 'widgetId'
  *   },
  * });
  */
@@ -7234,9 +7437,9 @@ export type RemoveWidgetMutationHookResult = ReturnType<typeof useRemoveWidgetMu
 export type RemoveWidgetMutationResult = Apollo.MutationResult<RemoveWidgetMutation>;
 export type RemoveWidgetMutationOptions = Apollo.BaseMutationOptions<RemoveWidgetMutation, RemoveWidgetMutationVariables>;
 export const UpdateWidgetDocument = gql`
-    mutation updateWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $enabled: Boolean) {
+    mutation updateWidget($sceneId: ID!, $widgetId: ID!, $enabled: Boolean, $layout: WidgetLayoutInput) {
   updateWidget(
-    input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId, enabled: $enabled}
+    input: {sceneId: $sceneId, widgetId: $widgetId, enabled: $enabled, layout: $layout}
   ) {
     scene {
       id
@@ -7267,9 +7470,9 @@ export type UpdateWidgetMutationFn = Apollo.MutationFunction<UpdateWidgetMutatio
  * const [updateWidgetMutation, { data, loading, error }] = useUpdateWidgetMutation({
  *   variables: {
  *      sceneId: // value for 'sceneId'
- *      pluginId: // value for 'pluginId'
- *      extensionId: // value for 'extensionId'
+ *      widgetId: // value for 'widgetId'
  *      enabled: // value for 'enabled'
+ *      layout: // value for 'layout'
  *   },
  * });
  */

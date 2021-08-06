@@ -177,6 +177,7 @@ export const GET_EARTH_WIDGETS = gql`
         widgets {
           id
           enabled
+          extended
           pluginId
           extensionId
           plugin {
@@ -188,10 +189,25 @@ export const GET_EARTH_WIDGETS = gql`
               }
             }
           }
+          extension {
+            widgetLayout {
+              floating
+              extendable
+              extended
+              defaultLocation {
+                zone
+                section
+                area
+              }
+            }
+          }
           property {
             id
             ...PropertyFragment
           }
+        }
+        widgetAlignSystem {
+          ...WidgetAlignSystemFragment
         }
       }
     }
