@@ -18,8 +18,17 @@ const pluginId = "reearth";
 const extensionId = "marker";
 
 export default () => {
-  const [{ sceneId }, setLocalState] = useLocalState(s => ({
+  const [
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    { sceneId, selectedDatasetSchema, selectedLayer, selectedBlock, selectedWidget, selectedType },
+    setLocalState,
+  ] = useLocalState(s => ({
     sceneId: s.sceneId,
+    selectedDatasetSchema: s.selectedDatasetSchema,
+    selectedBlock: s.selectedBlock,
+    selectedLayer: s.selectedLayer,
+    selectedWidget: s.selectedWidget,
+    selectedType: s.selectedType,
   }));
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
 
@@ -57,6 +66,19 @@ export default () => {
             .filter((e): e is DatasetSchema => !!e)
         : [],
     [addLayerGroupFromDatasetSchemaMutation, data],
+  );
+
+  const selectDatasetSchema = useCallback(
+    (datasetSchemaId: string) => {
+      setLocalState({
+        selectedType: "dataset",
+        selectedLayer: undefined,
+        selectedWidget: undefined,
+        selectedBlock: undefined,
+        selectedDatasetSchema: datasetSchemaId,
+      });
+    },
+    [setLocalState],
   );
 
   // dataset sync
@@ -149,5 +171,7 @@ export default () => {
     handleRemoveDataset,
     loading,
     onNotify,
+    selectDatasetSchema,
+    selectedDatasetSchemaId: selectedDatasetSchema,
   };
 };

@@ -9,7 +9,7 @@ import {
 } from "@reearth/gql";
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widget" | "dataset";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -160,6 +160,16 @@ export default ({
       };
     }
 
+    if (mode === "dataset") {
+      return {
+        id: "dataset",
+        mode: "dataset",
+        propertyId: undefined,
+        items: [],
+        title: "hoge",
+      };
+    }
+
     return {
       id: mode,
       mode,
@@ -169,10 +179,12 @@ export default ({
       group: layerPropertyData?.layer?.__typename === "LayerGroup",
     };
   }, [items, mode, propertyId, scene?.widgets, selectedWidgetId, layerPropertyData?.layer]);
-  const datasetSchemas = useMemo(() => convertLinkableDatasets(linkableDatasets), [
-    linkableDatasets,
-  ]);
+  const datasetSchemas = useMemo(
+    () => convertLinkableDatasets(linkableDatasets),
+    [linkableDatasets],
+  );
 
+  console.log("dataset -------", datasetSchemas);
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
 
   return {

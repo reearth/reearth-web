@@ -23,7 +23,7 @@ export type Props = {
   layers?: Layer[];
   widgets?: Widget[];
   sceneDescription?: string;
-  selectedType?: "scene" | "layer" | "widget";
+  selectedType?: "scene" | "layer" | "widget" | "dataset";
   loading?: boolean;
   onLayerRename?: (id: string, name: string) => void;
   onLayerVisibilityChange?: (id: string, visibility: boolean) => void;
@@ -38,6 +38,7 @@ export type Props = {
     destChildrenCount: number,
     parentId: string,
   ) => void;
+  onDatasetSchemaSelect?: (datasetSchemaId: string) => void;
   onLayerGroupCreate?: () => void;
   onLayerImport?: (file: File, format: Format) => void;
   onDrop?: (layer: string, index: number, childrenCount: number) => any;
@@ -64,33 +65,26 @@ const OutlinePane: React.FC<Props> = ({
   onDrop,
   loading,
 }) => {
-  const {
-    sceneWidgetsItem,
-    layersItem,
-    select,
-    drop,
-    dropExternals,
-    TreeViewItem,
-    selected,
-  } = useHooks({
-    rootLayerId,
-    layers,
-    widgets,
-    sceneDescription,
-    selectedLayerId,
-    selectedWidgetId,
-    selectedType,
-    onLayerSelect,
-    onLayerImport,
-    onLayerRemove,
-    onSceneSelect,
-    onWidgetSelect,
-    onLayerMove,
-    onLayerRename,
-    onLayerVisibilityChange,
-    onDrop,
-    onLayerGroupCreate,
-  });
+  const { sceneWidgetsItem, layersItem, select, drop, dropExternals, TreeViewItem, selected } =
+    useHooks({
+      rootLayerId,
+      layers,
+      widgets,
+      sceneDescription,
+      selectedLayerId,
+      selectedWidgetId,
+      selectedType,
+      onLayerSelect,
+      onLayerImport,
+      onLayerRemove,
+      onSceneSelect,
+      onWidgetSelect,
+      onLayerMove,
+      onLayerRename,
+      onLayerVisibilityChange,
+      onDrop,
+      onLayerGroupCreate,
+    });
 
   return (
     <Wrapper className={className}>

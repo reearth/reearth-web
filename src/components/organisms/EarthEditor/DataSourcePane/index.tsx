@@ -18,6 +18,8 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
     handleRemoveDataset,
     loading,
     onNotify,
+    selectDatasetSchema,
+    selectedDatasetSchemaId,
   } = useHooks();
 
   return (
@@ -30,6 +32,8 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
       onRemoveDataset={handleRemoveDataset}
       loading={loading}
       onNotify={onNotify}
+      selectDatasetSchema={selectDatasetSchema}
+      selectedDatasetSchemaId={selectedDatasetSchemaId}
     />
   );
 };

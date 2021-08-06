@@ -40,6 +40,8 @@ export type Props = {
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   loading?: boolean;
   onNotify?: (type: NotificationType, text: string) => void;
+  selectedDatasetSchemaId?: string;
+  selectDatasetSchema?: (datasetSchemaId: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({
@@ -51,6 +53,8 @@ const DatasetPane: React.FC<Props> = ({
   onRemoveDataset,
   loading,
   onNotify,
+  selectDatasetSchema,
+  selectedDatasetSchemaId,
 }) => {
   const intl = useIntl();
   const {
@@ -129,6 +133,8 @@ const DatasetPane: React.FC<Props> = ({
                   totalCount={ds.totalCount}
                   onDrop={ds.onDrop}
                   onRemove={handleDatasetRemove}
+                  selected={selectedDatasetSchemaId === ds.id}
+                  selectDatasetSchema={selectDatasetSchema}
                 />
               ))}
             </div>

@@ -33,7 +33,7 @@ export type Widget = {
   icon?: string;
 };
 
-export type ItemType = "root" | "scene" | "layer" | "widget";
+export type ItemType = "root" | "scene" | "layer" | "widget" | "dataset";
 export type ItemEx = { type: ItemType };
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 

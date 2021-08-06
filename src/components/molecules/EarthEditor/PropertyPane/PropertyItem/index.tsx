@@ -24,7 +24,7 @@ import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widget";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widget" | "dataset";
 
 export type {
   Dataset,
