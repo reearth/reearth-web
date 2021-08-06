@@ -79,7 +79,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         onClick={selectViewerEntity}
         requestRenderMode={!property?.timeline?.animation}
         maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
-        shadows={!!property?.atmosphere?.enable_shadows}>
+        shadows={!!property?.atmosphere?.shadows}>
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
           {/* remove default click event */}

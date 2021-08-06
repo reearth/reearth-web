@@ -31,11 +31,11 @@ export type SceneProperty = {
     tile_minLevel?: number;
   }[];
   atmosphere?: {
-    enable_shadows?: boolean;
     enable_sun?: boolean;
     enable_lighting?: boolean;
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
+    shadows?: boolean;
     fog?: boolean;
     fog_density?: number;
     brightness_shift?: number;
