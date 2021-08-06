@@ -10,7 +10,7 @@ export interface Props {
 const Logo: React.FC<Props> = ({ className }) => {
   return (
     <Wrapper align="center" justify="center" className={className}>
-      <StyledImg src={logoColorful} alt="Re:earth Logo" />
+      <StyledImg src={logoColorful} alt="Re:Earth Logo" />
     </Wrapper>
   );
 };

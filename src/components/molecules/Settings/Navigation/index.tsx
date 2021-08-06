@@ -29,7 +29,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
   return (
     <Wrapper>
       <LogoWrapper>
-        <StyledImg src={logoColorful} alt="Re:earth Logo" />
+        <StyledImg src={logoColorful} alt="Re:Earth Logo" />
       </LogoWrapper>
       <NavigationList>
         <NavigationItem
