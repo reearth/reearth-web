@@ -55,6 +55,7 @@ export type EngineProps = {
   children?: ReactNode;
   ready?: boolean;
   selectedPrimitiveId?: string;
+  isLayerDraggable?: boolean;
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
   onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;

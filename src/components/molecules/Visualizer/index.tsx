@@ -114,6 +114,7 @@ export default function Visualizer({
           {...props}
           camera={innerCamera}
           onCameraChange={updateCamera}
+          isLayerDraggable={props.isEditable}
           onDragLayer={onDragLayer}
           onDraggingLayer={onDraggingLayer}
           onDropLayer={onDropLayer}>

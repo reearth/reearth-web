@@ -28,6 +28,7 @@ export default ({
   selectedPrimitiveId,
   onPrimitiveSelect,
   onCameraChange,
+  isLayerDraggable,
   onDragLayer,
   onDraggingLayer,
   onDropLayer,
@@ -38,6 +39,7 @@ export default ({
   selectedPrimitiveId?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
+  isLayerDraggable?: boolean;
   onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
@@ -202,14 +204,14 @@ export default ({
   const DELAY = 100;
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
-    if (!viewer) return;
+    if (!viewer || !isLayerDraggable) return;
     new CesiumDnD(viewer, {
       onDrag: handleDragLayer,
       onDrop: handleDropLayer,
       onDragging: handleDraggingLayer,
       dragDelay: DELAY,
     });
-  }, [handleDragLayer, handleDraggingLayer, handleDropLayer]);
+  }, [handleDragLayer, handleDraggingLayer, handleDropLayer, isLayerDraggable]);
 
   return {
     terrainProvider,
