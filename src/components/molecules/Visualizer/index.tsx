@@ -9,7 +9,11 @@ import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
-import WidgetAlignSystem, { WidgetAlignSystem as WidgetAlignSystemType } from "./WidgetAlignSystem";
+import WidgetAlignSystem, {
+  WidgetAlignSystem as WidgetAlignSystemType,
+  Location,
+  Alignments,
+} from "./WidgetAlignSystem";
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
 
@@ -38,6 +42,13 @@ export type Props = PropsWithChildren<
     selectedBlockId?: string;
     pluginBaseUrl?: string;
     isPublished?: boolean;
+    onWidgetUpdate: (
+      id: string,
+      extended?: boolean | undefined,
+      index?: number | undefined,
+      align?: Alignments | undefined,
+      location?: Location,
+    ) => Promise<void>;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
@@ -57,6 +68,7 @@ export default function Visualizer({
   children,
   pluginBaseUrl,
   isPublished,
+  onWidgetUpdate,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
@@ -99,7 +111,9 @@ export default function Visualizer({
     <Provider value={visualizerContext}>
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
-        {widgets && <WidgetAlignSystem alignSystem={widgets.alignSystem} />}
+        {widgets && (
+          <WidgetAlignSystem alignSystem={widgets.alignSystem} onWidgetUpdate={onWidgetUpdate} />
+        )}
         <Engine
           ref={engineRef}
           property={sceneProperty}

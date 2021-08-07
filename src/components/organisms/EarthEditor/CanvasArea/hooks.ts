@@ -8,11 +8,16 @@ import {
   useChangePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
+  useUpdateWidgetMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 import { valueTypeToGQL, ValueType, ValueTypes, Camera, valueToGQL } from "@reearth/util/value";
+import {
+  Location,
+  Alignments,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 export default (isBuilt?: boolean) => {
   const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
@@ -149,6 +154,39 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
+  // update widget alignment
+  const [updateWidgetMutation] = useUpdateWidgetMutation();
+  const onWidgetUpdate = useCallback(
+    async (
+      id: string,
+      extended?: boolean,
+      index?: number,
+      align?: Alignments,
+      location?: Location,
+    ) => {
+      if (!sceneId || !id) return;
+      let loc: { zone: string; section: string; area: string } | undefined;
+      if (location?.zone && location.section && location.area) {
+        loc = { zone: location.zone, section: location.section, area: location.area };
+      }
+      await updateWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId: id,
+          enabled: true,
+          layout: {
+            extended,
+            location: loc,
+            index,
+            align,
+          },
+        },
+        refetchQueries: ["GetEarthWidgets"],
+      });
+    },
+    [sceneId, updateWidgetMutation],
+  );
+
   return {
     sceneId,
     rootLayerId,
@@ -168,6 +206,7 @@ export default (isBuilt?: boolean) => {
     onBlockMove,
     onBlockRemove,
     onBlockInsert,
+    onWidgetUpdate,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,

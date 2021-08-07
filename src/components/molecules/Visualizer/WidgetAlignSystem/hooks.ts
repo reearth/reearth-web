@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Widget as WidgetType } from "../Widget";
 // Move types
 export type Location = {
@@ -7,11 +7,11 @@ export type Location = {
   area?: string;
 };
 
-export type Alignment = "start" | "centered" | "end";
+export type Alignments = "start" | "centered" | "end";
 
 export type WidgetArea = {
   position: "top" | "middle" | "bottom";
-  align?: Alignment;
+  align?: Alignments;
   widgets?: (Widget | undefined)[];
 };
 
@@ -32,31 +32,62 @@ export type Widget = WidgetType & {
   pluginProperty?: any;
 };
 
-export default function ({ alignSystem }: { alignSystem: WidgetAlignSystem }) {
+export type WidgetLayout = {
+  extended?: boolean;
+  layout?: Location;
+  index?: number;
+  align?: string;
+};
+
+export default function ({
+  alignSystem,
+  onWidgetUpdate,
+}: {
+  alignSystem: WidgetAlignSystem;
+  onWidgetUpdate: (
+    id: string,
+    extended?: boolean | undefined,
+    index?: number | undefined,
+    align?: Alignments | undefined,
+    location?: Location,
+  ) => Promise<void>;
+}) {
   const [alignState, setAlignState] = useState(alignSystem);
+
   // Reorder
   const onReorder = useCallback(() => {
     console.log("reorder");
     // Below is to avoid warning on git commit only
     setAlignState(alignSystem);
-  }, []);
+  }, [alignSystem]);
+
+  useEffect(() => {
+    setAlignState(alignSystem);
+  }, [alignSystem]);
+
   // Move
   const onMove = useCallback(
-    (
-      currentItem?: string,
-      dropLocation?: { zone?: string; section?: string; area?: string },
-      originalLocation?: { zone?: string; section?: string; area?: string },
-    ) => {
-      console.log(currentItem);
-      console.log(dropLocation);
-      console.log(originalLocation);
+    (currentItem?: string, dropLocation?: Location) => {
+      if (!currentItem || !dropLocation?.zone || !dropLocation.section || !dropLocation.area)
+        return;
+
+      onWidgetUpdate(currentItem, undefined, undefined, undefined, dropLocation);
     },
-    [],
+    [onWidgetUpdate],
+  );
+
+  const onAlignChange = useCallback(
+    (currentItem?: string, align?: Alignments) => {
+      if (!currentItem || !align) return;
+      onWidgetUpdate(currentItem, undefined, undefined, align, undefined);
+    },
+    [onWidgetUpdate],
   );
 
   return {
     alignState,
     onReorder,
     onMove,
+    onAlignChange,
   };
 }

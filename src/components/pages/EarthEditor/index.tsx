@@ -2,6 +2,7 @@ import React from "react";
 import { EditorModeContextProvider } from "reearth-realign";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 
+import { Provider as DndProvider } from "@reearth/util/use-dnd";
 import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
 import EarthEditorPage from "@reearth/components/molecules/EarthEditor/EarthEditorPage";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
@@ -21,17 +22,19 @@ const EarthEditor: React.FC<Props> = ({ sceneId }) => {
 
   return (
     <AuthenticationRequiredPage>
-      <EditorModeContextProvider>
-        <EarthEditorPage
-          loading={loading}
-          loaded={loaded}
-          header={<Header />}
-          left={<LeftMenu />}
-          centerTop={<PrimitiveHeader />}
-          center={<CanvasArea />}
-          right={<RightMenu />}
-        />
-      </EditorModeContextProvider>
+      <DndProvider>
+        <EditorModeContextProvider>
+          <EarthEditorPage
+            loading={loading}
+            loaded={loaded}
+            header={<Header />}
+            left={<LeftMenu />}
+            centerTop={<PrimitiveHeader />}
+            center={<CanvasArea />}
+            right={<RightMenu />}
+          />
+        </EditorModeContextProvider>
+      </DndProvider>
     </AuthenticationRequiredPage>
   );
 };

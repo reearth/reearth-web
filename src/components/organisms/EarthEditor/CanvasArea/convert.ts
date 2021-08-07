@@ -22,7 +22,7 @@ import {
   WidgetAlignSystem,
   WidgetZone,
   WidgetSection,
-  Alignment,
+  Alignments,
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 type BlockType = Item & {
@@ -203,17 +203,17 @@ export const convertWidgets = (
       return [
         {
           position: "top",
-          align: gridSection.top?.align as Alignment,
+          align: gridSection.top?.align as Alignments,
           widgets: gridSection.top?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
         },
         {
           position: "middle",
-          align: gridSection.middle?.align as Alignment,
+          align: gridSection.middle?.align as Alignments,
           widgets: gridSection.middle?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
         },
         {
           position: "bottom",
-          align: gridSection.bottom?.align as Alignment,
+          align: gridSection.bottom?.align as Alignments,
           widgets: gridSection.bottom?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
         },
       ];
