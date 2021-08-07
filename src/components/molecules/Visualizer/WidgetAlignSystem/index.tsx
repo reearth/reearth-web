@@ -109,8 +109,8 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
           id={widget?.id as string}
           index={i}
           onReorder={onReorder}
-          onMoveArea={onMove}>
-          {/* <p>Hello</p> */}
+          onMoveArea={onMove}
+          styles={{ pointerEvents: "auto", margin: "16px" }}>
           <W
             key={widget?.id}
             widget={widget}

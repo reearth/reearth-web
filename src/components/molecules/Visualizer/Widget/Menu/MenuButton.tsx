@@ -139,7 +139,7 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
 }
 
 const Wrapper = styled.div`
-  position: relative;
+  // position: relative;
   margin-left: 5px;
 
   &:first-of-type {

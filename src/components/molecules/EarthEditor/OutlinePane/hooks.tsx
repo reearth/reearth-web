@@ -252,6 +252,8 @@ export default ({
     const newState =
       selectedType === "scene"
         ? ["scene"]
+        : selectedType === "widgets"
+        ? ["widgets"]
         : selectedType === "layer" && selectedLayerId
         ? [selectedLayerId]
         : selectedType === "widget" && selectedWidgetId

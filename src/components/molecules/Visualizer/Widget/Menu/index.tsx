@@ -27,29 +27,27 @@ const Menu = ({ widget }: Props): JSX.Element => {
   );
 
   return (
-    <>
+    <Wrapper>
       {Object.entries(buttonsByPosition).map(([p, buttons]) =>
         buttons?.length ? (
-          <Wrapper key={p} position={p as Position}>
+          <InnerWrapper key={p} position={p as Position}>
             {buttons.map(b =>
               !b.buttonInvisible ? (
                 <MenuButton key={b.id} button={b} pos={p as Position} menuItems={menuItems} />
               ) : null,
             )}
-          </Wrapper>
+          </InnerWrapper>
         ) : null,
       )}
-    </>
+    </Wrapper>
   );
 };
 
-const Wrapper = styled.div<{ position?: "topleft" | "topright" | "bottomleft" | "bottomright" }>`
-  position: absolute;
-  top: ${({ position }) => (position === "topleft" || position === "topright" ? "0" : null)};
-  bottom: ${({ position }) =>
-    position === "bottomleft" || position === "bottomright" ? "0" : null};
-  left: ${({ position }) => (position === "topleft" || position === "bottomleft" ? "0" : null)};
-  right: ${({ position }) => (position === "topright" || position === "bottomright" ? "0" : null)};
+const Wrapper = styled.div``;
+
+const InnerWrapper = styled.div<{
+  position?: "topleft" | "topright" | "bottomleft" | "bottomright";
+}>`
   padding: 5px;
   display: flex;
 `;

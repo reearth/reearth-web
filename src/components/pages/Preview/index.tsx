@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
+import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
 import { PublishedAppProvider as ThemeProvider } from "../../../theme";
 import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
@@ -19,9 +20,11 @@ const PreviewPage: React.FC<Props> = ({ sceneId }) => {
 
   return sceneId2 ? (
     <ThemeProvider>
-      <AuthenticationRequiredPage>
-        <CanvasArea isBuilt />
-      </AuthenticationRequiredPage>
+      <DndProvider>
+        <AuthenticationRequiredPage>
+          <CanvasArea isBuilt />
+        </AuthenticationRequiredPage>
+      </DndProvider>
     </ThemeProvider>
   ) : null;
 };

@@ -61,13 +61,17 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
 
   const stories = useMemo<Story[]>(() => {
     if (!storiesData || !primitives) return [];
-    return storiesData.map(story => {
-      const primitive = primitives.find(l => l.id === story.layer);
-      return {
-        ...story,
-        title: story.title || primitive?.title || "",
-      };
-    });
+    return storiesData
+      .map(story => {
+        const primitive = primitives.find(l => l.id === story.layer);
+        return primitive
+          ? {
+              ...story,
+              title: story.title || primitive.title,
+            }
+          : undefined;
+      })
+      .filter((s): s is Story => !!s);
   }, [primitives, storiesData]);
 
   const [layerIndex, setLayerIndex] = useState<number>();
@@ -162,7 +166,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
   const layerPageCount = stories?.length;
 
   return typeof layerPageCount === "number" && layerPageCount > 0 ? (
-    <>
+    <div>
       <Menu ref={wrapperRef} menuOpen={menuOpen}>
         {stories?.map((story, i) => (
           <MenuItem
@@ -212,17 +216,13 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
       </Wrapper>
-    </>
+    </div>
   ) : null;
 };
 
 const Wrapper = styled.div`
   background-color: ${props => props.theme.main.paleBg};
   color: ${props => props.theme.main.text};
-  z-index: ${props => props.theme.zIndexes.infoBox};
-  position: absolute;
-  bottom: 80px;
-  left: 80px;
   display: flex;
   align-items: stretch;
   border-radius: ${metricsSizes["s"]}px;
@@ -230,6 +230,7 @@ const Wrapper = styled.div`
   height: 80px;
   width: 500px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  pointer-event: auto;
 
   @media (max-width: 1366px) {
     left: 30px;
@@ -307,8 +308,7 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
   background-color: ${props => props.theme.main.paleBg};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
-  bottom: 168px;
-  left: 80px;
+  margin-left: ${({ theme }) => theme.metrics.l + "px"};
   width: 324px;
   max-height: 500px;
   overflow: auto;
@@ -316,6 +316,7 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
+  transform: translate(0, -110%);
 
   @media (max-width: 1366px) {
     left: 30px;

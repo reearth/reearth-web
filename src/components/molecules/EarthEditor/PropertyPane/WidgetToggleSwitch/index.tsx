@@ -23,7 +23,7 @@ const WidgetToggleButton: React.FC<Props> = ({
   const intl = useIntl();
   return (
     <ToggleWrapper>
-      <Text size="xs">
+      <Text size="xs" otherProperties={{ userSelect: "none" }}>
         {mode === "widgets"
           ? intl.formatMessage({ defaultMessage: "Enable Editor Mode" })
           : intl.formatMessage({ defaultMessage: "Enable" })}

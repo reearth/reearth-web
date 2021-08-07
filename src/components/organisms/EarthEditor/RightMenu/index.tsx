@@ -30,7 +30,7 @@ const RightMenu: React.FC = () => {
   const property =
     selectedLayerType === "layer" && selectedLayerId
       ? "layer"
-      : selectedLayerType === "widget"
+      : selectedLayerType === "widget" || selectedLayerType === "widgets"
       ? "widget"
       : "scene";
 
@@ -62,7 +62,7 @@ const RightMenu: React.FC = () => {
   }, [selectedBlock, setSelectedTab]);
 
   return (
-    <TabArea<"layer" | "widget" | "scene" | "infobox" | "export">
+    <TabArea<"layer" | "widget" | "widgets" | "scene" | "infobox" | "export">
       menuAlignment="top"
       selected={
         selectedBlock || selectedTab === "infobox"
