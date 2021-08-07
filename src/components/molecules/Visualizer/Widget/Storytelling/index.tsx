@@ -61,17 +61,13 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
 
   const stories = useMemo<Story[]>(() => {
     if (!storiesData || !primitives) return [];
-    return storiesData
-      .map(story => {
-        const primitive = primitives.find(l => l.id === story.layer);
-        return primitive
-          ? {
-              ...story,
-              title: story.title || primitive.title,
-            }
-          : undefined;
-      })
-      .filter((s): s is Story => !!s);
+    return storiesData.map(story => {
+      const primitive = primitives.find(l => l.id === story.layer);
+      return {
+        ...story,
+        title: story.title || primitive?.title || "",
+      };
+    });
   }, [primitives, storiesData]);
 
   const [layerIndex, setLayerIndex] = useState<number>();

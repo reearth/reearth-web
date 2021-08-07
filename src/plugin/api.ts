@@ -103,10 +103,8 @@ export type UI = {
    * Creates a new iframe to show any UI of the plugin or call the web browser API in a hidden way.
    *
    * ```js
-   * reearth.ui.show(`<h1>Hello</h1>`, { visible: true });
+   * reearth.ui.show(`<h1>Hello</h1>`);
    * ```
-   *
-   * Please note that visible field in the options defaults to be false. If you want to show the UI, the visible option is needed to be true.
    *
    * How the UI is displayed depends on the type of extension when visible field is true in the options: in the case of widgets, it will be displayed in the place where it is placed on the screen, in the case of blocks, it will be displayed in the infobox field, but in the case of primitives, it will never actually be displayed.
    *

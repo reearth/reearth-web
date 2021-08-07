@@ -27,15 +27,46 @@ Default.args = {
   },
   staticExposed: ({ render, postMessage }) => ({
     reearth: {
+      on(type: string, value: (message: any) => void | undefined) {
+        if (type === "message") {
+          cb = value;
+        }
+      },
       ui: {
         show: render,
         postMessage,
-        get onmessage() {
-          return cb;
-        },
-        set onmessage(value: (message: any) => void | undefined) {
+      },
+    },
+  }),
+  onMessage: (message: any) => {
+    action("onMessage")(message);
+    return cb?.(message);
+  },
+};
+
+export const HiddenIFrame: Story<Props> = args => <Component {...args} />;
+
+HiddenIFrame.args = {
+  src: `${process.env.PUBLIC_URL}/plugins/hidden.js`,
+  canBeVisible: true,
+  style: {
+    width: "300px",
+    height: "300px",
+    backgroundColor: "#fff",
+  },
+  exposed: {
+    "console.log": action("console.log"),
+  },
+  staticExposed: ({ render, postMessage }) => ({
+    reearth: {
+      on(type: string, value: (message: any) => void | undefined) {
+        if (type === "message") {
           cb = value;
-        },
+        }
+      },
+      ui: {
+        show: render,
+        postMessage,
       },
     },
   }),

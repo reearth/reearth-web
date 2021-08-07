@@ -67,7 +67,8 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onBlockMove={onBlockMove}
       onBlockDelete={onBlockRemove}
       onBlockInsert={onBlockInsert}
-      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}>
+      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
+      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>
       <FovSlider
         isCapturing={isCapturing}
         onIsCapturingChange={onIsCapturingChange}

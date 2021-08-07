@@ -25,6 +25,7 @@ export default function Published({ className, alias }: Props) {
       ready={ready}
       isBuilt
       isPublished
+      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}
     />
   );
 }

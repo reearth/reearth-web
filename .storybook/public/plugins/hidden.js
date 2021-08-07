@@ -1,5 +1,4 @@
 const html = `
-<h1>IFrame works</h1>
 <script>
   addEventListener("message", e => {
     if (e.source !== parent) return;
@@ -12,7 +11,7 @@ const html = `
 </script>
 `;
 
-reearth.ui.show(html);
+reearth.ui.show(html, { visible: false });
 reearth.on("message", (message) => {
   console.log("plugin <- iframe", message);
 });
