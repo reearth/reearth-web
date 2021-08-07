@@ -7,7 +7,6 @@ import { reachify } from "redux-first-history";
 import { Provider as ThemeProvider, styled } from "./theme";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as LocalStateProvider } from "./state";
-// import { Provider as DndProvider } from "./util/use-dnd";
 import { Provider as Auth0Provider } from "./auth";
 import { Provider as IntlProvider } from "@reearth/locale";
 
@@ -53,10 +52,8 @@ const App: React.FC = () => {
                   <StyledRouter>
                     <TopPage path="/" />
                     <Dashboard path="/dashboard/:teamId" />
-
                     <EarthEditor path="/edit/:sceneId" />
                     <Preview path="/edit/:sceneId/preview" />
-
                     <Redirect from="/settings" to="/settings/account" />
                     <AccountSettings path="/settings/account" />
                     <WorkspaceList path="/settings/workspaces" />
