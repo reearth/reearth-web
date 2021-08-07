@@ -1,4 +1,5 @@
 import React from "react";
+import { ContextConsumer } from "reearth-realign";
 
 import Wrapper from "@reearth/components/atoms/PropertyPane";
 import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
@@ -127,6 +128,8 @@ const PropertyPane: React.FC<Props> = ({
     "onItemsUpdate",
   ]);
   const events = useBind(eventProps, propertyId);
+
+  const AlignSystemEditorToggle = ContextConsumer(WidgetToggleButton);
   return (
     <>
       {mode === "widget" && (
@@ -137,11 +140,7 @@ const PropertyPane: React.FC<Props> = ({
         />
       )}
       {mode === "widgets" && (
-        <WidgetToggleButton
-          mode={mode}
-          checked={!!selectedWidget?.enabled}
-          onChange={() => onWidgetActivate?.(!selectedWidget?.enabled)}
-        />
+        <AlignSystemEditorToggle mode={mode} checked={!!selectedWidget?.enabled} />
       )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||
         (mode !== "widget" && (propertyId || infoboxCreatable))) && (

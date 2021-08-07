@@ -10,11 +10,20 @@ import {
   EarthLayer5Fragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
+  WidgetAlignSystem as WidgetAlignSystemType,
+  WidgetZone as WidgetZoneType,
+  WidgetSection as WidgetSectionType,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
 import { Item } from "@reearth/components/atoms/ContentPicker";
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import {
+  WidgetAlignSystem,
+  WidgetZone,
+  WidgetSection,
+  Alignment,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 type BlockType = Item & {
   pluginId: string;
@@ -156,8 +165,10 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
     : undefined;
 };
 
-export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[] | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene") {
+export const convertWidgets = (
+  data: GetEarthWidgetsQuery | undefined,
+): { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } | undefined => {
+  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
     return undefined;
   }
 
@@ -166,6 +177,8 @@ export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[]
     .map(
       (widget): Widget => ({
         id: widget.id,
+        extended: widget.extended as boolean,
+        floating: widget.extension?.widgetLayout?.floating,
         pluginId: widget.pluginId,
         extensionId: widget.extensionId,
         property: convertProperty(widget.property),
@@ -173,7 +186,49 @@ export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[]
       }),
     );
 
-  return widgets;
+  const filterWidgets = (widgets: Widget[], layout: WidgetAlignSystemType): WidgetAlignSystem => {
+    const outer = layout.outer as WidgetZoneType;
+    const inner = layout.inner as WidgetZoneType;
+
+    const handleWidgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
+      return {
+        left: handleWidgetInsertion(zone?.left),
+        center: handleWidgetInsertion(zone?.center),
+        right: handleWidgetInsertion(zone?.right),
+      };
+    };
+
+    const handleWidgetInsertion = (gridSection?: Maybe<WidgetSectionType>): WidgetSection | [] => {
+      if (!gridSection) return [];
+      return [
+        {
+          position: "top",
+          align: gridSection.top?.align as Alignment,
+          widgets: gridSection.top?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
+        },
+        {
+          position: "middle",
+          align: gridSection.middle?.align as Alignment,
+          widgets: gridSection.middle?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
+        },
+        {
+          position: "bottom",
+          align: gridSection.bottom?.align as Alignment,
+          widgets: gridSection.bottom?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
+        },
+      ];
+    };
+
+    return {
+      outer: handleWidgetZone(outer),
+      inner: handleWidgetZone(inner),
+    };
+  };
+
+  return {
+    floatWidgets: widgets.filter(w => !!w.floating),
+    alignSystem: filterWidgets(widgets, data.node?.widgetAlignSystem),
+  };
 };
 
 export const convertLayers = (data: GetLayersQuery | undefined, selectedLayerId?: string) => {

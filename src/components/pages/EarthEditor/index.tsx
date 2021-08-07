@@ -1,4 +1,5 @@
 import React from "react";
+import { EditorModeContextProvider } from "reearth-realign";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 
 import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
@@ -20,15 +21,17 @@ const EarthEditor: React.FC<Props> = ({ sceneId }) => {
 
   return (
     <AuthenticationRequiredPage>
-      <EarthEditorPage
-        loading={loading}
-        loaded={loaded}
-        header={<Header />}
-        left={<LeftMenu />}
-        centerTop={<PrimitiveHeader />}
-        center={<CanvasArea />}
-        right={<RightMenu />}
-      />
+      <EditorModeContextProvider>
+        <EarthEditorPage
+          loading={loading}
+          loaded={loaded}
+          header={<Header />}
+          left={<LeftMenu />}
+          centerTop={<PrimitiveHeader />}
+          center={<CanvasArea />}
+          right={<RightMenu />}
+        />
+      </EditorModeContextProvider>
     </AuthenticationRequiredPage>
   );
 };

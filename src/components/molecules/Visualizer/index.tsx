@@ -9,7 +9,7 @@ import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
-
+import WidgetAlignSystem, { WidgetAlignSystem as WidgetAlignSystemType } from "./WidgetAlignSystem";
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
 
@@ -33,7 +33,7 @@ export type Props = PropsWithChildren<
   {
     rootLayerId?: string;
     primitives?: Primitive[];
-    widgets?: Widget[];
+    widgets?: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystemType };
     sceneProperty?: SceneProperty;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
@@ -99,6 +99,7 @@ export default function Visualizer({
     <Provider value={visualizerContext}>
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
+        {widgets && <WidgetAlignSystem alignSystem={widgets.alignSystem} />}
         <Engine
           ref={engineRef}
           property={sceneProperty}
@@ -120,7 +121,7 @@ export default function Visualizer({
               pluginBaseUrl={pluginBaseUrl}
             />
           ))}
-          {widgets?.map(widget => (
+          {widgets?.floatWidgets.map(widget => (
             <W
               key={widget.id}
               widget={widget}

@@ -86,6 +86,15 @@ export type Widget = {
   pluginId?: string;
   extensionId?: string;
   property?: any;
+  extended?: boolean;
+  floating?: boolean;
+  widgetLayout?: Location;
+};
+
+export type Location = {
+  zone: string;
+  section: string;
+  area: string;
 };
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */

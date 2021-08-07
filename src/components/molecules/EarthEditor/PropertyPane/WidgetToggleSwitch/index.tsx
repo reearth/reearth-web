@@ -9,9 +9,17 @@ export type Props = {
   mode?: "widgets" | "widget";
   checked?: boolean;
   onChange?: () => Promise<void> | undefined;
+  editorMode?: boolean;
+  setEditorMode?: (on: boolean) => void;
 };
 
-const WidgetToggleButton: React.FC<Props> = ({ mode, ...props }) => {
+const WidgetToggleButton: React.FC<Props> = ({
+  mode,
+  editorMode,
+  setEditorMode,
+  checked,
+  onChange,
+}) => {
   const intl = useIntl();
   return (
     <ToggleWrapper>
@@ -20,7 +28,10 @@ const WidgetToggleButton: React.FC<Props> = ({ mode, ...props }) => {
           ? intl.formatMessage({ defaultMessage: "Enable Editor Mode" })
           : intl.formatMessage({ defaultMessage: "Enable" })}
       </Text>
-      <ToggleButton {...props} />
+      <ToggleButton
+        checked={mode === "widgets" ? editorMode : checked}
+        onChange={mode === "widgets" ? () => setEditorMode?.(!editorMode) : onChange}
+      />
     </ToggleWrapper>
   );
 };

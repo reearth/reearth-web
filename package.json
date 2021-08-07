@@ -198,7 +198,7 @@
         "react-svg": "^11.2.3",
         "react-use": "^17.1.1",
         "redux-first-history": "^4.5.0",
-        "reearth-realign": "^1.0.3",
+        "reearth-realign": "^1.0.5",
         "regenerator-runtime": "^0.13.7",
         "remark-gfm": "^1.0.0",
         "resium": "^1.13.1",
