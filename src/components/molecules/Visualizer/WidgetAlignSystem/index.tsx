@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { GridWrapper, GridSection, GridArea, GridItem, useContext } from "reearth-realign";
-// import W from "../Widget";
+import W from "../Widget";
 import useHooks, {
   WidgetAlignSystem as WidgetAlignSystemType,
   WidgetZone,
@@ -23,6 +23,10 @@ type WidgetZoneProps = {
   onReorder: () => void;
   onMove: (currentItem?: string, dropLocation?: Location) => void;
   onAlignChange: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
+  isEditable?: boolean;
+  isBuilt?: boolean;
+  sceneProperty?: any;
+  pluginBaseUrl?: string;
 };
 
 type WidgetAreaProps = {
@@ -32,6 +36,10 @@ type WidgetAreaProps = {
   onReorder: () => void;
   onMove: (currentItem?: string, dropLocation?: Location) => void;
   onAlignChange: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
+  isEditable?: boolean;
+  isBuilt?: boolean;
+  sceneProperty?: any;
+  pluginBaseUrl?: string;
 };
 
 type Props = {
@@ -43,6 +51,10 @@ type Props = {
     align?: Alignments | undefined,
     location?: Location,
   ) => Promise<void>;
+  isEditable?: boolean;
+  isBuilt?: boolean;
+  sceneProperty?: any;
+  pluginBaseUrl?: string;
 };
 
 const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
@@ -52,6 +64,10 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
   onReorder,
   onMove,
   onAlignChange,
+  sceneProperty,
+  pluginBaseUrl,
+  isEditable,
+  isBuilt,
 }) => {
   const [align, setAlign] = useState(area.align ?? "start");
 
@@ -94,16 +110,16 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
           index={i}
           onReorder={onReorder}
           onMoveArea={onMove}>
-          <p>Hello</p>
-          {/* <W
-              key={widget.id}
-              widget={widget}
-              sceneProperty={sceneProperty}
-              pluginProperty={widget.pluginProperty}
-              isEditable={props.isEditable}
-              isBuilt={props.isBuilt}
-              pluginBaseUrl={pluginBaseUrl}
-            /> */}
+          {/* <p>Hello</p> */}
+          <W
+            key={widget?.id}
+            widget={widget}
+            sceneProperty={sceneProperty}
+            pluginProperty={widget?.pluginProperty}
+            isEditable={isEditable}
+            isBuilt={isBuilt}
+            pluginBaseUrl={pluginBaseUrl}
+          />
         </GridItem>
       ))}
     </GridArea>
@@ -117,6 +133,10 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
   onReorder,
   onMove,
   onAlignChange,
+  sceneProperty,
+  pluginBaseUrl,
+  isEditable,
+  isBuilt,
 }) => (
   <>
     <GridSection>
@@ -129,6 +149,10 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
           onReorder={onReorder}
           onMove={onMove}
           onAlignChange={onAlignChange}
+          sceneProperty={sceneProperty}
+          pluginBaseUrl={pluginBaseUrl}
+          isEditable={isEditable}
+          isBuilt={isBuilt}
         />
       ))}
     </GridSection>
@@ -144,6 +168,10 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
               onReorder={onReorder}
               onMove={onMove}
               onAlignChange={onAlignChange}
+              sceneProperty={sceneProperty}
+              pluginBaseUrl={pluginBaseUrl}
+              isEditable={isEditable}
+              isBuilt={isBuilt}
             />
           </div>
         ) : a.position !== "middle" ? (
@@ -155,6 +183,10 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
             onReorder={onReorder}
             onMove={onMove}
             onAlignChange={onAlignChange}
+            sceneProperty={sceneProperty}
+            pluginBaseUrl={pluginBaseUrl}
+            isEditable={isEditable}
+            isBuilt={isBuilt}
           />
         ) : undefined,
       )}
@@ -169,13 +201,24 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
           onReorder={onReorder}
           onMove={onMove}
           onAlignChange={onAlignChange}
+          sceneProperty={sceneProperty}
+          pluginBaseUrl={pluginBaseUrl}
+          isEditable={isEditable}
+          isBuilt={isBuilt}
         />
       ))}
     </GridSection>
   </>
 );
 
-const WidgetAlignSystem: React.FC<Props> = ({ alignSystem, onWidgetUpdate }) => {
+const WidgetAlignSystem: React.FC<Props> = ({
+  alignSystem,
+  onWidgetUpdate,
+  sceneProperty,
+  pluginBaseUrl,
+  isEditable,
+  isBuilt,
+}) => {
   const { editorMode } = useContext();
   const { alignState, onReorder, onMove, onAlignChange } = useHooks({
     alignSystem,
@@ -198,6 +241,10 @@ const WidgetAlignSystem: React.FC<Props> = ({ alignSystem, onWidgetUpdate }) => 
           onReorder={onReorder}
           onMove={onMove}
           onAlignChange={onAlignChange}
+          sceneProperty={sceneProperty}
+          pluginBaseUrl={pluginBaseUrl}
+          isEditable={isEditable}
+          isBuilt={isBuilt}
         />
       </GridWrapper>
     </div>

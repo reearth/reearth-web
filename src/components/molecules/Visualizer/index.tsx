@@ -112,7 +112,14 @@ export default function Visualizer({
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
         {widgets && (
-          <WidgetAlignSystem alignSystem={widgets.alignSystem} onWidgetUpdate={onWidgetUpdate} />
+          <WidgetAlignSystem
+            alignSystem={widgets.alignSystem}
+            onWidgetUpdate={onWidgetUpdate}
+            sceneProperty={sceneProperty}
+            isEditable={props.isEditable}
+            isBuilt={props.isBuilt}
+            pluginBaseUrl={pluginBaseUrl}
+          />
         )}
         <Engine
           ref={engineRef}
