@@ -45,7 +45,7 @@ const StyledImg = styled.img<{ size?: string }>`
 const SVG: React.FC<
   Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt">
 > = props => {
-  return <ReactSVG {...props} />;
+  return <ReactSVG {...props} wrapper="span" />;
 };
 
 const StyledSvg = styled(SVG)<{ color?: string; size?: string }>`
