@@ -6,6 +6,7 @@ import React, {
   ReactNode,
   RefAttributes,
   CSSProperties,
+  forwardRef,
 } from "react";
 
 import type { Camera } from "@reearth/util/value";
@@ -79,4 +80,4 @@ const Engine: ForwardRefRenderFunction<Ref, Props> = ({ engine, children, ...pro
   ) : null;
 };
 
-export default React.forwardRef(Engine);
+export default forwardRef(Engine);
