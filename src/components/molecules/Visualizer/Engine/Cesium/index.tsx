@@ -76,14 +76,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           display: ready ? undefined : "none",
           ...style,
         }}
-        onClick={selectViewerEntity}
         requestRenderMode={!property?.timeline?.animation}
         maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
         shadows={!!property?.atmosphere?.shadows}>
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
-          {/* remove default click event */}
-          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
+          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} action={selectViewerEntity} />
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
