@@ -1,6 +1,6 @@
 import { Cesium3DTileStyle } from "cesium";
 import React, { useMemo } from "react";
-import { Cesium3DTileset } from "resium";
+import { Cesium3DTileset, useCesium } from "resium";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode } from "../common";
@@ -15,7 +15,8 @@ export type Property = {
   };
 };
 
-export default function Tiles({ primitive }: PrimitiveProps<Property>): JSX.Element | null {
+export default function Tileset({ primitive }: PrimitiveProps<Property>): JSX.Element | null {
+  const { viewer } = useCesium();
   const { isVisible, property } = primitive ?? {};
   const { tileset, styleUrl, shadows } = (property as Property | undefined)?.default ?? {};
   const style = useMemo<Cesium3DTileStyle | undefined>(
@@ -24,6 +25,13 @@ export default function Tiles({ primitive }: PrimitiveProps<Property>): JSX.Elem
   );
 
   return !isVisible || !tileset ? null : (
-    <Cesium3DTileset url={tileset} shadows={shadowMode(shadows)} style={style} />
+    <Cesium3DTileset
+      url={tileset}
+      shadows={shadowMode(shadows)}
+      style={style}
+      onReady={_debugFlight ? t => viewer?.zoomTo(t) : undefined}
+    />
   );
 }
+
+const _debugFlight = false;
