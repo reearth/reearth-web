@@ -1007,6 +1007,7 @@ export type PageInfo = {
 export type Plugin = {
   __typename?: 'Plugin';
   id: Scalars['PluginID'];
+  sceneId?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   version: Scalars['String'];
   description: Scalars['String'];
@@ -1014,6 +1015,7 @@ export type Plugin = {
   repositoryUrl: Scalars['String'];
   propertySchemaId?: Maybe<Scalars['PropertySchemaID']>;
   extensions: Array<PluginExtension>;
+  scene?: Maybe<Scene>;
   scenePlugin?: Maybe<ScenePlugin>;
   allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
   allTranslatedName?: Maybe<Scalars['TranslatedString']>;
@@ -1024,7 +1026,7 @@ export type Plugin = {
 
 
 export type PluginScenePluginArgs = {
-  sceneId: Scalars['ID'];
+  sceneId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -1718,8 +1720,8 @@ export type UninstallPluginInput = {
 
 export type UninstallPluginPayload = {
   __typename?: 'UninstallPluginPayload';
+  pluginId: Scalars['PluginID'];
   scene: Scene;
-  scenePlugin: ScenePlugin;
 };
 
 export type UnlinkPropertyValueInput = {
@@ -1909,12 +1911,16 @@ export type UploadFileToPropertyInput = {
 };
 
 export type UploadPluginInput = {
-  file: Scalars['Upload'];
+  sceneId: Scalars['ID'];
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['URL']>;
 };
 
 export type UploadPluginPayload = {
   __typename?: 'UploadPluginPayload';
   plugin: Plugin;
+  scene: Scene;
+  scenePlugin: ScenePlugin;
 };
 
 export type User = Node & {
@@ -3112,69 +3118,6 @@ export type ChangePropertyValueMutationVariables = Exact<{
 export type ChangePropertyValueMutation = (
   { __typename?: 'Mutation' }
   & { updatePropertyValue?: Maybe<(
-    { __typename?: 'PropertyFieldPayload' }
-    & { property: (
-      { __typename?: 'Property' }
-      & Pick<Property, 'id'>
-      & { layer?: Maybe<(
-        { __typename?: 'LayerGroup' }
-        & Pick<LayerGroup, 'id'>
-        & Layer1Fragment_LayerGroup_Fragment
-      ) | (
-        { __typename?: 'LayerItem' }
-        & Pick<LayerItem, 'id'>
-        & Layer1Fragment_LayerItem_Fragment
-      )> }
-      & PropertyFragmentFragment
-    ) }
-  )> }
-);
-
-export type ChangePropertyValueLatLngMutationVariables = Exact<{
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-}>;
-
-
-export type ChangePropertyValueLatLngMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePropertyValueLatLng?: Maybe<(
-    { __typename?: 'PropertyFieldPayload' }
-    & { property: (
-      { __typename?: 'Property' }
-      & Pick<Property, 'id'>
-      & { layer?: Maybe<(
-        { __typename?: 'LayerGroup' }
-        & Pick<LayerGroup, 'id'>
-        & Layer1Fragment_LayerGroup_Fragment
-      ) | (
-        { __typename?: 'LayerItem' }
-        & Pick<LayerItem, 'id'>
-        & Layer1Fragment_LayerItem_Fragment
-      )> }
-      & PropertyFragmentFragment
-    ) }
-  )> }
-);
-
-export type ChangePropertyValueLatLngHeightMutationVariables = Exact<{
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  height: Scalars['Float'];
-}>;
-
-
-export type ChangePropertyValueLatLngHeightMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePropertyValueLatLngHeight?: Maybe<(
     { __typename?: 'PropertyFieldPayload' }
     & { property: (
       { __typename?: 'Property' }
@@ -6459,101 +6402,6 @@ export function useChangePropertyValueMutation(baseOptions?: Apollo.MutationHook
 export type ChangePropertyValueMutationHookResult = ReturnType<typeof useChangePropertyValueMutation>;
 export type ChangePropertyValueMutationResult = Apollo.MutationResult<ChangePropertyValueMutation>;
 export type ChangePropertyValueMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueMutation, ChangePropertyValueMutationVariables>;
-export const ChangePropertyValueLatLngDocument = gql`
-    mutation ChangePropertyValueLatLng($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lat: Float!, $lng: Float!) {
-  updatePropertyValueLatLng(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, lat: $lat, lng: $lng}
-  ) {
-    property {
-      id
-      ...PropertyFragment
-      layer {
-        id
-        ...Layer1Fragment
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}
-${Layer1FragmentFragmentDoc}`;
-export type ChangePropertyValueLatLngMutationFn = Apollo.MutationFunction<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>;
-
-/**
- * __useChangePropertyValueLatLngMutation__
- *
- * To run a mutation, you first call `useChangePropertyValueLatLngMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangePropertyValueLatLngMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changePropertyValueLatLngMutation, { data, loading, error }] = useChangePropertyValueLatLngMutation({
- *   variables: {
- *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
- *      itemId: // value for 'itemId'
- *      fieldId: // value for 'fieldId'
- *      lat: // value for 'lat'
- *      lng: // value for 'lng'
- *   },
- * });
- */
-export function useChangePropertyValueLatLngMutation(baseOptions?: Apollo.MutationHookOptions<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>) {
-        return Apollo.useMutation<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>(ChangePropertyValueLatLngDocument, baseOptions);
-      }
-export type ChangePropertyValueLatLngMutationHookResult = ReturnType<typeof useChangePropertyValueLatLngMutation>;
-export type ChangePropertyValueLatLngMutationResult = Apollo.MutationResult<ChangePropertyValueLatLngMutation>;
-export type ChangePropertyValueLatLngMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>;
-export const ChangePropertyValueLatLngHeightDocument = gql`
-    mutation ChangePropertyValueLatLngHeight($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lat: Float!, $lng: Float!, $height: Float!) {
-  updatePropertyValueLatLngHeight(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, lat: $lat, lng: $lng, height: $height}
-  ) {
-    property {
-      id
-      ...PropertyFragment
-      layer {
-        id
-        ...Layer1Fragment
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}
-${Layer1FragmentFragmentDoc}`;
-export type ChangePropertyValueLatLngHeightMutationFn = Apollo.MutationFunction<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>;
-
-/**
- * __useChangePropertyValueLatLngHeightMutation__
- *
- * To run a mutation, you first call `useChangePropertyValueLatLngHeightMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangePropertyValueLatLngHeightMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changePropertyValueLatLngHeightMutation, { data, loading, error }] = useChangePropertyValueLatLngHeightMutation({
- *   variables: {
- *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
- *      itemId: // value for 'itemId'
- *      fieldId: // value for 'fieldId'
- *      lat: // value for 'lat'
- *      lng: // value for 'lng'
- *      height: // value for 'height'
- *   },
- * });
- */
-export function useChangePropertyValueLatLngHeightMutation(baseOptions?: Apollo.MutationHookOptions<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>) {
-        return Apollo.useMutation<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>(ChangePropertyValueLatLngHeightDocument, baseOptions);
-      }
-export type ChangePropertyValueLatLngHeightMutationHookResult = ReturnType<typeof useChangePropertyValueLatLngHeightMutation>;
-export type ChangePropertyValueLatLngHeightMutationResult = Apollo.MutationResult<ChangePropertyValueLatLngHeightMutation>;
-export type ChangePropertyValueLatLngHeightMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>;
 export const LinkDatasetDocument = gql`
     mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaItemId: PropertySchemaFieldID, $fieldId: PropertySchemaFieldID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!) {
   linkDatasetToPropertyValue(
