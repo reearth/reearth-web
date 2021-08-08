@@ -8,7 +8,7 @@ import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "c
 import { Camera } from "@reearth/util/value";
 
 import type { Ref as EngineRef, SceneProperty } from "..";
-import tiles from "./tiles";
+import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
 
@@ -53,7 +53,7 @@ export default ({
       .map<[string, ImageryProvider | null, number | undefined, number | undefined]>(
         ([id, type, url, min, max]) => [
           id,
-          type ? (url ? tiles[type](url) : tiles[type]()) : null,
+          type ? (url ? imagery[type](url) : imagery[type]()) : null,
           min,
           max,
         ],
