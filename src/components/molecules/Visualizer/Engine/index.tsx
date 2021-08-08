@@ -51,6 +51,11 @@ export type SceneProperty = {
   };
 };
 
+export type OverridenInfobox = {
+  title?: string;
+  content: { key: string; value: string }[];
+};
+
 export type EngineProps = {
   className?: string;
   style?: CSSProperties;
@@ -62,7 +67,7 @@ export type EngineProps = {
   children?: ReactNode;
   ready?: boolean;
   selectedPrimitiveId?: string;
-  onPrimitiveSelect?: (id?: string) => void;
+  onPrimitiveSelect?: (id?: string, overridenInfobox?: OverridenInfobox) => void;
   onCameraChange?: (camera: Camera) => void;
 };
 

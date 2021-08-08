@@ -5,7 +5,8 @@ import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
 import { VisualizerContext } from "./context";
 import api from "./api";
-import type { Ref as EngineRef, SceneProperty } from "./Engine";
+import type { OverridenInfobox, Ref as EngineRef, SceneProperty } from "./Engine";
+import type { Props as InfoboxProps, Block } from "./Infobox";
 import type { Primitive } from ".";
 
 export default ({
@@ -62,11 +63,12 @@ export default ({
   );
   dropRef(wrapperRef);
 
-  const { selectedPrimitive, selectedPrimitiveId, selectPrimitive } = usePrimitiveSelection({
-    primitives,
-    selectedPrimitiveId: outerSelectedPrimitiveId,
-    onPrimitiveSelect,
-  });
+  const { selectedPrimitive, selectedPrimitiveId, infobox, selectPrimitive } =
+    usePrimitiveSelection({
+      primitives,
+      selectedPrimitiveId: outerSelectedPrimitiveId,
+      onPrimitiveSelect,
+    });
 
   const [selectedBlockId, selectBlock] = useInnerState<string>(outerSelectedBlockId, onBlockSelect);
 
@@ -148,6 +150,7 @@ export default ({
     selectedPrimitive,
     selectedBlockId,
     innerCamera,
+    infobox,
     selectPrimitive,
     selectBlock,
     updateCamera,
@@ -161,9 +164,14 @@ function usePrimitiveSelection({
 }: {
   primitives?: Primitive[];
   selectedPrimitiveId?: string;
-  onPrimitiveSelect?: (id?: string) => void;
+  infobox?: Pick<
+    InfoboxProps,
+    "infoboxKey" | "title" | "blocks" | "visible" | "property" | "primitive" | "isEditable"
+  >;
+  onPrimitiveSelect?: (id?: string, overridenInfobox?: OverridenInfobox) => void;
 }) {
   const [selectedPrimitiveId, innerSelectPrimitive] = useState<string | undefined>();
+  const [overridenInfobox, setOverridenInfobox] = useState<OverridenInfobox>();
 
   const selectedPrimitive = useMemo(
     () => (selectedPrimitiveId ? primitives?.find(p => p.id === selectedPrimitiveId) : undefined),
@@ -171,20 +179,50 @@ function usePrimitiveSelection({
   );
 
   const selectPrimitive = useCallback(
-    (id?: string) => {
+    (id?: string, overridenInfobox?: OverridenInfobox) => {
       innerSelectPrimitive(id);
       onPrimitiveSelect?.(id);
+      setOverridenInfobox(overridenInfobox);
     },
     [onPrimitiveSelect],
   );
 
+  const blocks = useMemo(
+    (): Block[] | undefined => overridenInfoboxBlocks(overridenInfobox),
+    [overridenInfobox],
+  );
+
+  const infobox = useMemo<
+    | Pick<
+        InfoboxProps,
+        "infoboxKey" | "title" | "blocks" | "visible" | "property" | "primitive" | "isEditable"
+      >
+    | undefined
+  >(
+    () =>
+      selectedPrimitive
+        ? {
+            infoboxKey: selectedPrimitive.id,
+            title: overridenInfobox?.title || selectedPrimitive.title,
+            isEditable: !overridenInfobox && selectedPrimitive.infoboxEditable,
+            visible: !!selectedPrimitive?.infobox,
+            property: selectedPrimitive?.infobox?.property,
+            primitive: selectedPrimitive,
+            blocks: blocks ?? selectedPrimitive.infobox?.blocks,
+          }
+        : undefined,
+    [selectedPrimitive, overridenInfobox, blocks],
+  );
+
   useEffect(() => {
     innerSelectPrimitive(outerSelectedPrimitiveId);
+    setOverridenInfobox(undefined);
   }, [outerSelectedPrimitiveId]);
 
   return {
     selectedPrimitive,
     selectedPrimitiveId,
+    infobox,
     selectPrimitive,
   };
 }
@@ -251,4 +289,26 @@ function useVisualizerContext({
   }, [camera, engine, pluginAPI, primitives, selectedPrimitive]);
 
   return ctx;
+}
+
+function overridenInfoboxBlocks(
+  overridenInfobox: OverridenInfobox | undefined,
+): Block[] | undefined {
+  return overridenInfobox && Array.isArray(overridenInfobox?.content)
+    ? [
+        {
+          id: "content",
+          pluginId: "reearth",
+          extensionId: "dlblock",
+          property: {
+            items: overridenInfobox.content.map((c, i) => ({
+              id: i,
+              item_title: c.key,
+              item_datastr: String(c.value),
+              item_datatype: "string",
+            })),
+          },
+        },
+      ]
+    : undefined;
 }

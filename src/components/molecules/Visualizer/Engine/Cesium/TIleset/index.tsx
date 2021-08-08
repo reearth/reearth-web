@@ -1,6 +1,6 @@
-import { Cesium3DTileStyle } from "cesium";
-import React, { useMemo } from "react";
-import { Cesium3DTileset, useCesium } from "resium";
+import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle } from "cesium";
+import React, { useCallback, useMemo } from "react";
+import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode } from "../common";
@@ -23,9 +23,18 @@ export default function Tileset({ primitive }: PrimitiveProps<Property>): JSX.El
     () => (styleUrl ? new Cesium3DTileStyle(styleUrl) : undefined),
     [styleUrl],
   );
+  const ref = useCallback(
+    (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
+      if (tileset?.cesiumElement) {
+        (tileset?.cesiumElement as any).__resium_primitive_id = primitive?.id;
+      }
+    },
+    [primitive],
+  );
 
   return !isVisible || !tileset ? null : (
     <Cesium3DTileset
+      ref={ref}
       url={tileset}
       shadows={shadowMode(shadows)}
       style={style}
