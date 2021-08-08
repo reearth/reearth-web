@@ -8,7 +8,7 @@ import {
   UrlTemplateImageryProvider,
 } from "cesium";
 
-const tiles: { [key: string]: (url?: string) => ImageryProvider | null } = {
+export default {
   default: () => createWorldImagery(),
   default_label: () =>
     createWorldImagery({
@@ -47,6 +47,4 @@ const tiles: { [key: string]: (url?: string) => ImageryProvider | null } = {
       url: "https://cyberjapandata.gsi.go.jp/xyz/std/",
     }),
   url: url => (url ? new UrlTemplateImageryProvider({ url }) : null),
-};
-
-export default tiles;
+} as { [key: string]: (url?: string) => ImageryProvider | null };

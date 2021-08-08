@@ -1,7 +1,7 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 
-import Component, { Props } from "./index";
+import Component, { Props } from ".";
 import { V } from "../storybook";
 
 export default {
