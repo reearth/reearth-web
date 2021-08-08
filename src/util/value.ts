@@ -86,15 +86,22 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   }
   const ok = typeof val !== "undefined" && val !== null;
   let newVal = val;
-  if (t === "camera" && "altitude" in val) {
+  if (t === "camera" && val && typeof val === "object" && "altitude" in val) {
     newVal = {
-      ...(val ?? []),
+      ...val,
       height: val.altitude,
     };
-  } else if (t === "typography") {
+  }
+  if (
+    t === "typography" &&
+    val &&
+    typeof val === "object" &&
+    "textAlign" in val &&
+    typeof val.textAlign === "string"
+  ) {
     newVal = {
-      ...(val ?? []),
-      ...(val?.textAlign ? { textAlign: val.textAlign.toLowerCase() } : {}),
+      ...val,
+      textAlign: val.textAlign.toLowerCase(),
     };
   }
   return { type: t, value: newVal, ok };
