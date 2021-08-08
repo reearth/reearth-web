@@ -1,8 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
 import { mapValues } from "lodash-es";
 
+import {
+  Maybe,
+  WidgetSection as WidgetSectionType,
+  WidgetZone as WidgetZoneType,
+} from "@reearth/gql";
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
 import { PublishedData } from "./types";
+import {
+  WidgetAlignSystem,
+  WidgetZone,
+  WidgetSection,
+  Alignments,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
@@ -38,18 +49,68 @@ export default (alias?: string) => {
     [data],
   );
 
-  const widgets = useMemo<Widget[] | undefined>(
-    () =>
-      data?.widgets?.map<Widget>(w => ({
-        id: `${data.id}/${w.pluginId}/${w.extensionId}`,
-        pluginId: w.pluginId,
-        extensionId: w.extensionId,
-        property: processProperty(w.property),
-        enabled: true,
-        pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
-      })),
-    [data],
-  );
+  const widgetSystem = useMemo<
+    { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } | undefined
+  >(() => {
+    if (!data || !data.widgets || !data.widgetAlignSystem) return undefined;
+
+    const widgets = data?.widgets?.map<Widget>(w => ({
+      id: w.id,
+      pluginId: w.pluginId,
+      extensionId: w.extensionId,
+      property: processProperty(w.property),
+      enabled: true,
+      floating: w.floating,
+      extended: w.extended,
+      pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
+    }));
+
+    const filterWidgets = (widgets: Widget[], layout: WidgetAlignSystem): WidgetAlignSystem => {
+      const outer = layout.outer as WidgetZoneType;
+      const inner = layout.inner as WidgetZoneType;
+
+      const handleWidgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
+        return {
+          left: handleWidgetInsertion(zone?.left),
+          center: handleWidgetInsertion(zone?.center),
+          right: handleWidgetInsertion(zone?.right),
+        };
+      };
+
+      const handleWidgetInsertion = (
+        gridSection?: Maybe<WidgetSectionType>,
+      ): WidgetSection | [] => {
+        if (!gridSection) return [];
+        return [
+          {
+            position: "top",
+            align: gridSection.top?.align as Alignments,
+            widgets: gridSection.top?.widgetIds?.map(w => widgets.find(w2 => w === w2.id)),
+          },
+          {
+            position: "middle",
+            align: gridSection.middle?.align as Alignments,
+            widgets: gridSection.middle?.widgetIds?.map(w => widgets.find(w2 => w === w2.id)),
+          },
+          {
+            position: "bottom",
+            align: gridSection.bottom?.align as Alignments,
+            widgets: gridSection.bottom?.widgetIds?.map(w => widgets.find(w2 => w === w2.id)),
+          },
+        ];
+      };
+
+      return {
+        outer: handleWidgetZone(outer),
+        inner: handleWidgetZone(inner),
+      };
+    };
+
+    return {
+      floatWidgets: widgets.filter(w => w.floating === true),
+      alignSystem: filterWidgets(widgets, data.widgetAlignSystem),
+    };
+  }, [data]);
 
   const actualAlias = useMemo(
     () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
@@ -96,7 +157,7 @@ export default (alias?: string) => {
     alias: actualAlias,
     sceneProperty,
     layers,
-    widgets,
+    widgets: widgetSystem,
     ready,
     error,
   };

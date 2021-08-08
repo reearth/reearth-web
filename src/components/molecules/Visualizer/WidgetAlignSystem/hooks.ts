@@ -44,7 +44,7 @@ export default function ({
   onWidgetUpdate,
 }: {
   alignSystem: WidgetAlignSystem;
-  onWidgetUpdate: (
+  onWidgetUpdate?: (
     id: string,
     extended?: boolean | undefined,
     index?: number | undefined,
@@ -68,7 +68,13 @@ export default function ({
   // Move
   const onMove = useCallback(
     (currentItem?: string, dropLocation?: Location) => {
-      if (!currentItem || !dropLocation?.zone || !dropLocation.section || !dropLocation.area)
+      if (
+        !currentItem ||
+        !dropLocation?.zone ||
+        !dropLocation.section ||
+        !dropLocation.area ||
+        !onWidgetUpdate
+      )
         return;
 
       onWidgetUpdate(currentItem, undefined, undefined, undefined, dropLocation);
@@ -78,7 +84,7 @@ export default function ({
 
   const onAlignChange = useCallback(
     (currentItem?: string, align?: Alignments) => {
-      if (!currentItem || !align) return;
+      if (!currentItem || !align || !onWidgetUpdate) return;
       onWidgetUpdate(currentItem, undefined, undefined, align, undefined);
     },
     [onWidgetUpdate],

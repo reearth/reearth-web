@@ -42,7 +42,7 @@ export type Props = PropsWithChildren<
     selectedBlockId?: string;
     pluginBaseUrl?: string;
     isPublished?: boolean;
-    onWidgetUpdate: (
+    onWidgetUpdate?: (
       id: string,
       extended?: boolean | undefined,
       index?: number | undefined,

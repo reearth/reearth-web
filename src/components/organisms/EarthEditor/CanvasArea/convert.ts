@@ -227,7 +227,7 @@ export const convertWidgets = (
 
   return {
     floatWidgets: widgets.filter(w => !!w.floating),
-    alignSystem: filterWidgets(widgets, data.node?.widgetAlignSystem),
+    alignSystem: filterWidgets(widgets, data.node.widgetAlignSystem),
   };
 };
 

@@ -44,7 +44,7 @@ type WidgetAreaProps = {
 
 type Props = {
   alignSystem: WidgetAlignSystemType;
-  onWidgetUpdate: (
+  onWidgetUpdate?: (
     id: string,
     extended?: boolean | undefined,
     index?: number | undefined,

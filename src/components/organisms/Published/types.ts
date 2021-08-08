@@ -1,4 +1,5 @@
 import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
+import { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -8,6 +9,7 @@ export type PublishedData = {
   plugins?: Record<string, Plugin>;
   layers?: Layer[];
   widgets?: Widget[];
+  widgetAlignSystem?: WidgetAlignSystem;
 };
 
 export type Plugin = {
@@ -35,7 +37,10 @@ export type Block = {
 };
 
 export type Widget = {
+  id: string;
   pluginId: string;
   extensionId: string;
   property: any;
+  extended?: boolean;
+  floating?: boolean;
 };
