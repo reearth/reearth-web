@@ -75,14 +75,13 @@ export default (isBuilt?: boolean) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
 
-      const gv = valueToGQL(v, vt);
       await changePropertyValue({
         variables: {
           propertyId,
           schemaItemId,
           fieldId: fid,
           type: gvt,
-          value: gv,
+          value: valueToGQL(v, vt),
         },
       });
     },
