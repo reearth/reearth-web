@@ -17,7 +17,10 @@ export const useDelayedCount = (durations: Durations = []) => {
 
   const startTransition = useCallback(
     (e: boolean, skipAnimation?: boolean) => {
-      if (timeout.current) return;
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+        timeout.current = undefined;
+      }
 
       if (skipAnimation) {
         setMode(e ? 0 : durations.length + 1);
