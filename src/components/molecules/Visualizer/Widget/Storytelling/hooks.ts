@@ -86,7 +86,7 @@ export default function ({
         camera,
         range,
       });
-      selectPrimitive?.(id);
+      selectPrimitive?.(id, { reason: "storytelling" });
     },
     [camera, duration, primitives, range, selectPrimitive, stories],
   );
