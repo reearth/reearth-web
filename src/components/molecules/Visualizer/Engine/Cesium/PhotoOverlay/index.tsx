@@ -1,18 +1,16 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { Entity, BillboardGraphics } from "resium";
-import { Math as CesiumMath, Cartesian3, EasingFunction } from "cesium";
-import useTransition, { TransitionStatus } from "@rot1024/use-transition";
+import { Cartesian3 } from "cesium";
 import nl2br from "react-nl2br";
 
 import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
-import { useDelayedCount, Durations } from "@reearth/util/use-delayed-count";
 import Text from "@reearth/components/atoms/Text";
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { useVisualizerContext } from "../../../context";
 import { useIcon, ho, vo } from "../common";
+import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -36,22 +34,7 @@ export type Property = {
   };
 };
 
-const cameraDuration = 2000;
-const cameraExitDuration = 2000;
-const fovDuration = 500;
-const fovExitDuration = 599;
-const photoDuration = 1000;
-const photoExitDuration = 500;
-const defaultFOV = CesiumMath.toRadians(60);
-
-const durations: Durations = [
-  [cameraDuration, cameraExitDuration],
-  [fovDuration, fovExitDuration],
-  [photoDuration, photoExitDuration],
-];
-
 const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelected }) => {
-  const ctx = useVisualizerContext();
   const { id, isVisible, property } = primitive ?? {};
   const {
     image,
@@ -82,60 +65,16 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
     shadowOffsetY: image ? imageShadowPositionY : undefined,
   });
 
-  // mode 0 = normal, 1 = flied, 2 = zoomed, 3 = photo
-  const [mode, prevMode, startTransition] = useDelayedCount(durations);
-  const prevCamera = useRef<Camera>();
-
-  useEffect(() => {
-    if (prevMode > 0 && mode === 0 && prevCamera.current) {
-      ctx?.engine?.flyTo(prevCamera.current, {
-        duration: cameraExitDuration / 1000,
-        easing: EasingFunction.CUBIC_IN_OUT,
-      });
-    }
-
-    if (prevMode === 0 && mode === 1 && camera) {
-      const currentCamera = ctx?.engine?.getCamera();
-      prevCamera.current = currentCamera;
-      ctx?.engine?.flyTo(camera, {
-        duration: cameraDuration / 1000,
-        easing: EasingFunction.CUBIC_IN_OUT,
-      });
-    }
-
-    if (prevMode === 1 && mode === 0) {
-      prevCamera.current = undefined;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, prevMode]); // ignore api, camera and selected
-
-  useEffect(() => {
-    if (isSelected && !photoOverlayImage) return;
-    startTransition(!isSelected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSelected]); // ignore photoOverlayImage and startTransition
-
-  const currentFov = mode >= 2 ? camera?.fov : prevCamera.current?.fov ?? defaultFOV;
-  useEffect(() => {
-    ctx?.engine?.flyTo(
-      { fov: currentFov },
-      {
-        duration: cameraDuration / 1000,
-        easing: EasingFunction.CUBIC_IN_OUT,
-      },
-    );
-  }, [ctx?.engine, currentFov]);
-
-  const transition = useTransition(mode >= 3, mode === 2 ? photoExitDuration : photoDuration, {
-    mountOnEnter: true,
-    unmountOnExit: true,
-  });
-
   const theme = useTheme();
 
   const pos = useMemo(() => {
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
   }, [location, height]);
+
+  const { photoOverlayImageTransiton, exitPhotoOverlay } = useHooks({
+    camera,
+    isSelected: isSelected && !!photoOverlayImage,
+  });
 
   return !isVisible ? null : (
     <>
@@ -146,12 +85,8 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ primitive, isSelecte
           verticalOrigin={vo(imageVerticalOrigin)}
         />
       </Entity>
-      {transition === "unmounted" ? null : (
-        <PhotoWrapper
-          transition={transition}
-          onClick={() => {
-            startTransition(true);
-          }}>
+      {photoOverlayImageTransiton === "unmounted" ? null : (
+        <PhotoWrapper transition={photoOverlayImageTransiton} onClick={exitPhotoOverlay}>
           <Photo src={photoOverlayImage} />
           {photoOverlayDescription && (
             <Description size="xs" color={theme.main.text}>
@@ -175,7 +110,9 @@ const PhotoWrapper = styled.div<{ transition: TransitionStatus }>`
   justify-content: center;
   align-items: center;
   transition: ${({ transition }) =>
-    transition === "entering" || transition === "exiting" ? `all ${photoDuration}ms ease` : ""};
+    transition === "entering" || transition === "exiting"
+      ? `all ${transition === "exiting" ? photoExitDuration : photoDuration}s ease`
+      : null};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
 `;
 
