@@ -3697,6 +3697,72 @@ export type RemoveDatasetSchemaMutation = (
   )> }
 );
 
+export type InstallablePluginsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type InstallablePluginsQuery = (
+  { __typename?: 'Query' }
+  & { installablePlugins: Array<(
+    { __typename?: 'PluginMetadata' }
+    & Pick<PluginMetadata, 'name' | 'description' | 'thumbnailUrl' | 'author' | 'createdAt'>
+  )> }
+);
+
+export type InstalledPluginsQueryVariables = Exact<{
+  projectId: Scalars['ID'];
+}>;
+
+
+export type InstalledPluginsQuery = (
+  { __typename?: 'Query' }
+  & { scene?: Maybe<(
+    { __typename?: 'Scene' }
+    & Pick<Scene, 'id'>
+    & { plugins: Array<(
+      { __typename?: 'ScenePlugin' }
+      & { plugin?: Maybe<(
+        { __typename?: 'Plugin' }
+        & Pick<Plugin, 'id' | 'name' | 'version' | 'description' | 'author' | 'repositoryUrl'>
+      )> }
+    )> }
+  )> }
+);
+
+export type UploadPluginMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['URL']>;
+}>;
+
+
+export type UploadPluginMutation = (
+  { __typename?: 'Mutation' }
+  & { uploadPlugin?: Maybe<(
+    { __typename?: 'UploadPluginPayload' }
+    & { plugin: (
+      { __typename?: 'Plugin' }
+      & Pick<Plugin, 'id' | 'name' | 'version' | 'description' | 'author'>
+    ), scenePlugin: (
+      { __typename?: 'ScenePlugin' }
+      & Pick<ScenePlugin, 'pluginId' | 'propertyId'>
+    ) }
+  )> }
+);
+
+export type UninstallPluginMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+}>;
+
+
+export type UninstallPluginMutation = (
+  { __typename?: 'Mutation' }
+  & { uninstallPlugin?: Maybe<(
+    { __typename?: 'UninstallPluginPayload' }
+    & Pick<UninstallPluginPayload, 'pluginId'>
+  )> }
+);
+
 export type ProjectQueryVariables = Exact<{
   teamId: Scalars['ID'];
 }>;
@@ -7341,6 +7407,162 @@ export function useRemoveDatasetSchemaMutation(baseOptions?: Apollo.MutationHook
 export type RemoveDatasetSchemaMutationHookResult = ReturnType<typeof useRemoveDatasetSchemaMutation>;
 export type RemoveDatasetSchemaMutationResult = Apollo.MutationResult<RemoveDatasetSchemaMutation>;
 export type RemoveDatasetSchemaMutationOptions = Apollo.BaseMutationOptions<RemoveDatasetSchemaMutation, RemoveDatasetSchemaMutationVariables>;
+export const InstallablePluginsDocument = gql`
+    query InstallablePlugins {
+  installablePlugins {
+    name
+    description
+    thumbnailUrl
+    author
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useInstallablePluginsQuery__
+ *
+ * To run a query within a React component, call `useInstallablePluginsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInstallablePluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInstallablePluginsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useInstallablePluginsQuery(baseOptions?: Apollo.QueryHookOptions<InstallablePluginsQuery, InstallablePluginsQueryVariables>) {
+        return Apollo.useQuery<InstallablePluginsQuery, InstallablePluginsQueryVariables>(InstallablePluginsDocument, baseOptions);
+      }
+export function useInstallablePluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstallablePluginsQuery, InstallablePluginsQueryVariables>) {
+          return Apollo.useLazyQuery<InstallablePluginsQuery, InstallablePluginsQueryVariables>(InstallablePluginsDocument, baseOptions);
+        }
+export type InstallablePluginsQueryHookResult = ReturnType<typeof useInstallablePluginsQuery>;
+export type InstallablePluginsLazyQueryHookResult = ReturnType<typeof useInstallablePluginsLazyQuery>;
+export type InstallablePluginsQueryResult = Apollo.QueryResult<InstallablePluginsQuery, InstallablePluginsQueryVariables>;
+export const InstalledPluginsDocument = gql`
+    query InstalledPlugins($projectId: ID!) {
+  scene(projectId: $projectId) {
+    id
+    plugins {
+      plugin {
+        id
+        name
+        version
+        description
+        author
+        repositoryUrl
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useInstalledPluginsQuery__
+ *
+ * To run a query within a React component, call `useInstalledPluginsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInstalledPluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInstalledPluginsQuery({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *   },
+ * });
+ */
+export function useInstalledPluginsQuery(baseOptions: Apollo.QueryHookOptions<InstalledPluginsQuery, InstalledPluginsQueryVariables>) {
+        return Apollo.useQuery<InstalledPluginsQuery, InstalledPluginsQueryVariables>(InstalledPluginsDocument, baseOptions);
+      }
+export function useInstalledPluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstalledPluginsQuery, InstalledPluginsQueryVariables>) {
+          return Apollo.useLazyQuery<InstalledPluginsQuery, InstalledPluginsQueryVariables>(InstalledPluginsDocument, baseOptions);
+        }
+export type InstalledPluginsQueryHookResult = ReturnType<typeof useInstalledPluginsQuery>;
+export type InstalledPluginsLazyQueryHookResult = ReturnType<typeof useInstalledPluginsLazyQuery>;
+export type InstalledPluginsQueryResult = Apollo.QueryResult<InstalledPluginsQuery, InstalledPluginsQueryVariables>;
+export const UploadPluginDocument = gql`
+    mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
+  uploadPlugin(input: {sceneId: $sceneId, file: $file, url: $url}) {
+    plugin {
+      id
+      name
+      version
+      description
+      author
+    }
+    scenePlugin {
+      pluginId
+      propertyId
+    }
+  }
+}
+    `;
+export type UploadPluginMutationFn = Apollo.MutationFunction<UploadPluginMutation, UploadPluginMutationVariables>;
+
+/**
+ * __useUploadPluginMutation__
+ *
+ * To run a mutation, you first call `useUploadPluginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadPluginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadPluginMutation, { data, loading, error }] = useUploadPluginMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      file: // value for 'file'
+ *      url: // value for 'url'
+ *   },
+ * });
+ */
+export function useUploadPluginMutation(baseOptions?: Apollo.MutationHookOptions<UploadPluginMutation, UploadPluginMutationVariables>) {
+        return Apollo.useMutation<UploadPluginMutation, UploadPluginMutationVariables>(UploadPluginDocument, baseOptions);
+      }
+export type UploadPluginMutationHookResult = ReturnType<typeof useUploadPluginMutation>;
+export type UploadPluginMutationResult = Apollo.MutationResult<UploadPluginMutation>;
+export type UploadPluginMutationOptions = Apollo.BaseMutationOptions<UploadPluginMutation, UploadPluginMutationVariables>;
+export const UninstallPluginDocument = gql`
+    mutation uninstallPlugin($sceneId: ID!, $pluginId: PluginID!) {
+  uninstallPlugin(input: {sceneId: $sceneId, pluginId: $pluginId}) {
+    pluginId
+  }
+}
+    `;
+export type UninstallPluginMutationFn = Apollo.MutationFunction<UninstallPluginMutation, UninstallPluginMutationVariables>;
+
+/**
+ * __useUninstallPluginMutation__
+ *
+ * To run a mutation, you first call `useUninstallPluginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUninstallPluginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uninstallPluginMutation, { data, loading, error }] = useUninstallPluginMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      pluginId: // value for 'pluginId'
+ *   },
+ * });
+ */
+export function useUninstallPluginMutation(baseOptions?: Apollo.MutationHookOptions<UninstallPluginMutation, UninstallPluginMutationVariables>) {
+        return Apollo.useMutation<UninstallPluginMutation, UninstallPluginMutationVariables>(UninstallPluginDocument, baseOptions);
+      }
+export type UninstallPluginMutationHookResult = ReturnType<typeof useUninstallPluginMutation>;
+export type UninstallPluginMutationResult = Apollo.MutationResult<UninstallPluginMutation>;
+export type UninstallPluginMutationOptions = Apollo.BaseMutationOptions<UninstallPluginMutation, UninstallPluginMutationVariables>;
 export const ProjectDocument = gql`
     query Project($teamId: ID!) {
   projects(teamId: $teamId, first: 0, last: 100) {
