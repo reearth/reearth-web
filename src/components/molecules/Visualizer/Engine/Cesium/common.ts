@@ -286,7 +286,7 @@ export const animateFOV = ({
         camera.frustum.fov = (fov - fromFov) * t + fromFov;
       },
       easing || "inOutCubic",
-      duration ?? 0,
+      (duration ?? 0) * 1000,
     );
   }
   return undefined;
