@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, IframeHTMLAttributes } from "react";
 import useHook, { RefType } from "./hooks";
 
 export type Ref = RefType;
@@ -9,12 +9,13 @@ export type Props = {
   html?: string;
   style?: CSSProperties;
   visible?: boolean;
+  iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
 };
 
 const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
-  { autoResize, className, html, style, visible, onLoad, onMessage },
+  { autoResize, className, html, style, visible, iFrameProps, onLoad, onMessage },
   ref,
 ) => {
   const {
@@ -46,7 +47,9 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
         ...style,
       }}
       className={className}
-      onLoad={onIFrameLoad}></iframe>
+      onLoad={onIFrameLoad}
+      {...iFrameProps}
+    />
   ) : null;
 };
 

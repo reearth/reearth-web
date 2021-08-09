@@ -1,5 +1,6 @@
 import React, { ComponentType } from "react";
 
+import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 import builtin from "./builtin";
 import Plugin, { Block, Primitive } from "../Plugin";
@@ -39,17 +40,30 @@ export default function BlockComponent<PP = any, IP = any, SP = any>({
   return Builtin ? (
     <Builtin {...props} />
   ) : (
-    <Plugin
-      pluginId={props.block?.pluginId}
-      extensionId={props.block?.extensionId}
-      sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
-      extensionType="block"
-      pluginBaseUrl={pluginBaseUrl}
-      visible
-      property={props.pluginProperty}
-      sceneProperty={props.sceneProperty}
-      primitive={props.primitive}
-      block={props.block}
-    />
+    <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
+      <Plugin
+        pluginId={props.block?.pluginId}
+        extensionId={props.block?.extensionId}
+        sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
+        extensionType="block"
+        pluginBaseUrl={pluginBaseUrl}
+        visible
+        property={props.pluginProperty}
+        sceneProperty={props.sceneProperty}
+        primitive={props.primitive}
+        block={props.block}
+      />
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
+  border: 1px solid
+    ${({ selected, editable, theme }) =>
+      editable && selected ? theme.infoBox.accent2 : "transparent"};
+  border-radius: 6px;
+
+  &:hover {
+    border-color: ${({ editable, theme }) => (editable ? theme.infoBox.border : null)};
+  }
+`;
