@@ -62,11 +62,12 @@ export default ({
   );
   dropRef(wrapperRef);
 
-  const { selectedPrimitive, selectedPrimitiveId, selectPrimitive } = usePrimitiveSelection({
-    primitives,
-    selectedPrimitiveId: outerSelectedPrimitiveId,
-    onPrimitiveSelect,
-  });
+  const { selectedPrimitive, selectedPrimitiveId, primitiveSelectionReason, selectPrimitive } =
+    usePrimitiveSelection({
+      primitives,
+      selectedPrimitiveId: outerSelectedPrimitiveId,
+      onPrimitiveSelect,
+    });
 
   const [selectedBlockId, selectBlock] = useInnerState<string>(outerSelectedBlockId, onBlockSelect);
 
@@ -126,6 +127,7 @@ export default ({
     primitives,
     camera: innerCamera,
     selectedPrimitive,
+    primitiveSelectionReason,
     selectPrimitive,
     showPrimitive,
     hidePrimitive,
@@ -145,6 +147,7 @@ export default ({
     visualizerContext,
     hiddenPrimitives,
     selectedPrimitiveId,
+    primitiveSelectionReason,
     selectedPrimitive,
     selectedBlockId,
     innerCamera,
@@ -164,6 +167,7 @@ function usePrimitiveSelection({
   onPrimitiveSelect?: (id?: string) => void;
 }) {
   const [selectedPrimitiveId, innerSelectPrimitive] = useState<string | undefined>();
+  const [primitiveSelectionReason, setSelectionReason] = useState<string | undefined>();
 
   const selectedPrimitive = useMemo(
     () => (selectedPrimitiveId ? primitives?.find(p => p.id === selectedPrimitiveId) : undefined),
@@ -171,20 +175,23 @@ function usePrimitiveSelection({
   );
 
   const selectPrimitive = useCallback(
-    (id?: string) => {
+    (id?: string, { reason }: { reason?: string } = {}) => {
       innerSelectPrimitive(id);
       onPrimitiveSelect?.(id);
+      setSelectionReason(reason);
     },
     [onPrimitiveSelect],
   );
 
   useEffect(() => {
     innerSelectPrimitive(outerSelectedPrimitiveId);
+    setSelectionReason(undefined);
   }, [outerSelectedPrimitiveId]);
 
   return {
     selectedPrimitive,
     selectedPrimitiveId,
+    primitiveSelectionReason,
     selectPrimitive,
   };
 }
@@ -215,6 +222,7 @@ function useVisualizerContext({
   camera,
   primitives = [],
   selectedPrimitive,
+  primitiveSelectionReason,
   showPrimitive,
   hidePrimitive,
   selectPrimitive,
@@ -223,18 +231,17 @@ function useVisualizerContext({
   camera?: Camera;
   primitives?: Primitive[];
   selectedPrimitive: Primitive | undefined;
+  primitiveSelectionReason?: string;
   showPrimitive: (...id: string[]) => void;
   hidePrimitive: (...id: string[]) => void;
-  selectPrimitive: (id?: string) => void;
+  selectPrimitive: (id?: string, options?: { reason?: string }) => void;
 }): VisualizerContext {
   const pluginAPI = useMemo(
     () =>
       api({
         engine: () => engine.current,
         hidePrimitive,
-        selectPrimitive: id => {
-          selectPrimitive?.(id);
-        },
+        selectPrimitive,
         showPrimitive,
       }),
     [engine, hidePrimitive, selectPrimitive, showPrimitive],
@@ -246,9 +253,10 @@ function useVisualizerContext({
       camera,
       primitives,
       selectedPrimitive,
+      primitiveSelectionReason,
       pluginAPI,
     };
-  }, [camera, engine, pluginAPI, primitives, selectedPrimitive]);
+  }, [camera, engine, pluginAPI, primitives, selectedPrimitive, primitiveSelectionReason]);
 
   return ctx;
 }

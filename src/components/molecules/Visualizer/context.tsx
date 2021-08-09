@@ -20,6 +20,7 @@ export type VisualizerContext = {
   camera?: Camera;
   primitives?: Primitive[];
   selectedPrimitive?: Primitive;
+  primitiveSelectionReason?: string;
   pluginAPI?: CommonGlobalThis;
 };
 

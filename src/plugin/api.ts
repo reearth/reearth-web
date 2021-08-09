@@ -52,8 +52,9 @@ export type Plugin = {
 export type Primitives = {
   readonly primitives: Primitive[];
   readonly selected?: Primitive;
+  readonly selectionReason?: string;
   /** Selects the primitive with the specified ID; if the ID is undefined, the currently selected primitive will be deselected. */
-  readonly select: (id?: string) => void;
+  readonly select: (id?: string, options?: { reason?: string }) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
 };

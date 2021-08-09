@@ -56,6 +56,7 @@ export type EngineProps = {
   children?: ReactNode;
   ready?: boolean;
   selectedPrimitiveId?: string;
+  primitiveSelectionReason?: string;
   onPrimitiveSelect?: (id?: string) => void;
   onCameraChange?: (camera: Camera) => void;
 };

@@ -74,6 +74,7 @@ export default function Visualizer({
     visualizerContext,
     selectedPrimitive,
     selectedPrimitiveId,
+    primitiveSelectionReason,
     selectedBlockId,
     innerCamera,
     selectPrimitive,
@@ -103,6 +104,7 @@ export default function Visualizer({
           ref={engineRef}
           property={sceneProperty}
           selectedPrimitiveId={selectedPrimitive?.id}
+          primitiveSelectionReason={primitiveSelectionReason}
           onPrimitiveSelect={selectPrimitive}
           {...props}
           camera={innerCamera}

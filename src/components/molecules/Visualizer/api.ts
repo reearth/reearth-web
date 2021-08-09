@@ -4,7 +4,7 @@ import { EngineRef } from "./Engine/ref";
 
 export type Options = {
   engine: () => EngineRef | null;
-  selectPrimitive: (id?: string) => void;
+  selectPrimitive: (id?: string, options?: { reason?: string }) => void;
   showPrimitive: (...id: string[]) => void;
   hidePrimitive: (...id: string[]) => void;
 };
@@ -46,14 +46,10 @@ function getPrimitives({
   showPrimitive,
   hidePrimitive,
 }: Options): CommonGlobalThis["reearth"]["primitives"] {
-  const select = (id?: string) => selectPrimitive(id);
-  const show = (...id: string[]) => showPrimitive(...id);
-  const hide = (...id: string[]) => hidePrimitive(...id);
-
   return {
-    select,
-    show,
-    hide,
+    select: selectPrimitive.bind(undefined),
+    show: showPrimitive.bind(undefined),
+    hide: hidePrimitive.bind(undefined),
   };
 }
 

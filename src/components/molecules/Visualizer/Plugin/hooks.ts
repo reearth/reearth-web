@@ -108,6 +108,7 @@ export default function ({
       "reearth.block": cloneDeep(block),
       "reearth.primitives.primitives": cloneDeep(ctx?.primitives),
       "reearth.primitives.selected": cloneDeep(ctx?.selectedPrimitive),
+      "reearth.primitives.selectionReason": cloneDeep(ctx?.primitiveSelectionReason),
       "reearth.plugin.property": cloneDeep(property),
       "reearth.visualizer.camera": cloneDeep(ctx?.camera),
       "reearth.visualizer.property": cloneDeep(sceneProperty),
@@ -115,6 +116,7 @@ export default function ({
     [
       ctx?.primitives,
       ctx?.selectedPrimitive,
+      ctx?.primitiveSelectionReason,
       ctx?.camera,
       primitive,
       widget,
