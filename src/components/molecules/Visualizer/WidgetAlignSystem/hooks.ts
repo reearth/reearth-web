@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Widget as WidgetType } from "../Widget";
-// Move types
+
 export type Location = {
   zone?: string;
   section?: string;
@@ -55,11 +55,20 @@ export default function ({
   const [alignState, setAlignState] = useState(alignSystem);
 
   // Reorder
-  const onReorder = useCallback(() => {
-    console.log("reorder");
-    // Below is to avoid warning on git commit only
-    setAlignState(alignSystem);
-  }, [alignSystem]);
+  const onReorder = useCallback(
+    (location?: Location, currentIndex?: number, hoverIndex?: number) => {
+      console.log("reorder");
+      console.log(location, "location");
+      console.log(currentIndex, "currentIndex");
+      console.log(hoverIndex, "hoverIndex");
+      if (!location?.zone || !location.section || !location.area || !hoverIndex) return;
+      const ts = Object.keys(alignSystem);
+      console.log(ts, "ts");
+      // const wid = alignSystem;
+      // onWidgetUpdate?.(wid, undefined, hoverIndex, undefined);
+    },
+    [alignSystem],
+  );
 
   useEffect(() => {
     setAlignState(alignSystem);
@@ -67,13 +76,16 @@ export default function ({
 
   // Move
   const onMove = useCallback(
-    (currentItem?: string, dropLocation?: Location) => {
+    (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => {
       if (
         !currentItem ||
         !dropLocation?.zone ||
         !dropLocation.section ||
         !dropLocation.area ||
-        !onWidgetUpdate
+        !onWidgetUpdate ||
+        (dropLocation.zone == originalLocation?.zone &&
+          dropLocation.section == originalLocation.section &&
+          dropLocation.area == originalLocation.area)
       )
         return;
 

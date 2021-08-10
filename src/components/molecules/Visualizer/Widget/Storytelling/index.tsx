@@ -192,7 +192,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper>
+      <Widget>
         <ArrowButton disabled={layerIndex === 0} onClick={handlePrev}>
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>
@@ -215,12 +215,12 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
         <ArrowButton disabled={layerIndex === layerPageCount - 1} onClick={handleNext}>
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
-      </Wrapper>
+      </Widget>
     </div>
   ) : null;
 };
 
-const Wrapper = styled.div`
+const Widget = styled.div`
   background-color: ${props => props.theme.main.paleBg};
   color: ${props => props.theme.main.text};
   display: flex;
@@ -232,16 +232,15 @@ const Wrapper = styled.div`
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   pointer-event: auto;
 
-  @media (max-width: 1366px) {
-    left: 30px;
-    bottom: 30px;
-  }
+  // @media (max-width: 1366px) {
+  //   left: 30px;
+  //   bottom: 30px;
+  // }
 
   @media (max-width: 560px) {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
+    display: flex;
+    width: 90vw;
+    margin: 0 auto;
     height: 56px;
   }
 `;
@@ -308,7 +307,6 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
   background-color: ${props => props.theme.main.paleBg};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
-  margin-left: ${({ theme }) => theme.metrics.l + "px"};
   width: 324px;
   max-height: 500px;
   overflow: auto;
@@ -316,17 +314,17 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-  transform: translate(0, -110%);
+  transform: translate(0, -105%);
 
   @media (max-width: 1366px) {
-    left: 30px;
-    bottom: 118px;
+    // left: 30px;
+    // bottom: 118px;
   }
 
   @media (max-width: 560px) {
-    right: 16px;
-    left: 16px;
-    bottom: 80px;
+    // right: 16px;
+    // left: 16px;
+    // bottom: 80px;
     border: 1px solid ${props => props.theme.main.text};
   }
 

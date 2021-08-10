@@ -27,7 +27,7 @@ const Menu = ({ widget }: Props): JSX.Element => {
   );
 
   return (
-    <Wrapper>
+    <div>
       {Object.entries(buttonsByPosition).map(([p, buttons]) =>
         buttons?.length ? (
           <InnerWrapper key={p} position={p as Position}>
@@ -39,11 +39,9 @@ const Menu = ({ widget }: Props): JSX.Element => {
           </InnerWrapper>
         ) : null,
       )}
-    </Wrapper>
+    </div>
   );
 };
-
-const Wrapper = styled.div``;
 
 const InnerWrapper = styled.div<{
   position?: "topleft" | "topright" | "bottomleft" | "bottomright";

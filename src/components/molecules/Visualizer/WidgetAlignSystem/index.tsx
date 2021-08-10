@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { GridWrapper, GridSection, GridArea, GridItem, useContext } from "reearth-realign";
 import W from "../Widget";
+import { styled } from "@reearth/theme";
 import useHooks, {
   WidgetAlignSystem as WidgetAlignSystemType,
   WidgetZone,
@@ -20,8 +21,8 @@ type WidgetZoneProps = {
   zoneName: string;
   zone: WidgetZone;
   innerZone?: WidgetZone;
-  onReorder: () => void;
-  onMove: (currentItem?: string, dropLocation?: Location) => void;
+  onReorder: (location?: Location, currentIndex?: number, hoverIndex?: number) => void;
+  onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
   onAlignChange: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -33,8 +34,8 @@ type WidgetAreaProps = {
   zone: string;
   section: keyof WidgetZone;
   area: WidgetArea;
-  onReorder: () => void;
-  onMove: (currentItem?: string, dropLocation?: Location) => void;
+  onReorder: (location?: Location, currentIndex?: number, hoverIndex?: number) => void;
+  onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
   onAlignChange: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -110,7 +111,7 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
           index={i}
           onReorder={onReorder}
           onMoveArea={onMove}
-          styles={{ pointerEvents: "auto", margin: "16px" }}>
+          styles={{ pointerEvents: "auto" }}>
           <W
             key={widget?.id}
             widget={widget}
@@ -159,9 +160,7 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
     <GridSection stretch>
       {zone.center.map(a =>
         innerZone && a.position === "middle" ? (
-          <div
-            key={a.position}
-            style={{ height: "100%", display: "flex", justifyContent: "space-between" }}>
+          <div key={a.position} style={{ display: "flex", height: "100%" }}>
             <WidgetZoneComponent
               zoneName="inner"
               zone={innerZone}
@@ -225,14 +224,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
     onWidgetUpdate,
   });
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        zIndex: 1,
-        position: "absolute",
-        pointerEvents: `${editorMode ? "auto" : "none"}`,
-      }}>
+    <WidetAlignSystemWrapper editorMode={editorMode}>
       <GridWrapper>
         <WidgetZoneComponent
           zoneName="outer"
@@ -247,8 +239,16 @@ const WidgetAlignSystem: React.FC<Props> = ({
           isBuilt={isBuilt}
         />
       </GridWrapper>
-    </div>
+    </WidetAlignSystemWrapper>
   );
 };
 
 export default WidgetAlignSystem;
+
+const WidetAlignSystemWrapper = styled.div<{ editorMode?: boolean }>`
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  position: absolute;
+  pointer-events: ${({ editorMode }) => (editorMode ? "auto" : "none")};
+`;
