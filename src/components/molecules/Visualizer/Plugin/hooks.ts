@@ -12,12 +12,12 @@ export default function ({
   sourceCode,
   pluginBaseUrl,
   extensionType,
-  primitive,
-  widget,
   block,
-  property,
-  sceneProperty,
-}: {
+}: // primitive,
+// widget,
+// property,
+// sceneProperty,
+{
   pluginId?: string;
   extensionId?: string;
   sourceCode?: string;
@@ -102,25 +102,31 @@ export default function ({
 
   const exposed = useMemo(
     // TODO: object must be cloned to prevent "already registered" error from qes
-    () => ({
-      "reearth.primitive": cloneDeep(primitive),
-      "reearth.widget": cloneDeep(widget),
-      "reearth.block": cloneDeep(block),
-      "reearth.primitives.primitives": cloneDeep(ctx?.primitives),
-      "reearth.primitives.selected": cloneDeep(ctx?.selectedPrimitive),
-      "reearth.plugin.property": cloneDeep(property),
-      "reearth.visualizer.camera": cloneDeep(ctx?.camera),
-      "reearth.visualizer.property": cloneDeep(sceneProperty),
-    }),
+    () => {
+      return {
+        // TODO: called several times, very heavy
+        // "reearth.primitives.primitives": cloneDeep(ctx?.primitives),
+        // "reearth.primitives.selected": cloneDeep(ctx?.selectedPrimitive),
+        // "reearth.primitives.selectionReason": cloneDeep(ctx?.primitiveSelectionReason),
+        // "reearth.primitives.overriddenInfobox": cloneDeep(ctx?.primitiveOverriddenInfobox),
+        // "reearth.plugin.property": cloneDeep(property),
+        // "reearth.visualizer.camera": cloneDeep(ctx?.camera),
+        // "reearth.visualizer.property": cloneDeep(sceneProperty),
+        // "reearth.primitive": cloneDeep(primitive),
+        // "reearth.widget": cloneDeep(widget),
+        "reearth.block": cloneDeep(block),
+      };
+    },
     [
-      ctx?.primitives,
-      ctx?.selectedPrimitive,
-      ctx?.camera,
-      primitive,
-      widget,
+      // ctx?.selectedPrimitive,
+      // ctx?.primitiveSelectionReason,
+      // ctx?.primitiveOverriddenInfobox,
+      // ctx?.camera,
+      // property,
+      // sceneProperty,
+      // primitive,
+      // widget,
       block,
-      property,
-      sceneProperty,
     ],
   );
 

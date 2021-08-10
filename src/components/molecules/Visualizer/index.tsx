@@ -86,8 +86,10 @@ export default function Visualizer({
     visualizerContext,
     selectedPrimitive,
     selectedPrimitiveId,
+    primitiveSelectionReason,
     selectedBlockId,
     innerCamera,
+    infobox,
     selectPrimitive,
     selectBlock,
     updateCamera,
@@ -125,6 +127,7 @@ export default function Visualizer({
           ref={engineRef}
           property={sceneProperty}
           selectedPrimitiveId={selectedPrimitive?.id}
+          primitiveSelectionReason={primitiveSelectionReason}
           onPrimitiveSelect={selectPrimitive}
           {...props}
           camera={innerCamera}
@@ -155,16 +158,16 @@ export default function Visualizer({
           ))}
         </Engine>
         <Infobox
-          title={selectedPrimitive?.title}
-          infoboxKey={selectedPrimitive?.id}
-          visible={!!selectedPrimitive?.infobox}
-          property={selectedPrimitive?.infobox?.property}
+          title={infobox?.title}
+          infoboxKey={infobox?.infoboxKey}
+          visible={!!infobox?.visible}
+          property={infobox?.property}
           sceneProperty={sceneProperty}
-          primitive={selectedPrimitive}
-          blocks={selectedPrimitive?.infobox?.blocks}
+          primitive={infobox?.primitive}
+          blocks={infobox?.blocks}
           selectedBlockId={selectedBlockId}
           isBuilt={props.isBuilt}
-          isEditable={props.isEditable && !!selectedPrimitive?.infoboxEditable}
+          isEditable={props.isEditable && !!infobox?.isEditable}
           onBlockChange={onBlockChange}
           onBlockDelete={onBlockDelete}
           onBlockMove={onBlockMove}

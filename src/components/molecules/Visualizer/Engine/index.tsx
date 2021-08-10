@@ -6,16 +6,23 @@ import React, {
   ReactNode,
   RefAttributes,
   CSSProperties,
+  forwardRef,
 } from "react";
 
+import { SelectPrimitiveOptions } from "@reearth/plugin";
 import type { Camera } from "@reearth/util/value";
 import type { EngineRef } from "./ref";
 import Cesium from "./Cesium";
+
+export type { OverriddenInfobox, SelectPrimitiveOptions } from "@reearth/plugin";
 
 export type SceneProperty = {
   default?: {
     camera?: Camera;
     terrain?: boolean;
+    terrainExaggeration?: number; // default: 1
+    terrainExaggerationRelativeHeight?: number; // default: 0
+    depthTestAgainstTerrain?: boolean;
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
@@ -32,11 +39,15 @@ export type SceneProperty = {
     enable_lighting?: boolean;
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
+    shadows?: boolean;
     fog?: boolean;
     fog_density?: number;
     brightness_shift?: number;
     hue_shift?: number;
     surturation_shift?: number;
+  };
+  timeline?: {
+    animation?: boolean;
   };
   googleAnalytics?: {
     enableGA?: boolean;
@@ -55,7 +66,8 @@ export type EngineProps = {
   children?: ReactNode;
   ready?: boolean;
   selectedPrimitiveId?: string;
-  onPrimitiveSelect?: (id?: string) => void;
+  primitiveSelectionReason?: string;
+  onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
   onCameraChange?: (camera: Camera) => void;
 };
 
@@ -79,4 +91,4 @@ const Engine: ForwardRefRenderFunction<Ref, Props> = ({ engine, children, ...pro
   ) : null;
 };
 
-export default React.forwardRef(Engine);
+export default forwardRef(Engine);

@@ -117,6 +117,7 @@ export default function useHook<T>({
 
     return () => {
       if (typeof eventLoop.current === "number") {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         window.clearTimeout(eventLoop.current);
       }
       if (arena.current) {

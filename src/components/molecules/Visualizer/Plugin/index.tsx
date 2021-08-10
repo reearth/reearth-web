@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 
 export type { Primitive, Block, Widget } from "@reearth/plugin";
 import { Primitive, Widget, Block } from "@reearth/plugin";
-import P from "@reearth/components/atoms/Plugin";
+import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
 
@@ -14,6 +14,7 @@ export type Props = {
   extensionId?: string;
   extensionType?: string;
   visible?: boolean;
+  iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
   sceneProperty?: any;
   pluginBaseUrl?: string;
@@ -29,6 +30,7 @@ export default function Plugin({
   pluginId,
   extensionId,
   extensionType,
+  iFrameProps,
   property,
   visible,
   pluginBaseUrl = "/plugins",
@@ -58,12 +60,13 @@ export default function Plugin({
       style={style}
       src={src}
       sourceCode={sourceCode}
+      iFrameProps={iFrameProps}
+      canBeVisible={visible}
+      exposed={exposed}
       isMarshalable={isMarshalable}
       staticExposed={staticExposed}
-      exposed={exposed}
       onError={handleError}
       onMessage={handleMessage}
-      canBeVisible={visible}
     />
   ) : null;
 

@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 import { Meta, Story } from "@storybook/react";
 import Component, { Primitive, Widget, Props } from ".";
+import { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 export default {
   title: "molecules/Visualizer",
@@ -65,26 +66,156 @@ const primitives: Primitive[] = [
       },
     },
   },
-];
-
-const widgets: Widget[] = [
   {
-    id: "a",
+    id: "3",
     pluginId: "reearth",
-    extensionId: "splashscreen",
+    extensionId: "tileset",
+    title: "tiles",
+    isVisible: true,
     property: {
-      overlay: {
-        overlayEnabled: true,
-        overlayDuration: 2,
-        overlayTransitionDuration: 1,
-        overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
-        overlayImageW: 648,
-        overlayImageH: 432,
-        overlayBgcolor: "#fff8",
+      default: {
+        tileset: `https://plateau.reearth.io/13109_shinagawa-ku/tileset.json`,
+      },
+    },
+    infobox: {
+      property: {
+        default: {
+          bgcolor: "#ccc",
+          typography: {
+            color: "#000",
+          },
+        },
       },
     },
   },
 ];
+
+const widgets: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } = {
+  floatWidgets: [
+    {
+      id: "a",
+      pluginId: "reearth",
+      extensionId: "splashscreen",
+      property: {
+        overlay: {
+          overlayEnabled: true,
+          overlayDuration: 2,
+          overlayTransitionDuration: 1,
+          overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+          overlayImageW: 648,
+          overlayImageH: 432,
+          overlayBgcolor: "#fff8",
+        },
+      },
+    },
+  ],
+  alignSystem: {
+    inner: {
+      left: [
+        {
+          position: "top",
+          widgets: [
+            {
+              id: "ab",
+              pluginId: "reearth",
+              extensionId: "storytelling",
+            },
+          ],
+          align: "start",
+        },
+        {
+          position: "middle",
+          widgets: [],
+        },
+        {
+          position: "bottom",
+          widgets: [],
+        },
+      ],
+      center: [
+        {
+          position: "top",
+          widgets: [],
+        },
+        {
+          position: "middle",
+          widgets: [],
+        },
+        {
+          position: "bottom",
+          widgets: [],
+        },
+      ],
+      right: [
+        {
+          position: "top",
+          widgets: [],
+          align: "start",
+        },
+        {
+          position: "middle",
+          widgets: [],
+        },
+        {
+          position: "bottom",
+          widgets: [],
+        },
+      ],
+    },
+    outer: {
+      left: [
+        {
+          position: "top",
+          widgets: [
+            {
+              id: "ab",
+              pluginId: "reearth",
+              extensionId: "storytelling",
+            },
+          ],
+          align: "start",
+        },
+        {
+          position: "middle",
+          widgets: [],
+        },
+        {
+          position: "bottom",
+          widgets: [],
+        },
+      ],
+      center: [
+        {
+          position: "top",
+          widgets: [],
+        },
+        {
+          position: "middle",
+          widgets: [],
+        },
+        {
+          position: "bottom",
+          widgets: [],
+        },
+      ],
+      right: [
+        {
+          position: "top",
+          widgets: [],
+          align: "start",
+        },
+        {
+          position: "middle",
+          widgets: [],
+        },
+        {
+          position: "bottom",
+          widgets: [],
+        },
+      ],
+    },
+  },
+};
 
 const Template: Story<Props> = args => <Component {...args} />;
 
@@ -119,120 +250,125 @@ Built.args = {
   isBuilt: true,
 };
 
-const initialSourceCode = `
-console.log("hello", reearth.block);
-reearth.ui.show("<style>body { margin: 0; background: #fff; }</style><h1>Hello World</h1>", { visible: true });
-`.trim();
+// Widget Component only supports builtin at the moment; same with align system
 
-export const Plugin: Story<Props> = args => {
-  const [temporalSourceCode, setTemporalSourceCode] = useState(initialSourceCode);
-  const [sourceCode, setSourceCode] = useState(temporalSourceCode);
-  const [temporalMode, setTemporalMode] = useState<"block" | "widget" | "primitive">("block");
-  const [mode, setMode] = useState(temporalMode);
+// const initialSourceCode = `
+// console.log("hello", reearth.block);
+// reearth.ui.show("<style>body { margin: 0; background: #fff; }</style><h1>Hello World</h1>", { visible: true });
+// `.trim();
 
-  const args2 = useMemo<Props>(() => {
-    return {
-      ...args,
-      widgets: [
-        ...(mode === "widget"
-          ? [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
-              },
-            ]
-          : []),
-      ],
-      primitives: [
-        ...(args.primitives ?? []),
-        {
-          id: "pluginprimitive",
-          pluginId: "reearth",
-          extensionId: "marker",
-          isVisible: true,
-          property: {
-            default: {
-              location: { lat: 0, lng: 139 },
-              height: 0,
-            },
-          },
-          infobox: {
-            blocks: [
-              ...(mode === "block"
-                ? [
-                    {
-                      id: "xxx",
-                      __REEARTH_SOURCECODE: sourceCode,
-                    },
-                  ]
-                : []),
-              {
-                id: "yyy",
-                pluginId: "plugins",
-                extensionId: "block",
-                property: {
-                  location: { lat: 0, lng: 139 },
-                },
-              },
-            ],
-          },
-        },
-        ...(mode === "primitive"
-          ? [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
-                isVisible: true,
-                property: {
-                  location: { lat: 0, lng: 130 },
-                },
-              },
-            ]
-          : []),
-      ],
-    };
-  }, [args, mode, sourceCode]);
+// export const Plugin: Story<Props> = args => {
+//   const [temporalSourceCode, setTemporalSourceCode] = useState(initialSourceCode);
+//   const [sourceCode, setSourceCode] = useState(temporalSourceCode);
+//   const [temporalMode, setTemporalMode] = useState<"block" | "widget" | "primitive">("block");
+//   const [mode, setMode] = useState(temporalMode);
 
-  return (
-    <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
-      <Component {...args2} style={{ ...args2.style, flex: "1" }} />
-      <div
-        style={{
-          flex: "1 0",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "stretch",
-          background: "#fff",
-        }}>
-        <textarea
-          style={{ flex: "auto" }}
-          value={temporalSourceCode}
-          onChange={e => setTemporalSourceCode(e.currentTarget.value)}
-        />
-        <p>
-          <button
-            onClick={() => {
-              setSourceCode(temporalSourceCode ?? "");
-              setMode(temporalMode);
-            }}>
-            Exec
-          </button>
-          <select
-            value={temporalMode}
-            onChange={e =>
-              setTemporalMode(e.currentTarget.value as "block" | "widget" | "primitive")
-            }>
-            <option value="block">Block</option>
-            <option value="widget">Widget</option>
-            <option value="primitive">Primitive</option>
-          </select>
-        </p>
-      </div>
-    </div>
-  );
-};
-Plugin.args = {
-  ...Default.args,
-  selectedPrimitiveId: "pluginprimitive",
-  pluginBaseUrl: process.env.PUBLIC_URL,
-};
+//   const args2 = useMemo<Props>(() => {
+//     return {
+//       ...args,
+//       widgets: {
+//         ...(mode === "widget"
+//           ? {
+//               floatWidgets: [
+//                 {
+//                   id: "xxx",
+//                   __REEARTH_SOURCECODE: sourceCode,
+//                 },
+//               ],
+//               alignSystem: {},
+//             }
+//           : undefined),
+//       },
+//       primitives: [
+//         ...(args.primitives ?? []),
+//         {
+//           id: "pluginprimitive",
+//           pluginId: "reearth",
+//           extensionId: "marker",
+//           isVisible: true,
+//           property: {
+//             default: {
+//               location: { lat: 0, lng: 139 },
+//               height: 0,
+//             },
+//           },
+//           infobox: {
+//             blocks: [
+//               ...(mode === "block"
+//                 ? [
+//                     {
+//                       id: "xxx",
+//                       __REEARTH_SOURCECODE: sourceCode,
+//                     },
+//                   ]
+//                 : []),
+//               {
+//                 id: "yyy",
+//                 pluginId: "plugins",
+//                 extensionId: "block",
+//                 property: {
+//                   location: { lat: 0, lng: 139 },
+//                 },
+//               },
+//             ],
+//           },
+//         },
+//         ...(mode === "primitive"
+//           ? [
+//               {
+//                 id: "xxx",
+//                 __REEARTH_SOURCECODE: sourceCode,
+//                 isVisible: true,
+//                 property: {
+//                   location: { lat: 0, lng: 130 },
+//                 },
+//               },
+//             ]
+//           : []),
+//       ],
+//     };
+//   }, [args, mode, sourceCode]);
+
+//   return (
+//     <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
+//       <Component {...args2} style={{ ...args2.style, flex: "1" }} />
+//       <div
+//         style={{
+//           flex: "1 0",
+//           display: "flex",
+//           flexDirection: "column",
+//           alignItems: "stretch",
+//           background: "#fff",
+//         }}>
+//         <textarea
+//           style={{ flex: "auto" }}
+//           value={temporalSourceCode}
+//           onChange={e => setTemporalSourceCode(e.currentTarget.value)}
+//         />
+//         <p>
+//           <button
+//             onClick={() => {
+//               setSourceCode(temporalSourceCode ?? "");
+//               setMode(temporalMode);
+//             }}>
+//             Exec
+//           </button>
+//           <select
+//             value={temporalMode}
+//             onChange={e =>
+//               setTemporalMode(e.currentTarget.value as "block" | "widget" | "primitive")
+//             }>
+//             <option value="block">Block</option>
+//             <option value="widget">Widget</option>
+//             <option value="primitive">Primitive</option>
+//           </select>
+//         </p>
+//       </div>
+//     </div>
+//   );
+// };
+// Plugin.args = {
+//   ...Default.args,
+//   selectedPrimitiveId: "pluginprimitive",
+//   pluginBaseUrl: process.env.PUBLIC_URL,
+// };

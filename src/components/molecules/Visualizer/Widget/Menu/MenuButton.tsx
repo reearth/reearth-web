@@ -82,7 +82,7 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
         const camera =
           "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
         if (camera) {
-          flyTo?.(camera, { duration: 2000 });
+          flyTo?.(camera, { duration: 2 });
         }
         return;
       }
@@ -99,10 +99,11 @@ export default function ({ button: b, menuItems, pos }: Props): JSX.Element {
     [flyTo],
   );
 
-  useClickAway(referenceElement, () => setVisibleMenuButton(undefined));
+  const wrappperRef = useRef<HTMLDivElement>(null);
+  useClickAway(wrappperRef, () => setVisibleMenuButton(undefined));
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrappperRef}>
       <ScreenSpaceEventHandler>
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.LEFT_CLICK}
