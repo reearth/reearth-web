@@ -192,22 +192,20 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
         onClick={handleExpand}>
         {group && <ArrowIcon open={expanded} icon="arrowToggle" size={10} />}
       </ArrowIconWrapper>
-      <LayerIconWrapper>
-        <LayerIcon
-          selected={selected}
-          disabled={deactivated}
-          type={type}
-          icon={icon ?? (group ? (linked ? "dataset" : "folder") : "layerItem")}
-          size={16}
-          color={
-            selected
-              ? theme.layers.selectedTextColor
-              : deactivated
-              ? theme.layers.disableTextColor
-              : theme.layers.textColor
-          }
-        />
-      </LayerIconWrapper>
+      <LayerIcon
+        selected={selected}
+        disabled={deactivated}
+        type={type}
+        icon={icon ?? (group ? (linked ? "dataset" : "folder") : "layerItem")}
+        size={16}
+        color={
+          selected
+            ? theme.layers.selectedTextColor
+            : deactivated
+            ? theme.layers.disableTextColor
+            : theme.layers.textColor
+        }
+      />
       {editing ? (
         <Input
           ref={inputRef}
@@ -296,7 +294,7 @@ const Wrapper = styled.div<{
 }>`
   user-select: none;
   width: 100%;
-  height: 35px;
+  height: 40px;
   display: flex;
   justify-content: start;
   align-items: center;
@@ -357,11 +355,6 @@ const Input = styled.input`
   padding: 3px;
   flex: auto;
   overflow: hidden;
-`;
-
-const LayerIconWrapper = styled.div`
-  flex: 0 0 26px;
-  text-align: center;
 `;
 
 const LayerIcon = styled(Icon)<{ disabled?: boolean; selected?: boolean; type?: string }>`

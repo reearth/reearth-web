@@ -112,10 +112,13 @@ const IconTitle = styled(Text)`
 `;
 
 const Content = styled.div<{ scrollable?: boolean }>`
-  flex: auto;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: stretch;
+  position: absolute;
+  top: 30px;
+  right: 0;
+  left: 0;
+  height: calc(100% - 30px);
+  padding-bottom: 50px;
+
   overflow-x: hidden;
   overflow-y: ${({ scrollable }) => (scrollable ? "auto" : "hidden")};
   -webkit-overflow-scrolling: touch;
