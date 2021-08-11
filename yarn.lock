@@ -16084,10 +16084,10 @@ redux@^4.0.5:
   dependencies:
     "@babel/runtime" "^7.9.2"
 
-reearth-realign@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/reearth-realign/-/reearth-realign-1.0.5.tgz#33cd6f2b6adce8e9087a981914eb9cba875cd6b1"
-  integrity sha512-FXpGdY4EdrTKVeZl9F+PcbCuLseTdXo0ANcQ/GlwRRomMRLHZQU9ptEqW/TiKG2UXad4uO25jOcvRibLtC/VsQ==
+reearth-realign@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/reearth-realign/-/reearth-realign-1.0.9.tgz#6732d6c9a25e72ac8f9b91278a656507a38e5c33"
+  integrity sha512-t1lJr5QgYqko4g4Qq/ai7LQ4+2Yk1IBmMdx9TglYb06O42jtPqnCKfBjfKTPGPOGhniKfxD6KQHLcj3IlG51Pw==
   dependencies:
     glamor "^2.20.40"
     react-dnd "^14.0.2"

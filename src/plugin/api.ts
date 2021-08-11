@@ -99,6 +99,7 @@ export type Widget = {
   extensionId?: string;
   property?: any;
   extended?: boolean;
+  extendable?: boolean;
   floating?: boolean;
   widgetLayout?: Location;
 };

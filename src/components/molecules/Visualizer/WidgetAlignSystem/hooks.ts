@@ -56,18 +56,11 @@ export default function ({
 
   // Reorder
   const onReorder = useCallback(
-    (location?: Location, currentIndex?: number, hoverIndex?: number) => {
-      console.log("reorder");
-      console.log(location, "location");
-      console.log(currentIndex, "currentIndex");
-      console.log(hoverIndex, "hoverIndex");
-      if (!location?.zone || !location.section || !location.area || !hoverIndex) return;
-      const ts = Object.keys(alignSystem);
-      console.log(ts, "ts");
-      // const wid = alignSystem;
-      // onWidgetUpdate?.(wid, undefined, hoverIndex, undefined);
+    (id?: string, hoverIndex?: number) => {
+      if (!id) return;
+      onWidgetUpdate?.(id, undefined, hoverIndex, undefined);
     },
-    [alignSystem],
+    [onWidgetUpdate],
   );
 
   useEffect(() => {
@@ -102,10 +95,19 @@ export default function ({
     [onWidgetUpdate],
   );
 
+  const onExtend = useCallback(
+    (currentItem?: string, align?: Alignments) => {
+      if (!currentItem || !align || !onWidgetUpdate) return;
+      onWidgetUpdate(currentItem, undefined, undefined, align, undefined);
+    },
+    [onWidgetUpdate],
+  );
+
   return {
     alignState,
     onReorder,
     onMove,
     onAlignChange,
+    onExtend,
   };
 }

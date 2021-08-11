@@ -164,6 +164,7 @@ export default (isBuilt?: boolean) => {
       location?: Location,
     ) => {
       if (!sceneId || !id) return;
+
       let loc: { zone: string; section: string; area: string } | undefined;
       if (location?.zone && location.section && location.area) {
         loc = { zone: location.zone, section: location.section, area: location.area };
