@@ -1,5 +1,6 @@
-import { useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
+import { useContext } from "reearth-realign";
 
 import { useLocalState } from "@reearth/state";
 import {
@@ -42,6 +43,8 @@ type GQLLayer = {
 
 export default () => {
   const intl = useIntl();
+  const { setEditorMode } = useContext();
+
   const [{ selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId }, setLocalState] =
     useLocalState(s => ({
       selectedType: s.selectedType,
@@ -138,15 +141,6 @@ export default () => {
     });
   }, [setLocalState]);
 
-  const selectWidgets = useCallback(() => {
-    setLocalState({
-      selectedType: "widgets",
-      selectedLayer: undefined,
-      selectedWidget: undefined,
-      selectedBlock: undefined,
-    });
-  }, [setLocalState]);
-
   const selectWidget = useCallback(
     (id: string) => {
       const [pluginId, extensionId, widgetId] = id.split("/");
@@ -161,6 +155,21 @@ export default () => {
     },
     [setLocalState],
   );
+
+  const selectWidgets = useCallback(() => {
+    setLocalState({
+      selectedType: "widgets",
+      selectedLayer: undefined,
+      selectedWidget: undefined,
+      selectedBlock: undefined,
+    });
+  }, [setLocalState]);
+
+  useEffect(() => {
+    if (selectedType !== "widgets") {
+      setEditorMode?.(false);
+    }
+  }, [selectedType, setEditorMode]);
 
   const moveLayer = useCallback(
     async (

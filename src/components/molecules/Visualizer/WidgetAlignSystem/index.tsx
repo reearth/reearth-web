@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, CSSProperties } from "react";
 import { useEffect } from "react";
 import { GridWrapper, GridSection, GridArea, GridItem, useContext } from "reearth-realign";
 import W from "../Widget";
@@ -28,6 +28,7 @@ type WidgetZoneProps = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginBaseUrl?: string;
+  styles?: CSSProperties;
 };
 
 type WidgetAreaProps = {
@@ -138,10 +139,11 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  styles,
 }) => (
   <>
     <GridSection>
-      {zone.left.map(a => (
+      {zone.left.map((a: WidgetArea) => (
         <WidgetAreaComponent
           key={a.position}
           zone={zoneName}
@@ -158,9 +160,9 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
       ))}
     </GridSection>
     <GridSection stretch>
-      {zone.center.map(a =>
+      {zone.center.map((a: WidgetArea) =>
         innerZone && a.position === "middle" ? (
-          <div key={a.position} style={{ display: "flex", height: "100%" }}>
+          <div key={a.position} style={{ display: "flex", flex: "1 0 auto" }}>
             <WidgetZoneComponent
               zoneName="inner"
               zone={innerZone}
@@ -171,6 +173,7 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}
+              styles={styles}
             />
           </div>
         ) : a.position !== "middle" ? (
@@ -191,7 +194,7 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
       )}
     </GridSection>
     <GridSection>
-      {zone.right.map(a => (
+      {zone.right.map((a: WidgetArea) => (
         <WidgetAreaComponent
           key={a.position}
           zone={zoneName}
@@ -237,6 +240,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
           pluginBaseUrl={pluginBaseUrl}
           isEditable={isEditable}
           isBuilt={isBuilt}
+          styles={{ background: "red" }}
         />
       </GridWrapper>
     </WidetAlignSystemWrapper>
