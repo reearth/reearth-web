@@ -2,8 +2,7 @@ import React, { forwardRef, PropsWithChildren, Ref, useCallback, useMemo } from 
 
 import type { ItemProps, DropType } from "@reearth/components/atoms/TreeView";
 import { styled } from "@reearth/theme";
-import Layer, { Layer as LayerType } from "./Layer";
-import { Format } from "./LayerActions/hooks";
+import Layer, { Layer as LayerType, Format } from "./Layer";
 
 export type Layer<T = unknown> = LayerType<T>;
 
