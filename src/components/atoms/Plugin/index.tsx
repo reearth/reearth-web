@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, IframeHTMLAttributes, ReactNode } from "react";
 
 import useHook, { IFrameAPI as IFrameAPIType } from "./hooks";
 import IFrame from "./IFrame";
@@ -13,6 +13,8 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   exposed?: { [key: string]: any };
+  renderPlaceholder?: ReactNode;
+  iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: (target: any) => boolean;
   staticExposed?: (api: IFrameAPI) => any;
   onMessage?: (message: any) => void;
@@ -27,6 +29,8 @@ const Plugin: React.FC<Props> = ({
   src,
   sourceCode,
   exposed,
+  renderPlaceholder,
+  iFrameProps,
   isMarshalable,
   staticExposed,
   onMessage,
@@ -52,7 +56,10 @@ const Plugin: React.FC<Props> = ({
       ref={iFrameRef}
       visible={iFrameVisible}
       onMessage={onMessage}
+      iFrameProps={iFrameProps}
     />
+  ) : renderPlaceholder ? (
+    <>{renderPlaceholder}</>
   ) : null;
 };
 

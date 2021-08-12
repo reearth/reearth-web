@@ -154,7 +154,7 @@ export default () => {
       });
 
       notify(
-        "info",
+        s === "limited" ? "success" : s == "published" ? "success" : "info",
         s === "limited"
           ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
           : s == "published"

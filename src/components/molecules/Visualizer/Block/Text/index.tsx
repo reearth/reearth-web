@@ -146,7 +146,7 @@ const Wrapper = styled(Border)<{ isTemplate: boolean }>`
         : isHovered
         ? theme.infoBox.border
         : isSelected
-        ? theme.main.select
+        ? theme.infoBox.accent2
         : theme.infoBox.weakText};
   border-radius: 6px;
 `;

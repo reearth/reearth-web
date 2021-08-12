@@ -52,10 +52,22 @@ export type Plugin = {
 export type Primitives = {
   readonly primitives: Primitive[];
   readonly selected?: Primitive;
+  readonly selectionReason?: string;
+  readonly overriddenInfobox?: OverriddenInfobox;
   /** Selects the primitive with the specified ID; if the ID is undefined, the currently selected primitive will be deselected. */
-  readonly select: (id?: string) => void;
+  readonly select: (id?: string, options?: SelectPrimitiveOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
+};
+
+export type SelectPrimitiveOptions = {
+  reason?: string;
+  overriddenInfobox?: OverriddenInfobox;
+};
+
+export type OverriddenInfobox = {
+  title?: string;
+  content: { key: string; value: string }[];
 };
 
 /** Primitive is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */

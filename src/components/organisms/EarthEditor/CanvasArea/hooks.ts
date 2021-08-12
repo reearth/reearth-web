@@ -8,7 +8,6 @@ import {
   useChangePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
-  useChangePropertyValueLatLngMutation,
 } from "@reearth/gql";
 import { useLocalState } from "@reearth/state";
 
@@ -89,14 +88,13 @@ export default (isBuilt?: boolean) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
 
-      const gv = valueToGQL(v, vt);
       await changePropertyValue({
         variables: {
           propertyId,
           schemaItemId,
           fieldId: fid,
           type: gvt,
-          value: gv,
+          value: valueToGQL(v, vt),
         },
       });
     },
@@ -226,3 +224,6 @@ export default (isBuilt?: boolean) => {
     handleDropLayer,
   };
 };
+function useChangePropertyValueLatLngMutation(): [any] {
+  throw new Error("Function not implemented.");
+}

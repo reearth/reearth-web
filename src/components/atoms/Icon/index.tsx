@@ -1,5 +1,6 @@
-import React from "react";
+import React, { ComponentProps, CSSProperties, memo, useMemo } from "react";
 import { ReactSVG } from "react-svg";
+import svgToMiniDataURI from "mini-svg-data-uri";
 
 import { styled } from "@reearth/theme";
 
@@ -13,66 +14,55 @@ export type Props = {
   size?: string | number;
   alt?: string;
   color?: string;
+  style?: CSSProperties;
   onClick?: () => void;
 };
 
-const Icon: React.FC<Props> = ({ className, icon, color, size, alt, onClick }) => {
+const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, onClick }) => {
+  const src = useMemo(
+    () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
+    [icon],
+  );
   if (!icon) return null;
 
-  const LocalIconComponent = Icons[icon as Icons];
-  if (LocalIconComponent) {
-    return (
-      <IconComponent
-        className={className}
-        src={LocalIconComponent}
-        color={color}
-        size={size}
-        onClick={onClick}
-        alt={alt}
-      />
-    );
-  }
-
-  if (icon.split(".").pop() !== "svg") {
-    return <ImageIconComponent src={icon} size={size} />;
+  const sizeStr = typeof size === "number" ? `${size}px` : size;
+  if (!src) {
+    return <StyledImg src={icon} alt={alt} style={style} size={sizeStr} onClick={onClick} />;
   }
 
   return (
-    <IconComponent
+    <StyledSvg
       className={className}
-      src={icon}
+      src={src}
       color={color}
-      size={size}
-      onClick={onClick}
+      style={style}
       alt={alt}
+      size={sizeStr}
+      onClick={onClick}
     />
   );
 };
 
-// This is needed to avoid a type error between Emotion and ReactSVG props(emotion styled components need className)
-export type ReactSVGProps = {
-  className?: string;
-  src: string | Icons;
-  onClick?: () => void;
-  alt?: string;
-  color?: string;
+const StyledImg = styled.img<{ size?: string }>`
+  width: ${({ size }) => size};
+  height: ${({ size }) => size};
+`;
+
+const SVG: React.FC<
+  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt" | "style">
+> = props => {
+  return <ReactSVG {...props} wrapper="span" />;
 };
 
-const ReactSVGComponent: React.FC<ReactSVGProps> = ({ color, ...props }) => {
-  return <ReactSVG {...props} style={{ color }} />;
-};
-
-const IconComponent = styled(ReactSVGComponent)<{ color?: string; size?: string | number }>`
+const StyledSvg = styled(SVG)<{ color?: string; size?: string }>`
   font-size: 0;
+  color: ${({ color }) => color};
+  display: inline-block;
+
   svg {
-    width: ${props => (typeof props.size === "number" ? `${props.size}px` : props.size)};
-    height: ${props => (typeof props.size === "number" ? `${props.size}px` : props.size)};
+    width: ${({ size }) => size};
+    height: ${({ size }) => size};
   }
 `;
 
-const ImageIconComponent = styled.img<{ size?: string | number }>`
-  width: ${({ size }) => size + "px"};
-  height: ${({ size }) => size + "px"};
-`;
-
-export default Icon;
+export default memo(Icon);

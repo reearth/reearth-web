@@ -1,7 +1,8 @@
 import React, { ComponentType, useMemo } from "react";
 
 import { useVisualizerContext } from "../context";
-import Plugin, { Primitive } from "../Plugin";
+import { Primitive } from "../Plugin";
+// import Plugins, { Widget } from "../Plugin";
 
 export type { Primitive } from "../Plugin";
 
@@ -20,7 +21,7 @@ export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;
 
 export default function PrimitiveComponent<PP = any, SP = any>({
   isHidden,
-  pluginBaseUrl,
+  pluginBaseUrl: _pluginBaseUrl,
   ...props
 }: Props<PP, SP>) {
   const ctx = useVisualizerContext();
@@ -31,19 +32,16 @@ export default function PrimitiveComponent<PP = any, SP = any>({
       : undefined;
   }, [ctx, props.primitive?.extensionId, props.primitive?.pluginId]);
 
-  return isHidden || !props.primitive?.isVisible ? null : Builtin ? (
-    <Builtin {...props} />
-  ) : (
-    <Plugin
-      pluginId={props.primitive?.pluginId}
-      extensionId={props.primitive?.extensionId}
-      sourceCode={(props.primitive as any)?.__REEARTH_SOURCECODE} // for debugging
-      extensionType="primitive"
-      pluginBaseUrl={pluginBaseUrl}
-      visible={false}
-      property={props.pluginProperty}
-      sceneProperty={props.sceneProperty}
-      primitive={props.primitive}
-    />
-  );
+  return isHidden || !props.primitive?.isVisible ? null : Builtin ? <Builtin {...props} /> : null; // TODO: primitive plugin is unsupported yet
+  // <Plugin
+  //   pluginId={props.primitive?.pluginId}
+  //   extensionId={props.primitive?.extensionId}
+  //   sourceCode={(props.primitive as any)?.__REEARTH_SOURCECODE} // for debugging
+  //   extensionType="primitive"
+  //   pluginBaseUrl={pluginBaseUrl}
+  //   visible={false}
+  //   property={props.pluginProperty}
+  //   sceneProperty={props.sceneProperty}
+  //   primitive={props.primitive}
+  // />
 }
