@@ -76,7 +76,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper>
+      <Wrapper extended={widget?.extended}>
         <ArrowButton disabled={!selected?.index} onClick={handlePrev}>
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>
@@ -100,7 +100,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
   ) : null;
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ extended?: boolean }>`
   background-color: ${props => props.theme.main.paleBg};
   color: ${props => props.theme.main.text};
   display: flex;
@@ -108,7 +108,7 @@ const Wrapper = styled.div`
   border-radius: ${metricsSizes["s"]}px;
   overflow: hidden;
   height: 80px;
-  width: 500px;
+  width: ${({ extended }) => (extended ? "100%" : "500px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   pointer-event: auto;
 
@@ -191,15 +191,7 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
   transform: translate(0, -105%);
 
-  @media (max-width: 1366px) {
-    // left: 30px;
-    // bottom: 118px;
-  }
-
   @media (max-width: 560px) {
-    // right: 16px;
-    // left: 16px;
-    // bottom: 80px;
     border: 1px solid ${props => props.theme.main.text};
   }
 

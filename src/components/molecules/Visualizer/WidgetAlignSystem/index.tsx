@@ -23,8 +23,8 @@ type WidgetZoneProps = {
   innerZone?: WidgetZone;
   onReorder: (id?: string, hoverIndex?: number) => void;
   onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
-  onExtend: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
+  onAlignChange: (currentItem?: string, align?: Alignments) => void;
+  onExtend: (currentItem?: string, extended?: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -38,8 +38,8 @@ type WidgetAreaProps = {
   area: WidgetArea;
   onReorder: (id?: string, hoverIndex?: number) => void;
   onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
-  onExtend: (currentItem?: string | undefined, align?: Alignments | undefined) => void;
+  onAlignChange: (currentItem?: string, align?: Alignments) => void;
+  onExtend: (currentItem?: string, extended?: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -108,31 +108,28 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
         border: area.position === "middle" ? "1px solid #4770FF" : "1px solid #E95518",
       }}
       iconColor={area.position === "middle" ? "#4770FF" : "#E95518"}>
-      {area.widgets?.map(
-        (widget, i) =>
-          widget && (
-            <GridItem
-              key={widget.id}
-              id={widget.id as string}
-              index={i}
-              onReorder={(id, _L, _CI, hoverIndex) => onReorder(id, hoverIndex)}
-              onMoveArea={onMove}
-              extended={widget.extended}
-              extendable={widget.extendable}
-              onExtend={onExtend}
-              styles={{ pointerEvents: "auto" }}>
-              <W
-                key={widget.id}
-                widget={widget}
-                sceneProperty={sceneProperty}
-                pluginProperty={widget.pluginProperty}
-                isEditable={isEditable}
-                isBuilt={isBuilt}
-                pluginBaseUrl={pluginBaseUrl}
-              />
-            </GridItem>
-          ),
-      )}
+      {area.widgets?.map((widget, i) => (
+        <GridItem
+          key={widget?.id + "container"}
+          id={widget?.id as string}
+          index={i}
+          onReorder={(id, _L, _CI, hoverIndex) => onReorder(id, hoverIndex)}
+          onMoveArea={onMove}
+          extended={widget?.extended}
+          extendable={widget?.extendable}
+          onExtend={onExtend}
+          styles={{ pointerEvents: "auto" }}>
+          <W
+            key={widget?.id}
+            widget={widget}
+            sceneProperty={sceneProperty}
+            pluginProperty={widget?.pluginProperty}
+            isEditable={isEditable}
+            isBuilt={isBuilt}
+            pluginBaseUrl={pluginBaseUrl}
+          />
+        </GridItem>
+      ))}
     </GridArea>
   );
 };

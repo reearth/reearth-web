@@ -96,9 +96,9 @@ export default function ({
   );
 
   const onExtend = useCallback(
-    (currentItem?: string, align?: Alignments) => {
-      if (!currentItem || !align || !onWidgetUpdate) return;
-      onWidgetUpdate(currentItem, undefined, undefined, align, undefined);
+    (currentItem?: string, extended?: boolean) => {
+      if (!currentItem || !onWidgetUpdate) return;
+      onWidgetUpdate(currentItem, !extended, undefined, undefined, undefined);
     },
     [onWidgetUpdate],
   );
