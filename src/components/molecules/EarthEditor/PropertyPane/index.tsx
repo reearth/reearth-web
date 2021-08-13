@@ -1,11 +1,13 @@
 import React, { useMemo } from "react";
+import { useIntl } from "react-intl";
 
-import Wrapper from "@reearth/components/atoms/PropertyPane";
-import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
-import Text from "@reearth/components/atoms/Text";
-import Button from "@reearth/components/atoms/Button";
+import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
+import Text from "@reearth/components/atoms/Text";
+import Button from "@reearth/components/atoms/Button";
+import WidgetToggleButton from "./WidgetToggleSwitch";
+import GroupWrapper from "./PropertyGroup";
 import PropertyItem, {
   Props as PropertyItemProps,
   Item as ItemItem,
@@ -24,9 +26,6 @@ import PropertyItem, {
   Asset as AssetType,
   Mode as ModeType,
 } from "./PropertyItem";
-import WidgetToggleButton from "./WidgetToggleSwitch";
-import { styled, useTheme } from "@reearth/theme";
-import { useIntl } from "react-intl";
 
 export type Item = ItemItem;
 export type SchemaField = ItemSchemaField;
@@ -206,6 +205,11 @@ const searchField = (
   }
   return;
 };
+
+const Wrapper = styled.div`
+  background: ${props => props.theme.properties};
+  margin: 14px 0;
+`;
 
 const StyledButton = styled(Button)`
   float: right;
