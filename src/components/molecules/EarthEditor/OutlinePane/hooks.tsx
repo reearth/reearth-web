@@ -234,11 +234,13 @@ export default ({
   );
 
   const layerTreeViewItemOnRename = useCallback(
-    (props, name) => onLayerRename?.(props.item.id, name),
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, name: string) =>
+      onLayerRename?.(item.id, name),
     [onLayerRename],
   );
   const layerTreeViewItemOnLayerVisibilityChange = useCallback(
-    (props, visibility) => onLayerVisibilityChange?.(props.item.id, visibility),
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, visibility: boolean) =>
+      onLayerVisibilityChange?.(item.id, visibility),
     [onLayerVisibilityChange],
   );
 

@@ -29,16 +29,20 @@ export default function ({
     setEditingName(name || "");
   }, [name]);
 
+  const cancelEditing = useCallback(() => {
+    resetEditing();
+    finishEditing();
+  }, [finishEditing, resetEditing]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         finishEditing();
       } else if (e.key === "Escape") {
-        resetEditing();
-        finishEditing();
+        cancelEditing();
       }
     },
-    [resetEditing, finishEditing],
+    [cancelEditing, finishEditing],
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +68,7 @@ export default function ({
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
-  useClickAway(inputRef, finishEditing);
+  useClickAway(inputRef, cancelEditing);
 
   return {
     editing,
