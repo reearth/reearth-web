@@ -97,7 +97,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     onVisibilityChange,
   });
 
-  const { editing, startEditing, inputProps } = useEditable({
+  const { editing, editingName, startEditing, inputProps } = useEditable({
     name: title,
     renamable,
     onRename,
@@ -157,7 +157,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                 ? theme.layers.disableTextColor
                 : theme.layers.textColor
             }>
-            {title}
+            {editingName}
           </LayerName>
           {group && typeof childrenCount === "number" && showChildrenCount && (
             <LayerCount

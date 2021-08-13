@@ -22,7 +22,10 @@ export default function ({
 
   const finishEditing = useCallback(() => {
     setEditing(false);
-  }, []);
+    if (name !== editingNameRef.current) {
+      onRename?.(editingNameRef.current);
+    }
+  }, [name, onRename]);
 
   const resetEditing = useCallback(() => {
     editingNameRef.current = name || "";
@@ -54,24 +57,12 @@ export default function ({
     resetEditing();
   }, [resetEditing]);
 
-  useEffect(
-    () =>
-      editing
-        ? () => {
-            if (name !== editingNameRef.current) {
-              onRename?.(editingNameRef.current);
-            }
-            resetEditing();
-          }
-        : undefined,
-    [editing, name, onRename, resetEditing],
-  );
-
   const inputRef = useRef<HTMLInputElement>(null);
   useClickAway(inputRef, cancelEditing);
 
   return {
     editing,
+    editingName,
     startEditing,
     finishEditing,
     inputProps: {
