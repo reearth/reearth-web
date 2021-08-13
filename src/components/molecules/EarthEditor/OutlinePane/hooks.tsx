@@ -244,12 +244,15 @@ export default ({
     [onLayerVisibilityChange],
   );
 
-  const TreeViewItem = useLayerTreeViewItem<ItemEx>({
+  const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>();
+
+  const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({
     onRename: layerTreeViewItemOnRename,
     onVisibilityChange: layerTreeViewItemOnLayerVisibilityChange,
     onRemove: onLayerRemove,
     onImport: onLayerImport,
     onGroupCreate: onLayerGroupCreate,
+    visibilityShown: true,
     selectedLayerId,
     rootLayerId,
   });
@@ -273,7 +276,8 @@ export default ({
     drop,
     dropExternals,
     removeLayer,
-    TreeViewItem,
+    SceneTreeViewItem,
+    LayerTreeViewItem,
     selected,
   };
 };

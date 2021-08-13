@@ -42,6 +42,7 @@ export type Props = {
   childSelected?: boolean;
   dropType?: DropType;
   allSiblingsDoesNotHaveChildren?: boolean;
+  visibilityShown?: boolean;
   onClick: () => void;
   onExpand?: () => void;
   onVisibilityChange?: (isVisible: boolean) => void;
@@ -77,6 +78,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     childSelected,
     dropType,
     allSiblingsDoesNotHaveChildren,
+    visibilityShown,
     onVisibilityChange,
     onClick,
     onExpand,
@@ -171,7 +173,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               {childrenCount}
             </LayerCount>
           )}
-          {typeof visible === "boolean" && (
+          {visibilityShown && (
             <Visibility
               isVisible={!visible || isHover || selected}
               onClick={handleVisibilityChange}>

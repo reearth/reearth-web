@@ -10,6 +10,7 @@ export type Props<T = unknown> = ItemProps<Layer<T>> & {
   className?: string;
   rootLayerId?: string;
   selectedLayerId?: string;
+  visibilityShown?: boolean;
   onVisibilityChange?: (isVisible: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
@@ -32,6 +33,7 @@ function LayerTreeViewItem<T = unknown>(
     canDrop,
     selectable,
     siblings,
+    visibilityShown,
     onSelect,
     onExpand,
     onVisibilityChange,
@@ -72,6 +74,7 @@ function LayerTreeViewItem<T = unknown>(
             : undefined
         }
         allSiblingsDoesNotHaveChildren={allSiblingsDoesNotHaveChildren}
+        visibilityShown={visibilityShown}
         onClick={handleClick}
         onExpand={onExpand}
         onVisibilityChange={onVisibilityChange}
@@ -114,6 +117,7 @@ export function useLayerTreeViewItem<T>({
   rootLayerId,
   selectedLayerId,
   className,
+  visibilityShown,
   onVisibilityChange,
   onRename,
   onRemove,
@@ -123,6 +127,7 @@ export function useLayerTreeViewItem<T>({
   rootLayerId?: string;
   selectedLayerId?: string;
   className?: string;
+  visibilityShown?: boolean;
   onVisibilityChange?: (element: Item<Layer<T>>, isVisible: boolean) => void;
   onRename?: (element: Item<Layer<T>>, name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
@@ -148,6 +153,7 @@ export function useLayerTreeViewItem<T>({
           rootLayerId,
           selectedLayerId,
           className,
+          visibilityShown,
           onRemove,
           onGroupCreate,
           onImport,
@@ -158,13 +164,14 @@ export function useLayerTreeViewItem<T>({
     }
     return forwardRef(InnerLayerTreeViewItem);
   }, [
+    rootLayerId,
+    selectedLayerId,
     className,
-    onVisibilityChange,
-    onRename,
+    visibilityShown,
     onRemove,
     onGroupCreate,
     onImport,
-    rootLayerId,
-    selectedLayerId,
+    onVisibilityChange,
+    onRename,
   ]);
 }
