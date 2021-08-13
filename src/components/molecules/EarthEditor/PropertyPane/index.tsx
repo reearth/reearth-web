@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import Wrapper from "@reearth/components/atoms/PropertyPane";
 import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
 import Text from "@reearth/components/atoms/Text";
 import Button from "@reearth/components/atoms/Button";
-import { partitionObject } from "@reearth/util/util";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
 import PropertyItem, {
@@ -103,6 +102,15 @@ const PropertyPane: React.FC<Props> = ({
   onRemovePane,
   selectedWidget,
   onWidgetActivate,
+  onChange,
+  onRemove,
+  onLink,
+  onUploadFile,
+  onRemoveFile,
+  onItemAdd,
+  onItemMove,
+  onItemRemove,
+  onItemsUpdate,
   ...props
 }) => {
   const theme = useTheme();
@@ -115,18 +123,32 @@ const PropertyPane: React.FC<Props> = ({
 
   const infoboxCreatable = !propertyId && mode === "infobox" && isInfoboxCreatable;
 
-  const [eventProps, otherProps] = partitionObject(props, [
-    "onChange",
-    "onRemove",
-    "onLink",
-    "onUploadFile",
-    "onRemoveFile",
-    "onItemAdd",
-    "onItemMove",
-    "onItemRemove",
-    "onItemsUpdate",
-  ]);
+  const eventProps = useMemo(
+    () => ({
+      onChange,
+      onRemove,
+      onLink,
+      onUploadFile,
+      onRemoveFile,
+      onItemAdd,
+      onItemMove,
+      onItemRemove,
+      onItemsUpdate,
+    }),
+    [
+      onChange,
+      onRemove,
+      onLink,
+      onUploadFile,
+      onRemoveFile,
+      onItemAdd,
+      onItemMove,
+      onItemRemove,
+      onItemsUpdate,
+    ],
+  );
   const events = useBind(eventProps, propertyId);
+
   return (
     <>
       {mode === "widget" && (
@@ -160,8 +182,8 @@ const PropertyPane: React.FC<Props> = ({
               item={item}
               onRemovePane={onRemovePane}
               mode={mode}
+              {...props}
               {...events}
-              {...otherProps}
             />
           ))}
         </Wrapper>

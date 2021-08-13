@@ -40,6 +40,8 @@ export default function ({
   stories?: Story[];
 }) {
   const [menuOpen, openMenu] = useState(false);
+  const toggleMenu = useCallback(() => openMenu(o => !o), []);
+
   const [selected, select] =
     useState<{
       index: number;
@@ -174,6 +176,7 @@ export default function ({
     handlePrev,
     selectAt,
     openMenu,
+    toggleMenu,
   };
 }
 
