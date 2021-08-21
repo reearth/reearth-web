@@ -53,6 +53,13 @@ export type SceneProperty = {
     enableGA?: boolean;
     trackingId?: string;
   };
+  reTheme?: {
+    reThemeMode?: "preMadeTheme" | "customTheme";
+    preMadeThemeId?: "reEarthLight" | "reEarthDark" | "forest";
+    textColor?: string;
+    selectColor?: string;
+    backgroundColor?: string;
+  };
 };
 
 export type EngineProps = {

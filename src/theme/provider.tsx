@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { ThemeProvider } from "@emotion/react";
+import useHooks from "./hooks";
 
-import darkTheme from "./darkTheme";
-import lightTheme from "./lightheme";
 import GlobalStyle from "./globalstyle";
-import { Theme, useThemeQuery } from "@reearth/gql";
+import { SceneThemeUpdateContext } from "./styled";
+import { useThemeQuery } from "@reearth/gql";
 import { useAuth } from "@reearth/auth";
 
 const Provider: React.FC = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const { data } = useThemeQuery({ skip: !isAuthenticated });
+  const [seneThemeOptions, setSceneThemeOptions] = useState<any>(undefined);
+  const { theme } = useHooks(seneThemeOptions, data);
 
-  const theme = data?.me?.theme === ("light" as Theme) ? lightTheme : darkTheme;
   return (
     <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      {children}
+      <SceneThemeUpdateContext.Provider value={setSceneThemeOptions}>
+        <GlobalStyle />
+        {children}
+      </SceneThemeUpdateContext.Provider>
     </ThemeProvider>
   );
 };

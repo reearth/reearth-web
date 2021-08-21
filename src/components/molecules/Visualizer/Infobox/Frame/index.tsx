@@ -75,10 +75,10 @@ const InfoBox: React.FC<Props> = ({
 
   const wrapperStyles = useMemo(
     () => css`
-      background-color: ${styles?.bgcolor || theme.infoBox.bg};
-      ${typographyStyles({ color: theme.infoBox.mainText, ...styles?.typography })}
+      background-color: ${styles?.bgcolor || theme?.published?.background};
+      ${typographyStyles({ color: theme?.published?.mainText, ...styles?.typography })}
     `,
-    [theme.infoBox.mainText, theme.infoBox.bg, styles?.bgcolor, styles?.typography],
+    [theme?.published?.mainText, theme?.published?.background, styles?.bgcolor, styles?.typography],
   );
 
   return (
@@ -158,6 +158,7 @@ const TitleFlex = styled(Flex)`
 
 const StyledIcon = styled(Icon)<{ open?: boolean }>`
   display: ${({ open }) => (open ? "none" : "block")};
+  color: ${({ theme }) => theme.published.mainIcon};
 `;
 
 const TitleText = styled.span`
@@ -169,7 +170,7 @@ const CloseBtn = styled(Icon)<{ open?: boolean }>`
   top: 10px;
   right: 10px;
   cursor: pointer;
-  color: ${props => props.theme.main.text};
+  color: ${({ theme }) => theme.published.mainIcon};
   display: ${({ open }) => (open ? "block" : "none")};
 `;
 

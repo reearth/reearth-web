@@ -59,13 +59,17 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
               icon="marker"
               size={16}
               color={
-                selected?.story.layer === story.layer ? theme.main.strongText : theme.main.text
+                selected?.story.layer === story.layer
+                  ? theme.published.strongText
+                  : theme.published.mainText
               }
             />
             <Text
               size="m"
               color={
-                selected?.story.layer === story.layer ? theme.main.strongText : theme.main.text
+                selected?.story.layer === story.layer
+                  ? theme.published.strongText
+                  : theme.published.mainText
               }
               otherProperties={{
                 textOverflow: "ellipsis",
@@ -87,6 +91,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
             {selected?.story.title}
           </Title>
           <Text
+            color={theme.published.weakText}
             size={isExtraSmallWindow ? "xs" : "m"}
             weight="bold"
             otherProperties={{ userSelect: "none" }}>
@@ -102,8 +107,8 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.theme.main.paleBg};
-  color: ${props => props.theme.main.text};
+  background-color: ${props => props.theme.published.background};
+  color: ${props => props.theme.published.mainText};
   z-index: ${props => props.theme.zIndexes.infoBox};
   position: absolute;
   bottom: 80px;
@@ -131,7 +136,7 @@ const Wrapper = styled.div`
 `;
 
 const ArrowButton = styled.button`
-  background-color: ${props => props.theme.main.paleBg};
+  background-color: ${props => props.theme.published.mask};
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -139,10 +144,10 @@ const ArrowButton = styled.button`
   border: none;
   padding: ${metricsSizes["s"]}px;
   cursor: pointer;
-  color: inherit;
+  color: ${props => props.theme.published.mainIcon};
 
   &:disabled {
-    color: #888;
+    color: ${props => props.theme.published.weakIcon};
     cursor: auto;
   }
 
@@ -161,6 +166,7 @@ const Current = styled(Flex)`
 `;
 
 const Title = styled(Text)`
+  color: ${props => props.theme.published.mainText}!important;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -175,21 +181,22 @@ const Title = styled(Text)`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.main.text};
+  color: ${props => props.theme.published.mainIcon};
   margin-right: ${metricsSizes["l"]}px;
 `;
 
 const MenuIcon = styled(Icon)<{ menuOpen?: boolean }>`
-  background: ${props => (props.menuOpen ? props.theme.main.bg : props.theme.main.paleBg)};
+  background: ${props => (props.menuOpen ? props.theme.published.select : "unset")};
   border-radius: 25px;
   padding: ${metricsSizes["xs"]}px;
   margin-right: ${metricsSizes["xs"]}px;
   cursor: pointer;
   user-select: none;
+  color: ${props => props.theme.published.mainIcon};
 `;
 
 const Menu = styled.div<{ menuOpen?: boolean }>`
-  background-color: ${props => props.theme.main.paleBg};
+  background-color: ${({ theme }) => theme.published.background};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
   bottom: 168px;
@@ -222,12 +229,11 @@ const Menu = styled.div<{ menuOpen?: boolean }>`
 const MenuItem = styled(Flex)<{ selected?: boolean }>`
   border-radius: ${metricsSizes["m"]}px;
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-  background: ${({ theme, selected }) => (selected ? theme.main.highlighted : "inherit")};
+  background: ${({ theme, selected }) => (selected ? theme.published.select : "inherit")};
   cursor: pointer;
   user-select: none;
-
   &:hover {
-    background: ${props => !props.selected && props.theme.main.bg};
+    background: ${props => !props.selected && props.theme.published.mask};
   }
 `;
 

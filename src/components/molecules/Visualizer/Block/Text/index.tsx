@@ -156,6 +156,7 @@ const Title = styled.div`
 `;
 
 const Field = styled.div<{ styles?: Typography }>`
+  color: ${({ theme }) => theme.published.mainText};
   ${({ styles }) => typographyStyles(styles)}
   padding: 5px;
   min-height: 15px;

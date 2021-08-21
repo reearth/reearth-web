@@ -1,4 +1,5 @@
 import colors from "./colors";
+import { light } from "./publishTheme/lightTheme";
 import { Theme, commonTheme } from "./theme";
 
 const lightheme: Theme = {
@@ -198,6 +199,7 @@ const lightheme: Theme = {
     successBg: colors.light.functional.success,
     text: colors.dark.text.strong,
   },
+  published: light,
 };
 
 export default lightheme;
