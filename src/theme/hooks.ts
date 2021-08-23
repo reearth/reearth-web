@@ -47,6 +47,12 @@ export default (seneThemeOptions: ReTheme, data?: any) => {
       if (seneThemeOptions?.preMadeThemeId === "reEarthLight") publishedTheme = light;
       if (seneThemeOptions?.preMadeThemeId === "forest") publishedTheme = forest;
     } else if (seneThemeOptions?.reThemeMode === "customTheme") {
+      seneThemeOptions = {
+        ...seneThemeOptions,
+        backgroundColor: seneThemeOptions.backgroundColor || "#dfe5f0",
+        textColor: seneThemeOptions.textColor || "#434343",
+        selectColor: seneThemeOptions.selectColor || "#C52C63",
+      };
       if (isDark(seneThemeOptions.backgroundColor)) {
         publishedTheme = {
           mask: "#FFFFFF0D",
