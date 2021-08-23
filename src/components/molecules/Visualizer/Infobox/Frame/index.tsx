@@ -162,6 +162,7 @@ const StyledIcon = styled(Icon)<{ open?: boolean }>`
 `;
 
 const TitleText = styled.span`
+  color: ${({ theme }) => theme.published.mainText};
   line-height: ${metricsSizes["2xl"]}px;
 `;
 
