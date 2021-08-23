@@ -239,20 +239,25 @@ export default ({
   );
 
   const layerTreeViewItemOnRename = useCallback(
-    (props, name) => onLayerRename?.(props.item.id, name),
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, name: string) =>
+      onLayerRename?.(item.id, name),
     [onLayerRename],
   );
   const layerTreeViewItemOnLayerVisibilityChange = useCallback(
-    (props, visibility) => onLayerVisibilityChange?.(props.item.id, visibility),
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, visibility: boolean) =>
+      onLayerVisibilityChange?.(item.id, visibility),
     [onLayerVisibilityChange],
   );
 
-  const TreeViewItem = useLayerTreeViewItem<ItemEx>({
+  const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>();
+
+  const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({
     onRename: layerTreeViewItemOnRename,
     onVisibilityChange: layerTreeViewItemOnLayerVisibilityChange,
     onRemove: onLayerRemove,
     onImport: onLayerImport,
     onGroupCreate: onLayerGroupCreate,
+    visibilityShown: true,
     selectedLayerId,
     rootLayerId,
   });
@@ -278,7 +283,8 @@ export default ({
     drop,
     dropExternals,
     removeLayer,
-    TreeViewItem,
+    SceneTreeViewItem,
+    LayerTreeViewItem,
     selected,
   };
 };

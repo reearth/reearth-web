@@ -66,27 +66,35 @@ const OutlinePane: React.FC<Props> = ({
   onDrop,
   loading,
 }) => {
-  const { sceneWidgetsItem, layersItem, select, drop, dropExternals, TreeViewItem, selected } =
-    useHooks({
-      rootLayerId,
-      layers,
-      widgets,
-      sceneDescription,
-      selectedLayerId,
-      selectedWidgetId,
-      selectedType,
-      onLayerSelect,
-      onLayerImport,
-      onLayerRemove,
-      onSceneSelect,
-      onWidgetsSelect,
-      onWidgetSelect,
-      onLayerMove,
-      onLayerRename,
-      onLayerVisibilityChange,
-      onDrop,
-      onLayerGroupCreate,
-    });
+  const {
+    sceneWidgetsItem,
+    layersItem,
+    select,
+    drop,
+    dropExternals,
+    SceneTreeViewItem,
+    LayerTreeViewItem,
+    selected,
+  } = useHooks({
+    rootLayerId,
+    layers,
+    widgets,
+    sceneDescription,
+    selectedLayerId,
+    selectedWidgetId,
+    selectedType,
+    onLayerSelect,
+    onLayerImport,
+    onLayerRemove,
+    onSceneSelect,
+    onWidgetsSelect,
+    onWidgetSelect,
+    onLayerMove,
+    onLayerRename,
+    onLayerVisibilityChange,
+    onDrop,
+    onLayerGroupCreate,
+  });
 
   return (
     <Wrapper className={className}>
@@ -95,7 +103,7 @@ const OutlinePane: React.FC<Props> = ({
           <TreeView<TreeViewItem, HTMLDivElement>
             item={sceneWidgetsItem}
             selected={selected}
-            renderItem={TreeViewItem}
+            renderItem={SceneTreeViewItem}
             draggable
             droppable
             selectable
@@ -112,7 +120,7 @@ const OutlinePane: React.FC<Props> = ({
           <TreeView<TreeViewItem, HTMLDivElement>
             item={layersItem}
             selected={selected}
-            renderItem={TreeViewItem}
+            renderItem={LayerTreeViewItem}
             draggable
             droppable
             selectable

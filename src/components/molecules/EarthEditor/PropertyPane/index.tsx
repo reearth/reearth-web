@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { ContextConsumer } from "reearth-realign";
+import { useIntl } from "react-intl";
 
-import Wrapper from "@reearth/components/atoms/PropertyPane";
-import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
-import Text from "@reearth/components/atoms/Text";
-import Button from "@reearth/components/atoms/Button";
-import { partitionObject } from "@reearth/util/util";
+import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
+import Text from "@reearth/components/atoms/Text";
+import Button from "@reearth/components/atoms/Button";
+import WidgetToggleButton from "./WidgetToggleSwitch";
+import GroupWrapper from "./PropertyGroup";
 import PropertyItem, {
   Props as PropertyItemProps,
   Item as ItemItem,
@@ -26,9 +27,6 @@ import PropertyItem, {
   Asset as AssetType,
   Mode as ModeType,
 } from "./PropertyItem";
-import WidgetToggleButton from "./WidgetToggleSwitch";
-import { styled, useTheme } from "@reearth/theme";
-import { useIntl } from "react-intl";
 
 export type Item = ItemItem;
 export type SchemaField = ItemSchemaField;
@@ -104,6 +102,15 @@ const PropertyPane: React.FC<Props> = ({
   onRemovePane,
   selectedWidget,
   onWidgetActivate,
+  onChange,
+  onRemove,
+  onLink,
+  onUploadFile,
+  onRemoveFile,
+  onItemAdd,
+  onItemMove,
+  onItemRemove,
+  onItemsUpdate,
   ...props
 }) => {
   const theme = useTheme();
@@ -116,17 +123,30 @@ const PropertyPane: React.FC<Props> = ({
 
   const infoboxCreatable = !propertyId && mode === "infobox" && isInfoboxCreatable;
 
-  const [eventProps, otherProps] = partitionObject(props, [
-    "onChange",
-    "onRemove",
-    "onLink",
-    "onUploadFile",
-    "onRemoveFile",
-    "onItemAdd",
-    "onItemMove",
-    "onItemRemove",
-    "onItemsUpdate",
-  ]);
+  const eventProps = useMemo(
+    () => ({
+      onChange,
+      onRemove,
+      onLink,
+      onUploadFile,
+      onRemoveFile,
+      onItemAdd,
+      onItemMove,
+      onItemRemove,
+      onItemsUpdate,
+    }),
+    [
+      onChange,
+      onRemove,
+      onLink,
+      onUploadFile,
+      onRemoveFile,
+      onItemAdd,
+      onItemMove,
+      onItemRemove,
+      onItemsUpdate,
+    ],
+  );
   const events = useBind(eventProps, propertyId);
 
   const AlignSystemEditorToggle = ContextConsumer(WidgetToggleButton);
@@ -167,8 +187,8 @@ const PropertyPane: React.FC<Props> = ({
               item={item}
               onRemovePane={onRemovePane}
               mode={mode}
+              {...props}
               {...events}
-              {...otherProps}
             />
           ))}
         </Wrapper>
@@ -191,6 +211,11 @@ const searchField = (
   }
   return;
 };
+
+const Wrapper = styled.div`
+  background: ${props => props.theme.properties};
+  margin: 14px 0;
+`;
 
 const StyledButton = styled(Button)`
   float: right;
