@@ -46,4 +46,5 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({ primitive }) => {
     </Entity>
   );
 };
+
 export default Polyline;
