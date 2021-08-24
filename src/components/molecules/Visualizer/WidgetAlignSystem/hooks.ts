@@ -54,6 +54,10 @@ export default function ({
 }) {
   const [alignState, setAlignState] = useState(alignSystem);
 
+  useEffect(() => {
+    setAlignState(alignSystem);
+  }, [alignSystem]);
+
   // Reorder
   const onReorder = useCallback(
     (id?: string, hoverIndex?: number) => {
@@ -62,10 +66,6 @@ export default function ({
     },
     [onWidgetUpdate],
   );
-
-  useEffect(() => {
-    setAlignState(alignSystem);
-  }, [alignSystem]);
 
   // Move
   const onMove = useCallback(

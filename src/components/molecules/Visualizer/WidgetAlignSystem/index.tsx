@@ -1,8 +1,8 @@
-import React, { useState, CSSProperties } from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { GridWrapper, GridSection, GridArea, GridItem, useContext } from "reearth-realign";
 import W from "../Widget";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import useHooks, {
   WidgetAlignSystem as WidgetAlignSystemType,
   WidgetZone,
@@ -29,7 +29,6 @@ type WidgetZoneProps = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginBaseUrl?: string;
-  styles?: CSSProperties;
 };
 
 type WidgetAreaProps = {
@@ -75,6 +74,7 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
   isBuilt,
 }) => {
   const [align, setAlign] = useState(area.align ?? "start");
+  const theme = useTheme();
 
   useEffect(() => {
     if (!area.align) return;
@@ -104,8 +104,11 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
       location={{ zone: zone, section: section, area: area.position }}
       editorStyles={{
         background:
-          area.position === "middle" ? "rgba(71, 112, 255, 0.5)" : "rgba(233, 85, 24, 0.5)",
-        border: area.position === "middle" ? "1px solid #4770FF" : "1px solid #E95518",
+          area.position === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
+        border:
+          area.position === "middle"
+            ? `1px solid ${theme.alignSystem.blueHighlight}`
+            : `1px solid ${theme.alignSystem.orangeHighlight}`,
       }}
       iconColor={area.position === "middle" ? "#4770FF" : "#E95518"}>
       {area.widgets?.map((widget, i) => (
@@ -149,7 +152,6 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
   pluginBaseUrl,
   isEditable,
   isBuilt,
-  styles,
 }) => (
   <>
     <GridSection>
@@ -185,7 +187,6 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}
-              styles={styles}
             />
           </div>
         ) : a.position !== "middle" ? (
@@ -256,7 +257,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
           pluginBaseUrl={pluginBaseUrl}
           isEditable={isEditable}
           isBuilt={isBuilt}
-          styles={{ background: "red" }}
         />
       </GridWrapper>
     </WidetAlignSystemWrapper>
