@@ -1974,9 +1974,15 @@ export enum WidgetAreaType {
   Bottom = 'BOTTOM'
 }
 
+export type WidgetExtendable = {
+  __typename?: 'WidgetExtendable';
+  vertically?: Maybe<Scalars['Boolean']>;
+  horizontally?: Maybe<Scalars['Boolean']>;
+};
+
 export type WidgetLayout = {
   __typename?: 'WidgetLayout';
-  extendable?: Maybe<Scalars['Boolean']>;
+  extendable?: Maybe<WidgetExtendable>;
   extended?: Maybe<Scalars['Boolean']>;
   floating: Scalars['Boolean'];
   defaultLocation?: Maybe<WidgetLocation>;
@@ -2448,8 +2454,11 @@ export type GetEarthWidgetsQuery = (
         { __typename?: 'PluginExtension' }
         & { widgetLayout?: Maybe<(
           { __typename?: 'WidgetLayout' }
-          & Pick<WidgetLayout, 'floating' | 'extendable' | 'extended'>
-          & { defaultLocation?: Maybe<(
+          & Pick<WidgetLayout, 'floating' | 'extended'>
+          & { extendable?: Maybe<(
+            { __typename?: 'WidgetExtendable' }
+            & Pick<WidgetExtendable, 'vertically' | 'horizontally'>
+          )>, defaultLocation?: Maybe<(
             { __typename?: 'WidgetLocation' }
             & Pick<WidgetLocation, 'zone' | 'section' | 'area'>
           )> }
@@ -3102,8 +3111,11 @@ export type GetWidgetsQuery = (
           & Pick<PluginExtension, 'extensionId' | 'description' | 'name' | 'translatedDescription' | 'translatedName' | 'icon' | 'type'>
           & { widgetLayout?: Maybe<(
             { __typename?: 'WidgetLayout' }
-            & Pick<WidgetLayout, 'extendable' | 'extended' | 'floating'>
-            & { defaultLocation?: Maybe<(
+            & Pick<WidgetLayout, 'extended' | 'floating'>
+            & { extendable?: Maybe<(
+              { __typename?: 'WidgetExtendable' }
+              & Pick<WidgetExtendable, 'vertically' | 'horizontally'>
+            )>, defaultLocation?: Maybe<(
               { __typename?: 'WidgetLocation' }
               & Pick<WidgetLocation, 'zone' | 'section' | 'area'>
             )> }
@@ -5619,7 +5631,10 @@ export const GetEarthWidgetsDocument = gql`
         extension {
           widgetLayout {
             floating
-            extendable
+            extendable {
+              vertically
+              horizontally
+            }
             extended
             defaultLocation {
               zone
@@ -6482,7 +6497,10 @@ export const GetWidgetsDocument = gql`
             icon
             type
             widgetLayout {
-              extendable
+              extendable {
+                vertically
+                horizontally
+              }
               extended
               floating
               defaultLocation {

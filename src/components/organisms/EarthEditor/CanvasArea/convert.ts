@@ -178,7 +178,12 @@ export const convertWidgets = (
       (widget): Widget => ({
         id: widget.id,
         extended: widget.extended as boolean,
-        extendable: widget.extension?.widgetLayout?.extendable as boolean,
+        extendable: widget.extension?.widgetLayout?.extendable
+          ? {
+              vertically: widget.extension.widgetLayout.extendable.vertically as boolean,
+              horizontally: widget.extension.widgetLayout.extendable.horizontally as boolean,
+            }
+          : undefined,
         floating: widget.extension?.widgetLayout?.floating,
         pluginId: widget.pluginId,
         extensionId: widget.extensionId,

@@ -192,7 +192,10 @@ export const GET_EARTH_WIDGETS = gql`
           extension {
             widgetLayout {
               floating
-              extendable
+              extendable {
+                vertically
+                horizontally
+              }
               extended
               defaultLocation {
                 zone

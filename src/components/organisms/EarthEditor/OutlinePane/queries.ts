@@ -177,7 +177,10 @@ export const GET_WIDGETS = gql`
               icon
               type
               widgetLayout {
-                extendable
+                extendable {
+                  vertically
+                  horizontally
+                }
                 extended
                 floating
                 defaultLocation {

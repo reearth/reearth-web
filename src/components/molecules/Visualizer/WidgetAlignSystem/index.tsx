@@ -116,7 +116,10 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
           onReorder={(id, _L, _CI, hoverIndex) => onReorder(id, hoverIndex)}
           onMoveArea={onMove}
           extended={widget?.extended}
-          extendable={widget?.extendable}
+          extendable={
+            (widget?.extendable?.horizontally && section === "center") ||
+            (widget?.extendable?.vertically && area.position === "middle")
+          }
           onExtend={onExtend}
           styles={{ pointerEvents: "auto" }}>
           <W
