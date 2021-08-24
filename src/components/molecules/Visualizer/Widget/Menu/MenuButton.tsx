@@ -158,7 +158,7 @@ const MenuWrapper = styled.div<{ visible?: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #2b2a2f;
+  background-color: ${({ theme }) => theme.published.background};
   border-radius: 3px;
   overflow-wrap: break-word;
   hyphens: auto;
@@ -172,6 +172,7 @@ const MenuItem = styled.a<{ item?: MenuItem }>`
   cursor: ${({ item }) => (item?.menuType === "border" ? null : "pointer")};
   border-top: ${({ item }) => (item?.menuType === "border" ? "1px solid #fff" : null)};
   opacity: ${({ item }) => (item?.menuType === "border" ? "0.5" : null)};
+  color: ${({ theme }) => theme.published.mainText};
 `;
 
 const Button = styled.div<{ button?: Button }>`
@@ -183,8 +184,8 @@ const Button = styled.div<{ button?: Button }>`
   font-size: ${fonts.sizes["2xs"]}px;
   line-height: 32px;
   box-sizing: border-box;
-  background-color: ${({ button }) => button?.buttonBgcolor || "#2B2A2F"};
-  color: ${({ button }) => button?.buttonColor || "#fff"};
+  background-color: ${({ button, theme }) => button?.buttonBgcolor || theme.published.background};
+  color: ${({ button, theme }) => button?.buttonColor || theme.published.mainText};
   cursor: pointer;
   align-items: center;
   user-select: none;
