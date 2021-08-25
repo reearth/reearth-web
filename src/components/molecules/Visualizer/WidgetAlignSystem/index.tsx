@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { GridWrapper, GridSection, GridArea, GridItem, useContext } from "reearth-realign";
+import { GridWrapper, GridSection, GridArea, GridItem } from "react-align";
 import W from "../Widget";
 import { styled, useTheme } from "@reearth/theme";
 import useHooks, {
@@ -47,6 +47,7 @@ type WidgetAreaProps = {
 
 type Props = {
   alignSystem: WidgetAlignSystemType;
+  enabled?: boolean;
   onWidgetUpdate?: (
     id: string,
     extended?: boolean | undefined,
@@ -230,21 +231,21 @@ const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
+  enabled,
   onWidgetUpdate,
   sceneProperty,
   pluginBaseUrl,
   isEditable,
   isBuilt,
 }) => {
-  const { editorMode } = useContext();
   const { alignState, onReorder, onMove, onAlignChange, onExtend } = useHooks({
     alignSystem,
     onWidgetUpdate,
   });
 
   return (
-    <WidetAlignSystemWrapper editorMode={editorMode}>
-      <GridWrapper>
+    <WidetAlignSystemWrapper editorMode={enabled}>
+      <GridWrapper enabled={enabled}>
         <WidgetZoneComponent
           zoneName="outer"
           zone={alignState.outer}

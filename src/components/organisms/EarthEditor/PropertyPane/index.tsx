@@ -23,6 +23,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     layers,
     assets,
     selectedWidget,
+    widgetAlignEditor,
     changeValue,
     removeField,
     link,
@@ -38,6 +39,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     movePropertyItem,
     removePropertyItem,
     onWidgetActivate,
+    onWidgetEditorActivate,
     updatePropertyItems,
   } = useHooks(mode);
   return (
@@ -60,6 +62,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           layers={layers}
           assets={assets}
           selectedWidget={selectedWidget}
+          widgetAlignEditor={widgetAlignEditor}
           onCreateInfobox={createInfobox}
           onChange={changeValue}
           onRemove={removeField}
@@ -74,6 +77,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onItemRemove={removePropertyItem}
           onItemsUpdate={updatePropertyItems}
           onWidgetActivate={onWidgetActivate}
+          onWidgetEditorActivate={onWidgetEditorActivate}
           onRemovePane={
             mode === "infobox" ? removeInfobox : mode === "block" ? removeInfoboxField : undefined
           }

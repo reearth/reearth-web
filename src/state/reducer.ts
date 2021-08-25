@@ -22,6 +22,7 @@ export type LocalState = {
   };
   currentProject?: { id: string; name: string; sceneId?: string; isArchived?: boolean };
   notification?: { type: "error" | "warning" | "info" | "success"; text: string };
+  widgetAlignEditor?: boolean;
 };
 
 const localInitialState: LocalState = {

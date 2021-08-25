@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { ContextConsumer } from "reearth-realign";
 import { useIntl } from "react-intl";
 
 import { styled, useTheme } from "@reearth/theme";
@@ -62,6 +61,8 @@ export type Props = {
   assets?: Asset[];
   selectedWidget?: Widget;
   onWidgetActivate?: (enabled: boolean) => Promise<void>;
+  onWidgetEditorActivate?: (enabled: boolean) => void;
+  widgetAlignEditor?: boolean;
 } & Pick<
   PropertyItemProps,
   | "datasetSchemas"
@@ -102,6 +103,8 @@ const PropertyPane: React.FC<Props> = ({
   onRemovePane,
   selectedWidget,
   onWidgetActivate,
+  onWidgetEditorActivate,
+  widgetAlignEditor,
   onChange,
   onRemove,
   onLink,
@@ -149,19 +152,20 @@ const PropertyPane: React.FC<Props> = ({
   );
   const events = useBind(eventProps, propertyId);
 
-  const AlignSystemEditorToggle = ContextConsumer(WidgetToggleButton);
   return (
     <>
-      {mode === "widget" && (
-        <WidgetToggleButton
-          mode={mode}
-          checked={!!selectedWidget?.enabled}
-          onChange={() => onWidgetActivate?.(!selectedWidget?.enabled)}
-        />
-      )}
-      {mode === "widgets" && (
-        <AlignSystemEditorToggle mode={mode} checked={!!selectedWidget?.enabled} />
-      )}
+      {mode === "widget" ||
+        (mode === "widgets" && (
+          <WidgetToggleButton
+            mode={mode}
+            checked={mode === "widgets" ? widgetAlignEditor : !!selectedWidget?.enabled}
+            onChange={() =>
+              mode === "widgets"
+                ? onWidgetEditorActivate?.(!widgetAlignEditor)
+                : onWidgetActivate?.(!selectedWidget?.enabled)
+            }
+          />
+        ))}
       {((mode === "widget" && !!selectedWidget?.enabled) ||
         (mode !== "widget" && (propertyId || infoboxCreatable))) && (
         <Wrapper className={className}>

@@ -41,6 +41,7 @@ export default (mode: Mode) => {
       camera,
       sceneId,
       teamId,
+      widgetAlignEditor,
     },
     setLocalState,
   ] = useLocalState(s => ({
@@ -52,6 +53,7 @@ export default (mode: Mode) => {
     camera: s.camera,
     teamId: s.currentTeam?.id,
     sceneId: s.sceneId,
+    widgetAlignEditor: s.widgetAlignEditor,
   }));
 
   const {
@@ -319,6 +321,15 @@ export default (mode: Mode) => {
     [addWidgetMutation, scene?.widgets, sceneId, selectedWidgetId, updateWidgetMutation],
   );
 
+  const onWidgetEditorActivate = useCallback(
+    (enabled: boolean) => {
+      setLocalState({
+        widgetAlignEditor: enabled,
+      });
+    },
+    [setLocalState],
+  );
+
   const [updatePropertyItemsMutation] = useUpdatePropertyItemsMutation();
   const updatePropertyItems = useCallback(
     async (
@@ -378,6 +389,8 @@ export default (mode: Mode) => {
     movePropertyItem,
     removePropertyItem,
     onWidgetActivate,
+    onWidgetEditorActivate,
+    widgetAlignEditor,
     selectedWidget,
     updatePropertyItems,
     datasetSchemas,

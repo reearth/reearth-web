@@ -43,6 +43,7 @@ export type Props = PropsWithChildren<
     selectedBlockId?: string;
     pluginBaseUrl?: string;
     isPublished?: boolean;
+    widgetAlignEditor?: boolean;
     onWidgetUpdate?: (
       id: string,
       extended?: boolean | undefined,
@@ -69,6 +70,7 @@ export default function Visualizer({
   children,
   pluginBaseUrl,
   isPublished,
+  widgetAlignEditor,
   onWidgetUpdate,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
@@ -117,6 +119,7 @@ export default function Visualizer({
         {widgets && (
           <WidgetAlignSystem
             alignSystem={widgets.alignSystem}
+            enabled={widgetAlignEditor}
             onWidgetUpdate={onWidgetUpdate}
             sceneProperty={sceneProperty}
             isEditable={props.isEditable}

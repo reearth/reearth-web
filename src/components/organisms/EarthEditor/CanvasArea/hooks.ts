@@ -20,14 +20,19 @@ import {
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 export default (isBuilt?: boolean) => {
-  const [{ sceneId, selectedLayer, selectedBlock, isCapturing, camera }, setLocalState] =
-    useLocalState(({ sceneId, selectedLayer, selectedBlock, isCapturing, camera }) => ({
+  const [
+    { sceneId, selectedLayer, selectedBlock, isCapturing, camera, widgetAlignEditor },
+    setLocalState,
+  ] = useLocalState(
+    ({ sceneId, selectedLayer, selectedBlock, isCapturing, camera, widgetAlignEditor }) => ({
       sceneId,
       selectedLayer,
       selectedBlock,
       isCapturing,
       camera,
-    }));
+      widgetAlignEditor,
+    }),
+  );
 
   const selectLayer = useCallback(
     (id?: string) => setLocalState({ selectedLayer: id, selectedType: "layer" }),
@@ -200,6 +205,7 @@ export default (isBuilt?: boolean) => {
     isCapturing,
     camera,
     ready: !isBuilt || (!!layerData && !!widgetData),
+    widgetAlignEditor,
     selectLayer,
     selectBlock,
     onBlockChange,

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
-import { useContext } from "reearth-realign";
 
 import { useLocalState } from "@reearth/state";
 import {
@@ -43,7 +42,6 @@ type GQLLayer = {
 
 export default () => {
   const intl = useIntl();
-  const { setEditorMode } = useContext();
 
   const [{ selectedType, rootLayerId, selectedLayerId, selectedWidgetId, sceneId }, setLocalState] =
     useLocalState(s => ({
@@ -167,9 +165,9 @@ export default () => {
 
   useEffect(() => {
     if (selectedType !== "widgets") {
-      setEditorMode?.(false);
+      setLocalState({ widgetAlignEditor: false });
     }
-  }, [selectedType, setEditorMode]);
+  }, [selectedType, setLocalState]);
 
   const moveLayer = useCallback(
     async (

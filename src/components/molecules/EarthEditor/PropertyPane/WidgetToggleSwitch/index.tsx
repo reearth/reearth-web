@@ -8,18 +8,10 @@ import Text from "@reearth/components/atoms/Text";
 export type Props = {
   mode?: "widgets" | "widget";
   checked?: boolean;
-  onChange?: () => Promise<void> | undefined;
-  editorMode?: boolean;
-  setEditorMode?: (on: boolean) => void;
+  onChange?: () => Promise<void> | void | undefined;
 };
 
-const WidgetToggleButton: React.FC<Props> = ({
-  mode,
-  editorMode,
-  setEditorMode,
-  checked,
-  onChange,
-}) => {
+const WidgetToggleButton: React.FC<Props> = ({ mode, checked, onChange }) => {
   const intl = useIntl();
   return (
     <ToggleWrapper>
@@ -28,10 +20,7 @@ const WidgetToggleButton: React.FC<Props> = ({
           ? intl.formatMessage({ defaultMessage: "Enable Editor Mode" })
           : intl.formatMessage({ defaultMessage: "Enable" })}
       </Text>
-      <ToggleButton
-        checked={mode === "widgets" ? editorMode : checked}
-        onChange={mode === "widgets" ? () => setEditorMode?.(!editorMode) : onChange}
-      />
+      <ToggleButton checked={checked} onChange={onChange} />
     </ToggleWrapper>
   );
 };
