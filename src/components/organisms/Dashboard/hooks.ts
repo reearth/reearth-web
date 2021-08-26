@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
+
 import { useNavigate } from "@reach/router";
-import { useLocalState } from "@reearth/state";
+import {
+  useError,
+  useTeam,
+  useProject,
+  useSceneId,
+  useSelected,
+  useSelectedBlock,
+  useCamera,
+  useIsCapturing,
+} from "@reearth/state";
 import {
   useMeQuery,
   useCreateTeamMutation,
@@ -22,11 +32,15 @@ import { Team } from "@reearth/components/molecules/Dashboard/types";
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
-  const [{ error, currentTeam, currentProject }, setLocalState] = useLocalState(s => ({
-    error: s.error,
-    currentTeam: s.currentTeam,
-    currentProject: s.currentProject,
-  }));
+  const [error, setError] = useError();
+  const [currentTeam, setCurrentTeam] = useTeam();
+  const [currentProject, setCurrentProject] = useProject();
+  const [, setSceneId] = useSceneId();
+  const [, setSelected] = useSelected();
+  const [, setSelectedBlock] = useSelectedBlock();
+  const [, setCamera] = useCamera();
+  const [, setIsCapturing] = useIsCapturing();
+
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
@@ -49,19 +63,19 @@ export default (teamId?: string) => {
 
   useEffect(() => {
     if (team?.id && team.id !== currentTeam?.id) {
-      setLocalState({ currentTeam: team });
+      setCurrentTeam(team);
     }
-  }, [currentTeam, team, setLocalState]);
+  }, [currentTeam, team, setCurrentTeam]);
 
   const changeTeam = useCallback(
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
       if (team) {
-        setLocalState({ currentTeam: team });
+        setCurrentTeam(team);
         navigate(`/dashboard/${teamId}`);
       }
     },
-    [teams, setLocalState, navigate],
+    [teams, setCurrentTeam, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -72,12 +86,12 @@ export default (teamId?: string) => {
         refetchQueries: ["teams"],
       });
       if (results.data?.createTeam) {
-        setLocalState({ currentTeam: results.data.createTeam.team });
+        setCurrentTeam(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setLocalState, refetch, navigate],
+    [createTeamMutation, setCurrentTeam, refetch, navigate],
   );
 
   const notificationTimeout = 5000;
@@ -89,33 +103,38 @@ export default (teamId?: string) => {
   useEffect(() => {
     if (!error) return;
     const timerID = setTimeout(() => {
-      setLocalState({ error: undefined });
+      setError(undefined);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [error, setLocalState]);
+  }, [error, setError]);
 
   const onNotificationClose = useCallback(() => {
     if (error) {
-      setLocalState({ error: undefined });
+      setError(undefined);
     }
-  }, [error, setLocalState]);
+  }, [error, setError]);
 
   useEffect(() => {
     // unselect project
     if (currentProject) {
-      setLocalState({
-        currentProject: undefined,
-        sceneId: undefined,
-        rootLayerId: undefined,
-        selectedLayer: undefined,
-        selectedWidget: undefined,
-        selectedBlock: undefined,
-        selectedType: undefined,
-        camera: undefined,
-        isCapturing: undefined,
-      });
+      setCurrentProject(undefined);
+      setCurrentTeam(undefined);
+      setSceneId(undefined);
+      setSelected(undefined);
+      setSelectedBlock(undefined);
+      setCamera(undefined);
+      setIsCapturing(false);
     }
-  }, [currentProject, setLocalState]);
+  }, [
+    currentProject,
+    setCamera,
+    setCurrentProject,
+    setCurrentTeam,
+    setIsCapturing,
+    setSceneId,
+    setSelected,
+    setSelectedBlock,
+  ]);
 
   const handleModalClose = useCallback(
     (r?: boolean) => {

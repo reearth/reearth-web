@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
@@ -17,46 +17,22 @@ export type Mode = LayerMode | WidgetMode | SceneMode;
 // TODO: ErrorBoudaryでエラーハンドリング
 
 const RightMenu: React.FC = () => {
-  const {
-    selectedLayerType,
-    isCapturing,
-    selectedLayerId,
-    selectedBlock,
-    selectedTab,
-    setSelectedTab,
-    reset,
-  } = useHooks();
-
-  const property =
-    selectedLayerType === "layer" && selectedLayerId
-      ? "layer"
-      : selectedLayerType === "widget"
-      ? "widget"
-      : "scene";
+  const { isCapturing, selectedLayerId, selectedBlock, selectedTab, property, reset } = useHooks();
 
   const intl = useIntl();
   const layerLabel = intl.formatMessage({ defaultMessage: "Layer" });
   const widgetLabel = intl.formatMessage({ defaultMessage: "Widget" });
   const sceneLabel = intl.formatMessage({ defaultMessage: "Scene" });
   const labels = {
-    [property]:
-      selectedLayerType === "layer" && selectedLayerId
-        ? layerLabel
-        : selectedLayerType === "widget"
-        ? widgetLabel
-        : sceneLabel,
+    ...(property
+      ? {
+          [property]:
+            property === "layer" ? layerLabel : property === "widget" ? widgetLabel : sceneLabel,
+        }
+      : {}),
     infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
     export: intl.formatMessage({ defaultMessage: "Export" }),
   };
-
-  useEffect(() => {
-    setSelectedTab(property);
-  }, [selectedLayerId, property, setSelectedTab]);
-
-  useEffect(() => {
-    if (!selectedBlock) return;
-    setSelectedTab("infobox");
-  }, [selectedBlock, setSelectedTab]);
 
   return (
     <TabArea<"layer" | "widget" | "scene" | "infobox" | "export">
@@ -74,20 +50,24 @@ const RightMenu: React.FC = () => {
       onChange={reset}
       scrollable>
       {{
-        [property]: (
-          <>
-            {selectedLayerType === "layer" ? (
-              // レイヤー自体のProperty
-              <PropertyPane mode="layer" />
-            ) : selectedLayerType === "widget" ? (
-              <PropertyPane mode="widget" />
-            ) : (
-              // Scene全体のProperty
-              <PropertyPane mode="scene" />
-            )}
-          </>
-        ),
-        infobox: selectedLayerType === "layer" && selectedLayerId && (
+        ...(property
+          ? {
+              [property]: (
+                <>
+                  {property === "layer" ? (
+                    // レイヤー自体のProperty
+                    <PropertyPane mode="layer" />
+                  ) : property === "widget" ? (
+                    <PropertyPane mode="widget" />
+                  ) : (
+                    // Scene全体のProperty
+                    <PropertyPane mode="scene" />
+                  )}
+                </>
+              ),
+            }
+          : {}),
+        infobox: property === "layer" && selectedLayerId && (
           <>
             {/* Infoboxの選択中のフィールドのProperty */}
             <PropertyPane mode="block" />
@@ -95,7 +75,7 @@ const RightMenu: React.FC = () => {
             <PropertyPane mode="infobox" />
           </>
         ),
-        export: selectedLayerType === "layer" && selectedLayerId && (
+        export: property === "layer" && selectedLayerId && (
           <>
             <ExportPane />
           </>
