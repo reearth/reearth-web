@@ -8,11 +8,10 @@ import lightTheme from "./lightheme";
 import { Theme } from "@reearth/gql";
 
 export type ReTheme = {
-  reThemeMode: "preMadeTheme" | "customTheme";
-  preMadeThemeId: "reEarthLight" | "reEarthDark" | "forest";
-  textColor: string;
-  selectColor: string;
-  backgroundColor: string;
+  themeType: "light" | "dark" | "forest" | "custom";
+  themeTextColor: string;
+  themeSelectColor: string;
+  themeBackgroundColor: string;
 };
 
 export default (seneThemeOptions: ReTheme, data?: any) => {
@@ -41,41 +40,39 @@ export default (seneThemeOptions: ReTheme, data?: any) => {
   }
 
   useEffect(() => {
+    seneThemeOptions = {
+      ...seneThemeOptions,
+      themeBackgroundColor: seneThemeOptions?.themeBackgroundColor || "#dfe5f0",
+      themeTextColor: seneThemeOptions?.themeTextColor || "#434343",
+      themeSelectColor: seneThemeOptions?.themeSelectColor || "#C52C63",
+    };
     let publishedTheme: PublishTheme = dark;
-    if (seneThemeOptions?.reThemeMode === "preMadeTheme") {
-      publishedTheme = dark;
-      if (seneThemeOptions?.preMadeThemeId === "reEarthLight") publishedTheme = light;
-      if (seneThemeOptions?.preMadeThemeId === "forest") publishedTheme = forest;
-    } else if (seneThemeOptions?.reThemeMode === "customTheme") {
-      seneThemeOptions = {
-        ...seneThemeOptions,
-        backgroundColor: seneThemeOptions.backgroundColor || "#dfe5f0",
-        textColor: seneThemeOptions.textColor || "#434343",
-        selectColor: seneThemeOptions.selectColor || "#C52C63",
-      };
-      if (isDark(seneThemeOptions.backgroundColor)) {
+    if (seneThemeOptions?.themeType === "light") publishedTheme = light;
+    if (seneThemeOptions?.themeType === "forest") publishedTheme = forest;
+    if (seneThemeOptions?.themeType === "custom") {
+      if (isDark(seneThemeOptions.themeBackgroundColor)) {
         publishedTheme = {
           mask: "#FFFFFF0D",
-          background: seneThemeOptions.backgroundColor,
-          mainText: seneThemeOptions.textColor,
-          select: seneThemeOptions.selectColor,
-          strongIcon: `lighten(.25, ${seneThemeOptions.textColor})`,
-          strongText: `lighten(.25, ${seneThemeOptions.textColor})`,
-          weakText: addAlpha(seneThemeOptions.textColor, 0.5),
-          mainIcon: addAlpha(seneThemeOptions.textColor, 0.5),
-          weakIcon: addAlpha(seneThemeOptions.textColor, 0.25),
+          background: seneThemeOptions.themeBackgroundColor,
+          mainText: seneThemeOptions.themeTextColor,
+          select: seneThemeOptions.themeSelectColor,
+          strongIcon: `lighten(.25, ${seneThemeOptions.themeTextColor})`,
+          strongText: `lighten(.25, ${seneThemeOptions.themeTextColor})`,
+          weakText: addAlpha(seneThemeOptions.themeTextColor, 0.5),
+          mainIcon: addAlpha(seneThemeOptions.themeTextColor, 0.5),
+          weakIcon: addAlpha(seneThemeOptions.themeTextColor, 0.25),
         };
       } else {
         publishedTheme = {
           mask: "#0000001A",
-          background: seneThemeOptions.backgroundColor,
-          mainText: seneThemeOptions.textColor,
-          select: seneThemeOptions.selectColor,
+          background: seneThemeOptions.themeBackgroundColor,
+          mainText: seneThemeOptions.themeTextColor,
+          select: seneThemeOptions.themeSelectColor,
           strongIcon: "#FFFFFF",
           strongText: "#FFFFFF",
-          weakText: addAlpha(seneThemeOptions.textColor, 0.5),
-          mainIcon: addAlpha(seneThemeOptions.textColor, 0.5),
-          weakIcon: addAlpha(seneThemeOptions.textColor, 0.25),
+          weakText: addAlpha(seneThemeOptions.themeTextColor, 0.5),
+          mainIcon: addAlpha(seneThemeOptions.themeTextColor, 0.5),
+          weakIcon: addAlpha(seneThemeOptions.themeTextColor, 0.25),
         };
       }
     }

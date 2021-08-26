@@ -130,8 +130,8 @@ export default ({
 
   const updateSceneTheme = useContext(SceneThemeUpdateContext);
   useEffect(() => {
-    updateSceneTheme(sceneProperty?.reTheme);
-  }, [sceneProperty?.reTheme, updateSceneTheme]);
+    updateSceneTheme(sceneProperty?.theme);
+  }, [sceneProperty?.theme, updateSceneTheme]);
 
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
   useEffect(() => {
