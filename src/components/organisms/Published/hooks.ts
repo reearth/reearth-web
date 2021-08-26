@@ -62,6 +62,12 @@ export default (alias?: string) => {
       enabled: true,
       floating: w.floating,
       extended: w.extended,
+      extendable: w.extendable
+        ? {
+            vertically: w.extendable.vertically as boolean,
+            horizontally: w.extendable.horizontally as boolean,
+          }
+        : undefined,
       pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
     }));
 

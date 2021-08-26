@@ -42,5 +42,11 @@ export type Widget = {
   extensionId: string;
   property: any;
   extended?: boolean;
+  extendable?:
+    | {
+        vertically?: boolean | undefined;
+        horizontally?: boolean | undefined;
+      }
+    | undefined;
   floating?: boolean;
 };
