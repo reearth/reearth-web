@@ -10,6 +10,7 @@ export type Props<PP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   widget?: Widget;
+  extendable?: boolean;
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;

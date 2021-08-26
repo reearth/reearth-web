@@ -24,7 +24,7 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget }: Props): JSX.Element | null => {
+const Storytelling = ({ widget, extendable }: Props): JSX.Element | null => {
   const theme = useTheme();
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
 
@@ -77,7 +77,7 @@ const Storytelling = ({ widget }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper extended={widget?.extended}>
+      <Wrapper extended={extendable && widget?.extended}>
         <ArrowButton disabled={!selected?.index} onClick={handlePrev}>
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>

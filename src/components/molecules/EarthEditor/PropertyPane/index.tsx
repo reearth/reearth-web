@@ -154,18 +154,17 @@ const PropertyPane: React.FC<Props> = ({
 
   return (
     <>
-      {mode === "widget" ||
-        (mode === "widgets" && (
-          <WidgetToggleButton
-            mode={mode}
-            checked={mode === "widgets" ? widgetAlignEditor : !!selectedWidget?.enabled}
-            onChange={() =>
-              mode === "widgets"
-                ? onWidgetEditorActivate?.(!widgetAlignEditor)
-                : onWidgetActivate?.(!selectedWidget?.enabled)
-            }
-          />
-        ))}
+      {(mode === "widget" || mode === "widgets") && (
+        <WidgetToggleButton
+          mode={mode}
+          checked={mode === "widgets" ? widgetAlignEditor : !!selectedWidget?.enabled}
+          onChange={() =>
+            mode === "widgets"
+              ? onWidgetEditorActivate?.(!widgetAlignEditor)
+              : onWidgetActivate?.(!selectedWidget?.enabled)
+          }
+        />
+      )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||
         (mode !== "widget" && (propertyId || infoboxCreatable))) && (
         <Wrapper className={className}>

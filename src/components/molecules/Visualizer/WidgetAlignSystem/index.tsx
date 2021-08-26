@@ -119,7 +119,11 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
           index={i}
           onReorder={(id, _L, _CI, hoverIndex) => onReorder(id, hoverIndex)}
           onMoveArea={onMove}
-          extended={widget?.extended}
+          extended={
+            ((widget?.extendable?.horizontally && section === "center") ||
+              (widget?.extendable?.vertically && area.position === "middle")) &&
+            widget?.extended
+          }
           extendable={
             (widget?.extendable?.horizontally && section === "center") ||
             (widget?.extendable?.vertically && area.position === "middle")
@@ -129,6 +133,10 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
           <W
             key={widget?.id}
             widget={widget}
+            extendable={
+              (widget?.extendable?.horizontally && section === "center") ||
+              (widget?.extendable?.vertically && area.position === "middle")
+            }
             sceneProperty={sceneProperty}
             pluginProperty={widget?.pluginProperty}
             isEditable={isEditable}
