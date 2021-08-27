@@ -29,8 +29,7 @@ export default () => {
 
   return {
     selectedTab,
-    property: selected?.type,
-    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selected: selected?.type || "scene",
     isCapturing,
     selectedBlock,
     setSelectedTab,
