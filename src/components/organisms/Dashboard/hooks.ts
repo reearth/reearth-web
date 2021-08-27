@@ -2,16 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
 import { useNavigate } from "@reach/router";
-import {
-  useError,
-  useTeam,
-  useProject,
-  useSceneId,
-  useSelected,
-  useSelectedBlock,
-  useCamera,
-  useIsCapturing,
-} from "@reearth/state";
+import { useError, useTeam, useProject, useUnselectProject } from "@reearth/state";
 import {
   useMeQuery,
   useCreateTeamMutation,
@@ -24,22 +15,16 @@ import {
   useAssetsQuery,
 } from "@reearth/gql";
 
-import { User } from "@reearth/components/molecules/Common/Header";
-import { Project } from "@reearth/components/molecules/Dashboard/types";
-
-import { Team } from "@reearth/components/molecules/Dashboard/types";
+import type { User } from "@reearth/components/molecules/Common/Header";
+import type { Project, Team } from "@reearth/components/molecules/Dashboard";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
   const [error, setError] = useError();
   const [currentTeam, setCurrentTeam] = useTeam();
-  const [currentProject, setCurrentProject] = useProject();
-  const [, setSceneId] = useSceneId();
-  const [, setSelected] = useSelected();
-  const [, setSelectedBlock] = useSelectedBlock();
-  const [, setCamera] = useCamera();
-  const [, setIsCapturing] = useIsCapturing();
+  const [currentProject] = useProject();
+  const unselectProject = useUnselectProject();
 
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -117,24 +102,9 @@ export default (teamId?: string) => {
   useEffect(() => {
     // unselect project
     if (currentProject) {
-      setCurrentProject(undefined);
-      setCurrentTeam(undefined);
-      setSceneId(undefined);
-      setSelected(undefined);
-      setSelectedBlock(undefined);
-      setCamera(undefined);
-      setIsCapturing(false);
+      unselectProject();
     }
-  }, [
-    currentProject,
-    setCamera,
-    setCurrentProject,
-    setCurrentTeam,
-    setIsCapturing,
-    setSceneId,
-    setSelected,
-    setSelectedBlock,
-  ]);
+  }, [currentProject, setCurrentTeam, unselectProject]);
 
   const handleModalClose = useCallback(
     (r?: boolean) => {

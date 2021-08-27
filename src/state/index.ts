@@ -50,3 +50,14 @@ export const useProject = () => useAtom(project);
 export type Notification = { type: "error" | "warning" | "info" | "success"; text: string };
 const notification = atom<Notification | undefined>(undefined);
 export const useNotification = () => useAtom(notification);
+
+const unselectProject = atom(null, (_get, set) => {
+  set(project, undefined);
+  set(team, undefined);
+  set(sceneId, undefined);
+  set(selected, undefined);
+  set(selectedBlock, undefined);
+  set(camera, undefined);
+  set(isCapturing, false);
+});
+export const useUnselectProject = () => useAtom(unselectProject)[1];
