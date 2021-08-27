@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useSelected } from "@reearth/state";
+import { useRootLayerId, useSelected } from "@reearth/state";
 import { useAuth } from "@reearth/auth";
 import { Format } from "@reearth/components/molecules/EarthEditor/ExportPane";
 
@@ -13,16 +13,19 @@ const ext: { [key in Format]: string } = {
 
 export default () => {
   const { getAccessToken } = useAuth();
+  const [rootLayerId] = useRootLayerId();
   const [selected] = useSelected();
 
   const onExport = useCallback(
     async (format: Format) => {
-      if (selected?.type !== "layer" || !window.REEARTH_CONFIG?.api) return;
+      if (!rootLayerId || !window.REEARTH_CONFIG?.api) return;
 
       const accessToken = await getAccessToken();
       if (!accessToken) return;
 
-      const filename = `${selected.layerId}.${ext[format]}`;
+      const filename = `${selected?.type === "layer" ? selected.layerId : rootLayerId}.${
+        ext[format]
+      }`;
       const type =
         format === "kml"
           ? "application/xml"
@@ -42,8 +45,8 @@ export default () => {
       download.dataset.downloadurl = [type, download.download, download.href].join(":");
       download.click();
     },
-    [getAccessToken, selected],
+    [getAccessToken, rootLayerId, selected],
   );
 
-  return { selectedLayer: selected?.type === "layer" ? selected.layerId : undefined, onExport };
+  return { onExport };
 };
