@@ -31,25 +31,21 @@ export default (seneThemeOptions?: ReTheme) => {
     return luma < 50;
   }
 
-  seneThemeOptions = {
-    ...seneThemeOptions,
-    themeType: seneThemeOptions?.themeType || "dark",
-    themeBackgroundColor: seneThemeOptions?.themeBackgroundColor || "#dfe5f0",
-    themeTextColor: seneThemeOptions?.themeTextColor || "#434343",
-    themeSelectColor: seneThemeOptions?.themeSelectColor || "#C52C63",
-  };
-
   useEffect(() => {
+    if (!seneThemeOptions?.themeType || seneThemeOptions?.themeType === "dark")
+      setPublishedTheme(dark);
     if (seneThemeOptions?.themeType === "light") setPublishedTheme(light);
-    if (seneThemeOptions?.themeType === "dark") setPublishedTheme(dark);
     if (seneThemeOptions?.themeType === "forest") setPublishedTheme(forest);
     if (seneThemeOptions?.themeType === "custom") {
-      if (isDark(seneThemeOptions?.themeBackgroundColor as string)) {
+      seneThemeOptions.themeBackgroundColor = seneThemeOptions?.themeBackgroundColor || "#dfe5f0";
+      seneThemeOptions.themeTextColor = seneThemeOptions?.themeTextColor || "#434343";
+      seneThemeOptions.themeSelectColor = seneThemeOptions?.themeSelectColor || "#C52C63";
+      if (isDark(seneThemeOptions?.themeBackgroundColor)) {
         setPublishedTheme({
           mask: "#FFFFFF0D",
-          background: seneThemeOptions.themeBackgroundColor as string,
-          mainText: seneThemeOptions.themeTextColor as string,
-          select: seneThemeOptions.themeSelectColor as string,
+          background: seneThemeOptions.themeBackgroundColor,
+          mainText: seneThemeOptions.themeTextColor,
+          select: seneThemeOptions.themeSelectColor,
           strongIcon: `lighten(.25, ${seneThemeOptions.themeTextColor})`,
           strongText: `lighten(.25, ${seneThemeOptions.themeTextColor})`,
           weakText: addAlpha(seneThemeOptions.themeTextColor, 0.5),
@@ -59,9 +55,9 @@ export default (seneThemeOptions?: ReTheme) => {
       } else {
         setPublishedTheme({
           mask: "#0000001A",
-          background: seneThemeOptions.themeBackgroundColor as string,
-          mainText: seneThemeOptions.themeTextColor as string,
-          select: seneThemeOptions.themeSelectColor as string,
+          background: seneThemeOptions.themeBackgroundColor,
+          mainText: seneThemeOptions.themeTextColor,
+          select: seneThemeOptions.themeSelectColor,
           strongIcon: "#FFFFFF",
           strongText: "#FFFFFF",
           weakText: addAlpha(seneThemeOptions.themeTextColor, 0.5),
