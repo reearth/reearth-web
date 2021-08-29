@@ -1,5 +1,4 @@
 import colors from "./colors";
-import { dark } from "./publishTheme/darkTheme";
 import { Theme, commonTheme } from "./theme";
 
 const darkTheme: Theme = {
@@ -199,7 +198,6 @@ const darkTheme: Theme = {
     successBg: colors.dark.functional.success,
     text: colors.dark.text.strong,
   },
-  published: dark,
 };
 
 export default darkTheme;

@@ -1,6 +1,5 @@
 import colors from "./colors";
 import { metricsSizes } from "./metrics";
-import { PublishTheme } from "./publishTheme/publishTheme";
 import zIndexes from "./z-index";
 
 export const commonTheme = {
@@ -17,7 +16,6 @@ export const commonTheme = {
 export type Theme = {
   colors: typeof colors;
   metrics: typeof metricsSizes;
-  published: PublishTheme;
   main: {
     accent: string;
     alert: string;

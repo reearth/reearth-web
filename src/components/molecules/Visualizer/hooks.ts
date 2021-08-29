@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useContext } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import ReactGA from "react-ga";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
@@ -13,7 +13,6 @@ import type {
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import type { Primitive } from ".";
-import { SceneThemeUpdateContext } from "@reearth/theme";
 
 export default ({
   engineType,
@@ -127,11 +126,6 @@ export default ({
     },
     [hiddenPrimitivesSet],
   );
-
-  const updateSceneTheme = useContext(SceneThemeUpdateContext);
-  useEffect(() => {
-    updateSceneTheme(sceneProperty?.theme);
-  }, [sceneProperty?.theme, updateSceneTheme]);
 
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
   useEffect(() => {

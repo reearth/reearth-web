@@ -4,7 +4,7 @@ import nl2br from "react-nl2br";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Markdown from "@reearth/components/atoms/Markdown";
-import { styled, useTheme } from "@reearth/theme";
+import { styled, useTheme, usePublishedTheme, PublishTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
@@ -25,6 +25,7 @@ export type Property = {
 const TextBlock: React.FC<Props> = ({
   block,
   infoboxProperty,
+  sceneProperty,
   isSelected,
   isEditable,
   onChange,
@@ -35,6 +36,7 @@ const TextBlock: React.FC<Props> = ({
   const { text, title, markdown, typography } =
     (block?.property as Property | undefined)?.default ?? {};
   const { bgcolor: bg } = infoboxProperty?.default ?? {};
+  const { publishedTheme } = usePublishedTheme(sceneProperty);
 
   const ref = useRef<HTMLTextAreaElement>(null);
   const isDirty = useRef(false);
@@ -127,7 +129,7 @@ const TextBlock: React.FC<Props> = ({
               {text}
             </Markdown>
           ) : (
-            <Field styles={typography} onDoubleClick={startEditing}>
+            <Field styles={typography} publishedTheme={publishedTheme} onDoubleClick={startEditing}>
               {nl2br(text ?? "")}
             </Field>
           )}
@@ -155,8 +157,8 @@ const Title = styled.div`
   font-size: 12px;
 `;
 
-const Field = styled.div<{ styles?: Typography }>`
-  color: ${({ theme }) => theme.published.mainText};
+const Field = styled.div<{ styles?: Typography; publishedTheme: PublishTheme }>`
+  color: ${({ publishedTheme }) => publishedTheme.mainText};
   ${({ styles }) => typographyStyles(styles)}
   padding: 5px;
   min-height: 15px;
