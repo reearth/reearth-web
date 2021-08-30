@@ -20,7 +20,7 @@ export default (seneThemeOptions?: ReTheme) => {
   }
 
   function isDark(color: string) {
-    const c = color.substring(1); // strip #
+    const c = color.substring(1); // strip # from hex
     const rgb = parseInt(c, 16); // convert rrggbb to decimal
     const r = (rgb >> 16) & 0xff; // extract red
     const g = (rgb >> 8) & 0xff; // extract green
