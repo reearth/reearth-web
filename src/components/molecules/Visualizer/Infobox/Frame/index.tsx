@@ -104,7 +104,7 @@ const InfoBox: React.FC<Props> = ({
           {isSmallWindow && !noContent && (
             <StyledIcon publishedTheme={publishedTheme} icon="arrowUp" size={24} open={open} />
           )}
-          <Text size="m" weight="bold">
+          <Text size="m" weight="bold" customColor>
             <TitleText publishedTheme={publishedTheme}>{title || " "}</TitleText>
           </Text>
           {!isSmallWindow && (
