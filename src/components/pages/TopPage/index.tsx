@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 
 import MoleculeTopPage from "@reearth/components/molecules/TopPage";
 import Loading from "@reearth/components/atoms/Loading";
-import NotificationBar from "@reearth/components/atoms/NotificationBar";
+import NotificationBanner from "@reearth/components/atoms/NotificationBanner";
 
 import useHooks from "./hooks";
 
@@ -20,9 +20,9 @@ const TopPage: React.FC<Props> = () => {
   ) : !isAuthenticated ? (
     <MoleculeTopPage login={login}>
       {error && (
-        <NotificationBar type="error">
+        <NotificationBanner type="error">
           {intl.formatMessage({ defaultMessage: "Sign in error" })}: {error}
-        </NotificationBar>
+        </NotificationBanner>
       )}
     </MoleculeTopPage>
   ) : null;

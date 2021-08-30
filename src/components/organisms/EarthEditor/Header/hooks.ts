@@ -10,11 +10,11 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useError, useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
+import { notificationSystem } from "@reearth/globalHooks";
+import { useSceneId, useTeam, useProject } from "@reearth/state";
 import { useAuth } from "@reearth/auth";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import { User } from "@reearth/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 
@@ -23,11 +23,10 @@ export default () => {
   const { logout } = useAuth();
   const intl = useIntl();
 
-  const [error, setError] = useError();
+  const { closeNotification, notification, notify } = notificationSystem();
   const [sceneId] = useSceneId();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
-  const [notification, setNotification] = useNotification();
 
   const navigate = useNavigate();
 
@@ -121,17 +120,6 @@ export default () => {
     setPublicationModalVisible(false);
   }, [project?.publishmentStatus]);
 
-  const notify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type: type,
-        text: text,
-      });
-    },
-    [setNotification],
-  );
-
   const publishProject = useCallback(
     async (alias: string | undefined, s: Status) => {
       if (!project) return;
@@ -190,35 +178,9 @@ export default () => {
     setProjectAlias(project?.alias);
   }, [project]);
 
-  const notificationTimeout = 5000;
-
-  useEffect(() => {
-    if (!error) return;
-    setNotification({
-      type: "error",
-      text: error,
-    });
-    const timerID = setTimeout(() => {
-      setError(undefined);
-    }, notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [error, setError, setNotification]);
-
-  const closeNotification = useCallback(() => {
-    if (error) {
-      setError(undefined);
-    }
-  }, [error, setError]);
-
   const openPreview = useCallback(() => {
     window.open(location.pathname + "/preview", "_blank");
   }, []);
-
-  useEffect(() => {
-    if (!notification?.text) return;
-    const timerID = setTimeout(() => setNotification(undefined), notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [notification?.text, setNotification]);
 
   return {
     teams,

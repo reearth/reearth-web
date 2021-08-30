@@ -6,7 +6,7 @@ import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/
 import Text from "@reearth/components/atoms/Text";
 import Icon from "@reearth/components/atoms/Icon";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import useHooks from "./hooks";

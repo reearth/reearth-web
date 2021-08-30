@@ -11,7 +11,7 @@ import Card from "@reearth/components/atoms/Card";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
 import useHooks from "./hooks";
 import Gdrive from "./Gdrive";
 

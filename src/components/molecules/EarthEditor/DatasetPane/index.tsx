@@ -13,7 +13,7 @@ import Text from "@reearth/components/atoms/Text";
 // Theme
 import { styled, useTheme } from "@reearth/theme";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
 import useHooks from "./hooks";
 
 export type DataSource = RawDataSource;

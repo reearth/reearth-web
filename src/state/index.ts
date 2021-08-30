@@ -47,7 +47,11 @@ export type Project = {
 const project = atom<Project | undefined>(undefined);
 export const useProject = () => useAtom(project);
 
-export type Notification = { type: "error" | "warning" | "info" | "success"; text: string };
+export type Notification = {
+  type: "error" | "warning" | "info" | "success";
+  heading: string;
+  text: string;
+};
 const notification = atom<Notification | undefined>(undefined);
 export const useNotification = () => useAtom(notification);
 

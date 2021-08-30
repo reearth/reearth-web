@@ -9,17 +9,17 @@ import {
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useSceneId, useNotification } from "@reearth/state";
+import { notificationSystem } from "@reearth/globalHooks";
+import { useSceneId } from "@reearth/state";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 
 const pluginId = "reearth";
 const extensionId = "marker";
 
 export default () => {
+  const { notify } = notificationSystem();
   const [sceneId] = useSceneId();
-  const [, setNotification] = useNotification();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
 
   const { data, loading } = useGetAllDataSetsQuery({
@@ -127,17 +127,6 @@ export default () => {
     [client, removeDatasetSchema],
   );
 
-  const onNotify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type: type,
-        text: text,
-      });
-    },
-    [setNotification],
-  );
-
   return {
     datasetSchemas,
     handleDatasetSync,
@@ -145,6 +134,6 @@ export default () => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
-    onNotify,
+    onNotify: notify,
   };
 };
