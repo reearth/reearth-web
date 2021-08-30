@@ -105,7 +105,7 @@ const InfoBox: React.FC<Props> = ({
             <StyledIcon publishedTheme={publishedTheme} icon="arrowUp" size={24} open={open} />
           )}
           <Text size="m" weight="bold" customColor>
-            <TitleText publishedTheme={publishedTheme}>{title || " "}</TitleText>
+            <TitleText>{title || " "}</TitleText>
           </Text>
           {!isSmallWindow && (
             <StyledIcon publishedTheme={publishedTheme} icon="arrowDown" size={24} open={open} />
@@ -174,8 +174,7 @@ const StyledIcon = styled(Icon)<{ open?: boolean; publishedTheme: PublishTheme }
   color: ${({ publishedTheme }) => publishedTheme.mainIcon};
 `;
 
-const TitleText = styled.span<{ publishedTheme: PublishTheme }>`
-  color: ${({ publishedTheme }) => publishedTheme.mainText};
+const TitleText = styled.span`
   line-height: ${metricsSizes["2xl"]}px;
 `;
 
