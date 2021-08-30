@@ -19,7 +19,7 @@ export type InfoboxStyles = {
 export type Props = {
   className?: string;
   infoboxKey?: string;
-  sceneProperty: SceneProperty;
+  sceneProperty?: SceneProperty;
   title?: string;
   size?: "small" | "large";
   visible?: boolean;
