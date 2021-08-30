@@ -18,44 +18,36 @@ export default (seneThemeOptions?: ReTheme) => {
   const isDark = (hex: string): boolean => tinycolor(hex).isDark();
 
   useEffect(() => {
-    if (!seneThemeOptions?.themeType || seneThemeOptions?.themeType === "dark")
-      setPublishedTheme(dark);
-    if (seneThemeOptions?.themeType === "light") setPublishedTheme(light);
-    if (seneThemeOptions?.themeType === "forest") setPublishedTheme(forest);
+    switch (seneThemeOptions?.themeType) {
+      case "light":
+        setPublishedTheme(light);
+        break;
+      case "forest":
+        setPublishedTheme(forest);
+        break;
+      default:
+        setPublishedTheme(dark);
+    }
     if (seneThemeOptions?.themeType === "custom") {
       seneThemeOptions.themeBackgroundColor = seneThemeOptions?.themeBackgroundColor || "#dfe5f0";
       seneThemeOptions.themeTextColor = seneThemeOptions?.themeTextColor || "#434343";
       seneThemeOptions.themeSelectColor = seneThemeOptions?.themeSelectColor || "#C52C63";
       const tinyThemeTextColor = tinycolor(seneThemeOptions.themeTextColor);
-      if (isDark(seneThemeOptions?.themeBackgroundColor)) {
-        setPublishedTheme({
-          mask: "#FFFFFF0D",
-          background: seneThemeOptions.themeBackgroundColor,
-          mainText: seneThemeOptions.themeTextColor,
-          select: seneThemeOptions.themeSelectColor,
-          strongIcon: tinyThemeTextColor.lighten(25).toHex8String(),
-          strongText: tinyThemeTextColor.lighten(25).toHex8String(),
-          weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
-          mainIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
-          weakIcon: tinyThemeTextColor
-            .setAlpha(tinyThemeTextColor.getAlpha() + 0.25)
-            .toHex8String(),
-        });
-      } else {
-        setPublishedTheme({
-          mask: "#0000001A",
-          background: seneThemeOptions.themeBackgroundColor,
-          mainText: seneThemeOptions.themeTextColor,
-          select: seneThemeOptions.themeSelectColor,
-          strongIcon: "#FFFFFF",
-          strongText: "#FFFFFF",
-          weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
-          mainIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
-          weakIcon: tinyThemeTextColor
-            .setAlpha(tinyThemeTextColor.getAlpha() + 0.25)
-            .toHex8String(),
-        });
-      }
+      setPublishedTheme({
+        mask: isDark(seneThemeOptions?.themeBackgroundColor) ? "#FFFFFF0D" : "#0000001A",
+        background: seneThemeOptions.themeBackgroundColor,
+        mainText: seneThemeOptions.themeTextColor,
+        select: seneThemeOptions.themeSelectColor,
+        strongIcon: isDark(seneThemeOptions?.themeBackgroundColor)
+          ? tinyThemeTextColor.lighten(25).toHex8String()
+          : "#FFFFFF",
+        strongText: isDark(seneThemeOptions?.themeBackgroundColor)
+          ? tinyThemeTextColor.lighten(25).toHex8String()
+          : "#FFFFFF",
+        weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
+        mainIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
+        weakIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.25).toHex8String(),
+      });
     }
   }, [seneThemeOptions]);
 
