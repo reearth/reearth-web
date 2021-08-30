@@ -27,7 +27,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
     handleModalClose,
     back,
     notification,
-    onNotificationClose,
+    closeNotification,
   } = useHooks({
     teamId,
     projectId,
@@ -48,7 +48,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
       openModal={openModal}
       handleModalClose={handleModalClose}
       notification={notification}
-      onNotificationClose={onNotificationClose}>
+      onNotificationClose={closeNotification}>
       {children}
     </MoleculesSettingPage>
   );

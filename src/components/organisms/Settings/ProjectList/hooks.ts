@@ -11,6 +11,7 @@ import {
   useAssetsQuery,
   useCreateAssetMutation,
 } from "@reearth/gql";
+import { notificationSystem } from "@reearth/globalHooks";
 import { useTeam, useProject } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
@@ -23,6 +24,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 
 export default () => {
+  const { notify } = notificationSystem();
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
   const navigate = useNavigate();
@@ -103,18 +105,23 @@ export default () => {
         },
       });
       if (project.errors || !project.data?.createProject) {
-        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setModalShown(false);
+        return;
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
       });
       if (scene.errors || !scene.data?.createScene) {
-        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setModalShown(false);
+        return;
       }
+      notify("success", intl.formatMessage({ defaultMessage: "Successfully created a project!" }));
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, intl, refetch, teamId],
+    [createNewProject, createScene, intl, refetch, notify, teamId],
   );
 
   const selectProject = useCallback(

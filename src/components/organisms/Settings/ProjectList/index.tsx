@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 
 import useHooks from "./hooks";
 
-// Components
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
