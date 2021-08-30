@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import tinycolor from "tinycolor2";
 import { dark } from "./darkTheme";
 import { forest } from "./forestTheme";
 import { light } from "./lightTheme";
@@ -13,23 +14,8 @@ export type ReTheme = {
 
 export default (seneThemeOptions?: ReTheme) => {
   const [publishedTheme, setPublishedTheme] = useState<PublishTheme>(dark);
-  function addAlpha(color?: string, opacity?: number): string {
-    // coerce values so it is between 0 and 1.
-    const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
-    return color + _opacity.toString(16).toUpperCase();
-  }
 
-  function isDark(color: string) {
-    const c = color.substring(1); // strip # from hex
-    const rgb = parseInt(c, 16); // convert rrggbb to decimal
-    const r = (rgb >> 16) & 0xff; // extract red
-    const g = (rgb >> 8) & 0xff; // extract green
-    const b = (rgb >> 0) & 0xff; // extract blue
-
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-    return luma < 50;
-  }
+  const isDark = (hex: string): boolean => tinycolor(hex).isDark();
 
   useEffect(() => {
     if (!seneThemeOptions?.themeType || seneThemeOptions?.themeType === "dark")
@@ -40,17 +26,20 @@ export default (seneThemeOptions?: ReTheme) => {
       seneThemeOptions.themeBackgroundColor = seneThemeOptions?.themeBackgroundColor || "#dfe5f0";
       seneThemeOptions.themeTextColor = seneThemeOptions?.themeTextColor || "#434343";
       seneThemeOptions.themeSelectColor = seneThemeOptions?.themeSelectColor || "#C52C63";
+      const tinyThemeTextColor = tinycolor(seneThemeOptions.themeTextColor);
       if (isDark(seneThemeOptions?.themeBackgroundColor)) {
         setPublishedTheme({
           mask: "#FFFFFF0D",
           background: seneThemeOptions.themeBackgroundColor,
           mainText: seneThemeOptions.themeTextColor,
           select: seneThemeOptions.themeSelectColor,
-          strongIcon: `lighten(.25, ${seneThemeOptions.themeTextColor})`,
-          strongText: `lighten(.25, ${seneThemeOptions.themeTextColor})`,
-          weakText: addAlpha(seneThemeOptions.themeTextColor, 0.5),
-          mainIcon: addAlpha(seneThemeOptions.themeTextColor, 0.5),
-          weakIcon: addAlpha(seneThemeOptions.themeTextColor, 0.25),
+          strongIcon: tinyThemeTextColor.lighten(25).toHex8String(),
+          strongText: tinyThemeTextColor.lighten(25).toHex8String(),
+          weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
+          mainIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
+          weakIcon: tinyThemeTextColor
+            .setAlpha(tinyThemeTextColor.getAlpha() + 0.25)
+            .toHex8String(),
         });
       } else {
         setPublishedTheme({
@@ -60,9 +49,11 @@ export default (seneThemeOptions?: ReTheme) => {
           select: seneThemeOptions.themeSelectColor,
           strongIcon: "#FFFFFF",
           strongText: "#FFFFFF",
-          weakText: addAlpha(seneThemeOptions.themeTextColor, 0.5),
-          mainIcon: addAlpha(seneThemeOptions.themeTextColor, 0.5),
-          weakIcon: addAlpha(seneThemeOptions.themeTextColor, 0.25),
+          weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
+          mainIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
+          weakIcon: tinyThemeTextColor
+            .setAlpha(tinyThemeTextColor.getAlpha() + 0.25)
+            .toHex8String(),
         });
       }
     }
