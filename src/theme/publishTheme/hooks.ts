@@ -5,14 +5,14 @@ import { forest } from "./forestTheme";
 import { light } from "./lightTheme";
 import { PublishTheme } from "./publishTheme";
 
-export type ReTheme = {
+export type SeneThemeOptions = {
   themeType?: "light" | "dark" | "forest" | "custom";
   themeTextColor?: string;
   themeSelectColor?: string;
   themeBackgroundColor?: string;
 };
 
-export default (seneThemeOptions?: ReTheme) => {
+export default (seneThemeOptions?: SeneThemeOptions) => {
   const [publishedTheme, setPublishedTheme] = useState<PublishTheme>(dark);
 
   const isDark = (hex: string): boolean => tinycolor(hex).isDark();
