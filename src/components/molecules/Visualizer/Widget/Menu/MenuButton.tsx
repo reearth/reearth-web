@@ -166,7 +166,7 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
   margin-right: ${({ margin }) => (margin ? "5px" : null)};
 `;
 
-const MenuWrapper = styled.div<{ visible?: boolean; publishedTheme: PublishTheme }>`
+const MenuWrapper = styled.div<{ publishedTheme: PublishTheme }>`
   width: 100%;
   position: absolute;
   top: 0;
