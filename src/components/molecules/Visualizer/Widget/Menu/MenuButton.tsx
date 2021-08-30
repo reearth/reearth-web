@@ -8,6 +8,7 @@ import { Camera } from "@reearth/util/value";
 import { fonts, styled, usePublishedTheme, PublishTheme } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 import { useVisualizerContext } from "../../context";
+import { SceneProperty } from "../../Engine";
 
 export type Position = "topleft" | "topright" | "bottomleft" | "bottomright";
 
@@ -38,12 +39,12 @@ export type Props = {
   button: Button;
   menuItems?: MenuItem[];
   pos: Position;
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
 };
 
 export default function ({ button: b, menuItems, pos, sceneProperty }: Props): JSX.Element {
   const ctx = useVisualizerContext();
-  const { publishedTheme } = usePublishedTheme(sceneProperty.theme);
+  const { publishedTheme } = usePublishedTheme(sceneProperty?.theme);
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
   const flyTo = ctx?.engine?.flyTo;
 
