@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import generateRandomString from "@reearth/util/generate-random-string";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
 
 export type Validation = "too short" | "not match";
 export type CopiedItemKey = {
@@ -13,7 +13,7 @@ export type CopiedItemKey = {
 export default (
   defaultAlias?: string,
   onClose?: () => void,
-  onNotify?: (type?: NotificationType, text?: string) => void,
+  onNotify?: (type?: NotificationStyleType, text?: string) => void,
   onAliasValidate?: (alias: string) => void,
 ) => {
   const intl = useIntl();

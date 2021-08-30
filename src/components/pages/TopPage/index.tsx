@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import MoleculeTopPage from "@reearth/components/molecules/TopPage";
 import Loading from "@reearth/components/atoms/Loading";
@@ -12,18 +11,13 @@ export type Props = {
 };
 
 const TopPage: React.FC<Props> = () => {
-  const intl = useIntl();
-  const { isLoading, isAuthenticated, login, error } = useHooks();
+  const { isLoading, isAuthenticated, login, notification } = useHooks();
 
   return isLoading ? (
     <Loading />
   ) : !isAuthenticated ? (
     <MoleculeTopPage login={login}>
-      {error && (
-        <NotificationBanner type="error">
-          {intl.formatMessage({ defaultMessage: "Sign in error" })}: {error}
-        </NotificationBanner>
-      )}
+      {notification && <NotificationBanner notification={notification} />}
     </MoleculeTopPage>
   ) : null;
 };

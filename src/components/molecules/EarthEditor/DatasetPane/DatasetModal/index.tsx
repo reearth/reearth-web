@@ -11,7 +11,7 @@ import Card from "@reearth/components/atoms/Card";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
 import useHooks from "./hooks";
 import Gdrive from "./Gdrive";
 
@@ -27,7 +27,7 @@ interface Props {
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>;
-  onNotify?: (type: NotificationType, text: string) => void;
+  onNotify?: (type: NotificationStyleType, text: string) => void;
 }
 
 const DatasetModal: React.FC<Props> = ({

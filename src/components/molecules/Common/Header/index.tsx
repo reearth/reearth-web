@@ -5,7 +5,9 @@ import { styled, metrics, css } from "@reearth/theme";
 import Icon from "@reearth/components/atoms/Icon";
 
 // Components
-import NotificationBanner, { Type } from "@reearth/components/atoms/NotificationBanner";
+import NotificationBanner, {
+  NotificationType as Type,
+} from "@reearth/components/atoms/NotificationBanner";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import Profile from "./profile";
 
@@ -33,11 +35,7 @@ export interface Props {
   modalShown?: boolean;
   openModal?: () => void;
   handleModalClose?: (r?: boolean | undefined) => void;
-  notification?: {
-    type: NotificationType;
-    heading: string;
-    text: string;
-  };
+  notification?: NotificationType;
   onNotificationClose?: () => void;
   dashboard?: boolean;
 }
@@ -93,9 +91,11 @@ const Header: React.FC<Props> = ({
           <RightArea>{right}</RightArea>
         </Content>
       </Wrapper>
-      {notification && (
-        <NotificationBanner notification={notification} onClose={onNotificationClose} />
-      )}
+      <NotificationBanner
+        notification={notification}
+        hidden={!notification}
+        onClose={onNotificationClose}
+      />
     </>
   );
 };

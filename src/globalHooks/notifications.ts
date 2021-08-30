@@ -1,13 +1,15 @@
 import { useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
-import { useError, useNotification } from "@reearth/state";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { useError, useNotification, Notification } from "@reearth/state";
+
+export type NotificationStyleType = "error" | "warning" | "info" | "success";
+export type NotificationType = Notification;
 
 export default () => {
   const intl = useIntl();
   const [notification, setNotification] = useNotification();
   const [error, setError] = useError();
-  const notificationTimeout = 5000;
+  const notificationTimeout = 6000;
 
   const notificationHeading = useMemo(() => {
     if (!notification) {
@@ -30,7 +32,7 @@ export default () => {
   }, [error, setError]);
 
   const notify = useCallback(
-    (type?: NotificationType, text?: string) => {
+    (type?: NotificationStyleType, text?: string) => {
       if (!type || !text) return;
       setNotification({
         type: type,

@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-// Components
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
 
-// Theme
 import { styled, metrics, useTheme } from "@reearth/theme";
+import { NotificationType as Type, NotificationStyleType as StyleType } from "@reearth/globalHooks";
 
-export type Type = "error" | "warning" | "info" | "success";
+export type NotificationType = Type;
+export type NotificationStyleType = StyleType;
 
 interface NotificationBannerProps {
-  notification: {
-    type: Type;
-    heading: string;
-    text: string;
-  };
+  notification?: NotificationType;
   hidden?: boolean;
   onClose?: () => void;
 }
@@ -27,21 +23,28 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
   onClose,
 }) => {
   const theme = useTheme();
-  const { type, heading, text } = notification;
-  const [visibility, changeVisibility] = useState(!hidden);
+  const [visible, changeVisibility] = useState(!hidden);
   useEffect(() => {
     changeVisibility(!hidden);
-  }, [hidden, text]);
+  }, [hidden]);
 
-  return visibility && (text || children) && type ? (
-    <StyledNotificationBanner type={type} direction="column">
+  useEffect(() => {
+    if (hidden) return;
+    const timerID = setTimeout(() => {
+      changeVisibility(false);
+    }, 5000);
+    return () => clearTimeout(timerID);
+  }, [hidden]);
+
+  return (
+    <StyledNotificationBanner visible={visible} type={notification?.type} direction="column">
       <HeadingArea justify="space-between">
         <Text
           size="m"
           color={theme.notification.text}
           weight="bold"
           otherProperties={{ padding: "0 0 8px 0" }}>
-          {heading}
+          {notification?.heading}
         </Text>
         <CloseBtn
           icon="cancel"
@@ -52,15 +55,16 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
           }}
         />
       </HeadingArea>
-      <WarningArea size="s" color={theme.notification.text}>
-        {text || children}
-      </WarningArea>
+      <Text size="s" color={theme.notification.text}>
+        {notification?.text || children}
+      </Text>
     </StyledNotificationBanner>
-  ) : null;
+  );
 };
 
 const StyledNotificationBanner = styled(Flex)<{
-  type?: Type;
+  type?: NotificationStyleType;
+  visible?: boolean;
 }>`
   position: absolute;
   top: ${metrics.headerHeight}px;
@@ -76,19 +80,17 @@ const StyledNotificationBanner = styled(Flex)<{
       ? theme.notification.successBg
       : theme.notification.infoBg};
   color: ${({ theme }) => theme.notification.text};
-  z-index: ${props => props.theme.zIndexes.notificationBar};
+  z-index: ${({ theme, visible }) => (visible ? theme.zIndexes.notificationBar : 0)};
+  opacity: ${({ visible }) => (visible ? "1" : "0")};
+  transition: all 0.5s;
+  pointer-event: ${({ visible }) => (visible ? "auto" : "none")};
 `;
 
 const HeadingArea = styled(Flex)`
   width: 100%;
 `;
 
-const WarningArea = styled(Text)``;
-
 const CloseBtn = styled(Icon)`
-  // position: absolute;
-  // right: 12px;
-  // top: 8px;
   cursor: pointer;
 `;
 

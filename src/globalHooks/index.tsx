@@ -1,1 +1,5 @@
-export { default as notificationSystem } from "./notifications";
+export {
+  default as notificationSystem,
+  NotificationType,
+  NotificationStyleType,
+} from "./notifications";

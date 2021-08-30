@@ -13,7 +13,7 @@ import Text from "@reearth/components/atoms/Text";
 // Theme
 import { styled, useTheme } from "@reearth/theme";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
 import useHooks from "./hooks";
 
 export type DataSource = RawDataSource;
@@ -39,7 +39,7 @@ export type Props = {
   ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   loading?: boolean;
-  onNotify?: (type: NotificationType, text: string) => void;
+  onNotify?: (type: NotificationStyleType, text: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "@reach/router";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
+import { notificationSystem } from "@reearth/globalHooks";
 import { useTeam } from "@reearth/state";
 import { useTeamsQuery } from "@reearth/gql";
 
@@ -12,6 +13,7 @@ export default () => {
   const error = useCleanUrl();
   const navigate = useNavigate();
   const [currentTeam, setTeam] = useTeam();
+  const { notify, notification } = notificationSystem();
 
   const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
@@ -28,10 +30,14 @@ export default () => {
     }
   }, [authError, data?.me, isAuthenticated, loading, logout]);
 
+  if (error) {
+    notify("error", error);
+  }
+
   return {
     isLoading,
     isAuthenticated,
     login,
-    error,
+    notification,
   };
 };

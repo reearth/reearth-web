@@ -6,7 +6,7 @@ import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/
 import Text from "@reearth/components/atoms/Text";
 import Icon from "@reearth/components/atoms/Icon";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import useHooks from "./hooks";
@@ -20,7 +20,7 @@ interface Props {
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
-  onNotify?: (type: NotificationType, text: string) => void;
+  onNotify?: (type: NotificationStyleType, text: string) => void;
 }
 
 const PublishSection: React.FC<Props> = ({

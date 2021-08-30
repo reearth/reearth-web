@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
 import { SheetParameter } from "./Gdrive";
 
 export type DatasetType = "csv" | "gcms" | "box" | "drop" | "gdrive";
@@ -14,7 +14,7 @@ export default (
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>,
-  onNotify?: (type: NotificationType, text: string) => void,
+  onNotify?: (type: NotificationStyleType, text: string) => void,
 ) => {
   const intl = useIntl();
   const [url, onUrlChange] = useState<string>();

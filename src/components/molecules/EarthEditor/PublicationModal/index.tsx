@@ -7,7 +7,7 @@ import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import InputField from "./InputField";
@@ -29,7 +29,7 @@ interface Props {
   searchIndex?: boolean;
   publishing?: publishingType;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
-  onNotify?: (type?: NotificationType, text?: string) => void;
+  onNotify?: (type?: NotificationStyleType, text?: string) => void;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
   url?: string[];
