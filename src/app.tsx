@@ -57,7 +57,7 @@ const App: React.FC = () => {
                   <PublicSettings path="/settings/project/:projectId/public" />
                   <DatasetSettings path="/settings/project/:projectId/dataset" />
                   <PluginSettings path="/settings/project/:projectId/plugins" />
-                  <GraphQLPlayground path="/gql" />
+                  {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
                   <NotFound default />
                 </StyledRouter>
               </Suspense>
