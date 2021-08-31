@@ -47,11 +47,9 @@ export default (sceneThemeOptions?: SceneThemeOptions) => {
           strongText: isDark(sceneThemeOptions?.themeBackgroundColor)
             ? tinyThemeTextColor.lighten(25).toHex8String()
             : "#FFFFFF",
-          weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
-          mainIcon: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
-          weakIcon: tinyThemeTextColor
-            .setAlpha(tinyThemeTextColor.getAlpha() + 0.25)
-            .toHex8String(),
+          weakText: tinyThemeTextColor.setAlpha(0.5).toHex8String(),
+          mainIcon: tinyThemeTextColor.setAlpha(0.5).toHex8String(),
+          weakIcon: tinyThemeTextColor.setAlpha(0.25).toHex8String(),
         });
         break;
       default:
