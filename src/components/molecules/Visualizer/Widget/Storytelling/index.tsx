@@ -58,7 +58,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
             align="center"
             onClick={selectAt.bind(undefined, i)}>
             <StyledIcon
-              publishedTheme={publishedTheme}
+              iconColor={publishedTheme.mainIcon}
               icon="marker"
               size={16}
               color={
@@ -98,7 +98,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
             onClick={toggleMenu}
             menuOpen={menuOpen}
           />
-          <Title publishedTheme={publishedTheme} size="m" weight="bold">
+          <Title color={publishedTheme.mainText} size="m" weight="bold">
             {selected?.story.title}
           </Title>
           <Text
@@ -179,8 +179,8 @@ const Current = styled(Flex)`
   }
 `;
 
-const Title = styled(Text)<{ publishedTheme: PublishTheme }>`
-  color: ${({ publishedTheme }) => publishedTheme.mainText}!important;
+const Title = styled(Text)<{ color: string }>`
+  color: ${({ color }) => color}!important;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -194,8 +194,8 @@ const Title = styled(Text)<{ publishedTheme: PublishTheme }>`
   }
 `;
 
-const StyledIcon = styled(Icon)<{ publishedTheme: PublishTheme }>`
-  color: ${({ publishedTheme }) => publishedTheme.mainIcon};
+const StyledIcon = styled(Icon)<{ iconColor: string }>`
+  color: ${({ color }) => color};
   margin-right: ${metricsSizes["l"]}px;
 `;
 

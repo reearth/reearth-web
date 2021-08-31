@@ -5,26 +5,26 @@ import { forest } from "./forestTheme";
 import { light } from "./lightTheme";
 import { PublishTheme } from "./publishTheme";
 
-export type SeneThemeOptions = {
+export type SceneThemeOptions = {
   themeType?: "light" | "dark" | "forest" | "custom";
   themeTextColor?: string;
   themeSelectColor?: string;
   themeBackgroundColor?: string;
 };
 
-export default (seneThemeOptions?: SeneThemeOptions) => {
+export default (sceneThemeOptions?: SceneThemeOptions) => {
   const [publishedTheme, setPublishedTheme] = useState<PublishTheme>(dark);
 
   const isDark = (hex: string): boolean => tinycolor(hex).isDark();
-  seneThemeOptions = {
-    ...seneThemeOptions,
-    themeBackgroundColor: seneThemeOptions?.themeBackgroundColor || "#dfe5f0",
-    themeTextColor: seneThemeOptions?.themeTextColor || "#434343",
-    themeSelectColor: seneThemeOptions?.themeSelectColor || "#C52C63",
+  sceneThemeOptions = {
+    ...sceneThemeOptions,
+    themeBackgroundColor: sceneThemeOptions?.themeBackgroundColor || "#dfe5f0",
+    themeTextColor: sceneThemeOptions?.themeTextColor || "#434343",
+    themeSelectColor: sceneThemeOptions?.themeSelectColor || "#C52C63",
   };
-  const tinyThemeTextColor = tinycolor(seneThemeOptions.themeTextColor);
+  const tinyThemeTextColor = tinycolor(sceneThemeOptions.themeTextColor);
   useEffect(() => {
-    switch (seneThemeOptions?.themeType) {
+    switch (sceneThemeOptions?.themeType) {
       case "light":
         setPublishedTheme(light);
         break;
@@ -32,18 +32,19 @@ export default (seneThemeOptions?: SeneThemeOptions) => {
         setPublishedTheme(forest);
         break;
       case "custom":
-        seneThemeOptions.themeBackgroundColor = seneThemeOptions?.themeBackgroundColor || "#dfe5f0";
-        seneThemeOptions.themeTextColor = seneThemeOptions?.themeTextColor || "#434343";
-        seneThemeOptions.themeSelectColor = seneThemeOptions?.themeSelectColor || "#C52C63";
+        sceneThemeOptions.themeBackgroundColor =
+          sceneThemeOptions?.themeBackgroundColor || "#dfe5f0";
+        sceneThemeOptions.themeTextColor = sceneThemeOptions?.themeTextColor || "#434343";
+        sceneThemeOptions.themeSelectColor = sceneThemeOptions?.themeSelectColor || "#C52C63";
         setPublishedTheme({
-          mask: isDark(seneThemeOptions?.themeBackgroundColor) ? "#FFFFFF0D" : "#0000001A",
-          background: seneThemeOptions.themeBackgroundColor,
-          mainText: seneThemeOptions.themeTextColor,
-          select: seneThemeOptions.themeSelectColor,
-          strongIcon: isDark(seneThemeOptions?.themeBackgroundColor)
+          mask: isDark(sceneThemeOptions?.themeBackgroundColor) ? "#FFFFFF0D" : "#0000001A",
+          background: sceneThemeOptions.themeBackgroundColor,
+          mainText: sceneThemeOptions.themeTextColor,
+          select: sceneThemeOptions.themeSelectColor,
+          strongIcon: isDark(sceneThemeOptions?.themeBackgroundColor)
             ? tinyThemeTextColor.lighten(25).toHex8String()
             : "#FFFFFF",
-          strongText: isDark(seneThemeOptions?.themeBackgroundColor)
+          strongText: isDark(sceneThemeOptions?.themeBackgroundColor)
             ? tinyThemeTextColor.lighten(25).toHex8String()
             : "#FFFFFF",
           weakText: tinyThemeTextColor.setAlpha(tinyThemeTextColor.getAlpha() + 0.5).toHex8String(),
@@ -56,7 +57,7 @@ export default (seneThemeOptions?: SeneThemeOptions) => {
       default:
         setPublishedTheme(dark);
     }
-  }, [seneThemeOptions]);
+  }, [sceneThemeOptions]);
 
   return { publishedTheme };
 };

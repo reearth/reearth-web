@@ -134,10 +134,10 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
         }}
         {...attributes}>
         {visibleMenuButton && (
-          <MenuWrapper publishedTheme={publishedTheme}>
+          <MenuWrapper background={publishedTheme.background}>
             {menuItems?.map(i => (
               <MenuItem
-                publishedTheme={publishedTheme}
+                color={publishedTheme.mainText}
                 tabIndex={0}
                 key={i.id}
                 item={i}
@@ -166,18 +166,18 @@ const StyledIcon = styled(Icon)<{ margin: boolean }>`
   margin-right: ${({ margin }) => (margin ? "5px" : null)};
 `;
 
-const MenuWrapper = styled.div<{ publishedTheme: PublishTheme }>`
+const MenuWrapper = styled.div<{ background: string }>`
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  background-color: ${({ publishedTheme }) => publishedTheme.background};
+  background-color: ${({ background }) => background};
   border-radius: 3px;
   overflow-wrap: break-word;
   hyphens: auto;
 `;
 
-const MenuItem = styled.a<{ item?: MenuItem; publishedTheme: PublishTheme }>`
+const MenuItem = styled.a<{ item?: MenuItem; color: string }>`
   display: block;
   font-size: ${fonts.sizes.xs}px;
   margin: ${({ item }) => (item?.menuType === "border" ? "0 5px" : null)};
@@ -185,7 +185,7 @@ const MenuItem = styled.a<{ item?: MenuItem; publishedTheme: PublishTheme }>`
   cursor: ${({ item }) => (item?.menuType === "border" ? null : "pointer")};
   border-top: ${({ item }) => (item?.menuType === "border" ? "1px solid #fff" : null)};
   opacity: ${({ item }) => (item?.menuType === "border" ? "0.5" : null)};
-  color: ${({ publishedTheme }) => publishedTheme.mainText};
+  color: ${({ color }) => color};
 `;
 
 const Button = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`

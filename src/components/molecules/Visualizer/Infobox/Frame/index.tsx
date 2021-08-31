@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import { styled, css, usePublishedTheme, PublishTheme } from "@reearth/theme";
+import { styled, css, usePublishedTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
@@ -102,17 +102,17 @@ const InfoBox: React.FC<Props> = ({
           direction="column"
           onClick={handleOpen}>
           {isSmallWindow && !noContent && (
-            <StyledIcon publishedTheme={publishedTheme} icon="arrowUp" size={24} open={open} />
+            <StyledIcon color={publishedTheme.mainIcon} icon="arrowUp" size={24} open={open} />
           )}
           <Text size="m" weight="bold" customColor>
             <TitleText>{title || " "}</TitleText>
           </Text>
           {!isSmallWindow && (
-            <StyledIcon publishedTheme={publishedTheme} icon="arrowDown" size={24} open={open} />
+            <StyledIcon color={publishedTheme.mainIcon} icon="arrowDown" size={24} open={open} />
           )}
         </TitleFlex>
         <CloseBtn
-          publishedTheme={publishedTheme}
+          color={publishedTheme.mainIcon}
           icon="cancel"
           size={16}
           onClick={handleClose}
@@ -169,21 +169,21 @@ const TitleFlex = styled(Flex)`
   width: 75%;
 `;
 
-const StyledIcon = styled(Icon)<{ open?: boolean; publishedTheme: PublishTheme }>`
+const StyledIcon = styled(Icon)<{ open?: boolean; color: string }>`
   display: ${({ open }) => (open ? "none" : "block")};
-  color: ${({ publishedTheme }) => publishedTheme.mainIcon};
+  color: ${({ color }) => color};
 `;
 
 const TitleText = styled.span`
   line-height: ${metricsSizes["2xl"]}px;
 `;
 
-const CloseBtn = styled(Icon)<{ open?: boolean; publishedTheme: PublishTheme }>`
+const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
   position: absolute;
   top: 10px;
   right: 10px;
   cursor: pointer;
-  color: ${({ publishedTheme }) => publishedTheme.mainIcon};
+  color: ${({ color }) => color};
   display: ${({ open }) => (open ? "block" : "none")};
 `;
 

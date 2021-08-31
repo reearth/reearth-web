@@ -4,7 +4,7 @@ import nl2br from "react-nl2br";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Markdown from "@reearth/components/atoms/Markdown";
-import { styled, useTheme, usePublishedTheme, PublishTheme } from "@reearth/theme";
+import { styled, useTheme, usePublishedTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
@@ -129,7 +129,7 @@ const TextBlock: React.FC<Props> = ({
               {text}
             </Markdown>
           ) : (
-            <Field styles={typography} publishedTheme={publishedTheme} onDoubleClick={startEditing}>
+            <Field styles={typography} color={publishedTheme.mainText} onDoubleClick={startEditing}>
               {nl2br(text ?? "")}
             </Field>
           )}
@@ -157,8 +157,8 @@ const Title = styled.div`
   font-size: 12px;
 `;
 
-const Field = styled.div<{ styles?: Typography; publishedTheme: PublishTheme }>`
-  color: ${({ publishedTheme }) => publishedTheme.mainText};
+const Field = styled.div<{ styles?: Typography; color: string }>`
+  color: ${({ color }) => color};
   ${({ styles }) => typographyStyles(styles)}
   padding: 5px;
   min-height: 15px;
