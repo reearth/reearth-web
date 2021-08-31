@@ -267,3 +267,29 @@ export const ADD_INFOBOX_FIELD = gql`
 
   ${layerFragment}
 `;
+
+export const UPDATE_LAT_LNG = gql`
+  mutation updatePropertyValueLatLng(
+    $propertyId: ID!
+    $schemaItemId: PropertySchemaFieldID
+    $itemId: ID
+    $fieldId: PropertySchemaFieldID!
+    $lat: Float!
+    $lng: Float!
+  ) {
+    updatePropertyValueLatLng(
+      input: {
+        propertyId: $propertyId
+        schemaItemId: $schemaItemId
+        itemId: $itemId
+        fieldId: $fieldId
+        lat: $lat
+        lng: $lng
+      }
+    ) {
+      property {
+        id
+      }
+    }
+  }
+`;

@@ -2504,6 +2504,27 @@ export type AddInfoboxFieldMutation = (
   )> }
 );
 
+export type UpdatePropertyValueLatLngMutationVariables = Exact<{
+  propertyId: Scalars['ID'];
+  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
+  itemId?: Maybe<Scalars['ID']>;
+  fieldId: Scalars['PropertySchemaFieldID'];
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
+}>;
+
+
+export type UpdatePropertyValueLatLngMutation = (
+  { __typename?: 'Mutation' }
+  & { updatePropertyValueLatLng?: Maybe<(
+    { __typename?: 'PropertyFieldPayload' }
+    & { property: (
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+    ) }
+  )> }
+);
+
 export type GetAllDataSetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
 }>;
@@ -5634,6 +5655,47 @@ export function useAddInfoboxFieldMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddInfoboxFieldMutationHookResult = ReturnType<typeof useAddInfoboxFieldMutation>;
 export type AddInfoboxFieldMutationResult = Apollo.MutationResult<AddInfoboxFieldMutation>;
 export type AddInfoboxFieldMutationOptions = Apollo.BaseMutationOptions<AddInfoboxFieldMutation, AddInfoboxFieldMutationVariables>;
+export const UpdatePropertyValueLatLngDocument = gql`
+    mutation updatePropertyValueLatLng($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lat: Float!, $lng: Float!) {
+  updatePropertyValueLatLng(
+    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, lat: $lat, lng: $lng}
+  ) {
+    property {
+      id
+    }
+  }
+}
+    `;
+export type UpdatePropertyValueLatLngMutationFn = Apollo.MutationFunction<UpdatePropertyValueLatLngMutation, UpdatePropertyValueLatLngMutationVariables>;
+
+/**
+ * __useUpdatePropertyValueLatLngMutation__
+ *
+ * To run a mutation, you first call `useUpdatePropertyValueLatLngMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePropertyValueLatLngMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePropertyValueLatLngMutation, { data, loading, error }] = useUpdatePropertyValueLatLngMutation({
+ *   variables: {
+ *      propertyId: // value for 'propertyId'
+ *      schemaItemId: // value for 'schemaItemId'
+ *      itemId: // value for 'itemId'
+ *      fieldId: // value for 'fieldId'
+ *      lat: // value for 'lat'
+ *      lng: // value for 'lng'
+ *   },
+ * });
+ */
+export function useUpdatePropertyValueLatLngMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePropertyValueLatLngMutation, UpdatePropertyValueLatLngMutationVariables>) {
+        return Apollo.useMutation<UpdatePropertyValueLatLngMutation, UpdatePropertyValueLatLngMutationVariables>(UpdatePropertyValueLatLngDocument, baseOptions);
+      }
+export type UpdatePropertyValueLatLngMutationHookResult = ReturnType<typeof useUpdatePropertyValueLatLngMutation>;
+export type UpdatePropertyValueLatLngMutationResult = Apollo.MutationResult<UpdatePropertyValueLatLngMutation>;
+export type UpdatePropertyValueLatLngMutationOptions = Apollo.BaseMutationOptions<UpdatePropertyValueLatLngMutation, UpdatePropertyValueLatLngMutationVariables>;
 export const GetAllDataSetsDocument = gql`
     query GetAllDataSets($sceneId: ID!) {
   datasetSchemas(sceneId: $sceneId, first: 100) {

@@ -6,6 +6,7 @@ import {
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
   useChangePropertyValueMutation,
+  useUpdatePropertyValueLatLngMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
 } from "@reearth/gql";
@@ -161,7 +162,7 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
-  const [updateLayerLatLng] = useChangePropertyValueLatLngMutation();
+  const [updateLayerLatLng] = useUpdatePropertyValueLatLngMutation();
 
   const layersWithRawProperty = convertLayersWithRawProperty(layerData);
 
@@ -224,6 +225,3 @@ export default (isBuilt?: boolean) => {
     handleDropLayer,
   };
 };
-function useChangePropertyValueLatLngMutation(): [any] {
-  throw new Error("Function not implemented.");
-}
