@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
-import { Provider as DndProvider } from "@reearth/util/use-dnd";
 
-import { PublishedAppProvider as ThemeProvider } from "../../../theme";
-import AuthenticationRequiredPage from "@reearth/components/pages/Common/AuthenticationRequiredPage";
+import { Provider as DndProvider } from "@reearth/util/use-dnd";
+import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
+import { useSceneId } from "@reearth/state";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
-import { useLocalState } from "@reearth/state";
+import { PublishedAppProvider as ThemeProvider } from "../../../theme";
 
 export type Props = {
   path?: string;
@@ -13,10 +12,11 @@ export type Props = {
 };
 
 const PreviewPage: React.FC<Props> = ({ sceneId }) => {
-  const [sceneId2, setLocalState] = useLocalState(s => ({ sceneId: s.sceneId }));
+  const [sceneId2, setSceneId] = useSceneId();
+
   useEffect(() => {
-    setLocalState({ sceneId });
-  }, [sceneId, setLocalState]);
+    setSceneId(sceneId);
+  }, [sceneId, setSceneId]);
 
   return sceneId2 ? (
     <ThemeProvider>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
@@ -17,49 +17,20 @@ export type Mode = LayerMode | WidgetMode | SceneMode;
 // TODO: ErrorBoudaryでエラーハンドリング
 
 const RightMenu: React.FC = () => {
-  const {
-    selectedLayerType,
-    isCapturing,
-    selectedLayerId,
-    selectedBlock,
-    selectedTab,
-    setSelectedTab,
-    reset,
-  } = useHooks();
-
-  const property =
-    selectedLayerType === "layer" && selectedLayerId
-      ? "layer"
-      : selectedLayerType === "widget" || selectedLayerType === "widgets"
-      ? "widget"
-      : "scene";
+  const { isCapturing, selectedBlock, selectedTab, selected, reset } = useHooks();
 
   const intl = useIntl();
-  const layerLabel = intl.formatMessage({ defaultMessage: "Layer" });
-  const widgetLabel = intl.formatMessage({ defaultMessage: "Widget" });
-  const widgetsLabel = intl.formatMessage({ defaultMessage: "Widgets" });
-  const sceneLabel = intl.formatMessage({ defaultMessage: "Scene" });
-  const labels = {
-    [property]:
-      selectedLayerType === "layer" && selectedLayerId
-        ? layerLabel
-        : selectedLayerType === "widget"
-        ? widgetLabel
-        : selectedLayerType === "widgets"
-        ? widgetsLabel
-        : sceneLabel,
-    infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
-    export: intl.formatMessage({ defaultMessage: "Export" }),
-  };
-
-  useEffect(() => {
-    setSelectedTab(property);
-  }, [selectedLayerId, property, setSelectedTab]);
-
-  useEffect(() => {
-    if (!selectedBlock) return;
-    setSelectedTab("infobox");
-  }, [selectedBlock, setSelectedTab]);
+  const labels = useMemo(
+    () => ({
+      layer: intl.formatMessage({ defaultMessage: "Layer" }),
+      widget: intl.formatMessage({ defaultMessage: "Widget" }),
+      widgets: intl.formatMessage({ defaultMessage: "Widgets" }),
+      scene: intl.formatMessage({ defaultMessage: "Scene" }),
+      infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
+      export: intl.formatMessage({ defaultMessage: "Export" }),
+    }),
+    [intl],
+  );
 
   return (
     <TabArea<"layer" | "widget" | "widgets" | "scene" | "infobox" | "export">
@@ -69,7 +40,7 @@ const RightMenu: React.FC = () => {
           ? "infobox"
           : selectedTab === "export"
           ? "export"
-          : property
+          : selected
       }
       disabled={isCapturing}
       labels={labels}
@@ -77,34 +48,36 @@ const RightMenu: React.FC = () => {
       onChange={reset}
       scrollable>
       {{
-        [property]: (
+        ...(selected
+          ? {
+              [selected]: (
+                <>
+                  {selected === "layer" ? (
+                    <PropertyPane mode="layer" />
+                  ) : selected === "widget" ? (
+                    <PropertyPane mode="widget" />
+                  ) : selected === "widgets" ? (
+                    <PropertyPane mode="widgets" />
+                  ) : (
+                    <PropertyPane mode="scene" />
+                  )}
+                </>
+              ),
+            }
+          : {}),
+        infobox: selected === "layer" && (
           <>
-            {selectedLayerType === "layer" ? (
-              // レイヤー自体のProperty
-              <PropertyPane mode="layer" />
-            ) : selectedLayerType === "widget" ? (
-              <PropertyPane mode="widget" />
-            ) : selectedLayerType === "widgets" ? (
-              <PropertyPane mode="widgets" />
-            ) : (
-              // Scene全体のProperty
-              <PropertyPane mode="scene" />
-            )}
-          </>
-        ),
-        infobox: selectedLayerType === "layer" && selectedLayerId && (
-          <>
-            {/* Infoboxの選択中のフィールドのProperty */}
             <PropertyPane mode="block" />
-            {/* Infobox自体のProperty */}
             <PropertyPane mode="infobox" />
           </>
         ),
-        export: selectedLayerType === "layer" && selectedLayerId && (
-          <>
-            <ExportPane />
-          </>
-        ),
+        export:
+          selected === "layer" ||
+          (selected === "scene" && (
+            <>
+              <ExportPane />
+            </>
+          )),
       }}
     </TabArea>
   );

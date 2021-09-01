@@ -1,14 +1,10 @@
 import React, { Suspense } from "react";
 import { Router, Redirect } from "@reach/router";
-import { LocationProvider } from "@reach/router";
-import { createBrowserHistory } from "history";
-import { reachify } from "redux-first-history";
 
+import { Provider as IntlProvider } from "@reearth/locale";
 import { Provider as ThemeProvider, styled } from "./theme";
 import { Provider as GqlProvider } from "./gql";
-import { Provider as LocalStateProvider } from "./state";
 import { Provider as Auth0Provider } from "./auth";
-import { Provider as IntlProvider } from "@reearth/locale";
 
 import NotFound from "@reearth/components/pages/NotFound";
 import Loading from "@reearth/components/atoms/Loading";
@@ -37,41 +33,34 @@ if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
 
-const history = createBrowserHistory();
-const reachHistory = reachify(history);
-
 const App: React.FC = () => {
   return (
     <Auth0Provider>
-      <LocalStateProvider>
-        <GqlProvider>
-          <ThemeProvider>
-            <LocationProvider history={reachHistory}>
-              <IntlProvider>
-                <Suspense fallback={<Loading />}>
-                  <StyledRouter>
-                    <TopPage path="/" />
-                    <Dashboard path="/dashboard/:teamId" />
-                    <EarthEditor path="/edit/:sceneId" />
-                    <Preview path="/edit/:sceneId/preview" />
-                    <Redirect from="/settings" to="/settings/account" />
-                    <AccountSettings path="/settings/account" />
-                    <WorkspaceList path="/settings/workspaces" />
-                    <WorkspaceSettings path="/settings/workspace/:teamId" />
-                    <SettingsProjectList path="/settings/workspace/:teamId/projects" />
-                    <AssetSettings path="/settings/workspace/:teamId/asset" />
-                    <ProjectSettings path="/settings/project/:projectId" />
-                    <PublicSettings path="/settings/project/:projectId/public" />
-                    <DatasetSettings path="/settings/project/:projectId/dataset" />
-                    <PluginSettings path="/settings/project/:projectId/plugins" />
-                    <NotFound default />
-                  </StyledRouter>
-                </Suspense>
-              </IntlProvider>
-            </LocationProvider>
-          </ThemeProvider>
-        </GqlProvider>
-      </LocalStateProvider>
+      <GqlProvider>
+        <ThemeProvider>
+          <IntlProvider>
+            <Suspense fallback={<Loading />}>
+              <StyledRouter>
+                <TopPage path="/" />
+                <Dashboard path="/dashboard/:teamId" />
+                <EarthEditor path="/edit/:sceneId" />
+                <Preview path="/edit/:sceneId/preview" />
+                <Redirect from="/settings" to="/settings/account" />
+                <AccountSettings path="/settings/account" />
+                <WorkspaceList path="/settings/workspaces" />
+                <WorkspaceSettings path="/settings/workspace/:teamId" />
+                <SettingsProjectList path="/settings/workspace/:teamId/projects" />
+                <AssetSettings path="/settings/workspace/:teamId/asset" />
+                <ProjectSettings path="/settings/project/:projectId" />
+                <PublicSettings path="/settings/project/:projectId/public" />
+                <DatasetSettings path="/settings/project/:projectId/dataset" />
+                <PluginSettings path="/settings/project/:projectId/plugins" />
+                <NotFound default />
+              </StyledRouter>
+            </Suspense>
+          </IntlProvider>
+        </ThemeProvider>
+      </GqlProvider>
     </Auth0Provider>
   );
 };
