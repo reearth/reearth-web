@@ -177,11 +177,11 @@ export const convertWidgets = (
     .map(
       (widget): Widget => ({
         id: widget.id,
-        extended: widget.extended as boolean,
+        extended: !!widget.extended,
         extendable: widget.extension?.widgetLayout?.extendable
           ? {
-              vertically: widget.extension.widgetLayout.extendable.vertically as boolean,
-              horizontally: widget.extension.widgetLayout.extendable.horizontally as boolean,
+              vertically: !!widget.extension.widgetLayout.extendable.vertically,
+              horizontally: !!widget.extension.widgetLayout.extendable.horizontally,
             }
           : undefined,
         floating: widget.extension?.widgetLayout?.floating,

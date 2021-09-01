@@ -158,7 +158,7 @@ const BannerButton = styled(Flex)`
 const HeroBannerButton = styled(Flex)`
   ${BannerButtonStyles};
   position: relative;
-  z-index: 1;
+  z-index: ${({ theme }) => theme.zIndexes.base};
   overflow: hidden;
 
   color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
@@ -178,7 +178,7 @@ const HeroBannerButton = styled(Flex)`
     background-size: cover;
     background-position: top;
     transition: transform 0.4s;
-    z-index: -1;
+    z-index: ${({ theme }) => theme.zIndexes.hidden};
   }
 
   &:hover: :before {

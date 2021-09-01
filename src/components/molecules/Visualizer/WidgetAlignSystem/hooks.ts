@@ -15,7 +15,7 @@ export type WidgetArea = {
   widgets?: (Widget | undefined)[];
 };
 
-export type WidgetSection = WidgetArea[] | [];
+export type WidgetSection = WidgetArea[];
 
 export type WidgetZone = {
   left: WidgetSection;
