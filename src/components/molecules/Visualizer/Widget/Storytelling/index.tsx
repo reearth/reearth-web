@@ -180,7 +180,7 @@ const Current = styled(Flex)`
 `;
 
 const Title = styled(Text)<{ color: string }>`
-  color: ${({ color }) => color}!important;
+  color: ${({ color }) => color};
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
