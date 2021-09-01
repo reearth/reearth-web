@@ -277,14 +277,14 @@ export const UPDATE_LAT_LNG = gql`
     $lat: Float!
     $lng: Float!
   ) {
-    updatePropertyValueLatLng(
+    updatePropertyValue(
       input: {
         propertyId: $propertyId
         schemaItemId: $schemaItemId
         itemId: $itemId
         fieldId: $fieldId
-        lat: $lat
-        lng: $lng
+        value: { lat: $lat, lng: $lng }
+        type: LATLNG
       }
     ) {
       property {

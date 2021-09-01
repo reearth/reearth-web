@@ -656,13 +656,13 @@ export type Mutation = {
   updateProject?: Maybe<ProjectPayload>;
   publishProject?: Maybe<ProjectPayload>;
   deleteProject?: Maybe<DeleteProjectPayload>;
-  uploadPlugin?: Maybe<UploadPluginPayload>;
   createScene?: Maybe<CreateScenePayload>;
   addWidget?: Maybe<AddWidgetPayload>;
   updateWidget?: Maybe<UpdateWidgetPayload>;
   removeWidget?: Maybe<RemoveWidgetPayload>;
   installPlugin?: Maybe<InstallPluginPayload>;
   uninstallPlugin?: Maybe<UninstallPluginPayload>;
+  uploadPlugin?: Maybe<UploadPluginPayload>;
   upgradePlugin?: Maybe<UpgradePluginPayload>;
   updateDatasetSchema?: Maybe<UpdateDatasetSchemaPayload>;
   syncDataset?: Maybe<SyncDatasetPayload>;
@@ -673,10 +673,6 @@ export type Mutation = {
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   addDatasetSchema?: Maybe<AddDatasetSchemaPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueLatLng?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueLatLngHeight?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueCamera?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueTypography?: Maybe<PropertyFieldPayload>;
   removePropertyField?: Maybe<PropertyFieldPayload>;
   uploadFileToProperty?: Maybe<PropertyFieldPayload>;
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
@@ -779,11 +775,6 @@ export type MutationDeleteProjectArgs = {
 };
 
 
-export type MutationUploadPluginArgs = {
-  input: UploadPluginInput;
-};
-
-
 export type MutationCreateSceneArgs = {
   input: CreateSceneInput;
 };
@@ -811,6 +802,11 @@ export type MutationInstallPluginArgs = {
 
 export type MutationUninstallPluginArgs = {
   input: UninstallPluginInput;
+};
+
+
+export type MutationUploadPluginArgs = {
+  input: UploadPluginInput;
 };
 
 
@@ -861,26 +857,6 @@ export type MutationAddDatasetSchemaArgs = {
 
 export type MutationUpdatePropertyValueArgs = {
   input: UpdatePropertyValueInput;
-};
-
-
-export type MutationUpdatePropertyValueLatLngArgs = {
-  input: UpdatePropertyValueLatLngInput;
-};
-
-
-export type MutationUpdatePropertyValueLatLngHeightArgs = {
-  input: UpdatePropertyValueLatLngHeightInput;
-};
-
-
-export type MutationUpdatePropertyValueCameraArgs = {
-  input: UpdatePropertyValueCameraInput;
-};
-
-
-export type MutationUpdatePropertyValueTypographyArgs = {
-  input: UpdatePropertyValueTypographyInput;
 };
 
 
@@ -983,6 +959,7 @@ export type Node = {
 };
 
 export enum NodeType {
+  Asset = 'ASSET',
   User = 'USER',
   Team = 'TEAM',
   Project = 'PROJECT',
@@ -1809,20 +1786,6 @@ export type UpdatePropertyItemOperationInput = {
   nameFieldType?: Maybe<ValueType>;
 };
 
-export type UpdatePropertyValueCameraInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  altitude: Scalars['Float'];
-  heading: Scalars['Float'];
-  pitch: Scalars['Float'];
-  roll: Scalars['Float'];
-  fov: Scalars['Float'];
-};
-
 export type UpdatePropertyValueInput = {
   propertyId: Scalars['ID'];
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
@@ -1830,40 +1793,6 @@ export type UpdatePropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   value?: Maybe<Scalars['Any']>;
   type: ValueType;
-};
-
-export type UpdatePropertyValueLatLngHeightInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  height: Scalars['Float'];
-};
-
-export type UpdatePropertyValueLatLngInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-};
-
-export type UpdatePropertyValueTypographyInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  fontFamily?: Maybe<Scalars['String']>;
-  fontWeight?: Maybe<Scalars['String']>;
-  fontSize?: Maybe<Scalars['Int']>;
-  color?: Maybe<Scalars['String']>;
-  textAlign?: Maybe<TextAlign>;
-  bold?: Maybe<Scalars['Boolean']>;
-  italic?: Maybe<Scalars['Boolean']>;
-  underline?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateTeamInput = {
@@ -2516,7 +2445,7 @@ export type UpdatePropertyValueLatLngMutationVariables = Exact<{
 
 export type UpdatePropertyValueLatLngMutation = (
   { __typename?: 'Mutation' }
-  & { updatePropertyValueLatLng?: Maybe<(
+  & { updatePropertyValue?: Maybe<(
     { __typename?: 'PropertyFieldPayload' }
     & { property: (
       { __typename?: 'Property' }
@@ -5657,8 +5586,8 @@ export type AddInfoboxFieldMutationResult = Apollo.MutationResult<AddInfoboxFiel
 export type AddInfoboxFieldMutationOptions = Apollo.BaseMutationOptions<AddInfoboxFieldMutation, AddInfoboxFieldMutationVariables>;
 export const UpdatePropertyValueLatLngDocument = gql`
     mutation updatePropertyValueLatLng($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lat: Float!, $lng: Float!) {
-  updatePropertyValueLatLng(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, lat: $lat, lng: $lng}
+  updatePropertyValue(
+    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, value: {lat: $lat, lng: $lng}, type: LATLNG}
   ) {
     property {
       id
