@@ -39,7 +39,7 @@ export type Props = {
   button: Button;
   menuItems?: MenuItem[];
   pos: Position;
-  sceneProperty?: SceneProperty; // to remove
+  sceneProperty?: SceneProperty;
 };
 
 export default function ({ button: b, menuItems, pos, sceneProperty }: Props): JSX.Element {
