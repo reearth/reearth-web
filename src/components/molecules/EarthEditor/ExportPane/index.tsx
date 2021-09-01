@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useIntl } from "react-intl";
 import { styled } from "@reearth/theme";
-// TODO: 後で汎用化して PropertyPane をやめる
-import Wrapper from "@reearth/components/atoms/PropertyPane";
 import Button from "@reearth/components/atoms/Button";
 import SelectBox, { Props as SelectBoxProps } from "@reearth/components/atoms/SelectBox";
 import Text from "@reearth/components/atoms/Text";
@@ -17,13 +15,13 @@ type Props = {
   onExport: (format: Format) => void;
 };
 
-const ExportPane: React.FC<Props> = ({ className, show = true, onExport }) => {
+const ExportPane: React.FC<Props> = ({ className, onExport }) => {
   const intl = useIntl();
   const [format, setFormat] = useState<Format>(defaultFormat);
 
   const handleExport = useCallback(() => onExport(format), [format, onExport]);
 
-  return show ? (
+  return (
     <Wrapper className={className}>
       <SelectWrapper>
         <Label size="s">{intl.formatMessage({ defaultMessage: "Export type" })}</Label>
@@ -44,8 +42,13 @@ const ExportPane: React.FC<Props> = ({ className, show = true, onExport }) => {
         onClick={handleExport}
       />
     </Wrapper>
-  ) : null;
+  );
 };
+
+const Wrapper = styled.div`
+  background: ${props => props.theme.properties};
+  margin: 14px 0;
+`;
 
 const SelectWrapper = styled.div`
   display: flex;
