@@ -150,7 +150,7 @@ const Wrapper = styled.div<{ publishedTheme: PublishTheme }>`
 `;
 
 const ArrowButton = styled.button<{ publishedTheme: PublishTheme }>`
-  color: ${({ publishedTheme }) => publishedTheme.mask};
+  background-color: ${({ publishedTheme }) => publishedTheme.mask};
   display: flex;
   flex-flow: column;
   justify-content: center;
