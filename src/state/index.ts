@@ -11,10 +11,14 @@ export const useSceneId = () => useAtom(sceneId);
 const rootLayerId = atom<string | undefined>(undefined);
 export const useRootLayerId = () => useAtom(rootLayerId);
 
+const widgetAlignEditor = atom<boolean | undefined>(undefined);
+export const useWidgetAlignEditor = () => useAtom(widgetAlignEditor);
+
 export type Selected =
   | { type: "scene" }
   | { type: "layer"; layerId: string }
-  | { type: "widget"; widgetId?: string };
+  | { type: "widget"; widgetId?: string }
+  | { type: "widgets" };
 const selected = atom<Selected | undefined>(undefined);
 export const useSelected = () => useAtom(selected);
 

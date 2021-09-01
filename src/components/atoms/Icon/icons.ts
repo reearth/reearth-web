@@ -132,6 +132,7 @@ export default {
   model: PrimModel,
   tileset: PrimTileset,
   widget: Widgets,
+  widgets: Widgets,
   menu: WidgetMenu,
   storytelling: WidgetStory,
   storytellingMenu: StorytellingMenu,
