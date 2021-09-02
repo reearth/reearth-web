@@ -26,7 +26,7 @@ export default ({
   rootLayerId?: string;
   selectedLayer?: string;
   selectedBlock?: string;
-  selectedWidgetId?: { pluginId: string; extensionId: string };
+  selectedWidgetId?: string;
   teamId?: string;
   mode: Mode;
 }) => {
@@ -121,14 +121,7 @@ export default ({
   const isInfoboxCreatable =
     !!selectedLayer && mode === "infobox" && !layerPropertyData?.layer?.infobox;
   const selectedWidget = useMemo(
-    () =>
-      selectedWidgetId
-        ? scene?.widgets.find(
-            w =>
-              selectedWidgetId.pluginId === w.pluginId &&
-              selectedWidgetId.extensionId === w.extensionId,
-          )
-        : undefined,
+    () => (selectedWidgetId ? scene?.widgets.find(w => selectedWidgetId === w.id) : undefined),
     [scene?.widgets, selectedWidgetId],
   );
 
@@ -145,13 +138,11 @@ export default ({
 
     if (mode === "widget") {
       if (!selectedWidgetId) return undefined;
-      const w = scene?.widgets.find(
-        w =>
-          w.pluginId === selectedWidgetId.pluginId &&
-          w.extensionId === selectedWidgetId.extensionId,
-      );
+      const w = scene?.widgets.find(w => selectedWidgetId === w.id);
       return {
-        id: selectedWidgetId.pluginId + "/" + selectedWidgetId.extensionId,
+        id: selectedWidgetId,
+        pluginId: w?.pluginId,
+        extensionId: w?.extensionId,
         mode: "widget",
         propertyId: w?.property?.id,
         items: convert(w?.property, null),
@@ -185,7 +176,6 @@ export default ({
     linkedDatasetSchemaId,
     isInfoboxCreatable,
     datasetSchemas,
-    scene,
     layers,
     assets,
     selectedWidget,
