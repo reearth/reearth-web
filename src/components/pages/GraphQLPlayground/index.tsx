@@ -24,6 +24,6 @@ export default function GraphQLPlayground(_: { path?: string }): JSX.Element {
       <GraphiQL fetcher={fetcher} headerEditorEnabled headers={headers} />
     </Filled>
   ) : (
-    <div>Please log in Re:Earth</div>
+    <div>Please log in to Re:Earth</div>
   );
 }
