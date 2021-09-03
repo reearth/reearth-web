@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 import { useError, useNotification, Notification } from "@reearth/state";
 
@@ -9,6 +9,7 @@ export default () => {
   const intl = useIntl();
   const [notification, setNotification] = useNotification();
   const [error, setError] = useError();
+  const [visible, changeVisibility] = useState(false);
   const notificationTimeout = 6000;
 
   const notificationHeading = useMemo(() => {
@@ -38,6 +39,18 @@ export default () => {
   );
 
   useEffect(() => {
+    changeVisibility(!!notification);
+  }, [notification]);
+
+  useEffect(() => {
+    if (!notification) return;
+    const timerID = setTimeout(() => {
+      changeVisibility(false);
+    }, 5000);
+    return () => clearTimeout(timerID);
+  }, [notification]);
+
+  useEffect(() => {
     if (!error) return;
     setNotification({
       type: "error",
@@ -51,7 +64,10 @@ export default () => {
   }, [error, setError, notificationHeading, setNotification]);
 
   return {
-    notification,
+    visible,
+    changeVisibility,
     notify,
+    notification,
+    setNotification,
   };
 };

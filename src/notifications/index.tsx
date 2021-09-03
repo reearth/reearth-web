@@ -1,32 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
 
 import { styled, metrics, useTheme } from "@reearth/theme";
-import { useNotification } from "@reearth/state";
-import { NotificationType as Type, NotificationStyleType as StyleType } from "./hooks";
+import useHooks, { NotificationType as Type, NotificationStyleType as StyleType } from "./hooks";
 
 export type NotificationType = Type;
 export type NotificationStyleType = StyleType;
 
 const NotificationBanner: React.FC = ({ children }) => {
   const theme = useTheme();
-  const [notification, setNotification] = useNotification();
-  const [visible, changeVisibility] = useState(false);
-
-  useEffect(() => {
-    changeVisibility(!!notification);
-  }, [notification]);
-
-  useEffect(() => {
-    if (!notification) return;
-    const timerID = setTimeout(() => {
-      changeVisibility(false);
-    }, 5000);
-    return () => clearTimeout(timerID);
-  }, [notification]);
+  const { visible, changeVisibility, notification, setNotification } = useHooks();
 
   return (
     <div style={{ height: "100%" }}>

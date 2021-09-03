@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useIntl } from "react-intl";
 import { useNavigate } from "@reach/router";
 import { useTeam, useProject } from "@reearth/state";
 import {
@@ -13,6 +14,7 @@ import {
   useRemoveMemberFromTeamMutation,
 } from "@reearth/gql";
 import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
+import useNotification from "@reearth/notifications/hooks";
 import { Team } from "@reearth/gql/graphql-client-api";
 
 type Params = {
@@ -20,8 +22,10 @@ type Params = {
 };
 
 export default (params: Params) => {
+  const intl = useIntl();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject] = useProject();
+  const { notify } = useNotification();
 
   const navigate = useNavigate();
   const [modalShown, setModalShown] = useState(false);
@@ -67,10 +71,14 @@ export default (params: Params) => {
       const team = results.data?.createTeam?.team;
       if (results) {
         setTeam(team);
+        notify(
+          "success",
+          intl.formatMessage({ defaultMessage: "Sucessfully created a workspace!" }),
+        );
       }
       setModalShown(false);
     },
-    [createTeamMutation, setTeam],
+    [createTeamMutation, setTeam, intl, notify],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
@@ -87,8 +95,9 @@ export default (params: Params) => {
     if (teamId) {
       await deleteTeamMutation({ variables: { teamId } });
     }
+    notify("info", intl.formatMessage({ defaultMessage: "Workspace was successfully deleted" }));
     setTeam(teams[0]);
-  }, [teamId, setTeam, teams, deleteTeamMutation]);
+  }, [teamId, setTeam, teams, deleteTeamMutation, intl, notify]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 
