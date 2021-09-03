@@ -7,7 +7,7 @@ import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
-import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/notifications";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import InputField from "./InputField";

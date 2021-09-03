@@ -11,7 +11,7 @@ import {
   useAssetsQuery,
   useCreateAssetMutation,
 } from "@reearth/gql";
-import { notificationSystem } from "@reearth/globalHooks";
+import useNotification from "@reearth/notifications/hooks";
 import { useTeam, useProject } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
@@ -24,7 +24,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 
 export default () => {
-  const { notify } = notificationSystem();
+  const { notify } = useNotification();
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
   const navigate = useNavigate();

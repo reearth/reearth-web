@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
-import { NotificationStyleType } from "@reearth/components/atoms/NotificationBanner";
+import { NotificationStyleType } from "@reearth/notifications";
 import { SheetParameter } from "./Gdrive";
 
 export type DatasetType = "csv" | "gcms" | "box" | "drop" | "gdrive";

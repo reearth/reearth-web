@@ -10,7 +10,7 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { notificationSystem } from "@reearth/globalHooks";
+import useNotification from "@reearth/notifications/hooks";
 import { useSceneId, useTeam, useProject } from "@reearth/state";
 import { useAuth } from "@reearth/auth";
 
@@ -23,7 +23,7 @@ export default () => {
   const { logout } = useAuth();
   const intl = useIntl();
 
-  const { closeNotification, notification, notify } = notificationSystem();
+  const { notify } = useNotification();
   const [sceneId] = useSceneId();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
@@ -197,7 +197,6 @@ export default () => {
     user,
     currentTeam,
     currentProject,
-    notification,
     validAlias,
     validatingAlias,
     url,
@@ -210,7 +209,6 @@ export default () => {
     logout,
     notify,
     checkProjectAlias,
-    closeNotification,
     createTeam,
     openPreview,
   };

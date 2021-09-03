@@ -20,14 +20,12 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
     currentTeam,
     currentProject,
     sceneId,
+    modalShown,
     changeTeam,
     createTeam,
-    modalShown,
     openModal,
     handleModalClose,
     back,
-    notification,
-    closeNotification,
   } = useHooks({
     teamId,
     projectId,
@@ -46,9 +44,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
       onChangeTeam={changeTeam}
       modalShown={modalShown}
       openModal={openModal}
-      handleModalClose={handleModalClose}
-      notification={notification}
-      onNotificationClose={closeNotification}>
+      handleModalClose={handleModalClose}>
       {children}
     </MoleculesSettingPage>
   );

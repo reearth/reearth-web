@@ -18,7 +18,7 @@ import {
 import { styled } from "@reearth/theme";
 
 // Proxy dependent types
-export { User, Team, NotificationType } from "@reearth/components/molecules/Common/Header";
+export { User, Team } from "@reearth/components/molecules/Common/Header";
 
 export type publishingType = "publishing" | "updating" | "unpublishing";
 export type Project = {

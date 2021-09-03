@@ -9,7 +9,6 @@ import {
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
-import { notificationSystem } from "@reearth/globalHooks";
 import { User } from "@reearth/components/molecules/Common/Header";
 
 type Params = {
@@ -20,7 +19,6 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const { notification, closeNotification } = notificationSystem();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
 
@@ -141,7 +139,5 @@ export default (params: Params) => {
     openModal,
     handleModalClose,
     back,
-    notification,
-    closeNotification,
   };
 };

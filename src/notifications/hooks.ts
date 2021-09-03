@@ -25,12 +25,6 @@ export default () => {
     }
   }, [intl, notification]);
 
-  const closeNotification = useCallback(() => {
-    if (error) {
-      setError(undefined);
-    }
-  }, [error, setError]);
-
   const notify = useCallback(
     (type?: NotificationStyleType, text?: string) => {
       if (!type || !text) return;
@@ -56,15 +50,8 @@ export default () => {
     return () => clearTimeout(timerID);
   }, [error, setError, notificationHeading, setNotification]);
 
-  useEffect(() => {
-    if (!notification?.text) return;
-    const timerID = setTimeout(() => setNotification(undefined), notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [notification?.text, setNotification]);
-
   return {
     notification,
     notify,
-    closeNotification,
   };
 };

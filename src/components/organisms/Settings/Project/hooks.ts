@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useIntl } from "react-intl";
 import {
   useProjectQuery,
   useUpdateProjectMutation,
@@ -9,6 +10,7 @@ import {
   useAssetsQuery,
 } from "@reearth/gql";
 import { useTeam } from "@reearth/state";
+import useNotification from "@reearth/notifications/hooks";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -17,6 +19,8 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
+  const intl = useIntl();
+  const { notify } = useNotification();
   const [currentTeam] = useTeam();
 
   const teamId = currentTeam?.id;
@@ -65,10 +69,6 @@ export default ({ projectId }: Params) => {
     [projectId, updateProjectMutation],
   );
 
-  const deleteProject = useCallback(() => {
-    projectId && deleteProjectMutation({ variables: { projectId } });
-  }, [projectId, deleteProjectMutation]);
-
   const updateProjectDescription = useCallback(
     (description: string) => {
       projectId && updateProjectMutation({ variables: { projectId, description } });
@@ -86,9 +86,25 @@ export default ({ projectId }: Params) => {
   const archiveProject = useCallback(
     (archived: boolean) => {
       projectId && archiveProjectMutation({ variables: { projectId, archived } });
+      if (archived) {
+        notify(
+          "info",
+          intl.formatMessage({ defaultMessage: "Project was successfully archived." }),
+        );
+      } else {
+        notify(
+          "info",
+          intl.formatMessage({ defaultMessage: "Project was successfully unarchived." }),
+        );
+      }
     },
-    [projectId, archiveProjectMutation],
+    [projectId, intl, notify, archiveProjectMutation],
   );
+
+  const deleteProject = useCallback(() => {
+    projectId && deleteProjectMutation({ variables: { projectId } });
+    notify("info", intl.formatMessage({ defaultMessage: "Project was successfully deleted." }));
+  }, [projectId, intl, notify, deleteProjectMutation]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(

@@ -34,12 +34,10 @@ const Header: React.FC<Props> = ({ className }) => {
     currentTeam,
     currentProject,
     logout,
-    notification,
     notify,
     validAlias,
     checkProjectAlias,
     validatingAlias,
-    closeNotification,
     createTeam,
     url,
     openPreview,
@@ -59,8 +57,6 @@ const Header: React.FC<Props> = ({ className }) => {
         onSignOut={logout}
         onCreateTeam={createTeam}
         onChangeTeam={changeTeam}
-        notification={notification}
-        onNotificationClose={closeNotification}
         onPreviewOpen={openPreview}
         modalShown={workspaceModalVisible}
         openModal={openWorkspaceModal}
