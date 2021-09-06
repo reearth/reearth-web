@@ -6,7 +6,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { SentryLink } from "apollo-link-sentry";
 
 import { useAuth } from "@reearth/auth";
-import { useError } from "@reearth/state";
+import { useNotification } from "@reearth/state";
 import { reportError } from "@reearth/sentry";
 import fragmentMatcher from "./fragmentMatcher.json";
 
@@ -14,7 +14,7 @@ const Provider: React.FC = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";
-  const [, setError] = useError();
+  const [, setNotification] = useNotification();
   const { getAccessToken } = useAuth();
 
   const authLink = setContext(async (_, { headers }) => {
@@ -36,8 +36,14 @@ const Provider: React.FC = ({ children }) => {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (!networkError && !graphQLErrors) return;
     const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
-    setError(error);
-    if (error) reportError(error);
+    if (error) {
+      setNotification({
+        type: "error",
+        heading: "Error",
+        text: error,
+      });
+      reportError(error);
+    }
   });
 
   const sentryLink = new SentryLink({ uri: endpoint });

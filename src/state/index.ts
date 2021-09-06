@@ -2,9 +2,6 @@ import { atom, useAtom } from "jotai";
 
 import { Camera } from "@reearth/util/value";
 
-const error = atom<string | undefined>(undefined);
-export const useError = () => useAtom(error);
-
 const sceneId = atom<string | undefined>(undefined);
 export const useSceneId = () => useAtom(sceneId);
 

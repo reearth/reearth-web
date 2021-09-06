@@ -117,7 +117,7 @@ export default () => {
         setModalShown(false);
         return;
       }
-      notify("success", intl.formatMessage({ defaultMessage: "Successfully created a project!" }));
+      notify("success", intl.formatMessage({ defaultMessage: "Successfully created project!" }));
       setModalShown(false);
       refetch();
     },
