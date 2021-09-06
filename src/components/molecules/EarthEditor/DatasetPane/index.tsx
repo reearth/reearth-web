@@ -88,13 +88,6 @@ const DatasetPane: React.FC<Props> = ({
     [onDatasetImport, onDatasetSync, setDatasetSyncLoading, setDatasetSyncOpen],
   );
 
-  const handleDatasetRemove = useCallback(
-    async (schemeId: string) => {
-      await onRemoveDataset?.(schemeId);
-    },
-    [onRemoveDataset],
-  );
-
   const byHost = (datasetSchemas || []).reduce((acc, ac) => {
     const host = parseHost(ac.source);
     const identifier = host || intl.formatMessage({ defaultMessage: "Other Source" });
@@ -126,7 +119,7 @@ const DatasetPane: React.FC<Props> = ({
                   name={ds.name}
                   totalCount={ds.totalCount}
                   onDrop={ds.onDrop}
-                  onRemove={handleDatasetRemove}
+                  onRemove={onRemoveDataset}
                 />
               ))}
             </div>
