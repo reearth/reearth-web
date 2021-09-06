@@ -73,11 +73,11 @@ export default (projectId: string) => {
       const results = await uploadPluginMutation({
         variables: { sceneId: sceneId, url: repoUrl },
       });
-      if (results) {
+      if (results.errors || !results.data?.uploadPlugin) {
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to install plugin." }));
+      } else {
         notify("success", intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }));
         await refetchInstalledPlugins();
-      } else {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to install plugin." }));
       }
     },
     [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, notify, intl],
@@ -93,7 +93,7 @@ export default (projectId: string) => {
       if (results.errors || !results.data?.uninstallPlugin) {
         notify("error", intl.formatMessage({ defaultMessage: "Failed to uninstall plugin." }));
       } else {
-        notify("info", intl.formatMessage({ defaultMessage: "Failed to uninstall plugin." }));
+        notify("info", intl.formatMessage({ defaultMessage: "Successfully removed plugin." }));
         await refetchInstalledPlugins();
       }
     },

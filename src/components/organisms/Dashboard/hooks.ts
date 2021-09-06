@@ -148,7 +148,7 @@ export default (teamId?: string) => {
         setModalShown(false);
         return;
       }
-      notify("success", intl.formatMessage({ defaultMessage: "Successfully created project." }));
+      notify("success", intl.formatMessage({ defaultMessage: "Successfully created project!" }));
       setModalShown(false);
       refetch();
     },
