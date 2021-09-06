@@ -27,14 +27,14 @@ export default () => {
 
   const notify = useCallback(
     (type?: NotificationStyleType, text?: string) => {
-      if (!type || !text) return;
+      if (!type || !text || notification?.type === "error") return;
       setNotification({
         type: type,
         heading: notificationHeading,
         text: text,
       });
     },
-    [setNotification, notificationHeading],
+    [setNotification, notificationHeading, notification?.type],
   );
 
   useEffect(() => {

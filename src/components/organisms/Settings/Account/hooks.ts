@@ -1,7 +1,9 @@
 import { useCallback } from "react";
+import { useIntl } from "react-intl";
 
-import { useTeam, useProject } from "@reearth/state";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
+import { useTeam, useProject } from "@reearth/state";
+import useNotification from "@reearth/notifications/hooks";
 
 export enum Theme {
   Default = "DEFAULT",
@@ -10,6 +12,8 @@ export enum Theme {
 }
 
 export default () => {
+  const intl = useIntl();
+  const { notify } = useNotification();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
 
@@ -21,31 +25,45 @@ export default () => {
   const [updateMeMutation] = useUpdateMeMutation();
 
   const updateName = useCallback(
-    (name: string) => {
-      updateMeMutation({ variables: { name } });
+    async (name: string) => {
+      const username = await updateMeMutation({ variables: { name } });
+      if (username.errors || !username.data?.updateMe) {
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to update account name." }));
+      }
     },
-    [updateMeMutation],
+    [updateMeMutation, intl, notify],
   );
 
   const updatePassword = useCallback(
-    (password: string, passwordConfirmation: string) => {
-      updateMeMutation({ variables: { password, passwordConfirmation } });
+    async (password: string, passwordConfirmation: string) => {
+      const newPassword = await updateMeMutation({ variables: { password, passwordConfirmation } });
+      if (newPassword.errors || !newPassword.data?.updateMe) {
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to update password." }));
+      } else {
+        notify("success", intl.formatMessage({ defaultMessage: "Successfully updated password!" }));
+      }
     },
-    [updateMeMutation],
+    [updateMeMutation, intl, notify],
   );
 
   const updateLanguage = useCallback(
-    (lang: string) => {
-      updateMeMutation({ variables: { lang } });
+    async (lang: string) => {
+      const language = await updateMeMutation({ variables: { lang } });
+      if (language.errors || !language.data?.updateMe) {
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to change language." }));
+      }
     },
-    [updateMeMutation],
+    [updateMeMutation, intl, notify],
   );
 
   const updateTheme = useCallback(
-    (theme: string) => {
-      updateMeMutation({ variables: { theme: theme as Theme } });
+    async (theme: string) => {
+      const newTheme = await updateMeMutation({ variables: { theme: theme as Theme } });
+      if (newTheme.errors || !newTheme.data?.updateMe) {
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to change theme." }));
+      }
     },
-    [updateMeMutation],
+    [updateMeMutation, intl, notify],
   );
 
   return {

@@ -42,6 +42,7 @@ const Provider: React.FC = ({ children }) => {
         heading: "Error",
         text: error,
       });
+      setTimeout(() => setNotification(undefined), 6000);
       reportError(error);
     }
   });
