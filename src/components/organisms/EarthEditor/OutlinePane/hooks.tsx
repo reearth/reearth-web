@@ -253,7 +253,8 @@ export default () => {
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
-    selectedWidgetId: selected?.type === "widget" ? selected.widgetId : undefined,
+    selectedWidgetId:
+      selected?.type === "widget" ? `${selected.pluginId}/${selected.extensionId}` : undefined,
     loading: loading && WidgetLoading,
     selectLayer,
     selectScene,

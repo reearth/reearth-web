@@ -64,8 +64,7 @@ export default (mode: Mode) => {
     sceneId,
     rootLayerId,
     selectedBlock,
-    selectedLayer: selected?.type === "layer" ? selected.layerId : undefined,
-    selectedWidgetId: selected?.type === "widget" ? selected.widgetId : undefined,
+    selected,
     teamId: team?.id,
   });
 
