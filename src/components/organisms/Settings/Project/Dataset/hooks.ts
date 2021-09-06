@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useIntl } from "react-intl";
 import {
   DatasetSchemasQuery,
   useSceneQuery,
@@ -9,14 +10,17 @@ import {
 import { useApolloClient } from "@apollo/client";
 
 import { useTeam, useProject } from "@reearth/state";
+import useNotification from "@reearth/notifications/hooks";
 
 type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
 
 export default (projectId: string) => {
+  const intl = useIntl();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
+  const { notify } = useNotification();
 
   const { data: sceneData } = useSceneQuery({
     variables: { projectId: projectId ?? "" },
@@ -38,16 +42,21 @@ export default (projectId: string) => {
   const [removeDatasetSchema] = useRemoveDatasetMutation();
   const handleRemoveDataset = useCallback(
     async (schemaId: string) => {
-      await removeDatasetSchema({
+      const results = await removeDatasetSchema({
         variables: {
           schemaId,
           force: true,
         },
       });
-      // re-render
-      await client.resetStore();
+      if (results.errors || results.data?.removeDatasetSchema) {
+        notify("error", intl.formatMessage({ defaultMessage: "Failed to delete dataset." }));
+      } else {
+        notify("info", intl.formatMessage({ defaultMessage: "Dataset was successfully deleted." }));
+        // re-render
+        await client.resetStore();
+      }
     },
-    [client, removeDatasetSchema],
+    [client, removeDatasetSchema, notify, intl],
   );
 
   // Add

@@ -84,26 +84,41 @@ export default ({ projectId }: Params) => {
   );
 
   const archiveProject = useCallback(
-    (archived: boolean) => {
-      projectId && archiveProjectMutation({ variables: { projectId, archived } });
-      if (archived) {
+    async (archived: boolean) => {
+      if (!projectId) return;
+      const results = await archiveProjectMutation({ variables: { projectId, archived } });
+      if (results.errors || !results.data?.updateProject) {
         notify(
-          "info",
-          intl.formatMessage({ defaultMessage: "Project was successfully archived." }),
+          "error",
+          archived
+            ? intl.formatMessage({
+                defaultMessage: "Failed to archive project.",
+              })
+            : intl.formatMessage({ defaultMessage: "Failed to unarchive project." }),
         );
       } else {
         notify(
           "info",
-          intl.formatMessage({ defaultMessage: "Project was successfully unarchived." }),
+          archived
+            ? intl.formatMessage({ defaultMessage: "Successfully archived the project." })
+            : intl.formatMessage({
+                defaultMessage:
+                  "Successfully unarchived the project. You can now edit this project.",
+              }),
         );
       }
     },
     [projectId, intl, notify, archiveProjectMutation],
   );
 
-  const deleteProject = useCallback(() => {
-    projectId && deleteProjectMutation({ variables: { projectId } });
-    notify("info", intl.formatMessage({ defaultMessage: "Project was successfully deleted." }));
+  const deleteProject = useCallback(async () => {
+    if (!projectId) return;
+    const results = await deleteProjectMutation({ variables: { projectId } });
+    if (results.errors || results.data?.deleteProject) {
+      notify("error", intl.formatMessage({ defaultMessage: "Failed to delete project." }));
+    } else {
+      notify("info", intl.formatMessage({ defaultMessage: "Project was successfully deleted." }));
+    }
   }, [projectId, intl, notify, deleteProjectMutation]);
 
   const [createAssetMutation] = useCreateAssetMutation();

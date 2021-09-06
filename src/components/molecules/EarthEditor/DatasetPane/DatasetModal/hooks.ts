@@ -29,16 +29,13 @@ export default (
       await handleGoogleSheetDatasetAdd(sheet.accessToken, sheet.fileId, sheet.sheetName, null);
       onNotify?.(
         "success",
-        intl.formatMessage({ defaultMessage: "You have added a dataset successfully." }),
+        intl.formatMessage({ defaultMessage: "Successfully added a dataset!" }),
       );
     }
     const data = dataType === "csv" ? csv : url;
     if (!data || !handleDatasetAdd) return;
     await handleDatasetAdd(data, null);
-    onNotify?.(
-      "success",
-      intl.formatMessage({ defaultMessage: "You have added a dataset successfully." }),
-    );
+    onNotify?.("success", intl.formatMessage({ defaultMessage: "Successfully added a dataset!" }));
   }, [dataType, url, csv, sheet, handleDatasetAdd, handleGoogleSheetDatasetAdd, intl, onNotify]);
 
   const onSelectCsvFile = useFileInput(

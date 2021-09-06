@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import { useIntl } from "react-intl";
 import { useNavigate } from "@reach/router";
 import {
   AssetsQuery,
@@ -7,6 +8,7 @@ import {
   useRemoveAssetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
+import useNotification from "@reearth/notifications/hooks";
 
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -15,6 +17,8 @@ type Params = {
 };
 
 export default (params: Params) => {
+  const intl = useIntl();
+  const { notify } = useNotification();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const navigate = useNavigate();
@@ -35,15 +39,24 @@ export default (params: Params) => {
   const createAssets = useCallback(
     (files: FileList) =>
       (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file => createAssetMutation({ variables: { teamId, file } })),
-          );
+        if (!teamId) return;
 
+        const results = await Promise.all(
+          Array.from(files).map(async file => {
+            const result = await createAssetMutation({ variables: { teamId, file } });
+            if (result.errors || !result.data?.createAsset) {
+              notify(
+                "error",
+                intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
+              );
+            }
+          }),
+        );
+        if (results) {
           await refetch();
         }
       })(),
-    [createAssetMutation, refetch, teamId],
+    [createAssetMutation, refetch, teamId, notify, intl],
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
@@ -51,15 +64,23 @@ export default (params: Params) => {
   const removeAsset = useCallback(
     (assetIds: string[]) =>
       (async () => {
-        if (teamId) {
-          await Promise.all(
-            assetIds.map(assetId => {
-              removeAssetMutation({ variables: { assetId }, refetchQueries: ["Assets"] });
-            }),
-          );
-        }
+        if (!teamId) return;
+        await Promise.all(
+          assetIds.map(async assetId => {
+            const result = await removeAssetMutation({
+              variables: { assetId },
+              refetchQueries: ["Assets"],
+            });
+            if (result.errors || result.data?.removeAsset) {
+              notify(
+                "error",
+                intl.formatMessage({ defaultMessage: "Failed to delete one or more assets." }),
+              );
+            }
+          }),
+        );
       })(),
-    [removeAssetMutation, teamId],
+    [removeAssetMutation, teamId, notify, intl],
   );
 
   return {

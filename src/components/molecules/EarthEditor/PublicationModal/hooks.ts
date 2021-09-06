@@ -49,8 +49,8 @@ export default (
 
           `${
             key === "embedCode"
-              ? intl.formatMessage({ defaultMessage: "Embed code was successfully copied!" })
-              : intl.formatMessage({ defaultMessage: "URL was successfully copied!" })
+              ? intl.formatMessage({ defaultMessage: "Successfully copied the embed code!" })
+              : intl.formatMessage({ defaultMessage: "Successfully copied the URL!" })
           }`,
         );
         resetCopiedWithDelay(key);

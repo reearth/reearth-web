@@ -141,7 +141,10 @@ export default () => {
           ? intl.formatMessage({
               defaultMessage: "Successfully published your project with search engine indexing!",
             })
-          : intl.formatMessage({ defaultMessage: "Successfully unpublished your project!" }),
+          : intl.formatMessage({
+              defaultMessage:
+                "Successfully unpublished your project. Now nobody can access your project.",
+            }),
       );
     },
     [project, publishProjectMutation, notify, intl],
