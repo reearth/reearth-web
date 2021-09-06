@@ -35,7 +35,6 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     onCameraChange,
     onFovChange,
     handleDragLayer,
-    handleDraggingLayer,
     handleDropLayer,
     isDragging,
   } = useHooks(isBuilt);
@@ -71,7 +70,6 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onBlockInsert={onBlockInsert}
       renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
       onDragLayer={handleDragLayer}
-      onDraggingLayer={handleDraggingLayer}
       onDropLayer={handleDropLayer}
       isLayerDragging={isDragging}
       pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>

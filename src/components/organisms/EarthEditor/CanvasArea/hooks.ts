@@ -162,8 +162,6 @@ export default (isBuilt?: boolean) => {
     setIsDragging(true);
   };
 
-  const handleDraggingLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
-
   const handleDropLayer = useCallback(
     async (layerId: string, position: LatLngHeight | undefined) => {
       setIsDragging(false);
@@ -216,7 +214,6 @@ export default (isBuilt?: boolean) => {
     onCameraChange,
     onFovChange,
     handleDragLayer,
-    handleDraggingLayer,
     handleDropLayer,
     isDragging,
   };
