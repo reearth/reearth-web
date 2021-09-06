@@ -23,8 +23,6 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     currentTeam,
     createTeam,
     changeTeam,
-    notification,
-    onNotificationClose,
     modalShown,
     openModal,
     handleModalClose,
@@ -45,8 +43,6 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
           modalShown={modalShown}
           openModal={openModal}
           handleModalClose={handleModalClose}
-          notification={notification}
-          onNotificationClose={onNotificationClose}
           dashboard
         />
       }>
