@@ -38,6 +38,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onDropLayer,
     onDraggingLayer,
     isLayerDraggable,
+    isLayerDragging,
   },
   ref,
 ) => {
@@ -82,7 +83,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           width: small ? "300px" : "auto",
           height: small ? "300px" : "100%",
           display: ready ? undefined : "none",
-          cursor: "grab",
+          cursor: isLayerDragging ? "grab" : "default",
           ...style,
         }}
         requestRenderMode={!property?.timeline?.animation}

@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import {
   useGetLayersQuery,
@@ -39,7 +39,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  // const [mouseLatLng, setMouseLatLng] = useState<{ lat: number; lng: number }>();
+  const [isDragging, setIsDragging] = useState(false);
 
   const selectLayer = useCallback(
     (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
@@ -158,15 +158,15 @@ export default (isBuilt?: boolean) => {
 
   const layersWithRawProperty = convertLayersWithRawProperty(layerData);
 
-  const handleDragLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
-
-  const handleDraggingLayer = (_layerId: string, _position: LatLngHeight | undefined) => {
-    // if (!position) return;
-    // setMouseLatLng(_old => ({ lat: position.lat, lng: position.lng }));
+  const handleDragLayer = (_layerId: string, _position: LatLngHeight | undefined) => {
+    setIsDragging(true);
   };
+
+  const handleDraggingLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
 
   const handleDropLayer = useCallback(
     async (layerId: string, position: LatLngHeight | undefined) => {
+      setIsDragging(false);
       const layerProperty = layersWithRawProperty?.find(l => l.id === layerId)?.property;
       const propertyId = layerProperty?.id;
       const fieldId = "location";
@@ -218,6 +218,6 @@ export default (isBuilt?: boolean) => {
     handleDragLayer,
     handleDraggingLayer,
     handleDropLayer,
-    // mouseLatLng,
+    isDragging,
   };
 };

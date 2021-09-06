@@ -73,6 +73,7 @@ export type EngineProps = {
   onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
   onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+  isLayerDragging?: boolean;
 };
 
 export type Component = ComponentType<PropsWithoutRef<EngineProps> & RefAttributes<Ref>>;

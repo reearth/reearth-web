@@ -37,7 +37,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     handleDragLayer,
     handleDraggingLayer,
     handleDropLayer,
-    // mouseLatLng,
+    isDragging,
   } = useHooks(isBuilt);
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopUp"]>
@@ -73,7 +73,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onDragLayer={handleDragLayer}
       onDraggingLayer={handleDraggingLayer}
       onDropLayer={handleDropLayer}
-      // mouseLatLng={mouseLatLng}
+      isLayerDragging={isDragging}
       pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>
       <FovSlider
         isCapturing={isCapturing}

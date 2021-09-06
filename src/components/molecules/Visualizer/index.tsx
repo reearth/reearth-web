@@ -150,7 +150,6 @@ export default function Visualizer({
             />
           ))}
         </Engine>
-        {/* {mouseLatLng && <LatLngIndicator lat={mouseLatLng.lat} lng={mouseLatLng.lng} />} */}
         <Infobox
           title={infobox?.title}
           infoboxKey={infobox?.infoboxKey}
