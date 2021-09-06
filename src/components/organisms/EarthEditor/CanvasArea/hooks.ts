@@ -156,11 +156,11 @@ export default (isBuilt?: boolean) => {
 
   const [updateLayerLatLng] = useUpdatePropertyValueLatLngMutation();
 
-  const layersWithRawProperty = convertLayersWithRawProperty(layerData);
+  const layersWithRawProperty = useMemo(() => convertLayersWithRawProperty(layerData), [layerData]);
 
-  const handleDragLayer = (_layerId: string, _position: LatLngHeight | undefined) => {
+  const handleDragLayer = useCallback((_layerId: string, _position: LatLngHeight | undefined) => {
     setIsDragging(true);
-  };
+  }, []);
 
   const handleDropLayer = useCallback(
     async (layerId: string, position: LatLngHeight | undefined) => {
@@ -186,7 +186,6 @@ export default (isBuilt?: boolean) => {
           lng: position?.lng,
         },
       });
-      // }
     },
     [layersWithRawProperty, updateLayerLatLng],
   );
