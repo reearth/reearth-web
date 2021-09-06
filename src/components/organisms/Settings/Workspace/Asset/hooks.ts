@@ -53,6 +53,10 @@ export default (params: Params) => {
           }),
         );
         if (results) {
+          notify(
+            "success",
+            intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
+          );
           await refetch();
         }
       })(),
@@ -65,7 +69,7 @@ export default (params: Params) => {
     (assetIds: string[]) =>
       (async () => {
         if (!teamId) return;
-        await Promise.all(
+        const results = await Promise.all(
           assetIds.map(async assetId => {
             const result = await removeAssetMutation({
               variables: { assetId },
@@ -79,6 +83,12 @@ export default (params: Params) => {
             }
           }),
         );
+        if (results) {
+          notify(
+            "info",
+            intl.formatMessage({ defaultMessage: "One or more assets were successfully deleted." }),
+          );
+        }
       })(),
     [removeAssetMutation, teamId, notify, intl],
   );
