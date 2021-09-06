@@ -9,7 +9,6 @@ import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
-import { LatLngHeight } from "@reearth/util/value";
 
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
@@ -42,10 +41,6 @@ export type Props = PropsWithChildren<
     isPublished?: boolean;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
-    onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
-    onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
-    onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
-    mouseLatLng?: { lat: number; lng: number };
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
     Pick<
       InfoboxProps,
@@ -73,6 +68,7 @@ export default function Visualizer({
   onDragLayer,
   onDraggingLayer,
   onDropLayer,
+  isLayerDragging,
   ...props
 }: Props): JSX.Element {
   const {
@@ -109,7 +105,7 @@ export default function Visualizer({
   return (
     <Provider value={visualizerContext}>
       <Filled ref={wrapperRef}>
-        {isDroppable && <DropHolder />}
+        {(isDroppable || isLayerDragging) && <DropHolder />}
         <Engine
           ref={engineRef}
           property={sceneProperty}
@@ -122,6 +118,7 @@ export default function Visualizer({
           onDragLayer={onDragLayer}
           onDraggingLayer={onDraggingLayer}
           onDropLayer={onDropLayer}
+          isLayerDragging={isLayerDragging}
           onCameraChange={updateCamera}>
           {primitives?.map(primitive =>
             primitive.hidden ? null : (
