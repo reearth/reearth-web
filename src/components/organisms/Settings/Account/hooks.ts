@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 
 export enum Theme {
   Default = "DEFAULT",

@@ -10,7 +10,7 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 import { useSceneId, useTeam, useProject } from "@reearth/state";
 import { useAuth } from "@reearth/auth";
 

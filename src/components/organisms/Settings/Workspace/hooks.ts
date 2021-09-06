@@ -14,7 +14,7 @@ import {
   useRemoveMemberFromTeamMutation,
 } from "@reearth/gql";
 import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 import { Team } from "@reearth/gql/graphql-client-api";
 
 type Params = {

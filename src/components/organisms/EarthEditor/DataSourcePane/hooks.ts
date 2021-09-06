@@ -10,7 +10,7 @@ import {
   useRemoveDatasetMutation,
 } from "@reearth/gql";
 import { useSceneId } from "@reearth/state";
-import useHooks from "@reearth/notifications/hooks";
+import useHooks from "@reearth/components/organisms/Notification/hooks";
 
 import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 

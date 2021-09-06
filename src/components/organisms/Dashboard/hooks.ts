@@ -17,7 +17,7 @@ import {
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 

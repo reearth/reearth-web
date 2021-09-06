@@ -2,7 +2,7 @@ import React from "react";
 
 import MoleculeTopPage from "@reearth/components/molecules/TopPage";
 import Loading from "@reearth/components/atoms/Loading";
-import NotificationBanner from "@reearth/notifications";
+import NotificationBanner from "@reearth/components/organisms/Notification";
 
 import useHooks from "./hooks";
 

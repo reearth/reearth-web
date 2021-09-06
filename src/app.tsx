@@ -9,7 +9,7 @@ import { Provider as Auth0Provider } from "./auth";
 
 import NotFound from "@reearth/components/pages/NotFound";
 import Loading from "@reearth/components/atoms/Loading";
-import NotificationBanner from "@reearth/notifications";
+import NotificationBanner from "@reearth/components/organisms/Notification";
 import TopPage from "@reearth/components/pages/TopPage";
 import AccountSettings from "@reearth/components/pages/Settings/Account";
 import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
@@ -43,26 +43,25 @@ const App: React.FC = () => {
           <DndProvider>
             <IntlProvider>
               <Suspense fallback={<Loading />}>
-                <NotificationBanner>
-                  <StyledRouter>
-                    <TopPage path="/" />
-                    <Dashboard path="/dashboard/:teamId" />
-                    <EarthEditor path="/edit/:sceneId" />
-                    <Preview path="/edit/:sceneId/preview" />
-                    <Redirect from="/settings" to="/settings/account" />
-                    <AccountSettings path="/settings/account" />
-                    <WorkspaceList path="/settings/workspaces" />
-                    <WorkspaceSettings path="/settings/workspace/:teamId" />
-                    <SettingsProjectList path="/settings/workspace/:teamId/projects" />
-                    <AssetSettings path="/settings/workspace/:teamId/asset" />
-                    <ProjectSettings path="/settings/project/:projectId" />
-                    <PublicSettings path="/settings/project/:projectId/public" />
-                    <DatasetSettings path="/settings/project/:projectId/dataset" />
-                    <PluginSettings path="/settings/project/:projectId/plugins" />
-                    {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
-                    <NotFound default />
-                  </StyledRouter>
-                </NotificationBanner>
+                <NotificationBanner />
+                <StyledRouter>
+                  <TopPage path="/" />
+                  <Dashboard path="/dashboard/:teamId" />
+                  <EarthEditor path="/edit/:sceneId" />
+                  <Preview path="/edit/:sceneId/preview" />
+                  <Redirect from="/settings" to="/settings/account" />
+                  <AccountSettings path="/settings/account" />
+                  <WorkspaceList path="/settings/workspaces" />
+                  <WorkspaceSettings path="/settings/workspace/:teamId" />
+                  <SettingsProjectList path="/settings/workspace/:teamId/projects" />
+                  <AssetSettings path="/settings/workspace/:teamId/asset" />
+                  <ProjectSettings path="/settings/project/:projectId" />
+                  <PublicSettings path="/settings/project/:projectId/public" />
+                  <DatasetSettings path="/settings/project/:projectId/dataset" />
+                  <PluginSettings path="/settings/project/:projectId/plugins" />
+                  {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
+                  <NotFound default />
+                </StyledRouter>
               </Suspense>
             </IntlProvider>
           </DndProvider>

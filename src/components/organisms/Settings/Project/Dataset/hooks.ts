@@ -10,7 +10,7 @@ import {
 import { useApolloClient } from "@apollo/client";
 
 import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 
 type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
 

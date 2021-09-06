@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import generateRandomString from "@reearth/util/generate-random-string";
-import { NotificationStyleType } from "@reearth/notifications";
+import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
 
 export type Validation = "too short" | "not match";
 export type CopiedItemKey = {

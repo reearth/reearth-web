@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useInstallablePluginsQuery,

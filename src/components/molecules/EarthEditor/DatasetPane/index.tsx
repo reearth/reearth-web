@@ -11,7 +11,7 @@ import Text from "@reearth/components/atoms/Text";
 
 import { styled, useTheme } from "@reearth/theme";
 
-import { NotificationStyleType } from "@reearth/notifications";
+import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
 import useHooks from "./hooks";
 
 export type DataSource = RawDataSource;

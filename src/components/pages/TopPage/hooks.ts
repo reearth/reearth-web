@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "@reach/router";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 import { useTeam } from "@reearth/state";
 import { useTeamsQuery } from "@reearth/gql";
 

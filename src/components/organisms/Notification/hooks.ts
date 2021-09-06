@@ -1,15 +1,14 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
-import { useNotification, Notification } from "@reearth/state";
+import { useNotification } from "@reearth/state";
+import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
 
-export type NotificationStyleType = "error" | "warning" | "info" | "success";
-export type NotificationType = Notification;
+export const notificationTimeout = 5000;
 
 export default () => {
   const intl = useIntl();
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
-  const notificationTimeout = 5000;
 
   const notificationHeading = useMemo(() => {
     if (!notification) {
@@ -37,6 +36,8 @@ export default () => {
     [setNotification, notificationHeading, notification?.type],
   );
 
+  const resetNotification = useCallback(() => setNotification(undefined), [setNotification]);
+
   useEffect(() => {
     changeVisibility(!!notification);
   }, [notification]);
@@ -54,6 +55,6 @@ export default () => {
     changeVisibility,
     notify,
     notification,
-    setNotification,
+    resetNotification,
   };
 };

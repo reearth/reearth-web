@@ -4,7 +4,7 @@ import NotificationBanner from ".";
 import useHooks from "./hooks";
 
 export default {
-  title: "notifications/NotificationBanner",
+  title: "organisms/NotificationBanner",
   component: NotificationBanner,
 } as Meta;
 

@@ -8,7 +8,7 @@ import {
   useRemoveAssetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/notifications/hooks";
+import useNotification from "@reearth/components/organisms/Notification/hooks";
 
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 

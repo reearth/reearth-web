@@ -5,41 +5,52 @@ import Text from "@reearth/components/atoms/Text";
 import Flex from "@reearth/components/atoms/Flex";
 
 import { styled, metrics, useTheme } from "@reearth/theme";
-import useHooks, { NotificationType as Type, NotificationStyleType as StyleType } from "./hooks";
 
-export type NotificationType = Type;
-export type NotificationStyleType = StyleType;
+export type NotificationStyleType = "error" | "warning" | "info" | "success";
+export type NotificationType = {
+  type: "error" | "warning" | "info" | "success";
+  heading: string;
+  text: string;
+};
 
-const NotificationBanner: React.FC = ({ children }) => {
+export type Props = {
+  visible?: boolean;
+  changeVisibility: React.Dispatch<React.SetStateAction<boolean>>;
+  notification?: NotificationType;
+  resetNotification: () => void;
+};
+
+const NotificationBanner: React.FC<Props> = ({
+  visible,
+  changeVisibility,
+  notification,
+  resetNotification,
+}) => {
   const theme = useTheme();
-  const { visible, changeVisibility, notification, setNotification } = useHooks();
 
   return (
-    <div style={{ height: "100%" }}>
-      <StyledNotificationBanner visible={visible} type={notification?.type} direction="column">
-        <HeadingArea justify="space-between">
-          <Text
-            size="m"
-            color={theme.notification.text}
-            weight="bold"
-            otherProperties={{ padding: "0 0 8px 0" }}>
-            {notification?.heading}
-          </Text>
-          <CloseBtn
-            icon="cancel"
-            size={20}
-            onClick={() => {
-              changeVisibility(false);
-              setNotification(undefined);
-            }}
-          />
-        </HeadingArea>
-        <Text size="s" color={theme.notification.text}>
-          {notification?.text}
+    <StyledNotificationBanner visible={visible} type={notification?.type} direction="column">
+      <HeadingArea justify="space-between">
+        <Text
+          size="m"
+          color={theme.notification.text}
+          weight="bold"
+          otherProperties={{ padding: "0 0 8px 0" }}>
+          {notification?.heading}
         </Text>
-      </StyledNotificationBanner>
-      {children}
-    </div>
+        <CloseBtn
+          icon="cancel"
+          size={20}
+          onClick={() => {
+            changeVisibility(false);
+            resetNotification();
+          }}
+        />
+      </HeadingArea>
+      <Text size="s" color={theme.notification.text}>
+        {notification?.text}
+      </Text>
+    </StyledNotificationBanner>
   );
 };
 
