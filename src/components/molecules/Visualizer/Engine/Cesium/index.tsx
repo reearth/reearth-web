@@ -82,6 +82,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           width: small ? "300px" : "auto",
           height: small ? "300px" : "100%",
           display: ready ? undefined : "none",
+          cursor: "grab",
           ...style,
         }}
         requestRenderMode={!property?.timeline?.animation}

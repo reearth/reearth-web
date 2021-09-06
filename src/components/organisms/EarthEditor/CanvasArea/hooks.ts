@@ -39,6 +39,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
+  // const [mouseLatLng, setMouseLatLng] = useState<{ lat: number; lng: number }>();
 
   const selectLayer = useCallback(
     (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
@@ -159,7 +160,10 @@ export default (isBuilt?: boolean) => {
 
   const handleDragLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
 
-  const handleDraggingLayer = (_layerId: string, _position: LatLngHeight | undefined) => {};
+  const handleDraggingLayer = (_layerId: string, _position: LatLngHeight | undefined) => {
+    // if (!position) return;
+    // setMouseLatLng(_old => ({ lat: position.lat, lng: position.lng }));
+  };
 
   const handleDropLayer = useCallback(
     async (layerId: string, position: LatLngHeight | undefined) => {
@@ -214,5 +218,6 @@ export default (isBuilt?: boolean) => {
     handleDragLayer,
     handleDraggingLayer,
     handleDropLayer,
+    // mouseLatLng,
   };
 };

@@ -45,6 +45,7 @@ export type Props = PropsWithChildren<
     onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
     onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
     onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+    mouseLatLng?: { lat: number; lng: number };
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
     Pick<
       InfoboxProps,
@@ -149,6 +150,7 @@ export default function Visualizer({
             />
           ))}
         </Engine>
+        {/* {mouseLatLng && <LatLngIndicator lat={mouseLatLng.lat} lng={mouseLatLng.lng} />} */}
         <Infobox
           title={infobox?.title}
           infoboxKey={infobox?.infoboxKey}
