@@ -278,7 +278,6 @@ const flattenLayerWithRawProperty = (l?: LayerWithRawProperty[]): LayerWithRawPr
 
 type LayerWithRawProperty = {
   id: string;
-  // TODO: fix this type definition
   property: PropertyItemFragmentFragment | PropertyFragmentFragment | undefined;
   pluginId: string;
   extensionId: string;
