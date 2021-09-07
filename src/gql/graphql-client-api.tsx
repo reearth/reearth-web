@@ -179,12 +179,6 @@ export type Camera = {
   fov: Scalars['Float'];
 };
 
-export type CheckProjectAliasPayload = {
-  __typename?: 'CheckProjectAliasPayload';
-  alias: Scalars['String'];
-  available: Scalars['Boolean'];
-};
-
 export type CreateAssetInput = {
   teamId: Scalars['ID'];
   file: Scalars['Upload'];
@@ -1094,6 +1088,12 @@ export type Project = Node & {
   scene?: Maybe<Scene>;
 };
 
+export type ProjectAliasAvailability = {
+  __typename?: 'ProjectAliasAvailability';
+  alias: Scalars['String'];
+  available: Scalars['Boolean'];
+};
+
 export type ProjectConnection = {
   __typename?: 'ProjectConnection';
   edges: Array<ProjectEdge>;
@@ -1212,7 +1212,6 @@ export type PropertySchemaField = {
   fieldId: Scalars['PropertySchemaFieldID'];
   type: ValueType;
   title: Scalars['String'];
-  name: Scalars['String'];
   description: Scalars['String'];
   prefix?: Maybe<Scalars['String']>;
   suffix?: Maybe<Scalars['String']>;
@@ -1223,20 +1222,13 @@ export type PropertySchemaField = {
   choices?: Maybe<Array<PropertySchemaFieldChoice>>;
   isAvailableIf?: Maybe<PropertyCondition>;
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
   allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
   translatedTitle: Scalars['String'];
-  translatedName: Scalars['String'];
   translatedDescription: Scalars['String'];
 };
 
 
 export type PropertySchemaFieldTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-
-export type PropertySchemaFieldTranslatedNameArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
@@ -1249,21 +1241,13 @@ export type PropertySchemaFieldChoice = {
   __typename?: 'PropertySchemaFieldChoice';
   key: Scalars['String'];
   title: Scalars['String'];
-  label: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedLabel?: Maybe<Scalars['TranslatedString']>;
   translatedTitle: Scalars['String'];
-  translatedLabel: Scalars['String'];
 };
 
 
 export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-
-export type PropertySchemaFieldChoiceTranslatedLabelArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
@@ -1289,7 +1273,6 @@ export type PropertySchemaGroup = {
   isAvailableIf?: Maybe<PropertyCondition>;
   title?: Maybe<Scalars['String']>;
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  name?: Maybe<Scalars['PropertySchemaFieldID']>;
   representativeFieldId?: Maybe<Scalars['PropertySchemaFieldID']>;
   representativeField?: Maybe<PropertySchemaField>;
   schema?: Maybe<PropertySchema>;
@@ -1332,7 +1315,7 @@ export type Query = {
   sceneLock?: Maybe<SceneLockMode>;
   dynamicDatasetSchemas: Array<DatasetSchema>;
   searchUser?: Maybe<SearchedUser>;
-  checkProjectAlias: CheckProjectAliasPayload;
+  checkProjectAlias: ProjectAliasAvailability;
   installablePlugins: Array<PluginMetadata>;
 };
 
@@ -1521,15 +1504,13 @@ export type RemovePropertyItemInput = {
 
 export type RemoveWidgetInput = {
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
 };
 
 export type RemoveWidgetPayload = {
   __typename?: 'RemoveWidgetPayload';
   scene: Scene;
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
 };
 
 export enum Role {
@@ -1807,8 +1788,7 @@ export type UpdateTeamPayload = {
 
 export type UpdateWidgetInput = {
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
   enabled?: Maybe<Scalars['Boolean']>;
 };
 
@@ -2640,8 +2620,8 @@ export type CheckProjectAliasQueryVariables = Exact<{
 export type CheckProjectAliasQuery = (
   { __typename?: 'Query' }
   & { checkProjectAlias: (
-    { __typename?: 'CheckProjectAliasPayload' }
-    & Pick<CheckProjectAliasPayload, 'alias' | 'available'>
+    { __typename?: 'ProjectAliasAvailability' }
+    & Pick<ProjectAliasAvailability, 'alias' | 'available'>
   ) }
 );
 
@@ -3500,14 +3480,16 @@ export type AddWidgetMutation = (
           & PropertyFragmentFragment
         )> }
       )> }
+    ), sceneWidget: (
+      { __typename?: 'SceneWidget' }
+      & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId'>
     ) }
   )> }
 );
 
 export type RemoveWidgetMutationVariables = Exact<{
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
 }>;
 
 
@@ -3528,8 +3510,7 @@ export type RemoveWidgetMutation = (
 
 export type UpdateWidgetMutationVariables = Exact<{
   sceneId: Scalars['ID'];
-  pluginId: Scalars['PluginID'];
-  extensionId: Scalars['PluginExtensionID'];
+  widgetId: Scalars['ID'];
   enabled?: Maybe<Scalars['Boolean']>;
 }>;
 
@@ -4351,16 +4332,16 @@ export type Layer5FragmentFragment = Layer5Fragment_LayerGroup_Fragment | Layer5
 
 export type PropertySchemaItemFragmentFragment = (
   { __typename?: 'PropertySchemaGroup' }
-  & Pick<PropertySchemaGroup, 'schemaGroupId' | 'title' | 'translatedTitle' | 'isList' | 'name'>
+  & Pick<PropertySchemaGroup, 'schemaGroupId' | 'title' | 'translatedTitle' | 'isList' | 'representativeFieldId'>
   & { isAvailableIf?: Maybe<(
     { __typename?: 'PropertyCondition' }
     & Pick<PropertyCondition, 'fieldId' | 'type' | 'value'>
   )>, fields: Array<(
     { __typename?: 'PropertySchemaField' }
-    & Pick<PropertySchemaField, 'fieldId' | 'name' | 'description' | 'translatedName' | 'translatedDescription' | 'prefix' | 'suffix' | 'type' | 'defaultValue' | 'ui' | 'min' | 'max'>
+    & Pick<PropertySchemaField, 'fieldId' | 'title' | 'description' | 'translatedTitle' | 'translatedDescription' | 'prefix' | 'suffix' | 'type' | 'defaultValue' | 'ui' | 'min' | 'max'>
     & { choices?: Maybe<Array<(
       { __typename?: 'PropertySchemaFieldChoice' }
-      & Pick<PropertySchemaFieldChoice, 'key' | 'label' | 'translatedLabel'>
+      & Pick<PropertySchemaFieldChoice, 'key' | 'icon' | 'title' | 'translatedTitle'>
     )>>, isAvailableIf?: Maybe<(
       { __typename?: 'PropertyCondition' }
       & Pick<PropertyCondition, 'fieldId' | 'type' | 'value'>
@@ -4632,7 +4613,7 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
   title
   translatedTitle
   isList
-  name
+  representativeFieldId
   isAvailableIf {
     fieldId
     type
@@ -4640,9 +4621,9 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
   }
   fields {
     fieldId
-    name
+    title
     description
-    translatedName
+    translatedTitle
     translatedDescription
     prefix
     suffix
@@ -4653,8 +4634,9 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
     max
     choices {
       key
-      label
-      translatedLabel
+      icon
+      title
+      translatedTitle
     }
     isAvailableIf {
       fieldId
@@ -7063,6 +7045,12 @@ export const AddWidgetDocument = gql`
         }
       }
     }
+    sceneWidget {
+      id
+      enabled
+      pluginId
+      extensionId
+    }
   }
 }
     ${PropertyFragmentFragmentDoc}`;
@@ -7094,10 +7082,8 @@ export type AddWidgetMutationHookResult = ReturnType<typeof useAddWidgetMutation
 export type AddWidgetMutationResult = Apollo.MutationResult<AddWidgetMutation>;
 export type AddWidgetMutationOptions = Apollo.BaseMutationOptions<AddWidgetMutation, AddWidgetMutationVariables>;
 export const RemoveWidgetDocument = gql`
-    mutation removeWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!) {
-  removeWidget(
-    input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
-  ) {
+    mutation removeWidget($sceneId: ID!, $widgetId: ID!) {
+  removeWidget(input: {sceneId: $sceneId, widgetId: $widgetId}) {
     scene {
       id
       widgets {
@@ -7127,8 +7113,7 @@ export type RemoveWidgetMutationFn = Apollo.MutationFunction<RemoveWidgetMutatio
  * const [removeWidgetMutation, { data, loading, error }] = useRemoveWidgetMutation({
  *   variables: {
  *      sceneId: // value for 'sceneId'
- *      pluginId: // value for 'pluginId'
- *      extensionId: // value for 'extensionId'
+ *      widgetId: // value for 'widgetId'
  *   },
  * });
  */
@@ -7139,10 +7124,8 @@ export type RemoveWidgetMutationHookResult = ReturnType<typeof useRemoveWidgetMu
 export type RemoveWidgetMutationResult = Apollo.MutationResult<RemoveWidgetMutation>;
 export type RemoveWidgetMutationOptions = Apollo.BaseMutationOptions<RemoveWidgetMutation, RemoveWidgetMutationVariables>;
 export const UpdateWidgetDocument = gql`
-    mutation updateWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $enabled: Boolean) {
-  updateWidget(
-    input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId, enabled: $enabled}
-  ) {
+    mutation updateWidget($sceneId: ID!, $widgetId: ID!, $enabled: Boolean) {
+  updateWidget(input: {sceneId: $sceneId, widgetId: $widgetId, enabled: $enabled}) {
     scene {
       id
       widgets {
@@ -7172,8 +7155,7 @@ export type UpdateWidgetMutationFn = Apollo.MutationFunction<UpdateWidgetMutatio
  * const [updateWidgetMutation, { data, loading, error }] = useUpdateWidgetMutation({
  *   variables: {
  *      sceneId: // value for 'sceneId'
- *      pluginId: // value for 'pluginId'
- *      extensionId: // value for 'extensionId'
+ *      widgetId: // value for 'widgetId'
  *      enabled: // value for 'enabled'
  *   },
  * });
