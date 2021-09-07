@@ -145,7 +145,7 @@ export default ({
         ? scene?.widgets.find(w => selected.widgetId === w.id)
         : undefined;
       return {
-        id: selected.widgetId || `${selected.pluginId}/${selected.widgetId}`,
+        id: selected.widgetId || `${selected.pluginId}/${selected.extensionId}`,
         pluginId: selected.pluginId,
         extensionId: selected.extensionId,
         mode: "widget",
