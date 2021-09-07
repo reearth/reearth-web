@@ -1,7 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
-  useChangePropertyValueLatLngMutation,
   useChangePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
   useRemoveInfoboxMutation,
@@ -19,8 +18,16 @@ import {
   ListOperation,
   useCreateAssetMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
-import { valueTypeToGQL, Camera, toGQLSimpleValue } from "@reearth/util/value";
+import {
+  useSelected,
+  useRootLayerId,
+  useIsCapturing,
+  useCamera,
+  useTeam,
+  useSceneId,
+  useSelectedBlock,
+} from "@reearth/state";
+import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/util/value";
 import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
 import useQueries, { Mode as RawMode } from "./hooks-queries";
 
@@ -32,28 +39,20 @@ export type FieldPointer = {
 };
 
 export default (mode: Mode) => {
-  const [
-    {
-      rootLayerId,
-      selectedLayer,
-      selectedBlock,
-      selectedWidgetId,
-      isCapturing,
-      camera,
-      sceneId,
-      teamId,
-    },
-    setLocalState,
-  ] = useLocalState(s => ({
-    rootLayerId: s.rootLayerId,
-    selectedLayer: s.selectedLayer,
-    selectedBlock: s.selectedBlock,
-    selectedWidgetId: s.selectedWidget,
-    isCapturing: s.isCapturing,
-    camera: s.camera,
-    teamId: s.currentTeam?.id,
-    sceneId: s.sceneId,
-  }));
+  const [selected] = useSelected();
+  const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [rootLayerId] = useRootLayerId();
+  const [isCapturing, onIsCapturingChange] = useIsCapturing();
+  const [camera, setCamera] = useCamera();
+  const [team] = useTeam();
+  const [sceneId] = useSceneId();
+
+  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
+  const selectedWidgetId = useMemo(() => {
+    const wid = selected?.type === "widget" ? selected.widgetId : undefined;
+    const wids = wid?.split("/");
+    return wids?.length === 2 ? { pluginId: wids[0], extensionId: wids[1] } : undefined;
+  }, [selected]);
 
   const {
     loading,
@@ -72,14 +71,13 @@ export default (mode: Mode) => {
     mode,
     sceneId,
     rootLayerId,
-    selectedLayer,
     selectedBlock,
-    selectedWidgetId,
-    teamId,
+    selectedLayer: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedWidgetId: selectedWidgetId,
+    teamId: team?.id,
   });
 
   const [changeValueMutation] = useChangePropertyValueMutation();
-  const [changeValueLatLngMutation] = useChangePropertyValueLatLngMutation();
   const changeValue = useCallback(
     (
       propertyId: string,
@@ -89,19 +87,6 @@ export default (mode: Mode) => {
       v: ValueTypes[ValueType] | null,
       vt: ValueType,
     ) => {
-      if (vt === "latlng" && typeof v === "object" && v && "lat" in v) {
-        changeValueLatLngMutation({
-          variables: {
-            propertyId,
-            itemId,
-            schemaItemId,
-            fieldId,
-            lat: v.lat,
-            lng: v.lng,
-          },
-        });
-        return;
-      }
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
       changeValueMutation({
@@ -110,12 +95,12 @@ export default (mode: Mode) => {
           itemId,
           schemaItemId,
           fieldId,
-          value: v,
+          value: valueToGQL(v, vt),
           type: gvt,
         },
       });
     },
-    [changeValueLatLngMutation, changeValueMutation],
+    [changeValueMutation],
   );
 
   const [linkDataset] = useLinkDatasetMutation({
@@ -164,15 +149,18 @@ export default (mode: Mode) => {
   const createAssets = useCallback(
     (files: FileList) =>
       (async () => {
-        if (teamId) {
+        if (team?.id) {
           await Promise.all(
             Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
+              createAssetMutation({
+                variables: { teamId: team.id, file },
+                refetchQueries: ["Assets"],
+              }),
             ),
           );
         }
       })(),
-    [createAssetMutation, teamId],
+    [createAssetMutation, team?.id],
   );
 
   const removeFile = useCallback(
@@ -208,37 +196,34 @@ export default (mode: Mode) => {
 
   const [createInfoboxMutation] = useCreateInfoboxMutation();
   const createInfobox = useCallback(() => {
-    if (!selectedLayer) return;
+    if (!selectedLayerId) return;
     return createInfoboxMutation({
-      variables: { layerId: selectedLayer },
+      variables: { layerId: selectedLayerId },
     });
-  }, [createInfoboxMutation, selectedLayer]);
+  }, [createInfoboxMutation, selectedLayerId]);
 
   const [removeInfoboxMutation] = useRemoveInfoboxMutation();
   const removeInfobox = useCallback(() => {
-    if (!selectedLayer) return;
+    if (!selectedLayerId) return;
     return removeInfoboxMutation({
-      variables: { layerId: selectedLayer },
+      variables: { layerId: selectedLayerId },
     });
-  }, [removeInfoboxMutation, selectedLayer]);
+  }, [removeInfoboxMutation, selectedLayerId]);
 
   const [removeInfoboxFieldMutation] = useRemoveInfoboxFieldMutation();
   const removeInfoboxField = useCallback(() => {
-    if (!selectedBlock || !selectedLayer) return;
-    setLocalState({ selectedBlock: undefined });
+    if (!selectedBlock || !selectedLayerId) return;
+    selectBlock(undefined);
     return removeInfoboxFieldMutation({
-      variables: { layerId: selectedLayer, infoboxFieldId: selectedBlock },
+      variables: { layerId: selectedLayerId, infoboxFieldId: selectedBlock },
     });
-  }, [removeInfoboxFieldMutation, selectedBlock, selectedLayer, setLocalState]);
-
-  const onIsCapturingChange = useCallback(
-    (isCapturing: boolean) => setLocalState({ isCapturing }),
-    [setLocalState],
-  );
+  }, [removeInfoboxFieldMutation, selectBlock, selectedBlock, selectedLayerId]);
 
   const onCameraChange = useCallback(
-    (value: Partial<Camera>) => camera && setLocalState({ camera: { ...camera, ...value } }),
-    [setLocalState, camera],
+    (value: Partial<Camera>) => {
+      if (camera) setCamera({ ...camera, ...value });
+    },
+    [camera, setCamera],
   );
 
   const [addPropertyItemMutation] = useAddPropertyItemMutation();

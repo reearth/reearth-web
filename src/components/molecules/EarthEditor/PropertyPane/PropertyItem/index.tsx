@@ -2,13 +2,12 @@ import React, { useState, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 import { mapValues } from "lodash-es";
 
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { ExtendedFuncProps2 } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
-import { partitionObject } from "@reearth/util/util";
 import { zeroValues } from "@reearth/util/value";
 
-import GroupWrapper from "@reearth/components/atoms/PropertyGroup";
+import GroupWrapper from "../PropertyGroup";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 import PropertyField, {
   Props as FieldProps,
@@ -22,6 +21,7 @@ import PropertyField, {
 import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Mode = "infobox" | "scene" | "layer" | "block" | "widget" | "dataset";
@@ -127,16 +127,16 @@ const PropertyItem: React.FC<Props> = ({
   onItemRemove,
   onItemsUpdate,
   onRemovePane,
+  onChange,
+  onRemove,
+  onLink,
+  onUploadFile,
+  onRemoveFile,
   ...props
 }) => {
-  const [eventProps, otherProps] = partitionObject(props, [
-    "onChange",
-    "onRemove",
-    "onLink",
-    "onUploadFile",
-    "onRemoveFile",
-  ]);
   const intl = useIntl();
+
+  const theme = useTheme();
 
   const [selected, select] = useState(-1);
   const [openModal, setModal] = useState(false);
@@ -154,6 +154,7 @@ const PropertyItem: React.FC<Props> = ({
   );
 
   const selectedItem = isList ? groups[selected] : groups[0];
+  const selectedItemId = isList ? selectedItem?.id : undefined;
   const propertyListItems = useMemo(
     () =>
       groups
@@ -187,10 +188,10 @@ const PropertyItem: React.FC<Props> = ({
       selectedItem
         ? item?.schemaFields.map(f => {
             const events = mapValues(
-              eventProps,
+              { onChange, onRemove, onLink, onUploadFile, onRemoveFile },
               f =>
                 (...args: any[]) =>
-                  f?.(item.schemaGroup, selectedItem.id, ...args),
+                  f?.(item.schemaGroup, selectedItemId, ...args),
             );
             const field = selectedItem?.fields.find(f2 => f2.id === f.id);
             const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
@@ -208,7 +209,17 @@ const PropertyItem: React.FC<Props> = ({
             };
           })
         : [],
-    [eventProps, item, selectedItem],
+    [
+      item?.schemaFields,
+      item?.schemaGroup,
+      onChange,
+      onLink,
+      onRemove,
+      onRemoveFile,
+      onUploadFile,
+      selectedItem,
+      selectedItemId,
+    ],
   );
 
   const handleItemMove = useCallback(
@@ -229,20 +240,22 @@ const PropertyItem: React.FC<Props> = ({
     },
     [item?.schemaGroup, onItemRemove, propertyListItems],
   );
-  const { onItemsUpdate: handleItemUpdate } = useBind({ onItemsUpdate }, item?.schemaGroup);
+  const events = useMemo(() => ({ onItemsUpdate }), [onItemsUpdate]);
+  const { onItemsUpdate: handleItemUpdate } = useBind(events, item?.schemaGroup);
 
   const handleItemAdd = useCallback(() => {
-    if (item) [onItemAdd?.(item.schemaGroup)];
+    if (item) onItemAdd?.(item.schemaGroup);
   }, [onItemAdd, item]);
 
+  const itemTitle = intl.formatMessage({ defaultMessage: "Basic" });
   const handleDelete = useCallback(() => {
     if (!onRemovePane || !item?.title) return;
-    if (item?.title === intl.formatMessage({ defaultMessage: "Basic" })) {
+    if (item?.title === itemTitle) {
       setModal(true);
     } else {
       onRemovePane();
     }
-  }, [item, onRemovePane, intl]);
+  }, [item, onRemovePane, itemTitle]);
 
   return (
     <GroupWrapper
@@ -279,7 +292,7 @@ const PropertyItem: React.FC<Props> = ({
               hidden={f.hidden}
               isTemplate={isTemplate}
               {...f.events}
-              {...otherProps}
+              {...props}
             />
           );
         })}
@@ -310,12 +323,15 @@ const PropertyItem: React.FC<Props> = ({
         isVisible={openModal}
         onClose={() => setModal(false)}>
         <StyledIcon icon="alert" size={24} />
-        <ModalText>
+        <Text
+          size="m"
+          color={theme.main.text}
+          otherProperties={{ marginTop: `${metricsSizes["s"]}px` }}>
           {intl.formatMessage({
             defaultMessage:
               "You are deleting the infobox and all its contents. Are you sure you want to do that?",
           })}
-        </ModalText>
+        </Text>
       </Modal>
     </GroupWrapper>
   );
@@ -335,10 +351,6 @@ const TrashIcon = styled(Icon)`
 
 const StyledIcon = styled(Icon)`
   color: ${props => props.theme.main.alert};
-`;
-
-const ModalText = styled.p`
-  margin-top: 12px;
 `;
 
 const valueToString = (v: ValueTypesType[ValueTypeType] | undefined): string | undefined => {

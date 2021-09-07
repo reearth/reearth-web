@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import _ from "lodash";
 
 import { styled, useTheme } from "@reearth/theme";
 import Overlay from "@reearth/components/atoms/Overlay";
-import Icon from "../Icon";
 import Text from "@reearth/components/atoms/Text";
+import Icon from "@reearth/components/atoms/Icon";
 
 export type MenuAlignment = "left" | "top";
 
@@ -35,11 +34,7 @@ const TabArea = <T extends string>({
   onlyIcon,
   labels,
 }: Props<T>) => {
-  const tabs: T[] | undefined = Object.keys(
-    _.pickBy(children, value => {
-      return !!value;
-    }),
-  ) as T[];
+  const tabs: T[] = (Object.keys(children || {}) as T[]).filter(k => !!children?.[k]);
   const [selectedTab, select] = useState<T | undefined>(initialSelectedMode ?? tabs?.[0]);
 
   useEffect(() => {
@@ -78,8 +73,8 @@ const TabArea = <T extends string>({
 
 const Wrapper = styled.div<{ menuAlignment?: MenuAlignment }>`
   display: flex;
-  flex-flow: ${props => (props.menuAlignment === "top" ? "column" : "row")} nowrap;
-  background: ${props => props.theme.leftMenu.bg};
+  flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "column" : "row")} nowrap;
+  background: ${({ theme }) => theme.leftMenu.bg};
   justify-content: stretch;
   width: 100%;
   height: 100%;
@@ -88,8 +83,8 @@ const Wrapper = styled.div<{ menuAlignment?: MenuAlignment }>`
 
 const Menu = styled.div<{ menuAlignment?: MenuAlignment }>`
   display: flex;
-  flex-flow: ${props => (props.menuAlignment === "top" ? "row" : "column")} nowrap;
-  background-color: ${props => props.theme.tabArea.bg};
+  flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "row" : "column")} nowrap;
+  background-color: ${({ theme }) => theme.tabArea.bg};
 `;
 
 const IconWrapper = styled.div<{ selected?: boolean; expanded?: boolean }>`
@@ -99,12 +94,12 @@ const IconWrapper = styled.div<{ selected?: boolean; expanded?: boolean }>`
   user-select: none;
   display: flex;
   align-items: center;
-  background: ${props => (props.selected ? props.theme.tabArea.selectedBg : "none")};
-  opacity: ${props => (props.selected ? "1" : "0.7")};
+  background: ${({ selected, theme }) => (selected ? theme.tabArea.selectedBg : "none")};
+  opacity: ${({ selected }) => (selected ? "1" : "0.7")};
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.main.strongText};
+  color: ${({ theme }) => theme.main.strongText};
 `;
 
 const IconTitle = styled(Text)`
@@ -117,7 +112,7 @@ const Content = styled.div<{ scrollable?: boolean }>`
   flex-flow: column nowrap;
   justify-content: stretch;
   overflow-x: hidden;
-  overflow-y: ${props => (props.scrollable ? "auto" : "hidden")};
+  overflow-y: ${({ scrollable }) => (scrollable ? "auto" : "hidden")};
   -webkit-overflow-scrolling: touch;
 `;
 

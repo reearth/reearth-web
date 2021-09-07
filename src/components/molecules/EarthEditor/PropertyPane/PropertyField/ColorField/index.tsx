@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import Button from "@reearth/components/atoms/Button";
-import { styled, css, useTheme } from "@reearth/theme";
-import "./styles.css";
-
 import tinycolor, { ColorInput } from "tinycolor2";
 import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
 import { RgbaColorPicker } from "react-colorful";
-import "react-colorful/dist/index.css";
-import Text from "@reearth/components/atoms/Text";
 
+import Button from "@reearth/components/atoms/Button";
+import { styled, css, useTheme, metricsSizes } from "@reearth/theme";
+import Text from "@reearth/components/atoms/Text";
 import { FieldProps } from "../types";
-import { metricsSizes } from "@reearth/theme/metrics";
+import "./styles.css";
 
 export type Props = FieldProps<string>;
 
@@ -28,10 +25,12 @@ const getHexString = (value?: ColorInput) => {
   return color.getAlpha() === 1 ? color.toHexString() : color.toHex8String();
 };
 
+const initColor = tinycolor().toRgb();
+
 const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) => {
   const intl = useIntl();
   const [colorState, setColor] = useState<string | null>(null);
-  const [rgba, setRgba] = useState<RGBA>(tinycolor().toRgb());
+  const [rgba, setRgba] = useState<RGBA>(initColor);
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -43,15 +42,6 @@ const ColorField: React.FC<Props> = ({ value, onChange, overridden, linked }) =>
       setColor(null);
     }
   }, [value]);
-
-  useEffect(() => {
-    if (colorState == null) return;
-    const color = getHexString(rgba);
-    if (!color) return;
-    if (color != colorState) {
-      setColor(color);
-    }
-  }, [rgba]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
     placement: "bottom-start",
@@ -354,7 +344,7 @@ const Input = styled.input<{ type?: string; overridden?: boolean; linked?: boole
   background: ${props => props.theme.properties.bg};
   box-sizing: border-box;
   color: ${({ linked, overridden, theme }) =>
-    overridden ? theme.main.warning : linked ? theme.main.accent : theme.properties.contentsText};
+    overridden ? theme.main.warning : linked ? theme.main.link : theme.properties.contentsText};
   outline: none;
   border: 1px solid ${({ theme }) => theme.properties.border};
   &:focus {

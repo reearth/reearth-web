@@ -65,26 +65,34 @@ const OutlinePane: React.FC<Props> = ({
   onDrop,
   loading,
 }) => {
-  const { sceneWidgetsItem, layersItem, select, drop, dropExternals, TreeViewItem, selected } =
-    useHooks({
-      rootLayerId,
-      layers,
-      widgets,
-      sceneDescription,
-      selectedLayerId,
-      selectedWidgetId,
-      selectedType,
-      onLayerSelect,
-      onLayerImport,
-      onLayerRemove,
-      onSceneSelect,
-      onWidgetSelect,
-      onLayerMove,
-      onLayerRename,
-      onLayerVisibilityChange,
-      onDrop,
-      onLayerGroupCreate,
-    });
+  const {
+    sceneWidgetsItem,
+    layersItem,
+    select,
+    drop,
+    dropExternals,
+    SceneTreeViewItem,
+    LayerTreeViewItem,
+    selected,
+  } = useHooks({
+    rootLayerId,
+    layers,
+    widgets,
+    sceneDescription,
+    selectedLayerId,
+    selectedWidgetId,
+    selectedType,
+    onLayerSelect,
+    onLayerImport,
+    onLayerRemove,
+    onSceneSelect,
+    onWidgetSelect,
+    onLayerMove,
+    onLayerRename,
+    onLayerVisibilityChange,
+    onDrop,
+    onLayerGroupCreate,
+  });
 
   return (
     <Wrapper className={className}>
@@ -93,13 +101,13 @@ const OutlinePane: React.FC<Props> = ({
           <TreeView<TreeViewItem, HTMLDivElement>
             item={sceneWidgetsItem}
             selected={selected}
-            renderItem={TreeViewItem}
+            renderItem={SceneTreeViewItem}
             draggable
             droppable
             selectable
             expandable
             dragItemType="layer"
-            acceptedDragItemTypes={["primitive"]}
+            acceptedDragItemTypes={acceptedDragItemTypes}
             onSelect={select}
           />
         )}
@@ -110,14 +118,14 @@ const OutlinePane: React.FC<Props> = ({
           <TreeView<TreeViewItem, HTMLDivElement>
             item={layersItem}
             selected={selected}
-            renderItem={TreeViewItem}
+            renderItem={LayerTreeViewItem}
             draggable
             droppable
             selectable
             expandable
             expanded={rootLayerId && !selectedLayerId ? [rootLayerId] : undefined}
             dragItemType="layer"
-            acceptedDragItemTypes={["primitive"]}
+            acceptedDragItemTypes={acceptedDragItemTypes}
             onSelect={select}
             onDrop={drop}
             onDropExternals={dropExternals}
@@ -128,6 +136,8 @@ const OutlinePane: React.FC<Props> = ({
     </Wrapper>
   );
 };
+
+const acceptedDragItemTypes = ["primitive"];
 
 const Wrapper = styled.div`
   width: 100%;

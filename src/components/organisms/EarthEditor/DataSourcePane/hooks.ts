@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from "react";
+import { useApolloClient } from "@apollo/client";
 
-import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
   useGetAllDataSetsQuery,
   useAddLayerGroupFromDatasetSchemaMutation,
@@ -9,27 +9,18 @@ import {
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useLocalState } from "@reearth/state";
-import { useApolloClient } from "@apollo/client";
+import { useSceneId, useNotification, useSelected } from "@reearth/state";
 
 import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
+import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 
 const pluginId = "reearth";
 const extensionId = "marker";
 
 export default () => {
-  const [
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    { sceneId, selectedDatasetSchema, selectedLayer, selectedBlock, selectedWidget, selectedType },
-    setLocalState,
-  ] = useLocalState(s => ({
-    sceneId: s.sceneId,
-    selectedDatasetSchema: s.selectedDatasetSchema,
-    selectedBlock: s.selectedBlock,
-    selectedLayer: s.selectedLayer,
-    selectedWidget: s.selectedWidget,
-    selectedType: s.selectedType,
-  }));
+  const [sceneId] = useSceneId();
+  const [, setNotification] = useNotification();
+  const [selected, select] = useSelected();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
 
   const { data, loading } = useGetAllDataSetsQuery({
@@ -70,15 +61,9 @@ export default () => {
 
   const selectDatasetSchema = useCallback(
     (datasetSchemaId: string) => {
-      setLocalState({
-        selectedType: "dataset",
-        selectedLayer: undefined,
-        selectedWidget: undefined,
-        selectedBlock: undefined,
-        selectedDatasetSchema: datasetSchemaId,
-      });
+      select({ type: "dataset", datasetSchemaId: datasetSchemaId });
     },
-    [setLocalState],
+    [select],
   );
 
   // dataset sync
@@ -153,15 +138,16 @@ export default () => {
   const onNotify = useCallback(
     (type?: NotificationType, text?: string) => {
       if (!type || !text) return;
-      setLocalState({
-        notification: {
-          type: type,
-          text: text,
-        },
+      setNotification({
+        type: type,
+        text: text,
       });
     },
-    [setLocalState],
+    [setNotification],
   );
+
+  const selectedDatasetSchemaId =
+    selected?.type === "dataset" ? selected.datasetSchemaId : undefined;
 
   return {
     datasetSchemas,
@@ -172,6 +158,6 @@ export default () => {
     loading,
     onNotify,
     selectDatasetSchema,
-    selectedDatasetSchemaId: selectedDatasetSchema,
+    selectedDatasetSchemaId: selectedDatasetSchemaId,
   };
 };

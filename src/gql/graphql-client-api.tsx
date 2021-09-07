@@ -1007,6 +1007,7 @@ export type PageInfo = {
 export type Plugin = {
   __typename?: 'Plugin';
   id: Scalars['PluginID'];
+  sceneId?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   version: Scalars['String'];
   description: Scalars['String'];
@@ -1014,6 +1015,7 @@ export type Plugin = {
   repositoryUrl: Scalars['String'];
   propertySchemaId?: Maybe<Scalars['PropertySchemaID']>;
   extensions: Array<PluginExtension>;
+  scene?: Maybe<Scene>;
   scenePlugin?: Maybe<ScenePlugin>;
   allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
   allTranslatedName?: Maybe<Scalars['TranslatedString']>;
@@ -1024,7 +1026,7 @@ export type Plugin = {
 
 
 export type PluginScenePluginArgs = {
-  sceneId: Scalars['ID'];
+  sceneId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -1718,8 +1720,8 @@ export type UninstallPluginInput = {
 
 export type UninstallPluginPayload = {
   __typename?: 'UninstallPluginPayload';
+  pluginId: Scalars['PluginID'];
   scene: Scene;
-  scenePlugin: ScenePlugin;
 };
 
 export type UnlinkPropertyValueInput = {
@@ -1909,12 +1911,16 @@ export type UploadFileToPropertyInput = {
 };
 
 export type UploadPluginInput = {
-  file: Scalars['Upload'];
+  sceneId: Scalars['ID'];
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['URL']>;
 };
 
 export type UploadPluginPayload = {
   __typename?: 'UploadPluginPayload';
   plugin: Plugin;
+  scene: Scene;
+  scenePlugin: ScenePlugin;
 };
 
 export type User = Node & {
@@ -2034,7 +2040,14 @@ export type CreateSceneMutation = (
 export type EarthLayerItemFragment = (
   { __typename?: 'LayerItem' }
   & Pick<LayerItem, 'id' | 'linkedDatasetId'>
-  & { merged?: Maybe<(
+  & { scenePlugin?: Maybe<(
+    { __typename?: 'ScenePlugin' }
+    & { property?: Maybe<(
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+      & PropertyFragmentFragment
+    )> }
+  )>, merged?: Maybe<(
     { __typename?: 'MergedLayer' }
     & Pick<MergedLayer, 'parentId'>
     & { property?: Maybe<(
@@ -2051,6 +2064,13 @@ export type EarthLayerItemFragment = (
         & { property?: Maybe<(
           { __typename?: 'MergedProperty' }
           & MergedPropertyFragmentWithoutSchemaFragment
+        )>, scenePlugin?: Maybe<(
+          { __typename?: 'ScenePlugin' }
+          & { property?: Maybe<(
+            { __typename?: 'Property' }
+            & Pick<Property, 'id'>
+            & PropertyFragmentFragment
+          )> }
         )> }
       )> }
     )> }
@@ -2066,7 +2086,14 @@ type EarthLayer_LayerGroup_Fragment = (
   ) | (
     { __typename?: 'LayerItem' }
     & Pick<LayerItem, 'id'>
-  )>>, property?: Maybe<(
+  )>>, scenePlugin?: Maybe<(
+    { __typename?: 'ScenePlugin' }
+    & { property?: Maybe<(
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+      & PropertyFragmentFragment
+    )> }
+  )>, property?: Maybe<(
     { __typename?: 'Property' }
     & Pick<Property, 'id'>
     & PropertyFragmentWithoutSchemaFragment
@@ -2080,7 +2107,14 @@ type EarthLayer_LayerGroup_Fragment = (
     )>, fields: Array<(
       { __typename?: 'InfoboxField' }
       & Pick<InfoboxField, 'id' | 'pluginId' | 'extensionId' | 'propertyId'>
-      & { property?: Maybe<(
+      & { scenePlugin?: Maybe<(
+        { __typename?: 'ScenePlugin' }
+        & { property?: Maybe<(
+          { __typename?: 'Property' }
+          & Pick<Property, 'id'>
+          & PropertyFragmentFragment
+        )> }
+      )>, property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentWithoutSchemaFragment
@@ -2092,7 +2126,14 @@ type EarthLayer_LayerGroup_Fragment = (
 type EarthLayer_LayerItem_Fragment = (
   { __typename?: 'LayerItem' }
   & Pick<LayerItem, 'id' | 'name' | 'isVisible' | 'pluginId' | 'extensionId'>
-  & { property?: Maybe<(
+  & { scenePlugin?: Maybe<(
+    { __typename?: 'ScenePlugin' }
+    & { property?: Maybe<(
+      { __typename?: 'Property' }
+      & Pick<Property, 'id'>
+      & PropertyFragmentFragment
+    )> }
+  )>, property?: Maybe<(
     { __typename?: 'Property' }
     & Pick<Property, 'id'>
     & PropertyFragmentWithoutSchemaFragment
@@ -2106,7 +2147,14 @@ type EarthLayer_LayerItem_Fragment = (
     )>, fields: Array<(
       { __typename?: 'InfoboxField' }
       & Pick<InfoboxField, 'id' | 'pluginId' | 'extensionId' | 'propertyId'>
-      & { property?: Maybe<(
+      & { scenePlugin?: Maybe<(
+        { __typename?: 'ScenePlugin' }
+        & { property?: Maybe<(
+          { __typename?: 'Property' }
+          & Pick<Property, 'id'>
+          & PropertyFragmentFragment
+        )> }
+      )>, property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentWithoutSchemaFragment
@@ -3088,69 +3136,6 @@ export type ChangePropertyValueMutation = (
   )> }
 );
 
-export type ChangePropertyValueLatLngMutationVariables = Exact<{
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-}>;
-
-
-export type ChangePropertyValueLatLngMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePropertyValueLatLng?: Maybe<(
-    { __typename?: 'PropertyFieldPayload' }
-    & { property: (
-      { __typename?: 'Property' }
-      & Pick<Property, 'id'>
-      & { layer?: Maybe<(
-        { __typename?: 'LayerGroup' }
-        & Pick<LayerGroup, 'id'>
-        & Layer1Fragment_LayerGroup_Fragment
-      ) | (
-        { __typename?: 'LayerItem' }
-        & Pick<LayerItem, 'id'>
-        & Layer1Fragment_LayerItem_Fragment
-      )> }
-      & PropertyFragmentFragment
-    ) }
-  )> }
-);
-
-export type ChangePropertyValueLatLngHeightMutationVariables = Exact<{
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  height: Scalars['Float'];
-}>;
-
-
-export type ChangePropertyValueLatLngHeightMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePropertyValueLatLngHeight?: Maybe<(
-    { __typename?: 'PropertyFieldPayload' }
-    & { property: (
-      { __typename?: 'Property' }
-      & Pick<Property, 'id'>
-      & { layer?: Maybe<(
-        { __typename?: 'LayerGroup' }
-        & Pick<LayerGroup, 'id'>
-        & Layer1Fragment_LayerGroup_Fragment
-      ) | (
-        { __typename?: 'LayerItem' }
-        & Pick<LayerItem, 'id'>
-        & Layer1Fragment_LayerItem_Fragment
-      )> }
-      & PropertyFragmentFragment
-    ) }
-  )> }
-);
-
 export type LinkDatasetMutationVariables = Exact<{
   propertyId: Scalars['ID'];
   itemId?: Maybe<Scalars['ID']>;
@@ -3709,6 +3694,72 @@ export type RemoveDatasetSchemaMutation = (
   & { removeDatasetSchema?: Maybe<(
     { __typename?: 'RemoveDatasetSchemaPayload' }
     & Pick<RemoveDatasetSchemaPayload, 'schemaId'>
+  )> }
+);
+
+export type InstallablePluginsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type InstallablePluginsQuery = (
+  { __typename?: 'Query' }
+  & { installablePlugins: Array<(
+    { __typename?: 'PluginMetadata' }
+    & Pick<PluginMetadata, 'name' | 'description' | 'thumbnailUrl' | 'author' | 'createdAt'>
+  )> }
+);
+
+export type InstalledPluginsQueryVariables = Exact<{
+  projectId: Scalars['ID'];
+}>;
+
+
+export type InstalledPluginsQuery = (
+  { __typename?: 'Query' }
+  & { scene?: Maybe<(
+    { __typename?: 'Scene' }
+    & Pick<Scene, 'id'>
+    & { plugins: Array<(
+      { __typename?: 'ScenePlugin' }
+      & { plugin?: Maybe<(
+        { __typename?: 'Plugin' }
+        & Pick<Plugin, 'id' | 'name' | 'version' | 'description' | 'author' | 'repositoryUrl'>
+      )> }
+    )> }
+  )> }
+);
+
+export type UploadPluginMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['URL']>;
+}>;
+
+
+export type UploadPluginMutation = (
+  { __typename?: 'Mutation' }
+  & { uploadPlugin?: Maybe<(
+    { __typename?: 'UploadPluginPayload' }
+    & { plugin: (
+      { __typename?: 'Plugin' }
+      & Pick<Plugin, 'id' | 'name' | 'version' | 'description' | 'author'>
+    ), scenePlugin: (
+      { __typename?: 'ScenePlugin' }
+      & Pick<ScenePlugin, 'pluginId' | 'propertyId'>
+    ) }
+  )> }
+);
+
+export type UninstallPluginMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  pluginId: Scalars['PluginID'];
+}>;
+
+
+export type UninstallPluginMutation = (
+  { __typename?: 'Mutation' }
+  & { uninstallPlugin?: Maybe<(
+    { __typename?: 'UninstallPluginPayload' }
+    & Pick<UninstallPluginPayload, 'pluginId'>
   )> }
 );
 
@@ -4625,6 +4676,57 @@ export const PropertyFragmentWithoutSchemaFragmentDoc = gql`
   }
 }
     ${PropertyItemFragmentFragmentDoc}`;
+export const PropertySchemaItemFragmentFragmentDoc = gql`
+    fragment PropertySchemaItemFragment on PropertySchemaGroup {
+  schemaGroupId
+  title
+  translatedTitle
+  isList
+  name
+  isAvailableIf {
+    fieldId
+    type
+    value
+  }
+  fields {
+    fieldId
+    name
+    description
+    translatedName
+    translatedDescription
+    prefix
+    suffix
+    type
+    defaultValue
+    ui
+    min
+    max
+    choices {
+      key
+      label
+      translatedLabel
+    }
+    isAvailableIf {
+      fieldId
+      type
+      value
+    }
+  }
+}
+    `;
+export const PropertyFragmentFragmentDoc = gql`
+    fragment PropertyFragment on Property {
+  id
+  ...PropertyFragmentWithoutSchema
+  schema {
+    id
+    groups {
+      ...PropertySchemaItemFragment
+    }
+  }
+}
+    ${PropertyFragmentWithoutSchemaFragmentDoc}
+${PropertySchemaItemFragmentFragmentDoc}`;
 export const MergedPropertyGroupCommonFragmentFragmentDoc = gql`
     fragment MergedPropertyGroupCommonFragment on MergedPropertyGroup {
   schemaGroupId
@@ -4661,6 +4763,12 @@ export const EarthLayerItemFragmentDoc = gql`
     fragment EarthLayerItem on LayerItem {
   id
   linkedDatasetId
+  scenePlugin {
+    property {
+      id
+      ...PropertyFragment
+    }
+  }
   merged {
     parentId
     property {
@@ -4677,11 +4785,18 @@ export const EarthLayerItemFragmentDoc = gql`
         property {
           ...MergedPropertyFragmentWithoutSchema
         }
+        scenePlugin {
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
       }
     }
   }
 }
-    ${MergedPropertyFragmentWithoutSchemaFragmentDoc}`;
+    ${PropertyFragmentFragmentDoc}
+${MergedPropertyFragmentWithoutSchemaFragmentDoc}`;
 export const EarthLayerFragmentDoc = gql`
     fragment EarthLayer on Layer {
   id
@@ -4689,6 +4804,12 @@ export const EarthLayerFragmentDoc = gql`
   isVisible
   pluginId
   extensionId
+  scenePlugin {
+    property {
+      id
+      ...PropertyFragment
+    }
+  }
   property {
     id
     ...PropertyFragmentWithoutSchema
@@ -4704,6 +4825,12 @@ export const EarthLayerFragmentDoc = gql`
       pluginId
       extensionId
       propertyId
+      scenePlugin {
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
       property {
         id
         ...PropertyFragmentWithoutSchema
@@ -4718,7 +4845,8 @@ export const EarthLayerFragmentDoc = gql`
   }
   ...EarthLayerItem
 }
-    ${PropertyFragmentWithoutSchemaFragmentDoc}
+    ${PropertyFragmentFragmentDoc}
+${PropertyFragmentWithoutSchemaFragmentDoc}
 ${EarthLayerItemFragmentDoc}`;
 export const EarthLayer1FragmentDoc = gql`
     fragment EarthLayer1 on Layer {
@@ -4866,57 +4994,6 @@ export const LayerSystemLayer5FragmentDoc = gql`
 }
     ${LayerSystemLayerFragmentDoc}
 ${LayerSystemLayer4FragmentDoc}`;
-export const PropertySchemaItemFragmentFragmentDoc = gql`
-    fragment PropertySchemaItemFragment on PropertySchemaGroup {
-  schemaGroupId
-  title
-  translatedTitle
-  isList
-  name
-  isAvailableIf {
-    fieldId
-    type
-    value
-  }
-  fields {
-    fieldId
-    name
-    description
-    translatedName
-    translatedDescription
-    prefix
-    suffix
-    type
-    defaultValue
-    ui
-    min
-    max
-    choices {
-      key
-      label
-      translatedLabel
-    }
-    isAvailableIf {
-      fieldId
-      type
-      value
-    }
-  }
-}
-    `;
-export const PropertyFragmentFragmentDoc = gql`
-    fragment PropertyFragment on Property {
-  id
-  ...PropertyFragmentWithoutSchema
-  schema {
-    id
-    groups {
-      ...PropertySchemaItemFragment
-    }
-  }
-}
-    ${PropertyFragmentWithoutSchemaFragmentDoc}
-${PropertySchemaItemFragmentFragmentDoc}`;
 export const InfoboxFragmentFragmentDoc = gql`
     fragment InfoboxFragment on Infobox {
   propertyId
@@ -6391,101 +6468,6 @@ export function useChangePropertyValueMutation(baseOptions?: Apollo.MutationHook
 export type ChangePropertyValueMutationHookResult = ReturnType<typeof useChangePropertyValueMutation>;
 export type ChangePropertyValueMutationResult = Apollo.MutationResult<ChangePropertyValueMutation>;
 export type ChangePropertyValueMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueMutation, ChangePropertyValueMutationVariables>;
-export const ChangePropertyValueLatLngDocument = gql`
-    mutation ChangePropertyValueLatLng($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lat: Float!, $lng: Float!) {
-  updatePropertyValueLatLng(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, lat: $lat, lng: $lng}
-  ) {
-    property {
-      id
-      ...PropertyFragment
-      layer {
-        id
-        ...Layer1Fragment
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}
-${Layer1FragmentFragmentDoc}`;
-export type ChangePropertyValueLatLngMutationFn = Apollo.MutationFunction<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>;
-
-/**
- * __useChangePropertyValueLatLngMutation__
- *
- * To run a mutation, you first call `useChangePropertyValueLatLngMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangePropertyValueLatLngMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changePropertyValueLatLngMutation, { data, loading, error }] = useChangePropertyValueLatLngMutation({
- *   variables: {
- *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
- *      itemId: // value for 'itemId'
- *      fieldId: // value for 'fieldId'
- *      lat: // value for 'lat'
- *      lng: // value for 'lng'
- *   },
- * });
- */
-export function useChangePropertyValueLatLngMutation(baseOptions?: Apollo.MutationHookOptions<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>) {
-        return Apollo.useMutation<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>(ChangePropertyValueLatLngDocument, baseOptions);
-      }
-export type ChangePropertyValueLatLngMutationHookResult = ReturnType<typeof useChangePropertyValueLatLngMutation>;
-export type ChangePropertyValueLatLngMutationResult = Apollo.MutationResult<ChangePropertyValueLatLngMutation>;
-export type ChangePropertyValueLatLngMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueLatLngMutation, ChangePropertyValueLatLngMutationVariables>;
-export const ChangePropertyValueLatLngHeightDocument = gql`
-    mutation ChangePropertyValueLatLngHeight($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lat: Float!, $lng: Float!, $height: Float!) {
-  updatePropertyValueLatLngHeight(
-    input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, lat: $lat, lng: $lng, height: $height}
-  ) {
-    property {
-      id
-      ...PropertyFragment
-      layer {
-        id
-        ...Layer1Fragment
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}
-${Layer1FragmentFragmentDoc}`;
-export type ChangePropertyValueLatLngHeightMutationFn = Apollo.MutationFunction<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>;
-
-/**
- * __useChangePropertyValueLatLngHeightMutation__
- *
- * To run a mutation, you first call `useChangePropertyValueLatLngHeightMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangePropertyValueLatLngHeightMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changePropertyValueLatLngHeightMutation, { data, loading, error }] = useChangePropertyValueLatLngHeightMutation({
- *   variables: {
- *      propertyId: // value for 'propertyId'
- *      schemaItemId: // value for 'schemaItemId'
- *      itemId: // value for 'itemId'
- *      fieldId: // value for 'fieldId'
- *      lat: // value for 'lat'
- *      lng: // value for 'lng'
- *      height: // value for 'height'
- *   },
- * });
- */
-export function useChangePropertyValueLatLngHeightMutation(baseOptions?: Apollo.MutationHookOptions<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>) {
-        return Apollo.useMutation<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>(ChangePropertyValueLatLngHeightDocument, baseOptions);
-      }
-export type ChangePropertyValueLatLngHeightMutationHookResult = ReturnType<typeof useChangePropertyValueLatLngHeightMutation>;
-export type ChangePropertyValueLatLngHeightMutationResult = Apollo.MutationResult<ChangePropertyValueLatLngHeightMutation>;
-export type ChangePropertyValueLatLngHeightMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueLatLngHeightMutation, ChangePropertyValueLatLngHeightMutationVariables>;
 export const LinkDatasetDocument = gql`
     mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaItemId: PropertySchemaFieldID, $fieldId: PropertySchemaFieldID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!) {
   linkDatasetToPropertyValue(
@@ -7425,6 +7407,162 @@ export function useRemoveDatasetSchemaMutation(baseOptions?: Apollo.MutationHook
 export type RemoveDatasetSchemaMutationHookResult = ReturnType<typeof useRemoveDatasetSchemaMutation>;
 export type RemoveDatasetSchemaMutationResult = Apollo.MutationResult<RemoveDatasetSchemaMutation>;
 export type RemoveDatasetSchemaMutationOptions = Apollo.BaseMutationOptions<RemoveDatasetSchemaMutation, RemoveDatasetSchemaMutationVariables>;
+export const InstallablePluginsDocument = gql`
+    query InstallablePlugins {
+  installablePlugins {
+    name
+    description
+    thumbnailUrl
+    author
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useInstallablePluginsQuery__
+ *
+ * To run a query within a React component, call `useInstallablePluginsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInstallablePluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInstallablePluginsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useInstallablePluginsQuery(baseOptions?: Apollo.QueryHookOptions<InstallablePluginsQuery, InstallablePluginsQueryVariables>) {
+        return Apollo.useQuery<InstallablePluginsQuery, InstallablePluginsQueryVariables>(InstallablePluginsDocument, baseOptions);
+      }
+export function useInstallablePluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstallablePluginsQuery, InstallablePluginsQueryVariables>) {
+          return Apollo.useLazyQuery<InstallablePluginsQuery, InstallablePluginsQueryVariables>(InstallablePluginsDocument, baseOptions);
+        }
+export type InstallablePluginsQueryHookResult = ReturnType<typeof useInstallablePluginsQuery>;
+export type InstallablePluginsLazyQueryHookResult = ReturnType<typeof useInstallablePluginsLazyQuery>;
+export type InstallablePluginsQueryResult = Apollo.QueryResult<InstallablePluginsQuery, InstallablePluginsQueryVariables>;
+export const InstalledPluginsDocument = gql`
+    query InstalledPlugins($projectId: ID!) {
+  scene(projectId: $projectId) {
+    id
+    plugins {
+      plugin {
+        id
+        name
+        version
+        description
+        author
+        repositoryUrl
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useInstalledPluginsQuery__
+ *
+ * To run a query within a React component, call `useInstalledPluginsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInstalledPluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInstalledPluginsQuery({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *   },
+ * });
+ */
+export function useInstalledPluginsQuery(baseOptions: Apollo.QueryHookOptions<InstalledPluginsQuery, InstalledPluginsQueryVariables>) {
+        return Apollo.useQuery<InstalledPluginsQuery, InstalledPluginsQueryVariables>(InstalledPluginsDocument, baseOptions);
+      }
+export function useInstalledPluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstalledPluginsQuery, InstalledPluginsQueryVariables>) {
+          return Apollo.useLazyQuery<InstalledPluginsQuery, InstalledPluginsQueryVariables>(InstalledPluginsDocument, baseOptions);
+        }
+export type InstalledPluginsQueryHookResult = ReturnType<typeof useInstalledPluginsQuery>;
+export type InstalledPluginsLazyQueryHookResult = ReturnType<typeof useInstalledPluginsLazyQuery>;
+export type InstalledPluginsQueryResult = Apollo.QueryResult<InstalledPluginsQuery, InstalledPluginsQueryVariables>;
+export const UploadPluginDocument = gql`
+    mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
+  uploadPlugin(input: {sceneId: $sceneId, file: $file, url: $url}) {
+    plugin {
+      id
+      name
+      version
+      description
+      author
+    }
+    scenePlugin {
+      pluginId
+      propertyId
+    }
+  }
+}
+    `;
+export type UploadPluginMutationFn = Apollo.MutationFunction<UploadPluginMutation, UploadPluginMutationVariables>;
+
+/**
+ * __useUploadPluginMutation__
+ *
+ * To run a mutation, you first call `useUploadPluginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadPluginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadPluginMutation, { data, loading, error }] = useUploadPluginMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      file: // value for 'file'
+ *      url: // value for 'url'
+ *   },
+ * });
+ */
+export function useUploadPluginMutation(baseOptions?: Apollo.MutationHookOptions<UploadPluginMutation, UploadPluginMutationVariables>) {
+        return Apollo.useMutation<UploadPluginMutation, UploadPluginMutationVariables>(UploadPluginDocument, baseOptions);
+      }
+export type UploadPluginMutationHookResult = ReturnType<typeof useUploadPluginMutation>;
+export type UploadPluginMutationResult = Apollo.MutationResult<UploadPluginMutation>;
+export type UploadPluginMutationOptions = Apollo.BaseMutationOptions<UploadPluginMutation, UploadPluginMutationVariables>;
+export const UninstallPluginDocument = gql`
+    mutation uninstallPlugin($sceneId: ID!, $pluginId: PluginID!) {
+  uninstallPlugin(input: {sceneId: $sceneId, pluginId: $pluginId}) {
+    pluginId
+  }
+}
+    `;
+export type UninstallPluginMutationFn = Apollo.MutationFunction<UninstallPluginMutation, UninstallPluginMutationVariables>;
+
+/**
+ * __useUninstallPluginMutation__
+ *
+ * To run a mutation, you first call `useUninstallPluginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUninstallPluginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uninstallPluginMutation, { data, loading, error }] = useUninstallPluginMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      pluginId: // value for 'pluginId'
+ *   },
+ * });
+ */
+export function useUninstallPluginMutation(baseOptions?: Apollo.MutationHookOptions<UninstallPluginMutation, UninstallPluginMutationVariables>) {
+        return Apollo.useMutation<UninstallPluginMutation, UninstallPluginMutationVariables>(UninstallPluginDocument, baseOptions);
+      }
+export type UninstallPluginMutationHookResult = ReturnType<typeof useUninstallPluginMutation>;
+export type UninstallPluginMutationResult = Apollo.MutationResult<UninstallPluginMutation>;
+export type UninstallPluginMutationOptions = Apollo.BaseMutationOptions<UninstallPluginMutation, UninstallPluginMutationVariables>;
 export const ProjectDocument = gql`
     query Project($teamId: ID!) {
   projects(teamId: $teamId, first: 0, last: 100) {
