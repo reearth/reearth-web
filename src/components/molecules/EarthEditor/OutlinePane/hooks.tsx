@@ -26,15 +26,20 @@ export type LayerItem = {
 };
 
 export type Widget = {
-  id: string;
+  id?: string;
+  pluginId: string;
+  extensionId: string;
   title: string;
   description?: string;
   enabled?: boolean;
   icon?: string;
 };
 
-export type ItemType = "root" | "scene" | "layer" | "widget" | "dataset";
-export type ItemEx = { type: ItemType };
+export type ItemType = ItemEx["type"];
+export type ItemEx =
+  | { type: "root" | "scene" | "layer" | "scenes" | "widgets" }
+  | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }
+  | { type: "dataset"; datasetSchemaId: string };
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 
 export default ({
@@ -68,7 +73,7 @@ export default ({
   onLayerImport?: (file: File, format: Format) => void;
   onLayerRemove?: (id: string) => void;
   onSceneSelect?: () => void;
-  onWidgetSelect?: (id: string) => void;
+  onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
   onLayerMove?: (
     src: string,
     dest: string,
@@ -95,7 +100,7 @@ export default ({
       if (item.content.type === "scene") {
         onSceneSelect?.();
       } else if (item.content.type === "widget") {
-        onWidgetSelect?.(item.id);
+        onWidgetSelect?.(item.content.widgetId, item.content.pluginId, item.content.extensionId);
       } else if (item.content.type === "layer") {
         onLayerSelect?.(
           item.id,
@@ -154,7 +159,6 @@ export default ({
         {
           id: "scene",
           content: {
-            id: "scene",
             type: "scene",
             icon: "scene",
             title: sceneTitle,
@@ -169,8 +173,7 @@ export default ({
         {
           id: "widgets",
           content: {
-            id: "widgets",
-            type: "widget",
+            type: "widgets",
             icon: "widget",
             title: widgetTitle,
             group: true,
@@ -181,9 +184,12 @@ export default ({
           expandable: true,
           selectable: false,
           children: widgets?.map(w => ({
-            id: w.id,
+            id: `${w.pluginId}/${w.extensionId}`,
             content: {
-              id: w.id,
+              id: `${w.pluginId}/${w.extensionId}`,
+              widgetId: w.id,
+              pluginId: w.pluginId,
+              extensionId: w.extensionId,
               type: "widget",
               title: w.title,
               description: w.description,

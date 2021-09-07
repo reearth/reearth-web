@@ -14,8 +14,7 @@ export const useRootLayerId = () => useAtom(rootLayerId);
 export type Selected =
   | { type: "scene" }
   | { type: "layer"; layerId: string }
-  | { type: "widget"; widgetId?: string }
-  | { type: "dataset"; datasetSchemaId: string };
+  | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string };
 const selected = atom<Selected | undefined>(undefined);
 export const useSelected = () => useAtom(selected);
 
