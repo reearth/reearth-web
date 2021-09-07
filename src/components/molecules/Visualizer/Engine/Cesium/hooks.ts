@@ -198,7 +198,6 @@ export default ({
   const handleDropLayer = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
       onDropLayer?.(e.id, convertCartesian3ToPosition(position));
-      //TODO: remove here since cesium-dnd must take care of this
       if (cesium.current?.cesiumElement?.scene.screenSpaceCameraController) {
         cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = true;
       }
