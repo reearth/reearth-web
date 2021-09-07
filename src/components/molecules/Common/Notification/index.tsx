@@ -9,20 +9,20 @@ import { styled, metrics, useTheme } from "@reearth/theme";
 export type NotificationStyleType = "error" | "warning" | "info" | "success";
 export type NotificationType = {
   type: "error" | "warning" | "info" | "success";
-  heading: string;
+  heading?: string;
   text: string;
 };
 
 export type Props = {
   visible?: boolean;
-  changeVisibility: React.Dispatch<React.SetStateAction<boolean>>;
+  setModal: (show: boolean) => void;
   notification?: NotificationType;
   resetNotification: () => void;
 };
 
 const NotificationBanner: React.FC<Props> = ({
   visible,
-  changeVisibility,
+  setModal,
   notification,
   resetNotification,
 }) => {
@@ -42,7 +42,7 @@ const NotificationBanner: React.FC<Props> = ({
           icon="cancel"
           size={20}
           onClick={() => {
-            changeVisibility(false);
+            setModal(false);
             resetNotification();
           }}
         />

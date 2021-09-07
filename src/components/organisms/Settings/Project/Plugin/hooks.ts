@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 
-import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/components/organisms/Notification/hooks";
+import { useTeam, useProject, useNotification } from "@reearth/state";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useInstallablePluginsQuery,
@@ -15,7 +14,7 @@ export default (projectId: string) => {
   const intl = useIntl();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
-  const { notify } = useNotification();
+  const [, setNotification] = useNotification();
 
   const { loading: pluginLoading } = useInstallablePluginsQuery();
   const [uploadPluginMutation] = useUploadPluginMutation();
@@ -57,13 +56,19 @@ export default (projectId: string) => {
         ),
       );
       if (results) {
-        notify("success", intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }));
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
+        });
         await refetchInstalledPlugins();
       } else {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to install plugin." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to install plugin." }),
+        });
       }
     },
-    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, notify, intl],
+    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, setNotification, intl],
   );
 
   const installFromPublicRepo = useCallback(
@@ -74,13 +79,19 @@ export default (projectId: string) => {
         variables: { sceneId: sceneId, url: repoUrl },
       });
       if (results.errors || !results.data?.uploadPlugin) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to install plugin." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to install plugin." }),
+        });
       } else {
-        notify("success", intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }));
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({ defaultMessage: "Successfully installed plugin!" }),
+        });
         await refetchInstalledPlugins();
       }
     },
-    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, notify, intl],
+    [rawSceneData?.scene?.id, refetchInstalledPlugins, uploadPluginMutation, setNotification, intl],
   );
 
   const uninstallPlugin = useCallback(
@@ -91,13 +102,25 @@ export default (projectId: string) => {
         variables: { sceneId: sceneId, pluginId: pluginId },
       });
       if (results.errors || !results.data?.uninstallPlugin) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to uninstall plugin." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to uninstall plugin." }),
+        });
       } else {
-        notify("info", intl.formatMessage({ defaultMessage: "Successfully removed plugin." }));
+        setNotification({
+          type: "info",
+          text: intl.formatMessage({ defaultMessage: "Successfully removed plugin." }),
+        });
         await refetchInstalledPlugins();
       }
     },
-    [rawSceneData?.scene?.id, refetchInstalledPlugins, uninstallPluginMutation, notify, intl],
+    [
+      rawSceneData?.scene?.id,
+      refetchInstalledPlugins,
+      uninstallPluginMutation,
+      setNotification,
+      intl,
+    ],
   );
 
   const loading = sceneLoading || pluginLoading;

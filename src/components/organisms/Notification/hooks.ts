@@ -1,7 +1,6 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
-import { useNotification } from "@reearth/state";
-import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
+import { useNotification, Notification } from "@reearth/state";
 
 export const notificationTimeout = 5000;
 
@@ -10,33 +9,22 @@ export default () => {
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
 
-  const notificationHeading = useMemo(() => {
-    if (!notification) {
-      return intl.formatMessage({ defaultMessage: "Notice" });
-    }
-    switch (notification.type) {
-      case "error":
-        return intl.formatMessage({ defaultMessage: "Error" });
-      case "warning":
-        return intl.formatMessage({ defaultMessage: "Warning" });
-      default:
-        return intl.formatMessage({ defaultMessage: "Notice" });
-    }
-  }, [intl, notification]);
+  const errorMessage = intl.formatMessage({ defaultMessage: "Error" });
+  const warningMessage = intl.formatMessage({ defaultMessage: "Warning" });
+  const noticeMessage = intl.formatMessage({ defaultMessage: "Notice" });
 
-  const notify = useCallback(
-    (type?: NotificationStyleType, text?: string) => {
-      if (!type || !text || notification?.type === "error") return;
-      setNotification({
-        type: type,
-        heading: notificationHeading,
-        text: text,
-      });
-    },
-    [setNotification, notificationHeading, notification?.type],
-  );
+  const notificationHeading =
+    notification?.type === "error"
+      ? errorMessage
+      : notification?.type === "warning"
+      ? warningMessage
+      : noticeMessage;
 
   const resetNotification = useCallback(() => setNotification(undefined), [setNotification]);
+
+  const setModal = (show: boolean) => {
+    changeVisibility(show);
+  };
 
   useEffect(() => {
     changeVisibility(!!notification);
@@ -52,9 +40,12 @@ export default () => {
 
   return {
     visible,
-    changeVisibility,
-    notify,
-    notification,
+    setModal,
+    notification: {
+      type: notification?.type,
+      heading: notificationHeading,
+      text: notification?.text,
+    } as Notification,
     resetNotification,
   };
 };

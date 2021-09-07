@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
 import { useNavigate } from "@reach/router";
-import { useTeam, useProject, useUnselectProject } from "@reearth/state";
+import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 import {
   useMeQuery,
   useCreateTeamMutation,
@@ -17,7 +17,6 @@ import {
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
-import useNotification from "@reearth/components/organisms/Notification/hooks";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -25,7 +24,7 @@ export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
-  const { notify } = useNotification();
+  const [, setNotification] = useNotification();
 
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -72,16 +71,16 @@ export default (teamId?: string) => {
         refetchQueries: ["teams"],
       });
       if (results.data?.createTeam) {
-        notify(
-          "success",
-          intl.formatMessage({ defaultMessage: "Successfully created workspace!" }),
-        );
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({ defaultMessage: "Successfully created workspace!" }),
+        });
         setCurrentTeam(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setCurrentTeam, refetch, navigate, intl, notify],
+    [createTeamMutation, setCurrentTeam, refetch, navigate, intl, setNotification],
   );
 
   useEffect(() => {
@@ -136,7 +135,10 @@ export default (teamId?: string) => {
         },
       });
       if (project.errors || !project.data?.createProject) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
         setModalShown(false);
         return;
       }
@@ -144,15 +146,21 @@ export default (teamId?: string) => {
         variables: { projectId: project.data.createProject.project.id },
       });
       if (scene.errors || !scene.data?.createScene) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
         setModalShown(false);
         return;
       }
-      notify("success", intl.formatMessage({ defaultMessage: "Successfully created project!" }));
+      setNotification({
+        type: "success",
+        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+      });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, teamId, refetch, intl, notify],
+    [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
   const [createAssetMutation] = useCreateAssetMutation();

@@ -38,7 +38,7 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
       <DatasetDeleteModal
         onRemove={() => id && onRemove?.(id)}
         openModal={showDeleteModal}
-        setModal={setDeleteModal}
+        setModal={(show: boolean) => setDeleteModal(show)}
       />
     </Wrapper>
   );

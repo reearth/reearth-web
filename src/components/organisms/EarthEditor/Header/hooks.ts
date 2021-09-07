@@ -10,8 +10,7 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import useNotification from "@reearth/components/organisms/Notification/hooks";
-import { useSceneId, useTeam, useProject } from "@reearth/state";
+import { useSceneId, useTeam, useProject, useNotification, NotificationType } from "@reearth/state";
 import { useAuth } from "@reearth/auth";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
@@ -23,7 +22,7 @@ export default () => {
   const { logout } = useAuth();
   const intl = useIntl();
 
-  const { notify } = useNotification();
+  const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
@@ -133,21 +132,22 @@ export default () => {
         variables: { projectId: project.id, alias, status: gqlStatus },
       });
 
-      notify(
-        s === "limited" ? "success" : s == "published" ? "success" : "info",
-        s === "limited"
-          ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
-          : s == "published"
-          ? intl.formatMessage({
-              defaultMessage: "Successfully published your project with search engine indexing!",
-            })
-          : intl.formatMessage({
-              defaultMessage:
-                "Successfully unpublished your project. Now nobody can access your project.",
-            }),
-      );
+      setNotification({
+        type: s === "limited" ? "success" : s == "published" ? "success" : "info",
+        text:
+          s === "limited"
+            ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
+            : s == "published"
+            ? intl.formatMessage({
+                defaultMessage: "Successfully published your project with search engine indexing!",
+              })
+            : intl.formatMessage({
+                defaultMessage:
+                  "Successfully unpublished your project. Now nobody can access your project.",
+              }),
+      });
     },
-    [project, publishProjectMutation, notify, intl],
+    [project, publishProjectMutation, setNotification, intl],
   );
 
   const changeTeam = useCallback(
@@ -185,6 +185,17 @@ export default () => {
     window.open(location.pathname + "/preview", "_blank");
   }, []);
 
+  const onNotify = useCallback(
+    (type?: NotificationType, text?: string) => {
+      if (!type || !text) return;
+      setNotification({
+        type,
+        text,
+      });
+    },
+    [setNotification],
+  );
+
   return {
     teams,
     teamId,
@@ -210,7 +221,7 @@ export default () => {
     closeWorkspaceModal,
     publishProject,
     logout,
-    notify,
+    notify: onNotify,
     checkProjectAlias,
     createTeam,
     openPreview,

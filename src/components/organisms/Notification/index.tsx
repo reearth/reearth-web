@@ -5,12 +5,12 @@ import MoleculeNotificationBanner from "@reearth/components/molecules/Common/Not
 import useHooks from "./hooks";
 
 const NotificationBanner: React.FC = () => {
-  const { visible, changeVisibility, notification, resetNotification } = useHooks();
+  const { visible, setModal, notification, resetNotification } = useHooks();
 
   return (
     <MoleculeNotificationBanner
       visible={visible}
-      changeVisibility={changeVisibility}
+      setModal={setModal}
       notification={notification}
       resetNotification={resetNotification}
     />

@@ -11,8 +11,7 @@ import {
   useAssetsQuery,
   useCreateAssetMutation,
 } from "@reearth/gql";
-import useNotification from "@reearth/components/organisms/Notification/hooks";
-import { useTeam, useProject } from "@reearth/state";
+import { useTeam, useProject, useNotification } from "@reearth/state";
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
 
@@ -24,7 +23,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 
 export default () => {
-  const { notify } = useNotification();
+  const [, setNotification] = useNotification();
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
   const navigate = useNavigate();
@@ -105,7 +104,10 @@ export default () => {
         },
       });
       if (project.errors || !project.data?.createProject) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
         setModalShown(false);
         return;
       }
@@ -113,15 +115,21 @@ export default () => {
         variables: { projectId: project.data.createProject.project.id },
       });
       if (scene.errors || !scene.data?.createScene) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
         setModalShown(false);
         return;
       }
-      notify("success", intl.formatMessage({ defaultMessage: "Successfully created project!" }));
+      setNotification({
+        type: "success",
+        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+      });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, intl, refetch, notify, teamId],
+    [createNewProject, createScene, intl, refetch, setNotification, teamId],
   );
 
   const selectProject = useCallback(

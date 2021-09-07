@@ -9,8 +9,7 @@ import {
 } from "@reearth/gql";
 import { useApolloClient } from "@apollo/client";
 
-import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/components/organisms/Notification/hooks";
+import { useTeam, useProject, useNotification } from "@reearth/state";
 
 type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
 
@@ -20,7 +19,7 @@ export default (projectId: string) => {
   const intl = useIntl();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
-  const { notify } = useNotification();
+  const [, setNotification] = useNotification();
 
   const { data: sceneData } = useSceneQuery({
     variables: { projectId: projectId ?? "" },
@@ -49,14 +48,20 @@ export default (projectId: string) => {
         },
       });
       if (results.errors || results.data?.removeDatasetSchema) {
-        notify("error", intl.formatMessage({ defaultMessage: "Failed to delete dataset." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to delete dataset." }),
+        });
       } else {
-        notify("info", intl.formatMessage({ defaultMessage: "Dataset was successfully deleted." }));
+        setNotification({
+          type: "info",
+          text: intl.formatMessage({ defaultMessage: "Dataset was successfully deleted." }),
+        });
         // re-render
         await client.resetStore();
       }
     },
-    [client, removeDatasetSchema, notify, intl],
+    [client, removeDatasetSchema, setNotification, intl],
   );
 
   // Add

@@ -46,7 +46,6 @@ export default (
         navigator.clipboard.writeText(value);
         onNotify?.(
           "info",
-
           `${
             key === "embedCode"
               ? intl.formatMessage({ defaultMessage: "Successfully copied the embed code!" })

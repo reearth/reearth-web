@@ -9,7 +9,7 @@ import Text from "@reearth/components/atoms/Text";
 
 export type Props = {
   onRemove?: (schemaId?: string) => void;
-  setModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  setModal?: (show: boolean) => void;
   openModal?: boolean;
 };
 

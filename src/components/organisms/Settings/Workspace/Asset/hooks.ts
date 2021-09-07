@@ -7,8 +7,7 @@ import {
   useCreateAssetMutation,
   useRemoveAssetMutation,
 } from "@reearth/gql";
-import { useTeam, useProject } from "@reearth/state";
-import useNotification from "@reearth/components/organisms/Notification/hooks";
+import { useTeam, useProject, useNotification } from "@reearth/state";
 
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -18,7 +17,7 @@ type Params = {
 
 export default (params: Params) => {
   const intl = useIntl();
-  const { notify } = useNotification();
+  const [, setNotification] = useNotification();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const navigate = useNavigate();
@@ -45,22 +44,22 @@ export default (params: Params) => {
           Array.from(files).map(async file => {
             const result = await createAssetMutation({ variables: { teamId, file } });
             if (result.errors || !result.data?.createAsset) {
-              notify(
-                "error",
-                intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
-              );
+              setNotification({
+                type: "error",
+                text: intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
+              });
             }
           }),
         );
         if (results) {
-          notify(
-            "success",
-            intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
-          );
+          setNotification({
+            type: "success",
+            text: intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
+          });
           await refetch();
         }
       })(),
-    [createAssetMutation, refetch, teamId, notify, intl],
+    [createAssetMutation, refetch, teamId, setNotification, intl],
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
@@ -76,21 +75,25 @@ export default (params: Params) => {
               refetchQueries: ["Assets"],
             });
             if (result.errors || result.data?.removeAsset) {
-              notify(
-                "error",
-                intl.formatMessage({ defaultMessage: "Failed to delete one or more assets." }),
-              );
+              setNotification({
+                type: "error",
+                text: intl.formatMessage({
+                  defaultMessage: "Failed to delete one or more assets.",
+                }),
+              });
             }
           }),
         );
         if (results) {
-          notify(
-            "info",
-            intl.formatMessage({ defaultMessage: "One or more assets were successfully deleted." }),
-          );
+          setNotification({
+            type: "info",
+            text: intl.formatMessage({
+              defaultMessage: "One or more assets were successfully deleted.",
+            }),
+          });
         }
       })(),
-    [removeAssetMutation, teamId, notify, intl],
+    [removeAssetMutation, teamId, setNotification, intl],
   );
 
   return {
