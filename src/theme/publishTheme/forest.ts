@@ -1,5 +1,5 @@
 import colors from "../colors";
-import { PublishTheme } from "./publishTheme";
+import type { PublishTheme } from ".";
 
 export const forest: PublishTheme = {
   strongText: colors.publish.forest.text.strong,

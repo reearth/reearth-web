@@ -7,5 +7,4 @@ export { default as metrics, metricsSizes } from "./metrics";
 export { default } from "./darkTheme";
 export { default as Provider } from "./provider";
 export { default as PublishedAppProvider } from "./publishedAppProvider";
-export { default as usePublishedTheme } from "./publishTheme/hooks";
-export { PublishTheme } from "./publishTheme/publishTheme";
+export { usePublishTheme, publishTheme, PublishTheme } from "./publishTheme";

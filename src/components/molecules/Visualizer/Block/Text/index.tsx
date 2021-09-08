@@ -4,7 +4,7 @@ import nl2br from "react-nl2br";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Markdown from "@reearth/components/atoms/Markdown";
-import { styled, useTheme, usePublishedTheme } from "@reearth/theme";
+import { styled, useTheme, usePublishTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
@@ -36,7 +36,7 @@ const TextBlock: React.FC<Props> = ({
   const { text, title, markdown, typography } =
     (block?.property as Property | undefined)?.default ?? {};
   const { bgcolor: bg } = infoboxProperty?.default ?? {};
-  const { publishedTheme } = usePublishedTheme(sceneProperty);
+  const publishedTheme = usePublishTheme(sceneProperty);
 
   const ref = useRef<HTMLTextAreaElement>(null);
   const isDirty = useRef(false);
