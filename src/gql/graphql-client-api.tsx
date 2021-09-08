@@ -179,12 +179,6 @@ export type Camera = {
   fov: Scalars['Float'];
 };
 
-export type CheckProjectAliasPayload = {
-  __typename?: 'CheckProjectAliasPayload';
-  alias: Scalars['String'];
-  available: Scalars['Boolean'];
-};
-
 export type CreateAssetInput = {
   teamId: Scalars['ID'];
   file: Scalars['Upload'];
@@ -656,13 +650,13 @@ export type Mutation = {
   updateProject?: Maybe<ProjectPayload>;
   publishProject?: Maybe<ProjectPayload>;
   deleteProject?: Maybe<DeleteProjectPayload>;
-  uploadPlugin?: Maybe<UploadPluginPayload>;
   createScene?: Maybe<CreateScenePayload>;
   addWidget?: Maybe<AddWidgetPayload>;
   updateWidget?: Maybe<UpdateWidgetPayload>;
   removeWidget?: Maybe<RemoveWidgetPayload>;
   installPlugin?: Maybe<InstallPluginPayload>;
   uninstallPlugin?: Maybe<UninstallPluginPayload>;
+  uploadPlugin?: Maybe<UploadPluginPayload>;
   upgradePlugin?: Maybe<UpgradePluginPayload>;
   updateDatasetSchema?: Maybe<UpdateDatasetSchemaPayload>;
   syncDataset?: Maybe<SyncDatasetPayload>;
@@ -673,10 +667,6 @@ export type Mutation = {
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   addDatasetSchema?: Maybe<AddDatasetSchemaPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueLatLng?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueLatLngHeight?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueCamera?: Maybe<PropertyFieldPayload>;
-  updatePropertyValueTypography?: Maybe<PropertyFieldPayload>;
   removePropertyField?: Maybe<PropertyFieldPayload>;
   uploadFileToProperty?: Maybe<PropertyFieldPayload>;
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
@@ -779,11 +769,6 @@ export type MutationDeleteProjectArgs = {
 };
 
 
-export type MutationUploadPluginArgs = {
-  input: UploadPluginInput;
-};
-
-
 export type MutationCreateSceneArgs = {
   input: CreateSceneInput;
 };
@@ -811,6 +796,11 @@ export type MutationInstallPluginArgs = {
 
 export type MutationUninstallPluginArgs = {
   input: UninstallPluginInput;
+};
+
+
+export type MutationUploadPluginArgs = {
+  input: UploadPluginInput;
 };
 
 
@@ -861,26 +851,6 @@ export type MutationAddDatasetSchemaArgs = {
 
 export type MutationUpdatePropertyValueArgs = {
   input: UpdatePropertyValueInput;
-};
-
-
-export type MutationUpdatePropertyValueLatLngArgs = {
-  input: UpdatePropertyValueLatLngInput;
-};
-
-
-export type MutationUpdatePropertyValueLatLngHeightArgs = {
-  input: UpdatePropertyValueLatLngHeightInput;
-};
-
-
-export type MutationUpdatePropertyValueCameraArgs = {
-  input: UpdatePropertyValueCameraInput;
-};
-
-
-export type MutationUpdatePropertyValueTypographyArgs = {
-  input: UpdatePropertyValueTypographyInput;
 };
 
 
@@ -983,6 +953,7 @@ export type Node = {
 };
 
 export enum NodeType {
+  Asset = 'ASSET',
   User = 'USER',
   Team = 'TEAM',
   Project = 'PROJECT',
@@ -1118,6 +1089,12 @@ export type Project = Node & {
   scene?: Maybe<Scene>;
 };
 
+export type ProjectAliasAvailability = {
+  __typename?: 'ProjectAliasAvailability';
+  alias: Scalars['String'];
+  available: Scalars['Boolean'];
+};
+
 export type ProjectConnection = {
   __typename?: 'ProjectConnection';
   edges: Array<ProjectEdge>;
@@ -1236,7 +1213,6 @@ export type PropertySchemaField = {
   fieldId: Scalars['PropertySchemaFieldID'];
   type: ValueType;
   title: Scalars['String'];
-  name: Scalars['String'];
   description: Scalars['String'];
   prefix?: Maybe<Scalars['String']>;
   suffix?: Maybe<Scalars['String']>;
@@ -1247,20 +1223,13 @@ export type PropertySchemaField = {
   choices?: Maybe<Array<PropertySchemaFieldChoice>>;
   isAvailableIf?: Maybe<PropertyCondition>;
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
   allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
   translatedTitle: Scalars['String'];
-  translatedName: Scalars['String'];
   translatedDescription: Scalars['String'];
 };
 
 
 export type PropertySchemaFieldTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-
-export type PropertySchemaFieldTranslatedNameArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
@@ -1273,21 +1242,13 @@ export type PropertySchemaFieldChoice = {
   __typename?: 'PropertySchemaFieldChoice';
   key: Scalars['String'];
   title: Scalars['String'];
-  label: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedLabel?: Maybe<Scalars['TranslatedString']>;
   translatedTitle: Scalars['String'];
-  translatedLabel: Scalars['String'];
 };
 
 
 export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
-};
-
-
-export type PropertySchemaFieldChoiceTranslatedLabelArgs = {
   lang?: Maybe<Scalars['String']>;
 };
 
@@ -1313,7 +1274,6 @@ export type PropertySchemaGroup = {
   isAvailableIf?: Maybe<PropertyCondition>;
   title?: Maybe<Scalars['String']>;
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  name?: Maybe<Scalars['PropertySchemaFieldID']>;
   representativeFieldId?: Maybe<Scalars['PropertySchemaFieldID']>;
   representativeField?: Maybe<PropertySchemaField>;
   schema?: Maybe<PropertySchema>;
@@ -1356,7 +1316,7 @@ export type Query = {
   sceneLock?: Maybe<SceneLockMode>;
   dynamicDatasetSchemas: Array<DatasetSchema>;
   searchUser?: Maybe<SearchedUser>;
-  checkProjectAlias: CheckProjectAliasPayload;
+  checkProjectAlias: ProjectAliasAvailability;
   installablePlugins: Array<PluginMetadata>;
 };
 
@@ -1810,20 +1770,6 @@ export type UpdatePropertyItemOperationInput = {
   nameFieldType?: Maybe<ValueType>;
 };
 
-export type UpdatePropertyValueCameraInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  altitude: Scalars['Float'];
-  heading: Scalars['Float'];
-  pitch: Scalars['Float'];
-  roll: Scalars['Float'];
-  fov: Scalars['Float'];
-};
-
 export type UpdatePropertyValueInput = {
   propertyId: Scalars['ID'];
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
@@ -1831,40 +1777,6 @@ export type UpdatePropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   value?: Maybe<Scalars['Any']>;
   type: ValueType;
-};
-
-export type UpdatePropertyValueLatLngHeightInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  height: Scalars['Float'];
-};
-
-export type UpdatePropertyValueLatLngInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-};
-
-export type UpdatePropertyValueTypographyInput = {
-  propertyId: Scalars['ID'];
-  schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
-  itemId?: Maybe<Scalars['ID']>;
-  fieldId: Scalars['PropertySchemaFieldID'];
-  fontFamily?: Maybe<Scalars['String']>;
-  fontWeight?: Maybe<Scalars['String']>;
-  fontSize?: Maybe<Scalars['Int']>;
-  color?: Maybe<Scalars['String']>;
-  textAlign?: Maybe<TextAlign>;
-  bold?: Maybe<Scalars['Boolean']>;
-  italic?: Maybe<Scalars['Boolean']>;
-  underline?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateTeamInput = {
@@ -2784,8 +2696,8 @@ export type CheckProjectAliasQueryVariables = Exact<{
 export type CheckProjectAliasQuery = (
   { __typename?: 'Query' }
   & { checkProjectAlias: (
-    { __typename?: 'CheckProjectAliasPayload' }
-    & Pick<CheckProjectAliasPayload, 'alias' | 'available'>
+    { __typename?: 'ProjectAliasAvailability' }
+    & Pick<ProjectAliasAvailability, 'alias' | 'available'>
   ) }
 );
 
@@ -3655,6 +3567,9 @@ export type AddWidgetMutation = (
           & PropertyFragmentFragment
         )> }
       )> }
+    ), sceneWidget: (
+      { __typename?: 'SceneWidget' }
+      & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId'>
     ) }
   )> }
 );
@@ -4549,16 +4464,16 @@ export type Layer5FragmentFragment = Layer5Fragment_LayerGroup_Fragment | Layer5
 
 export type PropertySchemaItemFragmentFragment = (
   { __typename?: 'PropertySchemaGroup' }
-  & Pick<PropertySchemaGroup, 'schemaGroupId' | 'title' | 'translatedTitle' | 'isList' | 'name'>
+  & Pick<PropertySchemaGroup, 'schemaGroupId' | 'title' | 'translatedTitle' | 'isList' | 'representativeFieldId'>
   & { isAvailableIf?: Maybe<(
     { __typename?: 'PropertyCondition' }
     & Pick<PropertyCondition, 'fieldId' | 'type' | 'value'>
   )>, fields: Array<(
     { __typename?: 'PropertySchemaField' }
-    & Pick<PropertySchemaField, 'fieldId' | 'name' | 'description' | 'translatedName' | 'translatedDescription' | 'prefix' | 'suffix' | 'type' | 'defaultValue' | 'ui' | 'min' | 'max'>
+    & Pick<PropertySchemaField, 'fieldId' | 'title' | 'description' | 'translatedTitle' | 'translatedDescription' | 'prefix' | 'suffix' | 'type' | 'defaultValue' | 'ui' | 'min' | 'max'>
     & { choices?: Maybe<Array<(
       { __typename?: 'PropertySchemaFieldChoice' }
-      & Pick<PropertySchemaFieldChoice, 'key' | 'label' | 'translatedLabel'>
+      & Pick<PropertySchemaFieldChoice, 'key' | 'icon' | 'title' | 'translatedTitle'>
     )>>, isAvailableIf?: Maybe<(
       { __typename?: 'PropertyCondition' }
       & Pick<PropertyCondition, 'fieldId' | 'type' | 'value'>
@@ -4830,7 +4745,7 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
   title
   translatedTitle
   isList
-  name
+  representativeFieldId
   isAvailableIf {
     fieldId
     type
@@ -4838,9 +4753,9 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
   }
   fields {
     fieldId
-    name
+    title
     description
-    translatedName
+    translatedTitle
     translatedDescription
     prefix
     suffix
@@ -4851,8 +4766,9 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
     max
     choices {
       key
-      label
-      translatedLabel
+      icon
+      title
+      translatedTitle
     }
     isAvailableIf {
       fieldId
@@ -7295,6 +7211,12 @@ export const AddWidgetDocument = gql`
           ...PropertyFragment
         }
       }
+    }
+    sceneWidget {
+      id
+      enabled
+      pluginId
+      extensionId
     }
   }
 }

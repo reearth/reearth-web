@@ -397,6 +397,12 @@ export const ADD_WIDGET = gql`
           }
         }
       }
+      sceneWidget {
+        id
+        enabled
+        pluginId
+        extensionId
+      }
     }
   }
 `;

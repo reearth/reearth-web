@@ -26,16 +26,19 @@ export type LayerItem = {
 };
 
 export type Widget = {
-  id: string;
-  widgetId?: string;
+  id?: string;
+  pluginId: string;
+  extensionId: string;
   title: string;
   description?: string;
   enabled?: boolean;
   icon?: string;
 };
 
-export type ItemType = "root" | "scene" | "layer" | "widgets" | "widget";
-export type ItemEx = { type: ItemType };
+export type ItemType = ItemEx["type"];
+export type ItemEx =
+  | { type: "root" | "scene" | "layer" | "scenes" | "widgets" }
+  | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string };
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 
 export default ({
@@ -71,7 +74,7 @@ export default ({
   onLayerRemove?: (id: string) => void;
   onSceneSelect?: () => void;
   onWidgetsSelect?: () => void;
-  onWidgetSelect?: (id: string) => void;
+  onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
   onLayerMove?: (
     src: string,
     dest: string,
@@ -100,7 +103,7 @@ export default ({
       } else if (item.id === "widgets") {
         onWidgetsSelect?.();
       } else if (item.content.type === "widget") {
-        onWidgetSelect?.(item.id);
+        onWidgetSelect?.(item.content.widgetId, item.content.pluginId, item.content.extensionId);
       } else if (item.content.type === "layer") {
         onLayerSelect?.(
           item.id,
@@ -159,7 +162,6 @@ export default ({
         {
           id: "scene",
           content: {
-            id: "scene",
             type: "scene",
             icon: "scene",
             title: sceneTitle,
@@ -174,8 +176,7 @@ export default ({
         {
           id: "widgets",
           content: {
-            id: "widgets",
-            type: "widget",
+            type: "widgets",
             icon: "widget",
             title: widgetTitle,
             group: true,
@@ -186,8 +187,12 @@ export default ({
           expandable: true,
           selectable: true,
           children: widgets?.map(w => ({
-            id: `${w.id}/${w.widgetId}`,
+            id: `${w.pluginId}/${w.extensionId}`,
             content: {
+              id: `${w.pluginId}/${w.extensionId}`,
+              widgetId: w.id,
+              pluginId: w.pluginId,
+              extensionId: w.extensionId,
               type: "widget",
               title: w.title,
               description: w.description,
