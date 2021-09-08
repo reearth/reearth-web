@@ -126,20 +126,22 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
         onClick={handleExpand}>
         {group && <ArrowIcon open={expanded} icon="arrowToggle" size={10} />}
       </ArrowIconWrapper>
-      <LayerIcon
-        selected={selected}
-        disabled={deactivated}
-        type={type}
-        icon={icon ?? (group ? (linked ? "dataset" : "folder") : "layerItem")}
-        size={16}
-        color={
-          selected
-            ? theme.layers.selectedTextColor
-            : deactivated
-            ? theme.layers.disableTextColor
-            : theme.layers.textColor
-        }
-      />
+      <LayerIconWrapper>
+        <LayerIcon
+          selected={selected}
+          disabled={deactivated}
+          type={type}
+          icon={icon ?? (group ? (linked ? "dataset" : "folder") : "layerItem")}
+          size={16}
+          color={
+            selected
+              ? theme.layers.selectedTextColor
+              : deactivated
+              ? theme.layers.disableTextColor
+              : theme.layers.textColor
+          }
+        />
+      </LayerIconWrapper>
       {editing ? (
         <Input type="text" {...inputProps} onClick={stopPropagation} />
       ) : (
@@ -220,7 +222,7 @@ const Wrapper = styled.div<{
 }>`
   user-select: none;
   width: 100%;
-  height: 40px;
+  height: 35px;
   display: flex;
   justify-content: start;
   align-items: center;
@@ -283,6 +285,11 @@ const Input = styled.input`
   overflow: hidden;
 `;
 
+const LayerIconWrapper = styled.div`
+  flex: 0 0 26px;
+  text-align: center;
+`;
+
 const LayerIcon = styled(Icon)<{ disabled?: boolean; selected?: boolean; type?: string }>`
   margin: 0 5px;
   flex: 0 0 auto;
@@ -298,11 +305,9 @@ const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
 
 const LayerCount = styled(Text)<{ selected?: boolean }>`
   margin-right: 10px;
-
   &::before {
     content: "(";
   }
-
   &::after {
     content: ")";
   }
