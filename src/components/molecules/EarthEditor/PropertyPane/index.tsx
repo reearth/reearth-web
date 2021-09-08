@@ -7,7 +7,7 @@ import { useBind } from "@reearth/util/use-bind";
 import Text from "@reearth/components/atoms/Text";
 import Button from "@reearth/components/atoms/Button";
 import WidgetToggleButton from "./WidgetToggleSwitch";
-import GroupWrapper from "./PropertyGroup";
+import GroupWrapper from "@reearth/components/atoms/TabCard";
 import PropertyItem, {
   Props as PropertyItemProps,
   Item as ItemItem,

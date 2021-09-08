@@ -7,7 +7,7 @@ import { ExtendedFuncProps2 } from "@reearth/types";
 import { useBind } from "@reearth/util/use-bind";
 import { zeroValues } from "@reearth/util/value";
 
-import GroupWrapper from "../PropertyGroup";
+import GroupWrapper from "@reearth/components/atoms/TabCard";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 import PropertyField, {
   Props as FieldProps,
