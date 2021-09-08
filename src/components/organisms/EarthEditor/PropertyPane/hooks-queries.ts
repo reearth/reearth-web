@@ -188,7 +188,6 @@ export default ({
     [linkableDatasets],
   );
 
-  console.log("dataset -------", datasetSchemas);
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
 
   return {
