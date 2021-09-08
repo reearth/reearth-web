@@ -195,7 +195,6 @@ export type Theme = {
   };
   zIndexes: {
     base: number;
-    hidden: number;
     form: number;
     infoBox: number;
     propertyFieldPopup: number;
