@@ -70,9 +70,9 @@ export type EngineProps = {
   onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
   onCameraChange?: (camera: Camera) => void;
   isLayerDraggable?: boolean;
-  onDragLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
-  onDraggingLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
-  onDropLayer?: (layerId: string, position: LatLngHeight | undefined) => void;
+  onDragLayer?: (layerId: string, position?: LatLngHeight) => void;
+  onDraggingLayer?: (layerId: string, position?: LatLngHeight) => void;
+  onDropLayer?: (layerId: string, position?: LatLngHeight) => void;
   isLayerDragging?: boolean;
 };
 
