@@ -86,7 +86,7 @@ export default ({ projectId }: Params) => {
     async (archived: boolean) => {
       if (!projectId) return;
       const results = await archiveProjectMutation({ variables: { projectId, archived } });
-      if (results.errors || !results.data?.updateProject) {
+      if (results.errors) {
         setNotification({
           type: "error",
           text: archived
@@ -113,7 +113,7 @@ export default ({ projectId }: Params) => {
   const deleteProject = useCallback(async () => {
     if (!projectId) return;
     const results = await deleteProjectMutation({ variables: { projectId } });
-    if (results.errors || results.data?.deleteProject) {
+    if (results.errors) {
       setNotification({
         type: "error",
         text: intl.formatMessage({ defaultMessage: "Failed to delete project." }),

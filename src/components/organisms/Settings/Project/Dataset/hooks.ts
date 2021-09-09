@@ -47,7 +47,7 @@ export default (projectId: string) => {
           force: true,
         },
       });
-      if (results.errors || results.data?.removeDatasetSchema) {
+      if (results.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to delete dataset." }),

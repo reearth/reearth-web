@@ -26,7 +26,7 @@ export default () => {
   const updateName = useCallback(
     async (name: string) => {
       const username = await updateMeMutation({ variables: { name } });
-      if (username.errors || !username.data?.updateMe) {
+      if (username.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to update account name." }),
@@ -39,7 +39,7 @@ export default () => {
   const updatePassword = useCallback(
     async (password: string, passwordConfirmation: string) => {
       const newPassword = await updateMeMutation({ variables: { password, passwordConfirmation } });
-      if (newPassword.errors || !newPassword.data?.updateMe) {
+      if (newPassword.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to update password." }),
@@ -57,7 +57,7 @@ export default () => {
   const updateLanguage = useCallback(
     async (lang: string) => {
       const language = await updateMeMutation({ variables: { lang } });
-      if (language.errors || !language.data?.updateMe) {
+      if (language.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to change language." }),
@@ -70,7 +70,7 @@ export default () => {
   const updateTheme = useCallback(
     async (theme: string) => {
       const newTheme = await updateMeMutation({ variables: { theme: theme as Theme } });
-      if (newTheme.errors || !newTheme.data?.updateMe) {
+      if (newTheme.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to change theme." }),

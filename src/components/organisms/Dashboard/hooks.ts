@@ -145,7 +145,7 @@ export default (teamId?: string) => {
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
       });
-      if (scene.errors || !scene.data?.createScene) {
+      if (scene.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
