@@ -220,7 +220,7 @@ export default ({
   };
 
   //Enable Drag and Drop Layers
-  const DELAY = 100;
+  const DELAY = 1000;
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || !isLayerDraggable) return;
