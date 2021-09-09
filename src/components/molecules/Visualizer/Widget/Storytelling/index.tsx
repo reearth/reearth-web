@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import { styled, usePublishedTheme, PublishTheme } from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Camera as CameraValue } from "@reearth/util/value";
 import Flex from "@reearth/components/atoms/Flex";
@@ -25,7 +25,7 @@ export type Property = {
 };
 
 const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
-  const { publishedTheme } = usePublishedTheme(sceneProperty.theme);
+  const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
 

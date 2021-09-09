@@ -1,5 +1,5 @@
 import colors from "../colors";
-import { PublishTheme } from "./publishTheme";
+import type { PublishTheme } from ".";
 
 export const light: PublishTheme = {
   strongText: colors.publish.light.text.strong,

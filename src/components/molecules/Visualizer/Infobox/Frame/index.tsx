@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
-import { styled, css, usePublishedTheme } from "@reearth/theme";
+import { styled, css, usePublishTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
@@ -50,7 +50,7 @@ const InfoBox: React.FC<Props> = ({
   onExit,
   onExited,
 }) => {
-  const { publishedTheme } = usePublishedTheme(sceneProperty?.theme);
+  const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
