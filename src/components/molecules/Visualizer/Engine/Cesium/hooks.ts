@@ -44,7 +44,7 @@ export default ({
   isLayerDraggable?: boolean;
   onDragLayer?: (layerId: string, position?: LatLngHeight) => void;
   onDraggingLayer?: (layerId: string, position?: LatLngHeight) => void;
-  onDropLayer?: (layerId: string, position¿: LatLngHeight) => void;
+  onDropLayer?: (layerId: string, position?: LatLngHeight) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
