@@ -48,7 +48,6 @@ export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishThem
     themeSelectColor: sceneThemeOptions?.themeSelectColor || "#C52C63",
   };
 
-  const themeTextColor = tinycolor(options.themeTextColor);
   const isBackgroundDark = isDark(options?.themeBackgroundColor);
 
   return {
@@ -56,10 +55,14 @@ export function publishTheme(sceneThemeOptions?: SceneThemeOptions): PublishThem
     background: options.themeBackgroundColor,
     mainText: options.themeTextColor,
     select: options.themeSelectColor,
-    strongIcon: isBackgroundDark ? themeTextColor.lighten(25).toHex8String() : "#FFFFFF",
-    strongText: isBackgroundDark ? themeTextColor.lighten(25).toHex8String() : "#FFFFFF",
-    weakText: themeTextColor.setAlpha(0.5).toHex8String(),
-    mainIcon: themeTextColor.setAlpha(0.5).toHex8String(),
-    weakIcon: themeTextColor.setAlpha(0.25).toHex8String(),
+    strongIcon: isBackgroundDark
+      ? tinycolor(options.themeTextColor).lighten(25).toHex8String()
+      : "#FFFFFF",
+    strongText: isBackgroundDark
+      ? tinycolor(options.themeTextColor).lighten(25).toHex8String()
+      : "#FFFFFF",
+    weakText: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
+    mainIcon: tinycolor(options.themeTextColor).setAlpha(0.5).toHex8String(),
+    weakIcon: tinycolor(options.themeTextColor).setAlpha(0.25).toHex8String(),
   };
 }
