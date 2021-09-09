@@ -18,13 +18,7 @@ import {
   useSelectedBlock,
 } from "@reearth/state";
 
-import {
-  convertLayers,
-  convertWidgets,
-  convertToBlocks,
-  convertProperty,
-  convertLayersWithRawProperty,
-} from "./convert";
+import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 import {
   valueTypeToGQL,
   ValueType,
@@ -119,6 +113,7 @@ export default (isBuilt?: boolean) => {
     () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
     [layerData, selected],
   );
+
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
 
@@ -156,8 +151,6 @@ export default (isBuilt?: boolean) => {
 
   const [updateLayerLatLng] = useUpdatePropertyValueLatLngMutation();
 
-  const layersWithRawProperty = useMemo(() => convertLayersWithRawProperty(layerData), [layerData]);
-
   const handleDragLayer = useCallback((_layerId: string, _position: LatLngHeight | undefined) => {
     setIsDragging(true);
   }, []);
@@ -165,8 +158,7 @@ export default (isBuilt?: boolean) => {
   const handleDropLayer = useCallback(
     async (layerId: string, position: LatLngHeight | undefined) => {
       setIsDragging(false);
-      const layerProperty = layersWithRawProperty?.find(l => l.id === layerId)?.property;
-      const propertyId = layerProperty?.id;
+      const layerProperty = layers?.layers.find(l => l.id === layerId)?.rawProperty;
       const fieldId = "location";
       const schemaItemId = "default";
       const propertyItem =
@@ -175,10 +167,10 @@ export default (isBuilt?: boolean) => {
               i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
             )
           : undefined;
-      if (!propertyId || !position) return;
+      if (!layerProperty?.id || !position) return;
       await updateLayerLatLng({
         variables: {
-          propertyId,
+          propertyId: layerProperty?.id,
           itemId: propertyItem?.id,
           schemaItemId,
           fieldId,
@@ -187,7 +179,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [layersWithRawProperty, updateLayerLatLng],
+    [layers?.layers, updateLayerLatLng],
   );
 
   return {

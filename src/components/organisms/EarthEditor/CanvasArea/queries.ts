@@ -289,6 +289,11 @@ export const UPDATE_LAT_LNG = gql`
     ) {
       property {
         id
+        ...PropertyFragment
+        layer {
+          id
+          ...Layer1Fragment
+        }
       }
     }
   }

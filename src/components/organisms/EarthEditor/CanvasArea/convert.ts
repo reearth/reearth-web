@@ -14,7 +14,11 @@ import {
 import { valueFromGQL } from "@reearth/util/value";
 
 import { Item } from "@reearth/components/atoms/ContentPicker";
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import {
+  Primitive as PrimitiveType,
+  Widget,
+  Block,
+} from "@reearth/components/molecules/Visualizer";
 
 type BlockType = Item & {
   pluginId: string;
@@ -24,6 +28,10 @@ type BlockType = Item & {
 export type Layer = Primitive & {
   layers: Layer[] | undefined;
   isParentVisible: boolean;
+};
+
+type Primitive = PrimitiveType & {
+  rawProperty?: PropertyItemFragmentFragment | PropertyFragmentFragment;
 };
 
 type P = { [key in string]: any };
@@ -140,6 +148,7 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
             ? processMergedProperty(layer.merged?.property)
             : undefined,
         pluginProperty: convertProperty(layer.scenePlugin?.property),
+        rawProperty: layer.property ?? undefined,
         infoboxEditable: !!layer.infobox,
         infobox:
           layer.__typename === "LayerItem"
@@ -230,56 +239,4 @@ export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined 
     )
     .filter((a): a is BlockType[] => !!a)
     .reduce((a, b) => [...a, ...b], []);
-};
-
-// TODO: refactor these part since it isn't based on DRY principle
-export const convertLayersWithRawProperty = (
-  data: GetLayersQuery | undefined,
-): LayerWithRawProperty[] | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
-    return undefined;
-  }
-  const rootLayer = processLayerWithRawProperty(data.node.rootLayer);
-  const layers = flattenLayerWithRawProperty(rootLayer?.layers);
-  return layers;
-};
-
-const processLayerWithRawProperty = (l?: EarthLayer5Fragment): LayerWithRawProperty | undefined => {
-  return l
-    ? {
-        id: l.id,
-        property: l.property ?? undefined,
-        pluginId: l.pluginId ?? "",
-        extensionId: l.extensionId ?? "",
-        layers:
-          l.__typename === "LayerGroup"
-            ? l.layers
-                .map(layer => processLayerWithRawProperty(layer ?? undefined))
-                .filter((layer): layer is LayerWithRawProperty => !!layer)
-            : undefined,
-      }
-    : undefined;
-};
-
-const flattenLayerWithRawProperty = (l?: LayerWithRawProperty[]): LayerWithRawProperty[] => {
-  return (
-    l?.reduce<LayerWithRawProperty[]>((a, b) => {
-      if (!b) {
-        return a;
-      }
-      if (b.layers?.length) {
-        return [...a, ...flattenLayerWithRawProperty(b.layers)];
-      }
-      if (!b.pluginId || !b.extensionId) return a;
-      return [...a, b];
-    }, []) ?? []
-  );
-};
-
-type LayerWithRawProperty = {
-  id: string;
-  property: PropertyItemFragmentFragment | PropertyFragmentFragment | undefined;
-  pluginId: string;
-  extensionId: string;
-  layers: LayerWithRawProperty[] | undefined;
 };

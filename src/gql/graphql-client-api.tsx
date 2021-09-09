@@ -2430,6 +2430,16 @@ export type UpdatePropertyValueLatLngMutation = (
     & { property: (
       { __typename?: 'Property' }
       & Pick<Property, 'id'>
+      & { layer?: Maybe<(
+        { __typename?: 'LayerGroup' }
+        & Pick<LayerGroup, 'id'>
+        & Layer1Fragment_LayerGroup_Fragment
+      ) | (
+        { __typename?: 'LayerItem' }
+        & Pick<LayerItem, 'id'>
+        & Layer1Fragment_LayerItem_Fragment
+      )> }
+      & PropertyFragmentFragment
     ) }
   )> }
 );
@@ -5573,10 +5583,16 @@ export const UpdatePropertyValueLatLngDocument = gql`
   ) {
     property {
       id
+      ...PropertyFragment
+      layer {
+        id
+        ...Layer1Fragment
+      }
     }
   }
 }
-    `;
+    ${PropertyFragmentFragmentDoc}
+${Layer1FragmentFragmentDoc}`;
 export type UpdatePropertyValueLatLngMutationFn = Apollo.MutationFunction<UpdatePropertyValueLatLngMutation, UpdatePropertyValueLatLngMutationVariables>;
 
 /**
