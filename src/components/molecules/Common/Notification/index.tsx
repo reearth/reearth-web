@@ -15,9 +15,9 @@ export type NotificationType = {
 
 export type Props = {
   visible?: boolean;
-  setModal: (show: boolean) => void;
+  setModal?: (show: boolean) => void;
   notification?: NotificationType;
-  resetNotification: () => void;
+  resetNotification?: () => void;
 };
 
 const NotificationBanner: React.FC<Props> = ({
@@ -42,8 +42,8 @@ const NotificationBanner: React.FC<Props> = ({
           icon="cancel"
           size={20}
           onClick={() => {
-            setModal(false);
-            resetNotification();
+            setModal?.(false);
+            resetNotification?.();
           }}
         />
       </HeadingArea>
