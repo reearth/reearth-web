@@ -32,7 +32,26 @@ const data: Item[] = [
 
 export const Default: Story<Props<Item>> = args => <Table {...args} />;
 
+export const Scroll: Story<Props<Item>> = args => <Table {...args} />;
+export const Auto: Story<Props<Item>> = args => <Table {...args} />;
+
 Default.args = {
   headers,
   items: data,
+  scroll: false,
+};
+
+Scroll.args = {
+  headers,
+  items: data,
+  layout: "fixed",
+  columnWidth: "100px",
+  width: "400px",
+};
+
+Auto.args = {
+  headers,
+  items: data,
+  layout: "auto",
+  scroll: false,
 };
