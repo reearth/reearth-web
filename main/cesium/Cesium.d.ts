@@ -854,10 +854,12 @@ export class AxisAlignedBoundingBox {
  * Provides geocoding through Bing Maps.
  * @param options - Object with the following properties:
  * @param options.key - A key to use with the Bing Maps geocoding service
+ * @param [options.culture] - A Bing Maps {@link https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes|Culture Code} to return results in a specific culture and language.
  */
 export class BingMapsGeocoderService {
     constructor(options: {
         key: string;
+        culture?: string;
     });
     /**
      * The URL endpoint for the Bing geocoder service
@@ -1743,6 +1745,10 @@ export class Cartesian2 {
      */
     static readonly ZERO: Cartesian2;
     /**
+     * An immutable Cartesian2 instance initialized to (1.0, 1.0).
+     */
+    static readonly ONE: Cartesian2;
+    /**
      * An immutable Cartesian2 instance initialized to (1.0, 0.0).
      */
     static readonly UNIT_X: Cartesian2;
@@ -2153,6 +2159,10 @@ export class Cartesian3 {
      */
     static readonly ZERO: Cartesian3;
     /**
+     * An immutable Cartesian3 instance initialized to (1.0, 1.0, 1.0).
+     */
+    static readonly ONE: Cartesian3;
+    /**
      * An immutable Cartesian3 instance initialized to (1.0, 0.0, 0.0).
      */
     static readonly UNIT_X: Cartesian3;
@@ -2474,6 +2484,10 @@ export class Cartesian4 {
      * An immutable Cartesian4 instance initialized to (0.0, 0.0, 0.0, 0.0).
      */
     static readonly ZERO: Cartesian4;
+    /**
+     * An immutable Cartesian4 instance initialized to (1.0, 1.0, 1.0, 1.0).
+     */
+    static readonly ONE: Cartesian4;
     /**
      * An immutable Cartesian4 instance initialized to (1.0, 0.0, 0.0, 0.0).
      */
@@ -28991,6 +29005,200 @@ export class ClippingPlaneCollection {
 }
 
 /**
+ * A renderable collection of clouds in the 3D scene.
+ * <br /><br />
+ * <div align='center'>
+ * <img src='Images/CumulusCloud.png' width='400' height='300' /><br />
+ * Example cumulus clouds
+ * </div>
+ * <br /><br />
+ * Clouds are added and removed from the collection using {@link CloudCollection#add}
+ * and {@link CloudCollection#remove}.
+ * @example
+ * // Create a cloud collection with two cumulus clouds
+ * var clouds = scene.primitives.add(new Cesium.CloudCollection());
+ * clouds.add({
+ *   position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
+ *   maximumSize: new Cesium.Cartesian3(20.0, 12.0, 8.0)
+ * });
+ * clouds.add({
+ *   position : new Cesium.Cartesian3(4.0, 5.0, 6.0),
+ *   maximumSize: new Cesium.Cartesian3(15.0, 9.0, 9.0),
+ *   slice: 0.5
+ * });
+ * @param [options] - Object with the following properties:
+ * @param [options.show = true] - Whether to display the clouds.
+ * @param [options.noiseDetail = 16.0] - Desired amount of detail in the noise texture.
+ * @param [options.noiseOffset = Cartesian3.ZERO] - Desired translation of data in noise texture.
+ * @param [options.debugBillboards = false] - For debugging only. Determines if the billboards are rendered with an opaque color.
+ * @param [options.debugEllipsoids = false] - For debugging only. Determines if the clouds will be rendered as opaque ellipsoids.
+ */
+export class CloudCollection {
+    constructor(options?: {
+        show?: boolean;
+        noiseDetail?: number;
+        noiseOffset?: number;
+        debugBillboards?: boolean;
+        debugEllipsoids?: boolean;
+    });
+    /**
+     * <p>
+     * Controls the amount of detail captured in the precomputed noise texture
+     * used to render the cumulus clouds. In order for the texture to be tileable,
+     * this must be a power of two. For best results, set this to be a power of two
+     * between <code>8.0</code> and <code>32.0</code> (inclusive).
+     * </p>
+     *
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'>
+     *   <code>clouds.noiseDetail = 8.0;</code><br/>
+     *   <img src='Images/CloudCollection.noiseDetail8.png' width='250' height='158' />
+     * </td>
+     * <td align='center'>
+     *   <code>clouds.noiseDetail = 32.0;</code><br/>
+     *   <img src='Images/CloudCollection.noiseDetail32.png' width='250' height='158' />
+     * </td>
+     * </tr></table>
+     * </div>
+     */
+    noiseDetail: number;
+    /**
+     * <p>
+     * Applies a translation to noise texture coordinates to generate different data.
+     * This can be modified if the default noise does not generate good-looking clouds.
+     * </p>
+     *
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'>
+     *   <code>default</code><br/>
+     *   <img src='Images/CloudCollection.noiseOffsetdefault.png' width='250' height='158' />
+     * </td>
+     * <td align='center'>
+     *   <code>clouds.noiseOffset = new Cesium.Cartesian3(10, 20, 10);</code><br/>
+     *   <img src='Images/CloudCollection.noiseOffsetx10y20z10.png' width='250' height='158' />
+     * </td>
+     * </tr></table>
+     * </div>
+     */
+    noiseOffset: Cartesian3;
+    /**
+     * Determines if billboards in this collection will be shown.
+     */
+    show: boolean;
+    /**
+     * This property is for debugging only; it is not for production use nor is it optimized.
+     * <p>
+     * Renders the billboards with one opaque color for the sake of debugging.
+     * </p>
+     */
+    debugBillboards: boolean;
+    /**
+     * This property is for debugging only; it is not for production use nor is it optimized.
+     * <p>
+     * Draws the clouds as opaque, monochrome ellipsoids for the sake of debugging.
+     * If <code>debugBillboards</code> is also true, then the ellipsoids will draw on top of the billboards.
+     * </p>
+     */
+    debugEllipsoids: boolean;
+    /**
+     * Returns the number of clouds in this collection.
+     */
+    length: number;
+    /**
+     * Creates and adds a cloud with the specified initial properties to the collection.
+     * The added cloud is returned so it can be modified or removed from the collection later.
+     * @example
+     * // Example 1:  Add a cumulus cloud, specifying all the default values.
+     * var c = clouds.add({
+     *   show : true,
+     *   position : Cesium.Cartesian3.ZERO,
+     *   scale : new Cesium.Cartesian2(20.0, 12.0),
+     *   maximumSize: new Cesium.Cartesian3(20.0, 12.0, 12.0),
+     *   slice: -1.0,
+     *   cloudType : CloudType.CUMULUS
+     * });
+     * @example
+     * // Example 2:  Specify only the cloud's cartographic position.
+     * var c = clouds.add({
+     *   position : Cesium.Cartesian3.fromDegrees(longitude, latitude, height)
+     * });
+     * @param [options] - A template describing the cloud's properties as shown in Example 1.
+     * @returns The cloud that was added to the collection.
+     */
+    add(options?: any): CumulusCloud;
+    /**
+     * Removes a cloud from the collection.
+     * @example
+     * var c = clouds.add(...);
+     * clouds.remove(c);  // Returns true
+     * @param cloud - The cloud to remove.
+     * @returns <code>true</code> if the cloud was removed; <code>false</code> if the cloud was not found in the collection.
+     */
+    remove(cloud: CumulusCloud): boolean;
+    /**
+     * Removes all clouds from the collection.
+     * @example
+     * clouds.add(...);
+     * clouds.add(...);
+     * clouds.removeAll();
+     */
+    removeAll(): void;
+    /**
+     * Check whether this collection contains a given cloud.
+     * @param [cloud] - The cloud to check for.
+     * @returns true if this collection contains the cloud, false otherwise.
+     */
+    contains(cloud?: CumulusCloud): boolean;
+    /**
+     * Returns the cloud in the collection at the specified index. Indices are zero-based
+     * and increase as clouds are added. Removing a cloud shifts all clouds after
+     * it to the left, changing their indices. This function is commonly used with
+     * {@link CloudCollection#length} to iterate over all the clouds in the collection.
+     * @example
+     * // Toggle the show property of every cloud in the collection
+     * var len = clouds.length;
+     * for (var i = 0; i < len; ++i) {
+     *   var c = clouds.get(i);
+     *   c.show = !c.show;
+     * }
+     * @param index - The zero-based index of the cloud.
+     * @returns The cloud at the specified index.
+     */
+    get(index: number): CumulusCloud;
+    /**
+     * Returns true if this object was destroyed; otherwise, false.
+     * <br /><br />
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
+     */
+    isDestroyed(): boolean;
+    /**
+     * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
+     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+     * <br /><br />
+     * Once an object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
+     * @example
+     * clouds = clouds && clouds.destroy();
+     */
+    destroy(): void;
+}
+
+/**
+ * Specifies the type of the cloud that is added to a {@link CloudCollection} in {@link CloudCollection#add}.
+ */
+export enum CloudType {
+    /**
+     * Cumulus cloud.
+     */
+    CUMULUS = 0
+}
+
+/**
  * Defines different modes for blending between a target color and a primitive's source color.
  *
  * HIGHLIGHT multiplies the source color by the target color
@@ -29143,6 +29351,144 @@ export enum CullFace {
      * Both front-facing and back-facing triangles are culled.
      */
     FRONT_AND_BACK = WebGLConstants.FRONT_AND_BACK
+}
+
+/**
+ * A cumulus cloud billboard positioned in the 3D scene, that is created and rendered using a {@link CloudCollection}.
+ * A cloud is created and its initial properties are set by calling {@link CloudCollection#add}.
+ * and {@link CloudCollection#remove}.
+ * <br /><br />
+ * <div align='center'>
+ * <img src='Images/CumulusCloud.png' width='400' height='300' /><br />
+ * Example cumulus clouds
+ * </div>
+ */
+export class CumulusCloud {
+    constructor();
+    /**
+     * Determines if this cumulus cloud will be shown.  Use this to hide or show a cloud, instead
+     * of removing it and re-adding it to the collection.
+     */
+    show: boolean;
+    /**
+     * Gets or sets the Cartesian position of this cumulus cloud.
+     */
+    position: Cartesian3;
+    /**
+     * <p>Gets or sets the scale of the cumulus cloud billboard in meters.
+     * The <code>scale</code> property will affect the size of the billboard,
+     * but not the cloud's actual appearance.</p>
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'>
+     *   <code>cloud.scale = new Cesium.Cartesian2(12, 8);</code><br/>
+     *   <img src='Images/CumulusCloud.scalex12y8.png' width='250' height='158' />
+     * </td>
+     * <td align='center'>
+     *   <code>cloud.scale = new Cesium.Cartesian2(24, 10);</code><br/>
+     *   <img src='Images/CumulusCloud.scalex24y10.png' width='250' height='158' />
+     * </td>
+     * </tr></table>
+     * </div>
+     *
+     * <p>To modify the cloud's appearance, modify its <code>maximumSize</code>
+     * and <code>slice</code> properties.</p>
+     */
+    scale: Cartesian2;
+    /**
+     * <p>Gets or sets the maximum size of the cumulus cloud rendered on the billboard.
+     * This defines a maximum ellipsoid volume that the cloud can appear in.
+     * Rather than guaranteeing a specific size, this specifies a boundary for the
+     * cloud to appear in, and changing it can affect the shape of the cloud.</p>
+     * <p>Changing the z-value of <code>maximumSize</code> has the most dramatic effect
+     * on the cloud's appearance because it changes the depth of the cloud, and thus the
+     * positions at which the cloud-shaping texture is sampled.</p>
+     * <div align='center'>
+     * <table border='0' cellpadding='5'>
+     * <tr>
+     *   <td align='center'>
+     *     <code>cloud.maximumSize = new Cesium.Cartesian3(14, 9, 10);</code><br/>
+     *     <img src='Images/CumulusCloud.maximumSizex14y9z10.png' width='250' height='158' />
+     *   </td>
+     *   <td align='center'>
+     *     <code>cloud.maximumSize.x = 25;</code><br/>
+     *     <img src='Images/CumulusCloud.maximumSizex25.png' width='250' height='158' />
+     *   </td>
+     * </tr>
+     * <tr>
+     *   <td align='center'>
+     *     <code>cloud.maximumSize.y = 5;</code><br/>
+     *     <img src='Images/CumulusCloud.maximumSizey5.png' width='250' height='158' />
+     *   </td>
+     *   <td align='center'>
+     *     <code>cloud.maximumSize.z = 17;</code><br/>
+     *     <img src='Images/CumulusCloud.maximumSizez17.png' width='250' height='158' />
+     *   </td>
+     * </tr>
+     * </table>
+     * </div>
+     *
+     * <p>To modify the billboard's actual size, modify the cloud's <code>scale</code> property.</p>
+     */
+    maximumSize: Cartesian3;
+    /**
+     * <p>Gets or sets the "slice" of the cloud that is rendered on the billboard, i.e.
+     * the specific cross-section of the cloud chosen for the billboard's appearance.
+     * Given a value between 0 and 1, the slice specifies how deeply into the cloud
+     * to intersect based on its maximum size in the z-direction.</p>
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'><code>cloud.slice = 0.32;</code><br/><img src='Images/CumulusCloud.slice0.32.png' width='250' height='158' /></td>
+     * <td align='center'><code>cloud.slice = 0.5;</code><br/><img src='Images/CumulusCloud.slice0.5.png' width='250' height='158' /></td>
+     * <td align='center'><code>cloud.slice = 0.6;</code><br/><img src='Images/CumulusCloud.slice0.6.png' width='250' height='158' /></td>
+     * </tr></table>
+     * </div>
+     *
+     * <br />
+     * <p>Due to the nature in which this slice is calculated,
+     * values below <code>0.2</code> may result in cross-sections that are too small,
+     * and the edge of the ellipsoid will be visible. Similarly, values above <code>0.7</code>
+     * will cause the cloud to appear smaller. Values outside the range <code>[0.1, 0.9]</code>
+     * should be avoided entirely because they do not produce desirable results.</p>
+     *
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'><code>cloud.slice = 0.08;</code><br/><img src='Images/CumulusCloud.slice0.08.png' width='250' height='158' /></td>
+     * <td align='center'><code>cloud.slice = 0.8;</code><br/><img src='Images/CumulusCloud.slice0.8.png' width='250' height='158' /></td>
+     * </tr></table>
+     * </div>
+     *
+     * <p>If <code>slice</code> is set to a negative number, the cloud will not render a cross-section.
+     * Instead, it will render the outside of the ellipsoid that is visible. For clouds with
+     * small values of `maximumSize.z`, this can produce good-looking results, but for larger
+     * clouds, this can result in a cloud that is undesirably warped to the ellipsoid volume.</p>
+     *
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'>
+     *  <code>cloud.slice = -1.0;<br/>cloud.maximumSize.z = 18;</code><br/>
+     *  <img src='Images/CumulusCloud.slice-1z18.png' width='250' height='158' />
+     * </td>
+     * <td align='center'>
+     *   <code>cloud.slice = -1.0;<br/>cloud.maximumSize.z = 30;</code><br/>
+     *   <img src='Images/CumulusCloud.slice-1z30.png' width='250' height='158' /></td>
+     * </tr></table>
+     * </div>
+     */
+    slice: number;
+    /**
+     * Gets or sets the brightness of the cloud. This can be used to give clouds
+     * a darker, grayer appearance.
+     * <br /><br />
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'><code>cloud.brightness = 1.0;</code><br/><img src='Images/CumulusCloud.brightness1.png' width='250' height='158' /></td>
+     * <td align='center'><code>cloud.brightness = 0.6;</code><br/><img src='Images/CumulusCloud.brightness0.6.png' width='250' height='158' /></td>
+     * <td align='center'><code>cloud.brightness = 0.0;</code><br/><img src='Images/CumulusCloud.brightness0.png' width='250' height='158' /></td>
+     * </tr></table>
+     * </div>
+     */
+    brightness: number;
 }
 
 /**
@@ -32602,7 +32948,7 @@ export enum LabelStyle {
 }
 
 /**
- * A light source. This type describes an interface and is not intended to be instantiated directly.
+ * A light source. This type describes an interface and is not intended to be instantiated directly. Together, <code>color</code> and <code>intensity</code> produce a high-dynamic-range light color. <code>intensity</code> can also be used individually to dim or brighten the light without changing the hue.
  */
 export class Light {
     constructor();
@@ -32611,7 +32957,7 @@ export class Light {
      */
     color: Color;
     /**
-     * The intensity of the light.
+     * The intensity controls the strength of the light. <code>intensity</code> has a minimum value of 0.0 and no maximum value.
      */
     intensity: number;
 }
@@ -34382,6 +34728,22 @@ export enum ModelAnimationLoop {
      */
     MIRRORED_REPEAT = 2
 }
+
+/**
+ * The 4x4 transformation matrix that transforms the model from model to world coordinates.
+ * When this is the identity matrix, the model is drawn in world coordinates, i.e., Earth's Cartesian WGS84 coordinates.
+ * Local reference frames can be used by providing a different transformation matrix, like that returned
+ * by {@link Transforms.eastNorthUpToFixedFrame}.
+ * @example
+ * var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
+ * m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+ */
+export var modelMatrix: Matrix4;
+
+/**
+ * The bounding sphere that contains all the vertices in this primitive.
+ */
+export var boundingSphere: BoundingSphere;
 
 /**
  * A model's material with modifiable parameters.  A glTF material
@@ -36900,7 +37262,7 @@ export class PrimitiveCollection {
  *     allowTextureFilterAnisotropic : false
  *   }
  * });
- * @param [options] - Object with the following properties:
+ * @param options - Object with the following properties:
  * @param options.canvas - The HTML canvas element to create the scene for.
  * @param [options.contextOptions] - Context and WebGL creation properties.  See details above.
  * @param [options.creditContainer] - The HTML element in which the credits will be displayed.
@@ -36914,7 +37276,7 @@ export class PrimitiveCollection {
  * @param [options.maximumRenderTimeChange = 0.0] - If requestRenderMode is true, this value defines the maximum change in simulation time allowed before a render is requested. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
  */
 export class Scene {
-    constructor(options?: {
+    constructor(options: {
         canvas: HTMLCanvasElement;
         contextOptions?: any;
         creditContainer?: Element;
@@ -37297,10 +37659,6 @@ export class Scene {
      * Gets or sets the current mode of the scene.
      */
     mode: SceneMode;
-    /**
-     * Gets or sets the scalar used to exaggerate the terrain.
-     */
-    terrainExaggeration: number;
     /**
      * When <code>true</code>, splits the scene into two viewports with steroscopic views for the left and right eyes.
      * Used for cardboard and WebVR.
@@ -42909,11 +43267,14 @@ declare module "cesium/Source/Scene/ClassificationPrimitive" { import { Classifi
 declare module "cesium/Source/Scene/ClassificationType" { import { ClassificationType } from 'cesium'; export default ClassificationType; }
 declare module "cesium/Source/Scene/ClippingPlane" { import { ClippingPlane } from 'cesium'; export default ClippingPlane; }
 declare module "cesium/Source/Scene/ClippingPlaneCollection" { import { ClippingPlaneCollection } from 'cesium'; export default ClippingPlaneCollection; }
+declare module "cesium/Source/Scene/CloudCollection" { import { CloudCollection } from 'cesium'; export default CloudCollection; }
+declare module "cesium/Source/Scene/CloudType" { import { CloudType } from 'cesium'; export default CloudType; }
 declare module "cesium/Source/Scene/ColorBlendMode" { import { ColorBlendMode } from 'cesium'; export default ColorBlendMode; }
 declare module "cesium/Source/Scene/ConditionsExpression" { import { ConditionsExpression } from 'cesium'; export default ConditionsExpression; }
 declare module "cesium/Source/Scene/ConeEmitter" { import { ConeEmitter } from 'cesium'; export default ConeEmitter; }
 declare module "cesium/Source/Scene/CreditDisplay" { import { CreditDisplay } from 'cesium'; export default CreditDisplay; }
 declare module "cesium/Source/Scene/CullFace" { import { CullFace } from 'cesium'; export default CullFace; }
+declare module "cesium/Source/Scene/CumulusCloud" { import { CumulusCloud } from 'cesium'; export default CumulusCloud; }
 declare module "cesium/Source/Scene/DebugAppearance" { import { DebugAppearance } from 'cesium'; export default DebugAppearance; }
 declare module "cesium/Source/Scene/DebugCameraPrimitive" { import { DebugCameraPrimitive } from 'cesium'; export default DebugCameraPrimitive; }
 declare module "cesium/Source/Scene/DebugModelMatrixPrimitive" { import { DebugModelMatrixPrimitive } from 'cesium'; export default DebugModelMatrixPrimitive; }
