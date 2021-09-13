@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
 import { groupBy } from "lodash-es";
+import React, { useMemo } from "react";
 
 import { styled } from "@reearth/theme";
 
 import { Props as WidgetProps } from "../../Widget";
+
 import MenuButton, {
   Button as ButtonType,
   Position as PositionType,
@@ -19,7 +20,7 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const Menu = ({ widget }: Props): JSX.Element => {
+const Menu = ({ widget, sceneProperty }: Props): JSX.Element => {
   const { buttons, menu: menuItems } = (widget?.property as Property | undefined) ?? {};
   const buttonsByPosition = useMemo(
     () => groupBy(buttons, v => v.buttonPosition || "topleft") as { [p in Position]: Button[] },
@@ -33,7 +34,13 @@ const Menu = ({ widget }: Props): JSX.Element => {
           <Wrapper key={p} position={p as Position}>
             {buttons.map(b =>
               !b.buttonInvisible ? (
-                <MenuButton key={b.id} button={b} pos={p as Position} menuItems={menuItems} />
+                <MenuButton
+                  sceneProperty={sceneProperty}
+                  key={b.id}
+                  button={b}
+                  pos={p as Position}
+                  menuItems={menuItems}
+                />
               ) : null,
             )}
           </Wrapper>

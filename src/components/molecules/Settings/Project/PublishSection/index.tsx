@@ -1,13 +1,15 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
-import Section from "@reearth/components/molecules/Settings/Section";
-import Field from "@reearth/components/molecules/Settings/Field";
-import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/ChangeSiteNameModal";
-import Text from "@reearth/components/atoms/Text";
+
 import Icon from "@reearth/components/atoms/Icon";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
+import Text from "@reearth/components/atoms/Text";
+import Field from "@reearth/components/molecules/Settings/Field";
+import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/ChangeSiteNameModal";
+import Section from "@reearth/components/molecules/Settings/Section";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+
 import useHooks from "./hooks";
 
 interface Props {

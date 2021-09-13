@@ -11,8 +11,9 @@ import React, {
 
 import { SelectPrimitiveOptions } from "@reearth/plugin";
 import type { Camera } from "@reearth/util/value";
-import type { EngineRef } from "./ref";
+
 import Cesium from "./Cesium";
+import type { EngineRef } from "./ref";
 
 export type { OverriddenInfobox, SelectPrimitiveOptions } from "@reearth/plugin";
 
@@ -52,6 +53,12 @@ export type SceneProperty = {
   googleAnalytics?: {
     enableGA?: boolean;
     trackingId?: string;
+  };
+  theme?: {
+    themeType?: "light" | "dark" | "forest" | "custom";
+    themeTextColor?: string;
+    themeSelectColor?: string;
+    themeBackgroundColor?: string;
   };
 };
 

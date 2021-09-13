@@ -1,9 +1,8 @@
 import React from "react";
 
+import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import Flex from "@reearth/components/atoms/Flex";
-
 import { styled, metrics, useTheme } from "@reearth/theme";
 
 export type NotificationStyleType = "error" | "warning" | "info" | "success";

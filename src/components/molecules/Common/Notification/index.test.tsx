@@ -1,5 +1,7 @@
 import React from "react";
+
 import { render, screen } from "@reearth/test/utils";
+
 import NotificationBanner, { NotificationType } from "./index";
 
 const sampleNotification: NotificationType = {

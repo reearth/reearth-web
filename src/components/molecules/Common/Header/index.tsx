@@ -1,11 +1,11 @@
-import React from "react";
 import { Link } from "@reach/router";
+import React from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
-import Profile from "./profile";
-
 import { styled, metrics, css } from "@reearth/theme";
+
+import Profile from "./profile";
 import { User, Team, Project } from "./types";
 
 export * from "./types";

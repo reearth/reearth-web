@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
 
-import { styled, useTheme } from "@reearth/theme";
-import { ValueTypes, ValueType, Typography } from "@reearth/util/value";
-import Text from "@reearth/components/atoms/Text";
 import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
+import { ValueTypes, ValueType, Typography } from "@reearth/util/value";
 
 import PluginBlock, { Block as BlockType, Primitive } from "../Block";
-import Frame from "./Frame";
+import { SceneProperty } from "../Engine";
+
 import Field from "./Field";
+import Frame from "./Frame";
 import useHooks from "./hooks";
 
 export type { Primitive } from "../Block";
@@ -32,7 +34,7 @@ export type Props = {
   className?: string;
   infoboxKey?: string;
   property?: InfoboxProperty;
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
   primitive?: Primitive;
   blocks?: Block[];
   title?: string;
@@ -88,6 +90,7 @@ const Infobox: React.FC<Props> = ({
     <Frame
       className={className}
       infoboxKey={infoboxKey}
+      sceneProperty={sceneProperty}
       title={property?.default?.title || name}
       size={property?.default?.size}
       visible={visible}

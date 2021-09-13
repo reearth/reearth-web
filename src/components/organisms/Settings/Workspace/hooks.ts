@@ -1,7 +1,8 @@
+import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { useNavigate } from "@reach/router";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+
+import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import {
   useTeamsQuery,
   useSearchUserLazyQuery,
@@ -13,8 +14,8 @@ import {
   Role,
   useRemoveMemberFromTeamMutation,
 } from "@reearth/gql";
-import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import { Team } from "@reearth/gql/graphql-client-api";
+import { useTeam, useProject, useNotification } from "@reearth/state";
 
 type Params = {
   teamId: string;

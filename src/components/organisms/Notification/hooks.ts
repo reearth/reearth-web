@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
+
 import { useNotification, Notification } from "@reearth/state";
 
 export const notificationTimeout = 5000;

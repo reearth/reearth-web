@@ -1,11 +1,11 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import { styled, useTheme, metricsSizes } from "@reearth/theme";
 
-import Modal from "@reearth/components/atoms/Modal";
 import Button from "@reearth/components/atoms/Button";
 import Icon from "@reearth/components/atoms/Icon";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme, metricsSizes } from "@reearth/theme";
 
 export type Props = {
   onRemove?: (schemaId?: string) => void;
