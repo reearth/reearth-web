@@ -88,6 +88,7 @@ export default () => {
     setTeam({
       id: team.id,
       name: team.name,
+      personal: team.personal,
     });
   }, [teams, currentTeam, teamId, setTeam]);
 

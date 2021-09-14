@@ -55,32 +55,11 @@ export default (params: Params) => {
   const team = teams?.find(team => team.id === teamId);
 
   useEffect(() => {
-    if (!currentTeam && teamsData?.me) {
-      const { id, name = "" } = teamId
-        ? teams?.find(t => t.id === teamId) ?? {}
-        : teamsData.me.myTeam;
-      if (id) {
-        setTeam({ id, name });
-      }
+    if (!currentTeam) {
+      setTeam(teamId ? teams?.find(t => t.id === teamId) : teamsData?.me?.myTeam ?? undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam, team, setTeam, teams, teamsData?.me]);
-
-  // update team name
-  useEffect(() => {
-    if (currentTeam?.id && teams) {
-      const { name = "" } = teams?.find(t => t.id === currentTeam.id) ?? {};
-      if (currentTeam.name != name) {
-        setTeam({ id: currentTeam.id, name });
-      }
-    }
-  }, [currentTeam, setTeam, teams]);
-
-  useEffect(() => {
-    if (team?.id && !currentTeam?.id) {
-      setTeam(team);
-    }
-  }, [currentTeam, team, setTeam]);
 
   const { data } = useProjectQuery({
     variables: { teamId: teamId ?? "" },
