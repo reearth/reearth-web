@@ -4,7 +4,6 @@ import { useIntl } from "react-intl";
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
-import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
 import { styled, useTheme } from "@reearth/theme";
 import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
 
@@ -36,7 +35,6 @@ export type Props = {
   ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   loading?: boolean;
-  onNotify?: (type: NotificationStyleType, text: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({
@@ -47,7 +45,6 @@ const DatasetPane: React.FC<Props> = ({
   onGoogleSheetDatasetImport,
   onRemoveDataset,
   loading,
-  onNotify,
 }) => {
   const intl = useIntl();
   const {
@@ -139,7 +136,6 @@ const DatasetPane: React.FC<Props> = ({
         onClose={closeDatasetModal}
         handleGoogleSheetDatasetAdd={handleGoogleSheetDatasetAdd}
         handleDatasetAdd={handleDatasetAdd}
-        onNotify={onNotify}
       />
     </Wrapper>
   );

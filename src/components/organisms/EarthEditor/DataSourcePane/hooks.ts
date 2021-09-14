@@ -1,5 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback } from "react";
+import { useIntl } from "react-intl";
 
 import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
@@ -16,6 +17,7 @@ const pluginId = "reearth";
 const extensionId = "marker";
 
 export default () => {
+  const intl = useIntl();
   const [, setNotification] = useNotification();
   const [sceneId] = useSceneId();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
@@ -24,6 +26,22 @@ export default () => {
     variables: { sceneId: sceneId || "" },
     skip: !sceneId,
   });
+
+  const onNotify = useCallback(
+    (type?: NotificationType, text?: string) => {
+      if (!type || !text) return;
+      setNotification({
+        type,
+        text,
+      });
+    },
+    [setNotification],
+  );
+
+  const datasetMessageSuccess = intl.formatMessage({
+    defaultMessage: "Successfully added a dataset!",
+  });
+  const datasetMessageFailure = intl.formatMessage({ defaultMessage: "Failed to add dataset" });
 
   const datasetSchemas = useMemo(
     () =>
@@ -77,17 +95,23 @@ export default () => {
   const handleDatasetImport = useCallback(
     async (file: File, schemeId: string | null) => {
       if (!sceneId) return;
-      await importData({
+      const result = await importData({
         variables: {
           file,
           sceneId,
           datasetSchemaId: schemeId,
         },
       });
+
+      if (result.errors) {
+        onNotify?.("error", datasetMessageFailure);
+      } else {
+        onNotify?.("success", datasetMessageSuccess);
+      }
       // re-render
       await client.resetStore();
     },
-    [client, importData, sceneId],
+    [client, importData, sceneId, onNotify, datasetMessageSuccess, datasetMessageFailure],
   );
 
   const [importGoogleSheetData] = useImportGoogleSheetDatasetMutation();
@@ -95,7 +119,7 @@ export default () => {
   const handleGoogleSheetDatasetImport = useCallback(
     async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
       if (!sceneId) return;
-      await importGoogleSheetData({
+      const result = await importGoogleSheetData({
         variables: {
           accessToken,
           fileId,
@@ -104,10 +128,22 @@ export default () => {
           datasetSchemaId: schemeId,
         },
       });
+      if (result.errors) {
+        onNotify?.("error", datasetMessageFailure);
+      } else {
+        onNotify?.("success", datasetMessageSuccess);
+      }
       // re-render
       await client.resetStore();
     },
-    [client, importGoogleSheetData, sceneId],
+    [
+      client,
+      importGoogleSheetData,
+      sceneId,
+      onNotify,
+      datasetMessageFailure,
+      datasetMessageSuccess,
+    ],
   );
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
@@ -123,17 +159,6 @@ export default () => {
       await client.resetStore();
     },
     [client, removeDatasetSchema],
-  );
-
-  const onNotify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type,
-        text,
-      });
-    },
-    [setNotification],
   );
 
   return {
