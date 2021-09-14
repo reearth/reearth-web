@@ -1,12 +1,12 @@
-import React, { useCallback, useRef, useState } from "react";
 import L, { LeafletMouseEvent } from "leaflet";
+import React, { useCallback, useRef, useState } from "react";
 import { Map, TileLayer, Marker } from "react-leaflet";
 
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
-import { Border, Title } from "../common";
 import { Props as BlockProps } from "..";
+import { Border, Title } from "../common";
 
 import "leaflet/dist/leaflet.css";
 
@@ -95,6 +95,7 @@ const Wrapper = styled(Border)<{
   margin: ${({ fullSize }) => (fullSize ? "0" : "0 8px")};
   border-radius: 6px;
   height: 250px;
+  color: #000000;
 `;
 
 const iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
