@@ -9,7 +9,6 @@ import {
   Cesium3DTileFeature,
   Cartesian2,
   Cartesian3,
-  Math as CesiumMath,
 } from "cesium";
 import { isEqual } from "lodash-es";
 import type { CesiumComponentRef } from "resium";
@@ -22,6 +21,7 @@ import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
 import { getCamera } from "./common";
 import CesiumDnD, { Context } from "cesium-dnd";
+import { convertCartesian3ToPosition } from "./utils";
 
 export default ({
   ref,
@@ -183,41 +183,27 @@ export default ({
 
   const handleDragLayer = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
-      onDragLayer?.(e.id, convertCartesian3ToPosition(position));
+      onDragLayer?.(e.id, convertCartesian3ToPosition(cesium.current?.cesiumElement, position));
     },
     [onDragLayer],
   );
 
   const handleDraggingLayer = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): false | void => {
-      onDraggingLayer?.(e.id, convertCartesian3ToPosition(position));
+      onDraggingLayer?.(e.id, convertCartesian3ToPosition(cesium.current?.cesiumElement, position));
     },
     [onDraggingLayer],
   );
 
   const handleDropLayer = useCallback(
-    (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
-      onDropLayer?.(e.id, convertCartesian3ToPosition(position));
+    (e: Entity, position: Cartesian3 | undefined): boolean | void => {
+      onDropLayer?.(e.id, convertCartesian3ToPosition(cesium.current?.cesiumElement, position));
       if (cesium.current?.cesiumElement?.scene.screenSpaceCameraController) {
         cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = true;
       }
     },
     [onDropLayer],
   );
-
-  const convertCartesian3ToPosition = (
-    pos?: Cartesian3,
-  ): { lat: number; lng: number; height: number } | undefined => {
-    if (!pos) return;
-    const cartographic =
-      cesium.current?.cesiumElement?.scene.globe.ellipsoid.cartesianToCartographic(pos);
-    if (!cartographic) return;
-    return {
-      lat: CesiumMath.toDegrees(cartographic.latitude),
-      lng: CesiumMath.toDegrees(cartographic.longitude),
-      height: cartographic.height,
-    };
-  };
 
   //Enable Drag and Drop Layers
   const DELAY = 1000;
