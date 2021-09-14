@@ -5,9 +5,9 @@ import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { styled, metrics, useTheme } from "@reearth/theme";
 
-export type NotificationStyleType = "error" | "warning" | "info" | "success";
-export type NotificationType = {
-  type: "error" | "warning" | "info" | "success";
+export type NotificationType = "error" | "warning" | "info" | "success";
+export type Notification = {
+  type: NotificationType;
   heading?: string;
   text: string;
 };
@@ -15,7 +15,7 @@ export type NotificationType = {
 export type Props = {
   visible?: boolean;
   setModal?: (show: boolean) => void;
-  notification?: NotificationType;
+  notification?: Notification;
   resetNotification?: () => void;
 };
 
@@ -54,7 +54,7 @@ const NotificationBanner: React.FC<Props> = ({
 };
 
 const StyledNotificationBanner = styled(Flex)<{
-  type?: NotificationStyleType;
+  type?: NotificationType;
   visible?: boolean;
 }>`
   position: absolute;
