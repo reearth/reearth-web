@@ -17,8 +17,6 @@ import {
   useSelected,
   useSelectedBlock,
 } from "@reearth/state";
-
-import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 import {
   valueTypeToGQL,
   ValueType,
@@ -26,6 +24,8 @@ import {
   valueToGQL,
   LatLngHeight,
 } from "@reearth/util/value";
+
+import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 
 export default (isBuilt?: boolean) => {
   const [sceneId] = useSceneId();

@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useDeepCompareEffect } from "react-use";
 import {
   createWorldTerrain,
   Color,
@@ -10,17 +8,20 @@ import {
   Cartesian2,
   Cartesian3,
 } from "cesium";
-import { isEqual } from "lodash-es";
-import type { CesiumComponentRef } from "resium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
+import CesiumDnD, { Context } from "cesium-dnd";
+import { isEqual } from "lodash-es";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useDeepCompareEffect } from "react-use";
+import type { CesiumComponentRef } from "resium";
 
 import { Camera, LatLngHeight } from "@reearth/util/value";
 
 import type { SelectPrimitiveOptions, Ref as EngineRef, SceneProperty } from "..";
+
+import { getCamera } from "./common";
 import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
-import { getCamera } from "./common";
-import CesiumDnD, { Context } from "cesium-dnd";
 import { convertCartesian3ToPosition } from "./utils";
 
 export default ({
@@ -131,9 +132,9 @@ export default ({
   }, [cesium, selectedPrimitiveId]);
 
   const selectViewerEntity = useCallback(
-    (ev: { position: Cartesian2 }) => {
+    (ev: { position: Cartesian2 } | { startPosition: Cartesian2; endPosition: Cartesian2 }) => {
       const viewer = cesium.current?.cesiumElement;
-      if (!viewer || viewer.isDestroyed()) return;
+      if (!viewer || viewer.isDestroyed() || !("position" in ev)) return;
 
       let target = viewer.scene.pick(ev.position);
       if (target && target.id instanceof Entity) {

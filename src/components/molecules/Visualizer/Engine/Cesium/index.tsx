@@ -1,3 +1,4 @@
+import { ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -13,12 +14,13 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
 } from "resium";
-import { ScreenSpaceEventType } from "cesium";
 
 import Loading from "@reearth/components/atoms/Loading";
-import useHooks from "./hooks";
-import CameraFlyTo from "./CameraFlyTo";
+
 import type { EngineProps, Ref as EngineRef } from "..";
+
+import CameraFlyTo from "./CameraFlyTo";
+import useHooks from "./hooks";
 
 export type { EngineProps as Props } from "..";
 
@@ -113,11 +115,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
           atmosphereHueShift={property?.atmosphere?.hue_shift}
           atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
-          {...{
-            // TODO: update resium
-            terrainExaggeration: property?.default?.terrainExaggeration,
-            terrainExaggerationRelativeHeight: property?.default?.terrainExaggerationRelativeHeight,
-          }}
+          terrainExaggeration={property?.default?.terrainExaggeration}
+          terrainExaggerationRelativeHeight={property?.default?.terrainExaggerationRelativeHeight}
         />
         {imageryLayers?.map(([id, im, min, max]) => (
           <ImageryLayer

@@ -1,3 +1,9 @@
+import { Item } from "@reearth/components/atoms/ContentPicker";
+import {
+  Primitive as PrimitiveType,
+  Widget,
+  Block,
+} from "@reearth/components/molecules/Visualizer";
 import {
   GetLayersQuery,
   GetBlocksQuery,
@@ -12,13 +18,6 @@ import {
   PropertyFragmentFragment,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
-
-import { Item } from "@reearth/components/atoms/ContentPicker";
-import {
-  Primitive as PrimitiveType,
-  Widget,
-  Block,
-} from "@reearth/components/molecules/Visualizer";
 
 type BlockType = Item & {
   pluginId: string;
