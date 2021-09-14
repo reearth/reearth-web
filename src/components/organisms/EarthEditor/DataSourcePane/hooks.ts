@@ -41,7 +41,7 @@ export default () => {
   const datasetMessageSuccess = intl.formatMessage({
     defaultMessage: "Successfully added a dataset!",
   });
-  const datasetMessageFailure = intl.formatMessage({ defaultMessage: "Failed to add dataset" });
+  const datasetMessageFailure = intl.formatMessage({ defaultMessage: "Failed to add dataset." });
 
   const datasetSchemas = useMemo(
     () =>

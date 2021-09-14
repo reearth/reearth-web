@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useIntl } from "react-intl";
 
-import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
 import generateRandomString from "@reearth/util/generate-random-string";
 
 export type Validation = "too short" | "not match";
@@ -11,12 +9,11 @@ export type CopiedItemKey = {
 };
 
 export default (
+  onCopyToClipBoard: () => void,
   defaultAlias?: string,
   onClose?: () => void,
-  onNotify?: (type?: NotificationStyleType, text?: string) => void,
   onAliasValidate?: (alias: string) => void,
 ) => {
-  const intl = useIntl();
   const [copiedKey, setCopiedKey] = useState<CopiedItemKey>();
   const [alias, changeAlias] = useState(defaultAlias);
   const [validation, changeValidation] = useState<Validation>();
@@ -44,17 +41,10 @@ export default (
           [key]: true,
         }));
         navigator.clipboard.writeText(value);
-        onNotify?.(
-          "info",
-          `${
-            key === "embedCode"
-              ? intl.formatMessage({ defaultMessage: "Successfully copied the embed code!" })
-              : intl.formatMessage({ defaultMessage: "Successfully copied the URL!" })
-          }`,
-        );
+        onCopyToClipBoard();
         resetCopiedWithDelay(key);
       },
-    [onNotify, resetCopiedWithDelay, intl],
+    [resetCopiedWithDelay, onCopyToClipBoard],
   );
 
   const validate = useCallback(

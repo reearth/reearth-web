@@ -35,7 +35,7 @@ const Header: React.FC<Props> = ({ className }) => {
     currentTeam,
     currentProject,
     logout,
-    notify,
+    handleCopyToClipBoard,
     validAlias,
     checkProjectAlias,
     validatingAlias,
@@ -75,7 +75,7 @@ const Header: React.FC<Props> = ({ className }) => {
         projectId={projectId}
         projectAlias={projectAlias}
         publicationStatus={projectStatus}
-        onNotify={notify}
+        onCopyToClipBoard={handleCopyToClipBoard}
         validAlias={validAlias}
         onAliasValidate={checkProjectAlias}
         validatingAlias={validatingAlias}

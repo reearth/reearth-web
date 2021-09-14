@@ -14,7 +14,7 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useSceneId, useTeam, useProject, useNotification, NotificationType } from "@reearth/state";
+import { useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
@@ -184,16 +184,12 @@ export default () => {
     window.open(location.pathname + "/preview", "_blank");
   }, []);
 
-  const onNotify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type,
-        text,
-      });
-    },
-    [setNotification],
-  );
+  const handleCopyToClipBoard = useCallback(() => {
+    setNotification({
+      type: "info",
+      text: intl.formatMessage({ defaultMessage: "Successfully copied to clipboard!" }),
+    });
+  }, [intl, setNotification]);
 
   return {
     teams,
@@ -218,9 +214,9 @@ export default () => {
     closePublicationModal,
     openWorkspaceModal,
     closeWorkspaceModal,
+    handleCopyToClipBoard,
     publishProject,
     logout,
-    notify: onNotify,
     checkProjectAlias,
     createTeam,
     openPreview,

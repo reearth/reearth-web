@@ -8,7 +8,6 @@ import Modal from "@reearth/components/atoms/Modal";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
-import { NotificationStyleType } from "@reearth/components/molecules/Common/Notification";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -29,7 +28,7 @@ interface Props {
   searchIndex?: boolean;
   publishing?: publishingType;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
-  onNotify?: (type?: NotificationStyleType, text?: string) => void;
+  onCopyToClipBoard: () => void;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
   url?: string[];
@@ -45,7 +44,7 @@ const PublicationModal: React.FC<Props> = ({
   publicationStatus,
   onPublish,
   projectAlias,
-  onNotify,
+  onCopyToClipBoard,
   validAlias,
   onAliasValidate,
   validatingAlias,
@@ -64,7 +63,7 @@ const PublicationModal: React.FC<Props> = ({
     handleCopyToClipBoard,
     showOptions,
     setOptions,
-  } = useHooks(projectAlias, onClose, onNotify, onAliasValidate);
+  } = useHooks(onCopyToClipBoard, projectAlias, onClose, onAliasValidate);
 
   const purl = useMemo(() => {
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
