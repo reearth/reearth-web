@@ -114,6 +114,15 @@ export default (isBuilt?: boolean) => {
     [layerData, selected],
   );
 
+  useEffect(() => {
+    console.log(layers?.layers);
+  }, [layers]);
+
+  // const layers = convertLayers(
+  //   layerData,
+  //   selected?.type === "layer" ? selected.layerId : undefined,
+  // );
+
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
 
@@ -156,24 +165,23 @@ export default (isBuilt?: boolean) => {
   }, []);
 
   const handleDropLayer = useCallback(
-    async (layerId: string, position: LatLngHeight | undefined) => {
+    async (layerId: string, position?: LatLngHeight | undefined) => {
       setIsDragging(false);
+      if (!position) return;
       const layerProperty = layers?.layers.find(l => l.id === layerId)?.rawProperty;
-      const fieldId = "location";
-      const schemaItemId = "default";
       const propertyItem =
         layerProperty && "items" in layerProperty
           ? layerProperty?.items.find(
               i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
             )
           : undefined;
-      if (!layerProperty?.id || !position) return;
+      if (!layerProperty?.id || !position || !propertyItem) return;
       await updateLayerLatLng({
         variables: {
-          propertyId: layerProperty?.id,
-          itemId: propertyItem?.id,
-          schemaItemId,
-          fieldId,
+          propertyId: layerProperty.id,
+          itemId: propertyItem.id,
+          schemaItemId: "default",
+          fieldId: "location",
           lat: position?.lat,
           lng: position?.lng,
         },
