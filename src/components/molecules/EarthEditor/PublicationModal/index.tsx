@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -53,17 +53,24 @@ const PublicationModal: React.FC<Props> = ({
   const intl = useIntl();
   const theme = useTheme();
   const {
+    handlePublish,
     handleClose,
     statusChanged,
-    setStatusChange,
     alias,
     validation,
-    generateAlias,
     copiedKey,
     handleCopyToClipBoard,
     showOptions,
     setOptions,
-  } = useHooks(projectAlias, onClose, onAliasValidate, onCopyToClipBoard);
+  } = useHooks(
+    publishing,
+    projectAlias,
+    searchIndex,
+    onPublish,
+    onClose,
+    onAliasValidate,
+    onCopyToClipBoard,
+  );
 
   const purl = useMemo(() => {
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
@@ -79,20 +86,6 @@ const PublicationModal: React.FC<Props> = ({
     (publishing === "unpublishing" && publicationStatus === "unpublished") ||
     ((publishing === "publishing" || publishing === "updating") &&
       (!alias || !!validation || validatingAlias || !validAlias));
-
-  const handlePublish = useCallback(async () => {
-    if (!publishing) return;
-    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
-    // const p = !searchIndex && publishing !== "unpublishing" ? alias || generateAlias() : undefined;
-    const mode =
-      publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
-    await onPublish?.(a, mode);
-    if (publishing === "unpublishing") {
-      handleClose?.();
-    } else {
-      setStatusChange(true);
-    }
-  }, [alias, onPublish, publishing, searchIndex, setStatusChange, generateAlias, handleClose]);
 
   const modalTitleText = useMemo(() => {
     return statusChanged

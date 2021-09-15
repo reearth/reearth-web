@@ -127,26 +127,34 @@ export default () => {
           : s == "published"
           ? PublishmentStatus.Public
           : PublishmentStatus.Private;
-      await publishProjectMutation({
+      const result = await publishProjectMutation({
         variables: { projectId: project.id, alias, status: gqlStatus },
       });
 
-      setNotification({
-        type: s === "limited" ? "success" : s == "published" ? "success" : "info",
-        text:
-          s === "limited"
-            ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
-            : s == "published"
-            ? intl.formatMessage({
-                defaultMessage: "Successfully published your project with search engine indexing!",
-              })
-            : intl.formatMessage({
-                defaultMessage:
-                  "Successfully unpublished your project. Now nobody can access your project.",
-              }),
-      });
+      if (result.errors) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to publish your project." }),
+        });
+      } else {
+        setNotification({
+          type: s === "limited" ? "success" : s == "published" ? "success" : "info",
+          text:
+            s === "limited"
+              ? intl.formatMessage({ defaultMessage: "Successfully published your project!" })
+              : s == "published"
+              ? intl.formatMessage({
+                  defaultMessage:
+                    "Successfully published your project with search engine indexing!",
+                })
+              : intl.formatMessage({
+                  defaultMessage:
+                    "Successfully unpublished your project. Now nobody can access your project.",
+                }),
+        });
+      }
     },
-    [project, publishProjectMutation, setNotification, intl],
+    [project, publishProjectMutation, intl, setNotification],
   );
 
   const changeTeam = useCallback(

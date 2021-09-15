@@ -2,6 +2,10 @@ import { atom, useAtom } from "jotai";
 
 import { Camera } from "@reearth/util/value";
 
+// useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
+const error = atom<string | undefined>(undefined);
+export const useError = () => useAtom(error);
+
 const sceneId = atom<string | undefined>(undefined);
 export const useSceneId = () => useAtom(sceneId);
 

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
+import { Status } from "@reearth/components/atoms/PublicationStatus";
+import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import generateRandomString from "@reearth/util/generate-random-string";
 
 export type Validation = "too short" | "not match";
@@ -9,7 +11,10 @@ export type CopiedItemKey = {
 };
 
 export default (
+  publishing?: publishingType,
   defaultAlias?: string,
+  searchIndex?: boolean,
+  onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>,
   onClose?: () => void,
   onAliasValidate?: (alias: string) => void,
   onCopyToClipBoard?: () => void,
@@ -91,7 +96,21 @@ export default (
     onAliasChange(defaultAlias);
   }, [defaultAlias]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handlePublish = useCallback(async () => {
+    if (!publishing) return;
+    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
+    const mode =
+      publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
+    await onPublish?.(a, mode);
+    if (publishing === "unpublishing") {
+      handleClose?.();
+    } else {
+      setStatusChange(true);
+    }
+  }, [alias, onPublish, publishing, searchIndex, setStatusChange, generateAlias, handleClose]);
+
   return {
+    handlePublish,
     handleClose,
     statusChanged,
     setStatusChange,

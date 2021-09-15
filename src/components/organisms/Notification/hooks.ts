@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { useNotification, Notification } from "@reearth/state";
+import { useError, useNotification, Notification } from "@reearth/state";
 
 export const notificationTimeout = 5000;
 
 export default () => {
   const intl = useIntl();
+  const [error, setError] = useError();
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
 
@@ -28,8 +29,14 @@ export default () => {
   };
 
   useEffect(() => {
-    changeVisibility(!!notification);
-  }, [notification]);
+    if (!error) return;
+    setNotification({
+      type: "error",
+      heading: errorMessage,
+      text: "hey there it worked",
+    });
+    setError(undefined);
+  }, [error, setError, errorMessage, setNotification]);
 
   useEffect(() => {
     if (!notification) return;
@@ -37,6 +44,10 @@ export default () => {
       changeVisibility(false);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
+  }, [notification]);
+
+  useEffect(() => {
+    changeVisibility(!!notification);
   }, [notification]);
 
   return {

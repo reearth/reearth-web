@@ -7,7 +7,7 @@ import React from "react";
 
 import { useAuth } from "@reearth/auth";
 import { reportError } from "@reearth/sentry";
-import { useNotification } from "@reearth/state";
+import { useError } from "@reearth/state";
 
 import fragmentMatcher from "./fragmentMatcher.json";
 
@@ -15,7 +15,7 @@ const Provider: React.FC = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";
-  const [, setNotification] = useNotification();
+  const [, setError] = useError();
   const { getAccessToken } = useAuth();
 
   const authLink = setContext(async (_, { headers }) => {
@@ -38,12 +38,7 @@ const Provider: React.FC = ({ children }) => {
     if (!networkError && !graphQLErrors) return;
     const error = networkError?.message ?? graphQLErrors?.map(e => e.message).join(", ");
     if (error) {
-      setNotification({
-        type: "error",
-        heading: "Error",
-        text: error,
-      });
-      setTimeout(() => setNotification(undefined), 6000);
+      setError(error);
       reportError(error);
     }
   });
