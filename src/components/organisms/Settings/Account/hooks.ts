@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
@@ -13,6 +14,7 @@ export enum Theme {
 export default () => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
+  const client = useApolloClient();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
 
@@ -62,9 +64,11 @@ export default () => {
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to change language." }),
         });
+      } else {
+        await client.resetStore();
       }
     },
-    [updateMeMutation, intl, setNotification],
+    [updateMeMutation, intl, setNotification, client],
   );
 
   const updateTheme = useCallback(
