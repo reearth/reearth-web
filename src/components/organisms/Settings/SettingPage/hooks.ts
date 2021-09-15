@@ -52,14 +52,13 @@ export default (params: Params) => {
     name: teamsData?.me?.name ?? "",
   };
   const teams = teamsData?.me?.teams;
-  const team = teams?.find(team => team.id === teamId);
 
   useEffect(() => {
     if (!currentTeam) {
       setTeam(teamId ? teams?.find(t => t.id === teamId) : teamsData?.me?.myTeam ?? undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTeam, team, setTeam, teams, teamsData?.me]);
+  }, [currentTeam, setTeam, teams, teamsData?.me]);
 
   const { data } = useProjectQuery({
     variables: { teamId: teamId ?? "" },
