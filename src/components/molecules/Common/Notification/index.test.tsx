@@ -2,9 +2,9 @@ import React from "react";
 
 import { render, screen } from "@reearth/test/utils";
 
-import NotificationBanner, { NotificationType } from "./index";
+import NotificationBanner, { Notification } from "./index";
 
-const sampleNotification: NotificationType = {
+const sampleNotification: Notification = {
   type: "info",
   heading: "Notice",
   text: "This is a notification for something super cool.",

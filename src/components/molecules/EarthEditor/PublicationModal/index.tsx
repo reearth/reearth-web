@@ -28,7 +28,7 @@ interface Props {
   searchIndex?: boolean;
   publishing?: publishingType;
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
-  onCopyToClipBoard: () => void;
+  onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
   url?: string[];
@@ -63,7 +63,7 @@ const PublicationModal: React.FC<Props> = ({
     handleCopyToClipBoard,
     showOptions,
     setOptions,
-  } = useHooks(onCopyToClipBoard, projectAlias, onClose, onAliasValidate);
+  } = useHooks(projectAlias, onClose, onAliasValidate, onCopyToClipBoard);
 
   const purl = useMemo(() => {
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");

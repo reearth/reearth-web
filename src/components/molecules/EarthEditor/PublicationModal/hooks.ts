@@ -9,10 +9,10 @@ export type CopiedItemKey = {
 };
 
 export default (
-  onCopyToClipBoard: () => void,
   defaultAlias?: string,
   onClose?: () => void,
   onAliasValidate?: (alias: string) => void,
+  onCopyToClipBoard?: () => void,
 ) => {
   const [copiedKey, setCopiedKey] = useState<CopiedItemKey>();
   const [alias, changeAlias] = useState(defaultAlias);
@@ -41,7 +41,7 @@ export default (
           [key]: true,
         }));
         navigator.clipboard.writeText(value);
-        onCopyToClipBoard();
+        onCopyToClipBoard?.();
         resetCopiedWithDelay(key);
       },
     [resetCopiedWithDelay, onCopyToClipBoard],
