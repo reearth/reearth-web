@@ -33,10 +33,10 @@ export default () => {
     setNotification({
       type: "error",
       heading: errorMessage,
-      text: "hey there it worked",
+      text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again later." }),
     });
     setError(undefined);
-  }, [error, setError, errorMessage, setNotification]);
+  }, [error, setError, errorMessage, setNotification, intl]);
 
   useEffect(() => {
     if (!notification) return;
