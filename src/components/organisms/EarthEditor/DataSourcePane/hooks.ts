@@ -11,7 +11,7 @@ import {
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useSceneId, useNotification, NotificationType } from "@reearth/state";
+import { useSceneId, useNotification } from "@reearth/state";
 
 const pluginId = "reearth";
 const extensionId = "marker";
@@ -26,17 +26,6 @@ export default () => {
     variables: { sceneId: sceneId || "" },
     skip: !sceneId,
   });
-
-  const onNotify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type,
-        text,
-      });
-    },
-    [setNotification],
-  );
 
   const datasetMessageSuccess = intl.formatMessage({
     defaultMessage: "Successfully added a dataset!",
@@ -104,14 +93,20 @@ export default () => {
       });
 
       if (result.errors) {
-        onNotify?.("error", datasetMessageFailure);
+        setNotification({
+          type: "error",
+          text: datasetMessageFailure,
+        });
       } else {
-        onNotify?.("success", datasetMessageSuccess);
+        setNotification({
+          type: "success",
+          text: datasetMessageSuccess,
+        });
       }
       // re-render
       await client.resetStore();
     },
-    [client, importData, sceneId, onNotify, datasetMessageSuccess, datasetMessageFailure],
+    [client, importData, sceneId, datasetMessageSuccess, datasetMessageFailure, setNotification],
   );
 
   const [importGoogleSheetData] = useImportGoogleSheetDatasetMutation();
@@ -129,9 +124,9 @@ export default () => {
         },
       });
       if (result.errors) {
-        onNotify?.("error", datasetMessageFailure);
+        setNotification({ type: "error", text: datasetMessageFailure });
       } else {
-        onNotify?.("success", datasetMessageSuccess);
+        setNotification({ type: "success", text: datasetMessageSuccess });
       }
       // re-render
       await client.resetStore();
@@ -140,9 +135,9 @@ export default () => {
       client,
       importGoogleSheetData,
       sceneId,
-      onNotify,
       datasetMessageFailure,
       datasetMessageSuccess,
+      setNotification,
     ],
   );
 
@@ -168,6 +163,5 @@ export default () => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
-    onNotify,
   };
 };
