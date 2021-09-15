@@ -91,20 +91,21 @@ export default (params: Params) => {
   const updateName = useCallback(
     async (name: string) => {
       if (!teamId) return;
-      const teamName = await updateTeamMutation({ variables: { teamId, name } });
-      if (teamName.errors || !teamName.data?.__typename) {
+      const results = await updateTeamMutation({ variables: { teamId, name } });
+      if (results.errors || !results.data?.__typename) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to update workspace name." }),
         });
       } else {
+        setTeam(results.data?.updateTeam?.team);
         setNotification({
           type: "info",
           text: intl.formatMessage({ defaultMessage: "You have changed the workspace's name." }),
         });
       }
     },
-    [teamId, updateTeamMutation, intl, setNotification],
+    [teamId, updateTeamMutation, intl, setNotification, setTeam],
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({
