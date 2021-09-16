@@ -15,7 +15,7 @@ export type Props = {
   exposed?: { [key: string]: any };
   renderPlaceholder?: ReactNode;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
-  isMarshalable?: (target: any) => boolean;
+  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   staticExposed?: (api: IFrameAPI) => any;
   onMessage?: (message: any) => void;
   onError?: (err: any) => void;

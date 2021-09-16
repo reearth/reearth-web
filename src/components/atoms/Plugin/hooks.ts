@@ -1,5 +1,5 @@
 import { getQuickJS } from "quickjs-emscripten";
-import Arena from "quickjs-emscripten-sync";
+import { Arena } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 
 import type { Ref as IFrameRef } from "./IFrame";
@@ -15,7 +15,7 @@ export type Options<T> = {
   skip?: boolean;
   iframeCanBeVisible?: boolean;
   exposed?: { [key: string]: any };
-  isMarshalable?: (obj: any) => boolean;
+  isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   onError?: (err: any) => void;
   staticExposed?: (api: IFrameAPI) => T;
 };
@@ -93,14 +93,6 @@ export default function useHook<T>({
     [iframeCanBeVisible],
   );
 
-  const staticExpose = useCallback(() => {
-    if (!arena.current) return;
-    const exposed = staticExposed?.(iFrameApi);
-    if (exposed) {
-      arena.current.expose(exposed);
-    }
-  }, [iFrameApi, staticExposed]);
-
   // init and dispose of vm
   useEffect(() => {
     if (skip) return;
@@ -108,15 +100,19 @@ export default function useHook<T>({
     (async () => {
       const vm = (await getQuickJS()).createVm();
       arena.current = new Arena(vm, {
-        isMarshalable: target => defaultIsMarshalable(target) || !!isMarshalable?.(target),
+        isMarshalable: target =>
+          defaultIsMarshalable(target) ||
+          (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
-      staticExpose();
+      const exposed = staticExposed?.(iFrameApi);
+      if (exposed) {
+        arena.current.expose(exposed);
+      }
       setLoaded(true);
     })();
 
     return () => {
       if (typeof eventLoop.current === "number") {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         window.clearTimeout(eventLoop.current);
       }
       if (arena.current) {
@@ -131,7 +127,7 @@ export default function useHook<T>({
         }
       }
     };
-  }, [isMarshalable, onError, skip, src, sourceCode, staticExpose]);
+  }, [isMarshalable, onError, skip, src, sourceCode, staticExposed, iFrameApi]);
 
   const exposer = useMemo(() => {
     if (!arena.current || !loaded) return;
