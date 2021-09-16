@@ -1,52 +1,62 @@
-export type EventCallback = (...args: any[]) => void;
-export type EventEmitter = (type: string, ...args: any[]) => void;
+export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
+export type EventEmitter<E extends { [P in string]: any[] } = { [P in string]: any[] }> = <
+  T extends keyof E,
+>(
+  type: T,
+  ...args: E[T]
+) => void;
 
-export type Events = {
-  readonly on: (type: string, callback: EventCallback) => void;
-  readonly off: (type: string, callback: EventCallback) => void;
-  readonly once: (type: string, callback: EventCallback) => void;
+export type Events<E extends { [P in string]: any[] } = { [P in string]: any[] }> = {
+  readonly on: <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => void;
+  readonly off: <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => void;
+  readonly once: <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => void;
 };
 
-export default function events(): [
-  Events,
-  EventEmitter,
-  (name: string) => [() => EventCallback | undefined, (callback?: EventCallback) => void],
+export default function events<E extends { [P in string]: any[] } = { [P in string]: any[] }>(): [
+  Events<E>,
+  EventEmitter<E>,
+  <T extends keyof E>(
+    name: T,
+  ) => [() => EventCallback<E[T]> | undefined, (callback?: EventCallback<E[T]>) => void],
 ] {
   const e = new EventTarget();
-  const callbacks = new Map<string, Map<EventCallback, (e: Event) => void>>();
-  const getEventCallback = (type: string, cb: EventCallback): ((e: Event) => void) => {
+  const callbacks = new Map<keyof E, Map<EventCallback<E[keyof E]>, (e: Event) => void>>();
+  const getEventCallback = <T extends keyof E>(
+    type: T,
+    cb: EventCallback<E[T]>,
+  ): ((e: Event) => void) => {
     let ecbs = callbacks.get(type);
     if (!ecbs) {
       ecbs = new Map();
       callbacks.set(type, ecbs);
     }
 
-    let ecb = ecbs.get(cb);
+    let ecb = ecbs.get(cb as EventCallback);
     if (!ecb) {
       ecb = (e: Event): void => {
         cb(...(e as CustomEvent).detail);
       };
-      ecbs.set(cb, ecb);
+      ecbs.set(cb as EventCallback, ecb);
     }
 
     return ecb;
   };
-  const deleteEventCallback = (type: string, cb: EventCallback): void => {
+  const deleteEventCallback = (type: keyof E, cb: EventCallback): void => {
     callbacks.get(type)?.delete(cb);
   };
 
-  const on = (type: string, callback: EventCallback) => {
+  const on = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const ecb = getEventCallback(type, callback);
-    e.addEventListener(type, ecb);
+    e.addEventListener(String(type), ecb);
   };
-  const off = (type: string, callback: EventCallback) => {
+  const off = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const ecb = getEventCallback(type, callback);
-    e.removeEventListener(type, ecb);
+    e.removeEventListener(String(type), ecb);
     deleteEventCallback(type, ecb);
   };
-  const once = (type: string, callback: EventCallback) => {
+  const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const ecb = getEventCallback(type, callback);
-    e.addEventListener(type, ecb, { once: true });
+    e.addEventListener(String(type), ecb, { once: true });
   };
 
   const events = {
@@ -63,19 +73,20 @@ export default function events(): [
 
   return [
     events,
-    (type: string, ...args: any[]) => e.dispatchEvent(new CustomEvent(type, { detail: args })),
-    (name: string) => eventFn(name, events),
+    <T extends keyof E>(type: T, ...args: E[T]) =>
+      e.dispatchEvent(new CustomEvent(String(type), { detail: args })),
+    <T extends keyof E>(name: T) => eventFn(name, events),
   ];
 }
 
-function eventFn(
-  name: string,
-  e: Events,
-): [() => EventCallback | undefined, (callback?: EventCallback) => void] {
-  let cb: EventCallback | undefined;
+function eventFn<T extends keyof E, E extends { [P in string]: any[] } = { [P in string]: any[] }>(
+  name: T,
+  e: Events<E>,
+): [() => EventCallback<E[T]> | undefined, (callback?: EventCallback<E[T]>) => void] {
+  let cb: EventCallback<E[T]> | undefined;
   return [
     () => cb,
-    (value?: EventCallback) => {
+    (value?: EventCallback<E[T]>) => {
       if (typeof cb === "function") {
         e.off(name, cb);
         cb = undefined;
