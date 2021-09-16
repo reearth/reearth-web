@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -33,11 +33,34 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [disabled, setDisabled] = useState(true);
 
+  const lowSecurityRegex = "";
+  const medSecurityRegex = "";
+  const highSecurityRegex = "";
+
+  const regexMessage = useMemo(() => {
+    switch (password) {
+      case highSecurityRegex:
+        return intl.formatMessage({ defaultMessage: "That password is great." });
+      case medSecurityRegex:
+        return intl.formatMessage({ defaultMessage: "That password is better." });
+      case lowSecurityRegex:
+        return intl.formatMessage({ defaultMessage: "That password is okay." });
+      default:
+        return intl.formatMessage({ defaultMessage: "That password is too weak." });
+    }
+  }, [password, intl]);
+
+  console.log(regexMessage, "regexmes");
+
   const handleClose = useCallback(() => {
     setPassword("");
     setPasswordConfirmation("");
     onClose?.();
   }, [onClose]);
+
+  useEffect(() => {
+    console.log(password, "password");
+  }, [password]);
 
   const save = useCallback(() => {
     if (password === passwordConfirmation) {
@@ -94,18 +117,14 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
               </li>
             </StyledList>
           </Text>
-          <Label size="s">
-            {intl.formatMessage({ defaultMessage: "New password" })}
-            {/* {intl.formatMessage({
-                defaultMessage:
-                  "8 characters or more, 2 types or more from numbers, lowercase letters, uppercase letters",
-              })} */}
-          </Label>
+          <Label size="s">{intl.formatMessage({ defaultMessage: "New password" })}</Label>
           <StyledTextBox
             type="password"
             borderColor={"#3f3d45"}
             value={password}
+            message={password ? regexMessage : undefined}
             onChange={setPassword}
+            doesChangeEveryTime
           />
           <Label size="s">
             {intl.formatMessage({ defaultMessage: "New password (for confirmation)" })}
@@ -115,6 +134,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             borderColor={"#3f3d45"}
             value={passwordConfirmation}
             onChange={setPasswordConfirmation}
+            doesChangeEveryTime
           />
         </div>
       ) : (
@@ -151,4 +171,5 @@ const Label = styled(Text)`
 const StyledList = styled.ul`
   margin: 20px auto;
 `;
+
 export default PasswordModal;
