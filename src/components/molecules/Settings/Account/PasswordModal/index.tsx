@@ -6,7 +6,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
   className?: string;
@@ -28,7 +28,9 @@ type Props = {
 
 const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updatePassword }) => {
   const intl = useIntl();
+  const theme = useTheme();
 
+  const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [disabled, setDisabled] = useState(true);
@@ -68,6 +70,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   }, [password, intl]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClose = useCallback(() => {
+    setOldPassword("");
     setPassword("");
     setPasswordConfirmation("");
     onClose?.();
@@ -130,16 +133,28 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             </Text>
           </SubText>
           <PasswordField direction="column">
+            <Text size="m">{intl.formatMessage({ defaultMessage: "Old password" })}</Text>
+            <TextBox
+              type="password"
+              borderColor={theme.main.border}
+              value={oldPassword}
+              onChange={setOldPassword}
+              doesChangeEveryTime
+            />
+          </PasswordField>
+          <PasswordField direction="column">
             <Text size="m">{intl.formatMessage({ defaultMessage: "New password" })}</Text>
             <TextBox
               type="password"
-              borderColor={"#3f3d45"}
+              borderColor={theme.main.border}
               value={password}
               message={password ? regexMessage : undefined}
               onChange={setPassword}
               doesChangeEveryTime
               color={
-                whitespaceRegex.test(password) || tooLongRegex.test(password) ? "red" : undefined
+                whitespaceRegex.test(password) || tooLongRegex.test(password)
+                  ? theme.main.danger
+                  : undefined
               }
             />
           </PasswordField>
@@ -149,7 +164,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             </Text>
             <TextBox
               type="password"
-              borderColor={"#3f3d45"}
+              borderColor={theme.main.border}
               value={passwordConfirmation}
               onChange={setPasswordConfirmation}
               doesChangeEveryTime
@@ -161,7 +176,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
           <Text size="s">{intl.formatMessage({ defaultMessage: "New password" })}</Text>
           <TextBox
             type="password"
-            borderColor={"#3f3d45"}
+            borderColor={theme.main.border}
             value={passwordConfirmation}
             onChange={setPasswordConfirmation}
           />
@@ -179,11 +194,11 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
 };
 
 const SubText = styled.div`
-  margin: 20px auto auto 16px;
+  margin: ${({ theme }) => `${theme.metrics["xl"]}px auto auto ${theme.metrics.l}px`};
 `;
 
 const PasswordField = styled(Flex)`
-  margin: 16px auto;
+  margin: ${({ theme }) => theme.metrics.l}px auto;
 `;
 
 export default PasswordModal;
