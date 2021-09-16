@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
+import Text from "@reearth/components/atoms/Text";
 import { styled, metrics } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -15,6 +16,7 @@ export type Props = {
   prefix?: string;
   suffix?: string;
   placeholder?: string;
+  message?: string;
   throttle?: boolean;
   throttleTimeout?: number;
   color?: string;
@@ -34,6 +36,7 @@ const TextBox: React.FC<Props> = ({
   prefix,
   suffix,
   placeholder,
+  message,
   throttle,
   throttleTimeout: throttleTimeout = 3000,
   color,
@@ -103,44 +106,47 @@ const TextBox: React.FC<Props> = ({
   }, [innerValue, onChange, throttle, throttleTimeout]);
 
   return (
-    <FormWrapper className={className} align="center">
-      {prefix && (
-        <FloatedText floatedTextColor={floatedTextColor} color={color}>
-          {prefix}
-        </FloatedText>
-      )}
-      {multiline ? (
-        <StyledTextarea
-          ref={textAreaRef}
-          value={innerValue ?? ""}
-          onChange={handleChangeTextArea}
-          onBlur={handleBlur}
-          color={color}
-          backgroundColor={backgroundColor}
-          disabled={disabled}
-          placeholder={placeholder}
-          rows={rows}
-        />
-      ) : (
-        <StyledInput
-          value={innerValue ?? ""}
-          onChange={handleChange}
-          onKeyPress={handleKeyPress}
-          onBlur={handleBlur}
-          color={color}
-          type={type}
-          backgroundColor={backgroundColor}
-          disabled={disabled}
-          placeholder={placeholder}
-          borderColor={borderColor}
-        />
-      )}
-      {suffix && (
-        <FloatedText floatedTextColor={floatedTextColor} color={color}>
-          {suffix}
-        </FloatedText>
-      )}
-    </FormWrapper>
+    <div className={className}>
+      <FormWrapper align="center">
+        {prefix && (
+          <FloatedText floatedTextColor={floatedTextColor} color={color}>
+            {prefix}
+          </FloatedText>
+        )}
+        {multiline ? (
+          <StyledTextarea
+            ref={textAreaRef}
+            value={innerValue ?? ""}
+            onChange={handleChangeTextArea}
+            onBlur={handleBlur}
+            color={color}
+            backgroundColor={backgroundColor}
+            disabled={disabled}
+            placeholder={placeholder}
+            rows={rows}
+          />
+        ) : (
+          <StyledInput
+            value={innerValue ?? ""}
+            onChange={handleChange}
+            onKeyPress={handleKeyPress}
+            onBlur={handleBlur}
+            color={color}
+            type={type}
+            backgroundColor={backgroundColor}
+            disabled={disabled}
+            placeholder={placeholder}
+            borderColor={borderColor}
+          />
+        )}
+        {suffix && (
+          <FloatedText floatedTextColor={floatedTextColor} color={color}>
+            {suffix}
+          </FloatedText>
+        )}
+      </FormWrapper>
+      {message && <StyledText size="xs">{message}</StyledText>}
+    </div>
   );
 };
 
@@ -192,6 +198,12 @@ const FloatedText = styled.span<InputProps>`
     theme.properties.contentsText};
   font-size: ${fonts.sizes.s}px;
   user-select: none;
+`;
+
+const StyledText = styled(Text)`
+  margin-left: 12px;
+  margin-top: 5px;
+  font-style: italic;
 `;
 
 export default TextBox;
