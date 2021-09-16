@@ -432,8 +432,10 @@ src:
         '1573629237': Successfully created workspace!
       EarthEditor:
         DataSourcePane:
-          '471021289': Failed to add dataset.
-          '1500247390': Successfully added a dataset!
+          '8458775': Successfully deleted the dataset!
+          '373918798': Failed to delete the dataset.
+          '517189107': Successfully added the dataset!
+          '1235836640': Failed to add the dataset.
         Header:
           '329817781': >-
             Successfully unpublished your project. Now nobody can access your

@@ -28,9 +28,17 @@ export default () => {
   });
 
   const datasetMessageSuccess = intl.formatMessage({
-    defaultMessage: "Successfully added a dataset!",
+    defaultMessage: "Successfully added the dataset!",
   });
-  const datasetMessageFailure = intl.formatMessage({ defaultMessage: "Failed to add dataset." });
+  const datasetMessageFailure = intl.formatMessage({
+    defaultMessage: "Failed to add the dataset.",
+  });
+  const datasetDeleteMessageSuccess = intl.formatMessage({
+    defaultMessage: "Successfully deleted the dataset!",
+  });
+  const datasetDeleteMessageFailure = intl.formatMessage({
+    defaultMessage: "Failed to delete the dataset.",
+  });
 
   const datasetSchemas = useMemo(
     () =>
@@ -73,10 +81,14 @@ export default () => {
       await syncData({
         variables: { sceneId, url: value },
       });
+      setNotification({
+        type: "error",
+        text: "HEY THERE",
+      });
       // re-render
       await client.resetStore();
     },
-    [client, sceneId, syncData],
+    [client, sceneId, syncData, setNotification],
   );
 
   const [importData] = useImportDatasetMutation();
@@ -144,16 +156,27 @@ export default () => {
   const [removeDatasetSchema] = useRemoveDatasetMutation();
   const handleRemoveDataset = useCallback(
     async (schemaId: string) => {
-      await removeDatasetSchema({
+      const result = await removeDatasetSchema({
         variables: {
           schemaId,
           force: true,
         },
       });
+      if (result.errors) {
+        setNotification({ type: "error", text: datasetDeleteMessageFailure });
+      } else {
+        setNotification({ type: "success", text: datasetDeleteMessageSuccess });
+      }
       // re-render
       await client.resetStore();
     },
-    [client, removeDatasetSchema],
+    [
+      client,
+      removeDatasetSchema,
+      datasetDeleteMessageFailure,
+      datasetDeleteMessageSuccess,
+      setNotification,
+    ],
   );
 
   return {
