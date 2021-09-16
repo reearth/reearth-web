@@ -18,6 +18,7 @@ export type Props = {
   iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
   sceneProperty?: any;
+  pluginProperty?: any;
   pluginBaseUrl?: string;
   primitive?: Primitive;
   widget?: Widget;
@@ -39,21 +40,20 @@ export default function Plugin({
   widget,
   block,
   sceneProperty,
+  pluginProperty,
 }: Props): JSX.Element | null {
-  const { skip, src, exposed, isMarshalable, staticExposed, handleError, handleMessage } = useHooks(
-    {
-      pluginId,
-      extensionId,
-      sourceCode,
-      extensionType,
-      property,
-      pluginBaseUrl,
-      primitive,
-      widget,
-      block,
-      sceneProperty,
-    },
-  );
+  const { skip, src, isMarshalable, staticExposed, handleError, handleMessage } = useHooks({
+    pluginId,
+    extensionId,
+    extensionType,
+    property,
+    pluginBaseUrl,
+    primitive,
+    widget,
+    block,
+    sceneProperty,
+    pluginProperty,
+  });
 
   return !skip && (src || sourceCode) ? (
     <P
@@ -63,7 +63,6 @@ export default function Plugin({
       sourceCode={sourceCode}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
-      exposed={exposed}
       isMarshalable={isMarshalable}
       staticExposed={staticExposed}
       onError={handleError}

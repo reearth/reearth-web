@@ -4,7 +4,6 @@ import { initialize, pageview } from "react-ga";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
 
-import api from "./api";
 import { VisualizerContext } from "./context";
 import type {
   OverriddenInfobox,
@@ -291,17 +290,6 @@ function useVisualizerContext({
   hidePrimitive: (...id: string[]) => void;
   selectPrimitive: (id?: string, options?: { reason?: string }) => void;
 }): VisualizerContext {
-  const pluginAPI = useMemo(
-    () =>
-      api({
-        engine: () => engine.current,
-        hidePrimitive,
-        selectPrimitive,
-        showPrimitive,
-      }),
-    [engine, hidePrimitive, selectPrimitive, showPrimitive],
-  );
-
   const ctx = useMemo((): VisualizerContext => {
     return {
       engine: engine.current ?? undefined,
@@ -310,16 +298,20 @@ function useVisualizerContext({
       selectedPrimitive,
       primitiveSelectionReason,
       primitiveOverridenInfobox,
-      pluginAPI,
+      showPrimitive,
+      hidePrimitive,
+      selectPrimitive,
     };
   }, [
-    camera,
     engine,
-    pluginAPI,
+    camera,
     primitives,
     selectedPrimitive,
     primitiveSelectionReason,
     primitiveOverridenInfobox,
+    showPrimitive,
+    hidePrimitive,
+    selectPrimitive,
   ]);
 
   return ctx;

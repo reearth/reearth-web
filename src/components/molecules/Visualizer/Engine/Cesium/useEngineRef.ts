@@ -1,4 +1,4 @@
-import { Viewer } from "cesium";
+import { Color, Entity, Viewer } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo } from "react";
 import type { CesiumComponentRef } from "resium";
 
@@ -7,6 +7,24 @@ import type { Ref as EngineRef } from "..";
 import builtinPrimitives from "./builtin";
 import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
 
+const exposed = { Entity, Color };
+
+const cesiumAPI = {
+  Cesium: Object.keys(exposed).reduce(
+    (a, b) => ({
+      ...a,
+      get [b]() {
+        return exposed[b as keyof typeof exposed];
+      },
+    }),
+    {} as any,
+  ),
+};
+
+const isMarshalable = (t: any): boolean | "json" => {
+  return Object.values({ ...exposed, Viewer }).some(v => t instanceof v);
+};
+
 export default function useEngineRef(
   ref: Ref<EngineRef>,
   cesium: RefObject<CesiumComponentRef<Viewer>>,
@@ -14,6 +32,15 @@ export default function useEngineRef(
   const e = useMemo(
     (): EngineRef => ({
       name: "cesium",
+      pluginApi: {
+        ...cesiumAPI,
+        reearth: {
+          get viewer(): Viewer | undefined {
+            return cesium.current?.cesiumElement;
+          },
+        },
+      },
+      isMarshalable,
       requestRender: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;

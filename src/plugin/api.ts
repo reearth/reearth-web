@@ -29,7 +29,6 @@ export type Reearth = {
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
   ) => void;
-  onupdate?: () => void;
 };
 
 export type ReearthEventType = {
@@ -79,6 +78,8 @@ export type Primitive = {
   property?: any;
   infobox?: Infobox;
   isVisible?: boolean;
+  propertyId?: string;
+  pluginProperty?: any;
 };
 
 export type Infobox = {
@@ -91,6 +92,8 @@ export type Block = {
   pluginId?: string;
   extensionId?: string;
   property?: any;
+  propertyId?: string;
+  pluginProperty?: any;
 };
 
 export type Widget = {
@@ -98,6 +101,8 @@ export type Widget = {
   pluginId?: string;
   extensionId?: string;
   property?: any;
+  propertyId?: string;
+  pluginProperty?: any;
 };
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */

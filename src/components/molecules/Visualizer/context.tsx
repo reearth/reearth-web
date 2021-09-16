@@ -1,20 +1,10 @@
 import { createContext, useContext } from "react";
 
-import type { GlobalThis, Camera, Primitive, OverriddenInfobox } from "@reearth/plugin";
+import type { Camera, Primitive, OverriddenInfobox } from "@reearth/plugin";
 
 import type { Ref as EngineRef } from "./Engine";
 
 export type { GlobalThis } from "@reearth/plugin";
-
-export type CommonGlobalThis = Omit<GlobalThis, "reearth" | "cesium"> & {
-  reearth: Omit<
-    GlobalThis["reearth"],
-    "visualizer" | "primitives" | "plugin" | "ui" | "on" | "off" | "once"
-  > & {
-    primitives: Omit<GlobalThis["reearth"]["primitives"], "primitives">;
-    visualizer: Omit<GlobalThis["reearth"]["visualizer"], "camera">;
-  };
-};
 
 export type VisualizerContext = {
   engine?: EngineRef;
@@ -23,7 +13,9 @@ export type VisualizerContext = {
   selectedPrimitive?: Primitive;
   primitiveSelectionReason?: string;
   primitiveOverridenInfobox?: OverriddenInfobox;
-  pluginAPI?: CommonGlobalThis;
+  showPrimitive: (...id: string[]) => void;
+  hidePrimitive: (...id: string[]) => void;
+  selectPrimitive: (id?: string, options?: { reason?: string }) => void;
 };
 
 export const context = createContext<VisualizerContext | undefined>(undefined);
