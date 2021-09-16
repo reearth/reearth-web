@@ -81,14 +81,10 @@ export default () => {
       await syncData({
         variables: { sceneId, url: value },
       });
-      setNotification({
-        type: "error",
-        text: "HEY THERE",
-      });
       // re-render
       await client.resetStore();
     },
-    [client, sceneId, syncData, setNotification],
+    [client, sceneId, syncData],
   );
 
   const [importData] = useImportDatasetMutation();
@@ -165,7 +161,7 @@ export default () => {
       if (result.errors) {
         setNotification({ type: "error", text: datasetDeleteMessageFailure });
       } else {
-        setNotification({ type: "success", text: datasetDeleteMessageSuccess });
+        setNotification({ type: "info", text: datasetDeleteMessageSuccess });
       }
       // re-render
       await client.resetStore();
