@@ -1,26 +1,36 @@
-import { useGetAllDataSetsQuery } from "@reearth/gql";
+import { useGetAllDataSetsQuery, useGetDatasetsQuery } from "@reearth/gql";
 import { useSceneId, useSelected } from "@reearth/state";
 import { useMemo } from "react";
+
+type DatasetSchemaFields = string[]
 
 export default () => {
   const [selected, _] = useSelected();
   const [sceneId] = useSceneId();
 
-  const { data, loading: _loading } = useGetAllDataSetsQuery({
-    variables: { sceneId: sceneId || "" },
-    skip: !sceneId,
-  });
+  // const { data: datasetSchemas, loading: datasetSchemaLoading } = useGetAllDataSetsQuery({
+  //   variables: { sceneId: sceneId || "" },
+  //   skip: !sceneId,
+  // });
 
-  console.log(data);
-  const datasetSchema = useMemo(
+  const {data:rawDatasets, loading: datasetsLoading} = useGetDatasetsQuery({
+    variables: {datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "", first:100},
+    skip: selected?.type !== "dataset"
+  })
+  const datasets = useMemo(
     () =>
-      selected?.type === "dataset"
-        ? data?.datasetSchemas.nodes.filter(d => d?.id === selected.datasetSchemaId)
-        : undefined,
-    [data?.datasetSchemas.nodes, selected],
+    {
+      return rawDatasets?.datasets.nodes
+    },
+    [rawDatasets?.datasets.nodes, selected],
   );
 
-  console.log("ds-------", datasetSchema);
+  // const datasetSchemaFields = datasetSchema?.fields.map(f => f.name)
 
-  return { hoge: "hoge" };
+  console.log(datasets);
+
+
+  // console.log("raw------", datasetSchemas);
+
+  return { datasetSchema: "hoge" , datasetSchemaFields: "hoge"};
 };

@@ -53,7 +53,6 @@ const Table = <T extends {}>({
       </thead>
       <tbody>
         {items.map((item, i) => {
-          console.log(item);
           return (
             <tr key={i}>
               {headers.map((h, i) => {

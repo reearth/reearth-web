@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
-import DatasetInfoPane from "@reearth/components/molecules/EarthEditor/DatasetInfoPane";
+import DatasetInfoPane from "@reearth/components/organisms/EarthEditor/DatasetInfoPane";
 import ExportPane from "@reearth/components/organisms/EarthEditor/ExportPane";
 
 import PropertyPane from "../PropertyPane";

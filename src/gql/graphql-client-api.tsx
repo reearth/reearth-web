@@ -2531,6 +2531,30 @@ export type AddLayerGroupFromDatasetSchemaMutation = (
   )> }
 );
 
+export type GetDatasetsQueryVariables = Exact<{
+  datasetSchemaId: Scalars['ID'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+}>;
+
+
+export type GetDatasetsQuery = (
+  { __typename?: 'Query' }
+  & { datasets: (
+    { __typename?: 'DatasetConnection' }
+    & Pick<DatasetConnection, 'totalCount'>
+    & { nodes: Array<Maybe<(
+      { __typename?: 'Dataset' }
+      & DatasetFragmentFragment
+    )>>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'startCursor' | 'endCursor' | 'hasNextPage' | 'hasPreviousPage'>
+    ) }
+  ) }
+);
+
 export type GetProjectQueryVariables = Exact<{
   sceneId: Scalars['ID'];
 }>;
@@ -4012,6 +4036,19 @@ export type GetSceneQuery = (
   )> }
 );
 
+export type DatasetFragmentFragment = (
+  { __typename?: 'Dataset' }
+  & Pick<Dataset, 'id' | 'source' | 'schemaId' | 'name'>
+  & { fields: Array<(
+    { __typename?: 'DatasetField' }
+    & Pick<DatasetField, 'fieldId' | 'type' | 'value'>
+    & { field?: Maybe<(
+      { __typename?: 'DatasetSchemaField' }
+      & Pick<DatasetSchemaField, 'id' | 'name'>
+    )> }
+  )> }
+);
+
 export type InfoboxFragmentFragment = (
   { __typename?: 'Infobox' }
   & Pick<Infobox, 'propertyId'>
@@ -4905,6 +4942,23 @@ export const LayerSystemLayer5FragmentDoc = gql`
 }
     ${LayerSystemLayerFragmentDoc}
 ${LayerSystemLayer4FragmentDoc}`;
+export const DatasetFragmentFragmentDoc = gql`
+    fragment DatasetFragment on Dataset {
+  id
+  source
+  schemaId
+  fields {
+    fieldId
+    type
+    value
+    field {
+      id
+      name
+    }
+  }
+  name
+}
+    `;
 export const InfoboxFragmentFragmentDoc = gql`
     fragment InfoboxFragment on Infobox {
   propertyId
@@ -5788,6 +5842,58 @@ export function useAddLayerGroupFromDatasetSchemaMutation(baseOptions?: Apollo.M
 export type AddLayerGroupFromDatasetSchemaMutationHookResult = ReturnType<typeof useAddLayerGroupFromDatasetSchemaMutation>;
 export type AddLayerGroupFromDatasetSchemaMutationResult = Apollo.MutationResult<AddLayerGroupFromDatasetSchemaMutation>;
 export type AddLayerGroupFromDatasetSchemaMutationOptions = Apollo.BaseMutationOptions<AddLayerGroupFromDatasetSchemaMutation, AddLayerGroupFromDatasetSchemaMutationVariables>;
+export const GetDatasetsDocument = gql`
+    query GetDatasets($datasetSchemaId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  datasets(
+    datasetSchemaId: $datasetSchemaId
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+  ) {
+    nodes {
+      ...DatasetFragment
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+    totalCount
+  }
+}
+    ${DatasetFragmentFragmentDoc}`;
+
+/**
+ * __useGetDatasetsQuery__
+ *
+ * To run a query within a React component, call `useGetDatasetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDatasetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDatasetsQuery({
+ *   variables: {
+ *      datasetSchemaId: // value for 'datasetSchemaId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useGetDatasetsQuery(baseOptions: Apollo.QueryHookOptions<GetDatasetsQuery, GetDatasetsQueryVariables>) {
+        return Apollo.useQuery<GetDatasetsQuery, GetDatasetsQueryVariables>(GetDatasetsDocument, baseOptions);
+      }
+export function useGetDatasetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDatasetsQuery, GetDatasetsQueryVariables>) {
+          return Apollo.useLazyQuery<GetDatasetsQuery, GetDatasetsQueryVariables>(GetDatasetsDocument, baseOptions);
+        }
+export type GetDatasetsQueryHookResult = ReturnType<typeof useGetDatasetsQuery>;
+export type GetDatasetsLazyQueryHookResult = ReturnType<typeof useGetDatasetsLazyQuery>;
+export type GetDatasetsQueryResult = Apollo.QueryResult<GetDatasetsQuery, GetDatasetsQueryVariables>;
 export const GetProjectDocument = gql`
     query GetProject($sceneId: ID!) {
   node(id: $sceneId, type: SCENE) {
