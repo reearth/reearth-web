@@ -30,7 +30,6 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   const intl = useIntl();
   const theme = useTheme();
 
-  const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [regexMessage, setRegexMessage] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -96,7 +95,6 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   );
 
   const handleClose = useCallback(() => {
-    setOldPassword("");
     setPassword("");
     setPasswordConfirmation("");
     onClose?.();
@@ -162,16 +160,6 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
               })}
             </Text>
           </SubText>
-          <PasswordField direction="column">
-            <Text size="m">{intl.formatMessage({ defaultMessage: "Old password" })}</Text>
-            <TextBox
-              type="password"
-              borderColor={theme.main.border}
-              value={oldPassword}
-              onChange={setOldPassword}
-              doesChangeEveryTime
-            />
-          </PasswordField>
           <PasswordField direction="column">
             <Text size="m">{intl.formatMessage({ defaultMessage: "New password" })}</Text>
             <TextBox
