@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -32,6 +32,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
 
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
+  const [regexMessage, setRegexMessage] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [disabled, setDisabled] = useState(true);
 
@@ -42,32 +43,57 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   const medSecurityRegex = /^((?=.*[a-z])(?=.*[A-Z])|(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d))/;
   const lowSecurityRegex = /^((?=\d)|(?=[a-z])|(?=[A-Z]))/;
 
-  const regexMessage = useMemo(() => {
-    switch (true) {
-      case whitespaceRegex.test(password):
-        return intl.formatMessage({
-          defaultMessage: "No whitespace is allowed.",
-        });
-      case tooShortRegex.test(password):
-        return intl.formatMessage({
-          defaultMessage: "Too short.",
-        });
-      case tooLongRegex.test(password):
-        return intl.formatMessage({
-          defaultMessage: "That is terribly long.",
-        });
-      case highSecurityRegex.test(password):
-        return intl.formatMessage({ defaultMessage: "That password is great!" });
-      case medSecurityRegex.test(password):
-        return intl.formatMessage({ defaultMessage: "That password is better." });
-      case lowSecurityRegex.test(password):
-        return intl.formatMessage({ defaultMessage: "That password is okay." });
-      default:
-        return intl.formatMessage({
-          defaultMessage: "That password confuses me, but might be okay.",
-        });
-    }
-  }, [password, intl]); // eslint-disable-line react-hooks/exhaustive-deps
+  const handlePasswordChange = useCallback(
+    (password: string) => {
+      switch (true) {
+        case whitespaceRegex.test(password):
+          setPassword(password);
+          setRegexMessage(
+            intl.formatMessage({
+              defaultMessage: "No whitespace is allowed.",
+            }),
+          );
+          break;
+        case tooShortRegex.test(password):
+          setPassword(password);
+          setRegexMessage(
+            intl.formatMessage({
+              defaultMessage: "Too short.",
+            }),
+          );
+          break;
+        case tooLongRegex.test(password):
+          setPassword(password);
+          setRegexMessage(
+            intl.formatMessage({
+              defaultMessage: "That is terribly long.",
+            }),
+          );
+          break;
+        case highSecurityRegex.test(password):
+          setPassword(password);
+          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
+          break;
+        case medSecurityRegex.test(password):
+          setPassword(password);
+          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
+          break;
+        case lowSecurityRegex.test(password):
+          setPassword(password);
+          setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
+          break;
+        default:
+          setPassword(password);
+          setRegexMessage(
+            intl.formatMessage({
+              defaultMessage: "That password confuses me, but might be okay.",
+            }),
+          );
+          break;
+      }
+    },
+    [intl, password], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const handleClose = useCallback(() => {
     setOldPassword("");
@@ -76,7 +102,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
     onClose?.();
   }, [onClose]);
 
-  const save = useCallback(() => {
+  const handleSave = useCallback(() => {
     if (password === passwordConfirmation) {
       updatePassword?.(password, passwordConfirmation);
       handleClose();
@@ -84,12 +110,16 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   }, [updatePassword, handleClose, password, passwordConfirmation]);
 
   useEffect(() => {
-    if (password !== passwordConfirmation || password === "" || passwordConfirmation === "") {
+    if (
+      password !== passwordConfirmation ||
+      tooShortRegex.test(password) ||
+      tooLongRegex.test(password)
+    ) {
       setDisabled(true);
     } else {
       setDisabled(false);
     }
-  }, [password, passwordConfirmation]);
+  }, [password, passwordConfirmation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Modal
@@ -103,7 +133,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
           disabled={disabled}
           buttonType="primary"
           text={intl.formatMessage({ defaultMessage: "Change password" })}
-          onClick={save}
+          onClick={handleSave}
         />
       }>
       {hasPassword ? (
@@ -149,7 +179,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
               borderColor={theme.main.border}
               value={password}
               message={password ? regexMessage : undefined}
-              onChange={setPassword}
+              onChange={handlePasswordChange}
               doesChangeEveryTime
               color={
                 whitespaceRegex.test(password) || tooLongRegex.test(password)
@@ -185,7 +215,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             disabled={disabled}
             buttonType="primary"
             text={intl.formatMessage({ defaultMessage: "Set your password now" })}
-            onClick={save}
+            onClick={handleSave}
           />
         </div>
       )}
@@ -194,11 +224,13 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
 };
 
 const SubText = styled.div`
-  margin: ${({ theme }) => `${theme.metrics["xl"]}px auto auto ${theme.metrics.l}px`};
+  margin: ${({ theme }) =>
+    `${theme.metrics["xl"]}px auto ${theme.metrics["xl"]}px ${theme.metrics.l}px`};
 `;
 
 const PasswordField = styled(Flex)`
-  margin: ${({ theme }) => theme.metrics.l}px auto;
+  // background: red;
+  height: 75px;
 `;
 
 export default PasswordModal;

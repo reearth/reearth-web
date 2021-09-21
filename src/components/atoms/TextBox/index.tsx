@@ -201,8 +201,8 @@ const FloatedText = styled.span<InputProps>`
 `;
 
 const StyledText = styled(Text)`
-  margin-left: 12px;
-  margin-top: 5px;
+  margin-left: ${metricsSizes.m}px;
+  margin-top: ${metricsSizes["2xs"]}px;
   font-style: italic;
 `;
 
