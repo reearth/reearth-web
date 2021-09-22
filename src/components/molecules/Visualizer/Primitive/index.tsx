@@ -1,13 +1,13 @@
 import React, { ComponentType, useMemo } from "react";
 
 import { useVisualizerContext } from "../context";
-import { Primitive } from "../Plugin";
+import type { Primitive } from "../Infobox";
 // import Plugins, { Widget } from "../Plugin";
 
-export type { Primitive } from "../Plugin";
+export type { Primitive } from "../Infobox";
 
-export type Props<PP = any, SP = any> = {
-  primitive?: Primitive;
+export type Props<P = any, PP = any, SP = any> = {
+  primitive?: Primitive<P>;
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
@@ -17,13 +17,13 @@ export type Props<PP = any, SP = any> = {
   pluginBaseUrl?: string;
 };
 
-export type Component<PP = any, SP = any> = ComponentType<Props<PP, SP>>;
+export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, SP>>;
 
-export default function PrimitiveComponent<PP = any, SP = any>({
+export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   isHidden,
   pluginBaseUrl: _pluginBaseUrl,
   ...props
-}: Props<PP, SP>) {
+}: Props<P, PP, SP>) {
   const ctx = useVisualizerContext();
   const Builtin = useMemo(() => {
     const builtin = ctx?.engine?.builtinPrimitives;
@@ -43,5 +43,6 @@ export default function PrimitiveComponent<PP = any, SP = any>({
   //   property={props.pluginProperty}
   //   sceneProperty={props.sceneProperty}
   //   primitive={props.primitive}
+  //   pluginProperty={pluginProperty}
   // />
 }

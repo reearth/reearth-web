@@ -1,10 +1,9 @@
 import { useCallback } from "react";
 
-import type { Primitive, Widget, Block } from "@reearth/plugin";
-
 import { useVisualizerContext } from "../context";
 
 import { useAPI } from "./api";
+import type { Primitive, Widget, Block } from "./types";
 
 export default function ({
   pluginId,

@@ -1,11 +1,12 @@
 import { useMemo, useCallback, useRef, useEffect } from "react";
 
 import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
-import type { GlobalThis, Block, Primitive, Widget, ReearthEventType } from "@reearth/plugin";
-import events, { Events } from "@reearth/util/event";
-import type { EventEmitter } from "@reearth/util/event";
+import events from "@reearth/util/event";
+import type { Events, EventEmitter } from "@reearth/util/event";
 
 import type { VisualizerContext } from "..";
+
+import type { GlobalThis, Block, Primitive, Widget, ReearthEventType } from "./types";
 
 function api({
   render,
@@ -235,6 +236,10 @@ export function useAPI({
     getBlock,
     getCamera,
     getPrimitive,
+    getPrimitiveOverriddenInfobox,
+    getPrimitiveSelectionReason,
+    getPrimitives,
+    getSelectedPrimitive,
     getWidget,
     pluginId,
     pluginProperty,

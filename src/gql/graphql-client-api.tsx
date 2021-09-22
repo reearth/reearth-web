@@ -2270,18 +2270,15 @@ export type GetEarthWidgetsQuery = (
     )>, widgets: Array<(
       { __typename?: 'SceneWidget' }
       & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId'>
-      & { plugin?: Maybe<(
-        { __typename?: 'Plugin' }
-        & Pick<Plugin, 'id'>
-        & { scenePlugin?: Maybe<(
-          { __typename?: 'ScenePlugin' }
-          & { property?: Maybe<(
-            { __typename?: 'Property' }
-            & Pick<Property, 'id'>
-            & PropertyFragmentFragment
-          )> }
-        )> }
-      )>, property?: Maybe<(
+      & { property?: Maybe<(
+        { __typename?: 'Property' }
+        & Pick<Property, 'id'>
+        & PropertyFragmentFragment
+      )> }
+    )>, plugins: Array<(
+      { __typename?: 'ScenePlugin' }
+      & Pick<ScenePlugin, 'pluginId'>
+      & { property?: Maybe<(
         { __typename?: 'Property' }
         & Pick<Property, 'id'>
         & PropertyFragmentFragment
@@ -5339,15 +5336,13 @@ export const GetEarthWidgetsDocument = gql`
         enabled
         pluginId
         extensionId
-        plugin {
+        property {
           id
-          scenePlugin(sceneId: $sceneId) {
-            property {
-              id
-              ...PropertyFragment
-            }
-          }
+          ...PropertyFragment
         }
+      }
+      plugins {
+        pluginId
         property {
           id
           ...PropertyFragment

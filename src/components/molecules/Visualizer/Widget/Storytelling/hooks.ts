@@ -54,7 +54,7 @@ export default function ({
 
   const ctx = useVisualizerContext();
   const { flyTo, lookAt } = ctx?.engine ?? {};
-  const selectPrimitive = ctx?.pluginAPI?.reearth.primitives.select;
+  const selectPrimitive = ctx?.selectPrimitive;
   const { primitives, selectedPrimitive } = ctx ?? {};
 
   const stories = useMemo<Story[]>(() => {

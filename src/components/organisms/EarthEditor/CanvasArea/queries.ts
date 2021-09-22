@@ -179,15 +179,13 @@ export const GET_EARTH_WIDGETS = gql`
           enabled
           pluginId
           extensionId
-          plugin {
+          property {
             id
-            scenePlugin(sceneId: $sceneId) {
-              property {
-                id
-                ...PropertyFragment
-              }
-            }
+            ...PropertyFragment
           }
+        }
+        plugins {
+          pluginId
           property {
             id
             ...PropertyFragment

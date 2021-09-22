@@ -3,18 +3,19 @@ import React, { ComponentType } from "react";
 import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
-import Plugin, { Block, Primitive } from "../Plugin";
+import Plugin from "../Plugin";
+import type { Block, Primitive } from "../Plugin";
 
 import builtin from "./builtin";
 
-export type { Primitive, Block } from "../Plugin";
+export type { Block, Primitive } from "../Plugin";
 
-export type Props<PP = any, IP = any, SP = any> = {
+export type Props<BP = any, PP = any, IP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
   primitive?: Primitive;
-  block?: Block;
+  block?: Block<BP>;
   sceneProperty?: SP;
   infoboxProperty?: IP;
   pluginProperty?: PP;
@@ -28,12 +29,14 @@ export type Props<PP = any, IP = any, SP = any> = {
   ) => void;
 };
 
-export type Component<PP = any, IP = any, SP = any> = ComponentType<Props<PP, IP, SP>>;
+export type Component<BP = any, PP = any, IP = any, SP = any> = ComponentType<
+  Props<BP, PP, IP, SP>
+>;
 
-export default function BlockComponent<PP = any, IP = any, SP = any>({
+export default function BlockComponent<P = any, PP = any, IP = any, SP = any>({
   pluginBaseUrl,
   ...props
-}: Props<PP, IP, SP>): JSX.Element | null {
+}: Props<P, PP, IP, SP>): JSX.Element | null {
   const Builtin =
     props.block?.pluginId && props.block.extensionId
       ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
@@ -52,6 +55,7 @@ export default function BlockComponent<PP = any, IP = any, SP = any>({
         visible
         property={props.pluginProperty}
         sceneProperty={props.sceneProperty}
+        pluginProperty={props.pluginProperty}
         primitive={props.primitive}
         block={props.block}
       />

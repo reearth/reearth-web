@@ -6,29 +6,20 @@ import Filled from "@reearth/components/atoms/Filled";
 import { Provider } from "./context";
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
-import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
-import P, { Primitive as PrimitiveType } from "./Primitive";
-import W, { Widget as WidgetType } from "./Widget";
+import Infobox, { Props as InfoboxProps } from "./Infobox";
+import P from "./Primitive";
+import type { Primitive as RawPrimitive } from "./Primitive";
+import W from "./Widget";
+import type { Widget } from "./Widget";
 
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
+export type { InfoboxProperty, Block } from "./Infobox";
+export type { Widget } from "./Widget";
 
-export type Infobox = {
-  blocks?: Block[];
-  property?: InfoboxProperty;
-};
-
-export type Primitive = PrimitiveType & {
+export type Primitive = RawPrimitive & {
   infoboxEditable?: boolean;
-  pluginProperty?: any;
-  hidden?: boolean;
 };
-
-export type Widget = WidgetType & {
-  pluginProperty?: any;
-};
-
-export type Block = BlockType;
 
 export type Props = PropsWithChildren<
   {
@@ -36,6 +27,7 @@ export type Props = PropsWithChildren<
     primitives?: Primitive[];
     widgets?: Widget[];
     sceneProperty?: SceneProperty;
+    pluginProperty?: { [key: string]: any };
     selectedBlockId?: string;
     pluginBaseUrl?: string;
     isPublished?: boolean;
@@ -53,11 +45,12 @@ export default function Visualizer({
   primitives,
   widgets,
   sceneProperty,
-  selectedPrimitiveId: outerSelectedPrimitiveId,
-  selectedBlockId: outerSelectedBlockId,
   children,
+  pluginProperty,
   pluginBaseUrl,
   isPublished,
+  selectedPrimitiveId: outerSelectedPrimitiveId,
+  selectedBlockId: outerSelectedBlockId,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
@@ -71,8 +64,8 @@ export default function Visualizer({
     engineRef,
     wrapperRef,
     isDroppable,
-    hiddenPrimitives,
     visualizerContext,
+    isPrimitiveHidden,
     selectedPrimitive,
     selectedPrimitiveId,
     primitiveSelectionReason,
@@ -112,13 +105,17 @@ export default function Visualizer({
           camera={innerCamera}
           onCameraChange={updateCamera}>
           {primitives?.map(primitive =>
-            primitive.hidden ? null : (
+            !primitive.isVisible ? null : (
               <P
                 key={primitive.id}
                 primitive={primitive}
                 sceneProperty={sceneProperty}
-                pluginProperty={primitive.pluginProperty}
-                isHidden={hiddenPrimitives.includes(primitive.id)}
+                pluginProperty={
+                  primitive.pluginId && primitive.extensionId
+                    ? pluginProperty?.[`${primitive.pluginId}/${primitive.extensionId}`]
+                    : undefined
+                }
+                isHidden={isPrimitiveHidden(primitive.id)}
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
                 isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
@@ -131,7 +128,11 @@ export default function Visualizer({
               key={widget.id}
               widget={widget}
               sceneProperty={sceneProperty}
-              pluginProperty={widget.pluginProperty}
+              pluginProperty={
+                widget.pluginId && widget.extensionId
+                  ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                  : undefined
+              }
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
               pluginBaseUrl={pluginBaseUrl}
@@ -142,11 +143,10 @@ export default function Visualizer({
           title={infobox?.title}
           infoboxKey={infobox?.infoboxKey}
           visible={!!infobox?.visible}
-          property={infobox?.property}
           sceneProperty={sceneProperty}
           primitive={infobox?.primitive}
-          blocks={infobox?.blocks}
           selectedBlockId={selectedBlockId}
+          pluginProperty={pluginProperty}
           isBuilt={props.isBuilt}
           isEditable={props.isEditable && !!infobox?.isEditable}
           onBlockChange={onBlockChange}

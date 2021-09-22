@@ -18,13 +18,13 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     rootLayerId,
     selectedBlockId,
     sceneProperty,
+    pluginProperty,
     layers,
     widgets,
     selectedLayer,
     blocks,
     isCapturing,
     camera,
-    ready,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -56,8 +56,9 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       selectedBlockId={selectedBlockId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}
+      pluginProperty={pluginProperty}
       camera={camera}
-      ready={ready}
+      ready={isBuilt || (!!layers && !!widgets)}
       onPrimitiveSelect={selectLayer}
       onCameraChange={onCameraChange}
       onBlockSelect={selectBlock}

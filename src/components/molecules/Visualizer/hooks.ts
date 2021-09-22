@@ -1,5 +1,6 @@
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
+import { useSet } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
@@ -107,25 +108,23 @@ export default ({
     [onCameraChange],
   );
 
-  const hiddenPrimitivesSet = useMemo(() => new Set<string>(), []);
-  const [hiddenPrimitives, setHiddenPrimitives] = useState<string[]>([]);
-  const showPrimitive = useCallback(
+  const [, { add: hidePrimitive, remove: showPrimitive, has: isPrimitiveHidden }] =
+    useSet<string>();
+  const showPrimitives = useCallback(
     (...ids: string[]) => {
       for (const id of ids) {
-        hiddenPrimitivesSet.delete(id);
+        showPrimitive(id);
       }
-      setHiddenPrimitives(Array.from(hiddenPrimitivesSet.values()));
     },
-    [hiddenPrimitivesSet],
+    [showPrimitive],
   );
-  const hidePrimitive = useCallback(
+  const hidePrimitives = useCallback(
     (...ids: string[]) => {
       for (const id of ids) {
-        hiddenPrimitivesSet.add(id);
+        hidePrimitive(id);
       }
-      setHiddenPrimitives(Array.from(hiddenPrimitivesSet.values()));
     },
-    [hiddenPrimitivesSet],
+    [hidePrimitive],
   );
 
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
@@ -143,8 +142,8 @@ export default ({
     primitiveSelectionReason,
     primitiveOverridenInfobox,
     selectPrimitive,
-    showPrimitive,
-    hidePrimitive,
+    showPrimitive: showPrimitives,
+    hidePrimitive: hidePrimitives,
   });
 
   useEffect(() => {
@@ -159,13 +158,13 @@ export default ({
     wrapperRef,
     isDroppable,
     visualizerContext,
-    hiddenPrimitives,
     selectedPrimitiveId,
     primitiveSelectionReason,
     selectedPrimitive,
     selectedBlockId,
     innerCamera,
     infobox,
+    isPrimitiveHidden,
     selectPrimitive,
     selectBlock,
     updateCamera,
@@ -181,7 +180,7 @@ function usePrimitiveSelection({
   selectedPrimitiveId?: string;
   infobox?: Pick<
     InfoboxProps,
-    "infoboxKey" | "title" | "blocks" | "visible" | "property" | "primitive" | "isEditable"
+    "infoboxKey" | "title" | "blocks" | "visible" | "primitive" | "isEditable"
   >;
   primitiveOverridenInfobox?: OverriddenInfobox;
   onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
@@ -211,10 +210,7 @@ function usePrimitiveSelection({
   );
 
   const infobox = useMemo<
-    | Pick<
-        InfoboxProps,
-        "infoboxKey" | "title" | "blocks" | "visible" | "property" | "primitive" | "isEditable"
-      >
+    | Pick<InfoboxProps, "infoboxKey" | "title" | "visible" | "primitive" | "blocks" | "isEditable">
     | undefined
   >(
     () =>
@@ -224,9 +220,8 @@ function usePrimitiveSelection({
             title: primitiveOverridenInfobox?.title || selectedPrimitive.title,
             isEditable: !primitiveOverridenInfobox && selectedPrimitive.infoboxEditable,
             visible: !!selectedPrimitive?.infobox,
-            property: selectedPrimitive?.infobox?.property,
             primitive: selectedPrimitive,
-            blocks: blocks ?? selectedPrimitive.infobox?.blocks,
+            blocks,
           }
         : undefined,
     [selectedPrimitive, primitiveOverridenInfobox, blocks],

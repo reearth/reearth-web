@@ -102,9 +102,8 @@ const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Primitive["inf
       id: f.id,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
-      propertyId: f.propertyId ?? undefined,
       property: convertProperty(f.property),
-      pluginProperty: convertProperty(f.scenePlugin?.property),
+      propertyId: f.propertyId, // required by onBlockChange
     })),
   };
 };
@@ -115,13 +114,12 @@ const processMergedInfobox = (
   if (!infobox) return;
   return {
     property: processMergedProperty(infobox.property),
-    blocks: infobox.fields.map(f => ({
+    blocks: infobox.fields.map<Block & { propertyId?: string }>(f => ({
       id: f.originalId,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
-      propertyId: f.property?.originalId ?? undefined,
       property: processMergedProperty(f.property),
-      pluginProperty: convertProperty(f.scenePlugin?.property),
+      propertyId: f.property?.originalId ?? undefined, // required by onBlockChange
     })),
   };
 };
@@ -138,7 +136,6 @@ const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Laye
           layer.__typename === "LayerItem"
             ? processMergedProperty(layer.merged?.property)
             : undefined,
-        pluginProperty: convertProperty(layer.scenePlugin?.property),
         infoboxEditable: !!layer.infobox,
         infobox:
           layer.__typename === "LayerItem"
@@ -168,7 +165,6 @@ export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[]
         pluginId: widget.pluginId,
         extensionId: widget.extensionId,
         property: convertProperty(widget.property),
-        pluginProperty: convertProperty(widget.plugin?.scenePlugin?.property),
       }),
     );
 

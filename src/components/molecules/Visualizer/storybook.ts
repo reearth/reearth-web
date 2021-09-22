@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 
-import type { VisualizerContext, GlobalThis } from "./context";
+import type { VisualizerContext } from "./context";
 
 import type { Primitive } from ".";
 
@@ -70,41 +70,19 @@ export const context: VisualizerContext = {
     requestRender: act("requestRender"),
     getLocationFromScreenXY: act("getLocationFromScreenXY", () => undefined),
   },
-  pluginAPI: {
-    console: {
-      log: act("console.log"),
-      error: act("console.error"),
-    },
-    reearth: {
-      version: "0.0.0",
-      apiVersion: 0,
-      primitives: {
-        primitives,
-        select: act("primitive.select"),
-        show: act("primitive.show"),
-        hide: act("primitive.hide"),
-      },
-      visualizer: {
-        engine: "cesium",
-        camera: {
-          lat: 0,
-          lng: 0,
-          height: 0,
-          heading: 0,
-          pitch: 0,
-          roll: 0,
-          fov: Math.PI * (60 / 180),
-        },
-        flyTo: act("visualizer.flyTo"),
-        lookAt: act("visualizer.lookAt"),
-        zoomIn: act("visualizer.zoomIn"),
-        zoomOut: act("visualizer.zoomOut"),
-      },
-      on: act("reearth.on"),
-      off: act("reearth.off"),
-      once: act("reearth.once"),
-    },
-  } as GlobalThis,
+  hidePrimitive: act("primitive.hide"),
+  showPrimitive: act("primitive.show"),
+  selectPrimitive: act("primitive.select"),
+  camera: {
+    lat: 0,
+    lng: 0,
+    height: 0,
+    heading: 0,
+    pitch: 0,
+    roll: 0,
+    fov: Math.PI * (60 / 180),
+  },
+  primitives,
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

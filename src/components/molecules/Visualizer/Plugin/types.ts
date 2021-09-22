@@ -1,4 +1,4 @@
-export type globalThis = {
+export type GlobalThis = {
   reearth: Reearth;
   console: {
     readonly log: (...args: any[]) => void;
@@ -70,39 +70,45 @@ export type OverriddenInfobox = {
 };
 
 /** Primitive is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
-export type Primitive = {
+export type Primitive<P = any, IBP = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
   title?: string;
-  property?: any;
-  infobox?: Infobox;
+  property?: P;
+  infobox?: Infobox<IBP>;
   isVisible?: boolean;
   propertyId?: string;
-  pluginProperty?: any;
 };
 
-export type Infobox = {
-  property?: any;
-  blocks?: Block[];
+export type Infobox<BP = any> = {
+  property?: InfoboxProperty;
+  blocks?: Block<BP>[];
 };
 
-export type Block = {
+export type InfoboxProperty = {
+  default?: {
+    title?: string;
+    size?: "small" | "large";
+    typography?: Typography;
+    bgcolor?: string;
+  };
+};
+
+export type Block<P = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
-  property?: any;
+  property?: P;
   propertyId?: string;
-  pluginProperty?: any;
 };
 
-export type Widget = {
+export type Widget<P = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
-  property?: any;
+  property?: P;
   propertyId?: string;
-  pluginProperty?: any;
 };
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */
@@ -159,6 +165,17 @@ export type Camera = {
   roll: number;
   /** Field of view expressed in radians */
   fov: number;
+};
+
+export type Typography = {
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  color?: string;
+  textAlign?: "left" | "center" | "right" | "justify" | "justify_all";
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
 };
 
 /**

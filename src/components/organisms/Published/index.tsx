@@ -11,7 +11,7 @@ export type Props = {
 };
 
 export default function Published({ className, alias }: Props) {
-  const { sceneProperty, layers, widgets, ready, error } = useHooks(alias);
+  const { sceneProperty, pluginProperty, layers, widgets, ready, error } = useHooks(alias);
 
   return error ? (
     <Error />
@@ -22,6 +22,7 @@ export default function Published({ className, alias }: Props) {
       primitives={layers}
       widgets={widgets}
       sceneProperty={sceneProperty}
+      pluginProperty={pluginProperty}
       ready={ready}
       isBuilt
       isPublished

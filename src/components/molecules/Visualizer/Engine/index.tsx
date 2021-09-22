@@ -9,13 +9,14 @@ import React, {
   forwardRef,
 } from "react";
 
-import { SelectPrimitiveOptions } from "@reearth/plugin";
 import type { Camera } from "@reearth/util/value";
+
+import { SelectPrimitiveOptions } from "../Plugin/types";
 
 import Cesium from "./Cesium";
 import type { EngineRef } from "./ref";
 
-export type { OverriddenInfobox, SelectPrimitiveOptions } from "@reearth/plugin";
+export type { OverriddenInfobox, SelectPrimitiveOptions } from "../Plugin/types";
 
 export type SceneProperty = {
   default?: {

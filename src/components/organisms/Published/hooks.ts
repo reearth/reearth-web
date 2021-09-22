@@ -11,6 +11,10 @@ export default (alias?: string) => {
   const [error, setError] = useState(false);
 
   const sceneProperty = processProperty(data?.property);
+  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
+    (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
+    {},
+  );
 
   const layers = useMemo<Primitive[] | undefined>(
     () =>
@@ -21,7 +25,6 @@ export default (alias?: string) => {
         extensionId: l.extensionId,
         isVisible: true,
         property: processProperty(l.property),
-        pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
         infobox: l.infobox
           ? {
               property: processProperty(l.infobox.property),
@@ -30,8 +33,6 @@ export default (alias?: string) => {
                 pluginId: f.pluginId,
                 extensionId: f.extensionId,
                 property: processProperty(f.property),
-                pluginProperty: processProperty(data.plugins?.[f.pluginId]?.property),
-                // propertyId is not required in non-editable mode
               })),
             }
           : undefined,
@@ -47,7 +48,6 @@ export default (alias?: string) => {
         extensionId: w.extensionId,
         property: processProperty(w.property),
         enabled: true,
-        pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
       })),
     [data],
   );
@@ -96,6 +96,7 @@ export default (alias?: string) => {
   return {
     alias: actualAlias,
     sceneProperty,
+    pluginProperty,
     layers,
     widgets,
     ready,

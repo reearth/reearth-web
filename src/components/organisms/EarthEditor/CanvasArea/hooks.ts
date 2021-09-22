@@ -63,30 +63,6 @@ export default (isBuilt?: boolean) => {
     [removeInfoboxField, selected],
   );
 
-  const onBlockChange = useCallback(
-    async <T extends ValueType>(
-      propertyId: string,
-      schemaItemId: string,
-      fid: string,
-      v: ValueTypes[T],
-      vt: T,
-    ) => {
-      const gvt = valueTypeToGQL(vt);
-      if (!gvt) return;
-
-      await changePropertyValue({
-        variables: {
-          propertyId,
-          schemaItemId,
-          fieldId: fid,
-          type: gvt,
-          value: valueToGQL(v, vt),
-        },
-      });
-    },
-    [changePropertyValue],
-  );
-
   const { data: layerData } = useGetLayersQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
@@ -107,6 +83,43 @@ export default (isBuilt?: boolean) => {
   );
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const pluginProperty = useMemo(
+    () =>
+      scene?.plugins.reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b.pluginId]: convertProperty(b.property) }),
+        {},
+      ),
+    [scene?.plugins],
+  );
+
+  const onBlockChange = useCallback(
+    async <T extends ValueType>(
+      blockId: string,
+      schemaItemId: string,
+      fid: string,
+      v: ValueTypes[T],
+      vt: T,
+    ) => {
+      const propertyId = (
+        layers?.selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any
+      )?.propertyId as string | undefined;
+      if (!propertyId) return;
+
+      const gvt = valueTypeToGQL(vt);
+      if (!gvt) return;
+
+      await changePropertyValue({
+        variables: {
+          propertyId,
+          schemaItemId,
+          fieldId: fid,
+          type: gvt,
+          value: valueToGQL(v, vt),
+        },
+      });
+    },
+    [changePropertyValue, layers?.selectedLayer?.infobox?.blocks],
+  );
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
@@ -146,13 +159,13 @@ export default (isBuilt?: boolean) => {
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
     selectedBlockId: selectedBlock,
     sceneProperty,
+    pluginProperty,
     widgets,
     layers: layers?.layers,
     selectedLayer: layers?.selectedLayer,
     blocks,
     isCapturing,
     camera,
-    ready: !isBuilt || (!!layerData && !!widgetData),
     selectLayer,
     selectBlock,
     onBlockChange,
