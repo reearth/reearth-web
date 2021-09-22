@@ -26,6 +26,13 @@ type Props = {
   updatePassword?: (password: string, passwordConfirmation: string) => void;
 };
 
+export const tooShortRegex = /^(?=.{1,7}$)/;
+export const tooLongRegex = /^(?=.{25,}$)/;
+export const whitespaceRegex = /(?=.*\s)/;
+export const highSecurityRegex = /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/;
+export const medSecurityRegex = /^((?=.*[a-z])(?=.*[A-Z])|(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d))/;
+export const lowSecurityRegex = /^((?=\d)|(?=[a-z])|(?=[A-Z]))/;
+
 const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updatePassword }) => {
   const intl = useIntl();
   const theme = useTheme();
@@ -34,13 +41,6 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   const [regexMessage, setRegexMessage] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [disabled, setDisabled] = useState(true);
-
-  const tooShortRegex = /^(?=.{1,7}$)/;
-  const tooLongRegex = /^(?=.{25,}$)/;
-  const whitespaceRegex = /(?=.*\s)/;
-  const highSecurityRegex = /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/;
-  const medSecurityRegex = /^((?=.*[a-z])(?=.*[A-Z])|(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d))/;
-  const lowSecurityRegex = /^((?=\d)|(?=[a-z])|(?=[A-Z]))/;
 
   const handlePasswordChange = useCallback(
     (password: string) => {
@@ -147,13 +147,11 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
                 defaultMessage: `* Is between 8 and 25 characters in length`,
               })}
             </Text>
-
             <Text size="m">
               {intl.formatMessage({
                 defaultMessage: `* Has at least 2 different numbers`,
               })}
             </Text>
-
             <Text size="m">
               {intl.formatMessage({
                 defaultMessage: `* Uses lowercase and uppercase letters`,
