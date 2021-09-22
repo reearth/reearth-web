@@ -246,15 +246,15 @@ src:
             '539787951': Set your password now
             '619506016': That password is okay.
             '740918511': New password (for confirmation)
-            '856987295': '* Has at least 2 different numbers'
             '1000887516': 'In order to protect your account, make sure your password:'
+            '1578884909': Is between 8 and 25 characters in length
+            '1831673448': Has at least 2 different numbers
             '2039038750': New password
+            '2491671917': Uses lowercase and uppercase letters
             '2521568990': Change Password
-            '3020651684': '* Is between 8 and 25 characters in length'
             '3497016136': Too short.
             '3627357388': That password is great!
             '3907506757': 'That password confuses me, but might be okay.'
-            '4016968397': '* Uses lowercase and uppercase letters'
             '4066780408': That is terribly long.
             '4188749693': Change password
           ProfileSection:
