@@ -46,11 +46,11 @@ export type Props = PropsWithChildren<
     widgetAlignEditor?: boolean;
     onWidgetUpdate?: (
       id: string,
-      extended?: boolean | undefined,
-      index?: number | undefined,
-      align?: Alignments | undefined,
       location?: Location,
+      extended?: boolean,
+      index?: number,
     ) => Promise<void>;
+    onWidgetAlignSystemUpdate?: (location?: Location, align?: Alignments) => Promise<void>;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
@@ -72,6 +72,7 @@ export default function Visualizer({
   isPublished,
   widgetAlignEditor,
   onWidgetUpdate,
+  onWidgetAlignSystemUpdate,
   onPrimitiveSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
@@ -121,6 +122,7 @@ export default function Visualizer({
             alignSystem={widgets.alignSystem}
             enabled={widgetAlignEditor}
             onWidgetUpdate={onWidgetUpdate}
+            onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
             sceneProperty={sceneProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}

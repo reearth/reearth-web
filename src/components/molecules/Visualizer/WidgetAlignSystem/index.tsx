@@ -23,7 +23,7 @@ type WidgetZoneProps = {
   innerZone?: WidgetZone;
   onReorder: (id?: string, hoverIndex?: number) => void;
   onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (currentItem?: string, align?: Alignments) => void;
+  onAlignChange: (location?: LocationType | undefined, align?: AlignmentsType | undefined) => void;
   onExtend: (currentItem?: string, extended?: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -33,11 +33,11 @@ type WidgetZoneProps = {
 
 type WidgetAreaProps = {
   zone: string;
-  section: keyof WidgetZone;
+  section: string;
   area: WidgetArea;
   onReorder: (id?: string, hoverIndex?: number) => void;
   onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (currentItem?: string, align?: Alignments) => void;
+  onAlignChange: (location?: LocationType | undefined, align?: AlignmentsType | undefined) => void;
   onExtend: (currentItem?: string, extended?: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -50,11 +50,11 @@ type Props = {
   enabled?: boolean;
   onWidgetUpdate?: (
     id: string,
-    extended?: boolean | undefined,
-    index?: number | undefined,
-    align?: Alignments | undefined,
     location?: Location,
+    extended?: boolean,
+    index?: number,
   ) => Promise<void>;
+  onWidgetAlignSystemUpdate?: (location?: Location, align?: Alignments) => Promise<void>;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -76,6 +76,7 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
 }) => {
   const [align, setAlign] = useState(area.align ?? "start");
   const theme = useTheme();
+  console.log(area.align, "THIS IS WHAT IM LOOKING FOR");
 
   useEffect(() => {
     if (!area.align) return;
@@ -83,9 +84,8 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
   }, [area]);
 
   useEffect(() => {
-    if (!area.widgets?.[0]) return;
-    onAlignChange(area.widgets[0].id, align);
-  }, [align, area, onAlignChange]);
+    onAlignChange({ zone, section, area: area.position }, align);
+  }, [align, zone, section, area, onAlignChange]);
 
   return (
     <GridArea
@@ -241,6 +241,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
   enabled,
   onWidgetUpdate,
+  onWidgetAlignSystemUpdate,
   sceneProperty,
   pluginBaseUrl,
   isEditable,
@@ -249,6 +250,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   const { alignState, onReorder, onMove, onAlignChange, onExtend } = useHooks({
     alignSystem,
     onWidgetUpdate,
+    onWidgetAlignSystemUpdate,
   });
 
   return (

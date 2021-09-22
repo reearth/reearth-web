@@ -9,6 +9,12 @@ import {
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
   useUpdateWidgetMutation,
+  useUpdateWidgetAlignSystemMutation,
+  WidgetLocationInput,
+  WidgetZoneType,
+  WidgetSectionType,
+  WidgetAreaType,
+  WidgetAreaAlign,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -21,10 +27,13 @@ import {
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
-import {
-  Location,
-  Alignments,
-} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import { Alignments } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+
+export type Location = {
+  zone: string;
+  section: string;
+  area: string;
+};
 
 export default (isBuilt?: boolean) => {
   const [sceneId] = useSceneId();
@@ -149,35 +158,54 @@ export default (isBuilt?: boolean) => {
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
   const onWidgetUpdate = useCallback(
-    async (
-      id: string,
-      extended?: boolean,
-      index?: number,
-      align?: Alignments,
-      location?: Location,
-    ) => {
-      if (!sceneId || !id) return;
+    async (id: string, location?: Location, extended?: boolean, index?: number) => {
+      if (!sceneId) return;
 
-      let loc: { zone: string; section: string; area: string } | undefined;
-      if (location?.zone && location.section && location.area) {
-        loc = { zone: location.zone, section: location.section, area: location.area };
+      let loc: WidgetLocationInput | undefined;
+      if (location) {
+        loc = {
+          zone: location.zone.toUpperCase() as WidgetZoneType,
+          section: location.section.toUpperCase() as WidgetSectionType,
+          area: location.area.toUpperCase() as WidgetAreaType,
+        };
       }
       await updateWidgetMutation({
         variables: {
           sceneId,
           widgetId: id,
           enabled: true,
-          layout: {
-            extended,
-            location: loc,
-            index,
-            align,
-          },
+          location: loc,
+          extended,
+          index,
         },
         refetchQueries: ["GetEarthWidgets"],
       });
     },
     [sceneId, updateWidgetMutation],
+  );
+
+  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
+  const onWidgetAlignSystemUpdate = useCallback(
+    async (location?: Location, align?: Alignments) => {
+      if (!sceneId || !location) return;
+      console.log(sceneId, "sceneId");
+      console.log(location, "location");
+      console.log(align, "align");
+      console.log(align?.toUpperCase(), "alignUPP");
+
+      updateWidgetAlignSystemMutation({
+        variables: {
+          sceneId,
+          location: {
+            zone: location.zone.toUpperCase() as WidgetZoneType,
+            section: location.section.toUpperCase() as WidgetSectionType,
+            area: location.area.toUpperCase() as WidgetAreaType,
+          },
+          align: align?.toUpperCase() as WidgetAreaAlign,
+        },
+      });
+    },
+    [sceneId, updateWidgetAlignSystemMutation],
   );
 
   return {
@@ -201,6 +229,7 @@ export default (isBuilt?: boolean) => {
     onBlockRemove,
     onBlockInsert,
     onWidgetUpdate,
+    onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,

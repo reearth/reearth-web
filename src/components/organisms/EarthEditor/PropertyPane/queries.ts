@@ -429,10 +429,19 @@ export const UPDATE_WIDGET = gql`
     $sceneId: ID!
     $widgetId: ID!
     $enabled: Boolean
-    $layout: WidgetLayoutInput
+    $location: WidgetLocationInput
+    $extended: Boolean
+    $index: Int
   ) {
     updateWidget(
-      input: { sceneId: $sceneId, widgetId: $widgetId, enabled: $enabled, layout: $layout }
+      input: {
+        sceneId: $sceneId
+        widgetId: $widgetId
+        enabled: $enabled
+        location: $location
+        extended: $extended
+        index: $index
+      }
     ) {
       scene {
         id

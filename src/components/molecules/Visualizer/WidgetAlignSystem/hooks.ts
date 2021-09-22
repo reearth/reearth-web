@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { Widget as WidgetType } from "../Widget";
 
+export type Alignments = "start" | "centered" | "end";
+
 export type Location = {
   zone?: string;
   section?: string;
   area?: string;
 };
 
-export type Alignments = "start" | "centered" | "end";
-
 export type WidgetArea = {
-  position: "top" | "middle" | "bottom";
+  position: string;
   align?: Alignments;
   widgets?: (Widget | undefined)[];
 };
@@ -42,15 +42,16 @@ export type WidgetLayout = {
 export default function ({
   alignSystem,
   onWidgetUpdate,
+  onWidgetAlignSystemUpdate,
 }: {
   alignSystem: WidgetAlignSystem;
   onWidgetUpdate?: (
     id: string,
-    extended?: boolean | undefined,
-    index?: number | undefined,
-    align?: Alignments | undefined,
     location?: Location,
+    extended?: boolean,
+    index?: number,
   ) => Promise<void>;
+  onWidgetAlignSystemUpdate?: (location?: Location, align?: Alignments) => Promise<void>;
 }) {
   const [alignState, setAlignState] = useState(alignSystem);
 
@@ -58,16 +59,14 @@ export default function ({
     setAlignState(alignSystem);
   }, [alignSystem]);
 
-  // Reorder
   const onReorder = useCallback(
     (id?: string, hoverIndex?: number) => {
       if (!id) return;
-      onWidgetUpdate?.(id, undefined, hoverIndex, undefined);
+      onWidgetUpdate?.(id, undefined, undefined, hoverIndex);
     },
     [onWidgetUpdate],
   );
 
-  // Move
   const onMove = useCallback(
     (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => {
       if (
@@ -82,23 +81,23 @@ export default function ({
       )
         return;
 
-      onWidgetUpdate(currentItem, undefined, undefined, undefined, dropLocation);
+      onWidgetUpdate?.(currentItem, dropLocation, undefined, undefined);
     },
     [onWidgetUpdate],
   );
 
   const onAlignChange = useCallback(
-    (currentItem?: string, align?: Alignments) => {
-      if (!currentItem || !align || !onWidgetUpdate) return;
-      onWidgetUpdate(currentItem, undefined, undefined, align, undefined);
+    (location?: Location, align?: Alignments) => {
+      if (!location?.zone || !location.section || !location.area || !align) return;
+      onWidgetAlignSystemUpdate?.(location, align);
     },
-    [onWidgetUpdate],
+    [onWidgetAlignSystemUpdate],
   );
 
   const onExtend = useCallback(
     (currentItem?: string, extended?: boolean) => {
       if (!currentItem || !onWidgetUpdate) return;
-      onWidgetUpdate(currentItem, !extended, undefined, undefined, undefined);
+      onWidgetUpdate(currentItem, undefined, !extended, undefined);
     },
     [onWidgetUpdate],
   );
