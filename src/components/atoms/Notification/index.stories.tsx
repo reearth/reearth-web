@@ -4,7 +4,7 @@ import React from "react";
 import Notification from ".";
 
 export default {
-  title: "molecules/Common/NotificationBanner",
+  title: "atoms/NotificationBanner",
   component: Notification,
 } as Meta;
 

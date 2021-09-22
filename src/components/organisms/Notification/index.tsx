@@ -1,6 +1,6 @@
 import React from "react";
 
-import MoleculeNotificationBanner from "@reearth/components/molecules/Common/Notification";
+import MoleculeNotificationBanner from "@reearth/components/atoms/Notification";
 
 import useHooks from "./hooks";
 
