@@ -1,6 +1,7 @@
-import { useEffect, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "@reach/router";
+import { useEffect, useCallback, useState } from "react";
 
+import { User } from "@reearth/components/molecules/Common/Header";
 import {
   useMeQuery,
   useSceneQuery,
@@ -8,8 +9,7 @@ import {
   useProjectQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
-import { useError, useTeam, useProject } from "@reearth/state";
-import { User } from "@reearth/components/molecules/Common/Header";
+import { useTeam, useProject } from "@reearth/state";
 
 type Params = {
   teamId?: string;
@@ -19,7 +19,6 @@ type Params = {
 export default (params: Params) => {
   const projectId = params.projectId;
 
-  const [error, setError] = useError();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
 
@@ -52,35 +51,13 @@ export default (params: Params) => {
     name: teamsData?.me?.name ?? "",
   };
   const teams = teamsData?.me?.teams;
-  const team = teams?.find(team => team.id === teamId);
 
   useEffect(() => {
-    if (!currentTeam && teamsData?.me) {
-      const { id, name = "" } = teamId
-        ? teams?.find(t => t.id === teamId) ?? {}
-        : teamsData.me.myTeam;
-      if (id) {
-        setTeam({ id, name });
-      }
+    if (!currentTeam) {
+      setTeam(teamId ? teams?.find(t => t.id === teamId) : teamsData?.me?.myTeam ?? undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTeam, team, setTeam, teams, teamsData?.me]);
-
-  // update team name
-  useEffect(() => {
-    if (currentTeam?.id && teams) {
-      const { name = "" } = teams?.find(t => t.id === currentTeam.id) ?? {};
-      if (currentTeam.name != name) {
-        setTeam({ id: currentTeam.id, name });
-      }
-    }
-  }, [currentTeam, setTeam, teams]);
-
-  useEffect(() => {
-    if (team?.id && !currentTeam?.id) {
-      setTeam(team);
-    }
-  }, [currentTeam, team, setTeam]);
+  }, [currentTeam, setTeam, teams, teamsData?.me]);
 
   const { data } = useProjectQuery({
     variables: { teamId: teamId ?? "" },
@@ -126,26 +103,6 @@ export default (params: Params) => {
     [createTeamMutation, setTeam],
   );
 
-  const notificationTimeout = 5000;
-
-  const notification = useMemo<{ type: "error"; text: string } | undefined>(() => {
-    return error ? { type: "error", text: error } : undefined;
-  }, [error]);
-
-  useEffect(() => {
-    if (!error) return;
-    const timerID = setTimeout(() => {
-      setError(undefined);
-    }, notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [error, setError]);
-
-  const onNotificationClose = useCallback(() => {
-    if (error) {
-      setError(undefined);
-    }
-  }, [error, setError]);
-
   const back = useCallback(() => navigate(-1), [navigate]);
 
   return {
@@ -160,7 +117,5 @@ export default (params: Params) => {
     openModal,
     handleModalClose,
     back,
-    notification,
-    onNotificationClose,
   };
 };

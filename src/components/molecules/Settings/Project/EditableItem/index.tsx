@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
-import Field from "@reearth/components/molecules/Settings/Field";
-import TextBox from "@reearth/components/atoms/TextBox";
-import SelectField from "@reearth/components/molecules/Settings/SelectField";
+
 import Icon from "@reearth/components/atoms/Icon";
+import TextBox from "@reearth/components/atoms/TextBox";
+import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
+import Field from "@reearth/components/molecules/Settings/Field";
+import SelectField from "@reearth/components/molecules/Settings/SelectField";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 
 export type Props = {
   className?: string;
@@ -47,7 +48,7 @@ const EditableItem: React.FC<Props> = ({
   onEditCancel,
 }) => {
   const [isEditting, setIsEditting] = useState(false);
-  const [inputState, setInputState] = useState(body || currentItem);
+  const [inputState, setInputState] = useState(currentItem || body);
 
   const startEdit = useCallback(() => {
     if (onEditStart) {
@@ -56,6 +57,7 @@ const EditableItem: React.FC<Props> = ({
       setIsEditting(true);
     }
   }, [setIsEditting, onEditStart]);
+
   const cancelEdit = useCallback(() => {
     if (onEditCancel) {
       onEditCancel();
@@ -148,7 +150,9 @@ const ButtonWrapper = styled.div`
 `;
 
 const Image = styled.img`
-  max-height: 240px;
+  max-height: 800px;
+  max-width: 480px;
+  width: 75%;
 `;
 
 export default EditableItem;

@@ -3,6 +3,7 @@ import React from "react";
 // Components
 import MoleculeHeader from "@reearth/components/molecules/EarthEditor/Header";
 import PublicationModal from "@reearth/components/molecules/EarthEditor/PublicationModal";
+
 import useHooks from "./hooks";
 
 // TODO: ErrorBoudaryでエラーハンドリング
@@ -34,12 +35,10 @@ const Header: React.FC<Props> = ({ className }) => {
     currentTeam,
     currentProject,
     logout,
-    notification,
-    notify,
+    handleCopyToClipBoard,
     validAlias,
     checkProjectAlias,
     validatingAlias,
-    closeNotification,
     createTeam,
     url,
     openPreview,
@@ -59,8 +58,6 @@ const Header: React.FC<Props> = ({ className }) => {
         onSignOut={logout}
         onCreateTeam={createTeam}
         onChangeTeam={changeTeam}
-        notification={notification}
-        onNotificationClose={closeNotification}
         onPreviewOpen={openPreview}
         modalShown={workspaceModalVisible}
         openModal={openWorkspaceModal}
@@ -78,7 +75,7 @@ const Header: React.FC<Props> = ({ className }) => {
         projectId={projectId}
         projectAlias={projectAlias}
         publicationStatus={projectStatus}
-        onNotify={notify}
+        onCopyToClipBoard={handleCopyToClipBoard}
         validAlias={validAlias}
         onAliasValidate={checkProjectAlias}
         validatingAlias={validatingAlias}

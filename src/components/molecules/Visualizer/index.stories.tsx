@@ -1,7 +1,9 @@
-import React from "react";
 import { Meta, Story } from "@storybook/react";
-import Component, { Primitive, Widget, Props } from ".";
+import React from "react";
+
 import { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+
+import Component, { Primitive, Widget, Props } from ".";
 
 export default {
   title: "molecules/Visualizer",
@@ -126,24 +128,29 @@ const widgets: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } = {
         {
           position: "middle",
           widgets: [],
+          align: "start",
         },
         {
           position: "bottom",
           widgets: [],
+          align: "start",
         },
       ],
       center: [
         {
           position: "top",
           widgets: [],
+          align: "start",
         },
         {
           position: "middle",
           widgets: [],
+          align: "start",
         },
         {
           position: "bottom",
           widgets: [],
+          align: "start",
         },
       ],
       right: [
@@ -155,10 +162,12 @@ const widgets: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } = {
         {
           position: "middle",
           widgets: [],
+          align: "start",
         },
         {
           position: "bottom",
           widgets: [],
+          align: "start",
         },
       ],
     },
@@ -178,24 +187,29 @@ const widgets: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } = {
         {
           position: "middle",
           widgets: [],
+          align: "start",
         },
         {
           position: "bottom",
           widgets: [],
+          align: "start",
         },
       ],
       center: [
         {
           position: "top",
           widgets: [],
+          align: "start",
         },
         {
           position: "middle",
           widgets: [],
+          align: "start",
         },
         {
           position: "bottom",
           widgets: [],
+          align: "start",
         },
       ],
       right: [
@@ -207,10 +221,12 @@ const widgets: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } = {
         {
           position: "middle",
           widgets: [],
+          align: "start",
         },
         {
           position: "bottom",
           widgets: [],
+          align: "start",
         },
       ],
     },

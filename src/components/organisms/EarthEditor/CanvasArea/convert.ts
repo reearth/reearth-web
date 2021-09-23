@@ -1,3 +1,12 @@
+import { Item } from "@reearth/components/atoms/ContentPicker";
+import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import {
+  WidgetAlignSystem,
+  WidgetZone,
+  WidgetSection,
+  WidgetArea,
+  Alignments,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   GetLayersQuery,
   GetBlocksQuery,
@@ -16,16 +25,6 @@ import {
   WidgetArea as WidgetAreaType,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
-
-import { Item } from "@reearth/components/atoms/ContentPicker";
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
-import {
-  WidgetAlignSystem,
-  WidgetZone,
-  WidgetSection,
-  WidgetArea,
-  Alignments,
-} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 type BlockType = Item & {
   pluginId: string;

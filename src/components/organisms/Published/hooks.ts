@@ -1,19 +1,20 @@
-import { useState, useMemo, useEffect } from "react";
 import { mapValues } from "lodash-es";
+import { useState, useMemo, useEffect } from "react";
 
-import {
-  Maybe,
-  WidgetSection as WidgetSectionType,
-  WidgetZone as WidgetZoneType,
-} from "@reearth/gql";
 import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
-import { PublishedData } from "./types";
 import {
   WidgetAlignSystem,
   WidgetZone,
   WidgetSection,
   Alignments,
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import {
+  Maybe,
+  WidgetSection as WidgetSectionType,
+  WidgetZone as WidgetZoneType,
+} from "@reearth/gql";
+
+import { PublishedData } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();

@@ -2,6 +2,7 @@ import React from "react";
 
 import { useAuth } from "@reearth/auth";
 import MoleculesSettingPage from "@reearth/components/molecules/Settings/SettingPage";
+
 import useHooks from "./hooks";
 
 type Props = {
@@ -20,14 +21,12 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
     currentTeam,
     currentProject,
     sceneId,
+    modalShown,
     changeTeam,
     createTeam,
-    modalShown,
     openModal,
     handleModalClose,
     back,
-    notification,
-    onNotificationClose,
   } = useHooks({
     teamId,
     projectId,
@@ -46,9 +45,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
       onChangeTeam={changeTeam}
       modalShown={modalShown}
       openModal={openModal}
-      handleModalClose={handleModalClose}
-      notification={notification}
-      onNotificationClose={onNotificationClose}>
+      handleModalClose={handleModalClose}>
       {children}
     </MoleculesSettingPage>
   );

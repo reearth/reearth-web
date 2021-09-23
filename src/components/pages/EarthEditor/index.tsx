@@ -1,13 +1,14 @@
 import React from "react";
 
-import { Provider as DndProvider } from "@reearth/util/use-dnd";
 import { withAuthenticationRequired, AuthenticationRequiredPage } from "@reearth/auth";
 import EarthEditorPage from "@reearth/components/molecules/EarthEditor/EarthEditorPage";
 import CanvasArea from "@reearth/components/organisms/EarthEditor/CanvasArea";
 import Header from "@reearth/components/organisms/EarthEditor/Header";
 import LeftMenu from "@reearth/components/organisms/EarthEditor/LeftMenu";
-import RightMenu from "@reearth/components/organisms/EarthEditor/RightMenu";
 import PrimitiveHeader from "@reearth/components/organisms/EarthEditor/PrimitiveHeader";
+import RightMenu from "@reearth/components/organisms/EarthEditor/RightMenu";
+import { Provider as DndProvider } from "@reearth/util/use-dnd";
+
 import useHooks from "./hooks";
 
 export type Props = {

@@ -1,8 +1,9 @@
+import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
-import { useNavigate } from "@reach/router";
-import { useError, useTeam, useProject, useUnselectProject } from "@reearth/state";
+import type { User } from "@reearth/components/molecules/Common/Header";
+import type { Project, Team } from "@reearth/components/molecules/Dashboard";
 import {
   useMeQuery,
   useCreateTeamMutation,
@@ -14,17 +15,15 @@ import {
   AssetsQuery,
   useAssetsQuery,
 } from "@reearth/gql";
-
-import type { User } from "@reearth/components/molecules/Common/Header";
-import type { Project, Team } from "@reearth/components/molecules/Dashboard";
+import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
-  const [error, setError] = useError();
   const [currentTeam, setCurrentTeam] = useTeam();
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
+  const [, setNotification] = useNotification();
 
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -45,12 +44,16 @@ export default (teamId?: string) => {
 
   const teams = data?.me?.teams;
   const team = teams?.find(team => team.id === teamId);
+  const personal = teamId === data?.me?.myTeam.id;
 
   useEffect(() => {
     if (team?.id && team.id !== currentTeam?.id) {
-      setCurrentTeam(team);
+      setCurrentTeam({
+        personal,
+        ...team,
+      });
     }
-  }, [currentTeam, team, setCurrentTeam]);
+  }, [currentTeam, team, setCurrentTeam, personal]);
 
   const changeTeam = useCallback(
     (teamId: string) => {
@@ -71,33 +74,17 @@ export default (teamId?: string) => {
         refetchQueries: ["teams"],
       });
       if (results.data?.createTeam) {
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({ defaultMessage: "Successfully created workspace!" }),
+        });
         setCurrentTeam(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setCurrentTeam, refetch, navigate],
+    [createTeamMutation, setCurrentTeam, refetch, navigate, intl, setNotification],
   );
-
-  const notificationTimeout = 5000;
-
-  const notification = useMemo<{ type: "error"; text: string } | undefined>(() => {
-    return error ? { type: "error", text: error } : undefined;
-  }, [error]);
-
-  useEffect(() => {
-    if (!error) return;
-    const timerID = setTimeout(() => {
-      setError(undefined);
-    }, notificationTimeout);
-    return () => clearTimeout(timerID);
-  }, [error, setError]);
-
-  const onNotificationClose = useCallback(() => {
-    if (error) {
-      setError(undefined);
-    }
-  }, [error, setError]);
 
   useEffect(() => {
     // unselect project
@@ -151,18 +138,32 @@ export default (teamId?: string) => {
         },
       });
       if (project.errors || !project.data?.createProject) {
-        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
+        setModalShown(false);
+        return;
       }
       const scene = await createScene({
         variables: { projectId: project.data.createProject.project.id },
       });
-      if (scene.errors || !scene.data?.createScene) {
-        throw new Error(intl.formatMessage({ defaultMessage: "Failed to create project." }));
+      if (scene.errors) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+        });
+        setModalShown(false);
+        return;
       }
+      setNotification({
+        type: "success",
+        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+      });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, teamId, refetch, intl],
+    [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
   const [createAssetMutation] = useCreateAssetMutation();
@@ -194,8 +195,6 @@ export default (teamId?: string) => {
     currentTeam: team as Team,
     createTeam,
     changeTeam,
-    notification,
-    onNotificationClose,
     modalShown,
     openModal,
     handleModalClose,

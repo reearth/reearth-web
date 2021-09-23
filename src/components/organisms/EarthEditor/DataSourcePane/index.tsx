@@ -1,9 +1,10 @@
 import React from "react";
 
+import DatasetPane from "@reearth/components/molecules/EarthEditor/DatasetPane";
+
 import useHooks from "./hooks";
 
 // Components
-import DatasetPane from "@reearth/components/molecules/EarthEditor/DatasetPane";
 
 interface Props {
   className?: string;
@@ -17,7 +18,6 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
-    onNotify,
   } = useHooks();
 
   return (
@@ -29,7 +29,6 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
       onDatasetImport={handleDatasetImport}
       onRemoveDataset={handleRemoveDataset}
       loading={loading}
-      onNotify={onNotify}
     />
   );
 };

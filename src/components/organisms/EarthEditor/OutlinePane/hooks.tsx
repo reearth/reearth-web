@@ -1,13 +1,7 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import {
-  useSceneId,
-  useSelected,
-  useSelectedBlock,
-  useRootLayerId,
-  useWidgetAlignEditor,
-} from "@reearth/state";
+import { Format, Layer, Widget } from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
@@ -20,7 +14,13 @@ import {
   useGetWidgetsQuery,
   PluginExtensionType,
 } from "@reearth/gql";
-import { Format, Layer, Widget } from "@reearth/components/molecules/EarthEditor/OutlinePane";
+import {
+  useSceneId,
+  useSelected,
+  useSelectedBlock,
+  useRootLayerId,
+  useWidgetAlignEditor,
+} from "@reearth/state";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
 

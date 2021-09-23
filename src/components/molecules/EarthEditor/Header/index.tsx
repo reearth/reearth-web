@@ -2,23 +2,22 @@ import React, { useRef, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
+import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
 import Flex from "@reearth/components/atoms/Flex";
 import PublicationStatus, { Status } from "@reearth/components/atoms/PublicationStatus";
 import CommonHeader, {
   Props as CommonHeaderProps,
 } from "@reearth/components/molecules/Common/Header";
-import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
-import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
 import {
   MenuList,
   MenuListItem,
   MenuListItemLabel,
 } from "@reearth/components/molecules/Common/MenuList";
-
+import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import { styled } from "@reearth/theme";
 
 // Proxy dependent types
-export { User, Team, NotificationType } from "@reearth/components/molecules/Common/Header";
+export { User, Team } from "@reearth/components/molecules/Common/Header";
 
 export type publishingType = "publishing" | "updating" | "unpublishing";
 export type Project = {

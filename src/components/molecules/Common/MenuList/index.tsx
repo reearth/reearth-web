@@ -1,8 +1,9 @@
-import React from "react";
 import { Link } from "@reach/router";
-import { styled, useTheme } from "@reearth/theme";
+import React from "react";
+
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 
 export const MenuListItemLabel: React.FC<{
   icon?: string;
@@ -16,19 +17,24 @@ export const MenuListItemLabel: React.FC<{
   const theme = useTheme();
   const content = (
     <MenuItemWrapper
-      size="m"
       color={(disabled && theme.properties.text) || color || theme.main.text}
       onClick={onClick}
       disabled={disabled}>
       {icon ? <StyledIcon icon={icon} size={20} color={color} disabled={disabled} /> : null}
-      <StyledLabel center={center}>{text}</StyledLabel>
+      <StyledLabel size="m" center={center}>
+        {text}
+      </StyledLabel>
     </MenuItemWrapper>
   );
 
   return typeof linkTo !== "string" ? (
     content
   ) : (
-    <StyledLinkButton to={linkTo}>{content}</StyledLinkButton>
+    <StyledLinkButton
+      style={{ color: (disabled && theme.properties.text) || color || theme.main.text }}
+      to={linkTo}>
+      {content}
+    </StyledLinkButton>
   );
 };
 
@@ -49,7 +55,7 @@ export const MenuListItem = styled.li<{ noHover?: boolean }>`
   }
 `;
 
-const MenuItemWrapper = styled(Text)<{ disabled?: boolean }>`
+const MenuItemWrapper = styled.div<{ disabled?: boolean }>`
   flex: auto;
   display: flex;
   padding: 0 16px;
@@ -60,7 +66,7 @@ const MenuItemWrapper = styled(Text)<{ disabled?: boolean }>`
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
 `;
 
-const StyledLabel = styled.div<{ center?: boolean }>`
+const StyledLabel = styled(Text)<{ center?: boolean }>`
   flex: auto;
   text-align: ${({ center }) => (center ? "center" : "left")};
 `;
