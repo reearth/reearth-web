@@ -404,11 +404,11 @@ function useEmit<T extends { [K in string]: any[] }>(
   emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined,
 ) {
   for (const k of Object.keys(values)) {
+    const args = values[k];
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-      const args = values[k];
       if (!args) return;
       emit?.(k, ...args);
-    }, [emit, k, values]);
+    }, [emit, k, args]);
   }
 }
