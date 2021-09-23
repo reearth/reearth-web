@@ -44,13 +44,16 @@ export type Props = PropsWithChildren<
     pluginBaseUrl?: string;
     isPublished?: boolean;
     widgetAlignEditor?: boolean;
-    onWidgetUpdate?: (
+    onWidgetUpdate: (
       id: string,
-      location?: Location,
-      extended?: boolean,
-      index?: number,
+      location?: Location | undefined,
+      extended?: boolean | undefined,
+      index?: number | undefined,
     ) => Promise<void>;
-    onWidgetAlignSystemUpdate?: (location?: Location, align?: Alignments) => Promise<void>;
+    onWidgetAlignSystemUpdate: (
+      location?: Location | undefined,
+      align?: Alignments | undefined,
+    ) => Promise<void>;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &

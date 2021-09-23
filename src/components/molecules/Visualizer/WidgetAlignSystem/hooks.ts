@@ -11,7 +11,7 @@ export type Location = {
 
 export type WidgetArea = {
   position: string;
-  align?: Alignments;
+  align: Alignments;
   widgets?: (Widget | undefined)[];
 };
 
@@ -89,6 +89,18 @@ export default function ({
   const onAlignChange = useCallback(
     (location?: Location, align?: Alignments) => {
       if (!location?.zone || !location.section || !location.area || !align) return;
+      // let newAlign: Alignments;
+      // switch (align) {
+      //   case "start":
+      //     newAlign = "centered";
+      //     break;
+      //   case "centered":
+      //     newAlign = "end";
+      //     break;
+      //   default:
+      //     newAlign = "start";
+      //     break;
+      // }
       onWidgetAlignSystemUpdate?.(location, align);
     },
     [onWidgetAlignSystemUpdate],

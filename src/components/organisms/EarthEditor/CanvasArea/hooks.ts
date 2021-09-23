@@ -27,13 +27,10 @@ import {
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
-import { Alignments } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-
-export type Location = {
-  zone: string;
-  section: string;
-  area: string;
-};
+import {
+  Location,
+  Alignments,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
 export default (isBuilt?: boolean) => {
   const [sceneId] = useSceneId();
@@ -164,9 +161,9 @@ export default (isBuilt?: boolean) => {
       let loc: WidgetLocationInput | undefined;
       if (location) {
         loc = {
-          zone: location.zone.toUpperCase() as WidgetZoneType,
-          section: location.section.toUpperCase() as WidgetSectionType,
-          area: location.area.toUpperCase() as WidgetAreaType,
+          zone: location.zone?.toUpperCase() as WidgetZoneType,
+          section: location.section?.toUpperCase() as WidgetSectionType,
+          area: location.area?.toUpperCase() as WidgetAreaType,
         };
       }
       await updateWidgetMutation({
@@ -188,18 +185,14 @@ export default (isBuilt?: boolean) => {
   const onWidgetAlignSystemUpdate = useCallback(
     async (location?: Location, align?: Alignments) => {
       if (!sceneId || !location) return;
-      console.log(sceneId, "sceneId");
-      console.log(location, "location");
-      console.log(align, "align");
-      console.log(align?.toUpperCase(), "alignUPP");
 
       updateWidgetAlignSystemMutation({
         variables: {
           sceneId,
           location: {
-            zone: location.zone.toUpperCase() as WidgetZoneType,
-            section: location.section.toUpperCase() as WidgetSectionType,
-            area: location.area.toUpperCase() as WidgetAreaType,
+            zone: location.zone?.toUpperCase() as WidgetZoneType,
+            section: location.section?.toUpperCase() as WidgetSectionType,
+            area: location.area?.toUpperCase() as WidgetAreaType,
           },
           align: align?.toUpperCase() as WidgetAreaAlign,
         },

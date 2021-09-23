@@ -1889,8 +1889,8 @@ export enum Visualizer {
 
 export type WidgetAlignSystem = {
   __typename?: 'WidgetAlignSystem';
-  inner?: Maybe<WidgetZone>;
-  outer?: Maybe<WidgetZone>;
+  inner: WidgetZone;
+  outer: WidgetZone;
 };
 
 export type WidgetArea = {
@@ -1940,9 +1940,9 @@ export type WidgetLocationInput = {
 
 export type WidgetSection = {
   __typename?: 'WidgetSection';
-  top?: Maybe<WidgetArea>;
-  middle?: Maybe<WidgetArea>;
-  bottom?: Maybe<WidgetArea>;
+  top: WidgetArea;
+  middle: WidgetArea;
+  bottom: WidgetArea;
 };
 
 export enum WidgetSectionType {
@@ -1953,9 +1953,9 @@ export enum WidgetSectionType {
 
 export type WidgetZone = {
   __typename?: 'WidgetZone';
-  left?: Maybe<WidgetSection>;
-  center?: Maybe<WidgetSection>;
-  right?: Maybe<WidgetSection>;
+  left: WidgetSection;
+  center: WidgetSection;
+  right: WidgetSection;
 };
 
 export enum WidgetZoneType {
@@ -3654,7 +3654,7 @@ export type UpdateWidgetMutation = (
       & Pick<Scene, 'id'>
       & { widgets: Array<(
         { __typename?: 'SceneWidget' }
-        & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId' | 'propertyId'>
+        & Pick<SceneWidget, 'id' | 'enabled' | 'extended' | 'pluginId' | 'extensionId' | 'propertyId'>
       )> }
     ) }
   )> }
@@ -4165,41 +4165,41 @@ export type GetSceneQuery = (
 
 export type WidgetAlignSystemFragmentFragment = (
   { __typename?: 'WidgetAlignSystem' }
-  & { outer?: Maybe<(
+  & { outer: (
     { __typename?: 'WidgetZone' }
     & WidgetZoneFragmentFragment
-  )>, inner?: Maybe<(
+  ), inner: (
     { __typename?: 'WidgetZone' }
     & WidgetZoneFragmentFragment
-  )> }
+  ) }
 );
 
 export type WidgetZoneFragmentFragment = (
   { __typename?: 'WidgetZone' }
-  & { left?: Maybe<(
+  & { left: (
     { __typename?: 'WidgetSection' }
     & WidgetSectionFragmentFragment
-  )>, center?: Maybe<(
+  ), center: (
     { __typename?: 'WidgetSection' }
     & WidgetSectionFragmentFragment
-  )>, right?: Maybe<(
+  ), right: (
     { __typename?: 'WidgetSection' }
     & WidgetSectionFragmentFragment
-  )> }
+  ) }
 );
 
 export type WidgetSectionFragmentFragment = (
   { __typename?: 'WidgetSection' }
-  & { top?: Maybe<(
+  & { top: (
     { __typename?: 'WidgetArea' }
     & WidgetAreaFragmentFragment
-  )>, middle?: Maybe<(
+  ), middle: (
     { __typename?: 'WidgetArea' }
     & WidgetAreaFragmentFragment
-  )>, bottom?: Maybe<(
+  ), bottom: (
     { __typename?: 'WidgetArea' }
     & WidgetAreaFragmentFragment
-  )> }
+  ) }
 );
 
 export type WidgetAreaFragmentFragment = (
@@ -7387,6 +7387,7 @@ export const UpdateWidgetDocument = gql`
       widgets {
         id
         enabled
+        extended
         pluginId
         extensionId
         propertyId

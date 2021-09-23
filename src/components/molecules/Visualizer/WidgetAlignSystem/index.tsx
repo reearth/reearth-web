@@ -23,7 +23,7 @@ type WidgetZoneProps = {
   innerZone?: WidgetZone;
   onReorder: (id?: string, hoverIndex?: number) => void;
   onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (location?: LocationType | undefined, align?: AlignmentsType | undefined) => void;
+  onAlignChange: (location?: Location | undefined, align?: AlignmentsType | undefined) => void;
   onExtend: (currentItem?: string, extended?: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -37,7 +37,7 @@ type WidgetAreaProps = {
   area: WidgetArea;
   onReorder: (id?: string, hoverIndex?: number) => void;
   onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (location?: LocationType | undefined, align?: AlignmentsType | undefined) => void;
+  onAlignChange: (location?: Location | undefined, align?: AlignmentsType | undefined) => void;
   onExtend: (currentItem?: string, extended?: boolean) => void;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -76,7 +76,6 @@ const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
 }) => {
   const [align, setAlign] = useState(area.align ?? "start");
   const theme = useTheme();
-  console.log(area.align, "THIS IS WHAT IM LOOKING FOR");
 
   useEffect(() => {
     if (!area.align) return;

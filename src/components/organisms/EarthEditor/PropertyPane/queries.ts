@@ -448,6 +448,7 @@ export const UPDATE_WIDGET = gql`
         widgets {
           id
           enabled
+          extended
           pluginId
           extensionId
           propertyId
