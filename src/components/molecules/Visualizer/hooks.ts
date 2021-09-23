@@ -13,7 +13,14 @@ import type {
   SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
+import { CommonReearth, useCommonReearth } from "./Plugin/api";
 import type { Layer as RawLayer } from "./Primitive";
+
+declare global {
+  interface Window {
+    reearth?: CommonReearth;
+  }
+}
 
 export type Layer = RawLayer & {
   infoboxEditable?: boolean;
@@ -175,6 +182,15 @@ export default ({
       setInnerCamera(c);
     }
   }, [engineType]);
+
+  const [commonReearth] = useCommonReearth({ ctx: visualizerContext, sceneProperty });
+  useEffect(() => {
+    // expose plugin API for developers
+    window.reearth = commonReearth;
+    return () => {
+      delete window.reearth;
+    };
+  }, [commonReearth]);
 
   return {
     engineRef,

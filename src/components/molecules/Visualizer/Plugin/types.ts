@@ -1,4 +1,5 @@
 export type GlobalThis = {
+  Cesium?: Cesium;
   reearth: Reearth;
   console: {
     readonly log: (...args: any[]) => void;
@@ -10,10 +11,10 @@ export type GlobalThis = {
 export type Reearth = {
   readonly version: string;
   readonly apiVersion: number;
+  readonly visualizer: Visualizer;
+  readonly ui: UI;
   readonly plugin: Plugin;
   readonly layers: Layers;
-  readonly ui: UI;
-  readonly visualizer: Visualizer;
   readonly layer?: Layer;
   readonly widget?: Widget;
   readonly block?: Block;
@@ -227,3 +228,6 @@ export type CameraOptions = {
   /** Easing function. */
   easing?: (time: number) => number;
 };
+
+/** Cesium API: available only when the plugin is a primitive */
+export type Cesium = {};

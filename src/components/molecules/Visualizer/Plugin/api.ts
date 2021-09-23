@@ -6,7 +6,9 @@ import type { Events, EventEmitter } from "@reearth/util/event";
 
 import type { VisualizerContext } from "..";
 
-import type { GlobalThis, Block, Layer, Widget, ReearthEventType } from "./types";
+import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth } from "./types";
+
+export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
 
 function api({
   render,
@@ -17,8 +19,8 @@ function api({
   extensionId,
   extensionType,
   pluginProperty,
-  sceneProperty,
   events,
+  sceneProperty,
   findLayerById,
   findLayerByIds,
   selectedLayer,
@@ -36,40 +38,41 @@ function api({
   lookAt,
   zoomIn,
   zoomOut,
-}: IFrameAPI & {
-  engine: string;
-  engineAPI: any;
-  pluginId: string;
-  extensionId: string;
-  extensionType: string;
-  pluginProperty: any;
-  sceneProperty: any;
-  events: Events<ReearthEventType>;
-  selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
-  layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
-  layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
-  layers: () => GlobalThis["reearth"]["layers"]["layers"];
-  layer: () => GlobalThis["reearth"]["layer"];
-  block: () => GlobalThis["reearth"]["block"];
-  widget: () => GlobalThis["reearth"]["widget"];
-  camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
-  findLayerById: GlobalThis["reearth"]["layers"]["findById"];
-  findLayerByIds: GlobalThis["reearth"]["layers"]["findByIds"];
-  selectLayer: GlobalThis["reearth"]["layers"]["select"];
-  showLayer: GlobalThis["reearth"]["layers"]["show"];
-  hideLayer: GlobalThis["reearth"]["layers"]["hide"];
-  flyTo: GlobalThis["reearth"]["visualizer"]["flyTo"];
-  lookAt: GlobalThis["reearth"]["visualizer"]["lookAt"];
-  zoomIn: GlobalThis["reearth"]["visualizer"]["zoomIn"];
-  zoomOut: GlobalThis["reearth"]["visualizer"]["zoomOut"];
-}): GlobalThis {
+}: IFrameAPI &
+  Parameters<typeof commonReearth>[0] & {
+    engineAPI: any;
+    pluginId: string;
+    extensionId: string;
+    extensionType: string;
+    pluginProperty: any;
+    layer: () => GlobalThis["reearth"]["layer"];
+    block: () => GlobalThis["reearth"]["block"];
+    widget: () => GlobalThis["reearth"]["widget"];
+  }): GlobalThis {
   return {
     ...builtin(),
     ...(engineAPI ?? {}),
     reearth: {
       ...(engineAPI?.reearth ?? {}),
-      version: window.REEARTH_CONFIG?.version || "",
-      apiVersion: 1,
+      ...commonReearth({
+        engine,
+        sceneProperty,
+        events,
+        findLayerById,
+        findLayerByIds,
+        selectedLayer,
+        layerSelectionReason,
+        layerOverriddenInfobox,
+        layers,
+        camera,
+        selectLayer,
+        showLayer,
+        hideLayer,
+        flyTo,
+        lookAt,
+        zoomIn,
+        zoomOut,
+      }),
       ui: {
         show: (
           html: string,
@@ -97,38 +100,6 @@ function api({
           return pluginProperty;
         },
       },
-      visualizer: {
-        engine,
-        flyTo,
-        lookAt,
-        zoomIn,
-        zoomOut,
-        get camera() {
-          return camera();
-        },
-        get property() {
-          return sceneProperty;
-        },
-      },
-      layers: {
-        select: selectLayer,
-        show: showLayer,
-        hide: hideLayer,
-        get layers() {
-          return layers();
-        },
-        get selectionReason() {
-          return layerSelectionReason();
-        },
-        get overriddenInfobox() {
-          return layerOverriddenInfobox();
-        },
-        get selected() {
-          return selectedLayer();
-        },
-        findById: findLayerById,
-        findByIds: findLayerByIds,
-      },
       ...(extensionType === "primitive"
         ? {
             get layer() {
@@ -150,7 +121,6 @@ function api({
             },
           }
         : {}),
-      ...events,
     },
   };
 }
@@ -161,6 +131,82 @@ const builtin = (): Omit<GlobalThis, "reearth"> => ({
     log: console.log,
   },
 });
+
+export function commonReearth({
+  engine,
+  events,
+  sceneProperty,
+  camera,
+  selectedLayer,
+  layerSelectionReason,
+  layerOverriddenInfobox,
+  layers,
+  findLayerById,
+  findLayerByIds,
+  selectLayer,
+  showLayer,
+  hideLayer,
+  flyTo,
+  lookAt,
+  zoomIn,
+  zoomOut,
+}: {
+  engine: string;
+  events: Events<ReearthEventType>;
+  sceneProperty: () => any;
+  camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
+  selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
+  layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
+  layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
+  layers: () => GlobalThis["reearth"]["layers"]["layers"];
+  findLayerById: GlobalThis["reearth"]["layers"]["findById"];
+  findLayerByIds: GlobalThis["reearth"]["layers"]["findByIds"];
+  selectLayer: GlobalThis["reearth"]["layers"]["select"];
+  showLayer: GlobalThis["reearth"]["layers"]["show"];
+  hideLayer: GlobalThis["reearth"]["layers"]["hide"];
+  flyTo: GlobalThis["reearth"]["visualizer"]["flyTo"];
+  lookAt: GlobalThis["reearth"]["visualizer"]["lookAt"];
+  zoomIn: GlobalThis["reearth"]["visualizer"]["zoomIn"];
+  zoomOut: GlobalThis["reearth"]["visualizer"]["zoomOut"];
+}): CommonReearth {
+  return {
+    version: window.REEARTH_CONFIG?.version || "",
+    apiVersion: 1,
+    visualizer: {
+      engine,
+      flyTo,
+      lookAt,
+      zoomIn,
+      zoomOut,
+      get camera() {
+        return camera();
+      },
+      get property() {
+        return sceneProperty();
+      },
+    },
+    layers: {
+      select: selectLayer,
+      show: showLayer,
+      hide: hideLayer,
+      get layers() {
+        return layers();
+      },
+      get selectionReason() {
+        return layerSelectionReason();
+      },
+      get overriddenInfobox() {
+        return layerOverriddenInfobox();
+      },
+      get selected() {
+        return selectedLayer();
+      },
+      findById: findLayerById,
+      findByIds: findLayerByIds,
+    },
+    ...events,
+  };
+}
 
 export function useAPI({
   ctx,
@@ -273,6 +319,75 @@ export function useAPI({
       emit?.("close");
     },
     [emit],
+  );
+
+  return [exposed, emit];
+}
+
+export function useCommonReearth({
+  ctx,
+  sceneProperty,
+}: {
+  ctx: VisualizerContext | undefined;
+  sceneProperty: any;
+}): [CommonReearth | undefined, EventEmitter<ReearthEventType> | undefined] {
+  const engine = ctx?.engine;
+
+  const getCamera = useGet(ctx?.camera);
+  const getSelectedLayer = useGet(ctx?.selectedLayer);
+  const getLayerSelectionReason = useGet(ctx?.layerSelectionReason);
+  const getLayerOverriddenInfobox = useGet(ctx?.layerOverridenInfobox);
+  const getLayers = useGet(ctx?.layers ?? []);
+
+  const [ev, emit] = useMemo(
+    () => events<Pick<ReearthEventType, "cameramove" | "select">>(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [engine],
+  );
+
+  const exposed = useMemo((): CommonReearth | undefined => {
+    if (!engine) return;
+    return commonReearth({
+      engine: engine.name,
+      sceneProperty,
+      events: ev,
+      layers: getLayers,
+      selectedLayer: getSelectedLayer,
+      layerSelectionReason: getLayerSelectionReason,
+      layerOverriddenInfobox: getLayerOverriddenInfobox,
+      camera: getCamera,
+      findLayerById: ctx.findLayerById,
+      findLayerByIds: ctx.findLayerByIds,
+      selectLayer: ctx.selectLayer,
+      showLayer: ctx.showLayer,
+      hideLayer: ctx.hideLayer,
+      flyTo: engine.flyTo,
+      lookAt: engine.lookAt,
+      zoomIn: engine.zoomIn,
+      zoomOut: engine.zoomOut,
+    });
+  }, [
+    ctx?.findLayerById,
+    ctx?.findLayerByIds,
+    ctx?.hideLayer,
+    ctx?.selectLayer,
+    ctx?.showLayer,
+    engine,
+    ev,
+    getCamera,
+    getLayerOverriddenInfobox,
+    getLayerSelectionReason,
+    getLayers,
+    getSelectedLayer,
+    sceneProperty,
+  ]);
+
+  useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
+    {
+      select: ctx?.selectedLayer ? [ctx.selectedLayer] : undefined,
+      cameramove: ctx?.camera ? [ctx.camera] : undefined,
+    },
+    emit,
   );
 
   return [exposed, emit];
