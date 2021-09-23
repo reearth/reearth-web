@@ -2,7 +2,6 @@ import React, { ComponentType } from "react";
 
 import { Widget } from "../Plugin";
 
-// import Plugins, { Widget } from "../Plugin";
 import builtin from "./builtin";
 
 export type { Widget } from "../Plugin";

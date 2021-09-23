@@ -27,11 +27,6 @@ export default (isBuilt?: boolean) => {
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
 
-  const selectLayer = useCallback(
-    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
-    [select],
-  );
-
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
   const [changePropertyValue] = useChangePropertyValueMutation();
@@ -77,10 +72,9 @@ export default (isBuilt?: boolean) => {
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
   // convert data
-  const layers = useMemo(
-    () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
-    [layerData, selected],
-  );
+  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
+  const layers = useMemo(() => convertLayers(layerData), [layerData]);
+  const selectedLayer = selectedLayerId ? layers?.map.get(selectedLayerId) : undefined;
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const pluginProperty = useMemo(
@@ -92,6 +86,11 @@ export default (isBuilt?: boolean) => {
     [scene?.plugins],
   );
 
+  const selectLayer = useCallback(
+    (id?: string) => select(id && layers?.map.has(id) ? { layerId: id, type: "layer" } : undefined),
+    [layers?.map, select],
+  );
+
   const onBlockChange = useCallback(
     async <T extends ValueType>(
       blockId: string,
@@ -100,9 +99,8 @@ export default (isBuilt?: boolean) => {
       v: ValueTypes[T],
       vt: T,
     ) => {
-      const propertyId = (
-        layers?.selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any
-      )?.propertyId as string | undefined;
+      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
+        ?.propertyId as string | undefined;
       if (!propertyId) return;
 
       const gvt = valueTypeToGQL(vt);
@@ -118,7 +116,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [changePropertyValue, layers?.selectedLayer?.infobox?.blocks],
+    [changePropertyValue, selectedLayer?.infobox?.blocks],
   );
 
   const onFovChange = useCallback(
@@ -156,13 +154,14 @@ export default (isBuilt?: boolean) => {
   return {
     sceneId,
     rootLayerId,
-    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
     widgets,
-    layers: layers?.layers,
-    selectedLayer: layers?.selectedLayer,
+    layers: layers?.layer.children,
+    layerMap: layers?.map,
+    selectedLayer,
     blocks,
     isCapturing,
     camera,

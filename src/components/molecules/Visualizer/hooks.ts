@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
@@ -10,11 +10,14 @@ import type {
   OverriddenInfobox,
   Ref as EngineRef,
   SceneProperty,
-  SelectPrimitiveOptions,
+  SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
+import type { Layer as RawLayer } from "./Primitive";
 
-import type { Primitive } from ".";
+export type Layer = RawLayer & {
+  infoboxEditable?: boolean;
+};
 
 export default ({
   engineType,
@@ -22,12 +25,13 @@ export default ({
   isEditable,
   isBuilt,
   isPublished,
-  primitives,
-  selectedPrimitiveId: outerSelectedPrimitiveId,
+  layers,
+  layerMap,
+  selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
   camera,
   sceneProperty,
-  onPrimitiveSelect,
+  onLayerSelect,
   onBlockSelect,
   onCameraChange,
 }: {
@@ -36,12 +40,13 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
-  primitives?: Primitive[];
-  selectedPrimitiveId?: string;
+  layers?: Layer[];
+  layerMap?: Map<string, Layer>;
+  selectedLayerId?: string;
   selectedBlockId?: string;
   camera?: Camera;
   sceneProperty?: SceneProperty;
-  onPrimitiveSelect?: (id?: string) => void;
+  onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onCameraChange?: (c: Camera) => void;
 }) => {
@@ -71,16 +76,20 @@ export default ({
   dropRef(wrapperRef);
 
   const {
-    selectedPrimitive,
-    selectedPrimitiveId,
-    primitiveSelectionReason,
-    primitiveOverridenInfobox,
+    flattenLayers,
+    selectedLayer,
+    selectedLayerId,
+    layerSelectionReason,
+    layerOverridenInfobox,
     infobox,
-    selectPrimitive,
-  } = usePrimitiveSelection({
-    primitives,
-    selectedPrimitiveId: outerSelectedPrimitiveId,
-    onPrimitiveSelect,
+    selectLayer,
+    findLayerById,
+    findLayerByIds,
+  } = useLayers({
+    layers,
+    selected: outerSelectedLayerId,
+    onSelect: onLayerSelect,
+    layerMap,
   });
 
   const [selectedBlockId, selectBlock] = useInnerState<string>(outerSelectedBlockId, onBlockSelect);
@@ -108,23 +117,22 @@ export default ({
     [onCameraChange],
   );
 
-  const [, { add: hidePrimitive, remove: showPrimitive, has: isPrimitiveHidden }] =
-    useSet<string>();
-  const showPrimitives = useCallback(
+  const [, { add: hideLayer, remove: showLayer, has: isLayerHidden }] = useSet<string>();
+  const showLayers = useCallback(
     (...ids: string[]) => {
       for (const id of ids) {
-        showPrimitive(id);
+        showLayer(id);
       }
     },
-    [showPrimitive],
+    [showLayer],
   );
-  const hidePrimitives = useCallback(
+  const hideLayers = useCallback(
     (...ids: string[]) => {
       for (const id of ids) {
-        hidePrimitive(id);
+        hideLayer(id);
       }
     },
-    [hidePrimitive],
+    [hideLayer],
   );
 
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
@@ -134,17 +142,32 @@ export default ({
     pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
-  const visualizerContext = useVisualizerContext({
-    engine: engineRef,
-    primitives,
-    camera: innerCamera,
-    selectedPrimitive,
-    primitiveSelectionReason,
-    primitiveOverridenInfobox,
-    selectPrimitive,
-    showPrimitive: showPrimitives,
-    hidePrimitive: hidePrimitives,
-  });
+  const visualizerContext = useMemo((): VisualizerContext => {
+    return {
+      engine: engineRef.current ?? undefined,
+      camera,
+      layers,
+      selectedLayer,
+      layerSelectionReason,
+      layerOverridenInfobox,
+      findLayerById,
+      findLayerByIds,
+      showLayer: showLayers,
+      hideLayer: hideLayers,
+      selectLayer,
+    };
+  }, [
+    camera,
+    layers,
+    selectedLayer,
+    layerSelectionReason,
+    layerOverridenInfobox,
+    findLayerById,
+    findLayerByIds,
+    showLayers,
+    hideLayers,
+    selectLayer,
+  ]);
 
   useEffect(() => {
     const c = engineRef.current?.getCamera();
@@ -158,88 +181,92 @@ export default ({
     wrapperRef,
     isDroppable,
     visualizerContext,
-    selectedPrimitiveId,
-    primitiveSelectionReason,
-    selectedPrimitive,
+    selectedLayerId,
+    selectedLayer,
+    layerSelectionReason,
     selectedBlockId,
     innerCamera,
     infobox,
-    isPrimitiveHidden,
-    selectPrimitive,
+    flattenLayers,
+    isLayerHidden,
+    selectLayer,
     selectBlock,
     updateCamera,
   };
 };
 
-function usePrimitiveSelection({
-  primitives,
-  selectedPrimitiveId: outerSelectedPrimitiveId,
-  onPrimitiveSelect,
+function useLayers({
+  layers,
+  selected: outerSelectedPrimitiveId,
+  onSelect,
+  layerMap,
 }: {
-  primitives?: Primitive[];
-  selectedPrimitiveId?: string;
-  infobox?: Pick<
-    InfoboxProps,
-    "infoboxKey" | "title" | "blocks" | "visible" | "primitive" | "isEditable"
-  >;
-  primitiveOverridenInfobox?: OverriddenInfobox;
-  onPrimitiveSelect?: (id?: string, options?: SelectPrimitiveOptions) => void;
+  layers?: Layer[];
+  selected?: string;
+  onSelect?: (id?: string, options?: SelectLayerOptions) => void;
+  layerMap?: Map<string, Layer>;
 }) {
-  const [selectedPrimitiveId, innerSelectPrimitive] = useState<string | undefined>();
-  const [primitiveSelectionReason, setSelectionReason] = useState<string | undefined>();
-  const [primitiveOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
+  const [selectedLayerId, innerSelectLayer] = useState<string | undefined>();
+  const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
+  const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
 
-  const selectedPrimitive = useMemo(
-    () => (selectedPrimitiveId ? primitives?.find(p => p.id === selectedPrimitiveId) : undefined),
-    [selectedPrimitiveId, primitives],
-  );
+  const [getLayer, flattenLayers] = useGetLayer(layers, layerMap);
+  const selectedLayer = useMemo(() => getLayer(selectedLayerId), [selectedLayerId, getLayer]);
 
-  const selectPrimitive = useCallback(
-    (id?: string, { reason, overriddenInfobox }: SelectPrimitiveOptions = {}) => {
-      innerSelectPrimitive(id);
-      onPrimitiveSelect?.(id);
+  const selectLayer = useCallback(
+    (id?: string, { reason, overriddenInfobox }: SelectLayerOptions = {}) => {
+      innerSelectLayer(id);
+      onSelect?.(id);
       setSelectionReason(reason);
       setPrimitiveOverridenInfobox(overriddenInfobox);
     },
-    [onPrimitiveSelect],
+    [onSelect],
   );
 
   const blocks = useMemo(
-    (): Block[] | undefined => overridenInfoboxBlocks(primitiveOverridenInfobox),
-    [primitiveOverridenInfobox],
+    (): Block[] | undefined => overridenInfoboxBlocks(layerOverridenInfobox),
+    [layerOverridenInfobox],
   );
 
   const infobox = useMemo<
-    | Pick<InfoboxProps, "infoboxKey" | "title" | "visible" | "primitive" | "blocks" | "isEditable">
+    | Pick<InfoboxProps, "infoboxKey" | "title" | "visible" | "layer" | "blocks" | "isEditable">
     | undefined
   >(
     () =>
-      selectedPrimitive
+      selectedLayer
         ? {
-            infoboxKey: selectedPrimitive.id,
-            title: primitiveOverridenInfobox?.title || selectedPrimitive.title,
-            isEditable: !primitiveOverridenInfobox && selectedPrimitive.infoboxEditable,
-            visible: !!selectedPrimitive?.infobox,
-            primitive: selectedPrimitive,
+            infoboxKey: selectedLayer.id,
+            title: layerOverridenInfobox?.title || selectedLayer.title,
+            isEditable: !layerOverridenInfobox && selectedLayer.infoboxEditable,
+            visible: !!selectedLayer?.infobox,
+            layer: selectedLayer,
             blocks,
           }
         : undefined,
-    [selectedPrimitive, primitiveOverridenInfobox, blocks],
+    [selectedLayer, layerOverridenInfobox, blocks],
+  );
+
+  const findLayerByIds = useCallback(
+    (...ids: string[]): (Layer | undefined)[] => ids.map(id => getLayer(id)),
+    [getLayer],
   );
 
   useEffect(() => {
-    innerSelectPrimitive(outerSelectedPrimitiveId);
+    innerSelectLayer(outerSelectedPrimitiveId);
     setSelectionReason(undefined);
     setPrimitiveOverridenInfobox(undefined);
   }, [outerSelectedPrimitiveId]);
 
   return {
-    selectedPrimitive,
-    selectedPrimitiveId,
-    primitiveSelectionReason,
+    flattenLayers,
+    selectedLayer,
+    selectedLayerId,
+    layerSelectionReason,
+    layerOverridenInfobox,
     infobox,
-    primitiveOverridenInfobox,
-    selectPrimitive,
+    selectLayer,
+    findLayerById: getLayer,
+    findLayerByIds,
   };
 }
 
@@ -264,54 +291,6 @@ function useInnerState<T>(
   return [innerState, setState];
 }
 
-function useVisualizerContext({
-  engine,
-  camera,
-  primitives = [],
-  selectedPrimitive,
-  primitiveSelectionReason,
-  primitiveOverridenInfobox,
-  showPrimitive,
-  hidePrimitive,
-  selectPrimitive,
-}: {
-  engine: RefObject<EngineRef>;
-  camera?: Camera;
-  primitives?: Primitive[];
-  selectedPrimitive: Primitive | undefined;
-  primitiveSelectionReason?: string;
-  primitiveOverridenInfobox?: OverriddenInfobox;
-  showPrimitive: (...id: string[]) => void;
-  hidePrimitive: (...id: string[]) => void;
-  selectPrimitive: (id?: string, options?: { reason?: string }) => void;
-}): VisualizerContext {
-  const ctx = useMemo((): VisualizerContext => {
-    return {
-      engine: engine.current ?? undefined,
-      camera,
-      primitives,
-      selectedPrimitive,
-      primitiveSelectionReason,
-      primitiveOverridenInfobox,
-      showPrimitive,
-      hidePrimitive,
-      selectPrimitive,
-    };
-  }, [
-    engine,
-    camera,
-    primitives,
-    selectedPrimitive,
-    primitiveSelectionReason,
-    primitiveOverridenInfobox,
-    showPrimitive,
-    hidePrimitive,
-    selectPrimitive,
-  ]);
-
-  return ctx;
-}
-
 function overridenInfoboxBlocks(
   overriddenInfobox: OverriddenInfobox | undefined,
 ): Block[] | undefined {
@@ -332,4 +311,25 @@ function overridenInfoboxBlocks(
         },
       ]
     : undefined;
+}
+
+function useGetLayer(
+  layers: Layer[] = [],
+  map?: Map<string, Layer>,
+): [(id: string | undefined) => Layer | undefined, Layer[]] {
+  const flayers = useMemo(() => flattenLayers(layers), [layers]);
+  const m = useMemo(() => {
+    return map ?? new Map<string, Layer>(flayers.map(l => [l.id, l]));
+  }, [map, flayers]);
+  const get = useCallback(
+    (id: string | undefined): Layer | undefined => (id ? m.get(id) : undefined),
+    [m],
+  );
+  return [get, flayers];
+}
+
+function flattenLayers(layers: Layer[] | undefined): Layer[] {
+  return (
+    layers?.reduce<Layer[]>((a, b) => [...a, ...(b.isVisible ? b.children ?? [b] : [])], []) ?? []
+  );
 }

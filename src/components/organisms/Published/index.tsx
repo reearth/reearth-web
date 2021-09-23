@@ -19,7 +19,7 @@ export default function Published({ className, alias }: Props) {
     <Visualizer
       className={className}
       engine="cesium"
-      primitives={layers}
+      layers={layers}
       widgets={widgets}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}

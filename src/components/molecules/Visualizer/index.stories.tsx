@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import React, { useMemo, useState } from "react";
 
-import Component, { Primitive, Widget, Props } from ".";
+import Component, { Layer, Widget, Props } from ".";
 
 export default {
   title: "molecules/Visualizer",
@@ -16,7 +16,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-const primitives: Primitive[] = [
+const layers: Layer[] = [
   {
     id: "1",
     pluginId: "reearth",
@@ -115,12 +115,12 @@ export const Default = Template.bind({});
 Default.args = {
   engine: "cesium",
   rootLayerId: "root",
-  primitives,
+  layers,
   widgets,
   sceneProperty: {
     tiles: [{ id: "default", tile_type: "default" }],
   },
-  selectedPrimitiveId: undefined,
+  selectedLayerId: undefined,
   selectedBlockId: undefined,
   ready: true,
   isEditable: true,
@@ -131,8 +131,8 @@ Default.args = {
 export const Selected = Template.bind({});
 Selected.args = {
   ...Default.args,
-  primitives: Default.args.primitives?.map(p => ({ ...p, infoboxEditable: true })),
-  selectedPrimitiveId: primitives[1].id,
+  layers: Default.args.layers?.map(p => ({ ...p, infoboxEditable: true })),
+  selectedLayerId: layers[1].id,
 };
 
 export const Built = Template.bind({});
@@ -166,8 +166,8 @@ export const Plugin: Story<Props> = args => {
             ]
           : []),
       ],
-      primitives: [
-        ...(args.primitives ?? []),
+      layers: [
+        ...(args.layers ?? []),
         {
           id: "pluginprimitive",
           pluginId: "reearth",
@@ -254,8 +254,9 @@ export const Plugin: Story<Props> = args => {
     </div>
   );
 };
+
 Plugin.args = {
   ...Default.args,
-  selectedPrimitiveId: "pluginprimitive",
+  selectedLayerId: "pluginprimitive",
   pluginBaseUrl: process.env.PUBLIC_URL,
 };

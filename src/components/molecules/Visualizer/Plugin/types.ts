@@ -11,10 +11,10 @@ export type Reearth = {
   readonly version: string;
   readonly apiVersion: number;
   readonly plugin: Plugin;
-  readonly primitives: Primitives;
+  readonly layers: Layers;
   readonly ui: UI;
   readonly visualizer: Visualizer;
-  readonly primitive?: Primitive;
+  readonly layer?: Layer;
   readonly widget?: Widget;
   readonly block?: Block;
   readonly on: <T extends keyof ReearthEventType>(
@@ -35,7 +35,7 @@ export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: Camera];
-  select: [target?: Primitive];
+  select: [target?: Layer];
   message: [message: any];
 };
 
@@ -47,19 +47,21 @@ export type Plugin = {
   readonly property?: any;
 };
 
-/** You can operate and get data about primitives. */
-export type Primitives = {
-  readonly primitives: Primitive[];
-  readonly selected?: Primitive;
+/** You can operate and get data about layers. */
+export type Layers = {
+  readonly layers: Layer[];
+  readonly selected?: Layer;
   readonly selectionReason?: string;
   readonly overriddenInfobox?: OverriddenInfobox;
-  /** Selects the primitive with the specified ID; if the ID is undefined, the currently selected primitive will be deselected. */
-  readonly select: (id?: string, options?: SelectPrimitiveOptions) => void;
+  /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
+  readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
+  readonly findById: (id: string) => Layer | undefined;
+  readonly findByIds: (...id: string[]) => (Layer | undefined)[];
 };
 
-export type SelectPrimitiveOptions = {
+export type SelectLayerOptions = {
   reason?: string;
   overriddenInfobox?: OverriddenInfobox;
 };
@@ -69,8 +71,8 @@ export type OverriddenInfobox = {
   content: { key: string; value: string }[];
 };
 
-/** Primitive is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
-export type Primitive<P = any, IBP = any> = {
+/** Layer is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
+export type Layer<P = any, IBP = any> = {
   id: string;
   pluginId?: string;
   extensionId?: string;
@@ -79,6 +81,7 @@ export type Primitive<P = any, IBP = any> = {
   infobox?: Infobox<IBP>;
   isVisible?: boolean;
   propertyId?: string;
+  readonly children?: Layer<P, IBP>[];
 };
 
 export type Infobox<BP = any> = {

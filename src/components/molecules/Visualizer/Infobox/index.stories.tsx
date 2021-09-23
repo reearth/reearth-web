@@ -35,7 +35,7 @@ Template.args = {
       },
     },
   ],
-  primitive: {
+  layer: {
     id: "z",
     property: {
       default: {
@@ -60,12 +60,12 @@ Default.args = {
 export const Large = Template.bind({});
 Large.args = {
   ...Template.args,
-  primitive: {
+  layer: {
     id: "z",
     property: {
-      ...Template.args.primitive?.property,
+      ...Template.args.layer?.property,
       default: {
-        ...Template.args.primitive?.property?.default,
+        ...Template.args.layer?.property?.default,
         size: "large",
       },
     },

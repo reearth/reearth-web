@@ -1,9 +1,9 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import type { Layer, Widget, Block } from "@reearth/components/molecules/Visualizer";
 
-import { PublishedData } from "./types";
+import type { PublishedData } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
@@ -16,9 +16,9 @@ export default (alias?: string) => {
     {},
   );
 
-  const layers = useMemo<Primitive[] | undefined>(
+  const layers = useMemo<Layer[] | undefined>(
     () =>
-      data?.layers?.map<Primitive>(l => ({
+      data?.layers?.map<Layer>(l => ({
         id: l.id,
         title: l.name || "",
         pluginId: l.pluginId,

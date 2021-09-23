@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useVisualizerContext } from "../context";
 
 import { useAPI } from "./api";
-import type { Primitive, Widget, Block } from "./types";
+import type { Layer, Widget, Block } from "./types";
 
 export default function ({
   pluginId,
@@ -11,7 +11,7 @@ export default function ({
   pluginBaseUrl,
   extensionType,
   block,
-  primitive,
+  layer,
   widget,
   sceneProperty,
   pluginProperty,
@@ -20,7 +20,7 @@ export default function ({
   extensionId?: string;
   pluginBaseUrl?: string;
   extensionType?: string;
-  primitive?: Primitive;
+  layer?: Layer;
   widget?: Widget;
   block?: Block;
   property?: any;
@@ -35,7 +35,7 @@ export default function ({
       extensionType,
       pluginId,
       block,
-      primitive,
+      layer,
       widget,
       sceneProperty,
       pluginProperty,

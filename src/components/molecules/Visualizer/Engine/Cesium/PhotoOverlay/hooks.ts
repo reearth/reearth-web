@@ -35,7 +35,7 @@ export default function ({ isSelected, camera }: { isSelected?: boolean; camera?
   const cameraRef = useRef(camera);
   cameraRef.current = camera;
   const storytelling = useRef(false);
-  storytelling.current = ctx?.primitiveSelectionReason === "storytelling";
+  storytelling.current = ctx?.layerSelectionReason === "storytelling";
   const prevCamera = useRef<Camera>();
 
   // camera flight
@@ -75,7 +75,7 @@ export default function ({ isSelected, camera }: { isSelected?: boolean; camera?
       const fov = prevCamera.current?.fov ?? defaultFOV;
       flyTo?.({ fov }, { duration: 0 });
     }
-    // skip camera flight when selected primitive was changed by storytelling widget
+    // skip camera flight when selected layer was changed by storytelling widget
     startTransition(!isSelected, storytelling.current ? !isSelected : !cameraRef.current);
   }, [flyTo, startTransition, isSelected]);
 

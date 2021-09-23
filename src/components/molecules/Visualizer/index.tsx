@@ -6,9 +6,9 @@ import Filled from "@reearth/components/atoms/Filled";
 import { Provider } from "./context";
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
+import type { Layer } from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import P from "./Primitive";
-import type { Primitive as RawPrimitive } from "./Primitive";
 import W from "./Widget";
 import type { Widget } from "./Widget";
 
@@ -17,14 +17,13 @@ export type { SceneProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Widget } from "./Widget";
 
-export type Primitive = RawPrimitive & {
-  infoboxEditable?: boolean;
-};
+export type { Layer } from "./hooks";
 
 export type Props = PropsWithChildren<
   {
     rootLayerId?: string;
-    primitives?: Primitive[];
+    layers?: Layer[];
+    layerMap?: Map<string, Layer>;
     widgets?: Widget[];
     sceneProperty?: SceneProperty;
     pluginProperty?: { [key: string]: any };
@@ -32,8 +31,8 @@ export type Props = PropsWithChildren<
     pluginBaseUrl?: string;
     isPublished?: boolean;
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
-    onPrimitiveSelect?: (id?: string) => void;
-  } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
+    onLayerSelect?: (id?: string) => void;
+  } & Omit<EngineProps, "children" | "property" | "onLayerSelect"> &
     Pick<
       InfoboxProps,
       "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
@@ -42,16 +41,17 @@ export type Props = PropsWithChildren<
 
 export default function Visualizer({
   rootLayerId,
-  primitives,
+  layers,
+  layerMap,
   widgets,
   sceneProperty,
   children,
   pluginProperty,
   pluginBaseUrl,
   isPublished,
-  selectedPrimitiveId: outerSelectedPrimitiveId,
+  selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
-  onPrimitiveSelect,
+  onLayerSelect,
   renderInfoboxInsertionPopUp,
   onBlockChange,
   onBlockDelete,
@@ -65,14 +65,15 @@ export default function Visualizer({
     wrapperRef,
     isDroppable,
     visualizerContext,
-    isPrimitiveHidden,
-    selectedPrimitive,
-    selectedPrimitiveId,
-    primitiveSelectionReason,
+    isLayerHidden,
+    selectedLayer,
+    selectedLayerId,
+    layerSelectionReason,
     selectedBlockId,
     innerCamera,
+    flattenLayers,
     infobox,
-    selectPrimitive,
+    selectLayer,
     selectBlock,
     updateCamera,
   } = useHooks({
@@ -81,12 +82,13 @@ export default function Visualizer({
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
     isPublished,
-    primitives,
-    selectedPrimitiveId: outerSelectedPrimitiveId,
+    layers,
+    layerMap,
+    selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
     sceneProperty,
-    onPrimitiveSelect,
+    onLayerSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,
   });
@@ -98,27 +100,27 @@ export default function Visualizer({
         <Engine
           ref={engineRef}
           property={sceneProperty}
-          selectedPrimitiveId={selectedPrimitive?.id}
-          primitiveSelectionReason={primitiveSelectionReason}
-          onPrimitiveSelect={selectPrimitive}
+          selectedLayerId={selectedLayer?.id}
+          layerSelectionReason={layerSelectionReason}
+          onLayerSelect={selectLayer}
           {...props}
           camera={innerCamera}
           onCameraChange={updateCamera}>
-          {primitives?.map(primitive =>
-            !primitive.isVisible ? null : (
+          {flattenLayers?.map(layer =>
+            !layer.isVisible ? null : (
               <P
-                key={primitive.id}
-                primitive={primitive}
+                key={layer.id}
+                layer={layer}
                 sceneProperty={sceneProperty}
                 pluginProperty={
-                  primitive.pluginId && primitive.extensionId
-                    ? pluginProperty?.[`${primitive.pluginId}/${primitive.extensionId}`]
+                  layer.pluginId && layer.extensionId
+                    ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
                     : undefined
                 }
-                isHidden={isPrimitiveHidden(primitive.id)}
+                isHidden={isLayerHidden(layer.id)}
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
-                isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
+                isSelected={!!selectedLayerId && selectedLayerId === layer.id}
                 pluginBaseUrl={pluginBaseUrl}
               />
             ),
@@ -144,7 +146,7 @@ export default function Visualizer({
           infoboxKey={infobox?.infoboxKey}
           visible={!!infobox?.visible}
           sceneProperty={sceneProperty}
-          primitive={infobox?.primitive}
+          layer={infobox?.layer}
           selectedBlockId={selectedBlockId}
           pluginProperty={pluginProperty}
           isBuilt={props.isBuilt}

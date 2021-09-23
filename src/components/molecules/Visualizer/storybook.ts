@@ -2,9 +2,9 @@ import { action } from "@storybook/addon-actions";
 
 import type { VisualizerContext } from "./context";
 
-import type { Primitive } from ".";
+import type { Layer } from ".";
 
-const primitives: Primitive[] = [
+const layers: Layer[] = [
   {
     id: "a",
     title: "A",
@@ -70,9 +70,11 @@ export const context: VisualizerContext = {
     requestRender: act("requestRender"),
     getLocationFromScreenXY: act("getLocationFromScreenXY", () => undefined),
   },
-  hidePrimitive: act("primitive.hide"),
-  showPrimitive: act("primitive.show"),
-  selectPrimitive: act("primitive.select"),
+  hideLayer: act("layers.hide"),
+  showLayer: act("layers.show"),
+  selectLayer: act("layers.select"),
+  findLayerById: act("findLayerById"),
+  findLayerByIds: act("findLayerByIds"),
   camera: {
     lat: 0,
     lng: 0,
@@ -82,7 +84,7 @@ export const context: VisualizerContext = {
     roll: 0,
     fov: Math.PI * (60 / 180),
   },
-  primitives,
+  layers,
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

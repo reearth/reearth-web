@@ -1,5 +1,5 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import { Layer, Widget, Block } from "@reearth/components/molecules/Visualizer";
 import {
   GetLayersQuery,
   GetBlocksQuery,
@@ -18,11 +18,6 @@ import { valueFromGQL } from "@reearth/util/value";
 type BlockType = Item & {
   pluginId: string;
   extensionId: string;
-};
-
-export type Layer = Primitive & {
-  layers: Layer[] | undefined;
-  isParentVisible: boolean;
 };
 
 type P = { [key in string]: any };
@@ -94,7 +89,7 @@ const processMergedProperty = (
   );
 };
 
-const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Primitive["infobox"] => {
+const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox"] => {
   if (!infobox) return;
   return {
     property: convertProperty(infobox.property),
@@ -110,7 +105,7 @@ const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Primitive["inf
 
 const processMergedInfobox = (
   infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
-): Primitive["infobox"] | undefined => {
+): Layer["infobox"] | undefined => {
   if (!infobox) return;
   return {
     property: processMergedProperty(infobox.property),
@@ -124,32 +119,31 @@ const processMergedInfobox = (
   };
 };
 
-const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Layer | undefined => {
-  return layer
-    ? {
-        id: layer.id,
-        pluginId: layer.pluginId ?? "",
-        extensionId: layer.extensionId ?? "",
-        isVisible: layer.isVisible,
-        title: layer.name,
-        property:
-          layer.__typename === "LayerItem"
-            ? processMergedProperty(layer.merged?.property)
-            : undefined,
-        infoboxEditable: !!layer.infobox,
-        infobox:
-          layer.__typename === "LayerItem"
-            ? processMergedInfobox(layer.merged?.infobox)
-            : processInfobox(layer.infobox),
-        layers:
-          layer.__typename === "LayerGroup"
-            ? layer.layers
-                ?.map(l => processLayer(l ?? undefined, layer.isVisible))
-                .filter((l): l is Layer => !!l)
-            : undefined,
-        isParentVisible,
-      }
-    : undefined;
+const processLayer = (
+  layer: EarthLayer5Fragment | undefined,
+  map?: Map<string, Layer>,
+): Layer | undefined => {
+  if (!layer) return;
+  const res: Layer = {
+    id: layer.id,
+    pluginId: layer.pluginId ?? "",
+    extensionId: layer.extensionId ?? "",
+    isVisible: layer.isVisible,
+    title: layer.name,
+    property:
+      layer.__typename === "LayerItem" ? processMergedProperty(layer.merged?.property) : undefined,
+    infoboxEditable: !!layer.infobox,
+    infobox:
+      layer.__typename === "LayerItem"
+        ? processMergedInfobox(layer.merged?.infobox)
+        : processInfobox(layer.infobox),
+    children:
+      layer.__typename === "LayerGroup"
+        ? layer.layers?.map(l => processLayer(l ?? undefined, map)).filter((l): l is Layer => !!l)
+        : undefined,
+  };
+  map?.set(layer.id, res);
+  return res;
 };
 
 export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[] | undefined => {
@@ -171,32 +165,20 @@ export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[]
   return widgets;
 };
 
-export const convertLayers = (data: GetLayersQuery | undefined, selectedLayerId?: string) => {
+export const convertLayers = (
+  data: GetLayersQuery | undefined,
+): { layer: Layer; map: Map<string, Layer> } | undefined => {
   if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
     return undefined;
   }
-  const rootLayer = processLayer(data.node.rootLayer);
-  const visibleLayers = flattenLayers(rootLayer?.layers);
-  const selectedLayer = visibleLayers?.find(l => l.id === selectedLayerId);
-  return {
-    selectedLayer,
-    layers: visibleLayers,
-  };
-};
-
-const flattenLayers = (l?: Layer[]): Primitive[] => {
-  return (
-    l?.reduce<Primitive[]>((a, { layers, ...b }) => {
-      if (!b || !b.isVisible) {
-        return a;
+  const map = new Map<string, Layer>();
+  const layer = processLayer(data.node.rootLayer, map);
+  return layer
+    ? {
+        layer,
+        map,
       }
-      if (layers?.length) {
-        return [...a, { ...b, hiddden: true }, ...flattenLayers(layers)];
-      }
-      if (!b.pluginId || !b.extensionId) return a;
-      return [...a, b];
-    }, []) ?? []
-  );
+    : undefined;
 };
 
 export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {

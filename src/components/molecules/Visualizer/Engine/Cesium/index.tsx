@@ -33,27 +33,21 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     small,
     ready,
     children,
-    selectedPrimitiveId,
-    onPrimitiveSelect,
+    selectedLayerId,
+    onLayerSelect,
     onCameraChange,
   },
   ref,
 ) => {
-  const {
-    terrainProvider,
-    backgroundColor,
-    imageryLayers,
-    cesium,
-    selectViewerEntity,
-    onCameraMoveEnd,
-  } = useHooks({
-    ref,
-    property,
-    camera,
-    selectedPrimitiveId,
-    onPrimitiveSelect,
-    onCameraChange,
-  });
+  const { terrainProvider, backgroundColor, imageryLayers, cesium, onClick, onCameraMoveEnd } =
+    useHooks({
+      ref,
+      property,
+      camera,
+      selectedLayerId,
+      onLayerSelect,
+      onCameraChange,
+    });
 
   return (
     <>
@@ -80,10 +74,10 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         }}
         requestRenderMode={!property?.timeline?.animation}
         maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
-        shadows={!!property?.atmosphere?.shadows}>
+        shadows={!!property?.atmosphere?.shadows}
+        onClick={onClick}>
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
-          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} action={selectViewerEntity} />
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>

@@ -3,9 +3,9 @@ import React, { CSSProperties } from "react";
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
-import type { Primitive, Block, Widget } from "./types";
+import type { Layer, Block, Widget } from "./types";
 
-export type { Primitive, Block, Widget, InfoboxProperty } from "./types";
+export type { Layer, Block, Widget, InfoboxProperty } from "./types";
 
 export type Props = {
   className?: string;
@@ -20,7 +20,7 @@ export type Props = {
   sceneProperty?: any;
   pluginProperty?: any;
   pluginBaseUrl?: string;
-  primitive?: Primitive;
+  layer?: Layer;
   widget?: Widget;
   block?: Block;
 };
@@ -36,7 +36,7 @@ export default function Plugin({
   property,
   visible,
   pluginBaseUrl = "/plugins",
-  primitive,
+  layer,
   widget,
   block,
   sceneProperty,
@@ -48,7 +48,7 @@ export default function Plugin({
     extensionType,
     property,
     pluginBaseUrl,
-    primitive,
+    layer,
     widget,
     block,
     sceneProperty,

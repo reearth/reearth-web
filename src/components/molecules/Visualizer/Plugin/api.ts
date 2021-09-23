@@ -6,7 +6,7 @@ import type { Events, EventEmitter } from "@reearth/util/event";
 
 import type { VisualizerContext } from "..";
 
-import type { GlobalThis, Block, Primitive, Widget, ReearthEventType } from "./types";
+import type { GlobalThis, Block, Layer, Widget, ReearthEventType } from "./types";
 
 function api({
   render,
@@ -19,11 +19,13 @@ function api({
   pluginProperty,
   sceneProperty,
   events,
-  selectedPrimitive,
-  primitiveSelectionReason,
-  primitiveOverriddenInfobox,
-  primitives,
-  primitive,
+  findLayerById,
+  findLayerByIds,
+  selectedLayer,
+  layerSelectionReason,
+  layerOverriddenInfobox,
+  layers,
+  layer,
   block,
   widget,
   camera,
@@ -43,17 +45,19 @@ function api({
   pluginProperty: any;
   sceneProperty: any;
   events: Events<ReearthEventType>;
-  selectedPrimitive: () => GlobalThis["reearth"]["primitives"]["selected"];
-  primitiveSelectionReason: () => GlobalThis["reearth"]["primitives"]["selectionReason"];
-  primitiveOverriddenInfobox: () => GlobalThis["reearth"]["primitives"]["overriddenInfobox"];
-  primitives: () => GlobalThis["reearth"]["primitives"]["primitives"];
-  primitive: () => GlobalThis["reearth"]["primitive"];
+  selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
+  layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
+  layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
+  layers: () => GlobalThis["reearth"]["layers"]["layers"];
+  layer: () => GlobalThis["reearth"]["layer"];
   block: () => GlobalThis["reearth"]["block"];
   widget: () => GlobalThis["reearth"]["widget"];
   camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
-  selectLayer: GlobalThis["reearth"]["primitives"]["select"];
-  showLayer: GlobalThis["reearth"]["primitives"]["show"];
-  hideLayer: GlobalThis["reearth"]["primitives"]["hide"];
+  findLayerById: GlobalThis["reearth"]["layers"]["findById"];
+  findLayerByIds: GlobalThis["reearth"]["layers"]["findByIds"];
+  selectLayer: GlobalThis["reearth"]["layers"]["select"];
+  showLayer: GlobalThis["reearth"]["layers"]["show"];
+  hideLayer: GlobalThis["reearth"]["layers"]["hide"];
   flyTo: GlobalThis["reearth"]["visualizer"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["zoomIn"];
@@ -106,27 +110,29 @@ function api({
           return sceneProperty;
         },
       },
-      primitives: {
+      layers: {
         select: selectLayer,
         show: showLayer,
         hide: hideLayer,
-        get primitives() {
-          return primitives();
+        get layers() {
+          return layers();
         },
         get selectionReason() {
-          return primitiveSelectionReason();
+          return layerSelectionReason();
         },
         get overriddenInfobox() {
-          return primitiveOverriddenInfobox();
+          return layerOverriddenInfobox();
         },
         get selected() {
-          return selectedPrimitive();
+          return selectedLayer();
         },
+        findById: findLayerById,
+        findByIds: findLayerByIds,
       },
       ...(extensionType === "primitive"
         ? {
-            get primitive() {
-              return primitive();
+            get layer() {
+              return layer();
             },
           }
         : {}),
@@ -161,7 +167,7 @@ export function useAPI({
   pluginId = "",
   extensionId = "",
   extensionType = "",
-  primitive,
+  layer,
   block,
   widget,
   pluginProperty,
@@ -171,7 +177,7 @@ export function useAPI({
   pluginId: string | undefined;
   extensionId: string | undefined;
   extensionType: string | undefined;
-  primitive: Primitive | undefined;
+  layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
   pluginProperty: any;
@@ -179,14 +185,14 @@ export function useAPI({
 }): [((api: IFrameAPI) => GlobalThis) | undefined, EventEmitter<ReearthEventType> | undefined] {
   const engine = ctx?.engine;
 
-  const getPrimitive = useGet(primitive);
+  const getLayer = useGet(layer);
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
   const getCamera = useGet(ctx?.camera);
-  const getSelectedPrimitive = useGet(ctx?.selectedPrimitive);
-  const getPrimitiveSelectionReason = useGet(ctx?.primitiveSelectionReason);
-  const getPrimitiveOverriddenInfobox = useGet(ctx?.primitiveOverridenInfobox);
-  const getPrimitives = useGet(ctx?.primitives ?? []);
+  const getSelectedLayer = useGet(ctx?.selectedLayer);
+  const getLayerSelectionReason = useGet(ctx?.layerSelectionReason);
+  const getLayerOverriddenInfobox = useGet(ctx?.layerOverridenInfobox);
+  const getLayers = useGet(ctx?.layers ?? []);
 
   const [exposed, emit] = useMemo((): [
     ((api: IFrameAPI) => GlobalThis) | undefined,
@@ -205,17 +211,19 @@ export function useAPI({
             pluginProperty,
             sceneProperty,
             events: ev,
-            primitives: getPrimitives,
-            selectedPrimitive: getSelectedPrimitive,
-            primitiveSelectionReason: getPrimitiveSelectionReason,
-            primitiveOverriddenInfobox: getPrimitiveOverriddenInfobox,
+            layers: getLayers,
+            selectedLayer: getSelectedLayer,
+            layerSelectionReason: getLayerSelectionReason,
+            layerOverriddenInfobox: getLayerOverriddenInfobox,
             block: getBlock,
-            primitive: getPrimitive,
+            layer: getLayer,
             widget: getWidget,
             camera: getCamera,
-            selectLayer: ctx.selectPrimitive,
-            showLayer: ctx.showPrimitive,
-            hideLayer: ctx.hidePrimitive,
+            findLayerById: ctx.findLayerById,
+            findLayerByIds: ctx.findLayerByIds,
+            selectLayer: ctx.selectLayer,
+            showLayer: ctx.showLayer,
+            hideLayer: ctx.hideLayer,
             flyTo: engine.flyTo,
             lookAt: engine.lookAt,
             zoomIn: engine.zoomIn,
@@ -227,19 +235,21 @@ export function useAPI({
     return [exposed, emit];
   }, [
     ctx?.engine?.pluginApi,
-    ctx?.hidePrimitive,
-    ctx?.selectPrimitive,
-    ctx?.showPrimitive,
+    ctx?.findLayerById,
+    ctx?.findLayerByIds,
+    ctx?.hideLayer,
+    ctx?.selectLayer,
+    ctx?.showLayer,
     engine,
     extensionId,
     extensionType,
     getBlock,
     getCamera,
-    getPrimitive,
-    getPrimitiveOverriddenInfobox,
-    getPrimitiveSelectionReason,
-    getPrimitives,
-    getSelectedPrimitive,
+    getLayer,
+    getLayerOverriddenInfobox,
+    getLayerSelectionReason,
+    getLayers,
+    getSelectedLayer,
     getWidget,
     pluginId,
     pluginProperty,
@@ -248,7 +258,7 @@ export function useAPI({
 
   useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
     {
-      select: ctx?.selectedPrimitive ? [ctx.selectedPrimitive] : undefined,
+      select: ctx?.selectedLayer ? [ctx.selectedLayer] : undefined,
       cameramove: ctx?.camera ? [ctx.camera] : undefined,
     },
     emit,
@@ -256,7 +266,7 @@ export function useAPI({
 
   useEffect(() => {
     emit?.("update");
-  }, [block, emit, primitive, widget]);
+  }, [block, emit, layer, widget]);
 
   useEffect(
     () => () => {

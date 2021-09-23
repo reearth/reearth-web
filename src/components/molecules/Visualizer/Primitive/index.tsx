@@ -1,13 +1,12 @@
 import React, { ComponentType, useMemo } from "react";
 
 import { useVisualizerContext } from "../context";
-import type { Primitive } from "../Infobox";
-// import Plugins, { Widget } from "../Plugin";
+import type { Layer } from "../Plugin";
 
-export type { Primitive } from "../Infobox";
+export type { Layer } from "../Plugin";
 
 export type Props<P = any, PP = any, SP = any> = {
-  primitive?: Primitive<P>;
+  layer?: Layer<P>;
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
@@ -27,22 +26,22 @@ export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   const ctx = useVisualizerContext();
   const Builtin = useMemo(() => {
     const builtin = ctx?.engine?.builtinPrimitives;
-    return props.primitive?.pluginId && props.primitive.extensionId
-      ? builtin?.[`${props.primitive.pluginId}/${props.primitive.extensionId}`]
+    return props.layer?.pluginId && props.layer.extensionId
+      ? builtin?.[`${props.layer.pluginId}/${props.layer.extensionId}`]
       : undefined;
-  }, [ctx, props.primitive?.extensionId, props.primitive?.pluginId]);
+  }, [ctx, props.layer?.extensionId, props.layer?.pluginId]);
 
-  return isHidden || !props.primitive?.isVisible ? null : Builtin ? <Builtin {...props} /> : null; // TODO: primitive plugin is unsupported yet
+  return isHidden || !props.layer?.isVisible ? null : Builtin ? <Builtin {...props} /> : null;
   // <Plugin
-  //   pluginId={props.primitive?.pluginId}
-  //   extensionId={props.primitive?.extensionId}
-  //   sourceCode={(props.primitive as any)?.__REEARTH_SOURCECODE} // for debugging
+  //   pluginId={props.layer?.pluginId}
+  //   extensionId={props.layer?.extensionId}
+  //   sourceCode={(props.layer as any)?.__REEARTH_SOURCECODE} // for debugging
   //   extensionType="primitive"
   //   pluginBaseUrl={pluginBaseUrl}
   //   visible={false}
   //   property={props.pluginProperty}
   //   sceneProperty={props.sceneProperty}
-  //   primitive={props.primitive}
+  //   layer={props.layer}
   //   pluginProperty={pluginProperty}
   // />
 }

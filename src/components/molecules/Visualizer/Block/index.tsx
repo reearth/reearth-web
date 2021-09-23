@@ -4,17 +4,17 @@ import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
 import Plugin from "../Plugin";
-import type { Block, Primitive } from "../Plugin";
+import type { Block, Layer } from "../Plugin";
 
 import builtin from "./builtin";
 
-export type { Block, Primitive } from "../Plugin";
+export type { Block, Layer } from "../Plugin";
 
 export type Props<BP = any, PP = any, IP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
-  primitive?: Primitive;
+  layer?: Layer;
   block?: Block<BP>;
   sceneProperty?: SP;
   infoboxProperty?: IP;
@@ -56,7 +56,7 @@ export default function BlockComponent<P = any, PP = any, IP = any, SP = any>({
         property={props.pluginProperty}
         sceneProperty={props.sceneProperty}
         pluginProperty={props.pluginProperty}
-        primitive={props.primitive}
+        layer={props.layer}
         block={props.block}
       />
     </Wrapper>

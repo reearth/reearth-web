@@ -7,21 +7,21 @@ import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { ValueTypes, ValueType } from "@reearth/util/value";
 
-import PluginBlock, { Primitive, Block } from "../Block";
+import PluginBlock, { Layer, Block } from "../Block";
 import type { SceneProperty } from "../Engine";
 
 import Field from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
 
-export type { Block, Primitive } from "../Block";
+export type { Block, Layer } from "../Block";
 export type { InfoboxProperty } from "../Plugin";
 
 export type Props = {
   className?: string;
   infoboxKey?: string;
   sceneProperty?: SceneProperty;
-  primitive?: Primitive;
+  layer?: Layer;
   blocks?: Block[];
   title?: string;
   isEditable?: boolean;
@@ -48,7 +48,7 @@ const Infobox: React.FC<Props> = ({
   className,
   infoboxKey,
   sceneProperty,
-  primitive,
+  layer,
   blocks: overridenBlocks,
   title,
   isEditable,
@@ -72,8 +72,8 @@ const Infobox: React.FC<Props> = ({
   const theme = useTheme();
   const intl = useIntl();
   const [isReadyToRender, setIsReadyToRender] = useState(false);
-  const blocks = overridenBlocks ?? primitive?.infobox?.blocks;
-  const property = primitive?.infobox?.property;
+  const blocks = overridenBlocks ?? layer?.infobox?.blocks;
+  const property = layer?.infobox?.property;
 
   return (
     <Frame
@@ -124,7 +124,7 @@ const Infobox: React.FC<Props> = ({
                 onBlockSelect?.(b.id);
               }
             }}
-            primitive={primitive}
+            layer={layer}
             pluginBaseUrl={pluginBaseUrl}
           />
         </Field>
