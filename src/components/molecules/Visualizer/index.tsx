@@ -5,24 +5,22 @@ import Filled from "@reearth/components/atoms/Filled";
 
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
-import type { Layer } from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
+import Layers, { LayerStore } from "./Layer";
 import { Provider } from "./Plugin";
-import P from "./Primitive";
 import W from "./Widget";
 import type { Widget } from "./Widget";
 
 export type { SceneProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Widget } from "./Widget";
-
-export type { Layer } from "./hooks";
+export type { Layer } from "./Layer";
+export { LayerStore } from "./Layer";
 
 export type Props = PropsWithChildren<
   {
     rootLayerId?: string;
-    layers?: Layer[];
-    layerMap?: Map<string, Layer>;
+    layers?: LayerStore;
     widgets?: Widget[];
     sceneProperty?: SceneProperty;
     pluginProperty?: { [key: string]: any };
@@ -41,7 +39,6 @@ export type Props = PropsWithChildren<
 export default function Visualizer({
   rootLayerId,
   layers,
-  layerMap,
   widgets,
   sceneProperty,
   children,
@@ -70,7 +67,6 @@ export default function Visualizer({
     layerSelectionReason,
     selectedBlockId,
     innerCamera,
-    flattenLayers,
     infobox,
     selectLayer,
     selectBlock,
@@ -82,7 +78,6 @@ export default function Visualizer({
     isBuilt: props.isBuilt,
     isPublished,
     layers,
-    layerMap,
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
@@ -105,25 +100,15 @@ export default function Visualizer({
           {...props}
           camera={innerCamera}
           onCameraChange={updateCamera}>
-          {flattenLayers?.map(layer =>
-            !layer.isVisible ? null : (
-              <P
-                key={layer.id}
-                layer={layer}
-                sceneProperty={sceneProperty}
-                pluginProperty={
-                  layer.pluginId && layer.extensionId
-                    ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-                    : undefined
-                }
-                isHidden={isLayerHidden(layer.id)}
-                isEditable={props.isEditable}
-                isBuilt={props.isBuilt}
-                isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-                pluginBaseUrl={pluginBaseUrl}
-              />
-            ),
-          )}
+          <Layers
+            isEditable={props.isEditable}
+            isBuilt={props.isBuilt}
+            pluginProperty={pluginProperty}
+            pluginBaseUrl={pluginBaseUrl}
+            selectedLayerId={selectedLayerId}
+            layers={layers}
+            isLayerHidden={isLayerHidden}
+          />
           {widgets?.map(widget => (
             <W
               key={widget.id}

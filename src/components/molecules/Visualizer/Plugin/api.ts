@@ -1,5 +1,7 @@
 import type { Events } from "@reearth/util/event";
 
+import type { LayerStore } from "../Layer";
+
 import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth, Plugin } from "./types";
 
 export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
@@ -89,14 +91,12 @@ export function exposed({
 export function commonReearth({
   engineName,
   events,
+  layers,
   sceneProperty,
   camera,
   selectedLayer,
   layerSelectionReason,
   layerOverriddenInfobox,
-  layers,
-  findLayerById,
-  findLayerByIds,
   selectLayer,
   showLayer,
   hideLayer,
@@ -107,14 +107,12 @@ export function commonReearth({
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
+  layers: LayerStore;
   sceneProperty: () => any;
   camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
-  layers: () => GlobalThis["reearth"]["layers"]["layers"];
-  findLayerById: GlobalThis["reearth"]["layers"]["findById"];
-  findLayerByIds: GlobalThis["reearth"]["layers"]["findByIds"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
@@ -144,7 +142,7 @@ export function commonReearth({
       show: showLayer,
       hide: hideLayer,
       get layers() {
-        return layers();
+        return layers.root.children ?? [];
       },
       get selectionReason() {
         return layerSelectionReason();
@@ -155,8 +153,8 @@ export function commonReearth({
       get selected() {
         return selectedLayer();
       },
-      findById: findLayerById,
-      findByIds: findLayerByIds,
+      findById: layers.findById.bind(layers),
+      findByIds: layers.findByIds.bind(layers),
     },
     ...events,
   };

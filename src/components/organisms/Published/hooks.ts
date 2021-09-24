@@ -2,6 +2,7 @@ import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
 import type { Layer, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import { LayerStore } from "@reearth/components/molecules/Visualizer";
 
 import type { PublishedData } from "./types";
 
@@ -16,27 +17,30 @@ export default (alias?: string) => {
     {},
   );
 
-  const layers = useMemo<Layer[] | undefined>(
+  const layers = useMemo<LayerStore | undefined>(
     () =>
-      data?.layers?.map<Layer>(l => ({
-        id: l.id,
-        title: l.name || "",
-        pluginId: l.pluginId,
-        extensionId: l.extensionId,
-        isVisible: true,
-        property: processProperty(l.property),
-        infobox: l.infobox
-          ? {
-              property: processProperty(l.infobox.property),
-              blocks: l.infobox.fields.map<Block>(f => ({
-                id: f.id,
-                pluginId: f.pluginId,
-                extensionId: f.extensionId,
-                property: processProperty(f.property),
-              })),
-            }
-          : undefined,
-      })),
+      new LayerStore({
+        id: "",
+        children: data?.layers?.map<Layer>(l => ({
+          id: l.id,
+          title: l.name || "",
+          pluginId: l.pluginId,
+          extensionId: l.extensionId,
+          isVisible: true,
+          property: processProperty(l.property),
+          infobox: l.infobox
+            ? {
+                property: processProperty(l.infobox.property),
+                blocks: l.infobox.fields.map<Block>(f => ({
+                  id: f.id,
+                  pluginId: f.pluginId,
+                  extensionId: f.extensionId,
+                  property: processProperty(f.property),
+                })),
+              }
+            : undefined,
+        })),
+      }),
     [data],
   );
 

@@ -5,7 +5,7 @@ import type { PropsWithChildren } from "react";
 import type { ProviderProps } from "./Plugin";
 import { Provider as PluginProvider } from "./Plugin";
 
-import type { Layer } from ".";
+import { Layer, LayerStore } from ".";
 
 const layers: Layer[] = [
   {
@@ -62,8 +62,6 @@ export const context: ProviderProps = {
   hideLayer: act("layers.hide"),
   showLayer: act("layers.show"),
   selectLayer: act("layers.select"),
-  findLayerById: act("findLayerById"),
-  findLayerByIds: act("findLayerByIds"),
   camera: {
     lat: 0,
     lng: 0,
@@ -73,7 +71,7 @@ export const context: ProviderProps = {
     roll: 0,
     fov: Math.PI * (60 / 180),
   },
-  layers,
+  layers: new LayerStore({ id: "", children: layers }),
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
   zoomIn: act("zoomIn"),

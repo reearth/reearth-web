@@ -20,7 +20,6 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     sceneProperty,
     pluginProperty,
     layers,
-    layerMap,
     widgets,
     selectedLayerId,
     blocks,
@@ -52,7 +51,6 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
       layers={layers}
-      layerMap={layerMap}
       widgets={widgets}
       selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}

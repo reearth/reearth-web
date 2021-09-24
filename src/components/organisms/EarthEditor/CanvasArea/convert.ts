@@ -1,5 +1,6 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
-import { Layer, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import type { Layer, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import { LayerStore } from "@reearth/components/molecules/Visualizer";
 import {
   GetLayersQuery,
   GetBlocksQuery,
@@ -119,12 +120,9 @@ const processMergedInfobox = (
   };
 };
 
-const processLayer = (
-  layer: EarthLayer5Fragment | undefined,
-  map?: Map<string, Layer>,
-): Layer | undefined => {
+const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined => {
   if (!layer) return;
-  const res: Layer = {
+  return {
     id: layer.id,
     pluginId: layer.pluginId ?? "",
     extensionId: layer.extensionId ?? "",
@@ -132,18 +130,15 @@ const processLayer = (
     title: layer.name,
     property:
       layer.__typename === "LayerItem" ? processMergedProperty(layer.merged?.property) : undefined,
-    infoboxEditable: !!layer.infobox,
     infobox:
       layer.__typename === "LayerItem"
         ? processMergedInfobox(layer.merged?.infobox)
         : processInfobox(layer.infobox),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers?.map(l => processLayer(l ?? undefined, map)).filter((l): l is Layer => !!l)
+        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
         : undefined,
   };
-  map?.set(layer.id, res);
-  return res;
 };
 
 export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[] | undefined => {
@@ -165,20 +160,13 @@ export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[]
   return widgets;
 };
 
-export const convertLayers = (
-  data: GetLayersQuery | undefined,
-): { layer: Layer; map: Map<string, Layer> } | undefined => {
+export const convertLayers = (data: GetLayersQuery | undefined): LayerStore | undefined => {
   if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
-    return undefined;
+    return;
   }
-  const map = new Map<string, Layer>();
-  const layer = processLayer(data.node.rootLayer, map);
-  return layer
-    ? {
-        layer,
-        map,
-      }
-    : undefined;
+  const rl = processLayer(data.node.rootLayer);
+  if (!rl) return;
+  return new LayerStore(rl);
 };
 
 export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {

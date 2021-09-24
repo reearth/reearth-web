@@ -74,7 +74,7 @@ export default (isBuilt?: boolean) => {
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
-  const selectedLayer = selectedLayerId ? layers?.map.get(selectedLayerId) : undefined;
+  const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const pluginProperty = useMemo(
@@ -87,8 +87,9 @@ export default (isBuilt?: boolean) => {
   );
 
   const selectLayer = useCallback(
-    (id?: string) => select(id && layers?.map.has(id) ? { layerId: id, type: "layer" } : undefined),
-    [layers?.map, select],
+    (id?: string) =>
+      select(id && !!layers?.findById(id) ? { layerId: id, type: "layer" } : undefined),
+    [layers, select],
   );
 
   const onBlockChange = useCallback(
@@ -159,8 +160,7 @@ export default (isBuilt?: boolean) => {
     sceneProperty,
     pluginProperty,
     widgets,
-    layers: layers?.layer.children,
-    layerMap: layers?.map,
+    layers,
     selectedLayer,
     blocks,
     isCapturing,

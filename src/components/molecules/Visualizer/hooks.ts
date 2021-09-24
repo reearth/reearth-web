@@ -12,13 +12,9 @@ import type {
   SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
+import { LayerStore, emptyLayerStore } from "./Layer";
 import type { ProviderProps } from "./Plugin";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "./Plugin/types";
-import type { Layer as RawLayer } from "./Primitive";
-
-export type Layer = RawLayer & {
-  infoboxEditable?: boolean;
-};
 
 export default ({
   engineType,
@@ -26,8 +22,7 @@ export default ({
   isEditable,
   isBuilt,
   isPublished,
-  layers,
-  layerMap,
+  layers = emptyLayerStore,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
   camera,
@@ -41,8 +36,7 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
-  layers?: Layer[];
-  layerMap?: Map<string, Layer>;
+  layers?: LayerStore;
   selectedLayerId?: string;
   selectedBlockId?: string;
   camera?: Camera;
@@ -77,15 +71,12 @@ export default ({
   dropRef(wrapperRef);
 
   const {
-    flattenLayers,
     selectedLayer,
     selectedLayerId,
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
     selectLayer,
-    findLayerById,
-    findLayerByIds,
     hideLayers,
     isLayerHidden,
     showLayers,
@@ -93,7 +84,6 @@ export default ({
     layers,
     selected: outerSelectedLayerId,
     onSelect: onLayerSelect,
-    layerMap,
   });
 
   // selected block
@@ -133,17 +123,15 @@ export default ({
       engineName: engineType || "",
       sceneProperty,
       camera,
-      layers,
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
-      findLayerById,
-      findLayerByIds,
       showLayer: showLayers,
       hideLayer: hideLayers,
       selectLayer,
     },
     engineRef,
+    layers,
   );
 
   useEffect(() => {
@@ -169,7 +157,6 @@ export default ({
     selectedBlockId,
     innerCamera,
     infobox,
-    flattenLayers,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -181,19 +168,19 @@ function useLayers({
   layers,
   selected: outerSelectedPrimitiveId,
   onSelect,
-  layerMap,
 }: {
-  layers?: Layer[];
+  layers: LayerStore;
   selected?: string;
   onSelect?: (id?: string, options?: SelectLayerOptions) => void;
-  layerMap?: Map<string, Layer>;
 }) {
   const [selectedLayerId, innerSelectLayer] = useState<string | undefined>();
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
 
-  const [getLayer, flattenLayers] = useGetLayer(layers, layerMap);
-  const selectedLayer = useMemo(() => getLayer(selectedLayerId), [selectedLayerId, getLayer]);
+  const selectedLayer = useMemo(
+    () => (selectedLayerId ? layers.findById(selectedLayerId) : undefined),
+    [selectedLayerId, layers],
+  );
 
   const selectLayer = useCallback(
     (id?: string, { reason, overriddenInfobox }: SelectLayerOptions = {}) => {
@@ -219,18 +206,13 @@ function useLayers({
         ? {
             infoboxKey: selectedLayer.id,
             title: layerOverridenInfobox?.title || selectedLayer.title,
-            isEditable: !layerOverridenInfobox && selectedLayer.infoboxEditable,
+            isEditable: !layerOverridenInfobox && !!selectedLayer.infobox,
             visible: !!selectedLayer?.infobox,
             layer: selectedLayer,
             blocks,
           }
         : undefined,
     [selectedLayer, layerOverridenInfobox, blocks],
-  );
-
-  const findLayerByIds = useCallback(
-    (...ids: string[]): (Layer | undefined)[] => ids.map(id => getLayer(id)),
-    [getLayer],
   );
 
   const [, { add: hideLayer, remove: showLayer, has: isLayerHidden }] = useSet<string>();
@@ -258,15 +240,12 @@ function useLayers({
   }, [outerSelectedPrimitiveId]);
 
   return {
-    flattenLayers,
     selectedLayer,
     selectedLayerId,
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
     isLayerHidden,
-    findLayerById: getLayer,
-    findLayerByIds,
     selectLayer,
     showLayers,
     hideLayers,
@@ -316,30 +295,10 @@ function overridenInfoboxBlocks(
     : undefined;
 }
 
-function useGetLayer(
-  layers: Layer[] = [],
-  map?: Map<string, Layer>,
-): [(id: string | undefined) => Layer | undefined, Layer[]] {
-  const flayers = useMemo(() => flattenLayers(layers), [layers]);
-  const m = useMemo(() => {
-    return map ?? new Map<string, Layer>(flayers.map(l => [l.id, l]));
-  }, [map, flayers]);
-  const get = useCallback(
-    (id: string | undefined): Layer | undefined => (id ? m.get(id) : undefined),
-    [m],
-  );
-  return [get, flayers];
-}
-
-function flattenLayers(layers: Layer[] | undefined): Layer[] {
-  return (
-    layers?.reduce<Layer[]>((a, b) => [...a, ...(b.isVisible ? b.children ?? [b] : [])], []) ?? []
-  );
-}
-
 function useProviderProps(
-  props: Omit<ProviderProps, "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut">,
+  props: Omit<ProviderProps, "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut" | "layers">,
   engineRef: RefObject<EngineRef>,
+  layers: LayerStore,
 ): ProviderProps {
   const isMarshalable = useCallback(
     (obj: any): boolean | "json" => {
@@ -391,11 +350,12 @@ function useProviderProps(
   );
 
   return {
+    ...props,
     engine,
     flyTo,
     lookAt,
     zoomIn,
     zoomOut,
-    ...props,
+    layers,
   };
 }

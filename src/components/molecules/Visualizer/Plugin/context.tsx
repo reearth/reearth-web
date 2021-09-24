@@ -11,6 +11,7 @@ import React, {
 
 import events from "@reearth/util/event";
 
+import type { LayerStore } from "../Layer";
 import type { Component as PrimitiveComponent } from "../Primitive";
 
 import type { CommonReearth } from "./api";
@@ -35,15 +36,13 @@ export type Props = {
   engineName: string;
   sceneProperty?: any;
   camera?: Camera;
-  layers?: Layer[];
+  layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
-  findLayerById: (id: string) => Layer | undefined;
-  findLayerByIds: (...ids: string[]) => (Layer | undefined)[];
   flyTo: (dest: FlyToDestination) => void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
@@ -76,8 +75,6 @@ export function Provider({
   showLayer,
   hideLayer,
   selectLayer,
-  findLayerById,
-  findLayerByIds,
   flyTo,
   lookAt,
   zoomIn,
@@ -92,7 +89,6 @@ export function Provider({
 
   const getSceneProperty = useGet(sceneProperty);
   const getCamera = useGet(camera);
-  const getLayers = useGet(layers ?? []);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
@@ -107,17 +103,15 @@ export function Provider({
       reearth: commonReearth({
         engineName,
         events: ev,
+        layers,
         sceneProperty: getSceneProperty,
         camera: getCamera,
-        layers: getLayers,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
         showLayer,
         hideLayer,
         selectLayer,
-        findLayerById,
-        findLayerByIds,
         flyTo,
         lookAt,
         zoomIn,
@@ -126,21 +120,19 @@ export function Provider({
     }),
     [
       api,
-      engineName,
       isMarshalable,
       builtinPrimitives,
+      engineName,
       ev,
+      layers,
       getSceneProperty,
       getCamera,
-      getLayers,
       getSelectedLayer,
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
       showLayer,
       hideLayer,
       selectLayer,
-      findLayerById,
-      findLayerByIds,
       flyTo,
       lookAt,
       zoomIn,

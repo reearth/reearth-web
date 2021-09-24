@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import React, { useMemo, useState } from "react";
 
-import Component, { Layer, Widget, Props } from ".";
+import Component, { LayerStore, Widget, Props, Layer } from ".";
 
 export default {
   title: "molecules/Visualizer",
@@ -37,7 +37,6 @@ const layers: Layer[] = [
     extensionId: "marker",
     title: "hoge",
     isVisible: true,
-    infoboxEditable: true,
     property: {
       default: {
         location: { lat: 34.3929, lng: 139.4428 },
@@ -115,7 +114,7 @@ export const Default = Template.bind({});
 Default.args = {
   engine: "cesium",
   rootLayerId: "root",
-  layers,
+  layers: new LayerStore({ id: "", children: layers }),
   widgets,
   sceneProperty: {
     tiles: [{ id: "default", tile_type: "default" }],
@@ -131,8 +130,7 @@ Default.args = {
 export const Selected = Template.bind({});
 Selected.args = {
   ...Default.args,
-  layers: Default.args.layers?.map(p => ({ ...p, infoboxEditable: true })),
-  selectedLayerId: layers[1].id,
+  selectedLayerId: "2",
 };
 
 export const Built = Template.bind({});
@@ -166,53 +164,56 @@ export const Plugin: Story<Props> = args => {
             ]
           : []),
       ],
-      layers: [
-        ...(args.layers ?? []),
-        {
-          id: "pluginprimitive",
-          pluginId: "reearth",
-          extensionId: "marker",
-          isVisible: true,
-          property: {
-            default: {
-              location: { lat: 0, lng: 139 },
-              height: 0,
+      layers: new LayerStore({
+        id: "",
+        children: [
+          ...layers,
+          {
+            id: "pluginprimitive",
+            pluginId: "reearth",
+            extensionId: "marker",
+            isVisible: true,
+            property: {
+              default: {
+                location: { lat: 0, lng: 139 },
+                height: 0,
+              },
+            },
+            infobox: {
+              blocks: [
+                ...(mode === "block"
+                  ? [
+                      {
+                        id: "xxx",
+                        __REEARTH_SOURCECODE: sourceCode,
+                      } as any,
+                    ]
+                  : []),
+                {
+                  id: "yyy",
+                  pluginId: "plugins",
+                  extensionId: "block",
+                  property: {
+                    location: { lat: 0, lng: 139 },
+                  },
+                },
+              ],
             },
           },
-          infobox: {
-            blocks: [
-              ...(mode === "block"
-                ? [
-                    {
-                      id: "xxx",
-                      __REEARTH_SOURCECODE: sourceCode,
-                    },
-                  ]
-                : []),
-              {
-                id: "yyy",
-                pluginId: "plugins",
-                extensionId: "block",
-                property: {
-                  location: { lat: 0, lng: 139 },
-                },
-              },
-            ],
-          },
-        },
-        ...(mode === "primitive"
-          ? [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
-                isVisible: true,
-                property: {
-                  location: { lat: 0, lng: 130 },
-                },
-              },
-            ]
-          : []),
-      ],
+          ...(mode === "primitive"
+            ? [
+                {
+                  id: "xxx",
+                  __REEARTH_SOURCECODE: sourceCode,
+                  isVisible: true,
+                  property: {
+                    location: { lat: 0, lng: 130 },
+                  },
+                } as any,
+              ]
+            : []),
+        ],
+      }),
     };
   }, [args, mode, sourceCode]);
 
