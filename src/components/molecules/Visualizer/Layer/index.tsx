@@ -17,7 +17,7 @@ export type Props = {
   isLayerHidden?: (id: string) => boolean;
 };
 
-export { default as LayerStore, empty as emptyLayerStore } from "./Store";
+export { default as LayerStore, empty as emptyLayerStore } from "./store";
 
 export default function Layers({
   pluginProperty,
@@ -31,8 +31,8 @@ export default function Layers({
 }: Props): JSX.Element | null {
   return (
     <>
-      {layers?.flattenLayers?.map(layer =>
-        !layer.isVisible ? null : (
+      {layers?.flattenLayersRaw?.map(layer =>
+        !layer.isVisible || !!layer.children ? null : (
           <P
             key={layer.id}
             layer={layer}
