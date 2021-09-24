@@ -41,41 +41,6 @@ test("once", () => {
   expect(ev1).toBeCalledTimes(1);
 });
 
-test("fn", () => {
-  const [, emit, eventFn] = events();
-
-  const ev1 = jest.fn();
-  const ev2 = jest.fn();
-  const [get, set] = eventFn("aaa");
-
-  expect(get()).toBeUndefined();
-  set(ev1);
-  expect(get()).toBe(ev1);
-
-  emit("bbb");
-  expect(ev1).toBeCalledTimes(0);
-
-  emit("aaa");
-  expect(ev1).toBeCalledTimes(1);
-  expect(ev1).toBeCalledWith();
-
-  set(ev2);
-  expect(get()).toBe(ev2);
-  expect(ev1).toBeCalledTimes(1);
-  expect(ev2).toBeCalledTimes(0);
-
-  emit("aaa");
-  expect(ev1).toBeCalledTimes(1);
-  expect(ev2).toBeCalledTimes(1);
-
-  set();
-  expect(get()).toBeUndefined();
-
-  emit("aaa");
-  expect(ev1).toBeCalledTimes(1);
-  expect(ev2).toBeCalledTimes(1);
-});
-
 test("mergeEvents", () => {
   const cb = jest.fn();
   const [ev1, emit1] = events<{ a: [number]; c: [] }>();
