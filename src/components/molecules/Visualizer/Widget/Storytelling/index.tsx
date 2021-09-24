@@ -50,7 +50,12 @@ const Storytelling = ({ widget, sceneProperty, extendable }: Props): JSX.Element
 
   return stories?.length > 0 ? (
     <>
-      <Menu publishedTheme={publishedTheme} ref={wrapperRef} menuOpen={menuOpen}>
+      <Menu
+        publishedTheme={publishedTheme}
+        ref={wrapperRef}
+        menuOpen={menuOpen}
+        area={widget?.position?.area}
+        align={widget?.align}>
         {stories.map((story, i) => (
           <MenuItem
             publishedTheme={publishedTheme}
@@ -201,7 +206,12 @@ const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme
   color: ${({ publishedTheme }) => publishedTheme.mainIcon};
 `;
 
-const Menu = styled.div<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
+const Menu = styled.div<{
+  menuOpen?: boolean;
+  publishedTheme: PublishTheme;
+  area?: string;
+  align?: string;
+}>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
@@ -212,7 +222,11 @@ const Menu = styled.div<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-  transform: translate(0, -105%);
+  transform: translate(
+    0,
+    ${({ area, align }) =>
+      area === "top" || (area === "middle" && align === "start") ? "55%" : "-105%"}
+  );
 
   @media (max-width: 560px) {
     border: 1px solid ${props => props.theme.main.text};
