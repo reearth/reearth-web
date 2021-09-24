@@ -1,6 +1,9 @@
 import { action } from "@storybook/addon-actions";
+import React from "react";
+import type { PropsWithChildren } from "react";
 
-import type { VisualizerContext } from "./Plugin";
+import type { ProviderProps } from "./Plugin";
+import { Provider as PluginProvider } from "./Plugin";
 
 import type { Layer } from ".";
 
@@ -49,27 +52,13 @@ const layers: Layer[] = [
   },
 ];
 
-export const context: VisualizerContext = {
-  engine: {
-    name: "cesium",
-    getCamera() {
-      return {
-        lat: 0,
-        lng: 0,
-        height: 0,
-        heading: 0,
-        pitch: 0,
-        roll: 0,
-        fov: Math.PI * (60 / 180),
-      };
-    },
-    flyTo: act("flyTo"),
-    lookAt: act("lookAt"),
-    zoomIn: act("zoomIn"),
-    zoomOut: act("zoomOut"),
-    requestRender: act("requestRender"),
-    getLocationFromScreenXY: act("getLocationFromScreenXY", () => undefined),
-  },
+export function Provider({ children }: PropsWithChildren<{}>) {
+  return <PluginProvider {...context}>{children}</PluginProvider>;
+}
+
+export const context: ProviderProps = {
+  engineName: "cesium",
+  engine: {},
   hideLayer: act("layers.hide"),
   showLayer: act("layers.show"),
   selectLayer: act("layers.select"),
@@ -85,6 +74,10 @@ export const context: VisualizerContext = {
     fov: Math.PI * (60 / 180),
   },
   layers,
+  flyTo: act("flyTo"),
+  lookAt: act("lookAt"),
+  zoomIn: act("zoomIn"),
+  zoomOut: act("zoomOut"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

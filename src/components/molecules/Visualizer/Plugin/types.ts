@@ -36,7 +36,7 @@ export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: Camera];
-  select: [target?: Layer];
+  select: [layerId: string | undefined];
   message: [message: any];
 };
 

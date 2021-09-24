@@ -1,8 +1,12 @@
-import { useCallback } from "react";
+import { Options } from "quickjs-emscripten-sync";
+import { useCallback, useEffect, useMemo } from "react";
 
-import { useAPI } from "./api";
-import { useVisualizerContext } from "./context";
-import type { Layer, Widget, Block } from "./types";
+import { IFrameAPI } from "@reearth/components/atoms/Plugin/hooks";
+import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
+
+import { exposed } from "./api";
+import { useGet, useContext } from "./context";
+import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
   pluginId,
@@ -12,7 +16,6 @@ export default function ({
   block,
   layer,
   widget,
-  sceneProperty,
   pluginProperty,
 }: {
   pluginId?: string;
@@ -23,20 +26,16 @@ export default function ({
   widget?: Widget;
   block?: Block;
   property?: any;
-  sceneProperty?: any;
   pluginProperty?: any;
 }) {
-  const ctx = useVisualizerContext();
-  const [staticExposed, emit] =
+  const { staticExposed, emit, isMarshalable } =
     useAPI({
-      ctx,
       extensionId,
       extensionType,
       pluginId,
       block,
       layer,
       widget,
-      sceneProperty,
       pluginProperty,
     }) ?? [];
 
@@ -62,9 +61,98 @@ export default function ({
   return {
     skip: !staticExposed,
     src,
-    isMarshalable: ctx?.engine?.isMarshalable,
+    isMarshalable,
     staticExposed,
     handleError,
     handleMessage,
+  };
+}
+
+export function useAPI({
+  pluginId = "",
+  extensionId = "",
+  extensionType = "",
+  pluginProperty,
+  layer,
+  block,
+  widget,
+}: {
+  pluginId: string | undefined;
+  extensionId: string | undefined;
+  extensionType: string | undefined;
+  pluginProperty: any;
+  layer: Layer | undefined;
+  block: Block | undefined;
+  widget: Widget | undefined;
+}): {
+  staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
+  emit: EventEmitter<ReearthEventType> | undefined;
+  isMarshalable: Options["isMarshalable"] | undefined;
+} {
+  const ctx = useContext();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [ev, emit] = useMemo(() => events<ReearthEventType>(), [extensionId, pluginId]);
+
+  const getLayer = useGet(layer);
+  const getBlock = useGet(block);
+  const getWidget = useGet(widget);
+
+  const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
+    if (!ctx) return;
+    return ({ postMessage, render }: IFrameAPI) =>
+      exposed({
+        engineAPI: ctx.engine.api,
+        commonReearth: ctx.reearth,
+        events: ev,
+        plugin: {
+          id: pluginId,
+          extensionType,
+          extensionId,
+          property: pluginProperty,
+        },
+        block: getBlock,
+        layer: getLayer,
+        widget: getWidget,
+        postMessage,
+        render,
+      });
+  }, [
+    ctx,
+    ev,
+    extensionId,
+    extensionType,
+    getBlock,
+    getLayer,
+    getWidget,
+    pluginId,
+    pluginProperty,
+  ]);
+
+  // merge events
+  useEffect(() => {
+    if (!ctx) return;
+    const source: Events<ReearthEventType> = {
+      on: ctx.reearth.on,
+      off: ctx.reearth.off,
+      once: ctx.reearth.once,
+    };
+    return mergeEvents(source, emit, ["cameramove", "select"]);
+  }, [ctx, emit]);
+
+  useEffect(() => {
+    emit?.("update");
+  }, [block, emit, layer, widget]);
+
+  useEffect(
+    () => () => {
+      emit?.("close");
+    },
+    [emit],
+  );
+
+  return {
+    staticExposed,
+    emit,
+    isMarshalable: ctx?.engine.isMarshalable,
   };
 }

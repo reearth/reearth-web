@@ -6,8 +6,8 @@ import useHooks from "./hooks";
 import type { Layer, Block, Widget } from "./types";
 
 export type { Layer, Block, Widget, InfoboxProperty } from "./types";
-export { Provider, useVisualizerContext } from "./context";
-export type { VisualizerContext } from "./context";
+export { Provider, useContext } from "./context";
+export type { Props as ProviderProps, Context } from "./context";
 
 export type Props = {
   className?: string;
@@ -19,7 +19,6 @@ export type Props = {
   visible?: boolean;
   iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
-  sceneProperty?: any;
   pluginProperty?: any;
   pluginBaseUrl?: string;
   layer?: Layer;
@@ -41,7 +40,6 @@ export default function Plugin({
   layer,
   widget,
   block,
-  sceneProperty,
   pluginProperty,
 }: Props): JSX.Element | null {
   const { skip, src, isMarshalable, staticExposed, handleError, handleMessage } = useHooks({
@@ -53,7 +51,6 @@ export default function Plugin({
     layer,
     widget,
     block,
-    sceneProperty,
     pluginProperty,
   });
 

@@ -1,77 +1,38 @@
-import { useMemo, useCallback, useRef, useEffect } from "react";
+import type { Events } from "@reearth/util/event";
 
-import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
-import events from "@reearth/util/event";
-import type { Events, EventEmitter } from "@reearth/util/event";
-
-import type { VisualizerContext } from "./context";
-import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth } from "./types";
+import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth, Plugin } from "./types";
 
 export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
 
-function api({
+export function exposed({
   render,
   postMessage,
-  engine,
-  engineAPI,
-  pluginId,
-  extensionId,
-  extensionType,
-  pluginProperty,
   events,
-  sceneProperty,
-  findLayerById,
-  findLayerByIds,
-  selectedLayer,
-  layerSelectionReason,
-  layerOverriddenInfobox,
-  layers,
+  engineAPI,
+  commonReearth,
+  plugin,
   layer,
   block,
   widget,
-  camera,
-  selectLayer,
-  showLayer,
-  hideLayer,
-  flyTo,
-  lookAt,
-  zoomIn,
-  zoomOut,
-}: IFrameAPI &
-  Parameters<typeof commonReearth>[0] & {
-    engineAPI: any;
-    pluginId: string;
-    extensionId: string;
-    extensionType: string;
-    pluginProperty: any;
-    layer: () => GlobalThis["reearth"]["layer"];
-    block: () => GlobalThis["reearth"]["block"];
-    widget: () => GlobalThis["reearth"]["widget"];
-  }): GlobalThis {
+}: {
+  render: (html: string, options?: { visible?: boolean }) => void;
+  postMessage: (message: any) => void;
+  events: Events<ReearthEventType>;
+  engineAPI: any;
+  commonReearth: CommonReearth;
+  plugin?: Plugin;
+  layer?: () => Layer | undefined;
+  block?: () => Block | undefined;
+  widget?: () => Widget | undefined;
+}): GlobalThis {
   return {
-    ...builtin(),
+    console: {
+      error: console.error,
+      log: console.log,
+    },
     ...(engineAPI ?? {}),
     reearth: {
-      ...(engineAPI?.reearth ?? {}),
-      ...commonReearth({
-        engine,
-        sceneProperty,
-        events,
-        findLayerById,
-        findLayerByIds,
-        selectedLayer,
-        layerSelectionReason,
-        layerOverriddenInfobox,
-        layers,
-        camera,
-        selectLayer,
-        showLayer,
-        hideLayer,
-        flyTo,
-        lookAt,
-        zoomIn,
-        zoomOut,
-      }),
+      ...commonReearth,
       ui: {
         show: (
           html: string,
@@ -87,52 +48,46 @@ function api({
       },
       plugin: {
         get id() {
-          return pluginId;
+          return plugin?.id;
         },
         get extensionType() {
-          return extensionType;
+          return plugin?.extensionType;
         },
         get extensionId() {
-          return extensionId;
+          return plugin?.extensionId;
         },
         get property() {
-          return pluginProperty;
+          return plugin?.property;
         },
       },
-      ...(extensionType === "primitive"
+      ...(plugin?.extensionType === "primitive"
         ? {
             get layer() {
-              return layer();
+              return layer?.();
             },
           }
         : {}),
-      ...(extensionType === "block"
+      ...(plugin?.extensionType === "block"
         ? {
             get block() {
-              return block();
+              return block?.();
             },
           }
         : {}),
-      ...(extensionType === "widget"
+      ...(plugin?.extensionType === "widget"
         ? {
             get widget() {
-              return widget();
+              return widget?.();
             },
           }
         : {}),
+      ...events,
     },
   };
 }
 
-const builtin = (): Omit<GlobalThis, "reearth"> => ({
-  console: {
-    error: console.error,
-    log: console.log,
-  },
-});
-
 export function commonReearth({
-  engine,
+  engineName,
   events,
   sceneProperty,
   camera,
@@ -150,7 +105,7 @@ export function commonReearth({
   zoomIn,
   zoomOut,
 }: {
-  engine: string;
+  engineName: string;
   events: Events<ReearthEventType>;
   sceneProperty: () => any;
   camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
@@ -172,7 +127,7 @@ export function commonReearth({
     version: window.REEARTH_CONFIG?.version || "",
     apiVersion: 1,
     visualizer: {
-      engine,
+      engine: engineName,
       flyTo,
       lookAt,
       zoomIn,
@@ -205,209 +160,4 @@ export function commonReearth({
     },
     ...events,
   };
-}
-
-export function useAPI({
-  ctx,
-  pluginId = "",
-  extensionId = "",
-  extensionType = "",
-  layer,
-  block,
-  widget,
-  pluginProperty,
-  sceneProperty,
-}: {
-  ctx: VisualizerContext | undefined;
-  pluginId: string | undefined;
-  extensionId: string | undefined;
-  extensionType: string | undefined;
-  layer: Layer | undefined;
-  block: Block | undefined;
-  widget: Widget | undefined;
-  pluginProperty: any;
-  sceneProperty: any;
-}): [((api: IFrameAPI) => GlobalThis) | undefined, EventEmitter<ReearthEventType> | undefined] {
-  const engine = ctx?.engine;
-
-  const getLayer = useGet(layer);
-  const getBlock = useGet(block);
-  const getWidget = useGet(widget);
-  const getCamera = useGet(ctx?.camera);
-  const getSelectedLayer = useGet(ctx?.selectedLayer);
-  const getLayerSelectionReason = useGet(ctx?.layerSelectionReason);
-  const getLayerOverriddenInfobox = useGet(ctx?.layerOverridenInfobox);
-  const getLayers = useGet(ctx?.layers ?? []);
-
-  const [exposed, emit] = useMemo((): [
-    ((api: IFrameAPI) => GlobalThis) | undefined,
-    EventEmitter | undefined,
-  ] => {
-    if (!engine) return [undefined, undefined];
-    const [ev, emit] = events<ReearthEventType>();
-    const exposed = engine
-      ? ({ postMessage, render }: IFrameAPI) =>
-          api({
-            engine: engine.name,
-            engineAPI: ctx.engine?.pluginApi,
-            pluginId,
-            extensionId,
-            extensionType,
-            pluginProperty,
-            sceneProperty,
-            events: ev,
-            layers: getLayers,
-            selectedLayer: getSelectedLayer,
-            layerSelectionReason: getLayerSelectionReason,
-            layerOverriddenInfobox: getLayerOverriddenInfobox,
-            block: getBlock,
-            layer: getLayer,
-            widget: getWidget,
-            camera: getCamera,
-            findLayerById: ctx.findLayerById,
-            findLayerByIds: ctx.findLayerByIds,
-            selectLayer: ctx.selectLayer,
-            showLayer: ctx.showLayer,
-            hideLayer: ctx.hideLayer,
-            flyTo: engine.flyTo,
-            lookAt: engine.lookAt,
-            zoomIn: engine.zoomIn,
-            zoomOut: engine.zoomOut,
-            postMessage,
-            render,
-          })
-      : undefined;
-    return [exposed, emit];
-  }, [
-    ctx?.engine?.pluginApi,
-    ctx?.findLayerById,
-    ctx?.findLayerByIds,
-    ctx?.hideLayer,
-    ctx?.selectLayer,
-    ctx?.showLayer,
-    engine,
-    extensionId,
-    extensionType,
-    getBlock,
-    getCamera,
-    getLayer,
-    getLayerOverriddenInfobox,
-    getLayerSelectionReason,
-    getLayers,
-    getSelectedLayer,
-    getWidget,
-    pluginId,
-    pluginProperty,
-    sceneProperty,
-  ]);
-
-  useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
-    {
-      select: ctx?.selectedLayer ? [ctx.selectedLayer] : undefined,
-      cameramove: ctx?.camera ? [ctx.camera] : undefined,
-    },
-    emit,
-  );
-
-  useEffect(() => {
-    emit?.("update");
-  }, [block, emit, layer, widget]);
-
-  useEffect(
-    () => () => {
-      emit?.("close");
-    },
-    [emit],
-  );
-
-  return [exposed, emit];
-}
-
-export function useCommonReearth({
-  ctx,
-  sceneProperty,
-}: {
-  ctx: VisualizerContext | undefined;
-  sceneProperty: any;
-}): [CommonReearth | undefined, EventEmitter<ReearthEventType> | undefined] {
-  const engine = ctx?.engine;
-
-  const getCamera = useGet(ctx?.camera);
-  const getSelectedLayer = useGet(ctx?.selectedLayer);
-  const getLayerSelectionReason = useGet(ctx?.layerSelectionReason);
-  const getLayerOverriddenInfobox = useGet(ctx?.layerOverridenInfobox);
-  const getLayers = useGet(ctx?.layers ?? []);
-
-  const [ev, emit] = useMemo(
-    () => events<Pick<ReearthEventType, "cameramove" | "select">>(),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [engine],
-  );
-
-  const exposed = useMemo((): CommonReearth | undefined => {
-    if (!engine) return;
-    return commonReearth({
-      engine: engine.name,
-      sceneProperty,
-      events: ev,
-      layers: getLayers,
-      selectedLayer: getSelectedLayer,
-      layerSelectionReason: getLayerSelectionReason,
-      layerOverriddenInfobox: getLayerOverriddenInfobox,
-      camera: getCamera,
-      findLayerById: ctx.findLayerById,
-      findLayerByIds: ctx.findLayerByIds,
-      selectLayer: ctx.selectLayer,
-      showLayer: ctx.showLayer,
-      hideLayer: ctx.hideLayer,
-      flyTo: engine.flyTo,
-      lookAt: engine.lookAt,
-      zoomIn: engine.zoomIn,
-      zoomOut: engine.zoomOut,
-    });
-  }, [
-    ctx?.findLayerById,
-    ctx?.findLayerByIds,
-    ctx?.hideLayer,
-    ctx?.selectLayer,
-    ctx?.showLayer,
-    engine,
-    ev,
-    getCamera,
-    getLayerOverriddenInfobox,
-    getLayerSelectionReason,
-    getLayers,
-    getSelectedLayer,
-    sceneProperty,
-  ]);
-
-  useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
-    {
-      select: ctx?.selectedLayer ? [ctx.selectedLayer] : undefined,
-      cameramove: ctx?.camera ? [ctx.camera] : undefined,
-    },
-    emit,
-  );
-
-  return [exposed, emit];
-}
-
-function useGet<T>(value: T): () => T {
-  const ref = useRef<T>(value);
-  ref.current = value;
-  return useCallback(() => ref.current, []);
-}
-
-function useEmit<T extends { [K in string]: any[] }>(
-  values: { [K in keyof T]?: T[K] | undefined },
-  emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined,
-) {
-  for (const k of Object.keys(values)) {
-    const args = values[k];
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (!args) return;
-      emit?.(k, ...args);
-    }, [emit, k, args]);
-  }
 }

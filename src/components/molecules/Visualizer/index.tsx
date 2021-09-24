@@ -63,7 +63,7 @@ export default function Visualizer({
     engineRef,
     wrapperRef,
     isDroppable,
-    visualizerContext,
+    providerProps,
     isLayerHidden,
     selectedLayer,
     selectedLayerId,
@@ -93,7 +93,7 @@ export default function Visualizer({
   });
 
   return (
-    <Provider value={visualizerContext}>
+    <Provider {...providerProps}>
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
         <Engine

@@ -1,6 +1,6 @@
 import React, { ComponentType, useMemo } from "react";
 
-import { useVisualizerContext } from "../Plugin";
+import { useContext } from "../Plugin";
 import type { Layer } from "../Plugin";
 
 export type { Layer } from "../Plugin";
@@ -23,7 +23,7 @@ export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   pluginBaseUrl: _pluginBaseUrl,
   ...props
 }: Props<P, PP, SP>) {
-  const ctx = useVisualizerContext();
+  const ctx = useContext();
   const Builtin = useMemo(() => {
     const builtin = ctx?.engine?.builtinPrimitives;
     return props.layer?.pluginId && props.layer.extensionId

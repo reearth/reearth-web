@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 
 import { Camera as CameraValue } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../Plugin";
+import { useContext } from "../../Plugin";
 import type { Layer } from "../../Plugin";
 
 export type Story = {
@@ -52,9 +52,13 @@ export default function ({
     noCameraFlight?: boolean;
   }>();
 
-  const ctx = useVisualizerContext();
-  const { flyTo, lookAt } = ctx?.engine ?? {};
-  const { findLayerById, selectedLayer, selectLayer } = ctx ?? {};
+  const { reearth } = useContext() ?? {};
+  const { lookAt, flyTo } = reearth?.visualizer ?? {};
+  const {
+    findById: findLayerById,
+    selected: selectedLayer,
+    select: selectLayer,
+  } = reearth?.layers ?? {};
 
   const stories = useMemo<Story[]>(() => {
     if (!storiesData || !findLayerById) return [];
@@ -73,7 +77,6 @@ export default function ({
       }
 
       const id = story?.layer;
-
       const layer = id ? findLayerById?.(id) : undefined;
       select({
         index,

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState, useCallback } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
@@ -12,15 +12,9 @@ import type {
   SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
-import type { VisualizerContext } from "./Plugin";
-import { CommonReearth, useCommonReearth } from "./Plugin/api";
+import type { ProviderProps } from "./Plugin";
+import { CameraOptions, FlyToDestination, LookAtDestination } from "./Plugin/types";
 import type { Layer as RawLayer } from "./Primitive";
-
-declare global {
-  interface Window {
-    reearth?: CommonReearth;
-  }
-}
 
 export type Layer = RawLayer & {
   infoboxEditable?: boolean;
@@ -92,6 +86,9 @@ export default ({
     selectLayer,
     findLayerById,
     findLayerByIds,
+    hideLayers,
+    isLayerHidden,
+    showLayers,
   } = useLayers({
     layers,
     selected: outerSelectedLayerId,
@@ -99,6 +96,7 @@ export default ({
     layerMap,
   });
 
+  // selected block
   const [selectedBlockId, selectBlock] = useInnerState<string>(outerSelectedBlockId, onBlockSelect);
 
   useEffect(() => {
@@ -107,15 +105,12 @@ export default ({
     }
   }, [isEditable, isBuilt, selectBlock]);
 
-  // update cesium
-  useEffect(() => {
-    engineRef.current?.requestRender();
-  });
-
+  // camera
   const [innerCamera, setInnerCamera] = useState(camera);
   useEffect(() => {
     setInnerCamera(camera);
   }, [camera]);
+
   const updateCamera = useCallback(
     (camera: Camera) => {
       setInnerCamera(camera);
@@ -124,34 +119,19 @@ export default ({
     [onCameraChange],
   );
 
-  const [, { add: hideLayer, remove: showLayer, has: isLayerHidden }] = useSet<string>();
-  const showLayers = useCallback(
-    (...ids: string[]) => {
-      for (const id of ids) {
-        showLayer(id);
-      }
-    },
-    [showLayer],
-  );
-  const hideLayers = useCallback(
-    (...ids: string[]) => {
-      for (const id of ids) {
-        hideLayer(id);
-      }
-    },
-    [hideLayer],
-  );
-
+  // GA
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
+
   useEffect(() => {
     if (!isPublished || !enableGA || !trackingId) return;
     initialize(trackingId);
     pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
-  const visualizerContext = useMemo((): VisualizerContext => {
-    return {
-      engine: engineRef.current ?? undefined,
+  const providerProps: ProviderProps = useProviderProps(
+    {
+      engineName: engineType || "",
+      sceneProperty,
       camera,
       layers,
       selectedLayer,
@@ -162,19 +142,9 @@ export default ({
       showLayer: showLayers,
       hideLayer: hideLayers,
       selectLayer,
-    };
-  }, [
-    camera,
-    layers,
-    selectedLayer,
-    layerSelectionReason,
-    layerOverridenInfobox,
-    findLayerById,
-    findLayerByIds,
-    showLayers,
-    hideLayers,
-    selectLayer,
-  ]);
+    },
+    engineRef,
+  );
 
   useEffect(() => {
     const c = engineRef.current?.getCamera();
@@ -183,20 +153,16 @@ export default ({
     }
   }, [engineType]);
 
-  const [commonReearth] = useCommonReearth({ ctx: visualizerContext, sceneProperty });
+  // update cesium
   useEffect(() => {
-    // expose plugin API for developers
-    window.reearth = commonReearth;
-    return () => {
-      delete window.reearth;
-    };
-  }, [commonReearth]);
+    engineRef.current?.requestRender();
+  });
 
   return {
     engineRef,
     wrapperRef,
     isDroppable,
-    visualizerContext,
+    providerProps,
     selectedLayerId,
     selectedLayer,
     layerSelectionReason,
@@ -267,6 +233,24 @@ function useLayers({
     [getLayer],
   );
 
+  const [, { add: hideLayer, remove: showLayer, has: isLayerHidden }] = useSet<string>();
+  const showLayers = useCallback(
+    (...ids: string[]) => {
+      for (const id of ids) {
+        showLayer(id);
+      }
+    },
+    [showLayer],
+  );
+  const hideLayers = useCallback(
+    (...ids: string[]) => {
+      for (const id of ids) {
+        hideLayer(id);
+      }
+    },
+    [hideLayer],
+  );
+
   useEffect(() => {
     innerSelectLayer(outerSelectedPrimitiveId);
     setSelectionReason(undefined);
@@ -280,9 +264,12 @@ function useLayers({
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
-    selectLayer,
+    isLayerHidden,
     findLayerById: getLayer,
     findLayerByIds,
+    selectLayer,
+    showLayers,
+    hideLayers,
   };
 }
 
@@ -348,4 +335,67 @@ function flattenLayers(layers: Layer[] | undefined): Layer[] {
   return (
     layers?.reduce<Layer[]>((a, b) => [...a, ...(b.isVisible ? b.children ?? [b] : [])], []) ?? []
   );
+}
+
+function useProviderProps(
+  props: Omit<ProviderProps, "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut">,
+  engineRef: RefObject<EngineRef>,
+): ProviderProps {
+  const isMarshalable = useCallback(
+    (obj: any): boolean | "json" => {
+      const im = engineRef.current?.isMarshalable ?? false;
+      return typeof im === "function" ? im(obj) : im;
+    },
+    [engineRef],
+  );
+
+  const engine = useMemo(
+    () => ({
+      get api() {
+        return engineRef.current?.pluginApi;
+      },
+      isMarshalable,
+      get builtinPrimitives() {
+        return engineRef.current?.builtinPrimitives;
+      },
+    }),
+    [engineRef, isMarshalable],
+  );
+
+  const flyTo = useCallback(
+    (dest: FlyToDestination, options?: CameraOptions) => {
+      engineRef.current?.flyTo(dest, options);
+    },
+    [engineRef],
+  );
+
+  const lookAt = useCallback(
+    (dest: LookAtDestination, options?: CameraOptions) => {
+      engineRef.current?.lookAt(dest, options);
+    },
+    [engineRef],
+  );
+
+  const zoomIn = useCallback(
+    (amount: number) => {
+      engineRef.current?.zoomIn(amount);
+    },
+    [engineRef],
+  );
+
+  const zoomOut = useCallback(
+    (amount: number) => {
+      engineRef.current?.zoomOut(amount);
+    },
+    [engineRef],
+  );
+
+  return {
+    engine,
+    flyTo,
+    lookAt,
+    zoomIn,
+    zoomOut,
+    ...props,
+  };
 }
