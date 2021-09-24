@@ -1,5 +1,5 @@
 import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
-import { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem";
+import { WidgetAlignSystem } from "@reearth/gql";
 
 export type PublishedData = {
   schemaVersion: number;

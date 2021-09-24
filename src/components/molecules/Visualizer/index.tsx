@@ -45,13 +45,13 @@ export type Props = PropsWithChildren<
     pluginBaseUrl?: string;
     isPublished?: boolean;
     widgetAlignEditor?: boolean;
-    onWidgetUpdate: (
+    onWidgetUpdate?: (
       id: string,
       location?: Location | undefined,
       extended?: boolean | undefined,
       index?: number | undefined,
     ) => Promise<void>;
-    onWidgetAlignSystemUpdate: (
+    onWidgetAlignSystemUpdate?: (
       location?: Location | undefined,
       align?: Alignments | undefined,
     ) => Promise<void>;

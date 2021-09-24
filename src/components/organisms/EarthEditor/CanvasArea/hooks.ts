@@ -118,6 +118,7 @@ export default (isBuilt?: boolean) => {
     () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
     [layerData, selected],
   );
+
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
 

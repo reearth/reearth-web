@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+
 import { Widget as WidgetType } from "../Widget";
 
 export type Alignments = "start" | "centered" | "end";

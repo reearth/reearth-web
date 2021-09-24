@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { GridWrapper, GridSection, GridArea, GridItem } from "react-align";
-import W from "../Widget";
+
 import { styled, useTheme } from "@reearth/theme";
+
+import W from "../Widget";
+
 import useHooks, {
   WidgetAlignSystem as WidgetAlignSystemType,
   WidgetZone,

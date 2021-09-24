@@ -1889,8 +1889,8 @@ export enum Visualizer {
 
 export type WidgetAlignSystem = {
   __typename?: 'WidgetAlignSystem';
-  inner: WidgetZone;
-  outer: WidgetZone;
+  inner?: Maybe<WidgetZone>;
+  outer?: Maybe<WidgetZone>;
 };
 
 export type WidgetArea = {
@@ -1940,9 +1940,9 @@ export type WidgetLocationInput = {
 
 export type WidgetSection = {
   __typename?: 'WidgetSection';
-  top: WidgetArea;
-  middle: WidgetArea;
-  bottom: WidgetArea;
+  top?: Maybe<WidgetArea>;
+  middle?: Maybe<WidgetArea>;
+  bottom?: Maybe<WidgetArea>;
 };
 
 export enum WidgetSectionType {
@@ -1953,9 +1953,9 @@ export enum WidgetSectionType {
 
 export type WidgetZone = {
   __typename?: 'WidgetZone';
-  left: WidgetSection;
-  center: WidgetSection;
-  right: WidgetSection;
+  left?: Maybe<WidgetSection>;
+  center?: Maybe<WidgetSection>;
+  right?: Maybe<WidgetSection>;
 };
 
 export enum WidgetZoneType {
@@ -4165,41 +4165,41 @@ export type GetSceneQuery = (
 
 export type WidgetAlignSystemFragmentFragment = (
   { __typename?: 'WidgetAlignSystem' }
-  & { outer: (
+  & { outer?: Maybe<(
     { __typename?: 'WidgetZone' }
     & WidgetZoneFragmentFragment
-  ), inner: (
+  )>, inner?: Maybe<(
     { __typename?: 'WidgetZone' }
     & WidgetZoneFragmentFragment
-  ) }
+  )> }
 );
 
 export type WidgetZoneFragmentFragment = (
   { __typename?: 'WidgetZone' }
-  & { left: (
+  & { left?: Maybe<(
     { __typename?: 'WidgetSection' }
     & WidgetSectionFragmentFragment
-  ), center: (
+  )>, center?: Maybe<(
     { __typename?: 'WidgetSection' }
     & WidgetSectionFragmentFragment
-  ), right: (
+  )>, right?: Maybe<(
     { __typename?: 'WidgetSection' }
     & WidgetSectionFragmentFragment
-  ) }
+  )> }
 );
 
 export type WidgetSectionFragmentFragment = (
   { __typename?: 'WidgetSection' }
-  & { top: (
+  & { top?: Maybe<(
     { __typename?: 'WidgetArea' }
     & WidgetAreaFragmentFragment
-  ), middle: (
+  )>, middle?: Maybe<(
     { __typename?: 'WidgetArea' }
     & WidgetAreaFragmentFragment
-  ), bottom: (
+  )>, bottom?: Maybe<(
     { __typename?: 'WidgetArea' }
     & WidgetAreaFragmentFragment
-  ) }
+  )> }
 );
 
 export type WidgetAreaFragmentFragment = (

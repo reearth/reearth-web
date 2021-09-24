@@ -6,11 +6,14 @@ import {
   WidgetAlignSystem,
   WidgetZone,
   WidgetSection,
+  WidgetArea,
   Alignments,
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   Maybe,
+  WidgetAlignSystem as WidgetAlignSystemType,
   WidgetSection as WidgetSectionType,
+  WidgetArea as WidgetAreaType,
   WidgetZone as WidgetZoneType,
 } from "@reearth/gql";
 
@@ -72,44 +75,34 @@ export default (alias?: string) => {
       pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
     }));
 
-    const filterWidgets = (widgets: Widget[], layout: WidgetAlignSystem): WidgetAlignSystem => {
-      const outer = layout.outer as WidgetZoneType;
-      const inner = layout.inner as WidgetZoneType;
-
+    const filterWidgets = (widgets: Widget[], layout: WidgetAlignSystemType): WidgetAlignSystem => {
       const handleWidgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
         return {
-          left: handleWidgetInsertion(zone?.left),
-          center: handleWidgetInsertion(zone?.center),
-          right: handleWidgetInsertion(zone?.right),
+          left: handleWidgetSection(zone?.left),
+          center: handleWidgetSection(zone?.center),
+          right: handleWidgetSection(zone?.right),
         };
       };
 
-      const handleWidgetInsertion = (
-        gridSection?: Maybe<WidgetSectionType>,
-      ): WidgetSection | [] => {
-        if (!gridSection) return [];
+      const handleWidgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | [] => {
         return [
-          {
-            position: "top",
-            align: gridSection.top?.align as Alignments,
-            widgets: gridSection.top?.widgetIds?.map(w => widgets.find(w2 => w === w2.id)),
-          },
-          {
-            position: "middle",
-            align: gridSection.middle?.align as Alignments,
-            widgets: gridSection.middle?.widgetIds?.map(w => widgets.find(w2 => w === w2.id)),
-          },
-          {
-            position: "bottom",
-            align: gridSection.bottom?.align as Alignments,
-            widgets: gridSection.bottom?.widgetIds?.map(w => widgets.find(w2 => w === w2.id)),
-          },
+          handleWidgetArea("top", section?.top),
+          handleWidgetArea("middle", section?.middle),
+          handleWidgetArea("bottom", section?.bottom),
         ];
       };
 
+      const handleWidgetArea = (position: string, area?: Maybe<WidgetAreaType>): WidgetArea => {
+        return {
+          position,
+          align: area?.align.toLowerCase() as Alignments,
+          widgets: area?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
+        };
+      };
+
       return {
-        outer: handleWidgetZone(outer),
-        inner: handleWidgetZone(inner),
+        outer: handleWidgetZone(layout.outer),
+        inner: handleWidgetZone(layout.inner),
       };
     };
 
