@@ -33,7 +33,7 @@ export function objectFromGetter<T extends { [K in keyof T]: any }>(
     (a, b) => ({
       ...a,
       [b]: {
-        get() {
+        get(this: any): any {
           return fn.call(this, b);
         },
         configurable: false,
@@ -44,4 +44,27 @@ export function objectFromGetter<T extends { [K in keyof T]: any }>(
   );
   Object.defineProperties(res, descs);
   return res;
+}
+
+export function clone<T>(obj: T): T {
+  const obj2: any = {};
+  Object.defineProperties(obj2, Object.getOwnPropertyDescriptors(obj));
+  return obj2;
+}
+
+type BoxedTupleTypes<T extends any[]> = { [P in keyof T]: [T[P]] }[Exclude<keyof T, keyof any[]>];
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void
+  ? I
+  : never;
+type UnboxIntersection<T> = T extends { 0: infer U } ? U : never;
+
+export function merge<O, P extends any[]>(
+  o1: O,
+  ...o2: P
+): O & UnboxIntersection<UnionToIntersection<BoxedTupleTypes<P>>> {
+  const obj: any = clone(o1);
+  for (const o of o2) {
+    Object.defineProperties(obj, Object.getOwnPropertyDescriptors(o));
+  }
+  return obj;
 }

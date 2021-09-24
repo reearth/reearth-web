@@ -1,4 +1,5 @@
 import type { Events } from "@reearth/util/event";
+import { merge } from "@reearth/util/object";
 
 import type { LayerStore } from "../Layer";
 
@@ -10,7 +11,7 @@ export function exposed({
   render,
   postMessage,
   events,
-  engineAPI,
+  // engineAPI,
   commonReearth,
   plugin,
   layer,
@@ -27,65 +28,71 @@ export function exposed({
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
 }): GlobalThis {
-  return {
-    console: {
-      error: console.error,
-      log: console.log,
-    },
-    ...(engineAPI ?? {}),
-    reearth: {
-      ...commonReearth,
-      ui: {
-        show: (
-          html: string,
-          options?:
-            | {
-                visible?: boolean | undefined;
-              }
-            | undefined,
-        ) => {
-          render(html, options);
-        },
-        postMessage,
+  return merge(
+    {
+      console: {
+        error: console.error,
+        log: console.log,
       },
-      plugin: {
-        get id() {
-          return plugin?.id;
-        },
-        get extensionType() {
-          return plugin?.extensionType;
-        },
-        get extensionId() {
-          return plugin?.extensionId;
-        },
-        get property() {
-          return plugin?.property;
-        },
-      },
-      ...(plugin?.extensionType === "primitive"
-        ? {
-            get layer() {
-              return layer?.();
+      reearth: merge(
+        commonReearth,
+        {
+          ui: {
+            show: (
+              html: string,
+              options?:
+                | {
+                    visible?: boolean | undefined;
+                  }
+                | undefined,
+            ) => {
+              render(html, options);
             },
-          }
-        : {}),
-      ...(plugin?.extensionType === "block"
-        ? {
-            get block() {
-              return block?.();
+            postMessage,
+          },
+          plugin: {
+            get id() {
+              return plugin?.id;
             },
-          }
-        : {}),
-      ...(plugin?.extensionType === "widget"
-        ? {
-            get widget() {
-              return widget?.();
+            get extensionType() {
+              return plugin?.extensionType;
             },
-          }
-        : {}),
-      ...events,
+            get extensionId() {
+              return plugin?.extensionId;
+            },
+            get property() {
+              return plugin?.property;
+            },
+          },
+          ...events,
+        },
+        plugin?.extensionType === "primitive"
+          ? {
+              get layer() {
+                return layer?.();
+              },
+            }
+          : {},
+        plugin?.extensionType === "block"
+          ? {
+              get block() {
+                return block?.();
+              },
+            }
+          : {},
+        plugin?.extensionType === "widget"
+          ? {
+              get widget() {
+                return widget?.();
+              },
+            }
+          : {},
+      ),
     },
-  };
+    // plugin?.extensionType === "primitive" || plugin?.extensionType === "widget"
+    //   ? engineAPI ?? {}
+    //   : {},
+  );
 }
 
 export function commonReearth({
