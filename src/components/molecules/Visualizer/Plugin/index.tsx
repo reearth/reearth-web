@@ -34,7 +34,6 @@ export default function Plugin({
   extensionId,
   extensionType,
   iFrameProps,
-  property,
   visible,
   pluginBaseUrl = "/plugins",
   layer,
@@ -42,11 +41,10 @@ export default function Plugin({
   block,
   pluginProperty,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, staticExposed, handleError, handleMessage } = useHooks({
+  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
     pluginId,
     extensionId,
     extensionType,
-    property,
     pluginBaseUrl,
     layer,
     widget,
@@ -63,11 +61,11 @@ export default function Plugin({
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
-      staticExposed={staticExposed}
-      onError={handleError}
-      onMessage={handleMessage}
+      exposed={exposed}
+      onError={onError}
+      onMessage={onMessage}
+      onPreInit={onPreInit}
+      onDispose={onDispose}
     />
   ) : null;
-
-  return null;
 }

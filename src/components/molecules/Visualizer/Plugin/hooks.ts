@@ -1,5 +1,5 @@
 import { Options } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { IFrameAPI } from "@reearth/components/atoms/Plugin/hooks";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
@@ -25,10 +25,9 @@ export default function ({
   layer?: Layer;
   widget?: Widget;
   block?: Block;
-  property?: any;
   pluginProperty?: any;
 }) {
-  const { staticExposed, emit, isMarshalable } =
+  const { staticExposed, isMarshalable, onPreInit, onDispose, onMessage } =
     useAPI({
       extensionId,
       extensionType,
@@ -39,18 +38,11 @@ export default function ({
       pluginProperty,
     }) ?? [];
 
-  const handleError = useCallback(
+  const onError = useCallback(
     (err: any) => {
       console.error(`plugin error from ${pluginId}/${extensionId}: `, err);
     },
     [pluginId, extensionId],
-  );
-
-  const handleMessage = useCallback(
-    (msg: any) => {
-      emit?.("message", msg);
-    },
-    [emit],
   );
 
   const src =
@@ -62,9 +54,11 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
-    staticExposed,
-    handleError,
-    handleMessage,
+    exposed: staticExposed,
+    onError,
+    onMessage,
+    onPreInit,
+    onDispose,
   };
 }
 
@@ -86,24 +80,52 @@ export function useAPI({
   widget: Widget | undefined;
 }): {
   staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
-  emit: EventEmitter<ReearthEventType> | undefined;
   isMarshalable: Options["isMarshalable"] | undefined;
+  onMessage: (message: any) => void;
+  onPreInit: () => void;
+  onDispose: () => void;
 } {
   const ctx = useContext();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const [ev, emit] = useMemo(() => events<ReearthEventType>(), [extensionId, pluginId]);
-
   const getLayer = useGet(layer);
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
 
+  const event =
+    useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
+
+  const onPreInit = useCallback(() => {
+    const e = events<ReearthEventType>();
+    let cancel: (() => void) | undefined;
+
+    if (ctx) {
+      const source: Events<ReearthEventType> = {
+        on: ctx.reearth.on,
+        off: ctx.reearth.off,
+        once: ctx.reearth.once,
+      };
+      cancel = mergeEvents(source, e[1], ["cameramove", "select"]);
+    }
+
+    event.current = [e[0], e[1], cancel];
+  }, [ctx]);
+
+  const onDispose = useCallback(() => {
+    event.current?.[1]("close");
+    event.current?.[2]?.();
+    event.current = undefined;
+  }, []);
+
+  const onMessage = useCallback((msg: any) => {
+    event.current?.[1]("message", msg);
+  }, []);
+
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx) return;
-    return ({ postMessage, render }: IFrameAPI) =>
-      exposed({
+    return ({ postMessage, render }: IFrameAPI) => {
+      return exposed({
         engineAPI: ctx.engine.api,
         commonReearth: ctx.reearth,
-        events: ev,
+        events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },
         plugin: {
           id: pluginId,
           extensionType,
@@ -116,43 +138,18 @@ export function useAPI({
         postMessage,
         render,
       });
-  }, [
-    ctx,
-    ev,
-    extensionId,
-    extensionType,
-    getBlock,
-    getLayer,
-    getWidget,
-    pluginId,
-    pluginProperty,
-  ]);
-
-  // merge events
-  useEffect(() => {
-    if (!ctx) return;
-    const source: Events<ReearthEventType> = {
-      on: ctx.reearth.on,
-      off: ctx.reearth.off,
-      once: ctx.reearth.once,
     };
-    return mergeEvents(source, emit, ["cameramove", "select"]);
-  }, [ctx, emit]);
+  }, [ctx, extensionId, extensionType, pluginId, pluginProperty, getBlock, getLayer, getWidget]);
 
   useEffect(() => {
-    emit?.("update");
-  }, [block, emit, layer, widget]);
-
-  useEffect(
-    () => () => {
-      emit?.("close");
-    },
-    [emit],
-  );
+    event.current?.[1]("update");
+  }, [block, layer, widget]);
 
   return {
     staticExposed,
-    emit,
     isMarshalable: ctx?.engine.isMarshalable,
+    onMessage,
+    onPreInit,
+    onDispose,
   };
 }
