@@ -1,4 +1,4 @@
-import events from "./event";
+import events, { mergeEvents } from "./event";
 
 test("works", () => {
   const [{ on, off }, emit] = events();
@@ -74,4 +74,21 @@ test("fn", () => {
   emit("aaa");
   expect(ev1).toBeCalledTimes(1);
   expect(ev2).toBeCalledTimes(1);
+});
+
+test("mergeEvents", () => {
+  const cb = jest.fn();
+  const [ev1, emit1] = events<{ a: [number]; c: [] }>();
+  const [ev2, emit2] = events<{ a: [number]; b: [] }>();
+  ev2.on("a", cb);
+  const off = mergeEvents(ev1, emit2, ["a"]);
+
+  emit1("a", 100);
+  expect(cb).toBeCalledTimes(1);
+  expect(cb).toBeCalledWith(100);
+
+  off();
+
+  emit1("a", 100);
+  expect(cb).toBeCalledTimes(1);
 });

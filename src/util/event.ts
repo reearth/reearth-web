@@ -98,3 +98,29 @@ function eventFn<T extends keyof E, E extends { [P in string]: any[] } = { [P in
     },
   ];
 }
+
+export function mergeEvents<E extends { [x: string]: any[] } = { [x: string]: any[] }>(
+  source: Events<E>,
+  dest: EventEmitter<E>,
+  types: (keyof E)[],
+): () => void {
+  const cbs = types.reduce<{ [T in keyof E]: EventCallback<E[T]> }>(
+    (a, b) => ({
+      ...a,
+      [b]: (...args: E[typeof b]) => {
+        dest(b, ...args);
+      },
+    }),
+    {} as any,
+  );
+
+  for (const t of Object.keys(cbs)) {
+    source.on(t, cbs[t]);
+  }
+
+  return () => {
+    for (const t of Object.keys(cbs)) {
+      source.off(t, cbs[t]);
+    }
+  };
+}
