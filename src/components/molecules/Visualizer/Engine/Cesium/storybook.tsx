@@ -4,8 +4,7 @@ import React from "react";
 import { CameraFlyTo, CameraFlyToBoundingSphere } from "resium";
 
 import type { SceneProperty } from "..";
-import { Provider } from "../../Plugin";
-import { context } from "../../storybook";
+import { Provider } from "../../storybook";
 
 import CesiumEngine from ".";
 
@@ -20,7 +19,7 @@ export const V: React.FC<{
   property?: SceneProperty;
 }> = ({ children, location: l = location, lookAt, property }) => {
   return (
-    <Provider value={context}>
+    <Provider>
       <CesiumEngine
         ready
         property={{

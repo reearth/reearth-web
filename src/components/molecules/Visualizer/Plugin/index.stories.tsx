@@ -14,7 +14,7 @@ export default {
 } as Meta;
 
 export const Default: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider {...context}>
     <div style={{ background: "#fff" }}>
       <Component {...args} />
     </div>
@@ -29,7 +29,7 @@ Default.args = {
 };
 
 export const Headless: Story<Props> = args => (
-  <Provider value={context}>
+  <Provider {...context}>
     <Component {...args} />
   </Provider>
 );
