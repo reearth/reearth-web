@@ -196,25 +196,42 @@ export const convertWidgets = (
   const filterWidgets = (widgets: Widget[], layout: WidgetAlignSystemType): WidgetAlignSystem => {
     const handleWidgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
       return {
-        left: handleWidgetSection(zone?.left),
-        center: handleWidgetSection(zone?.center),
-        right: handleWidgetSection(zone?.right),
+        left: handleWidgetSection("left", zone?.left),
+        center: handleWidgetSection("center", zone?.center),
+        right: handleWidgetSection("right", zone?.right),
       };
     };
 
-    const handleWidgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | [] => {
+    const handleWidgetSection = (
+      section: string,
+      contents?: Maybe<WidgetSectionType>,
+    ): WidgetSection | [] => {
       return [
-        handleWidgetArea("top", section?.top),
-        handleWidgetArea("middle", section?.middle),
-        handleWidgetArea("bottom", section?.bottom),
+        handleWidgetArea(section, "top", contents?.top),
+        handleWidgetArea(section, "middle", contents?.middle),
+        handleWidgetArea(section, "bottom", contents?.bottom),
       ];
     };
 
-    const handleWidgetArea = (position: string, area?: Maybe<WidgetAreaType>): WidgetArea => {
+    const handleWidgetArea = (
+      section: string,
+      area: string,
+      contents?: Maybe<WidgetAreaType>,
+    ): WidgetArea => {
+      const align = contents?.align.toLowerCase() as Alignments;
       return {
-        position,
-        align: area?.align.toLowerCase() as Alignments,
-        widgets: area?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
+        position: area,
+        align,
+        widgets: contents?.widgetIds.map(w => {
+          return {
+            align,
+            position: {
+              section,
+              area,
+            },
+            ...widgets.find(w2 => w === w2.id),
+          } as Widget;
+        }),
       };
     };
 

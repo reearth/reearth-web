@@ -104,7 +104,11 @@ export type Widget = {
     horizontally?: boolean;
   };
   floating?: boolean;
-  widgetLayout?: Location;
+  position?: {
+    section?: "left" | "center" | "right";
+    area?: "top" | "middle" | "bottom";
+  };
+  align?: "start" | "centered" | "end";
 };
 
 export type Location = {

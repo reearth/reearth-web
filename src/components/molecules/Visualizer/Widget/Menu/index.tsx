@@ -28,10 +28,10 @@ const Menu = ({ widget, sceneProperty }: Props): JSX.Element => {
   );
 
   return (
-    <div>
+    <>
       {Object.entries(buttonsByPosition).map(([p, buttons]) =>
         buttons?.length ? (
-          <InnerWrapper key={p} position={p as Position}>
+          <Wrapper key={p} position={p as Position}>
             {buttons.map(b =>
               !b.buttonInvisible ? (
                 <MenuButton
@@ -43,16 +43,20 @@ const Menu = ({ widget, sceneProperty }: Props): JSX.Element => {
                 />
               ) : null,
             )}
-          </InnerWrapper>
+          </Wrapper>
         ) : null,
       )}
-    </div>
+    </>
   );
 };
 
-const InnerWrapper = styled.div<{
-  position?: "topleft" | "topright" | "bottomleft" | "bottomright";
-}>`
+const Wrapper = styled.div<{ position?: "topleft" | "topright" | "bottomleft" | "bottomright" }>`
+  position: absolute;
+  top: ${({ position }) => (position === "topleft" || position === "topright" ? "0" : null)};
+  bottom: ${({ position }) =>
+    position === "bottomleft" || position === "bottomright" ? "0" : null};
+  left: ${({ position }) => (position === "topleft" || position === "bottomleft" ? "0" : null)};
+  right: ${({ position }) => (position === "topright" || position === "bottomright" ? "0" : null)};
   padding: 5px;
   display: flex;
 `;

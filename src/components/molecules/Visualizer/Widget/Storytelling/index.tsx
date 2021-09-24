@@ -51,7 +51,7 @@ const Storytelling = ({ widget, sceneProperty, extendable }: Props): JSX.Element
   return stories?.length > 0 ? (
     <>
       <Menu publishedTheme={publishedTheme} ref={wrapperRef} menuOpen={menuOpen}>
-        {stories?.map((story, i) => (
+        {stories.map((story, i) => (
           <MenuItem
             publishedTheme={publishedTheme}
             key={story.layer}
