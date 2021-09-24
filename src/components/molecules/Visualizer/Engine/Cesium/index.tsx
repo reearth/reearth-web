@@ -19,7 +19,6 @@ import Loading from "@reearth/components/atoms/Loading";
 
 import type { EngineProps, Ref as EngineRef } from "..";
 
-import CameraFlyTo from "./CameraFlyTo";
 import useHooks from "./hooks";
 
 export type { EngineProps as Props } from "..";
@@ -82,7 +81,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
         <Camera onChange={onCameraMoveEnd} />
-        <CameraFlyTo camera={camera} duration={0} />
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
