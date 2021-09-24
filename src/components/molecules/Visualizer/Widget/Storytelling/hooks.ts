@@ -3,8 +3,8 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 
 import { Camera as CameraValue } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../context";
-import type { Layer } from "../../context";
+import { useVisualizerContext } from "../../Plugin";
+import type { Layer } from "../../Plugin";
 
 export type Story = {
   title: string;

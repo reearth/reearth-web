@@ -1,9 +1,8 @@
 import { createContext, useContext } from "react";
 
-import type { Ref as EngineRef } from "./Engine";
-import type { Camera, Layer, OverriddenInfobox } from "./Plugin/types";
+import type { Ref as EngineRef } from "../Engine";
 
-export type { Layer } from "./Plugin/types";
+import type { Camera, Layer, OverriddenInfobox } from "./types";
 
 export type VisualizerContext = {
   engine?: EngineRef;

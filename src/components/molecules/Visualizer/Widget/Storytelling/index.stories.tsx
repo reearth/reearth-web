@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Provider } from "../../context";
+import { Provider } from "../../Plugin";
 import { context } from "../../storybook";
 
 import Component, { Props } from ".";

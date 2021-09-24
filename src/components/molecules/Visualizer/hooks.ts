@@ -5,7 +5,6 @@ import { useSet } from "react-use";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera } from "@reearth/util/value";
 
-import { VisualizerContext } from "./context";
 import type {
   OverriddenInfobox,
   Ref as EngineRef,
@@ -13,6 +12,7 @@ import type {
   SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
+import type { VisualizerContext } from "./Plugin";
 import { CommonReearth, useCommonReearth } from "./Plugin/api";
 import type { Layer as RawLayer } from "./Primitive";
 

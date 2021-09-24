@@ -8,8 +8,8 @@ import Icon from "@reearth/components/atoms/Icon";
 import { fonts, styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../context";
 import { SceneProperty } from "../../Engine";
+import { useVisualizerContext } from "../../Plugin";
 
 export type Position = "topleft" | "topright" | "bottomleft" | "bottomright";
 

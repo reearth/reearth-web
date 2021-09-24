@@ -3,16 +3,15 @@ import React, { PropsWithChildren } from "react";
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
 
-import { Provider } from "./context";
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
 import type { Layer } from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
+import { Provider } from "./Plugin";
 import P from "./Primitive";
 import W from "./Widget";
 import type { Widget } from "./Widget";
 
-export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Widget } from "./Widget";

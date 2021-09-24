@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 
-import type { VisualizerContext } from "./context";
+import type { VisualizerContext } from "./Plugin";
 
 import type { Layer } from ".";
 

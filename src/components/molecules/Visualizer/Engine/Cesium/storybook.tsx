@@ -4,7 +4,7 @@ import React from "react";
 import { CameraFlyTo, CameraFlyToBoundingSphere } from "resium";
 
 import type { SceneProperty } from "..";
-import { Provider } from "../../context";
+import { Provider } from "../../Plugin";
 import { context } from "../../storybook";
 
 import CesiumEngine from ".";

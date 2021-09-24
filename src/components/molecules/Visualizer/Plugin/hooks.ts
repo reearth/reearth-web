@@ -1,8 +1,7 @@
 import { useCallback } from "react";
 
-import { useVisualizerContext } from "../context";
-
 import { useAPI } from "./api";
+import { useVisualizerContext } from "./context";
 import type { Layer, Widget, Block } from "./types";
 
 export default function ({

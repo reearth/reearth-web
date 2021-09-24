@@ -1,8 +1,9 @@
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 
-import { Provider } from "../context";
 import { context } from "../storybook";
+
+import { Provider } from "./context";
 
 import Component, { Props } from ".";
 

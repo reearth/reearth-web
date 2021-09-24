@@ -6,6 +6,8 @@ import useHooks from "./hooks";
 import type { Layer, Block, Widget } from "./types";
 
 export type { Layer, Block, Widget, InfoboxProperty } from "./types";
+export { Provider, useVisualizerContext } from "./context";
+export type { VisualizerContext } from "./context";
 
 export type Props = {
   className?: string;

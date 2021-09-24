@@ -4,8 +4,7 @@ import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
 import events from "@reearth/util/event";
 import type { Events, EventEmitter } from "@reearth/util/event";
 
-import type { VisualizerContext } from "..";
-
+import type { VisualizerContext } from "./context";
 import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth } from "./types";
 
 export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;

@@ -5,7 +5,7 @@ import { useTimeoutFn } from "react-use";
 import { styled } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../context";
+import { useVisualizerContext } from "../../Plugin";
 import { Props as WidgetProps } from "../../Widget";
 
 export type Props = WidgetProps<Property>;

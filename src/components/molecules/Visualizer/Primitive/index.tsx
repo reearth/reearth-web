@@ -1,6 +1,6 @@
 import React, { ComponentType, useMemo } from "react";
 
-import { useVisualizerContext } from "../context";
+import { useVisualizerContext } from "../Plugin";
 import type { Layer } from "../Plugin";
 
 export type { Layer } from "../Plugin";
