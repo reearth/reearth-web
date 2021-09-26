@@ -55,7 +55,7 @@ export default (alias?: string) => {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem[z][s][a].widgetIds) {
+            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ?? []) {
               widgetsInWas.add(w);
             }
           }
@@ -89,7 +89,7 @@ export default (alias?: string) => {
         }),
       );
 
-    const widgetZone = (zone?: WidgetZone) => {
+    const widgetZone = (zone?: WidgetZone | null) => {
       return {
         left: widgetSection(zone?.left),
         center: widgetSection(zone?.center),
@@ -97,7 +97,7 @@ export default (alias?: string) => {
       };
     };
 
-    const widgetSection = (section?: WidgetSection) => {
+    const widgetSection = (section?: WidgetSection | null) => {
       return {
         top: widgetArea(section?.top),
         middle: widgetArea(section?.middle),
@@ -105,7 +105,7 @@ export default (alias?: string) => {
       };
     };
 
-    const widgetArea = (area?: WidgetArea) => {
+    const widgetArea = (area?: WidgetArea | null) => {
       const align = area?.align.toLowerCase() as Alignment | undefined;
       return {
         align: align ?? "start",

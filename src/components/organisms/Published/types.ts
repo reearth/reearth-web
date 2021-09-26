@@ -51,20 +51,20 @@ export type Widget = {
 };
 
 export type WidgetAlignSystem = {
-  inner: WidgetZone;
-  outer: WidgetZone;
+  inner?: WidgetZone | null;
+  outer?: WidgetZone | null;
 };
 
 export type WidgetZone = {
-  left: WidgetSection;
-  center: WidgetSection;
-  right: WidgetSection;
+  left?: WidgetSection | null;
+  center?: WidgetSection | null;
+  right?: WidgetSection | null;
 };
 
 export type WidgetSection = {
-  top: WidgetArea;
-  middle: WidgetArea;
-  bottom: WidgetArea;
+  top?: WidgetArea | null;
+  middle?: WidgetArea | null;
+  bottom?: WidgetArea | null;
 };
 
 export type WidgetArea = {
