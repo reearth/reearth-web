@@ -2,6 +2,8 @@ import React, { PropsWithChildren } from "react";
 
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
+import Loading from "@reearth/components/atoms/Loading";
+import { styled } from "@reearth/theme";
 
 import { Provider } from "./context";
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
@@ -70,6 +72,7 @@ export type Props = PropsWithChildren<
 >;
 
 export default function Visualizer({
+  ready,
   rootLayerId,
   primitives,
   widgets,
@@ -126,7 +129,7 @@ export default function Visualizer({
     <Provider value={visualizerContext}>
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
-        {widgets?.alignSystem && (
+        {ready && widgets?.alignSystem && (
           <WidgetAlignSystem
             alignSystem={widgets.alignSystem}
             enabled={widgetAlignEditorActivated}
@@ -145,6 +148,7 @@ export default function Visualizer({
           selectedPrimitiveId={selectedPrimitive?.id}
           primitiveSelectionReason={primitiveSelectionReason}
           onPrimitiveSelect={selectPrimitive}
+          ready={ready}
           {...props}
           camera={innerCamera}
           onCameraChange={updateCamera}>
@@ -163,40 +167,58 @@ export default function Visualizer({
               />
             ),
           )}
-          {widgets?.floatingWidgets.map(widget => (
-            <W
-              key={widget.id}
-              widget={widget}
-              sceneProperty={sceneProperty}
-              pluginProperty={widget.pluginProperty}
-              isEditable={props.isEditable}
-              isBuilt={props.isBuilt}
-              pluginBaseUrl={pluginBaseUrl}
-              widgetLayout={{ floating: true }}
-            />
-          ))}
+          {ready &&
+            widgets?.floatingWidgets.map(widget => (
+              <W
+                key={widget.id}
+                widget={widget}
+                sceneProperty={sceneProperty}
+                pluginProperty={widget.pluginProperty}
+                isEditable={props.isEditable}
+                isBuilt={props.isBuilt}
+                pluginBaseUrl={pluginBaseUrl}
+                widgetLayout={{ floating: true }}
+              />
+            ))}
         </Engine>
-        <Infobox
-          title={infobox?.title}
-          infoboxKey={infobox?.infoboxKey}
-          visible={!!infobox?.visible}
-          property={infobox?.property}
-          sceneProperty={sceneProperty}
-          primitive={infobox?.primitive}
-          blocks={infobox?.blocks}
-          selectedBlockId={selectedBlockId}
-          isBuilt={props.isBuilt}
-          isEditable={props.isEditable && !!infobox?.isEditable}
-          onBlockChange={onBlockChange}
-          onBlockDelete={onBlockDelete}
-          onBlockMove={onBlockMove}
-          onBlockInsert={onBlockInsert}
-          onBlockSelect={selectBlock}
-          renderInsertionPopUp={renderInfoboxInsertionPopUp}
-          pluginBaseUrl={pluginBaseUrl}
-        />
+        {ready && (
+          <Infobox
+            title={infobox?.title}
+            infoboxKey={infobox?.infoboxKey}
+            visible={!!infobox?.visible}
+            property={infobox?.property}
+            sceneProperty={sceneProperty}
+            primitive={infobox?.primitive}
+            blocks={infobox?.blocks}
+            selectedBlockId={selectedBlockId}
+            isBuilt={props.isBuilt}
+            isEditable={props.isEditable && !!infobox?.isEditable}
+            onBlockChange={onBlockChange}
+            onBlockDelete={onBlockDelete}
+            onBlockMove={onBlockMove}
+            onBlockInsert={onBlockInsert}
+            onBlockSelect={selectBlock}
+            renderInsertionPopUp={renderInfoboxInsertionPopUp}
+            pluginBaseUrl={pluginBaseUrl}
+          />
+        )}
         {children}
+        {!ready && (
+          <LoadingWrapper>
+            <Loading />
+          </LoadingWrapper>
+        )}
       </Filled>
     </Provider>
   );
 }
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000;
+  z-index: ${({ theme }) => theme.zIndexes.loading};
+`;
