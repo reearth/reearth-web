@@ -10,7 +10,7 @@ import type {
   Location,
   WidgetLayoutConstraint,
 } from "./hooks";
-import ZoneComponent from "./zone";
+import ZoneComponent from "./Zone";
 
 export type {
   WidgetAlignSystem,
