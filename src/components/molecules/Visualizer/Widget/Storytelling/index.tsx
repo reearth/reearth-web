@@ -4,7 +4,7 @@ import { useClickAway, useMedia } from "react-use";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Camera as CameraValue } from "@reearth/util/value";
 
@@ -90,7 +90,10 @@ const Storytelling = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Eleme
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper publishedTheme={publishedTheme} extended={widget?.extended}>
+      <Wrapper
+        publishedTheme={publishedTheme}
+        extended={widget?.extended}
+        floating={widgetLayout?.floating}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}
@@ -126,7 +129,11 @@ const Storytelling = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Eleme
   ) : null;
 };
 
-const Wrapper = styled.div<{ publishedTheme: PublishTheme; extended?: boolean }>`
+const Wrapper = styled.div<{
+  publishedTheme: PublishTheme;
+  extended?: boolean;
+  floating?: boolean;
+}>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   color: ${({ publishedTheme }) => publishedTheme.mainText};
   display: flex;
@@ -137,6 +144,15 @@ const Wrapper = styled.div<{ publishedTheme: PublishTheme; extended?: boolean }>
   width: ${({ extended }) => (extended ? "100%" : "500px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   pointer-events: auto;
+
+  ${({ floating }) =>
+    floating
+      ? css`
+          position: absolute;
+          bottom: 80px;
+          left: 80px;
+        `
+      : null}
 
   @media (max-width: 560px) {
     display: flex;
