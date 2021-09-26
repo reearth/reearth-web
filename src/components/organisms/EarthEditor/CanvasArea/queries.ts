@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { layerFragment, propertyFragment } from "@reearth/gql/fragments";
+import { layerFragment, propertyFragment, widgetAlignSysFragment } from "@reearth/gql/fragments";
 
 const fragments = gql`
   fragment EarthLayerItem on LayerItem {
@@ -174,9 +174,37 @@ export const GET_EARTH_WIDGETS = gql`
           id
           ...PropertyFragment
         }
+        plugins {
+          property {
+            id
+            ...PropertyFragment
+          }
+          pluginId
+          plugin {
+            id
+            extensions {
+              extensionId
+              type
+              widgetLayout {
+                floating
+                extendable {
+                  vertically
+                  horizontally
+                }
+                extended
+                defaultLocation {
+                  zone
+                  section
+                  area
+                }
+              }
+            }
+          }
+        }
         widgets {
           id
           enabled
+          extended
           pluginId
           extensionId
           property {
@@ -184,18 +212,40 @@ export const GET_EARTH_WIDGETS = gql`
             ...PropertyFragment
           }
         }
-        plugins {
-          pluginId
-          property {
-            id
-            ...PropertyFragment
-          }
+        widgetAlignSystem {
+          ...WidgetAlignSystemFragment
         }
       }
     }
   }
 
   ${fragments}
+`;
+
+export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
+  mutation updateWidgetAlignSystem(
+    $sceneId: ID!
+    $location: WidgetLocationInput!
+    $align: WidgetAreaAlign
+  ) {
+    updateWidgetAlignSystem(input: { sceneId: $sceneId, location: $location, align: $align }) {
+      scene {
+        id
+        widgets {
+          id
+          enabled
+          pluginId
+          extensionId
+          propertyId
+        }
+        widgetAlignSystem {
+          ...WidgetAlignSystemFragment
+        }
+      }
+    }
+  }
+
+  ${widgetAlignSysFragment}
 `;
 
 export const MOVE_INFOBOX_FIELD = gql`

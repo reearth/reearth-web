@@ -156,7 +156,6 @@ export default function ({ button: b, menuItems, pos, sceneProperty }: Props): J
 const Wrapper = styled.div`
   position: relative;
   margin-left: 5px;
-
   &:first-of-type {
     margin-left: 0;
   }

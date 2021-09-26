@@ -16,7 +16,8 @@ import {
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import { styled } from "@reearth/theme";
 
-export type { User, Team, NotificationType } from "@reearth/components/molecules/Common/Header";
+// Proxy dependent types
+export type { User, Team } from "@reearth/components/molecules/Common/Header";
 
 export type publishingType = "publishing" | "updating" | "unpublishing";
 export type Project = {

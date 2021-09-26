@@ -23,6 +23,7 @@ Default.args = {
     id: "",
     pluginId: "reearth",
     extensionId: "menu",
+    extended: false,
     property: {
       buttons: [
         {

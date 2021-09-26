@@ -1,6 +1,16 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
-import type { Layer, Widget, Block } from "@reearth/components/molecules/Visualizer";
-import { LayerStore } from "@reearth/components/molecules/Visualizer";
+import {
+  LayerStore,
+  Layer,
+  Widget,
+  Block,
+  WidgetAlignSystem,
+  WidgetZone,
+  WidgetSection,
+  WidgetArea,
+  Alignment,
+  WidgetLayoutConstraint,
+} from "@reearth/components/molecules/Visualizer";
 import {
   GetLayersQuery,
   GetBlocksQuery,
@@ -13,6 +23,9 @@ import {
   EarthLayer5Fragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
+  WidgetZone as WidgetZoneType,
+  WidgetSection as WidgetSectionType,
+  WidgetArea as WidgetAreaType,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
@@ -141,23 +154,100 @@ const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined
   };
 };
 
-export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[] | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene") {
+export const convertWidgets = (
+  data: GetEarthWidgetsQuery | undefined,
+):
+  | {
+      floatingWidgets: Widget[];
+      alignSystem: WidgetAlignSystem;
+      layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
+    }
+  | undefined => {
+  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
     return undefined;
   }
 
-  const widgets = data.node.widgets
-    .filter(w => w.enabled)
+  const layoutConstraint = data.node.plugins
+    .map(p =>
+      p.plugin?.extensions.reduce<{
+        [w in string]: WidgetLayoutConstraint & { floating: boolean };
+      }>(
+        (b, e) =>
+          e?.widgetLayout?.extendable
+            ? {
+                ...b,
+                [`${p.pluginId}/${e.extensionId}`]: {
+                  extendable: {
+                    horizontally: e?.widgetLayout?.extendable.horizontally,
+                    vertically: e?.widgetLayout?.extendable.vertically,
+                  },
+                  floating: !!e?.widgetLayout?.floating,
+                },
+              }
+            : b,
+        {},
+      ),
+    )
+    .reduce((a, b) => ({ ...a, ...b }), {});
+
+  const floatingWidgets = data.node.widgets
+    .filter(w => w.enabled && layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
     .map(
-      (widget): Widget => ({
-        id: widget.id,
-        pluginId: widget.pluginId,
-        extensionId: widget.extensionId,
-        property: convertProperty(widget.property),
+      (w): Widget => ({
+        id: w.id,
+        extended: !!w.extended,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        property: convertProperty(w.property),
       }),
     );
 
-  return widgets;
+  const widgets = data.node.widgets
+    .filter(w => w.enabled && !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    .map(
+      (w): Widget => ({
+        id: w.id,
+        extended: !!w.extended,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        property: convertProperty(w.property),
+      }),
+    );
+
+  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
+    return {
+      left: widgetSection(zone?.left),
+      center: widgetSection(zone?.center),
+      right: widgetSection(zone?.right),
+    };
+  };
+
+  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection => {
+    return {
+      top: widgetArea(section?.top),
+      middle: widgetArea(section?.middle),
+      bottom: widgetArea(section?.bottom),
+    };
+  };
+
+  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea => {
+    const align = area?.align.toLowerCase() as Alignment | undefined;
+    return {
+      align: align ?? "start",
+      widgets: area?.widgetIds
+        .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
+        .filter((w): w is Widget => !!w),
+    };
+  };
+
+  return {
+    floatingWidgets,
+    alignSystem: {
+      outer: widgetZone(data.node.widgetAlignSystem.outer),
+      inner: widgetZone(data.node.widgetAlignSystem.inner),
+    },
+    layoutConstraint,
+  };
 };
 
 export const convertLayers = (data: GetLayersQuery | undefined): LayerStore | undefined => {

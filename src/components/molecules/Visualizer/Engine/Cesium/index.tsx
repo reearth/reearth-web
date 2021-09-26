@@ -15,8 +15,6 @@ import {
   ScreenSpaceEvent,
 } from "resium";
 
-import Loading from "@reearth/components/atoms/Loading";
-
 import type { EngineProps, Ref as EngineRef } from "..";
 
 import useHooks from "./hooks";
@@ -110,7 +108,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         ))}
         {ready ? children : null}
       </Viewer>
-      {!ready && <Loading />}
     </>
   );
 };
