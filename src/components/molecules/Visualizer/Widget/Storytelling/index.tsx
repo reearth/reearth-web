@@ -136,7 +136,7 @@ const Wrapper = styled.div<{ publishedTheme: PublishTheme; extended?: boolean }>
   height: 80px;
   width: ${({ extended }) => (extended ? "100%" : "500px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  pointer-event: auto;
+  pointer-events: auto;
 
   @media (max-width: 560px) {
     display: flex;
