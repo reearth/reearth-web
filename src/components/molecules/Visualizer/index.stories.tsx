@@ -264,22 +264,26 @@ export const Plugin: Story<Props> = args => {
     return {
       ...args,
       widgets: {
-        alignSystem: {
-          inner: {
-            center: {
-              bottom: {
-                align: "start",
-                widgets: [
-                  {
-                    id: "xxx",
-                    extended: true,
-                    __REEARTH_SOURCECODE: sourceCode,
+        ...(mode === "widget"
+          ? {
+              alignSystem: {
+                inner: {
+                  center: {
+                    bottom: {
+                      align: "start",
+                      widgets: [
+                        {
+                          id: "xxx",
+                          extended: true,
+                          __REEARTH_SOURCECODE: sourceCode,
+                        },
+                      ],
+                    },
                   },
-                ],
+                },
               },
-            },
-          },
-        },
+            }
+          : {}),
       },
       layers: new LayerStore({
         id: "",
