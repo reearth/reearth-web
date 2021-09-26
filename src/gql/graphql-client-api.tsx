@@ -2428,6 +2428,9 @@ export type UpdateWidgetAlignSystemMutation = (
       & { widgets: Array<(
         { __typename?: 'SceneWidget' }
         & Pick<SceneWidget, 'id' | 'enabled' | 'pluginId' | 'extensionId' | 'propertyId'>
+      )>, widgetAlignSystem?: Maybe<(
+        { __typename?: 'WidgetAlignSystem' }
+        & WidgetAlignSystemFragmentFragment
       )> }
     ) }
   )> }
@@ -5654,10 +5657,13 @@ export const UpdateWidgetAlignSystemDocument = gql`
         extensionId
         propertyId
       }
+      widgetAlignSystem {
+        ...WidgetAlignSystemFragment
+      }
     }
   }
 }
-    `;
+    ${WidgetAlignSystemFragmentFragmentDoc}`;
 export type UpdateWidgetAlignSystemMutationFn = Apollo.MutationFunction<UpdateWidgetAlignSystemMutation, UpdateWidgetAlignSystemMutationVariables>;
 
 /**

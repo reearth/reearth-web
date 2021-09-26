@@ -235,6 +235,9 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
           extensionId
           propertyId
         }
+        widgetAlignSystem {
+          ...WidgetAlignSystemFragment
+        }
       }
     }
   }
