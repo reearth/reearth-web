@@ -97,7 +97,7 @@ export function useAPI({
     const e = events<ReearthEventType>();
     let cancel: (() => void) | undefined;
 
-    if (ctx) {
+    if (ctx?.reearth.on && ctx.reearth.off && ctx.reearth.once) {
       const source: Events<ReearthEventType> = {
         on: ctx.reearth.on,
         off: ctx.reearth.off,
@@ -107,7 +107,7 @@ export function useAPI({
     }
 
     event.current = [e[0], e[1], cancel];
-  }, [ctx]);
+  }, [ctx?.reearth.on, ctx?.reearth.off, ctx?.reearth.once]);
 
   const onDispose = useCallback(() => {
     event.current?.[1]("close");
@@ -120,7 +120,7 @@ export function useAPI({
   }, []);
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
-    if (!ctx) return;
+    if (!ctx?.reearth) return;
     return ({ postMessage, render }: IFrameAPI) => {
       return exposed({
         engineAPI: ctx.engine.api,
@@ -139,7 +139,17 @@ export function useAPI({
         render,
       });
     };
-  }, [ctx, extensionId, extensionType, pluginId, pluginProperty, getBlock, getLayer, getWidget]);
+  }, [
+    ctx?.engine.api,
+    ctx?.reearth,
+    extensionId,
+    extensionType,
+    pluginId,
+    pluginProperty,
+    getBlock,
+    getLayer,
+    getWidget,
+  ]);
 
   useEffect(() => {
     event.current?.[1]("update");

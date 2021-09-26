@@ -87,6 +87,7 @@ export function Provider({
     [engineName],
   );
 
+  const getLayers = useGet(layers);
   const getSceneProperty = useGet(sceneProperty);
   const getCamera = useGet(camera);
   const getSelectedLayer = useGet(selectedLayer);
@@ -103,7 +104,7 @@ export function Provider({
       reearth: commonReearth({
         engineName,
         events: ev,
-        layers,
+        layers: getLayers,
         sceneProperty: getSceneProperty,
         camera: getCamera,
         selectedLayer: getSelectedLayer,
@@ -124,7 +125,7 @@ export function Provider({
       builtinPrimitives,
       engineName,
       ev,
-      layers,
+      getLayers,
       getSceneProperty,
       getCamera,
       getSelectedLayer,

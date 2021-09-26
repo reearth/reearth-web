@@ -54,13 +54,13 @@ export default class LayerStore {
     return l;
   }
 
-  findById(id: string): PluginLayer | undefined {
+  findById = (id: string): PluginLayer | undefined => {
     return this.#pmap.get(id);
-  }
+  };
 
-  findByIds(...ids: string[]): (PluginLayer | undefined)[] {
+  findByIds = (...ids: string[]): (PluginLayer | undefined)[] => {
     return ids.map(id => this.findById(id));
-  }
+  };
 
   get root(): PluginLayer {
     return this.#proot;

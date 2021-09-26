@@ -114,7 +114,7 @@ export function commonReearth({
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
-  layers: LayerStore;
+  layers: () => LayerStore;
   sceneProperty: () => any;
   camera: () => GlobalThis["reearth"]["visualizer"]["camera"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
@@ -149,7 +149,7 @@ export function commonReearth({
       show: showLayer,
       hide: hideLayer,
       get layers() {
-        return layers.root.children ?? [];
+        return layers().root.children ?? [];
       },
       get selectionReason() {
         return layerSelectionReason();
@@ -160,8 +160,12 @@ export function commonReearth({
       get selected() {
         return selectedLayer();
       },
-      findById: layers.findById.bind(layers),
-      findByIds: layers.findByIds.bind(layers),
+      get findById() {
+        return layers().findById;
+      },
+      get findByIds() {
+        return layers().findByIds;
+      },
     },
     ...events,
   };
