@@ -3,24 +3,19 @@ import React, { CSSProperties } from "react";
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
-import type { Layer, Widget, Block, WidgetLocation, WidgetAlignment } from "./types";
+import type { Layer, Widget, Block } from "./types";
 
 export type {
   Layer,
   Block,
   Widget,
+  WidgetLayout,
   InfoboxProperty,
   WidgetLocation,
   WidgetAlignment,
 } from "./types";
 export { Provider, useContext } from "./context";
 export type { Props as ProviderProps, Context } from "./context";
-
-export type WidgetLayout = {
-  floating: boolean;
-  location?: WidgetLocation;
-  align?: WidgetAlignment;
-};
 
 export type Props = {
   className?: string;
@@ -37,7 +32,6 @@ export type Props = {
   layer?: Layer;
   widget?: Widget;
   block?: Block;
-  widgetLayout?: WidgetLayout; // TODO
 };
 
 export default function Plugin({

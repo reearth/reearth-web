@@ -114,6 +114,12 @@ export type Widget<P = any> = {
   property?: P;
   propertyId?: string;
   extended: boolean;
+  layout?: WidgetLayout;
+};
+
+export type WidgetLayout = {
+  location: WidgetLocation;
+  align: WidgetAlignment;
 };
 
 export type WidgetLocation = {

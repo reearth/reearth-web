@@ -19,10 +19,10 @@ import WidgetAlignSystem, {
 
 export type { SceneProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
-export type { Widget } from "./Widget";
 export type { Layer } from "./Layer";
 export { LayerStore } from "./Layer";
 export type {
+  Widget,
   Alignment,
   Location,
   WidgetAlignSystem,
@@ -38,7 +38,7 @@ export type Props = PropsWithChildren<
     rootLayerId?: string;
     layers?: LayerStore;
     widgets?: {
-      floatingWidgets: Widget[];
+      floatingWidgets?: Widget[];
       alignSystem?: WidgetAlignSystemType;
       layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
     };
@@ -126,6 +126,7 @@ export default function Visualizer({
             onWidgetUpdate={onWidgetUpdate}
             onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
             sceneProperty={sceneProperty}
+            pluginProperty={pluginProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             pluginBaseUrl={pluginBaseUrl}
@@ -152,15 +153,19 @@ export default function Visualizer({
             isLayerHidden={isLayerHidden}
           />
           {ready &&
-            widgets?.floatingWidgets.map(widget => (
+            widgets?.floatingWidgets?.map(widget => (
               <W
                 key={widget.id}
                 widget={widget}
                 sceneProperty={sceneProperty}
+                pluginProperty={
+                  widget.pluginId && widget.extensionId
+                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                    : undefined
+                }
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
                 pluginBaseUrl={pluginBaseUrl}
-                widgetLayout={{ floating: true }}
               />
             ))}
         </Engine>
