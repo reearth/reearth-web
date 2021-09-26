@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import { GridSection } from "react-align";
 
-import Area from "./area";
+import Area from "./Area";
 import type { WidgetZone, Location, Alignment, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {

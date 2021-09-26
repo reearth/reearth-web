@@ -13,7 +13,7 @@
         "build": "webpack --mode production",
         "clean": "del build coverage storybook-static node_modules/.cache",
         "check": "run-p type lint test",
-        "type": "tsc --noEmit",
+        "type": "tsc",
         "lint": "eslint --ext '.js,.jsx,.ts,.tsx,.graphql' .",
         "format": "eslint --fix --ext '.js,.jsx,.ts,.tsx,.graphql' .",
         "storybook": "yarn && start-storybook -p 9001",
