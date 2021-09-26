@@ -1,5 +1,4 @@
 import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
-import { WidgetAlignSystem } from "@reearth/gql";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -50,3 +49,27 @@ export type Widget = {
     | undefined;
   floating?: boolean;
 };
+
+export type WidgetAlignSystem = {
+  inner: WidgetZone;
+  outer: WidgetZone;
+};
+
+export type WidgetZone = {
+  left: WidgetSection;
+  center: WidgetSection;
+  right: WidgetSection;
+};
+
+export type WidgetSection = {
+  top: WidgetArea;
+  middle: WidgetArea;
+  bottom: WidgetArea;
+};
+
+export type WidgetArea = {
+  widgetIds: string[];
+  align: WidgetAlignment;
+};
+
+export type WidgetAlignment = "start" | "centered" | "end";

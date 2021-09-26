@@ -1,242 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { GridWrapper, GridSection, GridArea, GridItem } from "react-align";
+import React from "react";
+import { GridWrapper } from "react-align";
 
-import { styled, useTheme } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 
-import W from "../Widget";
-
-import useHooks, {
+import useHooks from "./hooks";
+import type {
   WidgetAlignSystem as WidgetAlignSystemType,
-  WidgetZone,
+  Alignment,
+  Location,
+  WidgetLayoutConstraint,
+} from "./hooks";
+import ZoneComponent from "./zone";
+
+export type {
+  WidgetAlignSystem,
+  WidgetLayout,
+  Location,
+  Alignment,
+  Widget,
   WidgetArea,
-  Location as LocationType,
-  WidgetLayout as WidgetLayoutType,
-  Alignments as AlignmentsType,
+  WidgetSection,
+  WidgetZone,
+  WidgetLayoutConstraint,
 } from "./hooks";
 
-export type WidgetAlignSystem = WidgetAlignSystemType;
-export type WidgetLayout = WidgetLayoutType;
-export type Location = LocationType;
-export type Alignments = AlignmentsType;
-
-type WidgetZoneProps = {
-  zoneName: string;
-  zone: WidgetZone;
-  innerZone?: WidgetZone;
-  onReorder: (id?: string, hoverIndex?: number) => void;
-  onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (location?: Location | undefined, align?: AlignmentsType | undefined) => void;
-  onExtend: (currentItem?: string, extended?: boolean) => void;
-  isEditable?: boolean;
-  isBuilt?: boolean;
-  sceneProperty?: any;
-  pluginBaseUrl?: string;
-};
-
-type WidgetAreaProps = {
-  zone: string;
-  section: string;
-  area: WidgetArea;
-  onReorder: (id?: string, hoverIndex?: number) => void;
-  onMove: (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => void;
-  onAlignChange: (location?: Location | undefined, align?: AlignmentsType | undefined) => void;
-  onExtend: (currentItem?: string, extended?: boolean) => void;
-  isEditable?: boolean;
-  isBuilt?: boolean;
-  sceneProperty?: any;
-  pluginBaseUrl?: string;
-};
-
-type Props = {
+export type Props = {
   alignSystem: WidgetAlignSystemType;
   enabled?: boolean;
-  onWidgetUpdate?: (
-    id: string,
-    location?: Location,
-    extended?: boolean,
-    index?: number,
-  ) => Promise<void>;
-  onWidgetAlignSystemUpdate?: (location?: Location, align?: Alignments) => Promise<void>;
+  layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginBaseUrl?: string;
+  onWidgetUpdate?: (
+    id: string,
+    update: {
+      location?: Location;
+      extended?: boolean;
+      index?: number;
+    },
+  ) => void;
+  onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
 };
-
-const WidgetAreaComponent: React.FC<WidgetAreaProps> = ({
-  zone,
-  section,
-  area,
-  onReorder,
-  onMove,
-  onAlignChange,
-  onExtend,
-  sceneProperty,
-  pluginBaseUrl,
-  isEditable,
-  isBuilt,
-}) => {
-  const [align, setAlign] = useState(area.align ?? "start");
-  const theme = useTheme();
-
-  useEffect(() => {
-    if (!area.align) return;
-    setAlign(area.align);
-  }, [area]);
-
-  useEffect(() => {
-    onAlignChange({ zone, section, area: area.position }, align);
-  }, [align, zone, section, area, onAlignChange]);
-
-  return (
-    <GridArea
-      key={area.position}
-      vertical={area.position === "middle"}
-      stretch={area.position === "middle"}
-      reverse={area.position !== "middle" && section === "right"}
-      end={section === "right" || area.position === "bottom"}
-      align={
-        (area.position === "middle" || section === "center") &&
-        area.widgets &&
-        area.widgets.length > 0
-          ? align
-          : undefined
-      }
-      setAlign={setAlign}
-      location={{ zone: zone, section: section, area: area.position }}
-      editorStyles={{
-        background:
-          area.position === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
-        border:
-          area.position === "middle"
-            ? `1px solid ${theme.alignSystem.blueHighlight}`
-            : `1px solid ${theme.alignSystem.orangeHighlight}`,
-      }}
-      iconColor={area.position === "middle" ? "#4770FF" : "#E95518"}>
-      {area.widgets?.map((widget, i) => (
-        <GridItem
-          key={widget?.id + "container"}
-          id={widget?.id as string}
-          index={i}
-          onReorder={(id, _L, _CI, hoverIndex) => onReorder(id, hoverIndex)}
-          onMoveArea={onMove}
-          extended={
-            ((widget?.extendable?.horizontally && section === "center") ||
-              (widget?.extendable?.vertically && area.position === "middle")) &&
-            widget?.extended
-          }
-          extendable={
-            (widget?.extendable?.horizontally && section === "center") ||
-            (widget?.extendable?.vertically && area.position === "middle")
-          }
-          onExtend={onExtend}
-          styles={{ pointerEvents: "auto" }}>
-          <W
-            key={widget?.id}
-            widget={widget}
-            extendable={
-              (widget?.extendable?.horizontally && section === "center") ||
-              (widget?.extendable?.vertically && area.position === "middle")
-            }
-            sceneProperty={sceneProperty}
-            pluginProperty={widget?.pluginProperty}
-            isEditable={isEditable}
-            isBuilt={isBuilt}
-            pluginBaseUrl={pluginBaseUrl}
-          />
-        </GridItem>
-      ))}
-    </GridArea>
-  );
-};
-
-const WidgetZoneComponent: React.FC<WidgetZoneProps> = ({
-  zoneName,
-  zone,
-  innerZone,
-  onReorder,
-  onMove,
-  onAlignChange,
-  onExtend,
-  sceneProperty,
-  pluginBaseUrl,
-  isEditable,
-  isBuilt,
-}) => (
-  <>
-    <GridSection>
-      {zone.left.map((a: WidgetArea) => (
-        <WidgetAreaComponent
-          key={a.position}
-          zone={zoneName}
-          section="left"
-          area={a}
-          onReorder={onReorder}
-          onMove={onMove}
-          onAlignChange={onAlignChange}
-          onExtend={onExtend}
-          sceneProperty={sceneProperty}
-          pluginBaseUrl={pluginBaseUrl}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-        />
-      ))}
-    </GridSection>
-    <GridSection stretch>
-      {zone.center.map((a: WidgetArea) =>
-        innerZone && a.position === "middle" ? (
-          <div key={a.position} style={{ display: "flex", flex: "1 0 auto" }}>
-            <WidgetZoneComponent
-              zoneName="inner"
-              zone={innerZone}
-              onReorder={onReorder}
-              onMove={onMove}
-              onAlignChange={onAlignChange}
-              onExtend={onExtend}
-              sceneProperty={sceneProperty}
-              pluginBaseUrl={pluginBaseUrl}
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-            />
-          </div>
-        ) : a.position !== "middle" ? (
-          <WidgetAreaComponent
-            key={a.position}
-            zone={zoneName}
-            section="center"
-            area={a}
-            onReorder={onReorder}
-            onMove={onMove}
-            onAlignChange={onAlignChange}
-            onExtend={onExtend}
-            sceneProperty={sceneProperty}
-            pluginBaseUrl={pluginBaseUrl}
-            isEditable={isEditable}
-            isBuilt={isBuilt}
-          />
-        ) : undefined,
-      )}
-    </GridSection>
-    <GridSection>
-      {zone.right.map((a: WidgetArea) => (
-        <WidgetAreaComponent
-          key={a.position}
-          zone={zoneName}
-          section="right"
-          area={a}
-          onReorder={onReorder}
-          onMove={onMove}
-          onAlignChange={onAlignChange}
-          onExtend={onExtend}
-          sceneProperty={sceneProperty}
-          pluginBaseUrl={pluginBaseUrl}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-        />
-      ))}
-    </GridSection>
-  </>
-);
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
@@ -247,29 +52,41 @@ const WidgetAlignSystem: React.FC<Props> = ({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  layoutConstraint,
 }) => {
-  const { alignState, onReorder, onMove, onAlignChange, onExtend } = useHooks({
-    alignSystem,
+  const { onReorder, onMove, onExtend } = useHooks({
     onWidgetUpdate,
-    onWidgetAlignSystemUpdate,
   });
 
   return (
     <WidetAlignSystemWrapper editorMode={enabled}>
       <GridWrapper enabled={enabled}>
-        <WidgetZoneComponent
+        <ZoneComponent
           zoneName="outer"
-          zone={alignState.outer}
-          innerZone={alignState.inner}
+          zone={alignSystem.outer}
           onReorder={onReorder}
           onMove={onMove}
-          onAlignChange={onAlignChange}
+          onAlignChange={onWidgetAlignSystemUpdate}
           onExtend={onExtend}
           sceneProperty={sceneProperty}
           pluginBaseUrl={pluginBaseUrl}
           isEditable={isEditable}
           isBuilt={isBuilt}
-        />
+          layoutConstraint={layoutConstraint}>
+          <ZoneComponent
+            zoneName="inner"
+            zone={alignSystem.inner}
+            onReorder={onReorder}
+            onMove={onMove}
+            onAlignChange={onWidgetAlignSystemUpdate}
+            onExtend={onExtend}
+            sceneProperty={sceneProperty}
+            pluginBaseUrl={pluginBaseUrl}
+            isEditable={isEditable}
+            isBuilt={isBuilt}
+            layoutConstraint={layoutConstraint}
+          />
+        </ZoneComponent>
       </GridWrapper>
     </WidetAlignSystemWrapper>
   );

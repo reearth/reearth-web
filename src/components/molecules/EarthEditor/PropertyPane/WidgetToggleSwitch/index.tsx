@@ -8,7 +8,7 @@ import { styled } from "@reearth/theme";
 export type Props = {
   mode?: "widgets" | "widget";
   checked?: boolean;
-  onChange?: () => Promise<void> | void | undefined;
+  onChange?: () => Promise<void> | void;
 };
 
 const WidgetToggleButton: React.FC<Props> = ({ mode, checked, onChange }) => {

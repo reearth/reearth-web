@@ -1,23 +1,15 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
 import {
+  Primitive,
+  Widget,
+  Block,
   WidgetAlignSystem,
-  WidgetZone,
-  WidgetSection,
-  WidgetArea,
-  Alignments,
-} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-import {
-  Maybe,
-  WidgetAlignSystem as WidgetAlignSystemType,
-  WidgetSection as WidgetSectionType,
-  WidgetArea as WidgetAreaType,
-  WidgetZone as WidgetZoneType,
-} from "@reearth/gql";
+  Alignment,
+} from "@reearth/components/molecules/Visualizer";
 
-import { PublishedData } from "./types";
+import { PublishedData, WidgetZone, WidgetSection, WidgetArea } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
@@ -54,61 +46,83 @@ export default (alias?: string) => {
   );
 
   const widgetSystem = useMemo<
-    { floatWidgets: Widget[]; alignSystem: WidgetAlignSystem } | undefined
+    { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
   >(() => {
-    if (!data || !data.widgets || !data.widgetAlignSystem) return undefined;
+    if (!data || !data.widgets) return undefined;
 
-    const widgets = data?.widgets?.map<Widget>(w => ({
-      id: w.id,
-      pluginId: w.pluginId,
-      extensionId: w.extensionId,
-      property: processProperty(w.property),
-      enabled: true,
-      floating: w.floating,
-      extended: w.extended,
-      extendable: w.extendable
-        ? {
-            vertically: w.extendable.vertically as boolean,
-            horizontally: w.extendable.horizontally as boolean,
+    const widgetsInWas = new Set<string>();
+    if (data.widgetAlignSystem) {
+      for (const z of ["inner", "outer"] as const) {
+        for (const s of ["left", "center", "right"] as const) {
+          for (const a of ["top", "middle", "bottom"] as const) {
+            for (const w of data.widgetAlignSystem[z][s][a].widgetIds) {
+              widgetsInWas.add(w);
+            }
           }
-        : undefined,
-      pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
-    }));
+        }
+      }
+    }
 
-    const filterWidgets = (widgets: Widget[], layout: WidgetAlignSystemType): WidgetAlignSystem => {
-      const handleWidgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
-        return {
-          left: handleWidgetSection(zone?.left),
-          center: handleWidgetSection(zone?.center),
-          right: handleWidgetSection(zone?.right),
-        };
-      };
+    const floatingWidgets = data?.widgets
+      .filter(w => !widgetsInWas.has(w.id))
+      .map(
+        (w): Widget => ({
+          id: w.id,
+          extended: !!w.extended,
+          pluginId: w.pluginId,
+          extensionId: w.extensionId,
+          property: processProperty(w.property),
+          pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
+        }),
+      );
 
-      const handleWidgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | [] => {
-        return [
-          handleWidgetArea("top", section?.top),
-          handleWidgetArea("middle", section?.middle),
-          handleWidgetArea("bottom", section?.bottom),
-        ];
-      };
+    const widgets = data?.widgets
+      .filter(w => widgetsInWas.has(w.id))
+      .map(
+        (w): Widget => ({
+          id: w.id,
+          extended: !!w.extended,
+          pluginId: w.pluginId,
+          extensionId: w.extensionId,
+          property: processProperty(w.property),
+          pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
+        }),
+      );
 
-      const handleWidgetArea = (position: string, area?: Maybe<WidgetAreaType>): WidgetArea => {
-        return {
-          position,
-          align: area?.align.toLowerCase() as Alignments,
-          widgets: area?.widgetIds.map(w => widgets.find(w2 => w === w2.id)),
-        };
-      };
-
+    const widgetZone = (zone?: WidgetZone) => {
       return {
-        outer: handleWidgetZone(layout.outer),
-        inner: handleWidgetZone(layout.inner),
+        left: widgetSection(zone?.left),
+        center: widgetSection(zone?.center),
+        right: widgetSection(zone?.right),
+      };
+    };
+
+    const widgetSection = (section?: WidgetSection) => {
+      return {
+        top: widgetArea(section?.top),
+        middle: widgetArea(section?.middle),
+        bottom: widgetArea(section?.bottom),
+      };
+    };
+
+    const widgetArea = (area?: WidgetArea) => {
+      const align = area?.align.toLowerCase() as Alignment | undefined;
+      return {
+        align: align ?? "start",
+        widgets: area?.widgetIds
+          .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
+          .filter((w): w is Widget => !!w),
       };
     };
 
     return {
-      floatWidgets: widgets.filter(w => w.floating === true),
-      alignSystem: filterWidgets(widgets, data.widgetAlignSystem),
+      floatingWidgets,
+      alignSystem: data.widgetAlignSystem
+        ? {
+            outer: widgetZone(data.widgetAlignSystem.outer),
+            inner: widgetZone(data.widgetAlignSystem.inner),
+          }
+        : undefined,
     };
   }, [data]);
 

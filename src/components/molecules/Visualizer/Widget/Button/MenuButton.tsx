@@ -32,9 +32,9 @@ export type MenuItem = {
 export type Props = {
   button: Button;
   menuItems?: MenuItem[];
-  position?: {
-    section?: "left" | "right" | "center" | undefined;
-    area?: "top" | "middle" | "bottom" | undefined;
+  location?: {
+    section?: "left" | "right" | "center";
+    area?: "top" | "middle" | "bottom";
   };
   align?: "end" | "start" | "centered";
   sceneProperty?: SceneProperty;
@@ -43,7 +43,7 @@ export type Props = {
 export default function ({
   button: b,
   menuItems,
-  position,
+  location: position,
   align,
   sceneProperty,
 }: Props): JSX.Element {

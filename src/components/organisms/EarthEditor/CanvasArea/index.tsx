@@ -61,7 +61,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       sceneProperty={sceneProperty}
       camera={camera}
       ready={ready}
-      widgetAlignEditor={widgetAlignEditor}
+      widgetAlignEditorActivated={widgetAlignEditor}
       onPrimitiveSelect={selectLayer}
       onCameraChange={onCameraChange}
       onWidgetUpdate={onWidgetUpdate}

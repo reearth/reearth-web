@@ -19,7 +19,7 @@ import {
   useSelected,
   useSelectedBlock,
   useRootLayerId,
-  useWidgetAlignEditor,
+  useWidgetAlignEditorActivated,
 } from "@reearth/state";
 import deepFind from "@reearth/util/deepFind";
 import deepGet from "@reearth/util/deepGet";
@@ -52,7 +52,7 @@ export default () => {
   const [selected, select] = useSelected();
   const [, selectBlock] = useSelectedBlock();
   const [rootLayerId] = useRootLayerId();
-  const [, toggleWidgetAlignEditor] = useWidgetAlignEditor();
+  const [, toggleWidgetAlignEditor] = useWidgetAlignEditorActivated();
 
   const { data, loading } = useGetLayersFromLayerIdQuery({
     variables: { layerId: rootLayerId ?? "" },

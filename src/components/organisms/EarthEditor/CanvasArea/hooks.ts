@@ -2,7 +2,7 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import {
   Location,
-  Alignments,
+  Alignment,
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   useGetLayersQuery,
@@ -14,7 +14,6 @@ import {
   useGetBlocksQuery,
   useUpdateWidgetMutation,
   useUpdateWidgetAlignSystemMutation,
-  WidgetLocationInput,
   WidgetZoneType,
   WidgetSectionType,
   WidgetAreaType,
@@ -26,7 +25,7 @@ import {
   useCamera,
   useSelected,
   useSelectedBlock,
-  useWidgetAlignEditor,
+  useWidgetAlignEditorActivated,
 } from "@reearth/state";
 import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
 
@@ -38,7 +37,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  const [widgetAlignEditor] = useWidgetAlignEditor();
+  const [widgetAlignEditor] = useWidgetAlignEditorActivated();
 
   const selectLayer = useCallback(
     (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
@@ -156,25 +155,23 @@ export default (isBuilt?: boolean) => {
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
   const onWidgetUpdate = useCallback(
-    async (id: string, location?: Location, extended?: boolean, index?: number) => {
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
       if (!sceneId) return;
 
-      let loc: WidgetLocationInput | undefined;
-      if (location) {
-        loc = {
-          zone: location.zone?.toUpperCase() as WidgetZoneType,
-          section: location.section?.toUpperCase() as WidgetSectionType,
-          area: location.area?.toUpperCase() as WidgetAreaType,
-        };
-      }
       await updateWidgetMutation({
         variables: {
           sceneId,
           widgetId: id,
           enabled: true,
-          location: loc,
-          extended,
-          index,
+          location: update.location
+            ? {
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
+            : undefined,
+          extended: update.extended,
+          index: update.index,
         },
         refetchQueries: ["GetEarthWidgets"],
       });
@@ -184,16 +181,16 @@ export default (isBuilt?: boolean) => {
 
   const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
   const onWidgetAlignSystemUpdate = useCallback(
-    async (location?: Location, align?: Alignments) => {
-      if (!sceneId || !location) return;
+    async (location: Location, align: Alignment) => {
+      if (!sceneId) return;
 
       updateWidgetAlignSystemMutation({
         variables: {
           sceneId,
           location: {
-            zone: location.zone?.toUpperCase() as WidgetZoneType,
-            section: location.section?.toUpperCase() as WidgetSectionType,
-            area: location.area?.toUpperCase() as WidgetAreaType,
+            zone: location.zone.toUpperCase() as WidgetZoneType,
+            section: location.section.toUpperCase() as WidgetSectionType,
+            area: location.area.toUpperCase() as WidgetAreaType,
           },
           align: align?.toUpperCase() as WidgetAreaAlign,
         },

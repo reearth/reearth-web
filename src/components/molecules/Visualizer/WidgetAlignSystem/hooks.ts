@@ -1,22 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import type { Alignment } from "react-align";
 
 import { Widget as WidgetType } from "../Widget";
 
-export type Alignments = "start" | "centered" | "end";
+export type { Alignment } from "react-align";
 
 export type Location = {
-  zone?: string;
-  section?: string;
-  area?: string;
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
 };
 
 export type WidgetArea = {
-  position: string;
-  align: Alignments;
+  align: Alignment;
   widgets?: (Widget | undefined)[];
 };
 
-export type WidgetSection = WidgetArea[];
+export type WidgetSection = {
+  top: WidgetArea;
+  middle: WidgetArea;
+  bottom: WidgetArea;
+};
 
 export type WidgetZone = {
   left: WidgetSection;
@@ -41,85 +45,40 @@ export type WidgetLayout = {
 };
 
 export default function ({
-  alignSystem,
   onWidgetUpdate,
-  onWidgetAlignSystemUpdate,
 }: {
-  alignSystem: WidgetAlignSystem;
   onWidgetUpdate?: (
     id: string,
-    location?: Location,
-    extended?: boolean,
-    index?: number,
-  ) => Promise<void>;
-  onWidgetAlignSystemUpdate?: (location?: Location, align?: Alignments) => Promise<void>;
+    update: { location?: Location; extended?: boolean; index?: number },
+  ) => void;
 }) {
-  const [alignState, setAlignState] = useState(alignSystem);
-
-  useEffect(() => {
-    setAlignState(alignSystem);
-  }, [alignSystem]);
-
   const onReorder = useCallback(
-    (id?: string, hoverIndex?: number) => {
-      if (!id) return;
-      onWidgetUpdate?.(id, undefined, undefined, hoverIndex);
+    (id: string, index: number) => {
+      onWidgetUpdate?.(id, { index });
     },
     [onWidgetUpdate],
   );
 
   const onMove = useCallback(
-    (currentItem?: string, dropLocation?: Location, originalLocation?: Location) => {
-      if (
-        !currentItem ||
-        !dropLocation?.zone ||
-        !dropLocation.section ||
-        !dropLocation.area ||
-        !onWidgetUpdate ||
-        (dropLocation.zone == originalLocation?.zone &&
-          dropLocation.section == originalLocation.section &&
-          dropLocation.area == originalLocation.area)
-      )
-        return;
-
-      onWidgetUpdate?.(currentItem, dropLocation, undefined, undefined);
+    (currentItem: string, location: Location) => {
+      onWidgetUpdate?.(currentItem, { location });
     },
     [onWidgetUpdate],
-  );
-
-  const onAlignChange = useCallback(
-    (location?: Location, align?: Alignments) => {
-      if (!location?.zone || !location.section || !location.area || !align) return;
-      // let newAlign: Alignments;
-      // switch (align) {
-      //   case "start":
-      //     newAlign = "centered";
-      //     break;
-      //   case "centered":
-      //     newAlign = "end";
-      //     break;
-      //   default:
-      //     newAlign = "start";
-      //     break;
-      // }
-      onWidgetAlignSystemUpdate?.(location, align);
-    },
-    [onWidgetAlignSystemUpdate],
   );
 
   const onExtend = useCallback(
-    (currentItem?: string, extended?: boolean) => {
-      if (!currentItem || !onWidgetUpdate) return;
-      onWidgetUpdate(currentItem, undefined, !extended, undefined);
+    (currentItem: string, extended: boolean) => {
+      onWidgetUpdate?.(currentItem, { extended });
     },
     [onWidgetUpdate],
   );
 
-  return {
-    alignState,
-    onReorder,
-    onMove,
-    onAlignChange,
-    onExtend,
-  };
+  return { onReorder, onMove, onExtend };
 }
+
+export type WidgetLayoutConstraint = {
+  extendable?: {
+    horizontally?: boolean;
+    vertically?: boolean;
+  };
+};

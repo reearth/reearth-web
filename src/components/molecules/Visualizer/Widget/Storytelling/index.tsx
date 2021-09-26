@@ -25,7 +25,7 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty, extendable }: Props): JSX.Element | null => {
+const Storytelling = ({ widget, sceneProperty, widgetLayout }: Props): JSX.Element | null => {
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
@@ -54,8 +54,8 @@ const Storytelling = ({ widget, sceneProperty, extendable }: Props): JSX.Element
         publishedTheme={publishedTheme}
         ref={wrapperRef}
         menuOpen={menuOpen}
-        area={widget?.position?.area}
-        align={widget?.align}>
+        area={widgetLayout?.location?.area}
+        align={widgetLayout?.align}>
         {stories.map((story, i) => (
           <MenuItem
             publishedTheme={publishedTheme}
@@ -90,7 +90,7 @@ const Storytelling = ({ widget, sceneProperty, extendable }: Props): JSX.Element
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper publishedTheme={publishedTheme} extended={extendable && widget?.extended}>
+      <Wrapper publishedTheme={publishedTheme} extended={widget?.extended}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}

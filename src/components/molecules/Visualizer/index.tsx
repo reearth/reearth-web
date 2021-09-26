@@ -10,13 +10,22 @@ import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } f
 import P, { Primitive as PrimitiveType } from "./Primitive";
 import W, { Widget as WidgetType } from "./Widget";
 import WidgetAlignSystem, {
+  Props as WidgetAlignSystemProps,
   WidgetAlignSystem as WidgetAlignSystemType,
-  Location,
-  Alignments,
 } from "./WidgetAlignSystem";
 
 export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
+export type {
+  Alignment,
+  Location,
+  WidgetAlignSystem,
+  WidgetLayout,
+  WidgetArea,
+  WidgetSection,
+  WidgetZone,
+  WidgetLayoutConstraint,
+} from "./WidgetAlignSystem";
 
 export type Infobox = {
   blocks?: Block[];
@@ -39,22 +48,18 @@ export type Props = PropsWithChildren<
   {
     rootLayerId?: string;
     primitives?: Primitive[];
-    widgets?: { floatWidgets: Widget[]; alignSystem: WidgetAlignSystemType };
+    widgets?: {
+      floatingWidgets: Widget[];
+      alignSystem?: WidgetAlignSystemType;
+      layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
+    };
     sceneProperty?: SceneProperty;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
     isPublished?: boolean;
-    widgetAlignEditor?: boolean;
-    onWidgetUpdate?: (
-      id: string,
-      location?: Location | undefined,
-      extended?: boolean | undefined,
-      index?: number | undefined,
-    ) => Promise<void>;
-    onWidgetAlignSystemUpdate?: (
-      location?: Location | undefined,
-      align?: Alignments | undefined,
-    ) => Promise<void>;
+    widgetAlignEditorActivated?: boolean;
+    onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
+    onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onPrimitiveSelect?: (id?: string) => void;
   } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
@@ -74,7 +79,7 @@ export default function Visualizer({
   children,
   pluginBaseUrl,
   isPublished,
-  widgetAlignEditor,
+  widgetAlignEditorActivated,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
   onPrimitiveSelect,
@@ -121,16 +126,17 @@ export default function Visualizer({
     <Provider value={visualizerContext}>
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
-        {widgets && (
+        {widgets?.alignSystem && (
           <WidgetAlignSystem
             alignSystem={widgets.alignSystem}
-            enabled={widgetAlignEditor}
+            enabled={widgetAlignEditorActivated}
             onWidgetUpdate={onWidgetUpdate}
             onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
             sceneProperty={sceneProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             pluginBaseUrl={pluginBaseUrl}
+            layoutConstraint={widgets.layoutConstraint}
           />
         )}
         <Engine
@@ -157,7 +163,7 @@ export default function Visualizer({
               />
             ),
           )}
-          {widgets?.floatWidgets.map(widget => (
+          {widgets?.floatingWidgets.map(widget => (
             <W
               key={widget.id}
               widget={widget}
@@ -166,6 +172,7 @@ export default function Visualizer({
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
               pluginBaseUrl={pluginBaseUrl}
+              widgetLayout={{ floating: true }}
             />
           ))}
         </Engine>
