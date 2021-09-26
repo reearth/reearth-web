@@ -37,7 +37,7 @@ export default function Zone({
 }: PropsWithChildren<Props>) {
   return (
     <>
-      {sections.map(s => {
+      {sections.map(s => (
         <GridSection key={s} stretch={s === "center"}>
           {areas.map(a =>
             s === "center" && children && a === "middle" ? (
@@ -64,8 +64,8 @@ export default function Zone({
               />
             ),
           )}
-        </GridSection>;
-      })}
+        </GridSection>
+      ))}
     </>
   );
 }
