@@ -54,6 +54,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         publishedTheme={publishedTheme}
         ref={wrapperRef}
         menuOpen={menuOpen}
+        extended={widget?.extended}
         area={widget?.layout?.location?.area}
         align={widget?.layout?.align}>
         {stories.map((story, i) => (
@@ -90,7 +91,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper
+      <Widget
         publishedTheme={publishedTheme}
         extended={widget?.extended}
         floating={!widget?.layout}>
@@ -124,12 +125,12 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
           onClick={handleNext}>
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
-      </Wrapper>
+      </Widget>
     </>
   ) : null;
 };
 
-const Wrapper = styled.div<{
+const Widget = styled.div<{
   publishedTheme: PublishTheme;
   extended?: boolean;
   floating?: boolean;
@@ -156,7 +157,7 @@ const Wrapper = styled.div<{
 
   @media (max-width: 560px) {
     display: flex;
-    width: 90vw;
+    width: ${({ extended }) => (extended ? "100%" : "90vw")};
     margin: 0 auto;
     height: 56px;
   }
@@ -225,6 +226,7 @@ const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme
 const Menu = styled.div<{
   menuOpen?: boolean;
   publishedTheme: PublishTheme;
+  extended?: boolean;
   area?: string;
   align?: string;
 }>`
@@ -241,15 +243,18 @@ const Menu = styled.div<{
   transform: translate(
     0,
     ${({ area, align }) =>
-      area === "top" || (area === "middle" && align === "start") ? "55%" : "-105%"}
+      area === "top" || (area === "middle" && align === "start") ? "85px" : "-530px"}
   );
 
   @media (max-width: 560px) {
+    width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
+    max-height: 70vh;
     border: 1px solid ${props => props.theme.main.text};
-  }
-
-  @media (max-width: 420px) {
-    width: auto;
+    transform: translate(
+      0,
+      ${({ area, align }) =>
+        area === "top" || (area === "middle" && align === "start") ? "65px" : "-535px"}
+    );
   }
 `;
 
