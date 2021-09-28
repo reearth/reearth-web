@@ -51,7 +51,7 @@ export default function ({
   ) => void;
 }) {
   const onReorder = useCallback(
-    (id: string, location: Location, index: number, fromIndex: number) => {
+    (id: string, _location: Location, index: number, _fromIndex: number) => {
       onWidgetUpdate?.(id, { index });
     },
     [onWidgetUpdate],
