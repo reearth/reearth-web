@@ -8,7 +8,7 @@ export type Props = {
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
-  onReorder?: (id: string, hoverIndex: number) => void;
+  onReorder?: (id: string, location: Location, hoverIndex: number, originalIndex: number) => void;
   onMove?: (currentItem: string, dropLocation: Location, originalLocation?: Location) => void;
   onAlignChange?: (location: Location, align: Alignment) => void;
   onExtend?: (currentItem: string, extended: boolean) => void;
