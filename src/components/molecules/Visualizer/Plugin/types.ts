@@ -35,7 +35,7 @@ export type Reearth = {
 export type ReearthEventType = {
   update: [];
   close: [];
-  cameramove: [camera: Camera];
+  cameramove: [camera: CameraPosition];
   select: [layerId: string | undefined];
   message: [message: any];
 };
@@ -156,10 +156,14 @@ export type UI = {
 export type Visualizer = {
   /** Current visualization engine type. Currently only "cesium" is available. */
   readonly engine: string;
-  /** Current camera position and state. */
-  readonly camera: Camera | undefined;
+  readonly camera: Camera;
   /** Current scene property */
   readonly property?: any;
+};
+
+export type Camera = {
+  /** Current camera position */
+  readonly position: CameraPosition | undefined;
   readonly zoomIn: (amount: number) => void;
   readonly zoomOut: (amount: number) => void;
   /** Moves the camera position to the specified destination. */
@@ -169,7 +173,7 @@ export type Visualizer = {
 };
 
 /** Represents the camera position and state */
-export type Camera = {
+export type CameraPosition = {
   /** degrees */
   lat: number;
   /** degrees */

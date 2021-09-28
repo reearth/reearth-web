@@ -51,7 +51,7 @@ export default function ({
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const theme = useTheme();
   const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
-  const flyTo = ctx?.reearth.visualizer.flyTo;
+  const flyTo = ctx?.reearth.visualizer.camera.flyTo;
 
   const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
