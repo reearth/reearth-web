@@ -1,4 +1,5 @@
 import { useMemo, useEffect, useCallback } from "react";
+import { useIntl } from "react-intl";
 
 import {
   Location,
@@ -32,6 +33,7 @@ import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 
 export default (isBuilt?: boolean) => {
+  const intl = useIntl();
   const [sceneId] = useSceneId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
@@ -140,7 +142,7 @@ export default (isBuilt?: boolean) => {
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
   const { data: blockData } = useGetBlocksQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
   const blocks = useMemo(() => convertToBlocks(blockData), [blockData]);

@@ -25,7 +25,7 @@ export default (projectId: string) => {
     loading: sceneLoading,
     refetch: refetchInstalledPlugins,
   } = useInstalledPluginsQuery({
-    variables: { projectId: projectId ?? "" },
+    variables: { projectId: projectId ?? "", lang: intl.locale },
     skip: !projectId,
   });
 
@@ -34,8 +34,8 @@ export default (projectId: string) => {
       ? rawSceneData?.scene?.plugins
           .filter(p => p.plugin?.id !== "reearth")
           .map<PluginItem>(p => ({
-            title: p.plugin?.name ?? "",
-            bodyMarkdown: p.plugin?.description ?? "",
+            title: p.plugin?.translatedName ?? "",
+            bodyMarkdown: p.plugin?.translatedDescription ?? "",
             author: p.plugin?.author ?? "",
             // thumbnailUrl: p.plugin?.thumbnailUrl,
             isInstalled: true,

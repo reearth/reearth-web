@@ -146,7 +146,7 @@ const fragments = gql`
 `;
 
 export const GET_LAYERS = gql`
-  query GetLayers($sceneId: ID!) {
+  query GetLayers($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -162,7 +162,7 @@ export const GET_LAYERS = gql`
 `;
 
 export const GET_EARTH_WIDGETS = gql`
-  query GetEarthWidgets($sceneId: ID!) {
+  query GetEarthWidgets($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -275,7 +275,7 @@ export const REMOVE_INFOBOX_FIELD = gql`
 `;
 
 export const GET_BLOCKS = gql`
-  query getBlocks($sceneId: ID!) {
+  query getBlocks($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -287,6 +287,8 @@ export const GET_BLOCKS = gql`
               type
               name
               description
+              translatedName(lang: $lang)
+              translatedDescription(lang: $lang)
               icon
             }
           }
