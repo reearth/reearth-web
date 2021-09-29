@@ -49,7 +49,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   });
 
   return stories?.length > 0 ? (
-    <>
+    <div>
       <Menu
         publishedTheme={publishedTheme}
         ref={wrapperRef}
@@ -126,7 +126,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
       </Widget>
-    </>
+    </div>
   ) : null;
 };
 
@@ -233,28 +233,25 @@ const Menu = styled.div<{
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
+  ${({ area, align }) =>
+    area === "top" || (area === "middle" && align === "start") ? "top: 90px" : "bottom: 90px"};
   width: 324px;
-  max-height: 500px;
+  max-height: ${({ area, align }) =>
+    area === "middle" && align === "centered" ? "200px" : "500px"};
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
-  transform: translate(
-    0,
-    ${({ area, align }) =>
-      area === "top" || (area === "middle" && align === "start") ? "85px" : "-530px"}
-  );
 
   @media (max-width: 560px) {
     width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
-    max-height: 70vh;
+    max-height: ${({ area, align }) =>
+      area === "middle" && align === "centered" ? "30vh" : "70vh"};
     border: 1px solid ${props => props.theme.main.text};
-    transform: translate(
-      0,
-      ${({ area, align }) =>
-        area === "top" || (area === "middle" && align === "start") ? "65px" : "-535px"}
-    );
+    top: ${({ area, align }) =>
+      area === "top" || (area === "middle" && align === "start") ? "60px" : null};
+    bottom: ${({ area, align }) => (area !== "top" && align !== "start" ? "60px" : null)};
   }
 `;
 

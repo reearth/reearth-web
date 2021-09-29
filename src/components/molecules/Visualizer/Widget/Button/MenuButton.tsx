@@ -131,6 +131,7 @@ export default function ({
         ref={popperElement}
         style={{
           zIndex: theme.zIndexes.dropDown,
+          margin: "2.5px auto",
           ...styles.popper,
         }}
         {...attributes.popper}>
