@@ -25,7 +25,11 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
+const Storytelling = ({
+  widget,
+  sceneProperty,
+  widgetAlignSystemState,
+}: Props): JSX.Element | null => {
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
@@ -98,7 +102,9 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}
-          onClick={handlePrev}>
+          onClick={handlePrev}
+          // sometimes react-align goes wrong
+          style={widgetAlignSystemState?.editing ? { pointerEvents: "none" } : undefined}>
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>
         <Current align="center" justify="space-between">
@@ -122,7 +128,9 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={selected?.index === stories.length - 1}
-          onClick={handleNext}>
+          onClick={handleNext}
+          // sometimes react-align goes wrong
+          style={widgetAlignSystemState?.editing ? { pointerEvents: "none" } : undefined}>
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
       </Widget>

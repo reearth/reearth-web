@@ -76,19 +76,22 @@ export default function WidgetAreaComponent({
             extended={widget.extended}
             extendable={extendable}
             style={{ pointerEvents: "auto" }}>
-            <W
-              widget={widget}
-              sceneProperty={sceneProperty}
-              pluginProperty={
-                widget.pluginId && widget.extensionId
-                  ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                  : undefined
-              }
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-              pluginBaseUrl={pluginBaseUrl}
-              widgetLayout={widgetLayout}
-            />
+            {({ editing }) => (
+              <W
+                widget={widget}
+                sceneProperty={sceneProperty}
+                pluginProperty={
+                  widget.pluginId && widget.extensionId
+                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                    : undefined
+                }
+                isEditable={isEditable}
+                isBuilt={isBuilt}
+                pluginBaseUrl={pluginBaseUrl}
+                widgetLayout={widgetLayout}
+                widgetAlignSystemState={{ editing }}
+              />
+            )}
           </GridItem>
         );
       })}
