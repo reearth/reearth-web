@@ -54,7 +54,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         publishedTheme={publishedTheme}
         ref={wrapperRef}
         menuOpen={menuOpen}
-        extended={widget?.extended}
+        extended={!!widget?.extended?.horizontally}
         area={widget?.layout?.location?.area}
         align={widget?.layout?.align}>
         {stories.map((story, i) => (
