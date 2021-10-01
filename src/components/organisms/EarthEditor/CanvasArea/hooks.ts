@@ -1,6 +1,10 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 
 import {
+  Location,
+  Alignment,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
@@ -9,6 +13,12 @@ import {
   useUpdatePropertyValueLatLngMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
+  useUpdateWidgetMutation,
+  useUpdateWidgetAlignSystemMutation,
+  WidgetZoneType,
+  WidgetSectionType,
+  WidgetAreaType,
+  WidgetAreaAlign,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -16,6 +26,7 @@ import {
   useCamera,
   useSelected,
   useSelectedBlock,
+  useWidgetAlignEditorActivated,
 } from "@reearth/state";
 import {
   valueTypeToGQL,
@@ -34,11 +45,7 @@ export default (isBuilt?: boolean) => {
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [isDragging, setIsDragging] = useState(false);
-
-  const selectLayer = useCallback(
-    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
-    [select],
-  );
+  const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
@@ -71,30 +78,6 @@ export default (isBuilt?: boolean) => {
     [removeInfoboxField, selected],
   );
 
-  const onBlockChange = useCallback(
-    async <T extends ValueType>(
-      propertyId: string,
-      schemaItemId: string,
-      fid: string,
-      v: ValueTypes[T],
-      vt: T,
-    ) => {
-      const gvt = valueTypeToGQL(vt);
-      if (!gvt) return;
-
-      await changePropertyValue({
-        variables: {
-          propertyId,
-          schemaItemId,
-          fieldId: fid,
-          type: gvt,
-          value: valueToGQL(v, vt),
-        },
-      });
-    },
-    [changePropertyValue],
-  );
-
   const { data: layerData } = useGetLayersQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
@@ -109,22 +92,53 @@ export default (isBuilt?: boolean) => {
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
   // convert data
-  const layers = useMemo(
-    () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
-    [layerData, selected],
-  );
-
-  useEffect(() => {
-    console.log(layers?.layers);
-  }, [layers]);
-
-  // const layers = convertLayers(
-  //   layerData,
-  //   selected?.type === "layer" ? selected.layerId : undefined,
-  // );
-
+  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
+  const layers = useMemo(() => convertLayers(layerData), [layerData]);
+  const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const pluginProperty = useMemo(
+    () =>
+      scene?.plugins.reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b.pluginId]: convertProperty(b.property) }),
+        {},
+      ),
+    [scene?.plugins],
+  );
+
+  const selectLayer = useCallback(
+    (id?: string) =>
+      select(id && !!layers?.findById(id) ? { layerId: id, type: "layer" } : undefined),
+    [layers, select],
+  );
+
+  const onBlockChange = useCallback(
+    async <T extends ValueType>(
+      blockId: string,
+      schemaItemId: string,
+      fid: string,
+      v: ValueTypes[T],
+      vt: T,
+    ) => {
+      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
+        ?.propertyId as string | undefined;
+      if (!propertyId) return;
+
+      const gvt = valueTypeToGQL(vt);
+      if (!gvt) return;
+
+      await changePropertyValue({
+        variables: {
+          propertyId,
+          schemaItemId,
+          fieldId: fid,
+          type: gvt,
+          value: valueToGQL(v, vt),
+        },
+      });
+    },
+    [changePropertyValue, selectedLayer?.infobox?.blocks],
+  );
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
@@ -168,47 +182,97 @@ export default (isBuilt?: boolean) => {
     async (layerId: string, position?: LatLngHeight | undefined) => {
       setIsDragging(false);
       if (!position) return;
-      const layerProperty = layers?.layers.find(l => l.id === layerId)?.rawProperty;
-      const propertyItem =
-        layerProperty && "items" in layerProperty
-          ? layerProperty?.items.find(
-              i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
-            )
-          : undefined;
-      if (!layerProperty?.id || !position || !propertyItem) return;
-      await updateLayerLatLng({
+      // const layerProperty = layers?.findById(l => l.id === layerId)?.rawProperty;
+      // const layerProperty = layers?.findById(layerId)?.rawProperty;
+      // const propertyItem =
+      //   layerProperty && "items" in layerProperty
+      //     ? layerProperty?.items.find(
+      //         i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
+      //       )
+      //     : undefined;
+      // if (!layerProperty?.id || !position || !propertyItem) return;
+      // await updateLayerLatLng({
+      //   variables: {
+      //     propertyId: layerProperty.id,
+      //     itemId: propertyItem.id,
+      //     schemaItemId: "default",
+      //     fieldId: "location",
+      //     lat: position?.lat,
+      //     lng: position?.lng,
+      //   },
+      // });
+    },
+    [layers, updateLayerLatLng],
+  );
+
+  const [updateWidgetMutation] = useUpdateWidgetMutation();
+  const onWidgetUpdate = useCallback(
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+      if (!sceneId) return;
+
+      await updateWidgetMutation({
         variables: {
-          propertyId: layerProperty.id,
-          itemId: propertyItem.id,
-          schemaItemId: "default",
-          fieldId: "location",
-          lat: position?.lat,
-          lng: position?.lng,
+          sceneId,
+          widgetId: id,
+          enabled: true,
+          location: update.location
+            ? {
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
+            : undefined,
+          extended: update.extended,
+          index: update.index,
+        },
+        refetchQueries: ["GetEarthWidgets"],
+      });
+    },
+    [sceneId, updateWidgetMutation],
+  );
+
+  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
+  const onWidgetAlignSystemUpdate = useCallback(
+    async (location: Location, align: Alignment) => {
+      if (!sceneId) return;
+
+      updateWidgetAlignSystemMutation({
+        variables: {
+          sceneId,
+          location: {
+            zone: location.zone.toUpperCase() as WidgetZoneType,
+            section: location.section.toUpperCase() as WidgetSectionType,
+            area: location.area.toUpperCase() as WidgetAreaType,
+          },
+          align: align?.toUpperCase() as WidgetAreaAlign,
         },
       });
     },
-    [layers?.layers, updateLayerLatLng],
+    [sceneId, updateWidgetAlignSystemMutation],
   );
 
   return {
     sceneId,
     rootLayerId,
-    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
+    pluginProperty,
     widgets,
-    layers: layers?.layers,
-    selectedLayer: layers?.selectedLayer,
+    layers,
+    selectedLayer,
     blocks,
     isCapturing,
     camera,
-    ready: !isBuilt || (!!layerData && !!widgetData),
+    widgetAlignEditorActivated,
     selectLayer,
     selectBlock,
     onBlockChange,
     onBlockMove,
     onBlockRemove,
     onBlockInsert,
+    onWidgetUpdate,
+    onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,

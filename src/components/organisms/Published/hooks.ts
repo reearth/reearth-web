@@ -1,9 +1,16 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import type {
+  Layer,
+  Widget,
+  Block,
+  WidgetAlignSystem,
+  Alignment,
+} from "@reearth/components/molecules/Visualizer";
+import { LayerStore } from "@reearth/components/molecules/Visualizer";
 
-import { PublishedData } from "./types";
+import { PublishedData, WidgetZone, WidgetSection, WidgetArea } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
@@ -11,46 +18,116 @@ export default (alias?: string) => {
   const [error, setError] = useState(false);
 
   const sceneProperty = processProperty(data?.property);
+  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
+    (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
+    {},
+  );
 
-  const layers = useMemo<Primitive[] | undefined>(
+  const layers = useMemo<LayerStore | undefined>(
     () =>
-      data?.layers?.map<Primitive>(l => ({
-        id: l.id,
-        title: l.name || "",
-        pluginId: l.pluginId,
-        extensionId: l.extensionId,
-        isVisible: true,
-        property: processProperty(l.property),
-        pluginProperty: processProperty(data.plugins?.[l.pluginId]?.property),
-        infobox: l.infobox
-          ? {
-              property: processProperty(l.infobox.property),
-              blocks: l.infobox.fields.map<Block>(f => ({
-                id: f.id,
-                pluginId: f.pluginId,
-                extensionId: f.extensionId,
-                property: processProperty(f.property),
-                pluginProperty: processProperty(data.plugins?.[f.pluginId]?.property),
-                // propertyId is not required in non-editable mode
-              })),
+      new LayerStore({
+        id: "",
+        children: data?.layers?.map<Layer>(l => ({
+          id: l.id,
+          title: l.name || "",
+          pluginId: l.pluginId,
+          extensionId: l.extensionId,
+          isVisible: true,
+          property: processProperty(l.property),
+          infobox: l.infobox
+            ? {
+                property: processProperty(l.infobox.property),
+                blocks: l.infobox.fields.map<Block>(f => ({
+                  id: f.id,
+                  pluginId: f.pluginId,
+                  extensionId: f.extensionId,
+                  property: processProperty(f.property),
+                })),
+              }
+            : undefined,
+        })),
+      }),
+    [data],
+  );
+
+  const widgetSystem = useMemo<
+    { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
+  >(() => {
+    if (!data || !data.widgets) return undefined;
+
+    const widgetsInWas = new Set<string>();
+    if (data.widgetAlignSystem) {
+      for (const z of ["inner", "outer"] as const) {
+        for (const s of ["left", "center", "right"] as const) {
+          for (const a of ["top", "middle", "bottom"] as const) {
+            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ?? []) {
+              widgetsInWas.add(w);
             }
-          : undefined,
-      })),
-    [data],
-  );
+          }
+        }
+      }
+    }
 
-  const widgets = useMemo<Widget[] | undefined>(
-    () =>
-      data?.widgets?.map<Widget>(w => ({
-        id: `${data.id}/${w.pluginId}/${w.extensionId}`,
-        pluginId: w.pluginId,
-        extensionId: w.extensionId,
-        property: processProperty(w.property),
-        enabled: true,
-        pluginProperty: processProperty(data.plugins?.[w.pluginId]?.property),
-      })),
-    [data],
-  );
+    const floatingWidgets = data?.widgets
+      .filter(w => !widgetsInWas.has(w.id))
+      .map(
+        (w): Widget => ({
+          id: w.id,
+          extended: !!w.extended,
+          pluginId: w.pluginId,
+          extensionId: w.extensionId,
+          property: processProperty(w.property),
+        }),
+      );
+
+    const widgets = data?.widgets
+      .filter(w => widgetsInWas.has(w.id))
+      .map(
+        (w): Widget => ({
+          id: w.id,
+          extended: !!w.extended,
+          pluginId: w.pluginId,
+          extensionId: w.extensionId,
+          property: processProperty(w.property),
+        }),
+      );
+
+    const widgetZone = (zone?: WidgetZone | null) => {
+      return {
+        left: widgetSection(zone?.left),
+        center: widgetSection(zone?.center),
+        right: widgetSection(zone?.right),
+      };
+    };
+
+    const widgetSection = (section?: WidgetSection | null) => {
+      return {
+        top: widgetArea(section?.top),
+        middle: widgetArea(section?.middle),
+        bottom: widgetArea(section?.bottom),
+      };
+    };
+
+    const widgetArea = (area?: WidgetArea | null) => {
+      const align = area?.align.toLowerCase() as Alignment | undefined;
+      return {
+        align: align ?? "start",
+        widgets: area?.widgetIds
+          .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
+          .filter((w): w is Widget => !!w),
+      };
+    };
+
+    return {
+      floatingWidgets,
+      alignSystem: data.widgetAlignSystem
+        ? {
+            outer: widgetZone(data.widgetAlignSystem.outer),
+            inner: widgetZone(data.widgetAlignSystem.inner),
+          }
+        : undefined,
+    };
+  }, [data]);
 
   const actualAlias = useMemo(
     () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
@@ -96,8 +173,9 @@ export default (alias?: string) => {
   return {
     alias: actualAlias,
     sceneProperty,
+    pluginProperty,
     layers,
-    widgets,
+    widgets: widgetSystem,
     ready,
     error,
   };
