@@ -1,7 +1,7 @@
 import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
-import type { LayerStore } from "../Layer";
+import type { LayerStore } from "../Layers";
 
 import type { GlobalThis, Block, Layer, Widget, ReearthEventType, Reearth, Plugin } from "./types";
 
@@ -107,6 +107,7 @@ export function commonReearth({
   selectLayer,
   showLayer,
   hideLayer,
+  updateLayerProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -123,6 +124,7 @@ export function commonReearth({
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
+  updateLayerProperty: GlobalThis["reearth"]["layers"]["updateProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
@@ -150,6 +152,7 @@ export function commonReearth({
       select: selectLayer,
       show: showLayer,
       hide: hideLayer,
+      updateProperty: updateLayerProperty,
       get layers() {
         return layers().root.children ?? [];
       },

@@ -12,7 +12,7 @@ import type {
   SelectLayerOptions,
 } from "./Engine";
 import type { Props as InfoboxProps, Block } from "./Infobox";
-import { LayerStore, emptyLayerStore } from "./Layer";
+import { LayerStore, emptyLayerStore } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "./Plugin/types";
 
@@ -73,6 +73,7 @@ export default ({
   const {
     selectedLayer,
     selectedLayerId,
+    layerOverridenrProperties,
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
@@ -80,6 +81,7 @@ export default ({
     hideLayers,
     isLayerHidden,
     showLayers,
+    updateLayerProperty,
   } = useLayers({
     layers,
     selected: outerSelectedLayerId,
@@ -129,6 +131,7 @@ export default ({
       showLayer: showLayers,
       hideLayer: hideLayers,
       selectLayer,
+      updateLayerProperty,
     },
     engineRef,
     layers,
@@ -154,6 +157,7 @@ export default ({
     selectedLayerId,
     selectedLayer,
     layerSelectionReason,
+    layerOverridenrProperties,
     selectedBlockId,
     innerCamera,
     infobox,
@@ -239,16 +243,36 @@ function useLayers({
     setPrimitiveOverridenInfobox(undefined);
   }, [outerSelectedPrimitiveId]);
 
+  const [layerOverridenrProperties, setLayerOverridenrProperties] = useState<{
+    [id in string]: any;
+  }>({});
+  const updateLayerProperty = useCallback((id: string, property: any) => {
+    if (!id) return;
+    if (typeof property !== "object") {
+      setLayerOverridenrProperties(p => {
+        delete p[id];
+        return { ...p };
+      });
+      return;
+    }
+    setLayerOverridenrProperties(p => ({
+      ...p,
+      [id]: property,
+    }));
+  }, []);
+
   return {
     selectedLayer,
     selectedLayerId,
     layerSelectionReason,
     layerOverridenInfobox,
+    layerOverridenrProperties,
     infobox,
     isLayerHidden,
     selectLayer,
     showLayers,
     hideLayers,
+    updateLayerProperty,
   };
 }
 
