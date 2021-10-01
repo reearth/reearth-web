@@ -23,6 +23,17 @@ export default () => {
   const auths = profileData?.me?.auths;
   const hasPassword = auths?.includes("auth0") ?? false;
 
+  // Currently Auth0 policy. In future will be passed from
+  // backend depending on choosen type of authentication.
+  const passwordPolicy = {
+    tooShort: /^(?=.{1,7}$)/,
+    tooLong: /^(?=.{128,}$)/,
+    whitespace: /(?=.*\s)/,
+    lowSecurity: /^((?=\d)|(?=[a-z])|(?=[A-Z]))/,
+    medSecurity: /^((?=.*[a-z])(?=.*[A-Z])|(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d))/,
+    highSecurity: /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/,
+  };
+
   const [updateMeMutation] = useUpdateMeMutation();
 
   const updateName = useCallback(
@@ -89,6 +100,7 @@ export default () => {
     currentProject,
     me,
     hasPassword,
+    passwordPolicy,
     updateName,
     updatePassword,
     updateLanguage,

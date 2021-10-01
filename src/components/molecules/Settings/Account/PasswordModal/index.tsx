@@ -23,17 +23,24 @@ type Props = {
   archiveProject?: (archived: boolean) => void;
   onClose?: () => void;
   hasPassword: boolean;
+  passwordPolicy: {
+    tooShort?: RegExp;
+    tooLong?: RegExp;
+    whitespace?: RegExp;
+    lowSecurity?: RegExp;
+    medSecurity?: RegExp;
+    highSecurity?: RegExp;
+  };
   updatePassword?: (password: string, passwordConfirmation: string) => void;
 };
 
-export const tooShortRegex = /^(?=.{1,7}$)/;
-export const tooLongRegex = /^(?=.{25,}$)/;
-export const whitespaceRegex = /(?=.*\s)/;
-export const highSecurityRegex = /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/;
-export const medSecurityRegex = /^((?=.*[a-z])(?=.*[A-Z])|(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d))/;
-export const lowSecurityRegex = /^((?=\d)|(?=[a-z])|(?=[A-Z]))/;
-
-const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updatePassword }) => {
+const PasswordModal: React.FC<Props> = ({
+  isVisible,
+  onClose,
+  hasPassword,
+  passwordPolicy,
+  updatePassword,
+}) => {
   const intl = useIntl();
   const theme = useTheme();
 
@@ -45,7 +52,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   const handlePasswordChange = useCallback(
     (password: string) => {
       switch (true) {
-        case whitespaceRegex.test(password):
+        case passwordPolicy.whitespace?.test(password):
           setPassword(password);
           setRegexMessage(
             intl.formatMessage({
@@ -53,7 +60,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             }),
           );
           break;
-        case tooShortRegex.test(password):
+        case passwordPolicy.tooShort?.test(password):
           setPassword(password);
           setRegexMessage(
             intl.formatMessage({
@@ -61,7 +68,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             }),
           );
           break;
-        case tooLongRegex.test(password):
+        case passwordPolicy.tooLong?.test(password):
           setPassword(password);
           setRegexMessage(
             intl.formatMessage({
@@ -69,15 +76,15 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
             }),
           );
           break;
-        case highSecurityRegex.test(password):
+        case passwordPolicy.highSecurity?.test(password):
           setPassword(password);
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
           break;
-        case medSecurityRegex.test(password):
+        case passwordPolicy.medSecurity?.test(password):
           setPassword(password);
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
           break;
-        case lowSecurityRegex.test(password):
+        case passwordPolicy.lowSecurity?.test(password):
           setPassword(password);
           setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
           break;
@@ -110,8 +117,8 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
   useEffect(() => {
     if (
       password !== passwordConfirmation ||
-      tooShortRegex.test(password) ||
-      tooLongRegex.test(password)
+      passwordPolicy.tooShort?.test(password) ||
+      passwordPolicy.tooLong?.test(password)
     ) {
       setDisabled(true);
     } else {
@@ -171,7 +178,7 @@ const PasswordModal: React.FC<Props> = ({ isVisible, onClose, hasPassword, updat
               onChange={handlePasswordChange}
               doesChangeEveryTime
               color={
-                whitespaceRegex.test(password) || tooLongRegex.test(password)
+                passwordPolicy.whitespace?.test(password) || passwordPolicy.tooLong?.test(password)
                   ? theme.main.danger
                   : undefined
               }

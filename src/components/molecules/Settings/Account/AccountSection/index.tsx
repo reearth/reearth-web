@@ -17,6 +17,14 @@ export type Props = {
   appTheme?: string;
   lang?: string;
   hasPassword: boolean;
+  passwordPolicy: {
+    tooShort?: RegExp;
+    tooLong?: RegExp;
+    whitespace?: RegExp;
+    lowSecurity?: RegExp;
+    medSecurity?: RegExp;
+    highSecurity?: RegExp;
+  };
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
   updateTheme?: (theme: string) => void;
@@ -31,6 +39,7 @@ const ProfileSection: React.FC<Props> = ({
   email,
   appTheme,
   hasPassword,
+  passwordPolicy,
   updatePassword,
   updateLanguage,
   updateTheme,
@@ -103,6 +112,7 @@ const ProfileSection: React.FC<Props> = ({
       </Section>
       <PasswordModal
         hasPassword={hasPassword}
+        passwordPolicy={passwordPolicy}
         updatePassword={handleUpdatePassword}
         isVisible={isOpen}
         onClose={() => setIsOpen(false)}
