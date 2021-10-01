@@ -2,46 +2,58 @@ import React, { PropsWithChildren } from "react";
 
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
+import Loading from "@reearth/components/atoms/Loading";
+import { styled } from "@reearth/theme";
 
-import { Provider } from "./context";
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
-import Infobox, { Block as BlockType, InfoboxProperty, Props as InfoboxProps } from "./Infobox";
-import P, { Primitive as PrimitiveType } from "./Primitive";
-import W, { Widget as WidgetType } from "./Widget";
+import Infobox, { Props as InfoboxProps } from "./Infobox";
+import Layers, { LayerStore } from "./Layer";
+import { Provider } from "./Plugin";
+import W from "./Widget";
+import type { Widget } from "./Widget";
+import WidgetAlignSystem, {
+  Props as WidgetAlignSystemProps,
+  WidgetAlignSystem as WidgetAlignSystemType,
+} from "./WidgetAlignSystem";
 
-export type { VisualizerContext } from "./context";
 export type { SceneProperty } from "./Engine";
-
-export type Infobox = {
-  blocks?: Block[];
-  property?: InfoboxProperty;
-};
-
-export type Primitive = PrimitiveType & {
-  infoboxEditable?: boolean;
-  pluginProperty?: any;
-  hidden?: boolean;
-};
-
-export type Widget = WidgetType & {
-  pluginProperty?: any;
-};
-
-export type Block = BlockType;
+export type { InfoboxProperty, Block } from "./Infobox";
+export type { Layer } from "./Layer";
+export { LayerStore } from "./Layer";
+export type {
+  Widget,
+  Alignment,
+  Location,
+  WidgetAlignSystem,
+  WidgetLayout,
+  WidgetArea,
+  WidgetSection,
+  WidgetZone,
+  WidgetLayoutConstraint,
+} from "./WidgetAlignSystem";
 
 export type Props = PropsWithChildren<
   {
     rootLayerId?: string;
-    primitives?: Primitive[];
-    widgets?: Widget[];
+    layers?: LayerStore;
+    widgets?: {
+      floatingWidgets?: Widget[];
+      alignSystem?: WidgetAlignSystemType;
+      layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
+    };
     sceneProperty?: SceneProperty;
+    pluginProperty?: { [key: string]: any };
+    selectedLayerId?: string;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
     isPublished?: boolean;
+    widgetAlignEditorActivated?: boolean;
+    onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
+    onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
-    onPrimitiveSelect?: (id?: string) => void;
-  } & Omit<EngineProps, "children" | "property" | "onPrimitiveSelect"> &
+    onLayerSelect?: (id?: string) => void;
+  } & Omit<EngineProps, "children" | "property" | "onLayerSelect"> &
     Pick<
       InfoboxProps,
       "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
@@ -49,16 +61,21 @@ export type Props = PropsWithChildren<
 >;
 
 export default function Visualizer({
+  ready,
   rootLayerId,
-  primitives,
+  layers,
   widgets,
   sceneProperty,
-  selectedPrimitiveId: outerSelectedPrimitiveId,
-  selectedBlockId: outerSelectedBlockId,
   children,
+  pluginProperty,
   pluginBaseUrl,
   isPublished,
-  onPrimitiveSelect,
+  selectedLayerId: outerSelectedLayerId,
+  selectedBlockId: outerSelectedBlockId,
+  onLayerSelect,
+  widgetAlignEditorActivated,
+  onWidgetUpdate,
+  onWidgetAlignSystemUpdate,
   renderInfoboxInsertionPopUp,
   onBlockChange,
   onBlockDelete,
@@ -71,15 +88,15 @@ export default function Visualizer({
     engineRef,
     wrapperRef,
     isDroppable,
-    hiddenPrimitives,
-    visualizerContext,
-    selectedPrimitive,
-    selectedPrimitiveId,
-    primitiveSelectionReason,
+    providerProps,
+    isLayerHidden,
+    selectedLayer,
+    selectedLayerId,
+    layerSelectionReason,
     selectedBlockId,
     innerCamera,
     infobox,
-    selectPrimitive,
+    selectLayer,
     selectBlock,
     updateCamera,
   } = useHooks({
@@ -88,77 +105,107 @@ export default function Visualizer({
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
     isPublished,
-    primitives,
-    selectedPrimitiveId: outerSelectedPrimitiveId,
+    layers,
+    selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
     sceneProperty,
-    onPrimitiveSelect,
+    onLayerSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,
   });
 
   return (
-    <Provider value={visualizerContext}>
+    <Provider {...providerProps}>
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
+        {ready && widgets?.alignSystem && (
+          <WidgetAlignSystem
+            alignSystem={widgets.alignSystem}
+            editing={widgetAlignEditorActivated}
+            onWidgetUpdate={onWidgetUpdate}
+            onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
+            sceneProperty={sceneProperty}
+            pluginProperty={pluginProperty}
+            isEditable={props.isEditable}
+            isBuilt={props.isBuilt}
+            pluginBaseUrl={pluginBaseUrl}
+            layoutConstraint={widgets.layoutConstraint}
+          />
+        )}
         <Engine
           ref={engineRef}
           property={sceneProperty}
-          selectedPrimitiveId={selectedPrimitive?.id}
-          primitiveSelectionReason={primitiveSelectionReason}
-          onPrimitiveSelect={selectPrimitive}
+          selectedLayerId={selectedLayer?.id}
+          layerSelectionReason={layerSelectionReason}
+          onLayerSelect={selectLayer}
+          ready={ready}
           {...props}
           camera={innerCamera}
           onCameraChange={updateCamera}>
-          {primitives?.map(primitive =>
-            primitive.hidden ? null : (
-              <P
-                key={primitive.id}
-                primitive={primitive}
+          <Layers
+            isEditable={props.isEditable}
+            isBuilt={props.isBuilt}
+            pluginProperty={pluginProperty}
+            pluginBaseUrl={pluginBaseUrl}
+            selectedLayerId={selectedLayerId}
+            layers={layers}
+            isLayerHidden={isLayerHidden}
+          />
+          {ready &&
+            widgets?.floatingWidgets?.map(widget => (
+              <W
+                key={widget.id}
+                widget={widget}
                 sceneProperty={sceneProperty}
-                pluginProperty={primitive.pluginProperty}
-                isHidden={hiddenPrimitives.includes(primitive.id)}
+                pluginProperty={
+                  widget.pluginId && widget.extensionId
+                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                    : undefined
+                }
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
-                isSelected={!!selectedPrimitiveId && selectedPrimitiveId === primitive.id}
                 pluginBaseUrl={pluginBaseUrl}
               />
-            ),
-          )}
-          {widgets?.map(widget => (
-            <W
-              key={widget.id}
-              widget={widget}
-              sceneProperty={sceneProperty}
-              pluginProperty={widget.pluginProperty}
-              isEditable={props.isEditable}
-              isBuilt={props.isBuilt}
-              pluginBaseUrl={pluginBaseUrl}
-            />
-          ))}
+            ))}
         </Engine>
-        <Infobox
-          title={infobox?.title}
-          infoboxKey={infobox?.infoboxKey}
-          visible={!!infobox?.visible}
-          property={infobox?.property}
-          sceneProperty={sceneProperty}
-          primitive={infobox?.primitive}
-          blocks={infobox?.blocks}
-          selectedBlockId={selectedBlockId}
-          isBuilt={props.isBuilt}
-          isEditable={props.isEditable && !!infobox?.isEditable}
-          onBlockChange={onBlockChange}
-          onBlockDelete={onBlockDelete}
-          onBlockMove={onBlockMove}
-          onBlockInsert={onBlockInsert}
-          onBlockSelect={selectBlock}
-          renderInsertionPopUp={renderInfoboxInsertionPopUp}
-          pluginBaseUrl={pluginBaseUrl}
-        />
+        {ready && (
+          <Infobox
+            title={infobox?.title}
+            infoboxKey={infobox?.infoboxKey}
+            visible={!!infobox?.visible}
+            sceneProperty={sceneProperty}
+            layer={infobox?.layer}
+            selectedBlockId={selectedBlockId}
+            pluginProperty={pluginProperty}
+            isBuilt={props.isBuilt}
+            isEditable={props.isEditable && !!infobox?.isEditable}
+            onBlockChange={onBlockChange}
+            onBlockDelete={onBlockDelete}
+            onBlockMove={onBlockMove}
+            onBlockInsert={onBlockInsert}
+            onBlockSelect={selectBlock}
+            renderInsertionPopUp={renderInfoboxInsertionPopUp}
+            pluginBaseUrl={pluginBaseUrl}
+          />
+        )}
         {children}
+        {!ready && (
+          <LoadingWrapper>
+            <Loading />
+          </LoadingWrapper>
+        )}
       </Filled>
     </Provider>
   );
 }
+
+const LoadingWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000;
+  z-index: ${({ theme }) => theme.zIndexes.loading};
+`;

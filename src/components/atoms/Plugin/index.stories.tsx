@@ -17,15 +17,17 @@ let cb: (message: any) => void | undefined;
 Default.args = {
   src: `${process.env.PUBLIC_URL}/plugins/plugin.js`,
   canBeVisible: true,
-  style: {
-    width: "300px",
-    height: "300px",
-    backgroundColor: "#fff",
+  iFrameProps: {
+    style: {
+      width: "300px",
+      height: "300px",
+      backgroundColor: "#fff",
+    },
   },
-  exposed: {
-    "console.log": action("console.log"),
-  },
-  staticExposed: ({ render, postMessage }) => ({
+  exposed: ({ render, postMessage }) => ({
+    console: {
+      log: action("console.log"),
+    },
     reearth: {
       on(type: string, value: (message: any) => void | undefined) {
         if (type === "message") {
@@ -49,15 +51,17 @@ export const HiddenIFrame: Story<Props> = args => <Component {...args} />;
 HiddenIFrame.args = {
   src: `${process.env.PUBLIC_URL}/plugins/hidden.js`,
   canBeVisible: true,
-  style: {
-    width: "300px",
-    height: "300px",
-    backgroundColor: "#fff",
+  iFrameProps: {
+    style: {
+      width: "300px",
+      height: "300px",
+      backgroundColor: "#fff",
+    },
   },
-  exposed: {
-    "console.log": action("console.log"),
-  },
-  staticExposed: ({ render, postMessage }) => ({
+  exposed: ({ render, postMessage }) => ({
+    console: {
+      log: action("console.log"),
+    },
     reearth: {
       on(type: string, value: (message: any) => void | undefined) {
         if (type === "message") {
@@ -81,6 +85,8 @@ export const SourceCode: Story<Props> = args => <Component {...args} />;
 SourceCode.args = {
   sourceCode: `console.log("Hello")`,
   exposed: {
-    "console.log": action("console.log"),
+    console: {
+      log: action("console.log"),
+    },
   },
 };

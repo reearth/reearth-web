@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react",
@@ -7,13 +8,14 @@
       "esnext",
       "dom"
     ],
+    "noEmit": true,
     "module": "esnext",
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "pretty": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es5",
+    "target": "esnext",
     "baseUrl": ".",
     "resolveJsonModule": true,
     "skipLibCheck": true,

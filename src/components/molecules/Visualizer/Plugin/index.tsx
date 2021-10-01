@@ -1,15 +1,24 @@
-import React, { CSSProperties } from "react";
+import React from "react";
 
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
-import { Primitive, Widget, Block } from "@reearth/plugin";
 
 import useHooks from "./hooks";
+import type { Layer, Widget, Block } from "./types";
 
-export type { Primitive, Block, Widget } from "@reearth/plugin";
+export type {
+  Layer,
+  Block,
+  Widget,
+  WidgetLayout,
+  InfoboxProperty,
+  WidgetLocation,
+  WidgetAlignment,
+} from "./types";
+export { Provider, useContext } from "./context";
+export type { Props as ProviderProps, Context } from "./context";
 
 export type Props = {
   className?: string;
-  style?: CSSProperties;
   sourceCode?: string;
   pluginId?: string;
   extensionId?: string;
@@ -17,59 +26,52 @@ export type Props = {
   visible?: boolean;
   iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
-  sceneProperty?: any;
+  pluginProperty?: any;
   pluginBaseUrl?: string;
-  primitive?: Primitive;
+  layer?: Layer;
   widget?: Widget;
   block?: Block;
 };
 
 export default function Plugin({
   className,
-  style,
   sourceCode,
   pluginId,
   extensionId,
   extensionType,
   iFrameProps,
-  property,
   visible,
   pluginBaseUrl = "/plugins",
-  primitive,
+  layer,
   widget,
   block,
-  sceneProperty,
+  pluginProperty,
 }: Props): JSX.Element | null {
-  const { skip, src, exposed, isMarshalable, staticExposed, handleError, handleMessage } = useHooks(
-    {
-      pluginId,
-      extensionId,
-      sourceCode,
-      extensionType,
-      property,
-      pluginBaseUrl,
-      primitive,
-      widget,
-      block,
-      sceneProperty,
-    },
-  );
+  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
+    pluginId,
+    extensionId,
+    extensionType,
+    pluginBaseUrl,
+    layer,
+    widget,
+    block,
+    pluginProperty,
+  });
 
   return !skip && (src || sourceCode) ? (
     <P
       className={className}
-      style={style}
       src={src}
       sourceCode={sourceCode}
+      filled={!!widget?.extended?.horizontally || !!widget?.extended?.vertically}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
-      exposed={exposed}
       isMarshalable={isMarshalable}
-      staticExposed={staticExposed}
-      onError={handleError}
-      onMessage={handleMessage}
+      exposed={exposed}
+      onError={onError}
+      onMessage={onMessage}
+      onPreInit={onPreInit}
+      onDispose={onDispose}
     />
   ) : null;
-
-  return null;
 }
