@@ -15,7 +15,7 @@ export type Props<P = any, PP = any, SP = any> = {
   pluginProperty?: PP;
   sceneProperty?: SP;
   pluginBaseUrl?: string;
-  overridenrProperties?: { [id in string]: any };
+  overriddenProperties?: { [id in string]: any };
 };
 
 export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, SP>>;
@@ -23,16 +23,16 @@ export type Component<P = any, PP = any, SP = any> = ComponentType<Props<P, PP, 
 export default function PrimitiveComponent<P = any, PP = any, SP = any>({
   isHidden,
   pluginBaseUrl: _pluginBaseUrl,
-  overridenrProperties,
+  overriddenProperties,
   ...props
 }: Props<P, PP, SP>) {
   const ctx = useContext();
   const overridenProperty = useMemo(
     () =>
-      props.layer && overridenrProperties?.[props.layer.id]
-        ? merge(cloneDeep(props.layer.property), overridenrProperties[props.layer.id])
+      props.layer && overriddenProperties?.[props.layer.id]
+        ? merge(cloneDeep(props.layer.property), overriddenProperties[props.layer.id])
         : undefined,
-    [overridenrProperties, props.layer],
+    [overriddenProperties, props.layer],
   );
   const actualLayer = useMemo(
     () =>

@@ -14,7 +14,7 @@ export type Props = {
   pluginBaseUrl?: string;
   layers?: LayerStore;
   selectedLayerId?: string;
-  overridenrProperties?: { [id in string]: any };
+  overriddenProperties?: { [id in string]: any };
   isLayerHidden?: (id: string) => boolean;
 };
 
@@ -28,7 +28,7 @@ export default function Layers({
   pluginBaseUrl,
   layers,
   selectedLayerId,
-  overridenrProperties,
+  overriddenProperties,
   isLayerHidden,
 }: Props): JSX.Element | null {
   return (
@@ -49,7 +49,7 @@ export default function Layers({
             isBuilt={isBuilt}
             isSelected={!!selectedLayerId && selectedLayerId === layer.id}
             pluginBaseUrl={pluginBaseUrl}
-            overridenrProperties={overridenrProperties}
+            overriddenProperties={overriddenProperties}
           />
         ),
       )}
