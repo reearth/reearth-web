@@ -143,30 +143,12 @@ const PasswordModal: React.FC<Props> = ({
       }>
       {hasPassword ? (
         <div>
-          <Text size="m">
-            {intl.formatMessage({
-              defaultMessage: `In order to protect your account, make sure your password:`,
-            })}
-          </Text>
           <SubText>
-            <StyledText size="m">
-              *{" "}
+            <Text size="m">
               {intl.formatMessage({
-                defaultMessage: `Is between 8 and 25 characters in length`,
+                defaultMessage: `In order to protect your account, make sure your password is unique and strong.`,
               })}
-            </StyledText>
-            <StyledText size="m">
-              *{" "}
-              {intl.formatMessage({
-                defaultMessage: `Has at least 2 different numbers`,
-              })}
-            </StyledText>
-            <StyledText size="m">
-              *{" "}
-              {intl.formatMessage({
-                defaultMessage: `Uses lowercase and uppercase letters`,
-              })}
-            </StyledText>
+            </Text>
           </SubText>
           <PasswordField direction="column">
             <Text size="m">{intl.formatMessage({ defaultMessage: "New password" })}</Text>
@@ -220,11 +202,8 @@ const PasswordModal: React.FC<Props> = ({
 };
 
 const SubText = styled.div`
-  margin: ${({ theme }) =>
-    `${theme.metrics["xl"]}px auto ${theme.metrics["xl"]}px ${theme.metrics.l}px`};
+  margin: ${({ theme }) => `${theme.metrics["xl"]}px auto`};
 `;
-
-const StyledText = styled(Text)``;
 
 const PasswordField = styled(Flex)`
   height: 75px;
