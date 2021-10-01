@@ -43,7 +43,7 @@ export type Props = {
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
-  updateLayerProperty: (id: string, property: any) => void;
+  overrideLayerProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
@@ -76,7 +76,7 @@ export function Provider({
   showLayer,
   hideLayer,
   selectLayer,
-  updateLayerProperty,
+  overrideLayerProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -115,7 +115,7 @@ export function Provider({
         showLayer,
         hideLayer,
         selectLayer,
-        updateLayerProperty,
+        overrideLayerProperty,
         flyTo,
         lookAt,
         zoomIn,
@@ -137,7 +137,7 @@ export function Provider({
       showLayer,
       hideLayer,
       selectLayer,
-      updateLayerProperty,
+      overrideLayerProperty,
       flyTo,
       lookAt,
       zoomIn,

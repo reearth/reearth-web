@@ -81,7 +81,7 @@ export default ({
     hideLayers,
     isLayerHidden,
     showLayers,
-    updateLayerProperty,
+    overrideLayerProperty,
   } = useLayers({
     layers,
     selected: outerSelectedLayerId,
@@ -131,7 +131,7 @@ export default ({
       showLayer: showLayers,
       hideLayer: hideLayers,
       selectLayer,
-      updateLayerProperty,
+      overrideLayerProperty,
     },
     engineRef,
     layers,
@@ -246,7 +246,7 @@ function useLayers({
   const [layeroverriddenProperties, setLayeroverriddenProperties] = useState<{
     [id in string]: any;
   }>({});
-  const updateLayerProperty = useCallback((id: string, property: any) => {
+  const overrideLayerProperty = useCallback((id: string, property: any) => {
     if (!id) return;
     if (typeof property !== "object") {
       setLayeroverriddenProperties(p => {
@@ -272,7 +272,7 @@ function useLayers({
     selectLayer,
     showLayers,
     hideLayers,
-    updateLayerProperty,
+    overrideLayerProperty,
   };
 }
 

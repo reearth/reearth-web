@@ -107,7 +107,7 @@ export function commonReearth({
   selectLayer,
   showLayer,
   hideLayer,
-  updateLayerProperty,
+  overrideLayerProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -124,7 +124,7 @@ export function commonReearth({
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
-  updateLayerProperty: GlobalThis["reearth"]["layers"]["updateProperty"];
+  overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
@@ -152,7 +152,7 @@ export function commonReearth({
       select: selectLayer,
       show: showLayer,
       hide: hideLayer,
-      updateProperty: updateLayerProperty,
+      overrideProperty: overrideLayerProperty,
       get layers() {
         return layers().root.children ?? [];
       },
