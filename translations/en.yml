@@ -59,7 +59,6 @@ src:
           '3528672691': Cancel
           '4120989039': Create
         ProjectMenu:
-          '1936593459': Top page
           '2222696742': Help
           '2661706411': Datasets
           '3029638665': Project settings
@@ -256,11 +255,10 @@ src:
             '539787951': Set your password now
             '619506016': That password is okay.
             '740918511': New password (for confirmation)
-            '1000887516': 'In order to protect your account, make sure your password:'
-            '1578884909': Is between 8 and 25 characters in length
-            '1831673448': Has at least 2 different numbers
+            '1234886189': >-
+              In order to protect your account, make sure your password is
+              unique and strong.
             '2039038750': New password
-            '2491671917': Uses lowercase and uppercase letters
             '2521568990': Change Password
             '3497016136': Too short.
             '3627357388': That password is great!
@@ -418,15 +416,15 @@ src:
         WorkspaceList:
           WorkspaceCell:
             '808766300': No Title Workspace
-            '974692228': >-
-              This is your personal workspace, your projects and resource will
-              be managed in this workspace.
             '3230245813': 'Members:'
+            '4106929473': >-
+              This is your personal workspace. Your projects and resources will
+              be managed in this workspace.
           WorkspaceList:
             '3435539653': All workspaces
             '3828443189': New Workspace
       TopPage:
-        '1405865627': Sign in
+        '1135777802': Log in
       Visualizer:
         Block:
           Text:
