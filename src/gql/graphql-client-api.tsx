@@ -2039,6 +2039,7 @@ export type MoveInfoboxFieldMutationVariables = Exact<{
   layerId: Scalars['ID'];
   infoboxFieldId: Scalars['ID'];
   index: Scalars['Int'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2047,6 +2048,7 @@ export type MoveInfoboxFieldMutation = { __typename?: 'Mutation', moveInfoboxFie
 export type RemoveInfoboxFieldMutationVariables = Exact<{
   layerId: Scalars['ID'];
   infoboxFieldId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2065,6 +2067,7 @@ export type AddInfoboxFieldMutationVariables = Exact<{
   pluginId: Scalars['PluginID'];
   extensionId: Scalars['PluginExtensionID'];
   index?: Maybe<Scalars['Int']>;
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2119,6 +2122,7 @@ export type AddLayerGroupFromDatasetSchemaMutationVariables = Exact<{
   extensionId?: Maybe<Scalars['PluginExtensionID']>;
   datasetSchemaId?: Maybe<Scalars['ID']>;
   index?: Maybe<Scalars['Int']>;
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2267,6 +2271,7 @@ export type AddLayerItemFromPrimitiveMutationVariables = Exact<{
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
   index?: Maybe<Scalars['Int']>;
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2279,6 +2284,7 @@ export type ChangePropertyValueMutationVariables = Exact<{
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   type: ValueType;
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2292,6 +2298,7 @@ export type LinkDatasetMutationVariables = Exact<{
   datasetSchemaIds: Array<Scalars['ID']> | Scalars['ID'];
   datasetIds?: Maybe<Array<Scalars['ID']> | Scalars['ID']>;
   datasetFieldIds: Array<Scalars['ID']> | Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2302,6 +2309,7 @@ export type UnlinkDatasetMutationVariables = Exact<{
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2309,6 +2317,7 @@ export type UnlinkDatasetMutation = { __typename?: 'Mutation', unlinkPropertyVal
 
 export type CreateInfoboxMutationVariables = Exact<{
   layerId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2316,6 +2325,7 @@ export type CreateInfoboxMutation = { __typename?: 'Mutation', createInfobox?: M
 
 export type RemoveInfoboxMutationVariables = Exact<{
   layerId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2327,6 +2337,7 @@ export type UploadFileToPropertyMutationVariables = Exact<{
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
   file: Scalars['Upload'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2337,6 +2348,7 @@ export type RemovePropertyFieldMutationVariables = Exact<{
   schemaItemId?: Maybe<Scalars['PropertySchemaFieldID']>;
   itemId?: Maybe<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2348,6 +2360,7 @@ export type AddPropertyItemMutationVariables = Exact<{
   index?: Maybe<Scalars['Int']>;
   nameFieldValue?: Maybe<Scalars['Any']>;
   nameFieldType?: Maybe<ValueType>;
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2358,6 +2371,7 @@ export type MovePropertyItemMutationVariables = Exact<{
   schemaItemId: Scalars['PropertySchemaFieldID'];
   itemId: Scalars['ID'];
   index: Scalars['Int'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2367,6 +2381,7 @@ export type RemovePropertyItemMutationVariables = Exact<{
   propertyId: Scalars['ID'];
   schemaItemId: Scalars['PropertySchemaFieldID'];
   itemId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2376,6 +2391,7 @@ export type UpdatePropertyItemsMutationVariables = Exact<{
   propertyId: Scalars['ID'];
   schemaItemId: Scalars['PropertySchemaFieldID'];
   operations: Array<UpdatePropertyItemOperationInput> | UpdatePropertyItemOperationInput;
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2383,6 +2399,7 @@ export type UpdatePropertyItemsMutation = { __typename?: 'Mutation', updatePrope
 
 export type GetLayerPropertyQueryVariables = Exact<{
   layerId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2390,6 +2407,7 @@ export type GetLayerPropertyQuery = { __typename?: 'Query', layer?: Maybe<{ __ty
 
 export type GetScenePropertyQueryVariables = Exact<{
   sceneId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2406,6 +2424,7 @@ export type AddWidgetMutationVariables = Exact<{
   sceneId: Scalars['ID'];
   pluginId: Scalars['PluginID'];
   extensionId: Scalars['PluginExtensionID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2809,7 +2828,7 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
     fragment PropertySchemaItemFragment on PropertySchemaGroup {
   schemaGroupId
   title
-  translatedTitle
+  translatedTitle(lang: $lang)
   isList
   representativeFieldId
   isAvailableIf {
@@ -2821,8 +2840,8 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
     fieldId
     title
     description
-    translatedTitle
-    translatedDescription
+    translatedTitle(lang: $lang)
+    translatedDescription(lang: $lang)
     prefix
     suffix
     type
@@ -2834,7 +2853,7 @@ export const PropertySchemaItemFragmentFragmentDoc = gql`
       key
       icon
       title
-      translatedTitle
+      translatedTitle(lang: $lang)
     }
     isAvailableIf {
       fieldId
@@ -3727,7 +3746,7 @@ export type UpdateWidgetAlignSystemMutationHookResult = ReturnType<typeof useUpd
 export type UpdateWidgetAlignSystemMutationResult = Apollo.MutationResult<UpdateWidgetAlignSystemMutation>;
 export type UpdateWidgetAlignSystemMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetAlignSystemMutation, UpdateWidgetAlignSystemMutationVariables>;
 export const MoveInfoboxFieldDocument = gql`
-    mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!) {
+    mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: String) {
   moveInfoboxField(
     input: {layerId: $layerId, infoboxFieldId: $infoboxFieldId, index: $index}
   ) {
@@ -3756,6 +3775,7 @@ export type MoveInfoboxFieldMutationFn = Apollo.MutationFunction<MoveInfoboxFiel
  *      layerId: // value for 'layerId'
  *      infoboxFieldId: // value for 'infoboxFieldId'
  *      index: // value for 'index'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -3767,7 +3787,7 @@ export type MoveInfoboxFieldMutationHookResult = ReturnType<typeof useMoveInfobo
 export type MoveInfoboxFieldMutationResult = Apollo.MutationResult<MoveInfoboxFieldMutation>;
 export type MoveInfoboxFieldMutationOptions = Apollo.BaseMutationOptions<MoveInfoboxFieldMutation, MoveInfoboxFieldMutationVariables>;
 export const RemoveInfoboxFieldDocument = gql`
-    mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!) {
+    mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: String) {
   removeInfoboxField(input: {layerId: $layerId, infoboxFieldId: $infoboxFieldId}) {
     layer {
       id
@@ -3793,6 +3813,7 @@ export type RemoveInfoboxFieldMutationFn = Apollo.MutationFunction<RemoveInfobox
  *   variables: {
  *      layerId: // value for 'layerId'
  *      infoboxFieldId: // value for 'infoboxFieldId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -3856,7 +3877,7 @@ export type GetBlocksQueryHookResult = ReturnType<typeof useGetBlocksQuery>;
 export type GetBlocksLazyQueryHookResult = ReturnType<typeof useGetBlocksLazyQuery>;
 export type GetBlocksQueryResult = Apollo.QueryResult<GetBlocksQuery, GetBlocksQueryVariables>;
 export const AddInfoboxFieldDocument = gql`
-    mutation addInfoboxField($layerId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $index: Int) {
+    mutation addInfoboxField($layerId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $index: Int, $lang: String) {
   addInfoboxField(
     input: {layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index}
   ) {
@@ -3886,6 +3907,7 @@ export type AddInfoboxFieldMutationFn = Apollo.MutationFunction<AddInfoboxFieldM
  *      pluginId: // value for 'pluginId'
  *      extensionId: // value for 'extensionId'
  *      index: // value for 'index'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4100,7 +4122,7 @@ export type RemoveDatasetMutationHookResult = ReturnType<typeof useRemoveDataset
 export type RemoveDatasetMutationResult = Apollo.MutationResult<RemoveDatasetMutation>;
 export type RemoveDatasetMutationOptions = Apollo.BaseMutationOptions<RemoveDatasetMutation, RemoveDatasetMutationVariables>;
 export const AddLayerGroupFromDatasetSchemaDocument = gql`
-    mutation addLayerGroupFromDatasetSchema($parentLayerId: ID!, $pluginId: PluginID, $extensionId: PluginExtensionID, $datasetSchemaId: ID, $index: Int) {
+    mutation addLayerGroupFromDatasetSchema($parentLayerId: ID!, $pluginId: PluginID, $extensionId: PluginExtensionID, $datasetSchemaId: ID, $index: Int, $lang: String) {
   addLayerGroup(
     input: {parentLayerId: $parentLayerId, pluginId: $pluginId, extensionId: $extensionId, linkedDatasetSchemaID: $datasetSchemaId, index: $index}
   ) {
@@ -4136,6 +4158,7 @@ export type AddLayerGroupFromDatasetSchemaMutationFn = Apollo.MutationFunction<A
  *      extensionId: // value for 'extensionId'
  *      datasetSchemaId: // value for 'datasetSchemaId'
  *      index: // value for 'index'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4677,7 +4700,7 @@ export type GetPrimitivesQueryHookResult = ReturnType<typeof useGetPrimitivesQue
 export type GetPrimitivesLazyQueryHookResult = ReturnType<typeof useGetPrimitivesLazyQuery>;
 export type GetPrimitivesQueryResult = Apollo.QueryResult<GetPrimitivesQuery, GetPrimitivesQueryVariables>;
 export const AddLayerItemFromPrimitiveDocument = gql`
-    mutation addLayerItemFromPrimitive($parentLayerId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $name: String, $lat: Float, $lng: Float, $index: Int) {
+    mutation addLayerItemFromPrimitive($parentLayerId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $name: String, $lat: Float, $lng: Float, $index: Int, $lang: String) {
   addLayerItem(
     input: {parentLayerId: $parentLayerId, pluginId: $pluginId, extensionId: $extensionId, name: $name, lat: $lat, lng: $lng, index: $index}
   ) {
@@ -4715,6 +4738,7 @@ export type AddLayerItemFromPrimitiveMutationFn = Apollo.MutationFunction<AddLay
  *      lat: // value for 'lat'
  *      lng: // value for 'lng'
  *      index: // value for 'index'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4726,7 +4750,7 @@ export type AddLayerItemFromPrimitiveMutationHookResult = ReturnType<typeof useA
 export type AddLayerItemFromPrimitiveMutationResult = Apollo.MutationResult<AddLayerItemFromPrimitiveMutation>;
 export type AddLayerItemFromPrimitiveMutationOptions = Apollo.BaseMutationOptions<AddLayerItemFromPrimitiveMutation, AddLayerItemFromPrimitiveMutationVariables>;
 export const ChangePropertyValueDocument = gql`
-    mutation ChangePropertyValue($value: Any, $propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $type: ValueType!) {
+    mutation ChangePropertyValue($value: Any, $propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $type: ValueType!, $lang: String) {
   updatePropertyValue(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, value: $value, type: $type}
   ) {
@@ -4763,6 +4787,7 @@ export type ChangePropertyValueMutationFn = Apollo.MutationFunction<ChangeProper
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
  *      type: // value for 'type'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4774,7 +4799,7 @@ export type ChangePropertyValueMutationHookResult = ReturnType<typeof useChangeP
 export type ChangePropertyValueMutationResult = Apollo.MutationResult<ChangePropertyValueMutation>;
 export type ChangePropertyValueMutationOptions = Apollo.BaseMutationOptions<ChangePropertyValueMutation, ChangePropertyValueMutationVariables>;
 export const LinkDatasetDocument = gql`
-    mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaItemId: PropertySchemaFieldID, $fieldId: PropertySchemaFieldID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!) {
+    mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaItemId: PropertySchemaFieldID, $fieldId: PropertySchemaFieldID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!, $lang: String) {
   linkDatasetToPropertyValue(
     input: {propertyId: $propertyId, itemId: $itemId, schemaItemId: $schemaItemId, fieldId: $fieldId, datasetSchemaIds: $datasetSchemaIds, datasetIds: $datasetIds, datasetSchemaFieldIds: $datasetFieldIds}
   ) {
@@ -4807,6 +4832,7 @@ export type LinkDatasetMutationFn = Apollo.MutationFunction<LinkDatasetMutation,
  *      datasetSchemaIds: // value for 'datasetSchemaIds'
  *      datasetIds: // value for 'datasetIds'
  *      datasetFieldIds: // value for 'datasetFieldIds'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4818,7 +4844,7 @@ export type LinkDatasetMutationHookResult = ReturnType<typeof useLinkDatasetMuta
 export type LinkDatasetMutationResult = Apollo.MutationResult<LinkDatasetMutation>;
 export type LinkDatasetMutationOptions = Apollo.BaseMutationOptions<LinkDatasetMutation, LinkDatasetMutationVariables>;
 export const UnlinkDatasetDocument = gql`
-    mutation UnlinkDataset($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!) {
+    mutation UnlinkDataset($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lang: String) {
   unlinkPropertyValue(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId}
   ) {
@@ -4853,6 +4879,7 @@ export type UnlinkDatasetMutationFn = Apollo.MutationFunction<UnlinkDatasetMutat
  *      schemaItemId: // value for 'schemaItemId'
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4864,7 +4891,7 @@ export type UnlinkDatasetMutationHookResult = ReturnType<typeof useUnlinkDataset
 export type UnlinkDatasetMutationResult = Apollo.MutationResult<UnlinkDatasetMutation>;
 export type UnlinkDatasetMutationOptions = Apollo.BaseMutationOptions<UnlinkDatasetMutation, UnlinkDatasetMutationVariables>;
 export const CreateInfoboxDocument = gql`
-    mutation createInfobox($layerId: ID!) {
+    mutation createInfobox($layerId: ID!, $lang: String) {
   createInfobox(input: {layerId: $layerId}) {
     layer {
       id
@@ -4899,6 +4926,7 @@ export type CreateInfoboxMutationFn = Apollo.MutationFunction<CreateInfoboxMutat
  * const [createInfoboxMutation, { data, loading, error }] = useCreateInfoboxMutation({
  *   variables: {
  *      layerId: // value for 'layerId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4910,7 +4938,7 @@ export type CreateInfoboxMutationHookResult = ReturnType<typeof useCreateInfobox
 export type CreateInfoboxMutationResult = Apollo.MutationResult<CreateInfoboxMutation>;
 export type CreateInfoboxMutationOptions = Apollo.BaseMutationOptions<CreateInfoboxMutation, CreateInfoboxMutationVariables>;
 export const RemoveInfoboxDocument = gql`
-    mutation removeInfobox($layerId: ID!) {
+    mutation removeInfobox($layerId: ID!, $lang: String) {
   removeInfobox(input: {layerId: $layerId}) {
     layer {
       id
@@ -4945,6 +4973,7 @@ export type RemoveInfoboxMutationFn = Apollo.MutationFunction<RemoveInfoboxMutat
  * const [removeInfoboxMutation, { data, loading, error }] = useRemoveInfoboxMutation({
  *   variables: {
  *      layerId: // value for 'layerId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -4956,7 +4985,7 @@ export type RemoveInfoboxMutationHookResult = ReturnType<typeof useRemoveInfobox
 export type RemoveInfoboxMutationResult = Apollo.MutationResult<RemoveInfoboxMutation>;
 export type RemoveInfoboxMutationOptions = Apollo.BaseMutationOptions<RemoveInfoboxMutation, RemoveInfoboxMutationVariables>;
 export const UploadFileToPropertyDocument = gql`
-    mutation UploadFileToProperty($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $file: Upload!) {
+    mutation UploadFileToProperty($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $file: Upload!, $lang: String) {
   uploadFileToProperty(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId, file: $file}
   ) {
@@ -4992,6 +5021,7 @@ export type UploadFileToPropertyMutationFn = Apollo.MutationFunction<UploadFileT
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
  *      file: // value for 'file'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5003,7 +5033,7 @@ export type UploadFileToPropertyMutationHookResult = ReturnType<typeof useUpload
 export type UploadFileToPropertyMutationResult = Apollo.MutationResult<UploadFileToPropertyMutation>;
 export type UploadFileToPropertyMutationOptions = Apollo.BaseMutationOptions<UploadFileToPropertyMutation, UploadFileToPropertyMutationVariables>;
 export const RemovePropertyFieldDocument = gql`
-    mutation RemovePropertyField($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!) {
+    mutation RemovePropertyField($propertyId: ID!, $schemaItemId: PropertySchemaFieldID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $lang: String) {
   removePropertyField(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, fieldId: $fieldId}
   ) {
@@ -5038,6 +5068,7 @@ export type RemovePropertyFieldMutationFn = Apollo.MutationFunction<RemoveProper
  *      schemaItemId: // value for 'schemaItemId'
  *      itemId: // value for 'itemId'
  *      fieldId: // value for 'fieldId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5049,7 +5080,7 @@ export type RemovePropertyFieldMutationHookResult = ReturnType<typeof useRemoveP
 export type RemovePropertyFieldMutationResult = Apollo.MutationResult<RemovePropertyFieldMutation>;
 export type RemovePropertyFieldMutationOptions = Apollo.BaseMutationOptions<RemovePropertyFieldMutation, RemovePropertyFieldMutationVariables>;
 export const AddPropertyItemDocument = gql`
-    mutation addPropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $index: Int, $nameFieldValue: Any, $nameFieldType: ValueType) {
+    mutation addPropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $index: Int, $nameFieldValue: Any, $nameFieldType: ValueType, $lang: String) {
   addPropertyItem(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, index: $index, nameFieldValue: $nameFieldValue, nameFieldType: $nameFieldType}
   ) {
@@ -5085,6 +5116,7 @@ export type AddPropertyItemMutationFn = Apollo.MutationFunction<AddPropertyItemM
  *      index: // value for 'index'
  *      nameFieldValue: // value for 'nameFieldValue'
  *      nameFieldType: // value for 'nameFieldType'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5096,7 +5128,7 @@ export type AddPropertyItemMutationHookResult = ReturnType<typeof useAddProperty
 export type AddPropertyItemMutationResult = Apollo.MutationResult<AddPropertyItemMutation>;
 export type AddPropertyItemMutationOptions = Apollo.BaseMutationOptions<AddPropertyItemMutation, AddPropertyItemMutationVariables>;
 export const MovePropertyItemDocument = gql`
-    mutation movePropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $itemId: ID!, $index: Int!) {
+    mutation movePropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $itemId: ID!, $index: Int!, $lang: String) {
   movePropertyItem(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId, index: $index}
   ) {
@@ -5131,6 +5163,7 @@ export type MovePropertyItemMutationFn = Apollo.MutationFunction<MovePropertyIte
  *      schemaItemId: // value for 'schemaItemId'
  *      itemId: // value for 'itemId'
  *      index: // value for 'index'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5142,7 +5175,7 @@ export type MovePropertyItemMutationHookResult = ReturnType<typeof useMoveProper
 export type MovePropertyItemMutationResult = Apollo.MutationResult<MovePropertyItemMutation>;
 export type MovePropertyItemMutationOptions = Apollo.BaseMutationOptions<MovePropertyItemMutation, MovePropertyItemMutationVariables>;
 export const RemovePropertyItemDocument = gql`
-    mutation removePropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $itemId: ID!) {
+    mutation removePropertyItem($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $itemId: ID!, $lang: String) {
   removePropertyItem(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, itemId: $itemId}
   ) {
@@ -5176,6 +5209,7 @@ export type RemovePropertyItemMutationFn = Apollo.MutationFunction<RemovePropert
  *      propertyId: // value for 'propertyId'
  *      schemaItemId: // value for 'schemaItemId'
  *      itemId: // value for 'itemId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5187,7 +5221,7 @@ export type RemovePropertyItemMutationHookResult = ReturnType<typeof useRemovePr
 export type RemovePropertyItemMutationResult = Apollo.MutationResult<RemovePropertyItemMutation>;
 export type RemovePropertyItemMutationOptions = Apollo.BaseMutationOptions<RemovePropertyItemMutation, RemovePropertyItemMutationVariables>;
 export const UpdatePropertyItemsDocument = gql`
-    mutation updatePropertyItems($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $operations: [UpdatePropertyItemOperationInput!]!) {
+    mutation updatePropertyItems($propertyId: ID!, $schemaItemId: PropertySchemaFieldID!, $operations: [UpdatePropertyItemOperationInput!]!, $lang: String) {
   updatePropertyItems(
     input: {propertyId: $propertyId, schemaItemId: $schemaItemId, operations: $operations}
   ) {
@@ -5221,6 +5255,7 @@ export type UpdatePropertyItemsMutationFn = Apollo.MutationFunction<UpdateProper
  *      propertyId: // value for 'propertyId'
  *      schemaItemId: // value for 'schemaItemId'
  *      operations: // value for 'operations'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5232,7 +5267,7 @@ export type UpdatePropertyItemsMutationHookResult = ReturnType<typeof useUpdateP
 export type UpdatePropertyItemsMutationResult = Apollo.MutationResult<UpdatePropertyItemsMutation>;
 export type UpdatePropertyItemsMutationOptions = Apollo.BaseMutationOptions<UpdatePropertyItemsMutation, UpdatePropertyItemsMutationVariables>;
 export const GetLayerPropertyDocument = gql`
-    query GetLayerProperty($layerId: ID!) {
+    query GetLayerProperty($layerId: ID!, $lang: String) {
   layer(id: $layerId) {
     id
     ...Layer1Fragment
@@ -5253,6 +5288,7 @@ export const GetLayerPropertyDocument = gql`
  * const { data, loading, error } = useGetLayerPropertyQuery({
  *   variables: {
  *      layerId: // value for 'layerId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5268,7 +5304,7 @@ export type GetLayerPropertyQueryHookResult = ReturnType<typeof useGetLayerPrope
 export type GetLayerPropertyLazyQueryHookResult = ReturnType<typeof useGetLayerPropertyLazyQuery>;
 export type GetLayerPropertyQueryResult = Apollo.QueryResult<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>;
 export const GetScenePropertyDocument = gql`
-    query GetSceneProperty($sceneId: ID!) {
+    query GetSceneProperty($sceneId: ID!, $lang: String) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
@@ -5305,6 +5341,7 @@ export const GetScenePropertyDocument = gql`
  * const { data, loading, error } = useGetScenePropertyQuery({
  *   variables: {
  *      sceneId: // value for 'sceneId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */
@@ -5375,7 +5412,7 @@ export type GetLinkableDatasetsQueryHookResult = ReturnType<typeof useGetLinkabl
 export type GetLinkableDatasetsLazyQueryHookResult = ReturnType<typeof useGetLinkableDatasetsLazyQuery>;
 export type GetLinkableDatasetsQueryResult = Apollo.QueryResult<GetLinkableDatasetsQuery, GetLinkableDatasetsQueryVariables>;
 export const AddWidgetDocument = gql`
-    mutation addWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!) {
+    mutation addWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $lang: String) {
   addWidget(
     input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
   ) {
@@ -5420,6 +5457,7 @@ export type AddWidgetMutationFn = Apollo.MutationFunction<AddWidgetMutation, Add
  *      sceneId: // value for 'sceneId'
  *      pluginId: // value for 'pluginId'
  *      extensionId: // value for 'extensionId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */

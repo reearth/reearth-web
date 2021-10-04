@@ -1,3 +1,4 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import { layerFragment } from "@reearth/gql/fragments";
@@ -33,6 +34,7 @@ export const ADD_LAYER_ITEM_FROM_PRIMITIVE = gql`
     $lat: Float
     $lng: Float
     $index: Int
+    $lang: String
   ) {
     addLayerItem(
       input: {

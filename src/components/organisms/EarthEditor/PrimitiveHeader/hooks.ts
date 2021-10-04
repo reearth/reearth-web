@@ -60,6 +60,7 @@ export default () => {
                       lng: location.lng,
                     }
                   : {}),
+                lang: intl.locale,
               },
               refetchQueries: ["GetLayers"],
             });
@@ -70,7 +71,7 @@ export default () => {
             }
           },
         })),
-    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select],
+    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select, intl.locale],
   );
 
   return {

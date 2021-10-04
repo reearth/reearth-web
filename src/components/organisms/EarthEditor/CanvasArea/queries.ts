@@ -1,3 +1,4 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import { layerFragment, propertyFragment, widgetAlignSysFragment } from "@reearth/gql/fragments";
@@ -249,7 +250,7 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
 `;
 
 export const MOVE_INFOBOX_FIELD = gql`
-  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!) {
+  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: String) {
     moveInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId, index: $index }) {
       layer {
         id
@@ -262,7 +263,7 @@ export const MOVE_INFOBOX_FIELD = gql`
 `;
 
 export const REMOVE_INFOBOX_FIELD = gql`
-  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!) {
+  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: String) {
     removeInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId }) {
       layer {
         id
@@ -304,6 +305,7 @@ export const ADD_INFOBOX_FIELD = gql`
     $pluginId: PluginID!
     $extensionId: PluginExtensionID!
     $index: Int
+    $lang: String
   ) {
     addInfoboxField(
       input: { layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index }
