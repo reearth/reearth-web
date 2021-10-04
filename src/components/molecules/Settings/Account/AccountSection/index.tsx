@@ -19,7 +19,7 @@ export type Props = {
   appTheme?: string;
   lang?: string;
   hasPassword: boolean;
-  passwordPolicy: PasswordPolicy;
+  passwordPolicy?: PasswordPolicy;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
   updateTheme?: (theme: string) => void;

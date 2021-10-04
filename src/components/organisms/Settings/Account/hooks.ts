@@ -23,17 +23,7 @@ export default () => {
   const me = profileData?.me;
   const auths = profileData?.me?.auths;
   const hasPassword = auths?.includes("auth0") ?? false;
-
-  // Currently Auth0 policy. In future will be passed from
-  // backend depending on choosen type of authentication.
-  const passwordPolicy: PasswordPolicy = {
-    tooShort: /^(?=.{1,7}$)/,
-    tooLong: /^(?=.{128,}$)/,
-    whitespace: /(?=.*\s)/,
-    lowSecurity: /^((?=\d)|(?=[a-z])|(?=[A-Z]))/,
-    medSecurity: /^((?=.*[a-z])(?=.*[A-Z])|(?=.*[A-Z])(?=.*\d)|(?=.*[a-z])(?=.*\d))/,
-    highSecurity: /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/,
-  };
+  const passwordPolicy = (window.REEARTH_CONFIG?.passwordPolicy as PasswordPolicy) ?? undefined;
 
   const [updateMeMutation] = useUpdateMeMutation();
 
