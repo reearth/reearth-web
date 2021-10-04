@@ -8,6 +8,15 @@ import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
 import { styled, useTheme } from "@reearth/theme";
 
+export type PasswordPolicy = {
+  tooShort?: RegExp;
+  tooLong?: RegExp;
+  whitespace?: RegExp;
+  lowSecurity?: RegExp;
+  medSecurity?: RegExp;
+  highSecurity?: RegExp;
+};
+
 type Props = {
   className?: string;
   project?: {
@@ -23,14 +32,7 @@ type Props = {
   archiveProject?: (archived: boolean) => void;
   onClose?: () => void;
   hasPassword: boolean;
-  passwordPolicy: {
-    tooShort?: RegExp;
-    tooLong?: RegExp;
-    whitespace?: RegExp;
-    lowSecurity?: RegExp;
-    medSecurity?: RegExp;
-    highSecurity?: RegExp;
-  };
+  passwordPolicy: PasswordPolicy;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
 };
 

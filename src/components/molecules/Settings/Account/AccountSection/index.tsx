@@ -4,7 +4,9 @@ import { useIntl } from "react-intl";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
+import PasswordModal, {
+  PasswordPolicy,
+} from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import Field from "@reearth/components/molecules/Settings/Field";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
@@ -17,14 +19,7 @@ export type Props = {
   appTheme?: string;
   lang?: string;
   hasPassword: boolean;
-  passwordPolicy: {
-    tooShort?: RegExp;
-    tooLong?: RegExp;
-    whitespace?: RegExp;
-    lowSecurity?: RegExp;
-    medSecurity?: RegExp;
-    highSecurity?: RegExp;
-  };
+  passwordPolicy: PasswordPolicy;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
   updateTheme?: (theme: string) => void;

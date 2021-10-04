@@ -2,6 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
+import { PasswordPolicy } from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
@@ -25,7 +26,7 @@ export default () => {
 
   // Currently Auth0 policy. In future will be passed from
   // backend depending on choosen type of authentication.
-  const passwordPolicy = {
+  const passwordPolicy: PasswordPolicy = {
     tooShort: /^(?=.{1,7}$)/,
     tooLong: /^(?=.{128,}$)/,
     whitespace: /(?=.*\s)/,
