@@ -85,20 +85,18 @@ export default ({
   // move to initial position at startup
   const initialCameraFlight = useRef(false);
 
-  useEffect(() => {
+  const handleMount = useCallback(() => {
     if (!property?.default?.camera || initialCameraFlight.current) return;
     initialCameraFlight.current = true;
     engineAPI.flyTo(property.default.camera, { duration: 0 });
   }, [engineAPI, property?.default?.camera]);
 
-  useEffect(() => {
-    if (initialCameraFlight.current && !property) {
-      initialCameraFlight.current = false;
-    }
-  }, [property]);
+  const handleUnmount = useCallback(() => {
+    initialCameraFlight.current = false;
+  }, []);
 
   // call onCameraChange event after moving camera
-  const onCameraMoveEnd = useCallback(() => {
+  const handleCameraMoveEnd = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
@@ -119,7 +117,7 @@ export default ({
     viewer.selectedEntity = entity;
   }, [cesium, selectedLayerId]);
 
-  const onClick = useCallback(
+  const handleClick = useCallback(
     (_: CesiumMovementEvent, target: RootEventTarget) => {
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
@@ -171,8 +169,10 @@ export default ({
     backgroundColor,
     imageryLayers,
     cesium,
-    onClick,
-    onCameraMoveEnd,
+    handleMount,
+    handleUnmount,
+    handleClick,
+    handleCameraMoveEnd,
   };
 };
 
