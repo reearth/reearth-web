@@ -32,6 +32,7 @@ export default ({
   const closePopup = useCallback(() => setOpen(false), [setOpen]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const initCamera = useRef<Camera>();
   const cameraWrapperRef = useRef<HTMLDivElement>(null);
   const popperRef = useRef<HTMLUListElement>(null);
   const { styles, attributes } = usePopper(cameraWrapperRef.current, popperRef.current, {
@@ -60,13 +61,15 @@ export default ({
 
   const startCapture = useCallback(() => {
     if (disabled) return;
+    initCamera.current = cameraState;
     openPopup();
     onIsCapturingChange?.(true);
-  }, [disabled, onIsCapturingChange, openPopup]);
+  }, [cameraState, disabled, onIsCapturingChange, openPopup]);
 
   const finishCapture = useCallback(() => {
     closePopup();
     onIsCapturingChange?.(false);
+    initCamera.current = undefined;
   }, [closePopup, onIsCapturingChange]);
 
   const updateCamera = useCallback(
@@ -75,8 +78,11 @@ export default ({
   );
 
   const cancelCapture = useCallback(() => {
+    if (initCamera.current) {
+      updateCamera(initCamera.current);
+    }
     finishCapture();
-  }, [finishCapture]);
+  }, [finishCapture, updateCamera]);
 
   const submitCapture = useCallback(() => {
     if (disabled) return;
