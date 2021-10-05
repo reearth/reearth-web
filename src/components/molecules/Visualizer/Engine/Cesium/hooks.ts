@@ -112,6 +112,13 @@ export default ({
     }
   }, [onCameraChange, camera]);
 
+  // camera
+  useEffect(() => {
+    if (camera) {
+      engineAPI.flyTo(camera, { duration: 0 });
+    }
+  }, [camera, engineAPI]);
+
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
