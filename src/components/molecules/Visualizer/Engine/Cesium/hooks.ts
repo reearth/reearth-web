@@ -86,10 +86,16 @@ export default ({
   const initialCameraFlight = useRef(false);
 
   const handleMount = useCallback(() => {
-    if (!property?.default?.camera || initialCameraFlight.current) return;
+    if (initialCameraFlight.current) return;
     initialCameraFlight.current = true;
-    engineAPI.flyTo(property.default.camera, { duration: 0 });
-  }, [engineAPI, property?.default?.camera]);
+    if (property?.default?.camera) {
+      engineAPI.flyTo(property.default.camera, { duration: 0 });
+    }
+    const camera = getCamera(cesium?.current?.cesiumElement);
+    if (camera) {
+      onCameraChange?.(camera);
+    }
+  }, [engineAPI, onCameraChange, property?.default?.camera]);
 
   const handleUnmount = useCallback(() => {
     initialCameraFlight.current = false;
