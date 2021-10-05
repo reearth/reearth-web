@@ -97,8 +97,9 @@ const CameraField: React.FC<Props> = ({
                   <Input
                     type="number"
                     value={lat}
-                    onChange={handleLatChange}
+                    step={0.01}
                     readOnly={!isCapturing}
+                    onChange={handleLatChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                     {intl.formatMessage({ defaultMessage: "Latitude" })}
@@ -108,8 +109,9 @@ const CameraField: React.FC<Props> = ({
                   <Input
                     type="number"
                     value={lng}
-                    onChange={handleLngChange}
+                    step={0.01}
                     readOnly={!isCapturing}
+                    onChange={handleLngChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                     {intl.formatMessage({ defaultMessage: "Longtitude" })}
@@ -119,9 +121,9 @@ const CameraField: React.FC<Props> = ({
                   <Input
                     type="number"
                     value={height}
-                    onChange={handleAltitudeChange}
-                    step={10 ** 6}
+                    step={1000}
                     readOnly={!isCapturing}
+                    onChange={handleAltitudeChange}
                   />
                   <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                     {intl.formatMessage({ defaultMessage: "Altitude" })}
@@ -139,9 +141,9 @@ const CameraField: React.FC<Props> = ({
                 <Input
                   type="number"
                   value={heading}
-                  onChange={handleHeadingChange}
-                  step="0.01"
+                  step={1}
                   readOnly={!isCapturing}
+                  onChange={handleHeadingChange}
                 />
                 <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                   {intl.formatMessage({ defaultMessage: "Heading" })}
@@ -151,9 +153,9 @@ const CameraField: React.FC<Props> = ({
                 <Input
                   type="number"
                   value={pitch}
-                  onChange={handlePitchChange}
-                  step="0.01"
+                  step={1}
                   readOnly={!isCapturing}
+                  onChange={handlePitchChange}
                 />
                 <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                   {intl.formatMessage({ defaultMessage: "Pitch" })}
@@ -163,9 +165,9 @@ const CameraField: React.FC<Props> = ({
                 <Input
                   type="number"
                   value={roll}
-                  onChange={handleRollChange}
-                  step="0.01"
+                  step={1}
                   readOnly={!isCapturing}
+                  onChange={handleRollChange}
                 />
                 <FloatText size="2xs" color={theme.properties.contentsFloatText}>
                   {intl.formatMessage({ defaultMessage: "Roll" })}
