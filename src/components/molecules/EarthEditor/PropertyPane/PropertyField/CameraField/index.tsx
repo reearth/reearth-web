@@ -61,12 +61,21 @@ const CameraField: React.FC<Props> = ({
     onlyPose,
   });
 
-  const lat = camera?.lat && Math.round(camera?.lat * 1000) / 1000;
-  const lng = camera?.lng && Math.round(camera?.lng * 1000) / 1000;
-  const height = camera?.height && Math.round(camera?.height);
-  const heading = camera?.heading && Math.round(((camera?.heading * 180) / Math.PI) * 1000) / 1000;
-  const pitch = camera?.pitch && Math.round(((camera?.pitch * 180) / Math.PI) * 1000) / 1000;
-  const roll = camera?.roll && Math.round(((camera?.roll * 180) / Math.PI) * 1000) / 1000;
+  const lat = typeof camera?.lat === "number" ? Math.round(camera?.lat * 1000) / 1000 : "";
+  const lng = typeof camera?.lng === "number" ? Math.round(camera?.lng * 1000) / 1000 : "";
+  const height = typeof camera?.height === "number" ? Math.round(camera?.height) : "";
+  const heading =
+    typeof camera?.heading === "number"
+      ? Math.round(((camera?.heading * 180) / Math.PI) * 1000) / 1000
+      : "";
+  const pitch =
+    typeof camera?.pitch === "number"
+      ? Math.round(((camera?.pitch * 180) / Math.PI) * 1000) / 1000
+      : "";
+  const roll =
+    typeof camera?.roll === "number"
+      ? Math.round(((camera?.roll * 180) / Math.PI) * 1000) / 1000
+      : "";
   const theme = useTheme();
   return (
     <Wrapper ref={wrapperRef} onClick={value ? undefined : startCapture} data-camera-popup>
