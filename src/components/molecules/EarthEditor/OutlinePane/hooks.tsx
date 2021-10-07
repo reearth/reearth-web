@@ -45,6 +45,7 @@ export default ({
   rootLayerId,
   layers,
   widgets,
+  installedWidgets,
   sceneDescription,
   selectedLayerId,
   selectedWidgetId,
@@ -64,6 +65,7 @@ export default ({
   rootLayerId?: string;
   layers?: Layer[];
   widgets?: Widget[];
+  installedWidgets?: Widget[];
   sceneDescription?: string;
   selectedLayerId?: string;
   selectedIndex?: number[];
@@ -180,6 +182,11 @@ export default ({
             icon: "widget",
             title: widgetTitle,
             group: true,
+            showLayerActions: true,
+            children: installedWidgets?.map(w => ({
+              name: w.title,
+              icon: w.icon,
+            })),
           },
           draggable: false,
           droppable: false,
@@ -187,9 +194,9 @@ export default ({
           expandable: true,
           selectable: true,
           children: widgets?.map(w => ({
-            id: `${w.pluginId}/${w.extensionId}`,
+            id: `${w.pluginId}/${w.extensionId}/${w.id}`,
             content: {
-              id: `${w.pluginId}/${w.extensionId}`,
+              id: `${w.pluginId}/${w.extensionId}/${w.id}`,
               widgetId: w.id,
               pluginId: w.pluginId,
               extensionId: w.extensionId,
@@ -254,7 +261,9 @@ export default ({
     [onLayerVisibilityChange],
   );
 
-  const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>();
+  const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>({
+    selectedLayerId: selectedWidgetId,
+  });
 
   const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({
     onRename: layerTreeViewItemOnRename,

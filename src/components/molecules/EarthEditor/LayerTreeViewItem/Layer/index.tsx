@@ -8,6 +8,7 @@ import fonts from "@reearth/theme/fonts";
 import useDoubleClick from "@reearth/util/use-double-click";
 
 import LayerActions, { Format } from "../LayerActions";
+import WidgetActions from "../WidgetActions";
 
 import useHooks from "./hooks";
 import useEditable from "./use-editable";
@@ -23,6 +24,7 @@ export type Layer<T = unknown> = {
   type?: string;
   group?: boolean;
   childrenCount?: number;
+  children?: { name: string; icon?: string }[];
   linked?: boolean;
   deactivated?: boolean;
   visible?: boolean;
@@ -67,6 +69,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
       group,
       linked,
       childrenCount,
+      children,
       visible,
       renamable,
       visibilityChangeable,
@@ -199,12 +202,18 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
           )}
           {showLayerActions && (
             <LayerActionsWrapper>
-              <LayerActions
-                rootLayerId={rootLayerId}
-                selectedLayerId={selectedLayerId}
-                onLayerImport={onImport}
-                onLayerRemove={onRemove}
-                onLayerGroupCreate={onGroupCreate}></LayerActions>
+              {type === "layer" && (
+                <LayerActions
+                  rootLayerId={rootLayerId}
+                  selectedLayerId={selectedLayerId}
+                  onLayerImport={onImport}
+                  onLayerRemove={onRemove}
+                  onLayerGroupCreate={onGroupCreate}
+                />
+              )}
+              {showLayerActions && type === "widgets" && (
+                <WidgetActions selectedLayerId={selectedLayerId} widgets={children} />
+              )}
             </LayerActionsWrapper>
           )}
         </>

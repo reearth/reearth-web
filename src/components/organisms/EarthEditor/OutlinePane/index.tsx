@@ -13,6 +13,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     rootLayerId,
     layers,
     widgets,
+    installedWidgets,
     sceneDescription,
     selectedType,
     selectedLayerId,
@@ -39,6 +40,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       selectedWidgetId={selectedWidgetId}
       layers={layers}
       widgets={widgets}
+      installedWidgets={installedWidgets}
       sceneDescription={sceneDescription}
       selectedType={selectedType}
       loading={loading}

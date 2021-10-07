@@ -76,6 +76,26 @@ export default () => {
 
   const widgets = useMemo(() => {
     const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+    const extensions = scene?.plugins?.map(p =>
+      p.plugin?.extensions?.filter(e => e.type === PluginExtensionType.Widget),
+    );
+
+    return scene?.widgets?.map(w => {
+      const e = extensions?.[0]?.find(e => e.extensionId === w.extensionId);
+      return {
+        id: w.id,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        enabled: !!w.enabled,
+        title: e?.translatedName,
+        description: e?.translatedDescription,
+        icon: e?.icon || (w.pluginId === "reearth" ? w.extensionId : undefined),
+      } as Widget;
+    });
+  }, [widgetData?.node]);
+
+  const installedWidgets = useMemo(() => {
+    const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
     return scene?.plugins
       ?.map(p => {
         const plugin = p.plugin;
@@ -84,19 +104,12 @@ export default () => {
           .filter(e => e.type === PluginExtensionType.Widget)
           .map((e): Widget => {
             const pluginId = plugin.id;
-            const extensionId = e.extensionId;
-            // note: multiple widget is not supported now
-            const widget = scene?.widgets.find(
-              w => w.pluginId === plugin.id && w.extensionId === e.extensionId,
-            );
+
             return {
-              id: widget?.id,
               pluginId,
               extensionId: e.extensionId,
-              enabled: !!widget?.enabled,
               title: e.translatedName,
-              description: e.translatedDescription,
-              icon: e.icon || (pluginId === "reearth" ? extensionId : undefined),
+              icon: e.icon || (pluginId === "reearth" ? e.extensionId : undefined),
             };
           })
           .filter((w): w is Widget => !!w);
@@ -268,11 +281,14 @@ export default () => {
     rootLayerId,
     layers,
     widgets,
+    installedWidgets,
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
     selectedWidgetId:
-      selected?.type === "widget" ? `${selected.pluginId}/${selected.extensionId}` : undefined,
+      selected?.type === "widget"
+        ? `${selected.pluginId}/${selected.extensionId}/${selected.widgetId}`
+        : undefined,
     loading: loading && WidgetLoading,
     selectLayer,
     selectScene,

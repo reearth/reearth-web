@@ -23,6 +23,7 @@ export type Props = {
   selectedWidgetId?: string;
   layers?: Layer[];
   widgets?: Widget[];
+  installedWidgets?: Widget[];
   sceneDescription?: string;
   selectedType?: "scene" | "layer" | "widgets" | "widget";
   loading?: boolean;
@@ -53,6 +54,7 @@ const OutlinePane: React.FC<Props> = ({
   selectedType,
   layers,
   widgets,
+  installedWidgets,
   sceneDescription,
   onLayerRename,
   onLayerVisibilityChange,
@@ -80,6 +82,7 @@ const OutlinePane: React.FC<Props> = ({
     rootLayerId,
     layers,
     widgets,
+    installedWidgets,
     sceneDescription,
     selectedLayerId,
     selectedWidgetId,
