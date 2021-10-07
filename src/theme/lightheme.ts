@@ -14,6 +14,7 @@ const lightheme: Theme = {
     transparentBg: colors.general.transparentBlack,
     lightTransparentBg: colors.general.transparentLight,
     border: colors.light.outline.weak,
+    borderStrong: colors.light.outline.main,
     highlighted: colors.light.functional.select,
     text: colors.light.text.main,
     strongText: colors.light.text.strong,

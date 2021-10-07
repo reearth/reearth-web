@@ -14,6 +14,7 @@ const darkTheme: Theme = {
     transparentBg: colors.general.transparentBlack,
     lightTransparentBg: colors.general.transparentLight,
     border: colors.dark.outline.weak,
+    borderStrong: colors.dark.outline.strong,
     highlighted: colors.dark.functional.select,
     text: colors.dark.text.main,
     strongText: colors.dark.text.strong,

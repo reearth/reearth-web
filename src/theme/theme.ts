@@ -25,6 +25,7 @@ export type Theme = {
     deepBg: string;
     deepestBg: string;
     border: string;
+    borderStrong: string;
     highlighted: string;
     transparentBg: string;
     lightTransparentBg: string;
