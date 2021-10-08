@@ -9,6 +9,9 @@ import {
   useRemoveLayerMutation,
   useImportLayerMutation,
   useAddLayerGroupMutation,
+  useAddWidgetMutation,
+  useRemoveWidgetMutation,
+  useUpdateWidgetMutation,
   LayerEncodingFormat,
   Maybe,
   useGetWidgetsQuery,
@@ -131,6 +134,9 @@ export default () => {
   const [removeLayerMutation] = useRemoveLayerMutation();
   const [importLayerMutation] = useImportLayerMutation();
   const [addLayerGroupMutation] = useAddLayerGroupMutation();
+  const [addWidgetMutation] = useAddWidgetMutation();
+  const [removeWidgetMutation] = useRemoveWidgetMutation();
+  const [updateWidgetMutation] = useUpdateWidgetMutation();
 
   const selectLayer = useCallback(
     (id: string) => {
@@ -277,6 +283,62 @@ export default () => {
     [],
   );
 
+  const addWidget = useCallback(
+    async (id: string) => {
+      if (!sceneId) return;
+      const [pluginId, extensionId] = id.split("/");
+
+      const { data } = await addWidgetMutation({
+        variables: {
+          sceneId,
+          pluginId,
+          extensionId,
+          lang: intl.locale,
+        },
+        refetchQueries: ["GetEarthWidgets", "GetWidgets"],
+      });
+      if (data?.addWidget?.sceneWidget) {
+        select({
+          type: "widget",
+          widgetId: data.addWidget.sceneWidget.id,
+          pluginId: data.addWidget.sceneWidget.pluginId,
+          extensionId: data.addWidget.sceneWidget.extensionId,
+        });
+      }
+    },
+    [addWidgetMutation, intl.locale, sceneId, select],
+  );
+
+  const removeWidget = useCallback(
+    async (widgetId: string) => {
+      if (!sceneId) return;
+      await removeWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId,
+        },
+        refetchQueries: ["GetEarthWidgets", "GetWidgets"],
+      });
+      select(undefined);
+    },
+    [sceneId, select, removeWidgetMutation],
+  );
+
+  const activateWidget = useCallback(
+    async (enabled: boolean) => {
+      if (!sceneId || selected?.type !== "widget" || !selected.widgetId) return;
+      await updateWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId: selected.widgetId,
+          enabled,
+        },
+        refetchQueries: ["GetEarthWidgets"],
+      });
+    },
+    [sceneId, selected, updateWidgetMutation],
+  );
+
   return {
     rootLayerId,
     layers,
@@ -301,6 +363,9 @@ export default () => {
     importLayer,
     addLayerGroup,
     handleDrop,
+    addWidget,
+    removeWidget,
+    activateWidget,
   };
 };
 

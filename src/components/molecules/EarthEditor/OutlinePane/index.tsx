@@ -34,6 +34,9 @@ export type Props = {
   onSceneSelect?: () => void;
   onWidgetsSelect?: () => void;
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
+  onWidgetAdd?: (id: string) => Promise<void>;
+  onWidgetRemove?: (widgetId: string) => Promise<void>;
+  onWidgetActivation?: (enabled: boolean) => Promise<void>;
   onLayerMove?: (
     layer: string,
     destLayer: string,
@@ -63,6 +66,9 @@ const OutlinePane: React.FC<Props> = ({
   onSceneSelect,
   onWidgetsSelect,
   onWidgetSelect,
+  onWidgetAdd,
+  onWidgetRemove,
+  onWidgetActivation,
   onLayerMove,
   onLayerImport,
   onLayerGroupCreate,
@@ -93,6 +99,9 @@ const OutlinePane: React.FC<Props> = ({
     onSceneSelect,
     onWidgetsSelect,
     onWidgetSelect,
+    onWidgetAdd,
+    onWidgetRemove,
+    onWidgetActivation,
     onLayerMove,
     onLayerRename,
     onLayerVisibilityChange,

@@ -9,21 +9,26 @@ import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { styled, metricsSizes } from "@reearth/theme";
 
+import { Widget } from "../../OutlinePane/hooks";
+
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 
 export type Props = {
-  selectedLayerId?: string;
-  widgets?: {
-    name: string;
-    icon?: string | undefined;
-  }[];
-  onWidgetCreate?: () => void;
-  onWidgetRemove?: () => void;
+  selectedWidgetId?: string;
+  widgets?: Widget[];
+  onWidgetAdd?: (id: string) => void;
+  onWidgetRemove?: (selectedWidgetId: string) => void;
 };
 
-const WidgetActions: React.FC<Props> = ({ selectedLayerId, widgets }) => {
+const WidgetActions: React.FC<Props> = ({
+  selectedWidgetId,
+  widgets,
+  onWidgetAdd,
+  onWidgetRemove,
+}) => {
   const intl = useIntl();
   const [visibleMenu, setVisibleMenu] = useState(false);
+  const widgetId = selectedWidgetId?.split("/")[2];
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const referenceElement = useRef<HTMLDivElement>(null);
@@ -43,7 +48,6 @@ const WidgetActions: React.FC<Props> = ({ selectedLayerId, widgets }) => {
   });
 
   useClickAway(wrapperRef, () => setVisibleMenu(false));
-  // console.log(selectedLayerId, "ASDJFLASDKJFL");
 
   return (
     <ActionWrapper
@@ -52,19 +56,16 @@ const WidgetActions: React.FC<Props> = ({ selectedLayerId, widgets }) => {
         e.stopPropagation();
       }}>
       <Action
-        disabled={!selectedLayerId}
-        onClick={
-          () => alert("TRIED TO DELETE")
-          //   {
-          //   if (selectedLayerId) {
-          //     onLayerRemove?.(selectedLayerId);
-          //   }
-          // }
-        }>
+        disabled={!widgetId}
+        onClick={() => {
+          if (widgetId) {
+            onWidgetRemove?.(widgetId);
+          }
+        }}>
         <HelpButton
           descriptionTitle={intl.formatMessage({ defaultMessage: "Delete selected widget." })}
           balloonDirection="top">
-          <StyledIcon icon="bin" size={16} disabled={!selectedLayerId} />
+          <StyledIcon icon="bin" size={16} disabled={!widgetId} />
         </HelpButton>
       </Action>
       <Action ref={referenceElement} onClick={() => setVisibleMenu(!visibleMenu)}>
@@ -73,10 +74,12 @@ const WidgetActions: React.FC<Props> = ({ selectedLayerId, widgets }) => {
       <MenuWrapper ref={popperElement} style={styles.popper} {...attributes.popper}>
         {visibleMenu && (
           <Menu>
-            {widgets?.map((w, i) => (
-              <MenuItem key={w.name + i}>
+            {widgets?.map(w => (
+              <MenuItem
+                key={`${w.pluginId}/${w.extensionId}`}
+                onClick={() => onWidgetAdd?.(`${w.pluginId}/${w.extensionId}`)}>
                 <WidgetIcon icon={w.icon} size={16} />
-                <Text size="xs">{w.name}</Text>
+                <Text size="xs">{w.title}</Text>
               </MenuItem>
             ))}
           </Menu>
@@ -99,7 +102,7 @@ const Action = styled.span<{ disabled?: boolean }>`
 const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  color: ${({ disabled, theme }) => (disabled ? theme.main.text : null)};
+  color: ${({ disabled, theme }) => (disabled ? theme.main.weak : theme.main.text)};
   border-radius: 5px;
   &:hover {
     background-color: ${({ disabled, theme }) => (disabled ? null : theme.main.bg)};

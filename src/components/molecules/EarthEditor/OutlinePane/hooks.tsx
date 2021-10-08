@@ -38,7 +38,12 @@ export type Widget = {
 export type ItemType = ItemEx["type"];
 export type ItemEx =
   | { type: "root" | "scene" | "layer" | "scenes" | "widgets" }
-  | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string };
+  | {
+      type: "widget";
+      widgetId?: string;
+      pluginId: string;
+      extensionId: string;
+    };
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 
 export default ({
@@ -54,6 +59,9 @@ export default ({
   onSceneSelect,
   onWidgetsSelect,
   onWidgetSelect,
+  onWidgetAdd,
+  onWidgetRemove,
+  // onWidgetActivation,
   onLayerMove,
   onLayerRemove,
   onLayerRename,
@@ -77,6 +85,9 @@ export default ({
   onSceneSelect?: () => void;
   onWidgetsSelect?: () => void;
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
+  onWidgetAdd?: (id: string) => Promise<void>;
+  onWidgetRemove?: (widgetId: string) => Promise<void>;
+  onWidgetActivation?: (enabled: boolean) => Promise<void>;
   onLayerMove?: (
     src: string,
     dest: string,
@@ -183,9 +194,12 @@ export default ({
             title: widgetTitle,
             group: true,
             showLayerActions: true,
-            children: installedWidgets?.map(w => ({
-              name: w.title,
+            actionItems: installedWidgets?.map((w: Widget) => ({
+              type: "widget",
+              title: w.title,
               icon: w.icon,
+              pluginId: `${w.pluginId}`,
+              extensionId: `${w.extensionId}`,
             })),
           },
           draggable: false,
@@ -215,7 +229,7 @@ export default ({
         },
       ],
     }),
-    [sceneTitle, sceneDescription, widgetTitle, widgets],
+    [sceneTitle, sceneDescription, widgetTitle, widgets, installedWidgets],
   );
 
   const layersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
@@ -263,6 +277,8 @@ export default ({
 
   const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>({
     selectedLayerId: selectedWidgetId,
+    onRemove: onWidgetRemove,
+    onAdd: onWidgetAdd,
   });
 
   const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({

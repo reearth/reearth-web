@@ -28,6 +28,9 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     selectScene,
     selectWidgets,
     selectWidget,
+    addWidget,
+    removeWidget,
+    activateWidget,
     addLayerGroup,
     handleDrop,
   } = useHooks();
@@ -54,6 +57,9 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       onSceneSelect={selectScene}
       onWidgetsSelect={selectWidgets}
       onWidgetSelect={selectWidget}
+      onWidgetAdd={addWidget}
+      onWidgetRemove={removeWidget}
+      onWidgetActivation={activateWidget}
       onDrop={handleDrop}
     />
   );

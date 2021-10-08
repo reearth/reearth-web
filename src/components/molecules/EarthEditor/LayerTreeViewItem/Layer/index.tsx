@@ -7,6 +7,7 @@ import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import useDoubleClick from "@reearth/util/use-double-click";
 
+import { Widget } from "../../OutlinePane/hooks";
 import LayerActions, { Format } from "../LayerActions";
 import WidgetActions from "../WidgetActions";
 
@@ -24,7 +25,6 @@ export type Layer<T = unknown> = {
   type?: string;
   group?: boolean;
   childrenCount?: number;
-  children?: { name: string; icon?: string }[];
   linked?: boolean;
   deactivated?: boolean;
   visible?: boolean;
@@ -32,6 +32,7 @@ export type Layer<T = unknown> = {
   visibilityChangeable?: boolean;
   showChildrenCount?: boolean;
   showLayerActions?: boolean;
+  actionItems?: Layer<T>[];
   underlined?: boolean;
 } & T;
 
@@ -52,6 +53,7 @@ export type Props = {
   onVisibilityChange?: (isVisible: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
+  onAdd?: (id: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
 };
@@ -69,13 +71,13 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
       group,
       linked,
       childrenCount,
-      children,
       visible,
       renamable,
       visibilityChangeable,
       deactivated,
       showChildrenCount,
       showLayerActions,
+      actionItems,
       underlined,
     },
     expanded,
@@ -89,6 +91,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     onExpand,
     onRename,
     onRemove,
+    onAdd,
     onGroupCreate,
     onImport,
   },
@@ -211,8 +214,13 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                   onLayerGroupCreate={onGroupCreate}
                 />
               )}
-              {showLayerActions && type === "widgets" && (
-                <WidgetActions selectedLayerId={selectedLayerId} widgets={children} />
+              {type === "widgets" && (
+                <WidgetActions
+                  selectedWidgetId={selectedLayerId}
+                  widgets={actionItems as Widget[]}
+                  onWidgetAdd={onAdd}
+                  onWidgetRemove={onRemove}
+                />
               )}
             </LayerActionsWrapper>
           )}
