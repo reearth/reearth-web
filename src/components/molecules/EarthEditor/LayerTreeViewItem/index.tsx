@@ -13,6 +13,7 @@ export type Props<T = unknown> = ItemProps<Layer<T>> & {
   selectedLayerId?: string;
   visibilityShown?: boolean;
   onVisibilityChange?: (isVisible: boolean) => void;
+  onActivationChange?: (isActive: boolean) => void;
   onWarning?: (show: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
@@ -41,6 +42,7 @@ function LayerTreeViewItem<T = unknown>(
     onSelect,
     onExpand,
     onVisibilityChange,
+    onActivationChange,
     onRename,
     onAdd,
     onRemove,
@@ -84,6 +86,7 @@ function LayerTreeViewItem<T = unknown>(
         onClick={handleClick}
         onExpand={onExpand}
         onVisibilityChange={onVisibilityChange}
+        onActivationChange={onActivationChange}
         onRename={onRename}
         onRemove={onRemove}
         onAdd={onAdd}
@@ -126,6 +129,7 @@ export function useLayerTreeViewItem<T>({
   className,
   visibilityShown,
   onVisibilityChange,
+  onActivationChange,
   onWarning,
   onRename,
   onAdd,
@@ -138,6 +142,7 @@ export function useLayerTreeViewItem<T>({
   className?: string;
   visibilityShown?: boolean;
   onVisibilityChange?: (element: Item<Layer<T>>, isVisible: boolean) => void;
+  onActivationChange?: (element: Item<Layer<T>>, isVisible: boolean) => void;
   onWarning?: (show: boolean) => void;
   onAdd?: (id?: string) => void;
   onRename?: (element: Item<Layer<T>>, name: string) => void;
@@ -152,6 +157,9 @@ export function useLayerTreeViewItem<T>({
         () => ({
           onVisibilityChange: item
             ? (isVisible: boolean) => onVisibilityChange?.(item, isVisible)
+            : undefined,
+          onActivationChange: item
+            ? (isActive: boolean) => onActivationChange?.(item, isActive)
             : undefined,
           onRename: item ? (name: string) => onRename?.(item, name) : undefined,
         }),
@@ -187,6 +195,7 @@ export function useLayerTreeViewItem<T>({
     onGroupCreate,
     onImport,
     onVisibilityChange,
+    onActivationChange,
     onRename,
   ]);
 }

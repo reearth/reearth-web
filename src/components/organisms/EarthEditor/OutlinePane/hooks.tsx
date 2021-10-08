@@ -324,7 +324,6 @@ export default () => {
   const activateWidget = useCallback(
     async (widgetId: string, enabled: boolean) => {
       if (!sceneId) return;
-      // if (!sceneId || selected?.type !== "widget" || !selected.widgetId) return;
       await updateWidgetMutation({
         variables: {
           sceneId,

@@ -63,7 +63,7 @@ const Switch = styled.label<{
         : checked
         ? theme.toggleButton.activeBgBorder
         : theme.toggleButton.bgBorder};
-  opacity: ${props => (props.checked ? 1 : 0.35)};
+  opacity: ${({ checked, selected }) => (checked || selected ? 1 : 0.35)};
   transition: 0.4s;
   vertical-align: middle;
 `;
@@ -84,7 +84,7 @@ const TopSlider = styled.div<{
       : theme.toggleButton.toggle};
   transition: 0.4s;
   border-radius: 50%;
-  transform: ${props => props.checked && "translateX(100%)"};
+  transform: ${({ checked }) => checked && "translateX(100%)"};
   vertical-align: middle;
 `;
 

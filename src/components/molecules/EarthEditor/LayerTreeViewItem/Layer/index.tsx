@@ -1,10 +1,11 @@
 import React, { forwardRef } from "react";
 
+import Flex from "@reearth/components/atoms/Flex";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import ToggleButton from "@reearth/components/atoms/ToggleButton";
-import { styled, useTheme } from "@reearth/theme";
+import { metricsSizes, styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import useDoubleClick from "@reearth/util/use-double-click";
 
@@ -53,6 +54,7 @@ export type Props = {
   onExpand?: () => void;
   onWarning?: (show: boolean) => void;
   onVisibilityChange?: (isVisible: boolean) => void;
+  onActivationChange?: (isActive: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
   onAdd?: (id?: string) => void;
@@ -89,6 +91,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     allSiblingsDoesNotHaveChildren,
     visibilityShown,
     onVisibilityChange,
+    onActivationChange,
     onWarning,
     onClick,
     onExpand,
@@ -100,12 +103,21 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
   },
   ref,
 ) => {
-  const { isHover, showHelp, handleExpand, handleVisibilityChange, toggleHover } = useHooks({
+  const {
+    isHover,
+    showHelp,
+    handleExpand,
+    handleVisibilityChange,
+    handleActivationChange,
+    toggleHover,
+  } = useHooks({
     group,
     visibilityChangeable,
     visible,
+    deactivated,
     onExpand,
     onVisibilityChange,
+    onActivationChange,
   });
 
   const { editing, editingName, startEditing, inputProps } = useEditable({
@@ -129,7 +141,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
       disabled={deactivated}
       underlined={underlined}
       type={type}
-      onMouseEnter={() => toggleHover(true)}
+      onMouseOver={() => toggleHover(true)}
       onMouseLeave={() => toggleHover(false)}
       hover={isHover}>
       <ArrowIconWrapper
@@ -137,7 +149,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
         onClick={handleExpand}>
         {group && <ArrowIcon open={expanded} icon="arrowToggle" size={10} />}
       </ArrowIconWrapper>
-      <LayerIconWrapper>
+      <Flex>
         <LayerIcon
           selected={selected}
           disabled={deactivated}
@@ -148,11 +160,13 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             selected
               ? theme.layers.selectedTextColor
               : deactivated
-              ? theme.layers.disableTextColor
+              ? isHover
+                ? theme.layers.highlight
+                : theme.layers.disableTextColor
               : theme.layers.textColor
           }
         />
-      </LayerIconWrapper>
+      </Flex>
       {editing ? (
         <Input type="text" {...inputProps} onClick={stopPropagation} />
       ) : (
@@ -165,7 +179,9 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               selected
                 ? theme.layers.selectedTextColor
                 : deactivated
-                ? theme.layers.disableTextColor
+                ? isHover
+                  ? theme.layers.highlight
+                  : theme.layers.disableTextColor
                 : theme.layers.textColor
             }>
             {editingName}
@@ -198,7 +214,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             </HideableDiv>
           )}
           {deactivated !== undefined && (
-            <HideableDiv isVisible={isHover || selected}>
+            <HideableDiv isVisible={isHover || selected} onClick={handleActivationChange}>
               <ToggleButton size="sm" checked={!deactivated} parentSelected={selected} />
             </HideableDiv>
           )}
@@ -312,11 +328,6 @@ const Input = styled.input`
   overflow: hidden;
 `;
 
-const LayerIconWrapper = styled.div`
-  flex: 0 0 26px;
-  text-align: center;
-`;
-
 const LayerIcon = styled(Icon)<{ disabled?: boolean; selected?: boolean; type?: string }>`
   margin: 0 5px;
   flex: 0 0 auto;
@@ -327,6 +338,7 @@ const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: auto;
+  margin-left: ${metricsSizes.xs}px;
   overflow: hidden;
 `;
 

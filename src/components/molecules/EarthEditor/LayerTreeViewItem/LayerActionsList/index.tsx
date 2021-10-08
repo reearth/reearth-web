@@ -45,7 +45,6 @@ const LayerActionsList: React.FC<Props> = ({
       },
     ],
   });
-  console.log(selectedLayerId, "SELECTED LAYER ID");
 
   useClickAway(wrapperRef, () => setVisibleMenu(false));
 

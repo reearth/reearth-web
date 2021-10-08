@@ -274,18 +274,18 @@ export default ({
   );
 
   const layerTreeViewItemOnWidgetActivation = useCallback(
-    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, visibility: boolean) => {
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, activate: boolean) => {
       const widgetId = item.id.split("/")[2];
-      onWidgetActivation?.(widgetId, visibility);
+      onWidgetActivation?.(widgetId, activate);
     },
     [onWidgetActivation],
   );
 
   const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>({
     onAdd: onWidgetAdd,
-    onVisibilityChange: layerTreeViewItemOnWidgetActivation,
-    selectedLayerId: selectedWidgetId,
+    onActivationChange: layerTreeViewItemOnWidgetActivation,
     onWarning: handleShowWarning,
+    selectedLayerId: selectedWidgetId,
   });
 
   const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({
