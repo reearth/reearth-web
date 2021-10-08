@@ -217,7 +217,6 @@ export default ({
               description: w.description,
               icon: w.icon,
               deactivated: !w.enabled,
-              visibilityChangeable: true,
             },
             draggable: false,
             droppable: false,
@@ -286,7 +285,6 @@ export default ({
     onAdd: onWidgetAdd,
     onVisibilityChange: layerTreeViewItemOnWidgetActivation,
     selectedLayerId: selectedWidgetId,
-    visibilityShown: true,
     onWarning: handleShowWarning,
   });
 
