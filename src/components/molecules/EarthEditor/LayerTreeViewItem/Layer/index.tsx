@@ -184,22 +184,23 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               {childrenCount}
             </LayerCount>
           )}
-          {visibilityShown && (visible !== undefined || deactivated !== undefined) && (
-            <Visibility
+          {visibilityShown && visible !== undefined && (
+            <HideableDiv
               isVisible={!visible || isHover || selected}
               onClick={handleVisibilityChange}>
-              {deactivated !== undefined ? (
-                <ToggleButton checked={!deactivated} />
-              ) : (
-                <LayerIcon
-                  icon={!visible ? "hidden" : "visible"}
-                  size={16}
-                  selected={selected}
-                  disabled={deactivated}
-                  type={type}
-                />
-              )}
-            </Visibility>
+              <LayerIcon
+                icon={!visible ? "hidden" : "visible"}
+                size={16}
+                selected={selected}
+                disabled={deactivated}
+                type={type}
+              />
+            </HideableDiv>
+          )}
+          {deactivated !== undefined && (
+            <HideableDiv isVisible={isHover || selected}>
+              <ToggleButton size="sm" checked={!deactivated} parentSelected={selected} />
+            </HideableDiv>
           )}
           {showHelp && description && (
             <HelpButton
@@ -339,7 +340,7 @@ const LayerCount = styled(Text)<{ selected?: boolean }>`
   }
 `;
 
-const Visibility = styled.div<{ isVisible?: boolean }>`
+const HideableDiv = styled.div<{ isVisible?: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   align-self: stretch;
   display: flex;

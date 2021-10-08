@@ -193,6 +193,7 @@ export type Theme = {
     activeBg: string;
     activeBgBorder: string;
     activeToggle: string;
+    highlight: string;
   };
   zIndexes: {
     base: number;

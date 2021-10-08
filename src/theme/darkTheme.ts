@@ -180,6 +180,7 @@ const darkTheme: Theme = {
     activeBg: colors.dark.bg[4],
     activeBgBorder: colors.dark.outline.main,
     activeToggle: colors.dark.outline.main,
+    highlight: colors.dark.outline.strong,
   },
   descriptionBalloon: {
     bg: colors.dark.bg[5],

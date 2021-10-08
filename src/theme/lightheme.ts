@@ -180,6 +180,7 @@ const lightheme: Theme = {
     activeBg: colors.light.bg[4],
     activeBgBorder: colors.light.outline.main,
     activeToggle: colors.light.outline.main,
+    highlight: colors.light.outline.strong,
   },
   descriptionBalloon: {
     bg: colors.light.bg[5],
