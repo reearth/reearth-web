@@ -77,28 +77,9 @@ export default () => {
     [widgetData?.node],
   );
 
-  const widgets = useMemo(() => {
-    const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
-    const extensions = scene?.plugins?.map(p =>
-      p.plugin?.extensions?.filter(e => e.type === PluginExtensionType.Widget),
-    );
-
-    return scene?.widgets?.map(w => {
-      const e = extensions?.[0]?.find(e => e.extensionId === w.extensionId);
-      return {
-        id: w.id,
-        pluginId: w.pluginId,
-        extensionId: w.extensionId,
-        enabled: !!w.enabled,
-        title: e?.translatedName,
-        description: e?.translatedDescription,
-        icon: e?.icon || (w.pluginId === "reearth" ? w.extensionId : undefined),
-      } as Widget;
-    });
-  }, [widgetData?.node]);
+  const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
   const installedWidgets = useMemo(() => {
-    const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
     return scene?.plugins
       ?.map(p => {
         const plugin = p.plugin;
@@ -118,7 +99,22 @@ export default () => {
           .filter((w): w is Widget => !!w);
       })
       .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);
-  }, [widgetData?.node]);
+  }, [scene?.plugins]);
+
+  const widgets = useMemo(() => {
+    return scene?.widgets?.map(w => {
+      const e = installedWidgets?.find(e => e.extensionId === w.extensionId);
+      return {
+        id: w.id,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        enabled: !!w.enabled,
+        title: e?.title,
+        description: e?.description,
+        icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
+      } as Widget;
+    });
+  }, [installedWidgets, scene?.widgets]);
 
   const layers = useMemo(
     () =>
