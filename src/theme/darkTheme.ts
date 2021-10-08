@@ -171,6 +171,7 @@ const darkTheme: Theme = {
     textColor: colors.dark.text.main,
     selectedTextColor: colors.dark.text.strong,
     disableTextColor: colors.dark.text.weak,
+    highlight: colors.dark.outline.main,
     bottomBorder: colors.dark.outline.weakest,
   },
   toggleButton: {

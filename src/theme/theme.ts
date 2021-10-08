@@ -184,6 +184,7 @@ export type Theme = {
     textColor: string;
     selectedTextColor: string;
     disableTextColor: string;
+    highlight: string;
     bottomBorder: string;
   };
   toggleButton: {

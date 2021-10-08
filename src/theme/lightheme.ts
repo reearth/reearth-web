@@ -171,6 +171,7 @@ const lightheme: Theme = {
     textColor: colors.light.text.main,
     selectedTextColor: colors.light.text.strong,
     disableTextColor: colors.light.text.weak,
+    highlight: colors.light.outline.main,
     bottomBorder: colors.light.outline.weakest,
   },
   toggleButton: {
