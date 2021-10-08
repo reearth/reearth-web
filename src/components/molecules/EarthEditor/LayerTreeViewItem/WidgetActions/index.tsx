@@ -3,6 +3,9 @@ import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
+import Box from "@reearth/components/atoms/Box";
+import ConfirmationModal from "@reearth/components/atoms/ConfirmationModal";
+import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
@@ -27,7 +30,9 @@ const WidgetActions: React.FC<Props> = ({
   onWidgetRemove,
 }) => {
   const intl = useIntl();
+
   const [visibleMenu, setVisibleMenu] = useState(false);
+  const [warningOpen, setWarning] = useState(false);
   const widgetId = selectedWidgetId?.split("/")[2];
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -55,13 +60,7 @@ const WidgetActions: React.FC<Props> = ({
       onClick={e => {
         e.stopPropagation();
       }}>
-      <Action
-        disabled={!widgetId}
-        onClick={() => {
-          if (widgetId) {
-            onWidgetRemove?.(widgetId);
-          }
-        }}>
+      <Action disabled={!widgetId} onClick={() => setWarning(true)}>
         <HelpButton
           descriptionTitle={intl.formatMessage({ defaultMessage: "Delete selected widget." })}
           balloonDirection="top">
@@ -85,6 +84,35 @@ const WidgetActions: React.FC<Props> = ({
           </Menu>
         )}
       </MenuWrapper>
+      <ConfirmationModal
+        title={intl.formatMessage({ defaultMessage: "Delete widget" })}
+        body={
+          <>
+            <Divider margin="24px" />
+            <Box mb={"m"}>
+              <Text size="m">
+                {intl.formatMessage({
+                  defaultMessage:
+                    "You are about to delete the selected widget. You will lose all data tied to this widget.",
+                })}
+              </Text>
+            </Box>
+            <Text size="m">
+              {intl.formatMessage({
+                defaultMessage: "Are you sure you would like to delete this widget?",
+              })}
+            </Text>
+          </>
+        }
+        buttonAction={intl.formatMessage({ defaultMessage: "Delete" })}
+        isOpen={warningOpen}
+        onClose={() => setWarning(false)}
+        onProceed={() => {
+          if (widgetId) {
+            onWidgetRemove?.(widgetId);
+          }
+        }}
+      />
     </ActionWrapper>
   );
 };
