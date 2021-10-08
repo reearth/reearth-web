@@ -112,7 +112,7 @@ export default () => {
               pluginId,
               extensionId: e.extensionId,
               title: e.translatedName,
-              icon: e.icon || (pluginId === "reearth" ? e.extensionId : undefined),
+              icon: e.icon || (pluginId === "reearth" && e.extensionId) || "plugin",
             };
           })
           .filter((w): w is Widget => !!w);
