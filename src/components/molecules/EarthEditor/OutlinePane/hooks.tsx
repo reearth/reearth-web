@@ -40,9 +40,7 @@ export type ItemEx =
   | { type: "root" | "scene" | "layer" | "scenes" | "widgets" }
   | {
       type: "widget";
-      widgetId?: string;
-      pluginId: string;
-      extensionId: string;
+      id?: string;
     };
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
 
@@ -60,8 +58,7 @@ export default ({
   onWidgetsSelect,
   onWidgetSelect,
   onWidgetAdd,
-  onWidgetRemove,
-  // onWidgetActivation,
+  onWidgetActivation,
   onLayerMove,
   onLayerRemove,
   onLayerRename,
@@ -69,6 +66,7 @@ export default ({
   onDrop,
   onLayerGroupCreate,
   onLayerImport,
+  handleShowWarning,
 }: {
   rootLayerId?: string;
   layers?: Layer[];
@@ -85,9 +83,8 @@ export default ({
   onSceneSelect?: () => void;
   onWidgetsSelect?: () => void;
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
-  onWidgetAdd?: (id: string) => Promise<void>;
-  onWidgetRemove?: (widgetId: string) => Promise<void>;
-  onWidgetActivation?: (enabled: boolean) => Promise<void>;
+  onWidgetAdd?: (id?: string) => Promise<void>;
+  onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
   onLayerMove?: (
     src: string,
     dest: string,
@@ -99,6 +96,7 @@ export default ({
   onLayerVisibilityChange?: (id: string, visibility: boolean) => void;
   onDrop?: (layer: string, index: number, childrenCount: number) => any;
   onLayerGroupCreate?: () => void;
+  handleShowWarning?: (show: boolean) => void;
 }) => {
   const intl = useIntl();
   const [selected, setSelected] = useState<string[]>([]);
@@ -116,7 +114,8 @@ export default ({
       } else if (item.id === "widgets") {
         onWidgetsSelect?.();
       } else if (item.content.type === "widget") {
-        onWidgetSelect?.(item.content.widgetId, item.content.pluginId, item.content.extensionId);
+        const [pluginId, extensionId, widgetId] = item.content.id?.split("/") ?? [];
+        onWidgetSelect?.(widgetId, pluginId, extensionId);
       } else if (item.content.type === "layer") {
         onLayerSelect?.(
           item.id,
@@ -196,10 +195,9 @@ export default ({
             showLayerActions: true,
             actionItems: installedWidgets?.map((w: Widget) => ({
               type: "widget",
+              id: `${w.pluginId}/${w.extensionId}`,
               title: w.title,
               icon: w.icon,
-              pluginId: `${w.pluginId}`,
-              extensionId: `${w.extensionId}`,
             })),
           },
           draggable: false,
@@ -219,6 +217,7 @@ export default ({
               description: w.description,
               icon: w.icon,
               deactivated: !w.enabled,
+              visibilityChangeable: true,
             },
             draggable: false,
             droppable: false,
@@ -275,10 +274,20 @@ export default ({
     [onLayerVisibilityChange],
   );
 
+  const layerTreeViewItemOnWidgetActivation = useCallback(
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, visibility: boolean) => {
+      const widgetId = item.id.split("/")[2];
+      onWidgetActivation?.(widgetId, visibility);
+    },
+    [onWidgetActivation],
+  );
+
   const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>({
-    selectedLayerId: selectedWidgetId,
-    onRemove: onWidgetRemove,
     onAdd: onWidgetAdd,
+    onVisibilityChange: layerTreeViewItemOnWidgetActivation,
+    selectedLayerId: selectedWidgetId,
+    visibilityShown: true,
+    onWarning: handleShowWarning,
   });
 
   const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({

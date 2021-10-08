@@ -3,37 +3,31 @@ import { useIntl } from "react-intl";
 import { usePopper } from "react-popper";
 import { useClickAway } from "react-use";
 
-import Box from "@reearth/components/atoms/Box";
-import ConfirmationModal from "@reearth/components/atoms/ConfirmationModal";
-import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import { Layer } from "@reearth/components/molecules/EarthEditor/LayerTreeViewItem/Layer";
 import { styled, metricsSizes } from "@reearth/theme";
 
-import { Widget } from "../../OutlinePane/hooks";
-
-export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
-
 export type Props = {
-  selectedWidgetId?: string;
-  widgets?: Widget[];
-  onWidgetAdd?: (id: string) => void;
-  onWidgetRemove?: (selectedWidgetId: string) => void;
+  selectedLayerId?: string;
+  items?: Layer[];
+  onAdd?: (id?: string) => void;
+  onRemove?: (selectedLayerId: string) => void;
+  onWarning?: (show: boolean) => void;
 };
 
-const WidgetActions: React.FC<Props> = ({
-  selectedWidgetId,
-  widgets,
-  onWidgetAdd,
-  onWidgetRemove,
+const LayerActionsList: React.FC<Props> = ({
+  selectedLayerId,
+  items,
+  onAdd,
+  onRemove,
+  onWarning,
 }) => {
   const intl = useIntl();
 
   const [visibleMenu, setVisibleMenu] = useState(false);
-  const [warningOpen, setWarning] = useState(false);
-  const widgetId = selectedWidgetId?.split("/")[2];
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const referenceElement = useRef<HTMLDivElement>(null);
@@ -51,6 +45,7 @@ const WidgetActions: React.FC<Props> = ({
       },
     ],
   });
+  console.log(selectedLayerId, "SELECTED LAYER ID");
 
   useClickAway(wrapperRef, () => setVisibleMenu(false));
 
@@ -60,11 +55,13 @@ const WidgetActions: React.FC<Props> = ({
       onClick={e => {
         e.stopPropagation();
       }}>
-      <Action disabled={!widgetId} onClick={() => setWarning(true)}>
+      <Action
+        disabled={!selectedLayerId}
+        onClick={() => onWarning?.(true) ?? (selectedLayerId && onRemove?.(selectedLayerId))}>
         <HelpButton
-          descriptionTitle={intl.formatMessage({ defaultMessage: "Delete selected widget." })}
+          descriptionTitle={intl.formatMessage({ defaultMessage: "Delete the selected item." })}
           balloonDirection="top">
-          <StyledIcon icon="bin" size={16} disabled={!widgetId} />
+          <StyledIcon icon="bin" size={16} disabled={!selectedLayerId} />
         </HelpButton>
       </Action>
       <Action ref={referenceElement} onClick={() => setVisibleMenu(!visibleMenu)}>
@@ -73,46 +70,15 @@ const WidgetActions: React.FC<Props> = ({
       <MenuWrapper ref={popperElement} style={styles.popper} {...attributes.popper}>
         {visibleMenu && (
           <Menu>
-            {widgets?.map(w => (
-              <MenuItem
-                key={`${w.pluginId}/${w.extensionId}`}
-                onClick={() => onWidgetAdd?.(`${w.pluginId}/${w.extensionId}`)}>
-                <WidgetIcon icon={w.icon} size={16} />
+            {items?.map(w => (
+              <MenuItem key={w.id} onClick={() => onAdd?.(w.id)}>
+                <MenuItemIcon icon={w.icon} size={16} />
                 <Text size="xs">{w.title}</Text>
               </MenuItem>
             ))}
           </Menu>
         )}
       </MenuWrapper>
-      <ConfirmationModal
-        title={intl.formatMessage({ defaultMessage: "Delete widget" })}
-        body={
-          <>
-            <Divider margin="24px" />
-            <Box mb={"m"}>
-              <Text size="m">
-                {intl.formatMessage({
-                  defaultMessage:
-                    "You are about to delete the selected widget. You will lose all data tied to this widget.",
-                })}
-              </Text>
-            </Box>
-            <Text size="m">
-              {intl.formatMessage({
-                defaultMessage: "Are you sure you would like to delete this widget?",
-              })}
-            </Text>
-          </>
-        }
-        buttonAction={intl.formatMessage({ defaultMessage: "Delete" })}
-        isOpen={warningOpen}
-        onClose={() => setWarning(false)}
-        onProceed={() => {
-          if (widgetId) {
-            onWidgetRemove?.(widgetId);
-          }
-        }}
-      />
     </ActionWrapper>
   );
 };
@@ -137,10 +103,6 @@ const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   }
 `;
 
-const WidgetIcon = styled(Icon)`
-  margin-right: ${metricsSizes.s}px;
-`;
-
 const MenuWrapper = styled.div`
   z-index: 1;
 `;
@@ -159,4 +121,8 @@ const MenuItem = styled(Flex)`
   }
 `;
 
-export default WidgetActions;
+const MenuItemIcon = styled(Icon)`
+  margin-right: ${metricsSizes.s}px;
+`;
+
+export default LayerActionsList;

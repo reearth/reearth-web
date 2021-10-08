@@ -280,8 +280,8 @@ export default () => {
   );
 
   const addWidget = useCallback(
-    async (id: string) => {
-      if (!sceneId) return;
+    async (id?: string) => {
+      if (!sceneId || !id) return;
       const [pluginId, extensionId] = id.split("/");
 
       const { data } = await addWidgetMutation({
@@ -306,8 +306,9 @@ export default () => {
   );
 
   const removeWidget = useCallback(
-    async (widgetId: string) => {
+    async (ids: string) => {
       if (!sceneId) return;
+      const [, , widgetId] = ids.split("/");
       await removeWidgetMutation({
         variables: {
           sceneId,
@@ -321,18 +322,19 @@ export default () => {
   );
 
   const activateWidget = useCallback(
-    async (enabled: boolean) => {
-      if (!sceneId || selected?.type !== "widget" || !selected.widgetId) return;
+    async (widgetId: string, enabled: boolean) => {
+      if (!sceneId) return;
+      // if (!sceneId || selected?.type !== "widget" || !selected.widgetId) return;
       await updateWidgetMutation({
         variables: {
           sceneId,
-          widgetId: selected.widgetId,
+          widgetId,
           enabled,
         },
         refetchQueries: ["GetEarthWidgets"],
       });
     },
-    [sceneId, selected, updateWidgetMutation],
+    [sceneId, updateWidgetMutation],
   );
 
   return {

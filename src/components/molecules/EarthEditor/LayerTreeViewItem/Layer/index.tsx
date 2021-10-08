@@ -3,13 +3,13 @@ import React, { forwardRef } from "react";
 import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
+import ToggleButton from "@reearth/components/atoms/ToggleButton";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import useDoubleClick from "@reearth/util/use-double-click";
 
-import { Widget } from "../../OutlinePane/hooks";
 import LayerActions, { Format } from "../LayerActions";
-import WidgetActions from "../WidgetActions";
+import LayerActionsList from "../LayerActionsList";
 
 import useHooks from "./hooks";
 import useEditable from "./use-editable";
@@ -19,6 +19,7 @@ export type { Format } from "../LayerActions";
 export type DropType = "top" | "bottom" | "bottomOfChildren";
 
 export type Layer<T = unknown> = {
+  id?: string;
   title?: string;
   description?: string;
   icon?: string;
@@ -50,10 +51,11 @@ export type Props = {
   visibilityShown?: boolean;
   onClick: () => void;
   onExpand?: () => void;
+  onWarning?: (show: boolean) => void;
   onVisibilityChange?: (isVisible: boolean) => void;
   onRename?: (name: string) => void;
   onRemove?: (selectedLayerId: string) => void;
-  onAdd?: (id: string) => void;
+  onAdd?: (id?: string) => void;
   onGroupCreate?: () => void;
   onImport?: (file: File, format: Format) => void;
 };
@@ -87,6 +89,7 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
     allSiblingsDoesNotHaveChildren,
     visibilityShown,
     onVisibilityChange,
+    onWarning,
     onClick,
     onExpand,
     onRename,
@@ -181,17 +184,21 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               {childrenCount}
             </LayerCount>
           )}
-          {visibilityShown && typeof visible === "boolean" && (
+          {visibilityShown && (visible !== undefined || deactivated !== undefined) && (
             <Visibility
               isVisible={!visible || isHover || selected}
               onClick={handleVisibilityChange}>
-              <LayerIcon
-                icon={!visible ? "hidden" : "visible"}
-                size={16}
-                selected={selected}
-                disabled={deactivated}
-                type={type}
-              />
+              {deactivated !== undefined ? (
+                <ToggleButton checked={!deactivated} />
+              ) : (
+                <LayerIcon
+                  icon={!visible ? "hidden" : "visible"}
+                  size={16}
+                  selected={selected}
+                  disabled={deactivated}
+                  type={type}
+                />
+              )}
             </Visibility>
           )}
           {showHelp && description && (
@@ -205,21 +212,21 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
           )}
           {showLayerActions && (
             <LayerActionsWrapper>
-              {type === "layer" && (
+              {actionItems ? (
+                <LayerActionsList
+                  selectedLayerId={selectedLayerId}
+                  items={actionItems}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  onWarning={onWarning}
+                />
+              ) : (
                 <LayerActions
                   rootLayerId={rootLayerId}
                   selectedLayerId={selectedLayerId}
                   onLayerImport={onImport}
                   onLayerRemove={onRemove}
                   onLayerGroupCreate={onGroupCreate}
-                />
-              )}
-              {type === "widgets" && (
-                <WidgetActions
-                  selectedWidgetId={selectedLayerId}
-                  widgets={actionItems as Widget[]}
-                  onWidgetAdd={onAdd}
-                  onWidgetRemove={onRemove}
                 />
               )}
             </LayerActionsWrapper>
