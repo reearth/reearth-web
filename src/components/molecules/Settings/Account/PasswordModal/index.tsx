@@ -6,7 +6,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
-import { styled, useTheme } from "@reearth/theme";
+import { styled, useTheme, metricsSizes } from "@reearth/theme";
 
 export type PasswordPolicy = {
   tooShort?: RegExp;
@@ -158,7 +158,6 @@ const PasswordModal: React.FC<Props> = ({
               type="password"
               borderColor={theme.main.border}
               value={password}
-              message={password ? regexMessage : undefined}
               onChange={handlePasswordChange}
               doesChangeEveryTime
               color={
@@ -168,6 +167,7 @@ const PasswordModal: React.FC<Props> = ({
                   : undefined
               }
             />
+            <PasswordMessage size="xs">{password ? regexMessage : undefined}</PasswordMessage>
           </PasswordField>
           <PasswordField direction="column">
             <Text size="m">
@@ -210,6 +210,12 @@ const SubText = styled.div`
 
 const PasswordField = styled(Flex)`
   height: 75px;
+`;
+
+const PasswordMessage = styled(Text)`
+  margin-left: ${metricsSizes.m}px;
+  margin-top: ${metricsSizes["2xs"]}px;
+  font-style: italic;
 `;
 
 export default PasswordModal;

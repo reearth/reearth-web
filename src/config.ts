@@ -41,7 +41,7 @@ export default async function loadConfig() {
 
   if (!window.REEARTH_CONFIG?.passwordPolicy) return;
   try {
-    Object.keys(window.REEARTH_CONFIG.passwordPolicy).forEach(([value]) => new RegExp(value));
+    Object.values(window.REEARTH_CONFIG.passwordPolicy).forEach(value => new RegExp(value));
   } catch {
     window.REEARTH_CONFIG.passwordPolicy = undefined;
   }

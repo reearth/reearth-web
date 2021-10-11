@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
-import Text from "@reearth/components/atoms/Text";
 import { styled, metrics } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -16,7 +15,6 @@ export type Props = {
   prefix?: string;
   suffix?: string;
   placeholder?: string;
-  message?: string;
   throttle?: boolean;
   throttleTimeout?: number;
   color?: string;
@@ -36,7 +34,6 @@ const TextBox: React.FC<Props> = ({
   prefix,
   suffix,
   placeholder,
-  message,
   throttle,
   throttleTimeout: throttleTimeout = 3000,
   color,
@@ -145,7 +142,6 @@ const TextBox: React.FC<Props> = ({
           </FloatedText>
         )}
       </FormWrapper>
-      {message && <StyledText size="xs">{message}</StyledText>}
     </div>
   );
 };
@@ -198,12 +194,6 @@ const FloatedText = styled.span<InputProps>`
     theme.properties.contentsText};
   font-size: ${fonts.sizes.s}px;
   user-select: none;
-`;
-
-const StyledText = styled(Text)`
-  margin-left: ${metricsSizes.m}px;
-  margin-top: ${metricsSizes["2xs"]}px;
-  font-style: italic;
 `;
 
 export default TextBox;
