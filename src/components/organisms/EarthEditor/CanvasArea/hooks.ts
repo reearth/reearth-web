@@ -183,24 +183,24 @@ export default (isBuilt?: boolean) => {
       setIsDragging(false);
       if (!position) return;
       // const layerProperty = layers?.findById(l => l.id === layerId)?.rawProperty;
-      // const layerProperty = layers?.findById(layerId)?.rawProperty;
-      // const propertyItem =
-      //   layerProperty && "items" in layerProperty
-      //     ? layerProperty?.items.find(
-      //         i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
-      //       )
-      //     : undefined;
-      // if (!layerProperty?.id || !position || !propertyItem) return;
-      // await updateLayerLatLng({
-      //   variables: {
-      //     propertyId: layerProperty.id,
-      //     itemId: propertyItem.id,
-      //     schemaItemId: "default",
-      //     fieldId: "location",
-      //     lat: position?.lat,
-      //     lng: position?.lng,
-      //   },
-      // });
+      const layerProperty = layers?.findById(layerId)?.rawProperty;
+      const propertyItem =
+        layerProperty && "items" in layerProperty
+          ? layerProperty?.items.find(
+              i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
+            )
+          : undefined;
+      if (!layerProperty?.id || !position || !propertyItem) return;
+      await updateLayerLatLng({
+        variables: {
+          propertyId: layerProperty.id,
+          itemId: propertyItem.id,
+          schemaItemId: "default",
+          fieldId: "location",
+          lat: position?.lat,
+          lng: position?.lng,
+        },
+      });
     },
     [layers, updateLayerLatLng],
   );
