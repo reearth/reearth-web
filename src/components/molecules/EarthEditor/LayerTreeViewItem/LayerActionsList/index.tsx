@@ -69,10 +69,15 @@ const LayerActionsList: React.FC<Props> = ({
       <MenuWrapper ref={popperElement} style={styles.popper} {...attributes.popper}>
         {visibleMenu && (
           <Menu>
-            {items?.map(w => (
-              <MenuItem key={w.id} onClick={() => onAdd?.(w.id)}>
-                <MenuItemIcon icon={w.icon} size={16} />
-                <Text size="xs">{w.title}</Text>
+            {items?.map(i => (
+              <MenuItem
+                key={i.id}
+                disabled={i.limitReached}
+                onClick={() => !i.limitReached && onAdd?.(i.id)}>
+                <MenuItemIcon icon={i.icon} size={16} />
+                <Text size="xs" customColor>
+                  {i.title}
+                </Text>
               </MenuItem>
             ))}
           </Menu>
@@ -112,11 +117,14 @@ const Menu = styled.div`
   border-radius: 5px;
 `;
 
-const MenuItem = styled(Flex)`
+const MenuItem = styled(Flex)<{ disabled?: boolean }>`
   padding: ${metricsSizes.xs}px ${metricsSizes.m}px;
+  color: ${({ disabled, theme }) => (disabled ? theme.layers.disableTextColor : undefined)};
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 
   &:hover {
-    background: ${({ theme }) => theme.selectList.option.hoverBg};
+    background: ${({ disabled, theme }) =>
+      !disabled ? theme.selectList.option.hoverBg : undefined};
   }
 `;
 

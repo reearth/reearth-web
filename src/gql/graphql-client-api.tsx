@@ -1022,6 +1022,7 @@ export type PluginExtension = {
   propertySchema?: Maybe<PropertySchema>;
   propertySchemaId: Scalars['PropertySchemaID'];
   sceneWidget?: Maybe<SceneWidget>;
+  singleOnly?: Maybe<Scalars['Boolean']>;
   translatedDescription: Scalars['String'];
   translatedName: Scalars['String'];
   type: PluginExtensionType;
@@ -2253,7 +2254,7 @@ export type GetWidgetsQueryVariables = Exact<{
 }>;
 
 
-export type GetWidgetsQuery = { __typename?: 'Query', node?: Maybe<{ __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: Maybe<{ __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, description: string, name: string, translatedDescription: string, translatedName: string, icon: string, type: PluginExtensionType, widgetLayout?: Maybe<{ __typename?: 'WidgetLayout', extended: boolean, floating: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: Maybe<{ __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType }> }> }> }> }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string }> };
+export type GetWidgetsQuery = { __typename?: 'Query', node?: Maybe<{ __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: Maybe<{ __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, description: string, name: string, translatedDescription: string, translatedName: string, icon: string, singleOnly?: Maybe<boolean>, type: PluginExtensionType, widgetLayout?: Maybe<{ __typename?: 'WidgetLayout', extended: boolean, floating: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: Maybe<{ __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType }> }> }> }> }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string }> };
 
 export type GetPrimitivesQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -4591,6 +4592,7 @@ export const GetWidgetsDocument = gql`
             translatedDescription(lang: $lang)
             translatedName(lang: $lang)
             icon
+            singleOnly
             type
             widgetLayout {
               extendable {

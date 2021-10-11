@@ -29,6 +29,7 @@ export type Layer<T = unknown> = {
   childrenCount?: number;
   linked?: boolean;
   deactivated?: boolean;
+  limitReached?: boolean;
   visible?: boolean;
   renamable?: boolean;
   visibilityChangeable?: boolean;

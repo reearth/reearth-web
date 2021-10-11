@@ -87,19 +87,20 @@ export default () => {
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
           .map((e): Widget => {
-            const pluginId = plugin.id;
-
             return {
-              pluginId,
+              pluginId: plugin.id,
               extensionId: e.extensionId,
               title: e.translatedName,
-              icon: e.icon || (pluginId === "reearth" && e.extensionId) || "plugin",
+              icon: e.icon || (plugin.id === "reearth" && e.extensionId) || "plugin",
+              limitReached:
+                (e.singleOnly && !!scene?.widgets?.find(w => w.extensionId === e.extensionId)) ??
+                undefined,
             };
           })
           .filter((w): w is Widget => !!w);
       })
       .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);
-  }, [scene?.plugins]);
+  }, [scene]);
 
   const widgets = useMemo(() => {
     return scene?.widgets?.map(w => {

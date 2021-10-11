@@ -33,6 +33,7 @@ export type Widget = {
   description?: string;
   enabled?: boolean;
   icon?: string;
+  limitReached?: boolean;
 };
 
 export type ItemType = ItemEx["type"];
@@ -198,6 +199,7 @@ export default ({
               id: `${w.pluginId}/${w.extensionId}`,
               title: w.title,
               icon: w.icon,
+              limitReached: w.limitReached,
             })),
           },
           draggable: false,
