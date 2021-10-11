@@ -2,7 +2,7 @@ import React from "react";
 
 import P from "../Primitive";
 
-import LayerStore from "./store";
+import { LayerStore } from "./store";
 
 export type { Layer } from "../Primitive";
 
@@ -14,10 +14,11 @@ export type Props = {
   pluginBaseUrl?: string;
   layers?: LayerStore;
   selectedLayerId?: string;
+  overriddenProperties?: { [id in string]: any };
   isLayerHidden?: (id: string) => boolean;
 };
 
-export { default as LayerStore, empty as emptyLayerStore } from "./store";
+export { LayerStore, empty as emptyLayerStore } from "./store";
 
 export default function Layers({
   pluginProperty,
@@ -27,6 +28,7 @@ export default function Layers({
   pluginBaseUrl,
   layers,
   selectedLayerId,
+  overriddenProperties,
   isLayerHidden,
 }: Props): JSX.Element | null {
   return (
@@ -47,6 +49,7 @@ export default function Layers({
             isBuilt={isBuilt}
             isSelected={!!selectedLayerId && selectedLayerId === layer.id}
             pluginBaseUrl={pluginBaseUrl}
+            overriddenProperties={overriddenProperties}
           />
         ),
       )}

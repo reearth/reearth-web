@@ -8,7 +8,7 @@ import { styled } from "@reearth/theme";
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
-import Layers, { LayerStore } from "./Layer";
+import Layers, { LayerStore } from "./Layers";
 import { Provider } from "./Plugin";
 import W from "./Widget";
 import type { Widget } from "./Widget";
@@ -19,8 +19,7 @@ import WidgetAlignSystem, {
 
 export type { SceneProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
-export type { Layer } from "./Layer";
-export { LayerStore } from "./Layer";
+export type { Layer } from "./Layers";
 export type {
   Widget,
   Alignment,
@@ -32,6 +31,7 @@ export type {
   WidgetZone,
   WidgetLayoutConstraint,
 } from "./WidgetAlignSystem";
+export { LayerStore };
 
 export type Props = PropsWithChildren<
   {
@@ -72,8 +72,8 @@ export default function Visualizer({
   isPublished,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
-  onLayerSelect,
   widgetAlignEditorActivated,
+  onLayerSelect,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
   renderInfoboxInsertionPopUp,
@@ -93,13 +93,14 @@ export default function Visualizer({
     wrapperRef,
     isDroppable,
     providerProps,
-    isLayerHidden,
     selectedLayer,
     selectedLayerId,
     layerSelectionReason,
     selectedBlockId,
     innerCamera,
     infobox,
+    layeroverriddenProperties,
+    isLayerHidden,
     selectLayer,
     selectBlock,
     updateCamera,
@@ -146,6 +147,7 @@ export default function Visualizer({
             selectedLayerId={selectedLayerId}
             layers={layers}
             isLayerHidden={isLayerHidden}
+            overriddenProperties={layeroverriddenProperties}
           />
           {ready &&
             widgets?.floatingWidgets?.map(widget => (
@@ -170,6 +172,7 @@ export default function Visualizer({
             infoboxKey={infobox?.infoboxKey}
             visible={!!infobox?.visible}
             sceneProperty={sceneProperty}
+            blocks={infobox?.blocks}
             layer={infobox?.layer}
             selectedBlockId={selectedBlockId}
             pluginProperty={pluginProperty}

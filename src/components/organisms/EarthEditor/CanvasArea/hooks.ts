@@ -1,4 +1,5 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
+import { useIntl } from "react-intl";
 
 import {
   Location,
@@ -39,6 +40,7 @@ import {
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 
 export default (isBuilt?: boolean) => {
+  const intl = useIntl();
   const [sceneId] = useSceneId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
@@ -59,10 +61,11 @@ export default (isBuilt?: boolean) => {
           layerId: selected.layerId,
           infoboxFieldId: id,
           index: toIndex,
+          lang: intl.locale,
         },
       });
     },
-    [moveInfoboxField, selected],
+    [intl.locale, moveInfoboxField, selected],
   );
 
   const onBlockRemove = useCallback(
@@ -72,18 +75,19 @@ export default (isBuilt?: boolean) => {
         variables: {
           layerId: selected.layerId,
           infoboxFieldId: id,
+          lang: intl.locale,
         },
       });
     },
-    [removeInfoboxField, selected],
+    [intl.locale, removeInfoboxField, selected],
   );
 
   const { data: layerData } = useGetLayersQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
   const { data: widgetData } = useGetEarthWidgetsQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
 
@@ -134,10 +138,11 @@ export default (isBuilt?: boolean) => {
           fieldId: fid,
           type: gvt,
           value: valueToGQL(v, vt),
+          lang: intl.locale,
         },
       });
     },
-    [changePropertyValue, selectedLayer?.infobox?.blocks],
+    [changePropertyValue, intl.locale, selectedLayer?.infobox?.blocks],
   );
 
   const onFovChange = useCallback(
@@ -148,7 +153,7 @@ export default (isBuilt?: boolean) => {
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
   const { data: blockData } = useGetBlocksQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
   const blocks = useMemo(() => convertToBlocks(blockData), [blockData]);
@@ -161,6 +166,7 @@ export default (isBuilt?: boolean) => {
           pluginId: b.pluginId,
           extensionId: b.extensionId,
           index: p ? i + (p === "bottom" ? 1 : 0) : undefined,
+          lang: intl.locale,
         },
       });
     }
