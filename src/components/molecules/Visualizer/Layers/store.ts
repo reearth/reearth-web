@@ -72,9 +72,13 @@ export class LayerStore {
 }
 
 function flattenLayers(layers: Layer[] | undefined): Layer[] {
-  return (
-    layers?.reduce<Layer[]>((a, b) => [...a, b, ...(b.isVisible ? b.children ?? [] : [])], []) ?? []
-  );
+  const cb = (a: Layer[], b: Layer): Layer[] => [
+    ...a,
+    b,
+    ...(b.isVisible ? b.children?.reduce(cb, []) ?? [] : []),
+  ];
+
+  return layers?.reduce<Layer[]>(cb, []) ?? [];
 }
 
 export const empty = new LayerStore({ id: "" });
