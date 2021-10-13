@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBanner from "@reearth/components/organisms/Notification";
+import LoginPage from "@reearth/components/pages/LoginPage";
 import NotFound from "@reearth/components/pages/NotFound";
 import AccountSettings from "@reearth/components/pages/Settings/Account";
 import ProjectSettings from "@reearth/components/pages/Settings/Project";
@@ -13,7 +14,6 @@ import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList"
 import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
 import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
 import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
-import TopPage from "@reearth/components/pages/TopPage";
 import { Provider as IntlProvider } from "@reearth/locale";
 
 import { Provider as Auth0Provider } from "./auth";
@@ -44,7 +44,7 @@ const App: React.FC = () => {
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
               <StyledRouter>
-                <TopPage path="/" />
+                <LoginPage path="/" />
                 <Dashboard path="/dashboard/:teamId" />
                 <EarthEditor path="/edit/:sceneId" />
                 <Preview path="/edit/:sceneId/preview" />
