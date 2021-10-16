@@ -36,6 +36,21 @@ export type SceneProperty = {
     tile_maxLevel?: number;
     tile_minLevel?: number;
   }[];
+  clusters?: {
+    id: string;
+    cluster_name?: string;
+    cluster_pixelRange?: number;
+    cluster_minSize?: number;
+    cluster_sizeType?: "small" | "medium" | "large";
+    cluster_textColor: string;
+    cluster_shapeType: "circle";
+    cluster_backgroundColor: string;
+    cluster_image: string;
+  }[];
+  cluster_layers?: {
+    cluster_layer: string;
+    id: string;
+  }[];
   atmosphere?: {
     enable_sun?: boolean;
     enable_lighting?: boolean;
