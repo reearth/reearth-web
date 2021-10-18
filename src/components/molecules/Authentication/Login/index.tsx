@@ -4,6 +4,7 @@ import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
+import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 
@@ -19,16 +20,21 @@ const Login: React.FC<Props> = ({ login }) => {
 
   return (
     <AuthPage login={login}>
+      <Icon className="form-item" icon="logoColorful" size={60} />
       <Text className="form-item" size="l" customColor>
         {intl.formatMessage({ defaultMessage: "Welcome" })}
       </Text>
       <Text className="form-item" size="s" customColor>
         {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
       </Text>
-      <StyledInput className="form-item" placeholder="username or email" color={theme.main.weak} />
       <StyledInput
         className="form-item"
-        placeholder="password"
+        placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
+        color={theme.main.weak}
+      />
+      <StyledInput
+        className="form-item"
+        placeholder={intl.formatMessage({ defaultMessage: "Password" })}
         type="password"
         autoComplete="new-password"
         color={theme.main.weak}
@@ -51,7 +57,11 @@ const Login: React.FC<Props> = ({ login }) => {
           {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
         </Text>
         <StyledLink to={"/signup"}>
-          <Text size="xs" color={theme.main.link} otherProperties={{ marginLeft: "6px" }}>
+          <Text
+            size="xs"
+            color={theme.main.link}
+            weight="bold"
+            otherProperties={{ marginLeft: "6px" }}>
             {intl.formatMessage({ defaultMessage: "Sign up" })}
           </Text>
         </StyledLink>

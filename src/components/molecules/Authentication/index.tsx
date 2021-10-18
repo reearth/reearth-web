@@ -14,7 +14,6 @@ const AuthPage: React.FC<Props> = ({ children }) => {
     <Wrapper>
       <Flex justify="center" align="center" flex={2}>
         <FormWrapper align="center" justify="center" direction="column">
-          <Icon className="form-item" icon="logoColorful" size={60} />
           {children}
         </FormWrapper>
       </Flex>
