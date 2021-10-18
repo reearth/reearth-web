@@ -1,3 +1,4 @@
+import { Link } from "@reach/router";
 import React from "react";
 import { useIntl } from "react-intl";
 
@@ -49,9 +50,11 @@ const Login: React.FC<Props> = ({ login }) => {
         <Text size="xs" color={theme.main.weak}>
           {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
         </Text>
-        <Text size="xs" color={theme.main.link} otherProperties={{ marginLeft: "6px" }}>
-          {intl.formatMessage({ defaultMessage: "Sign up" })}
-        </Text>
+        <StyledLink to={"/signup"}>
+          <Text size="xs" color={theme.main.link} otherProperties={{ marginLeft: "6px" }}>
+            {intl.formatMessage({ defaultMessage: "Sign up" })}
+          </Text>
+        </StyledLink>
       </Footer>
     </AuthPage>
   );
@@ -80,6 +83,10 @@ const StyledInput = styled.input`
     border: 2px solid ${({ theme }) => theme.main.brandBlue};
     margin: -1px -1px 23px -1px;
   }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `;
 
 const Footer = styled(Flex)`
