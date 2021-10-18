@@ -11,12 +11,12 @@ export type Config = {
   sentryDsn?: string;
   sentryEnv?: string;
   passwordPolicy?: {
-    tooShort?: RegExp | string;
-    tooLong?: RegExp | string;
-    whitespace?: RegExp | string;
-    lowSecurity?: RegExp | string;
-    medSecurity?: RegExp | string;
-    highSecurity?: RegExp | string;
+    tooShort?: RegExp;
+    tooLong?: RegExp;
+    whitespace?: RegExp;
+    lowSecurity?: RegExp;
+    medSecurity?: RegExp;
+    highSecurity?: RegExp;
   };
 };
 declare global {
@@ -40,9 +40,15 @@ export default async function loadConfig() {
   };
 
   if (!window.REEARTH_CONFIG?.passwordPolicy) return;
-  try {
-    Object.values(window.REEARTH_CONFIG.passwordPolicy).forEach(value => new RegExp(value));
-  } catch {
-    window.REEARTH_CONFIG.passwordPolicy = undefined;
-  }
+
+  window.REEARTH_CONFIG.passwordPolicy = Object.entries(
+    Object.values(window.REEARTH_CONFIG.passwordPolicy).map((k, v) => {
+      if (typeof v !== "string") return undefined;
+      try {
+        return [k, new RegExp(v)];
+      } catch {
+        return undefined;
+      }
+    }),
+  ) as Config["passwordPolicy"];
 }

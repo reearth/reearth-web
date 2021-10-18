@@ -2,7 +2,6 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { PasswordPolicy } from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
@@ -23,7 +22,7 @@ export default () => {
   const me = profileData?.me;
   const auths = profileData?.me?.auths;
   const hasPassword = auths?.includes("auth0") ?? false;
-  const passwordPolicy = (window.REEARTH_CONFIG?.passwordPolicy as PasswordPolicy) ?? undefined;
+  const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
   const [updateMeMutation] = useUpdateMeMutation();
 
