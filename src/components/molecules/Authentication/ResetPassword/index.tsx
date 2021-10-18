@@ -11,56 +11,41 @@ import { styled, useTheme } from "@reearth/theme";
 import AuthPage from "..";
 
 export type Props = {
-  login: () => void;
+  resetPassword?: () => void;
 };
 
-const Login: React.FC<Props> = ({ login }) => {
+const ResetPassword: React.FC<Props> = () => {
   const intl = useIntl();
   const theme = useTheme();
 
   return (
-    <AuthPage login={login}>
+    <AuthPage>
       <Icon className="form-item" icon="logoColorful" size={60} />
       <Text className="form-item" size="l" customColor>
-        {intl.formatMessage({ defaultMessage: "Welcome" })}
+        {intl.formatMessage({ defaultMessage: "Forgot your password?" })}
       </Text>
       <Text className="form-item" size="s" customColor>
-        {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
+        {intl.formatMessage({
+          defaultMessage:
+            "Enter your email address and we will send you instructions to reset your password.",
+        })}
       </Text>
       <StyledInput
         className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
+        placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
         color={theme.main.weak}
       />
-      <StyledInput
-        className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Password" })}
-        type="password"
-        autoComplete="new-password"
-        color={theme.main.weak}
-      />
-      <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
-        <Text className="form-item" size="xs" color={theme.main.link}>
-          {intl.formatMessage({ defaultMessage: "Forgot password?" })}
-        </Text>
-      </StyledLink>
       <StyledButton
         className="form-item"
         large
-        onClick={login}
-        text={intl.formatMessage({ defaultMessage: "Continue" })}
+        onClick={() => alert("Tried to sign up")}
+        text={intl.formatMessage({ defaultMessage: "Send" })}
       />
-      <Footer className="form-item">
-        <Text size="xs" color={theme.main.weak}>
-          {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
-        </Text>
-        <StyledLink to={"/signup"}>
-          <Text
-            size="xs"
-            color={theme.main.link}
-            weight="bold"
-            otherProperties={{ marginLeft: "6px" }}>
-            {intl.formatMessage({ defaultMessage: "Sign up" })}
+      <Footer className="form-item" justify="center">
+        <StyledLink to={"/"}>
+          <StyledIcon icon="arrowLongLeft" size={16} />
+          <Text size="xs" customColor weight="bold">
+            {intl.formatMessage({ defaultMessage: "Back to Log in." })}
           </Text>
         </StyledLink>
       </Footer>
@@ -74,6 +59,10 @@ const StyledButton = styled(Button)`
   border: none;
   border-radius: 2px;
   color: ${({ theme }) => theme.other.white};
+`;
+
+const StyledIcon = styled(Icon)`
+  margin-right: 5px;
 `;
 
 const StyledInput = styled.input`
@@ -95,10 +84,13 @@ const StyledInput = styled.input`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.main.link};
 `;
 
 const Footer = styled(Flex)`
   width: 100%;
 `;
 
-export default Login;
+export default ResetPassword;
