@@ -6,7 +6,7 @@ import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { styled, useTheme } from "@reearth/theme";
+import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
 
@@ -73,7 +73,7 @@ const StyledInput = styled.input`
   background: inherit;
   border: 1px solid ${({ theme }) => theme.main.border};
   border-radius: 3px;
-  padding: 8px;
+  padding: ${metricsSizes.s}px;
   outline: none;
 
   :focus {
