@@ -6,7 +6,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 
-import AuthPage from "../";
+import AuthPage from "..";
 
 export type Props = {
   login: () => void;
