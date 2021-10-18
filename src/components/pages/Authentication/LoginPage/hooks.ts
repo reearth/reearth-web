@@ -5,8 +5,6 @@ import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
-export type Mode = "layer" | "widget";
-
 export default () => {
   const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
   const error = useCleanUrl();
