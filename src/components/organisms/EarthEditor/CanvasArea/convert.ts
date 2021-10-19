@@ -143,7 +143,7 @@ const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined
     title: layer.name,
     property:
       layer.__typename === "LayerItem" ? processMergedProperty(layer.merged?.property) : undefined,
-    rawProperty: layer.property ?? undefined,
+    propertyId: layer.propertyId ?? undefined,
     infobox:
       layer.__typename === "LayerItem"
         ? processMergedInfobox(layer.merged?.infobox)

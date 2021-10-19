@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import {
@@ -11,7 +11,6 @@ import {
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
   useChangePropertyValueMutation,
-  useUpdatePropertyValueLatLngMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
   useUpdateWidgetMutation,
@@ -20,6 +19,7 @@ import {
   WidgetSectionType,
   WidgetAreaType,
   WidgetAreaAlign,
+  ValueType,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -29,13 +29,7 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
 } from "@reearth/state";
-import {
-  valueTypeToGQL,
-  ValueType,
-  ValueTypes,
-  valueToGQL,
-  LatLngHeight,
-} from "@reearth/util/value";
+import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 
@@ -46,7 +40,6 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  const [isDragging, setIsDragging] = useState(false);
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
@@ -117,7 +110,7 @@ export default (isBuilt?: boolean) => {
   );
 
   const onBlockChange = useCallback(
-    async <T extends ValueType>(
+    async <T extends keyof ValueTypes>(
       blockId: string,
       schemaItemId: string,
       fid: string,
@@ -178,37 +171,27 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
-  const [updateLayerLatLng] = useUpdatePropertyValueLatLngMutation();
-
-  const handleDragLayer = useCallback((_layerId: string, _position: LatLngHeight | undefined) => {
-    setIsDragging(true);
-  }, []);
-
   const handleDropLayer = useCallback(
-    async (layerId: string, position?: LatLngHeight | undefined) => {
-      setIsDragging(false);
-      if (!position) return;
-      // const layerProperty = layers?.findById(l => l.id === layerId)?.rawProperty;
-      const layerProperty = layers?.findById(layerId)?.rawProperty;
-      const propertyItem =
-        layerProperty && "items" in layerProperty
-          ? layerProperty?.items.find(
-              i => i.__typename === "PropertyGroup" && i.fields.find(f => f.fieldId === "location"),
-            )
-          : undefined;
-      if (!layerProperty?.id || !position || !propertyItem) return;
-      await updateLayerLatLng({
+    async (layerId: string, position: LatLng) => {
+      const layer = layers?.findById(layerId);
+      console.log(layer, layerId, layers);
+      const propertyId = layer?.propertyId;
+      if (!propertyId) return;
+
+      await changePropertyValue({
         variables: {
-          propertyId: layerProperty.id,
-          itemId: propertyItem.id,
+          propertyId,
           schemaItemId: "default",
           fieldId: "location",
-          lat: position?.lat,
-          lng: position?.lng,
+          type: ValueType.Latlng,
+          value: {
+            lat: position?.lat,
+            lng: position?.lng,
+          },
         },
       });
     },
-    [layers, updateLayerLatLng],
+    [changePropertyValue, layers],
   );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
@@ -282,8 +265,6 @@ export default (isBuilt?: boolean) => {
     onIsCapturingChange,
     onCameraChange,
     onFovChange,
-    handleDragLayer,
     handleDropLayer,
-    isDragging,
   };
 };

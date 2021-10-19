@@ -9,7 +9,7 @@ import React, {
   forwardRef,
 } from "react";
 
-import type { Camera, LatLngHeight } from "@reearth/util/value";
+import type { Camera, LatLng } from "@reearth/util/value";
 
 import { SelectLayerOptions } from "../Plugin/types";
 
@@ -78,9 +78,8 @@ export type EngineProps = {
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
   isLayerDraggable?: boolean;
-  onDragLayer?: (layerId: string, position?: LatLngHeight) => void;
-  onDraggingLayer?: (layerId: string, position?: LatLngHeight) => void;
-  onDropLayer?: (layerId: string, position?: LatLngHeight) => void;
+  onLayerDrag?: (layerId: string, position: LatLng) => void;
+  onLayerDrop?: (layerId: string, position: LatLng) => void;
   isLayerDragging?: boolean;
 };
 

@@ -52,6 +52,7 @@ const fragments = gql`
         ...PropertyFragment
       }
     }
+    propertyId
     property {
       id
       ...PropertyFragmentWithoutSchema
@@ -318,35 +319,4 @@ export const ADD_INFOBOX_FIELD = gql`
   }
 
   ${layerFragment}
-`;
-
-export const UPDATE_LAT_LNG = gql`
-  mutation updatePropertyValueLatLng(
-    $propertyId: ID!
-    $schemaItemId: PropertySchemaFieldID
-    $itemId: ID
-    $fieldId: PropertySchemaFieldID!
-    $lat: Float!
-    $lng: Float!
-  ) {
-    updatePropertyValue(
-      input: {
-        propertyId: $propertyId
-        schemaItemId: $schemaItemId
-        itemId: $itemId
-        fieldId: $fieldId
-        value: { lat: $lat, lng: $lng }
-        type: LATLNG
-      }
-    ) {
-      property {
-        id
-        ...PropertyFragment
-        layer {
-          id
-          ...Layer1Fragment
-        }
-      }
-    }
-  }
 `;

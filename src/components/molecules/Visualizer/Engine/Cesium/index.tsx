@@ -34,9 +34,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     onLayerSelect,
     onCameraChange,
-    onDragLayer,
-    onDropLayer,
-    onDraggingLayer,
+    onLayerDrag,
+    onLayerDrop,
     isLayerDraggable,
     isLayerDragging,
   },
@@ -58,9 +57,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     onLayerSelect,
     onCameraChange,
-    onDragLayer,
-    onDropLayer,
-    onDraggingLayer,
+    onLayerDrag,
+    onLayerDrop,
     isLayerDraggable,
   });
 

@@ -14,7 +14,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 
-import { Camera, LatLngHeight } from "@reearth/util/value";
+import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 
@@ -31,9 +31,8 @@ export default ({
   onLayerSelect,
   onCameraChange,
   isLayerDraggable,
-  onDragLayer,
-  onDraggingLayer,
-  onDropLayer,
+  onLayerDrag,
+  onLayerDrop,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -42,9 +41,8 @@ export default ({
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
   isLayerDraggable?: boolean;
-  onDragLayer?: (layerId: string, position?: LatLngHeight) => void;
-  onDraggingLayer?: (layerId: string, position?: LatLngHeight) => void;
-  onDropLayer?: (layerId: string, position?: LatLngHeight) => void;
+  onLayerDrag?: (layerId: string, position: LatLng) => void;
+  onLayerDrop?: (layerId: string, position: LatLng) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
@@ -190,42 +188,51 @@ export default ({
     viewer.scene.requestRender();
   });
 
-  const handleDragLayer = useCallback(
+  // enable Drag and Drop Layers
+  const handleLayerDrag = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
-      onDragLayer?.(e.id, convertCartesian3ToPosition(cesium.current?.cesiumElement, position));
+      const viewer = cesium.current?.cesiumElement;
+      if (!viewer || viewer.isDestroyed()) return;
+      const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
+      if (!pos) return;
+      onLayerDrag?.(e.id, pos);
     },
-    [onDragLayer],
+    [onLayerDrag],
   );
 
-  const handleDraggingLayer = useCallback(
-    (e: Entity, position: Cartesian3 | undefined, _context: Context): false | void => {
-      onDraggingLayer?.(e.id, convertCartesian3ToPosition(cesium.current?.cesiumElement, position));
-    },
-    [onDraggingLayer],
-  );
-
-  const handleDropLayer = useCallback(
-    (e: Entity, position: Cartesian3 | undefined): boolean | void => {
-      onDropLayer?.(e.id, convertCartesian3ToPosition(cesium.current?.cesiumElement, position));
-      if (cesium.current?.cesiumElement?.scene.screenSpaceCameraController) {
-        cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = true;
-      }
-    },
-    [onDropLayer],
-  );
-
-  //Enable Drag and Drop Layers
-  const DELAY = 1000;
   useEffect(() => {
+    console.log("onLayerDrop", onLayerDrop);
+  }, [onLayerDrop]);
+
+  const handleLayerDrop = useCallback(
+    (e: Entity, position: Cartesian3 | undefined): boolean | void => {
+      const viewer = cesium.current?.cesiumElement;
+      if (!viewer || viewer.isDestroyed()) return;
+      const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
+      if (!pos) return;
+      onLayerDrop?.(e.id, pos);
+      // if (cesium.current?.cesiumElement?.scene.screenSpaceCameraController) {
+      //   cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = true;
+      // }
+    },
+    [onLayerDrop],
+  );
+
+  const cesiumDnD = useRef<CesiumDnD>();
+  useEffect(() => {
+    console.log("CesiumDND", handleLayerDrag, handleLayerDrop);
     const viewer = cesium.current?.cesiumElement;
-    if (!viewer || !isLayerDraggable) return;
-    new CesiumDnD(viewer, {
-      onDrag: handleDragLayer,
-      onDrop: handleDropLayer,
-      onDragging: handleDraggingLayer,
-      dragDelay: DELAY,
+    if (!viewer || viewer.isDestroyed()) return;
+    cesiumDnD.current = new CesiumDnD(viewer, {
+      onDrag: handleLayerDrag,
+      onDrop: handleLayerDrop,
+      dragDelay: 1000,
+      initialDisabled: !isLayerDraggable,
     });
-  }, [handleDragLayer, handleDraggingLayer, handleDropLayer, isLayerDraggable]);
+    return () => {
+      cesiumDnD.current?.disable();
+    };
+  }, [handleLayerDrag, handleLayerDrop, isLayerDraggable]);
 
   return {
     terrainProvider,

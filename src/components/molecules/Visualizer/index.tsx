@@ -82,10 +82,7 @@ export default function Visualizer({
   onBlockMove,
   onBlockInsert,
   onBlockSelect,
-  onDragLayer,
-  onDraggingLayer,
-  onDropLayer,
-  isLayerDragging,
+  onLayerDrop,
   ...props
 }: Props): JSX.Element {
   const {
@@ -104,6 +101,9 @@ export default function Visualizer({
     selectLayer,
     selectBlock,
     updateCamera,
+    handleLayerDrag,
+    handleLayerDrop,
+    isLayerDragging,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -118,27 +118,40 @@ export default function Visualizer({
     onLayerSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,
+    onLayerDrop,
   });
-
   return (
     <Provider {...providerProps}>
       <Filled ref={wrapperRef}>
-        {(isDroppable || isLayerDragging) && <DropHolder />}
+        {isDroppable && <DropHolder />}
+        {ready && widgets?.alignSystem && (
+          <WidgetAlignSystem
+            alignSystem={widgets.alignSystem}
+            editing={widgetAlignEditorActivated}
+            onWidgetUpdate={onWidgetUpdate}
+            onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
+            sceneProperty={sceneProperty}
+            pluginProperty={pluginProperty}
+            isEditable={props.isEditable}
+            isBuilt={props.isBuilt}
+            pluginBaseUrl={pluginBaseUrl}
+            layoutConstraint={widgets.layoutConstraint}
+          />
+        )}
         <Engine
           ref={engineRef}
           property={sceneProperty}
           selectedLayerId={selectedLayer?.id}
           layerSelectionReason={layerSelectionReason}
-          onLayerSelect={selectLayer}
           ready={ready}
-          {...props}
           camera={innerCamera}
-          isLayerDraggable={props.isEditable}
-          onDragLayer={onDragLayer}
-          onDraggingLayer={onDraggingLayer}
-          onDropLayer={onDropLayer}
           isLayerDragging={isLayerDragging}
-          onCameraChange={updateCamera}>
+          isLayerDraggable={props.isEditable}
+          onLayerSelect={selectLayer}
+          onCameraChange={updateCamera}
+          onLayerDrop={handleLayerDrop}
+          onLayerDrag={handleLayerDrag}
+          {...props}>
           <Layers
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
