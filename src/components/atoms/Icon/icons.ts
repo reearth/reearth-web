@@ -102,6 +102,7 @@ import FieldLinked from "./Icons/fieldLinked.svg";
 
 // Misc
 import Logo from "./Icons/reearthLogo.svg";
+import LogoColorful from "./Icons/reearthLogoColorful.svg";
 import Camera from "./Icons/camera.svg";
 import Help from "./Icons/helpIcon.svg";
 import Alert from "./Icons/alert.svg";
@@ -213,6 +214,7 @@ export default {
   search: Search,
   scale: Scale,
   logo: Logo,
+  logoColorful: LogoColorful,
   newProject: NewProject,
   newWorkspace: NewWorkspace,
   preview: Preview,
