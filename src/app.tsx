@@ -17,6 +17,7 @@ import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
 import { Provider as IntlProvider } from "@reearth/locale";
 
 import { Provider as Auth0Provider } from "./auth";
+import RootPage from "./components/pages/Authentication/RootPage";
 import Preview from "./components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as ThemeProvider, styled } from "./theme";
@@ -44,7 +45,8 @@ const App: React.FC = () => {
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
               <StyledRouter>
-                <LoginPage path="/" />
+                <RootPage path="/" />
+                <LoginPage path="/login" />
                 <Dashboard path="/dashboard/:teamId" />
                 <EarthEditor path="/edit/:sceneId" />
                 <Preview path="/edit/:sceneId/preview" />

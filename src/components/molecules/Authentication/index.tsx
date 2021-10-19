@@ -12,11 +12,13 @@ export type Props = {
 const AuthPage: React.FC<Props> = ({ children }) => {
   return (
     <Wrapper>
-      <Flex justify="center" align="center" flex={2}>
-        <FormWrapper align="center" justify="center" direction="column">
-          {children}
-        </FormWrapper>
-      </Flex>
+      {children && (
+        <Flex justify="center" align="center" flex={2}>
+          <FormWrapper align="center" justify="center" direction="column">
+            {children}
+          </FormWrapper>
+        </Flex>
+      )}
       <Flex justify="center" align="center" flex={3}>
         <Icon icon="logo" size={250} />
       </Flex>

@@ -1,9 +1,9 @@
-// import { Link } from "@reach/router";
+import { Link } from "@reach/router";
 import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
-// import Flex from "@reearth/components/atoms/Flex";
+import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
@@ -39,18 +39,18 @@ const Login: React.FC<Props> = ({ login }) => {
         autoComplete="new-password"
         color={theme.main.weak}
       />
-      {/* <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
+      <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
         <Text className="form-item" size="xs" color={theme.main.link}>
           {intl.formatMessage({ defaultMessage: "Forgot password?" })}
         </Text>
-      </StyledLink> */}
+      </StyledLink>
       <StyledButton
         className="form-item"
         large
         onClick={login}
         text={intl.formatMessage({ defaultMessage: "Continue" })}
       />
-      {/* <Footer className="form-item">
+      <Footer className="form-item">
         <Text size="xs" color={theme.main.weak}>
           {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
         </Text>
@@ -63,7 +63,7 @@ const Login: React.FC<Props> = ({ login }) => {
             {intl.formatMessage({ defaultMessage: "Sign up" })}
           </Text>
         </StyledLink>
-      </Footer> */}
+      </Footer>
     </AuthPage>
   );
 };
@@ -93,12 +93,12 @@ const StyledInput = styled.input`
   }
 `;
 
-// const StyledLink = styled(Link)`
-//   text-decoration: none;
-// `;
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
 
-// const Footer = styled(Flex)`
-//   width: 100%;
-// `;
+const Footer = styled(Flex)`
+  width: 100%;
+`;
 
 export default Login;
