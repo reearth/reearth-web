@@ -145,6 +145,7 @@ export default function Visualizer({
           camera={innerCamera}
           onCameraChange={updateCamera}>
           <Layers
+            sceneProperty={sceneProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}

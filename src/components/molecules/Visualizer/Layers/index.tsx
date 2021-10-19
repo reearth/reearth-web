@@ -1,5 +1,7 @@
 import React from "react";
 
+import { SceneProperty } from "../Engine";
+import Cluster from "../Engine/Cesium/cluster";
 import P from "../Primitive";
 
 import { LayerStore } from "./store";
@@ -8,7 +10,7 @@ export type { Layer } from "../Primitive";
 
 export type Props = {
   pluginProperty?: { [key: string]: any };
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
   isEditable?: boolean;
   isBuilt?: boolean;
   pluginBaseUrl?: string;
@@ -33,26 +35,47 @@ export default function Layers({
 }: Props): JSX.Element | null {
   return (
     <>
-      {layers?.flattenLayersRaw?.map(layer =>
-        !layer.isVisible || !!layer.children ? null : (
-          <P
-            key={layer.id}
-            layer={layer}
-            sceneProperty={sceneProperty}
-            pluginProperty={
-              layer.pluginId && layer.extensionId
-                ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-                : undefined
-            }
-            isHidden={isLayerHidden?.(layer.id)}
-            isEditable={isEditable}
-            isBuilt={isBuilt}
-            isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-            pluginBaseUrl={pluginBaseUrl}
-            overriddenProperties={overriddenProperties}
-          />
-        ),
-      )}
+      {sceneProperty?.clusters?.map(cluster => (
+        <Cluster
+          key={cluster.id}
+          cluster={cluster}
+          clusterLayers={sceneProperty.cluster_layers}
+          layers={layers}
+          pluginProperty={pluginProperty}
+          isEditable={isEditable}
+          isBuilt={isBuilt}
+          pluginBaseUrl={pluginBaseUrl}
+          selectedLayerId={selectedLayerId}
+          overriddenProperties={overriddenProperties}
+          isLayerHidden={isLayerHidden}></Cluster>
+      ))}
+      {layers?.flattenLayersRaw
+        ?.filter(
+          layer =>
+            !sceneProperty?.cluster_layers?.some(
+              clusterLayer => clusterLayer.cluster_layer === layer.id,
+            ),
+        )
+        .map(layer =>
+          !layer.isVisible || !!layer.children ? null : (
+            <P
+              key={layer.id}
+              layer={layer}
+              sceneProperty={sceneProperty}
+              pluginProperty={
+                layer.pluginId && layer.extensionId
+                  ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
+                  : undefined
+              }
+              isHidden={isLayerHidden?.(layer.id)}
+              isEditable={isEditable}
+              isBuilt={isBuilt}
+              isSelected={!!selectedLayerId && selectedLayerId === layer.id}
+              pluginBaseUrl={pluginBaseUrl}
+              overriddenProperties={overriddenProperties}
+            />
+          ),
+        )}
     </>
   );
 }

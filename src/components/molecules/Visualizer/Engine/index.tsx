@@ -18,6 +18,23 @@ import type { EngineRef } from "./ref";
 
 export type { OverriddenInfobox, SelectLayerOptions } from "../Plugin/types";
 
+export type ClusterItem = {
+  id: string;
+  cluster_name?: string;
+  cluster_pixelRange?: number;
+  cluster_minSize?: number;
+  cluster_sizeType?: "small" | "medium" | "large";
+  cluster_textColor: string;
+  cluster_shapeType: "circle";
+  cluster_backgroundColor: string;
+  cluster_image: string;
+};
+
+export type ClusterLayer = {
+  cluster_layer: string;
+  id: string;
+};
+
 export type SceneProperty = {
   default?: {
     camera?: Camera;
@@ -36,21 +53,8 @@ export type SceneProperty = {
     tile_maxLevel?: number;
     tile_minLevel?: number;
   }[];
-  clusters?: {
-    id: string;
-    cluster_name?: string;
-    cluster_pixelRange?: number;
-    cluster_minSize?: number;
-    cluster_sizeType?: "small" | "medium" | "large";
-    cluster_textColor: string;
-    cluster_shapeType: "circle";
-    cluster_backgroundColor: string;
-    cluster_image: string;
-  }[];
-  cluster_layers?: {
-    cluster_layer: string;
-    id: string;
-  }[];
+  clusters?: ClusterItem[];
+  cluster_layers?: ClusterLayer[];
   atmosphere?: {
     enable_sun?: boolean;
     enable_lighting?: boolean;
