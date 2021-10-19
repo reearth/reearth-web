@@ -1,12 +1,12 @@
 import { useNavigate } from "@reach/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
 export default () => {
-  const { isAuthenticated, isLoading, error: authError, login, logout } = useAuth();
+  const { isAuthenticated, isLoading, error: authError, logout } = useAuth();
   const error = useCleanUrl();
   const navigate = useNavigate();
   const [currentTeam, setTeam] = useTeam();
@@ -34,9 +34,28 @@ export default () => {
     });
   }
 
+  const handleLogin = useCallback(
+    (username: string, password: string) => {
+      if (isAuthenticated) return;
+      if (process.env.REEARTH_WEB_AUTH0_DOMAIN) {
+        fetch(process.env.REEARTH_WEB_AUTH0_DOMAIN, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        });
+      }
+    },
+    [isAuthenticated],
+  );
+
   return {
     isLoading,
     isAuthenticated,
-    login,
+    handleLogin,
   };
 };

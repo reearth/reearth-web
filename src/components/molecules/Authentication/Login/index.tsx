@@ -1,5 +1,5 @@
 import { Link } from "@reach/router";
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -11,15 +11,33 @@ import { metricsSizes, styled, useTheme } from "@reearth/theme";
 import AuthPage from "..";
 
 export type Props = {
-  login: () => void;
+  handleLogin: (username: string, password: string) => void;
 };
 
-const Login: React.FC<Props> = ({ login }) => {
+const Login: React.FC<Props> = ({ handleLogin }) => {
   const intl = useIntl();
   const theme = useTheme();
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleUsernameInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = e.currentTarget.value;
+      setUsername(newValue);
+    },
+    [],
+  );
+
+  const handlePasswordInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = e.currentTarget.value;
+      setPassword(newValue);
+    },
+    [],
+  );
 
   return (
-    <AuthPage login={login}>
+    <AuthPage>
       <Icon className="form-item" icon="logoColorful" size={60} />
       <Text className="form-item" size="l" customColor>
         {intl.formatMessage({ defaultMessage: "Welcome" })}
@@ -31,6 +49,8 @@ const Login: React.FC<Props> = ({ login }) => {
         className="form-item"
         placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
         color={theme.main.weak}
+        value={username}
+        onChange={handleUsernameInput}
       />
       <StyledInput
         className="form-item"
@@ -38,6 +58,8 @@ const Login: React.FC<Props> = ({ login }) => {
         type="password"
         autoComplete="new-password"
         color={theme.main.weak}
+        value={password}
+        onChange={handlePasswordInput}
       />
       <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
         <Text className="form-item" size="xs" color={theme.main.link}>
@@ -47,7 +69,8 @@ const Login: React.FC<Props> = ({ login }) => {
       <StyledButton
         className="form-item"
         large
-        onClick={login}
+        disabled // ************ disabled until backend is setup ************
+        onClick={() => handleLogin(username, password)}
         text={intl.formatMessage({ defaultMessage: "Continue" })}
       />
       <Footer className="form-item">

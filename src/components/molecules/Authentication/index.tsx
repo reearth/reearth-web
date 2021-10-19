@@ -4,12 +4,7 @@ import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
-export type Props = {
-  path?: string;
-  login?: () => void;
-};
-
-const AuthPage: React.FC<Props> = ({ children }) => {
+const AuthPage: React.FC = ({ children }) => {
   return (
     <Wrapper>
       {children && (
