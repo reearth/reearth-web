@@ -83,11 +83,13 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           width: small ? "300px" : "auto",
           height: small ? "300px" : "100%",
           display: ready ? undefined : "none",
-          cursor: isLayerDragging ? "grab" : "default",
+          cursor: isLayerDragging ? "grab" : undefined,
           ...style,
         }}
-        requestRenderMode={!property?.timeline?.animation}
-        maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
+        requestRenderMode={!property?.timeline?.animation && !isLayerDraggable}
+        maximumRenderTimeChange={
+          !property?.timeline?.animation && !isLayerDraggable ? Infinity : undefined
+        }
         shadows={!!property?.atmosphere?.shadows}
         onClick={handleClick}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />

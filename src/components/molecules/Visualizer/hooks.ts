@@ -45,7 +45,7 @@ export default ({
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onCameraChange?: (c: Camera) => void;
-  onLayerDrop?: (id: string, latlng: LatLng) => void;
+  onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
@@ -119,9 +119,9 @@ export default ({
     setIsLayerDragging(true);
   }, []);
   const handleLayerDrop = useCallback(
-    (id: string, latlng: LatLng) => {
+    (id: string, key: string, latlng: LatLng | undefined) => {
       setIsLayerDragging(false);
-      onLayerDrop?.(id, latlng);
+      if (latlng) onLayerDrop?.(id, key, latlng);
     },
     [onLayerDrop],
   );

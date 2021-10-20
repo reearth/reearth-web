@@ -79,7 +79,7 @@ export type EngineProps = {
   onCameraChange?: (camera: Camera) => void;
   isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
-  onLayerDrop?: (layerId: string, position: LatLng) => void;
+  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   isLayerDragging?: boolean;
 };
 
