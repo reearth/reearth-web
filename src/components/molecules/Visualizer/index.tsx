@@ -4,6 +4,7 @@ import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
 import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
+import { LatLng } from "@reearth/util/value";
 
 import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
 import useHooks from "./hooks";
@@ -53,7 +54,8 @@ export type Props = PropsWithChildren<
     onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
     renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
     onLayerSelect?: (id?: string) => void;
-  } & Omit<EngineProps, "children" | "property" | "onLayerSelect"> &
+    onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
+  } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
     Pick<
       InfoboxProps,
       "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
