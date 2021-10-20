@@ -4,11 +4,11 @@ import { useClickAway, useMedia } from "react-use";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 import { Camera as CameraValue } from "@reearth/util/value";
 
-import { Props as WidgetProps } from "../../Widget";
+import { ComponentProps as WidgetProps } from "../../Widget";
 
 import useHooks, { Story as StoryType } from "./hooks";
 
@@ -25,7 +25,11 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
+const Storytelling = ({
+  widget,
+  sceneProperty,
+  widgetAlignSystemState,
+}: Props): JSX.Element | null => {
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
@@ -48,10 +52,16 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
     openMenu(false);
   });
 
-  return stories?.length > 0 ? (
-    <>
-      <Menu publishedTheme={publishedTheme} ref={wrapperRef} menuOpen={menuOpen}>
-        {stories?.map((story, i) => (
+  return (
+    <div>
+      <Menu
+        publishedTheme={publishedTheme}
+        ref={wrapperRef}
+        menuOpen={menuOpen}
+        extended={!!widget?.extended?.horizontally}
+        area={widget?.layout?.location?.area}
+        align={widget?.layout?.align}>
+        {stories.map((story, i) => (
           <MenuItem
             publishedTheme={publishedTheme}
             key={story.layer}
@@ -85,11 +95,16 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
           </MenuItem>
         ))}
       </Menu>
-      <Wrapper publishedTheme={publishedTheme}>
+      <Widget
+        publishedTheme={publishedTheme}
+        extended={!!widget.extended?.horizontally}
+        floating={!widget.layout}>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={!selected?.index}
-          onClick={handlePrev}>
+          onClick={handlePrev}
+          // sometimes react-align goes wrong
+          style={widgetAlignSystemState?.editing ? { pointerEvents: "none" } : undefined}>
           <Icon icon="arrowLeft" size={24} />
         </ArrowButton>
         <Current align="center" justify="space-between">
@@ -107,45 +122,52 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
             size={isExtraSmallWindow ? "xs" : "m"}
             weight="bold"
             otherProperties={{ userSelect: "none" }}>
-            {typeof selected === "undefined" ? "-" : selected.index + 1} / {stories.length}
+            {typeof selected === "undefined" ? "-" : selected.index + 1} /{" "}
+            {stories.length > 0 ? stories.length : "-"}
           </Text>
         </Current>
         <ArrowButton
           publishedTheme={publishedTheme}
           disabled={selected?.index === stories.length - 1}
-          onClick={handleNext}>
+          onClick={handleNext}
+          // sometimes react-align goes wrong
+          style={widgetAlignSystemState?.editing ? { pointerEvents: "none" } : undefined}>
           <Icon icon="arrowRight" size={24} />
         </ArrowButton>
-      </Wrapper>
-    </>
-  ) : null;
+      </Widget>
+    </div>
+  );
 };
 
-const Wrapper = styled.div<{ publishedTheme: PublishTheme }>`
+const Widget = styled.div<{
+  publishedTheme: PublishTheme;
+  extended?: boolean;
+  floating?: boolean;
+}>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   color: ${({ publishedTheme }) => publishedTheme.mainText};
-  z-index: ${props => props.theme.zIndexes.infoBox};
-  position: absolute;
-  bottom: 80px;
-  left: 80px;
   display: flex;
   align-items: stretch;
   border-radius: ${metricsSizes["s"]}px;
   overflow: hidden;
   height: 80px;
-  width: 500px;
+  width: ${({ extended }) => (extended ? "100%" : "500px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
 
-  @media (max-width: 1366px) {
-    left: 30px;
-    bottom: 30px;
-  }
+  ${({ floating }) =>
+    floating
+      ? css`
+          position: absolute;
+          bottom: 80px;
+          left: 80px;
+        `
+      : null}
 
   @media (max-width: 560px) {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
+    display: flex;
+    width: ${({ extended }) => (extended ? "100%" : "90vw")};
+    margin: 0 auto;
     height: 56px;
   }
 `;
@@ -210,34 +232,35 @@ const MenuIcon = styled(Icon)<{ menuOpen?: boolean; publishedTheme: PublishTheme
   color: ${({ publishedTheme }) => publishedTheme.mainIcon};
 `;
 
-const Menu = styled.div<{ menuOpen?: boolean; publishedTheme: PublishTheme }>`
+const Menu = styled.div<{
+  menuOpen?: boolean;
+  publishedTheme: PublishTheme;
+  extended?: boolean;
+  area?: string;
+  align?: string;
+}>`
   background-color: ${({ publishedTheme }) => publishedTheme.background};
   z-index: ${props => props.theme.zIndexes.dropDown};
   position: absolute;
-  bottom: 168px;
-  left: 80px;
+  ${({ area, align }) =>
+    area === "top" || (area === "middle" && align === "start") ? "top: 90px" : "bottom: 90px"};
   width: 324px;
-  max-height: 500px;
+  max-height: ${({ area, align }) =>
+    area === "middle" && align === "centered" ? "200px" : "500px"};
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: ${metricsSizes["s"]}px;
   display: ${({ menuOpen }) => (!menuOpen ? "none" : "")};
   padding: ${metricsSizes["m"]}px ${metricsSizes["s"]}px;
 
-  @media (max-width: 1366px) {
-    left: 30px;
-    bottom: 118px;
-  }
-
   @media (max-width: 560px) {
-    right: 16px;
-    left: 16px;
-    bottom: 80px;
+    width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
+    max-height: ${({ area, align }) =>
+      area === "middle" && align === "centered" ? "30vh" : "70vh"};
     border: 1px solid ${props => props.theme.main.text};
-  }
-
-  @media (max-width: 420px) {
-    width: auto;
+    top: ${({ area, align }) =>
+      area === "top" || (area === "middle" && align === "start") ? "60px" : null};
+    bottom: ${({ area, align }) => (area !== "top" && align !== "start" ? "60px" : null)};
   }
 `;
 

@@ -1,4 +1,4 @@
-import React, { CSSProperties, IframeHTMLAttributes, ReactNode } from "react";
+import React, { IframeHTMLAttributes, ReactNode } from "react";
 
 import useHook, { IFrameAPI as IFrameAPIType } from "./hooks";
 import IFrame from "./IFrame";
@@ -9,49 +9,51 @@ export type Props = {
   className?: string;
   canBeVisible?: boolean;
   skip?: boolean;
-  style?: CSSProperties;
   src?: string;
   sourceCode?: string;
-  exposed?: { [key: string]: any };
   renderPlaceholder?: ReactNode;
+  filled?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
-  isMarshalable?: (target: any) => boolean;
-  staticExposed?: (api: IFrameAPI) => any;
+  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
+  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
   onMessage?: (message: any) => void;
+  onPreInit?: () => void;
   onError?: (err: any) => void;
+  onDispose?: () => void;
 };
 
 const Plugin: React.FC<Props> = ({
   className,
   canBeVisible,
   skip,
-  style,
   src,
   sourceCode,
-  exposed,
   renderPlaceholder,
+  filled,
   iFrameProps,
   isMarshalable,
-  staticExposed,
+  exposed,
   onMessage,
+  onPreInit,
   onError,
+  onDispose,
 }) => {
   const { iFrameRef, iFrameHtml, iFrameVisible } = useHook({
     iframeCanBeVisible: canBeVisible,
     skip,
     src,
     sourceCode,
-    exposed,
     isMarshalable,
-    staticExposed,
+    exposed,
+    onPreInit,
     onError,
+    onDispose,
   });
 
   return iFrameHtml ? (
     <IFrame
-      autoResize
+      autoResize={!filled}
       className={className}
-      style={style}
       html={iFrameHtml}
       ref={iFrameRef}
       visible={iFrameVisible}

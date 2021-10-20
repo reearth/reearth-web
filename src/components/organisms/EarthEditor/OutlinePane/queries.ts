@@ -161,7 +161,7 @@ export const ADD_LAYER_GROUP = gql`
 `;
 
 export const GET_WIDGETS = gql`
-  query GetWidgets($sceneId: ID!) {
+  query GetWidgets($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -172,16 +172,30 @@ export const GET_WIDGETS = gql`
               extensionId
               description
               name
-              translatedDescription
-              translatedName
+              translatedDescription(lang: $lang)
+              translatedName(lang: $lang)
               icon
               type
+              widgetLayout {
+                extendable {
+                  vertically
+                  horizontally
+                }
+                extended
+                floating
+                defaultLocation {
+                  zone
+                  section
+                  area
+                }
+              }
             }
           }
         }
         widgets {
           id
           enabled
+          extended
           pluginId
           extensionId
           propertyId

@@ -1,7 +1,7 @@
 import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback } from "react";
+import { useIntl } from "react-intl";
 
-import { Type as NotificationType } from "@reearth/components/atoms/NotificationBar";
 import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
 import {
   useGetAllDataSetsQuery,
@@ -17,14 +17,28 @@ const pluginId = "reearth";
 const extensionId = "marker";
 
 export default () => {
-  const [sceneId] = useSceneId();
+  const intl = useIntl();
   const [, setNotification] = useNotification();
   const [selected, select] = useSelected();
+  const [sceneId] = useSceneId();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
 
   const { data, loading } = useGetAllDataSetsQuery({
     variables: { sceneId: sceneId || "" },
     skip: !sceneId,
+  });
+
+  const datasetMessageSuccess = intl.formatMessage({
+    defaultMessage: "Successfully added the dataset!",
+  });
+  const datasetMessageFailure = intl.formatMessage({
+    defaultMessage: "Failed to add the dataset.",
+  });
+  const datasetDeleteMessageSuccess = intl.formatMessage({
+    defaultMessage: "Successfully deleted the dataset!",
+  });
+  const datasetDeleteMessageFailure = intl.formatMessage({
+    defaultMessage: "Failed to delete the dataset.",
   });
 
   const datasetSchemas = useMemo(
@@ -46,6 +60,7 @@ export default () => {
                           pluginId,
                           extensionId,
                           index,
+                          lang: intl.locale,
                         },
                         refetchQueries: ["GetLayers"],
                       });
@@ -55,7 +70,7 @@ export default () => {
             )
             .filter((e): e is DatasetSchema => !!e)
         : [],
-    [addLayerGroupFromDatasetSchemaMutation, data],
+    [addLayerGroupFromDatasetSchemaMutation, data, intl.locale],
   );
 
   const selectDatasetSchema = useCallback(
@@ -86,17 +101,29 @@ export default () => {
   const handleDatasetImport = useCallback(
     async (file: File, schemeId: string | null) => {
       if (!sceneId) return;
-      await importData({
+      const result = await importData({
         variables: {
           file,
           sceneId,
           datasetSchemaId: schemeId,
         },
       });
+
+      if (result.errors) {
+        setNotification({
+          type: "error",
+          text: datasetMessageFailure,
+        });
+      } else {
+        setNotification({
+          type: "success",
+          text: datasetMessageSuccess,
+        });
+      }
       // re-render
       await client.resetStore();
     },
-    [client, importData, sceneId],
+    [client, importData, sceneId, datasetMessageSuccess, datasetMessageFailure, setNotification],
   );
 
   const [importGoogleSheetData] = useImportGoogleSheetDatasetMutation();
@@ -104,7 +131,7 @@ export default () => {
   const handleGoogleSheetDatasetImport = useCallback(
     async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
       if (!sceneId) return;
-      await importGoogleSheetData({
+      const result = await importGoogleSheetData({
         variables: {
           accessToken,
           fileId,
@@ -113,36 +140,48 @@ export default () => {
           datasetSchemaId: schemeId,
         },
       });
+      if (result.errors) {
+        setNotification({ type: "error", text: datasetMessageFailure });
+      } else {
+        setNotification({ type: "success", text: datasetMessageSuccess });
+      }
       // re-render
       await client.resetStore();
     },
-    [client, importGoogleSheetData, sceneId],
+    [
+      client,
+      importGoogleSheetData,
+      sceneId,
+      datasetMessageFailure,
+      datasetMessageSuccess,
+      setNotification,
+    ],
   );
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
   const handleRemoveDataset = useCallback(
     async (schemaId: string) => {
-      await removeDatasetSchema({
+      const result = await removeDatasetSchema({
         variables: {
           schemaId,
           force: true,
         },
       });
+      if (result.errors) {
+        setNotification({ type: "error", text: datasetDeleteMessageFailure });
+      } else {
+        setNotification({ type: "info", text: datasetDeleteMessageSuccess });
+      }
       // re-render
       await client.resetStore();
     },
-    [client, removeDatasetSchema],
-  );
-
-  const onNotify = useCallback(
-    (type?: NotificationType, text?: string) => {
-      if (!type || !text) return;
-      setNotification({
-        type: type,
-        text: text,
-      });
-    },
-    [setNotification],
+    [
+      client,
+      removeDatasetSchema,
+      datasetDeleteMessageFailure,
+      datasetDeleteMessageSuccess,
+      setNotification,
+    ],
   );
 
   const selectedDatasetSchemaId =
@@ -155,7 +194,6 @@ export default () => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     loading,
-    onNotify,
     selectDatasetSchema,
     selectedDatasetSchemaId: selectedDatasetSchemaId,
   };

@@ -1,5 +1,10 @@
 import { useMemo, useEffect, useCallback } from "react";
+import { useIntl } from "react-intl";
 
+import {
+  Location,
+  Alignment,
+} from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -8,6 +13,12 @@ import {
   useChangePropertyValueMutation,
   useAddInfoboxFieldMutation,
   useGetBlocksQuery,
+  useUpdateWidgetMutation,
+  useUpdateWidgetAlignSystemMutation,
+  WidgetZoneType,
+  WidgetSectionType,
+  WidgetAreaType,
+  WidgetAreaAlign,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -15,22 +26,20 @@ import {
   useCamera,
   useSelected,
   useSelectedBlock,
+  useWidgetAlignEditorActivated,
 } from "@reearth/state";
 import { valueTypeToGQL, ValueType, ValueTypes, valueToGQL } from "@reearth/util/value";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
 
 export default (isBuilt?: boolean) => {
+  const intl = useIntl();
   const [sceneId] = useSceneId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-
-  const selectLayer = useCallback(
-    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
-    [select],
-  );
+  const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
@@ -44,10 +53,11 @@ export default (isBuilt?: boolean) => {
           layerId: selected.layerId,
           infoboxFieldId: id,
           index: toIndex,
+          lang: intl.locale,
         },
       });
     },
-    [moveInfoboxField, selected],
+    [intl.locale, moveInfoboxField, selected],
   );
 
   const onBlockRemove = useCallback(
@@ -57,20 +67,59 @@ export default (isBuilt?: boolean) => {
         variables: {
           layerId: selected.layerId,
           infoboxFieldId: id,
+          lang: intl.locale,
         },
       });
     },
-    [removeInfoboxField, selected],
+    [intl.locale, removeInfoboxField, selected],
+  );
+
+  const { data: layerData } = useGetLayersQuery({
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    skip: !sceneId,
+  });
+  const { data: widgetData } = useGetEarthWidgetsQuery({
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    skip: !sceneId,
+  });
+
+  const rootLayerId =
+    layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
+  const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+
+  // convert data
+  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
+  const layers = useMemo(() => convertLayers(layerData), [layerData]);
+  const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
+  const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
+  const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const pluginProperty = useMemo(
+    () =>
+      scene?.plugins.reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b.pluginId]: convertProperty(b.property) }),
+        {},
+      ),
+    [scene?.plugins],
+  );
+
+  const selectLayer = useCallback(
+    (id?: string) =>
+      select(id && !!layers?.findById(id) ? { layerId: id, type: "layer" } : undefined),
+    [layers, select],
   );
 
   const onBlockChange = useCallback(
     async <T extends ValueType>(
-      propertyId: string,
+      blockId: string,
       schemaItemId: string,
       fid: string,
       v: ValueTypes[T],
       vt: T,
     ) => {
+      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
+        ?.propertyId as string | undefined;
+      if (!propertyId) return;
+
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
 
@@ -81,32 +130,12 @@ export default (isBuilt?: boolean) => {
           fieldId: fid,
           type: gvt,
           value: valueToGQL(v, vt),
+          lang: intl.locale,
         },
       });
     },
-    [changePropertyValue],
+    [changePropertyValue, intl.locale, selectedLayer?.infobox?.blocks],
   );
-
-  const { data: layerData } = useGetLayersQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
-  const { data: widgetData } = useGetEarthWidgetsQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
-
-  const rootLayerId =
-    layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
-  const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
-
-  // convert data
-  const layers = useMemo(
-    () => convertLayers(layerData, selected?.type === "layer" ? selected.layerId : undefined),
-    [layerData, selected],
-  );
-  const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
-  const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
@@ -116,7 +145,7 @@ export default (isBuilt?: boolean) => {
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
   const { data: blockData } = useGetBlocksQuery({
-    variables: { sceneId: sceneId ?? "" },
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
   const blocks = useMemo(() => convertToBlocks(blockData), [blockData]);
@@ -129,6 +158,7 @@ export default (isBuilt?: boolean) => {
           pluginId: b.pluginId,
           extensionId: b.extensionId,
           index: p ? i + (p === "bottom" ? 1 : 0) : undefined,
+          lang: intl.locale,
         },
       });
     }
@@ -140,25 +170,74 @@ export default (isBuilt?: boolean) => {
     document.title = title;
   }, [isBuilt, title]);
 
+  const [updateWidgetMutation] = useUpdateWidgetMutation();
+  const onWidgetUpdate = useCallback(
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+      if (!sceneId) return;
+
+      await updateWidgetMutation({
+        variables: {
+          sceneId,
+          widgetId: id,
+          enabled: true,
+          location: update.location
+            ? {
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
+            : undefined,
+          extended: update.extended,
+          index: update.index,
+        },
+        refetchQueries: ["GetEarthWidgets"],
+      });
+    },
+    [sceneId, updateWidgetMutation],
+  );
+
+  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
+  const onWidgetAlignSystemUpdate = useCallback(
+    async (location: Location, align: Alignment) => {
+      if (!sceneId) return;
+
+      updateWidgetAlignSystemMutation({
+        variables: {
+          sceneId,
+          location: {
+            zone: location.zone.toUpperCase() as WidgetZoneType,
+            section: location.section.toUpperCase() as WidgetSectionType,
+            area: location.area.toUpperCase() as WidgetAreaType,
+          },
+          align: align?.toUpperCase() as WidgetAreaAlign,
+        },
+      });
+    },
+    [sceneId, updateWidgetAlignSystemMutation],
+  );
+
   return {
     sceneId,
     rootLayerId,
-    selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
+    pluginProperty,
     widgets,
-    layers: layers?.layers,
-    selectedLayer: layers?.selectedLayer,
+    layers,
+    selectedLayer,
     blocks,
     isCapturing,
     camera,
-    ready: !isBuilt || (!!layerData && !!widgetData),
+    widgetAlignEditorActivated,
     selectLayer,
     selectBlock,
     onBlockChange,
     onBlockMove,
     onBlockRemove,
     onBlockInsert,
+    onWidgetUpdate,
+    onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,

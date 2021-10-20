@@ -1,10 +1,11 @@
 import { Math as CesiumMath } from "cesium";
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 
 import { Camera as CameraValue } from "@reearth/util/value";
 
-import { useVisualizerContext } from "../../context";
-import type { Primitive } from "../../Primitive";
+import { useContext } from "../../Plugin";
+import type { Layer } from "../../Plugin";
+import type { CommonReearth } from "../../Plugin/api";
 
 export type Story = {
   title: string;
@@ -45,28 +46,56 @@ export default function ({
   const [selected, select] = useState<{
     index: number;
     story: Story;
-    primitive?: Primitive;
+    layer?: Layer;
     duration: number;
     camera: CameraValue;
     range: number;
     noCameraFlight?: boolean;
   }>();
 
-  const ctx = useVisualizerContext();
-  const { flyTo, lookAt } = ctx?.engine ?? {};
-  const selectPrimitive = ctx?.pluginAPI?.reearth.primitives.select;
-  const { primitives, selectedPrimitive } = ctx ?? {};
+  const { reearth } = useContext() ?? {};
+  const {
+    findById: findLayerById,
+    selected: selectedLayer,
+    select: selectLayer,
+  } = reearth?.layers ?? {};
+
+  const timeout = useRef<number>();
+
+  const flyTo = useCallback(
+    (...args: Parameters<CommonReearth["visualizer"]["camera"]["lookAt"]>) => {
+      // Prioritize camera flight by the photo overlay
+      timeout.current = window.setTimeout(() => {
+        reearth?.visualizer.camera.flyTo(...args);
+      }, 100);
+    },
+    [reearth?.visualizer.camera],
+  );
+
+  const lookAt = useCallback(
+    (...args: Parameters<CommonReearth["visualizer"]["camera"]["lookAt"]>) => {
+      // Prioritize camera flight by the photo overlay
+      timeout.current = window.setTimeout(() => {
+        reearth?.visualizer.camera.lookAt(...args);
+      }, 100);
+    },
+    [reearth?.visualizer.camera],
+  );
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeout.current);
+    },
+    [],
+  );
 
   const stories = useMemo<Story[]>(() => {
-    if (!storiesData || !primitives) return [];
-    return storiesData.map(story => {
-      const primitive = primitives.find(l => l.id === story.layer);
-      return {
-        ...story,
-        title: story.title || primitive?.title || "",
-      };
-    });
-  }, [primitives, storiesData]);
+    if (!storiesData || !findLayerById) return [];
+    return storiesData.map(story => ({
+      ...story,
+      title: story.title || (story.layer && findLayerById?.(story.layer)?.title) || "",
+    }));
+  }, [findLayerById, storiesData]);
 
   const selectAt = useCallback(
     (index: number) => {
@@ -77,19 +106,18 @@ export default function ({
       }
 
       const id = story?.layer;
-
-      const primitive = id ? primitives?.find(p => p.id === id) : undefined;
+      const layer = id ? findLayerById?.(id) : undefined;
       select({
         index,
         story,
-        primitive,
+        layer,
         duration,
         camera,
         range,
       });
-      selectPrimitive?.(id, { reason: "storytelling" });
+      selectLayer?.(id, { reason: "storytelling" });
     },
-    [camera, duration, primitives, range, selectPrimitive, stories],
+    [camera, duration, findLayerById, range, selectLayer, stories],
   );
 
   const handleNext = useCallback(() => {
@@ -102,17 +130,17 @@ export default function ({
 
   useEffect(() => {
     openMenu(false);
-  }, [selectedPrimitive]);
+  }, [selectedLayer]);
 
   useEffect(() => {
-    const id = selectedPrimitive?.id;
+    const id = selectedLayer?.id;
     const index = id ? stories?.findIndex(l => l.layer === id) : undefined;
     select(
       typeof index === "number" && index >= 0
         ? {
             index,
             story: stories[index],
-            primitive: selectedPrimitive,
+            layer: selectedLayer,
             duration,
             camera,
             range,
@@ -121,26 +149,26 @@ export default function ({
         : undefined,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPrimitive]); // ignore camera, duration, range, stories
+  }, [selectedLayer]); // ignore camera, duration, range, stories
 
   useEffect(() => {
     if (
-      !selected?.primitive ||
+      !selected?.layer ||
       selected.noCameraFlight ||
       // Photooverlays have own camera flight and that is the priority here.
-      isPhotoOverlay(selected.primitive)
+      isPhotoOverlay(selected.layer)
     ) {
       return;
     }
 
     if (selected.story.layerCamera) {
-      flyTo?.(selected.story.layerCamera, {
+      flyTo(selected.story.layerCamera, {
         duration: selected.story.layerDuration ?? selected.duration,
       });
       return;
     }
 
-    const p = selected.primitive?.property?.default;
+    const p = selected.layer?.property?.default;
 
     const position = {
       lat: (p?.location?.lat ?? p?.position?.lat) as number | undefined,
@@ -150,7 +178,7 @@ export default function ({
 
     if (typeof position.lat !== "number" && typeof position.lng !== "number") return;
 
-    lookAt?.(
+    lookAt(
       {
         ...position,
         heading: selected.camera.heading,
@@ -181,10 +209,10 @@ export default function ({
   };
 }
 
-function isPhotoOverlay(primitive: Primitive): boolean {
+function isPhotoOverlay(layer: Layer): boolean {
   return (
-    primitive.pluginId === "reearth" &&
-    primitive.extensionId === "photooverlay" &&
-    !!primitive.property?.default?.camera
+    layer.pluginId === "reearth" &&
+    layer.extensionId === "photooverlay" &&
+    !!layer.property?.default?.camera
   );
 }

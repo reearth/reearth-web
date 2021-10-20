@@ -27,6 +27,7 @@ const RightMenu: React.FC = () => {
     () => ({
       layer: intl.formatMessage({ defaultMessage: "Layer" }),
       widget: intl.formatMessage({ defaultMessage: "Widget" }),
+      widgets: intl.formatMessage({ defaultMessage: "Widgets" }),
       scene: intl.formatMessage({ defaultMessage: "Scene" }),
       infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
       export: intl.formatMessage({ defaultMessage: "Export" }),
@@ -58,6 +59,8 @@ const RightMenu: React.FC = () => {
                     <PropertyPane mode="layer" />
                   ) : selected === "widget" ? (
                     <PropertyPane mode="widget" />
+                  ) : selected === "widgets" ? (
+                    <PropertyPane mode="widgets" />
                   ) : (
                     <PropertyPane mode="scene" />
                   )}

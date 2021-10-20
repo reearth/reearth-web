@@ -14,6 +14,7 @@ import PrimTileset from "./Icons/primTileset.svg";
 // Built-in Widgets
 import Widgets from "./Icons/widgetsIcon.svg";
 import WidgetMenu from "./Icons/widgetMenu.svg";
+import WidgetButton from "./Icons/widgetButton.svg";
 import WidgetStory from "./Icons/widgetStorytelling.svg";
 import StorytellingMenu from "./Icons/storytellingMenu.svg";
 import WidgetSplash from "./Icons/widgetSplashscreen.svg";
@@ -117,7 +118,8 @@ import MenuForDevice from "./Icons/menuForDevice.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
 
-// Plugi-ins
+// Plug-ins
+import Plugin from "./Icons/plugin.svg";
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
 import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import PrivateGitHubRepo from "./Icons/privateGitHubRepo.svg";
@@ -134,7 +136,9 @@ export default {
   model: PrimModel,
   tileset: PrimTileset,
   widget: Widgets,
+  widgets: Widgets,
   menu: WidgetMenu,
+  button: WidgetButton,
   storytelling: WidgetStory,
   storytellingMenu: StorytellingMenu,
   splashscreen: WidgetSplash,
@@ -225,4 +229,5 @@ export default {
   privateGitHubRepo: PrivateGitHubRepo,
   publicGitHubRepo: PublicGitHubRepo,
   menuForDevice: MenuForDevice,
+  plugin: Plugin,
 };

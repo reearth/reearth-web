@@ -2,6 +2,7 @@ import { atom, useAtom } from "jotai";
 
 import { Camera } from "@reearth/util/value";
 
+// useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
 const error = atom<string | undefined>(undefined);
 export const useError = () => useAtom(error);
 
@@ -11,9 +12,13 @@ export const useSceneId = () => useAtom(sceneId);
 const rootLayerId = atom<string | undefined>(undefined);
 export const useRootLayerId = () => useAtom(rootLayerId);
 
+const widgetAlignEditor = atom<boolean | undefined>(undefined);
+export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
+
 export type Selected =
   | { type: "scene" }
   | { type: "layer"; layerId: string }
+  | { type: "widgets" }
   | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }
   | { type: "dataset"; datasetSchemaId: string };
 const selected = atom<Selected | undefined>(undefined);
@@ -48,7 +53,13 @@ export type Project = {
 const project = atom<Project | undefined>(undefined);
 export const useProject = () => useAtom(project);
 
-export type Notification = { type: "error" | "warning" | "info" | "success"; text: string };
+export type NotificationType = "error" | "warning" | "info" | "success";
+
+export type Notification = {
+  type: NotificationType;
+  heading?: string;
+  text: string;
+};
 const notification = atom<Notification | undefined>(undefined);
 export const useNotification = () => useAtom(notification);
 

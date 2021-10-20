@@ -52,6 +52,7 @@ export default ({
   selectedType,
   onLayerSelect,
   onSceneSelect,
+  onWidgetsSelect,
   onWidgetSelect,
   onLayerMove,
   onLayerRemove,
@@ -73,6 +74,7 @@ export default ({
   onLayerImport?: (file: File, format: Format) => void;
   onLayerRemove?: (id: string) => void;
   onSceneSelect?: () => void;
+  onWidgetsSelect?: () => void;
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
   onLayerMove?: (
     src: string,
@@ -99,6 +101,8 @@ export default ({
 
       if (item.content.type === "scene") {
         onSceneSelect?.();
+      } else if (item.id === "widgets") {
+        onWidgetsSelect?.();
       } else if (item.content.type === "widget") {
         onWidgetSelect?.(item.content.widgetId, item.content.pluginId, item.content.extensionId);
       } else if (item.content.type === "layer") {
@@ -109,7 +113,7 @@ export default ({
         );
       }
     },
-    [onLayerSelect, onSceneSelect, onWidgetSelect],
+    [onLayerSelect, onSceneSelect, onWidgetsSelect, onWidgetSelect],
   );
 
   const drop = useCallback(
@@ -182,7 +186,7 @@ export default ({
           droppable: false,
           droppableIntoChildren: false,
           expandable: true,
-          selectable: false,
+          selectable: true,
           children: widgets?.map(w => ({
             id: `${w.pluginId}/${w.extensionId}`,
             content: {
@@ -207,6 +211,7 @@ export default ({
     }),
     [sceneTitle, sceneDescription, widgetTitle, widgets],
   );
+
   const layersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
     () =>
       rootLayerId
@@ -267,6 +272,8 @@ export default ({
     const newState =
       selectedType === "scene"
         ? ["scene"]
+        : selectedType === "widgets"
+        ? ["widgets"]
         : selectedType === "layer" && selectedLayerId
         ? [selectedLayerId]
         : selectedType === "widget" && selectedWidgetId

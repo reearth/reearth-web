@@ -1,5 +1,16 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
-import { Primitive, Widget, Block } from "@reearth/components/molecules/Visualizer";
+import {
+  LayerStore,
+  Layer,
+  Widget,
+  Block,
+  WidgetAlignSystem,
+  WidgetZone,
+  WidgetSection,
+  WidgetArea,
+  Alignment,
+  WidgetLayoutConstraint,
+} from "@reearth/components/molecules/Visualizer";
 import {
   GetLayersQuery,
   GetBlocksQuery,
@@ -12,17 +23,15 @@ import {
   EarthLayer5Fragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
+  WidgetZone as WidgetZoneType,
+  WidgetSection as WidgetSectionType,
+  WidgetArea as WidgetAreaType,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
 type BlockType = Item & {
   pluginId: string;
   extensionId: string;
-};
-
-export type Layer = Primitive & {
-  layers: Layer[] | undefined;
-  isParentVisible: boolean;
 };
 
 type P = { [key in string]: any };
@@ -94,7 +103,7 @@ const processMergedProperty = (
   );
 };
 
-const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Primitive["infobox"] => {
+const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox"] => {
   if (!infobox) return;
   return {
     property: convertProperty(infobox.property),
@@ -102,105 +111,152 @@ const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Primitive["inf
       id: f.id,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
-      propertyId: f.propertyId ?? undefined,
       property: convertProperty(f.property),
-      pluginProperty: convertProperty(f.scenePlugin?.property),
+      propertyId: f.propertyId, // required by onBlockChange
     })),
   };
 };
 
 const processMergedInfobox = (
   infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
-): Primitive["infobox"] | undefined => {
+): Layer["infobox"] | undefined => {
   if (!infobox) return;
   return {
     property: processMergedProperty(infobox.property),
-    blocks: infobox.fields.map(f => ({
+    blocks: infobox.fields.map<Block & { propertyId?: string }>(f => ({
       id: f.originalId,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
-      propertyId: f.property?.originalId ?? undefined,
       property: processMergedProperty(f.property),
-      pluginProperty: convertProperty(f.scenePlugin?.property),
+      propertyId: f.property?.originalId ?? undefined, // required by onBlockChange
     })),
   };
 };
 
-const processLayer = (layer?: EarthLayer5Fragment, isParentVisible = true): Layer | undefined => {
-  return layer
-    ? {
-        id: layer.id,
-        pluginId: layer.pluginId ?? "",
-        extensionId: layer.extensionId ?? "",
-        isVisible: layer.isVisible,
-        title: layer.name,
-        property:
-          layer.__typename === "LayerItem"
-            ? processMergedProperty(layer.merged?.property)
-            : undefined,
-        pluginProperty: convertProperty(layer.scenePlugin?.property),
-        infoboxEditable: !!layer.infobox,
-        infobox:
-          layer.__typename === "LayerItem"
-            ? processMergedInfobox(layer.merged?.infobox)
-            : processInfobox(layer.infobox),
-        layers:
-          layer.__typename === "LayerGroup"
-            ? layer.layers
-                ?.map(l => processLayer(l ?? undefined, layer.isVisible))
-                .filter((l): l is Layer => !!l)
-            : undefined,
-        isParentVisible,
-      }
-    : undefined;
-};
-
-export const convertWidgets = (data: GetEarthWidgetsQuery | undefined): Widget[] | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene") {
-    return undefined;
-  }
-
-  const widgets = data.node.widgets
-    .filter(w => w.enabled)
-    .map(
-      (widget): Widget => ({
-        id: widget.id,
-        pluginId: widget.pluginId,
-        extensionId: widget.extensionId,
-        property: convertProperty(widget.property),
-        pluginProperty: convertProperty(widget.plugin?.scenePlugin?.property),
-      }),
-    );
-
-  return widgets;
-};
-
-export const convertLayers = (data: GetLayersQuery | undefined, selectedLayerId?: string) => {
-  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
-    return undefined;
-  }
-  const rootLayer = processLayer(data.node.rootLayer);
-  const visibleLayers = flattenLayers(rootLayer?.layers);
-  const selectedLayer = visibleLayers?.find(l => l.id === selectedLayerId);
+const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined => {
+  if (!layer) return;
   return {
-    selectedLayer,
-    layers: visibleLayers,
+    id: layer.id,
+    pluginId: layer.pluginId ?? "",
+    extensionId: layer.extensionId ?? "",
+    isVisible: layer.isVisible,
+    title: layer.name,
+    property:
+      layer.__typename === "LayerItem" ? processMergedProperty(layer.merged?.property) : undefined,
+    infobox:
+      layer.__typename === "LayerItem"
+        ? processMergedInfobox(layer.merged?.infobox)
+        : processInfobox(layer.infobox),
+    children:
+      layer.__typename === "LayerGroup"
+        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
+        : undefined,
   };
 };
 
-const flattenLayers = (l?: Layer[]): Primitive[] => {
-  return (
-    l?.reduce<Primitive[]>((a, { layers, ...b }) => {
-      if (!b || !b.isVisible) {
-        return a;
-      }
-      if (layers?.length) {
-        return [...a, { ...b, hiddden: true }, ...flattenLayers(layers)];
-      }
-      if (!b.pluginId || !b.extensionId) return a;
-      return [...a, b];
-    }, []) ?? []
-  );
+export const convertWidgets = (
+  data: GetEarthWidgetsQuery | undefined,
+):
+  | {
+      floatingWidgets: Widget[];
+      alignSystem: WidgetAlignSystem;
+      layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
+    }
+  | undefined => {
+  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
+    return undefined;
+  }
+
+  const layoutConstraint = data.node.plugins
+    .map(p =>
+      p.plugin?.extensions.reduce<{
+        [w in string]: WidgetLayoutConstraint & { floating: boolean };
+      }>(
+        (b, e) =>
+          e?.widgetLayout?.extendable
+            ? {
+                ...b,
+                [`${p.pluginId}/${e.extensionId}`]: {
+                  extendable: {
+                    horizontally: e?.widgetLayout?.extendable.horizontally,
+                    vertically: e?.widgetLayout?.extendable.vertically,
+                  },
+                  floating: !!e?.widgetLayout?.floating,
+                },
+              }
+            : b,
+        {},
+      ),
+    )
+    .reduce((a, b) => ({ ...a, ...b }), {});
+
+  const floatingWidgets = data.node.widgets
+    .filter(w => w.enabled && layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    .map(
+      (w): Widget => ({
+        id: w.id,
+        extended: !!w.extended,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        property: convertProperty(w.property),
+      }),
+    );
+
+  const widgets = data.node.widgets
+    .filter(w => w.enabled && !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    .map(
+      (w): Widget => ({
+        id: w.id,
+        extended: !!w.extended,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        property: convertProperty(w.property),
+      }),
+    );
+
+  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
+    return {
+      left: widgetSection(zone?.left),
+      center: widgetSection(zone?.center),
+      right: widgetSection(zone?.right),
+    };
+  };
+
+  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection => {
+    return {
+      top: widgetArea(section?.top),
+      middle: widgetArea(section?.middle),
+      bottom: widgetArea(section?.bottom),
+    };
+  };
+
+  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea => {
+    const align = area?.align.toLowerCase() as Alignment | undefined;
+    return {
+      align: align ?? "start",
+      widgets: area?.widgetIds
+        .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
+        .filter((w): w is Widget => !!w),
+    };
+  };
+
+  return {
+    floatingWidgets,
+    alignSystem: {
+      outer: widgetZone(data.node.widgetAlignSystem.outer),
+      inner: widgetZone(data.node.widgetAlignSystem.inner),
+    },
+    layoutConstraint,
+  };
+};
+
+export const convertLayers = (data: GetLayersQuery | undefined): LayerStore | undefined => {
+  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
+    return;
+  }
+  const rl = processLayer(data.node.rootLayer);
+  if (!rl) return;
+  return new LayerStore(rl);
 };
 
 export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {
@@ -215,9 +271,8 @@ export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined 
                 icon:
                   extension.icon ||
                   // for official plugin
-                  (plugin.plugin.id === "reearth"
-                    ? extension.extensionId.replace(/block$/, "")
-                    : ""),
+                  (plugin.plugin.id === "reearth" && extension.extensionId.replace(/block$/, "")) ||
+                  "plugin",
                 name: extension.name,
                 description: extension.description,
                 pluginId: plugin.plugin.id,

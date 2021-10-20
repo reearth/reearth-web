@@ -15,11 +15,9 @@ import {
   ScreenSpaceEvent,
 } from "resium";
 
-import Loading from "@reearth/components/atoms/Loading";
-
 import type { EngineProps, Ref as EngineRef } from "..";
 
-import CameraFlyTo from "./CameraFlyTo";
+import Event from "./Event";
 import useHooks from "./hooks";
 
 export type { EngineProps as Props } from "..";
@@ -33,8 +31,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     small,
     ready,
     children,
-    selectedPrimitiveId,
-    onPrimitiveSelect,
+    selectedLayerId,
+    onLayerSelect,
     onCameraChange,
   },
   ref,
@@ -44,14 +42,16 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     backgroundColor,
     imageryLayers,
     cesium,
-    selectViewerEntity,
-    onCameraMoveEnd,
+    handleMount,
+    handleUnmount,
+    handleClick,
+    handleCameraMoveEnd,
   } = useHooks({
     ref,
     property,
     camera,
-    selectedPrimitiveId,
-    onPrimitiveSelect,
+    selectedLayerId,
+    onLayerSelect,
     onCameraChange,
   });
 
@@ -80,15 +80,15 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         }}
         requestRenderMode={!property?.timeline?.animation}
         maximumRenderTimeChange={property?.timeline?.animation ? undefined : Infinity}
-        shadows={!!property?.atmosphere?.shadows}>
+        shadows={!!property?.atmosphere?.shadows}
+        onClick={handleClick}>
+        <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
-          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} action={selectViewerEntity} />
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
-        <Camera onMoveEnd={onCameraMoveEnd} />
-        <CameraFlyTo camera={camera} duration={0} />
+        <Camera onChange={handleCameraMoveEnd} />
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
@@ -118,7 +118,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         ))}
         {ready ? children : null}
       </Viewer>
-      {!ready && <Loading />}
     </>
   );
 };

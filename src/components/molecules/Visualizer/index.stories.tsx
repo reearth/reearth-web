@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/react";
 import React, { useMemo, useState } from "react";
 
-import Component, { Primitive, Widget, Props } from ".";
+import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+
+import Component, { LayerStore, Widget, Props, Layer } from ".";
 
 export default {
   title: "molecules/Visualizer",
@@ -16,7 +18,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-const primitives: Primitive[] = [
+const layers: Layer[] = [
   {
     id: "1",
     pluginId: "reearth",
@@ -37,7 +39,6 @@ const primitives: Primitive[] = [
     extensionId: "marker",
     title: "hoge",
     isVisible: true,
-    infoboxEditable: true,
     property: {
       default: {
         location: { lat: 34.3929, lng: 139.4428 },
@@ -90,24 +91,131 @@ const primitives: Primitive[] = [
   },
 ];
 
-const widgets: Widget[] = [
-  {
-    id: "a",
-    pluginId: "reearth",
-    extensionId: "splashscreen",
-    property: {
-      overlay: {
-        overlayEnabled: true,
-        overlayDuration: 2,
-        overlayTransitionDuration: 1,
-        overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
-        overlayImageW: 648,
-        overlayImageH: 432,
-        overlayBgcolor: "#fff8",
+const widgets: { floatingWidgets: Widget[]; alignSystem?: WidgetAlignSystem } = {
+  floatingWidgets: [
+    {
+      id: "a",
+      pluginId: "reearth",
+      extensionId: "splashscreen",
+      extended: false,
+      property: {
+        overlay: {
+          overlayEnabled: true,
+          overlayDuration: 2,
+          overlayTransitionDuration: 1,
+          overlayImage: `${process.env.PUBLIC_URL}/sample.svg`,
+          overlayImageW: 648,
+          overlayImageH: 432,
+          overlayBgcolor: "#fff8",
+        },
+      },
+    },
+  ],
+  alignSystem: {
+    inner: {
+      left: {
+        top: {
+          widgets: [
+            {
+              id: "ab",
+              pluginId: "reearth",
+              extensionId: "storytelling",
+              extended: false,
+            },
+          ],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      center: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      right: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+    },
+    outer: {
+      left: {
+        top: {
+          widgets: [
+            {
+              id: "ab",
+              pluginId: "reearth",
+              extensionId: "storytelling",
+              extended: false,
+            },
+          ],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      center: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
+      },
+      right: {
+        top: {
+          widgets: [],
+          align: "start",
+        },
+        middle: {
+          widgets: [],
+          align: "start",
+        },
+        bottom: {
+          widgets: [],
+          align: "start",
+        },
       },
     },
   },
-];
+};
 
 const Template: Story<Props> = args => <Component {...args} />;
 
@@ -115,12 +223,12 @@ export const Default = Template.bind({});
 Default.args = {
   engine: "cesium",
   rootLayerId: "root",
-  primitives,
+  layers: new LayerStore({ id: "", children: layers }),
   widgets,
   sceneProperty: {
     tiles: [{ id: "default", tile_type: "default" }],
   },
-  selectedPrimitiveId: undefined,
+  selectedLayerId: undefined,
   selectedBlockId: undefined,
   ready: true,
   isEditable: true,
@@ -131,8 +239,7 @@ Default.args = {
 export const Selected = Template.bind({});
 Selected.args = {
   ...Default.args,
-  primitives: Default.args.primitives?.map(p => ({ ...p, infoboxEditable: true })),
-  selectedPrimitiveId: primitives[1].id,
+  selectedLayerId: "2",
 };
 
 export const Built = Template.bind({});
@@ -156,63 +263,78 @@ export const Plugin: Story<Props> = args => {
   const args2 = useMemo<Props>(() => {
     return {
       ...args,
-      widgets: [
+      widgets: {
         ...(mode === "widget"
-          ? [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
+          ? {
+              alignSystem: {
+                inner: {
+                  center: {
+                    bottom: {
+                      align: "start",
+                      widgets: [
+                        {
+                          id: "xxx",
+                          extended: true,
+                          __REEARTH_SOURCECODE: sourceCode,
+                        },
+                      ],
+                    },
+                  },
+                },
               },
-            ]
-          : []),
-      ],
-      primitives: [
-        ...(args.primitives ?? []),
-        {
-          id: "pluginprimitive",
-          pluginId: "reearth",
-          extensionId: "marker",
-          isVisible: true,
-          property: {
-            default: {
-              location: { lat: 0, lng: 139 },
-              height: 0,
+            }
+          : {}),
+      },
+      layers: new LayerStore({
+        id: "",
+        children: [
+          ...layers,
+          {
+            id: "pluginprimitive",
+            pluginId: "reearth",
+            extensionId: "marker",
+            isVisible: true,
+            property: {
+              default: {
+                location: { lat: 0, lng: 139 },
+                height: 0,
+              },
+            },
+            infobox: {
+              blocks: [
+                ...(mode === "block"
+                  ? [
+                      {
+                        id: "xxx",
+                        __REEARTH_SOURCECODE: sourceCode,
+                      } as any,
+                    ]
+                  : []),
+                {
+                  id: "yyy",
+                  pluginId: "plugins",
+                  extensionId: "block",
+                  property: {
+                    location: { lat: 0, lng: 139 },
+                  },
+                },
+              ],
             },
           },
-          infobox: {
-            blocks: [
-              ...(mode === "block"
-                ? [
-                    {
-                      id: "xxx",
-                      __REEARTH_SOURCECODE: sourceCode,
-                    },
-                  ]
-                : []),
-              {
-                id: "yyy",
-                pluginId: "plugins",
-                extensionId: "block",
-                property: {
-                  location: { lat: 0, lng: 139 },
-                },
-              },
-            ],
-          },
-        },
-        ...(mode === "primitive"
-          ? [
-              {
-                id: "xxx",
-                __REEARTH_SOURCECODE: sourceCode,
-                isVisible: true,
-                property: {
-                  location: { lat: 0, lng: 130 },
-                },
-              },
-            ]
-          : []),
-      ],
+          ...(mode === "primitive"
+            ? [
+                {
+                  id: "xxx",
+                  __REEARTH_SOURCECODE: sourceCode,
+                  isVisible: true,
+                  property: {
+                    location: { lat: 0, lng: 130 },
+                  },
+                } as any,
+              ]
+            : []),
+        ],
+      }),
     };
   }, [args, mode, sourceCode]);
 
@@ -254,8 +376,9 @@ export const Plugin: Story<Props> = args => {
     </div>
   );
 };
+
 Plugin.args = {
   ...Default.args,
-  selectedPrimitiveId: "pluginprimitive",
+  selectedLayerId: "pluginprimitive",
   pluginBaseUrl: process.env.PUBLIC_URL,
 };

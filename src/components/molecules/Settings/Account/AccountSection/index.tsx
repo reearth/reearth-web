@@ -4,10 +4,13 @@ import { useIntl } from "react-intl";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import PasswordModal from "@reearth/components/molecules/Settings/Account/PasswordModal";
+import PasswordModal, {
+  PasswordPolicy,
+} from "@reearth/components/molecules/Settings/Account/PasswordModal";
 import Field from "@reearth/components/molecules/Settings/Field";
 import EditableItem from "@reearth/components/molecules/Settings/Project/EditableItem";
 import Section from "@reearth/components/molecules/Settings/Section";
+import { localesWithLabel } from "@reearth/locale";
 import { styled } from "@reearth/theme";
 
 export type Theme = "DARK" | "LIGHT";
@@ -17,26 +20,35 @@ export type Props = {
   appTheme?: string;
   lang?: string;
   hasPassword: boolean;
+  passwordPolicy?: PasswordPolicy;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
   updateTheme?: (theme: string) => void;
 };
 
-const items = [
-  { key: "ja", label: "日本語" },
-  { key: "en", label: "English" },
-];
-
 const ProfileSection: React.FC<Props> = ({
+  lang,
   email,
   appTheme,
   hasPassword,
+  passwordPolicy,
   updatePassword,
   updateLanguage,
   updateTheme,
 }) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
+
+  const langItems = useMemo(
+    () => [
+      { key: "und", label: intl.formatMessage({ defaultMessage: "Auto" }) },
+      ...Object.keys(localesWithLabel).map(l => ({
+        key: l as keyof typeof localesWithLabel,
+        label: localesWithLabel[l as keyof typeof localesWithLabel],
+      })),
+    ],
+    [intl],
+  );
 
   const themeItems: { key: Theme; label: string; icon: string }[] = useMemo(
     () => [
@@ -52,8 +64,8 @@ const ProfileSection: React.FC<Props> = ({
   );
 
   const currentLang = useMemo(
-    () => items.find(item => item.key === intl.locale)?.label,
-    [intl.locale],
+    () => langItems.find(item => item.key === lang)?.label,
+    [lang, langItems],
   );
 
   const handleUpdatePassword = useCallback(
@@ -76,8 +88,8 @@ const ProfileSection: React.FC<Props> = ({
         <EditableItem
           title={intl.formatMessage({ defaultMessage: "Service language" })}
           dropdown
-          dropdownItems={items}
-          currentItem={intl.locale}
+          dropdownItems={langItems}
+          currentItem={lang || "und"}
           body={currentLang}
           onSubmit={updateLanguage}
         />
@@ -103,6 +115,7 @@ const ProfileSection: React.FC<Props> = ({
       </Section>
       <PasswordModal
         hasPassword={hasPassword}
+        passwordPolicy={passwordPolicy}
         updatePassword={handleUpdatePassword}
         isVisible={isOpen}
         onClose={() => setIsOpen(false)}
