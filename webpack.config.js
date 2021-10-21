@@ -113,7 +113,7 @@ module.exports = (env, args = {}) => {
                 .update(packageName, "binary")
                 .digest("hex")
                 .slice(0, 8);
-              return `vendor - ${hash}`;
+              return `vendor-${hash}`;
             },
           },
         },
