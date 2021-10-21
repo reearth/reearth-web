@@ -72,8 +72,8 @@ const LayerActionsList: React.FC<Props> = ({
             {items?.map(i => (
               <MenuItem
                 key={i.id}
-                disabled={i.limitReached}
-                onClick={() => !i.limitReached && onAdd?.(i.id)}>
+                disabled={i.disabled}
+                onClick={() => !i.disabled && onAdd?.(i.id)}>
                 <MenuItemIcon icon={i.icon} size={16} />
                 <Text size="xs" customColor>
                   {i.title}

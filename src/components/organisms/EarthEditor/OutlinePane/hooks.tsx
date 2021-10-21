@@ -76,8 +76,8 @@ export default () => {
     () =>
       widgetData?.node?.__typename === "Scene"
         ? widgetData.node.plugins
-          .find(p => p.plugin?.id === "reearth")
-          ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
+            .find(p => p.plugin?.id === "reearth")
+            ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
         : undefined,
     [widgetData?.node],
   );
@@ -97,7 +97,7 @@ export default () => {
               extensionId: e.extensionId,
               title: e.translatedName,
               icon: e.icon || (plugin.id === "reearth" && e.extensionId) || "plugin",
-              limitReached:
+              disabled:
                 (e.singleOnly && !!scene?.widgets?.find(w => w.extensionId === e.extensionId)) ??
                 undefined,
             };
@@ -376,7 +376,7 @@ const convertLayer = (layer: Maybe<GQLLayer>): Layer | undefined =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"
-      ? {
+    ? {
         id: layer.id,
         title: layer.name,
         type: "group",
@@ -387,13 +387,13 @@ const convertLayer = (layer: Maybe<GQLLayer>): Layer | undefined =>
           .filter((l): l is Layer => !!l)
           .reverse(),
       }
-      : layer.__typename === "LayerItem"
-        ? {
-          id: layer.id,
-          title: layer.name,
-          visible: layer.isVisible,
-          linked: !!layer.linkedDatasetId,
-          icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
-          type: "item",
-        }
-        : undefined;
+    : layer.__typename === "LayerItem"
+    ? {
+        id: layer.id,
+        title: layer.name,
+        visible: layer.isVisible,
+        linked: !!layer.linkedDatasetId,
+        icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
+        type: "item",
+      }
+    : undefined;

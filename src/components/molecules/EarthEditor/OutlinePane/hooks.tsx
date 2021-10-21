@@ -40,7 +40,7 @@ export type InstallableWidget = {
   extensionId: string;
   title: string;
   icon?: string;
-  limitReached?: boolean;
+  disabled?: boolean;
 };
 
 export type ItemType = ItemEx["type"];
@@ -206,7 +206,7 @@ export default ({
               id: `${w.pluginId}/${w.extensionId}`,
               title: w.title,
               icon: w.icon,
-              limitReached: w.limitReached,
+              disabled: w.disabled,
             })),
           },
           draggable: false,
