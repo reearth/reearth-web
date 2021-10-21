@@ -1,11 +1,13 @@
 import { useNavigate } from "@reach/router";
 import { useCallback, useEffect } from "react";
+import { useIntl } from "react-intl";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
 export default () => {
+  const intl = useIntl();
   const { isAuthenticated, isLoading, error: authError, logout } = useAuth();
   const error = useCleanUrl();
   const navigate = useNavigate();
@@ -35,22 +37,29 @@ export default () => {
   }
 
   const onLogin = useCallback(
-    (username: string, password: string) => {
+    async (username: string, password: string) => {
       if (isAuthenticated) return;
-      if (process.env.REEARTH_WEB_AUTH0_DOMAIN) {
-        fetch(process.env.REEARTH_WEB_AUTH0_DOMAIN, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
+      const res = await fetch(`${window.REEARTH_CONFIG?.api || "/api"}/login`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      if (!res.ok) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({
+            defaultMessage:
+              "Could not log in. Please make sure you inputted the correct username and password and try again.",
           }),
         });
       }
     },
-    [isAuthenticated],
+    [isAuthenticated, intl, setNotification],
   );
 
   return {
