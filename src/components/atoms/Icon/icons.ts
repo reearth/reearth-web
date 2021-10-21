@@ -114,7 +114,6 @@ import Avatar from "./Icons/avatar.svg";
 import Scale from "./Icons/scale.svg";
 import MapIcon from "./Icons/map.svg";
 import NoProjects from "./Icons/noProjects.svg";
-import TopPage from "./Icons/topPage.svg";
 import MenuForDevice from "./Icons/menuForDevice.svg";
 import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
@@ -225,7 +224,6 @@ export default {
   noProjects: NoProjects,
   moon: Moon,
   sun: Sun,
-  topPage: TopPage,
   install: Install,
   uploadZipPlugin: UploadZipPlugin,
   privateGitHubRepo: PrivateGitHubRepo,
