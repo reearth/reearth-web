@@ -26,12 +26,19 @@ export type LayerItem = {
 };
 
 export type Widget = {
-  id?: string;
+  id: string;
   pluginId: string;
   extensionId: string;
   title: string;
   description?: string;
+  icon?: string;
   enabled?: boolean;
+};
+
+export type InstallableWidget = {
+  pluginId: string;
+  extensionId: string;
+  title: string;
   icon?: string;
   limitReached?: boolean;
 };
@@ -49,7 +56,7 @@ export default ({
   rootLayerId,
   layers,
   widgets,
-  installedWidgets,
+  installableWidgets,
   sceneDescription,
   selectedLayerId,
   selectedWidgetId,
@@ -72,7 +79,7 @@ export default ({
   rootLayerId?: string;
   layers?: Layer[];
   widgets?: Widget[];
-  installedWidgets?: Widget[];
+  installableWidgets?: InstallableWidget[];
   sceneDescription?: string;
   selectedLayerId?: string;
   selectedIndex?: number[];
@@ -194,7 +201,7 @@ export default ({
             title: widgetTitle,
             group: true,
             showLayerActions: true,
-            actionItems: installedWidgets?.map((w: Widget) => ({
+            actionItems: installableWidgets?.map(w => ({
               type: "widget",
               id: `${w.pluginId}/${w.extensionId}`,
               title: w.title,
@@ -229,7 +236,7 @@ export default ({
         },
       ],
     }),
-    [sceneTitle, sceneDescription, widgetTitle, widgets, installedWidgets],
+    [sceneTitle, sceneDescription, widgetTitle, widgets, installableWidgets],
   );
 
   const layersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(

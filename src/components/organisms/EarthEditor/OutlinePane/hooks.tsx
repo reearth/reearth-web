@@ -4,7 +4,8 @@ import { useIntl } from "react-intl";
 import {
   Format,
   Layer,
-  Widget as WidgetType,
+  Widget,
+  InstallableWidget,
 } from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
@@ -75,22 +76,22 @@ export default () => {
     () =>
       widgetData?.node?.__typename === "Scene"
         ? widgetData.node.plugins
-            .find(p => p.plugin?.id === "reearth")
-            ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
+          .find(p => p.plugin?.id === "reearth")
+          ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
         : undefined,
     [widgetData?.node],
   );
 
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
-  const installedWidgets = useMemo(() => {
+  const installableWidgets = useMemo(() => {
     return scene?.plugins
       ?.map(p => {
         const plugin = p.plugin;
 
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
-          .map((e): WidgetType => {
+          .map((e): InstallableWidget => {
             return {
               pluginId: plugin.id,
               extensionId: e.extensionId,
@@ -101,25 +102,25 @@ export default () => {
                 undefined,
             };
           })
-          .filter((w): w is WidgetType => !!w);
+          .filter((w): w is Widget => !!w);
       })
-      .reduce<WidgetType[]>((a, b) => (b ? [...a, ...b] : a), []);
+      .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);
   }, [scene]);
 
   const widgets = useMemo(() => {
-    return scene?.widgets?.map(w => {
-      const e = installedWidgets?.find(e => e.extensionId === w.extensionId);
+    return scene?.widgets?.map((w): Widget => {
+      const e = installableWidgets?.find(e => e.extensionId === w.extensionId);
       return {
         id: w.id,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
         enabled: !!w.enabled,
-        title: e?.title,
+        title: e?.title || "",
         description: e?.description,
         icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
-      } as WidgetType;
+      };
     });
-  }, [installedWidgets, scene?.widgets]);
+  }, [installableWidgets, scene?.widgets]);
 
   const layers = useMemo(
     () =>
@@ -345,7 +346,7 @@ export default () => {
     rootLayerId,
     layers,
     widgets,
-    installedWidgets,
+    installableWidgets,
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
@@ -375,7 +376,7 @@ const convertLayer = (layer: Maybe<GQLLayer>): Layer | undefined =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"
-    ? {
+      ? {
         id: layer.id,
         title: layer.name,
         type: "group",
@@ -386,13 +387,13 @@ const convertLayer = (layer: Maybe<GQLLayer>): Layer | undefined =>
           .filter((l): l is Layer => !!l)
           .reverse(),
       }
-    : layer.__typename === "LayerItem"
-    ? {
-        id: layer.id,
-        title: layer.name,
-        visible: layer.isVisible,
-        linked: !!layer.linkedDatasetId,
-        icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
-        type: "item",
-      }
-    : undefined;
+      : layer.__typename === "LayerItem"
+        ? {
+          id: layer.id,
+          title: layer.name,
+          visible: layer.isVisible,
+          linked: !!layer.linkedDatasetId,
+          icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
+          type: "item",
+        }
+        : undefined;
