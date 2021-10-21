@@ -16,7 +16,13 @@
     "@babel/proposal-optional-chaining",
     "@babel/proposal-nullish-coalescing-operator",
     "@babel/plugin-transform-typescript",
-    "react-intl-auto"
+    "react-intl-auto",
+    [
+      "@babel/plugin-proposal-private-property-in-object",
+      {
+        "loose": true
+      }
+    ]
   ],
   "env": {
     "test": {
