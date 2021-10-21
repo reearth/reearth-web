@@ -17,13 +17,14 @@ const pkg = require("./package.json");
 
 module.exports = (env, args = {}) => {
   const isProd = args.mode === "production";
+  const envfile = loadEnv(Object.keys(env || {}).find(k => !k.startsWith("WEBPACK_")));
   const config = {
     api: "http://localhost:8080/api",
     published: "/published.html?alias={}",
     ...readEnv("REEARTH_WEB", {
       source: {
         // When --env local is specified, .env.local will be loaded
-        ...dotenv.parse(loadEnv(Object.keys(env || {}).find(k => !k.startsWith("WEBPACK_")))),
+        ...(envfile ? dotenv.parse(envfile) : {}),
         ...process.env,
       },
     }),
