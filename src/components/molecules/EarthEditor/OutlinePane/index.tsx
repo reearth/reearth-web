@@ -10,9 +10,9 @@ import TreeView from "@reearth/components/atoms/TreeView";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import useHooks, { Format, Layer, Widget, InstallableWidget, TreeViewItem } from "./hooks";
+import useHooks, { Format, Layer, Widget, WidgetType, TreeViewItem } from "./hooks";
 
-export type { Format, Layer, Widget, InstallableWidget } from "./hooks";
+export type { Format, Layer, Widget, WidgetType } from "./hooks";
 
 export type Props = {
   className?: string;
@@ -21,7 +21,7 @@ export type Props = {
   selectedWidgetId?: string;
   layers?: Layer[];
   widgets?: Widget[];
-  installableWidgets?: InstallableWidget[];
+  widgetTypes?: WidgetType[];
   sceneDescription?: string;
   selectedType?: "scene" | "layer" | "widgets" | "widget";
   loading?: boolean;
@@ -55,7 +55,7 @@ const OutlinePane: React.FC<Props> = ({
   selectedType,
   layers,
   widgets,
-  installableWidgets,
+  widgetTypes,
   sceneDescription,
   onLayerRename,
   onLayerVisibilityChange,
@@ -91,7 +91,7 @@ const OutlinePane: React.FC<Props> = ({
     rootLayerId,
     layers,
     widgets,
-    installableWidgets,
+    widgetTypes,
     sceneDescription,
     selectedLayerId,
     selectedWidgetId,

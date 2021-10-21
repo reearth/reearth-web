@@ -5,7 +5,7 @@ import {
   Format,
   Layer,
   Widget,
-  InstallableWidget,
+  WidgetType,
 } from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
@@ -84,14 +84,14 @@ export default () => {
 
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
-  const installableWidgets = useMemo(() => {
+  const widgetTypes = useMemo(() => {
     return scene?.plugins
       ?.map(p => {
         const plugin = p.plugin;
 
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
-          .map((e): InstallableWidget => {
+          .map((e): WidgetType => {
             return {
               pluginId: plugin.id,
               extensionId: e.extensionId,
@@ -109,7 +109,7 @@ export default () => {
 
   const widgets = useMemo(() => {
     return scene?.widgets?.map((w): Widget => {
-      const e = installableWidgets?.find(e => e.extensionId === w.extensionId);
+      const e = widgetTypes?.find(e => e.extensionId === w.extensionId);
       return {
         id: w.id,
         pluginId: w.pluginId,
@@ -120,7 +120,7 @@ export default () => {
         icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
       };
     });
-  }, [installableWidgets, scene?.widgets]);
+  }, [widgetTypes, scene?.widgets]);
 
   const layers = useMemo(
     () =>
@@ -346,7 +346,7 @@ export default () => {
     rootLayerId,
     layers,
     widgets,
-    installableWidgets,
+    widgetTypes,
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
