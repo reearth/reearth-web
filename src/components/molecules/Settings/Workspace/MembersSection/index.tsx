@@ -1,4 +1,4 @@
-import React, { useCallback, useState, Dispatch, SetStateAction } from "react";
+import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -35,16 +35,9 @@ type Props = {
   };
   personal?: boolean;
   searchUser: (nameOrEmail: string) => void;
-  changeSearchedUser: Dispatch<
-    SetStateAction<
-      | {
-          userId: string;
-          userName: string;
-          userEmail: string;
-        }
-      | undefined
-    >
-  >;
+  changeSearchedUser: (
+    user: { userId: string; userName: string; userEmail: string } | undefined,
+  ) => void;
   addMembersToTeam: (userIds: string[]) => Promise<void>;
   updateMemberOfTeam: (userId: string, role: Role) => void;
   removeMemberFromTeam: (userId: string) => void;
