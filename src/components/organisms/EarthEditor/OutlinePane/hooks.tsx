@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { Format, Layer, Widget } from "@reearth/components/molecules/EarthEditor/OutlinePane";
+import {
+  Format,
+  Layer,
+  Widget as WidgetType,
+} from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
@@ -86,7 +90,7 @@ export default () => {
 
         return plugin?.extensions
           .filter(e => e.type === PluginExtensionType.Widget)
-          .map((e): Widget => {
+          .map((e): WidgetType => {
             return {
               pluginId: plugin.id,
               extensionId: e.extensionId,
@@ -97,9 +101,9 @@ export default () => {
                 undefined,
             };
           })
-          .filter((w): w is Widget => !!w);
+          .filter((w): w is WidgetType => !!w);
       })
-      .reduce<Widget[]>((a, b) => (b ? [...a, ...b] : a), []);
+      .reduce<WidgetType[]>((a, b) => (b ? [...a, ...b] : a), []);
   }, [scene]);
 
   const widgets = useMemo(() => {
@@ -113,7 +117,7 @@ export default () => {
         title: e?.title,
         description: e?.description,
         icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
-      } as Widget;
+      } as WidgetType;
     });
   }, [installedWidgets, scene?.widgets]);
 
