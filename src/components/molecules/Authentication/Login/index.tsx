@@ -11,10 +11,10 @@ import { metricsSizes, styled, useTheme } from "@reearth/theme";
 import AuthPage from "..";
 
 export type Props = {
-  handleLogin: (username: string, password: string) => void;
+  onLogin: (username: string, password: string) => void;
 };
 
-const Login: React.FC<Props> = ({ handleLogin }) => {
+const Login: React.FC<Props> = ({ onLogin }) => {
   const intl = useIntl();
   const theme = useTheme();
   const [username, setUsername] = useState<string>("");
@@ -35,6 +35,10 @@ const Login: React.FC<Props> = ({ handleLogin }) => {
     },
     [],
   );
+
+  const handleLogin = useCallback(() => {
+    onLogin(username, password);
+  }, [username, password, onLogin]);
 
   return (
     <AuthPage>
@@ -70,7 +74,7 @@ const Login: React.FC<Props> = ({ handleLogin }) => {
         className="form-item"
         large
         disabled // ************ disabled until backend is setup ************
-        onClick={() => handleLogin(username, password)}
+        onClick={handleLogin}
         text={intl.formatMessage({ defaultMessage: "Continue" })}
       />
       <Footer className="form-item">

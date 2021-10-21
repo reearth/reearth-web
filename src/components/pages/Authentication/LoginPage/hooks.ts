@@ -34,7 +34,7 @@ export default () => {
     });
   }
 
-  const handleLogin = useCallback(
+  const onLogin = useCallback(
     (username: string, password: string) => {
       if (isAuthenticated) return;
       if (process.env.REEARTH_WEB_AUTH0_DOMAIN) {
@@ -56,6 +56,6 @@ export default () => {
   return {
     isLoading,
     isAuthenticated,
-    handleLogin,
+    onLogin,
   };
 };

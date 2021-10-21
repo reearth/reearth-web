@@ -10,9 +10,9 @@ export type Props = {
 };
 
 const LoginPage: React.FC<Props> = () => {
-  const { isLoading, isAuthenticated, handleLogin } = useHooks();
+  const { isLoading, isAuthenticated, onLogin } = useHooks();
 
-  return isLoading ? <Loading /> : !isAuthenticated ? <Login handleLogin={handleLogin} /> : null;
+  return isLoading ? <Loading /> : !isAuthenticated ? <Login onLogin={onLogin} /> : null;
 };
 
 export default LoginPage;

@@ -3,11 +3,11 @@ import React from "react";
 import LoginMolecule from "@reearth/components/molecules/Authentication/Login";
 
 export type Props = {
-  handleLogin: (username: string, password: string) => void;
+  onLogin: (username: string, password: string) => void;
 };
 
-const Login: React.FC<Props> = ({ handleLogin }) => {
-  return <LoginMolecule handleLogin={handleLogin} />;
+const Login: React.FC<Props> = ({ onLogin }) => {
+  return <LoginMolecule onLogin={onLogin} />;
 };
 
 export default Login;
