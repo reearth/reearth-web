@@ -41,9 +41,6 @@ export default () => {
       if (isAuthenticated) return;
       const res = await fetch(`${window.REEARTH_CONFIG?.api || "/api"}/login`, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
         body: JSON.stringify({
           username,
           password,
