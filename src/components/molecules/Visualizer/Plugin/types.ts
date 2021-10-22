@@ -54,7 +54,7 @@ export type Layers = {
   readonly selected?: Layer;
   readonly selectionReason?: string;
   readonly overriddenInfobox?: OverriddenInfobox;
-  readonly overridenProperties?: { [id: string]: any };
+  readonly overriddenProperties?: { [id: string]: any };
   /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
   readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
