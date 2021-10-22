@@ -171,6 +171,15 @@ export function commonReearth({
       get findByIds() {
         return layers().findByIds;
       },
+      get find() {
+        return layers().find;
+      },
+      get findAll() {
+        return layers().findAll;
+      },
+      get walk() {
+        return layers().walk;
+      },
     },
     ...events,
   };
