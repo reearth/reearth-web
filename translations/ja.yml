@@ -203,7 +203,7 @@ src:
           PropertyList:
             '179601186': リスト
           WidgetAlignSystemToggle:
-            '2313839684': ''
+            '2313839684': ウィジェットの配置を編集
         PublicationModal:
           '383867403': コピー
           '562103780': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
