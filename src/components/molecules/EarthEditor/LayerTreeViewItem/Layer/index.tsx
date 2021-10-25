@@ -161,10 +161,10 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             selected
               ? theme.layers.selectedTextColor
               : deactivated
-              ? isHover
-                ? theme.layers.highlight
-                : theme.layers.disableTextColor
-              : theme.layers.textColor
+                ? isHover
+                  ? theme.layers.highlight
+                  : theme.layers.disableTextColor
+                : theme.layers.textColor
           }
         />
       </Flex>
@@ -180,10 +180,10 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
               selected
                 ? theme.layers.selectedTextColor
                 : deactivated
-                ? isHover
-                  ? theme.layers.highlight
-                  : theme.layers.disableTextColor
-                : theme.layers.textColor
+                  ? isHover
+                    ? theme.layers.highlight
+                    : theme.layers.disableTextColor
+                  : theme.layers.textColor
             }>
             {editingName}
           </LayerName>
@@ -195,8 +195,8 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                 selected
                   ? theme.layers.selectedTextColor
                   : deactivated
-                  ? theme.layers.disableTextColor
-                  : theme.layers.textColor
+                    ? theme.layers.disableTextColor
+                    : theme.layers.textColor
               }>
               {childrenCount}
             </LayerCount>
@@ -276,11 +276,11 @@ const Wrapper = styled.div<{
       ? disabled && !selected
         ? theme.main.weak
         : selected || !disabled
-        ? theme.main.strongText
-        : theme.main.text
+          ? theme.main.strongText
+          : theme.main.text
       : selected
-      ? theme.main.strongText
-      : theme.main.text};
+        ? theme.main.strongText
+        : theme.main.text};
   box-sizing: border-box;
   background-color: ${({ selected, theme, hover }) =>
     selected ? theme.layers.selectedLayer : hover ? theme.main.bg : "transparent"};
@@ -290,11 +290,11 @@ const Wrapper = styled.div<{
       ? dropType === "top"
         ? `${theme.main.danger} transparent transparent transparent`
         : dropType === "bottom"
-        ? `transparent transparent ${theme.main.danger} transparent`
-        : theme.main.danger
+          ? `transparent transparent ${theme.main.danger} transparent`
+          : theme.main.danger
       : selected
-      ? theme.layers.selectedLayer
-      : "transparent"};
+        ? theme.layers.selectedLayer
+        : "transparent"};
   border-bottom-color: ${({ underlined, theme }) => underlined && theme.layers.bottomBorder};
   font-size: ${fonts.sizes.xs}px;
   border-right: ${({ childSelected, theme }) =>
@@ -314,7 +314,7 @@ const StyledIcon = styled(Icon)`
   color: ${props => props.theme.main.strongText};
 `;
 
-const ArrowIcon = styled(Icon)<{ open?: boolean }>`
+const ArrowIcon = styled(Icon) <{ open?: boolean }>`
   transition: transform 0.15s ease;
   transform: ${({ open }) => open && "translateY(10%) rotate(90deg)"};
 `;
@@ -329,12 +329,12 @@ const Input = styled.input`
   overflow: hidden;
 `;
 
-const LayerIcon = styled(Icon)<{ disabled?: boolean; selected?: boolean; type?: string }>`
+const LayerIcon = styled(Icon) <{ disabled?: boolean; selected?: boolean; type?: string }>`
   margin: 0 5px;
   flex: 0 0 auto;
 `;
 
-const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
+const LayerName = styled(Text) <{ disabled?: boolean; selected?: boolean }>`
   user-select: none;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -343,7 +343,7 @@ const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   overflow: hidden;
 `;
 
-const LayerCount = styled(Text)<{ selected?: boolean }>`
+const LayerCount = styled(Text) <{ selected?: boolean }>`
   margin-right: 10px;
   &::before {
     content: "(";
@@ -364,7 +364,7 @@ const HideableDiv = styled.div<{ isVisible?: boolean }>`
 
 const LayerActionsWrapper = styled.div``;
 
-const stopPropagation = <E extends any>(event: React.MouseEvent<E, MouseEvent>) =>
+const stopPropagation = (event: React.MouseEvent<HTMLInputElement>) =>
   event.stopPropagation();
 
 export default forwardRef(Layer);
