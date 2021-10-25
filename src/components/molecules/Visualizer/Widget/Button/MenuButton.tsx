@@ -4,14 +4,7 @@ import { usePopper } from "react-popper";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import {
-  styled,
-  useTheme,
-  usePublishTheme,
-  PublishTheme,
-  metricsSizes,
-  mask,
-} from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme, metricsSizes, mask } from "@reearth/theme";
 import { Camera } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";
@@ -58,8 +51,7 @@ export default function ({
 }: Props): JSX.Element {
   const ctx = useContext();
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
-  const theme = useTheme();
-  const [visibleMenuButton, setVisibleMenuButton] = useState<string>();
+  const [visibleMenuButton, setVisibleMenuButton] = useState(false);
   const flyTo = ctx?.reearth.visualizer.camera.flyTo;
 
   const referenceElement = useRef<HTMLDivElement>(null);
@@ -103,30 +95,27 @@ export default function ({
     (b: Button | MenuItem) => () => {
       const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
       if (t === "menu") {
-        setVisibleMenuButton(v => (v === b.id ? undefined : b.id));
+        setVisibleMenuButton(!visibleMenuButton);
         return;
-      }
-      setVisibleMenuButton(undefined);
-
-      if (t === "camera") {
+      } else if (t === "camera") {
         const camera =
           "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
         if (camera) {
           flyTo?.(camera, { duration: 2 });
         }
-        return;
+      } else {
+        let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
+        if (link) {
+          const splitLink = link?.split("/");
+          if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
+            link = "https://" + link;
+            window.open(link, "_blank", "noopener");
+          }
+        }
       }
-
-      let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
-      if (!link) return;
-
-      const splitLink = link?.split("/");
-      if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
-        link = "https://" + link;
-      }
-      window.open(link, "_blank", "noopener");
+      setVisibleMenuButton(false);
     },
-    [flyTo],
+    [flyTo, visibleMenuButton],
   );
 
   return (
@@ -150,16 +139,9 @@ export default function ({
           </Text>
         )}
       </Button>
-      <div
-        ref={popperElement}
-        style={{
-          zIndex: theme.zIndexes.dropDown,
-          borderRadius: "3px",
-          ...styles.popper,
-        }}
-        {...attributes.popper}>
+      <MenuWrapper ref={popperElement} style={{ ...styles.popper }} {...attributes.popper}>
         {visibleMenuButton && (
-          <MenuWrapper publishedTheme={publishedTheme} button={b}>
+          <MenuInnerWrapper publishedTheme={publishedTheme} button={b}>
             {menuItems?.map(i => (
               <MenuItem
                 align="center"
@@ -181,9 +163,9 @@ export default function ({
                 </Flex>
               </MenuItem>
             ))}
-          </MenuWrapper>
+          </MenuInnerWrapper>
         )}
-      </div>
+      </MenuWrapper>
     </Wrapper>
   );
 }
@@ -215,7 +197,15 @@ const Button = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
   }
 `;
 
-const MenuWrapper = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
+const MenuWrapper = styled.div`
+  z-index: ${({ theme }) => theme.zIndexes.dropDown};
+  border-radius: 3px;
+  max-height: 30vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+`;
+
+const MenuInnerWrapper = styled.div<{ button?: Button; publishedTheme: PublishTheme }>`
   min-width: 32px;
   width: 100%;
   color: ${({ button, publishedTheme }) => button?.buttonColor || publishedTheme.mainText};
