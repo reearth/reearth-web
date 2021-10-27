@@ -3,7 +3,7 @@ import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
-import { Camera } from "@reearth/util/value";
+import { Camera, LatLng } from "@reearth/util/value";
 
 import type {
   OverriddenInfobox,
@@ -30,6 +30,7 @@ export default ({
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
+  onLayerDrop,
 }: {
   engineType?: string;
   rootLayerId?: string;
@@ -44,6 +45,7 @@ export default ({
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onCameraChange?: (c: Camera) => void;
+  onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
@@ -73,7 +75,7 @@ export default ({
   const {
     selectedLayer,
     selectedLayerId,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
@@ -111,6 +113,19 @@ export default ({
     [onCameraChange],
   );
 
+  // dnd
+  const [isLayerDragging, setIsLayerDragging] = useState(false);
+  const handleLayerDrag = useCallback(() => {
+    setIsLayerDragging(true);
+  }, []);
+  const handleLayerDrop = useCallback(
+    (id: string, key: string, latlng: LatLng | undefined) => {
+      setIsLayerDragging(false);
+      if (latlng) onLayerDrop?.(id, key, latlng);
+    },
+    [onLayerDrop],
+  );
+
   // GA
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
 
@@ -128,6 +143,7 @@ export default ({
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
+      layerOverriddenProperties,
       showLayer: showLayers,
       hideLayer: hideLayers,
       selectLayer,
@@ -149,7 +165,7 @@ export default ({
     selectedLayerId,
     selectedLayer,
     layerSelectionReason,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     selectedBlockId,
     innerCamera,
     infobox,
@@ -157,6 +173,9 @@ export default ({
     selectLayer,
     selectBlock,
     updateCamera,
+    isLayerDragging,
+    handleLayerDrag,
+    handleLayerDrop,
   };
 };
 
@@ -235,7 +254,7 @@ function useLayers({
     setPrimitiveOverridenInfobox(undefined);
   }, [outerSelectedPrimitiveId]);
 
-  const [layeroverriddenProperties, setLayeroverriddenProperties] = useState<{
+  const [layerOverriddenProperties, setLayeroverriddenProperties] = useState<{
     [id in string]: any;
   }>({});
   const overrideLayerProperty = useCallback((id: string, property: any) => {
@@ -258,7 +277,7 @@ function useLayers({
     selectedLayerId,
     layerSelectionReason,
     layerOverridenInfobox,
-    layeroverriddenProperties,
+    layerOverriddenProperties,
     infobox,
     isLayerHidden,
     selectLayer,
