@@ -10,7 +10,6 @@ test("convert password policy to regular expression", () => {
   expect(actual).toStrictEqual({
     whiteSpace: /(?=.*\s)/,
     highSecurity: /^(?=.*[a-z])(?=.*[A-Z])((?=(.*\d){2}))/,
-    wrong: undefined,
   });
 });
 

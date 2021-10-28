@@ -45,7 +45,7 @@ export function convertPasswordPolicy(passwordPolicy?: {
           return [k, undefined];
         }
       })
-      .filter(Boolean),
+      .filter(i => !!i[1]),
   );
 }
 
