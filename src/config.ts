@@ -11,12 +11,12 @@ export type Config = {
   sentryDsn?: string;
   sentryEnv?: string;
   passwordPolicy?: {
-    tooShort?: RegExp;
-    tooLong?: RegExp;
-    whitespace?: RegExp;
-    lowSecurity?: RegExp;
-    medSecurity?: RegExp;
-    highSecurity?: RegExp;
+    tooShort?: RegExp | string;
+    tooLong?: RegExp | string;
+    whitespace?: RegExp | string;
+    lowSecurity?: RegExp | string;
+    medSecurity?: RegExp | string;
+    highSecurity?: RegExp | string;
   };
 };
 declare global {
@@ -31,6 +31,22 @@ export const defaultConfig: Config = {
   published: window.origin + "/p/{}/",
 };
 
+export function convertPasswordPolicy(passwordPolicy: Config["passwordPolicy"]) {
+  if (!passwordPolicy) return;
+  return Object.fromEntries(
+    Object.entries(passwordPolicy)
+      .map(([k, v]) => {
+        if (typeof v !== "string") return [k, undefined];
+        try {
+          return [k, new RegExp(v)];
+        } catch {
+          return [k, undefined];
+        }
+      })
+      .filter(Boolean),
+  );
+}
+
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
@@ -41,16 +57,7 @@ export default async function loadConfig() {
 
   if (!window.REEARTH_CONFIG?.passwordPolicy) return;
 
-  window.REEARTH_CONFIG.passwordPolicy = Object.fromEntries(
-    Object.entries(window.REEARTH_CONFIG.passwordPolicy)
-      .map(([k, v]) => {
-        if (typeof v !== "string") return [k, undefined];
-        try {
-          return [k, new RegExp(v)];
-        } catch {
-          return [k, undefined];
-        }
-      })
-      .filter(Boolean),
+  window.REEARTH_CONFIG.passwordPolicy = convertPasswordPolicy(
+    window.REEARTH_CONFIG.passwordPolicy,
   );
 }
