@@ -1,10 +1,11 @@
+import React from "react";
+import { useIntl } from "react-intl";
+
 import Flex from "@reearth/components/atoms/Flex";
 import TabCard from "@reearth/components/atoms/TabCard";
 import Table from "@reearth/components/atoms/Table";
 import Text from "@reearth/components/atoms/Text";
 import { useTheme } from "@reearth/theme";
-import React from "react";
-import { useIntl } from "react-intl";
 
 export type Props = {
   className?: string;

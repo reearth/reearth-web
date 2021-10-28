@@ -1,36 +1,37 @@
-import { useGetAllDataSetsQuery, useGetDatasetsQuery } from "@reearth/gql";
-import { useSceneId, useSelected } from "@reearth/state";
 import { useMemo } from "react";
 
-type DatasetSchemaFields = string[]
+import { useGetDatasetsQuery } from "@reearth/gql";
+import { useSelected } from "@reearth/state";
+
+import { processDataset, processDatasetNames } from "./convert";
+
+// type DatasetSchemaFields = string[];
 
 export default () => {
   const [selected, _] = useSelected();
-  const [sceneId] = useSceneId();
+  // const [sceneId] = useSceneId();
 
   // const { data: datasetSchemas, loading: datasetSchemaLoading } = useGetAllDataSetsQuery({
   //   variables: { sceneId: sceneId || "" },
   //   skip: !sceneId,
   // });
 
-  const {data:rawDatasets, loading: datasetsLoading} = useGetDatasetsQuery({
-    variables: {datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "", first:100},
-    skip: selected?.type !== "dataset"
-  })
-  const datasets = useMemo(
-    () =>
-    {
-      return rawDatasets?.datasets.nodes
+  const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsQuery({
+    variables: {
+      datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
+      first: 100,
     },
-    [rawDatasets?.datasets.nodes, selected],
-  );
+    skip: selected?.type !== "dataset",
+  });
+  const datasets = useMemo(() => {
+    return rawDatasets?.datasets?.nodes ? processDataset(rawDatasets?.datasets?.nodes as any) : [];
+  }, [rawDatasets?.datasets.nodes]);
 
-  // const datasetSchemaFields = datasetSchema?.fields.map(f => f.name)
+  const datasetSchemaFields = useMemo(() => {
+    return rawDatasets?.datasets.nodes
+      ? processDatasetNames(rawDatasets.datasets.nodes[0] as any)
+      : [];
+  }, [rawDatasets?.datasets.nodes]);
 
-  console.log(datasets);
-
-
-  // console.log("raw------", datasetSchemas);
-
-  return { datasetSchema: "hoge" , datasetSchemaFields: "hoge"};
+  return { datasets, datasetSchemaFields, loading: datasetsLoading };
 };
