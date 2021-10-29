@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useState } from "react";
 import { GridSection } from "react-align";
 
 import Slide from "@reearth/components/atoms/Slide";
-import { styled, css } from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme, css } from "@reearth/theme";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
@@ -32,12 +32,13 @@ export default function MobileZone({
   isBuilt,
   children,
 }: PropsWithChildren<Props>) {
-  const [pos, setPos] = useState(2);
+  const [pos, setPos] = useState(1);
+  const publishedTheme = usePublishTheme(sceneProperty.theme);
   return (
     <>
       <StyledSlide pos={pos}>
         {sections.map(s => (
-          <GridSection key={s} stretch={s === "center"}>
+          <GridSection key={s} stretch style={{ border: "1px solid red" }}>
             {areas.map(a =>
               s === "center" && children && a === "middle" ? (
                 <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
@@ -63,48 +64,53 @@ export default function MobileZone({
           </GridSection>
         ))}
       </StyledSlide>
-      <Controls
-        onClick={() => {
-          setPos(pos < 3 ? pos + 1 : 1);
-          console.log("je;p");
-        }}>
-        <Control />
-        <Control page={1} current={pos === 1} />
-        <Control page={2} current={pos === 2} />
-        <Control page={3} current={pos === 3} />
-        <Control />
+      <Controls publishedTheme={publishedTheme}>
+        <Control onClick={() => setPos(pos > 0 ? pos - 1 : 2)} />
+        <Control onClick={() => setPos(0)}>
+          <Page current={pos === 0} />
+        </Control>
+        <Control onClick={() => setPos(1)}>
+          <Page current={pos === 1} />
+        </Control>
+        <Control onClick={() => setPos(2)}>
+          <Page current={pos === 2} />
+        </Control>
+        <Control onClick={() => setPos(pos < 2 ? pos + 1 : 0)} />
       </Controls>
     </>
   );
 }
 
 const StyledSlide = styled(Slide)`
-  height: calc(100% - 20px);
+  height: calc(100% - 32px);
 `;
 
-const Controls = styled.div`
+const Controls = styled.div<{ publishedTheme: PublishTheme }>`
   position: absolute;
   bottom: 0;
-  height: 20px;
+  height: 32px;
   width: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: ${({ publishedTheme }) => publishedTheme.background};
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: auto;
 `;
 
-const Control = styled.div<{ page?: number; current?: boolean }>`
-  ${({ page, theme }) =>
-    page &&
-    css`
-      border: 1px solid ${theme.main.strongText};
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin: 0 6px;
-    `}
-  background: ${({ current, theme }) => current && theme.main.strongText};
+const Control = styled.div<{ children?: React.ReactNode }>`
+  height: 100%;
+  ${({ children }) => !children && "flex: 1;"}
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  pointer-events: auto;
+  padding: 0 8px;
   transition: all 0.2s ease-in-out 0.1s;
+`;
+
+const Page = styled.div<{ current?: boolean }>`
+  border: 1px solid ${({ theme }) => theme.main.strongText};
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ current, theme }) => (current ? theme.main.strongText : null)};
 `;
