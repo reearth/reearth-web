@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useState } from "react";
 import { GridSection } from "react-align";
 
 import Slide from "@reearth/components/atoms/Slide";
-import { styled } from "@reearth/theme";
+import { styled, css } from "@reearth/theme";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
@@ -32,7 +32,7 @@ export default function MobileZone({
   isBuilt,
   children,
 }: PropsWithChildren<Props>) {
-  const [pos, setPos] = useState(1);
+  const [pos, setPos] = useState(2);
   return (
     <>
       <StyledSlide pos={pos}>
@@ -63,14 +63,15 @@ export default function MobileZone({
           </GridSection>
         ))}
       </StyledSlide>
-      <div onClick={() => alert("hello")} style={{ background: "blue", height: "20px" }}>
-        Hello
-      </div>
       <Controls
         onClick={() => {
-          setPos(pos <= 2 ? pos + 1 : 0);
+          setPos(pos < 3 ? pos + 1 : 1);
           console.log("je;p");
         }}>
+        <Control />
+        <Control page={1} current={pos === 1} />
+        <Control page={2} current={pos === 2} />
+        <Control page={3} current={pos === 3} />
         <Control />
       </Controls>
     </>
@@ -82,21 +83,28 @@ const StyledSlide = styled(Slide)`
 `;
 
 const Controls = styled.div`
-  height: 40px;
+  position: absolute;
+  bottom: 0;
+  height: 20px;
   width: 100%;
-  background: black;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  :hover {
-    background: green;
-  }
+  pointer-events: auto;
 `;
 
-const Control = styled.div`
-  background: red;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+const Control = styled.div<{ page?: number; current?: boolean }>`
+  ${({ page, theme }) =>
+    page &&
+    css`
+      border: 1px solid ${theme.main.strongText};
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin: 0 6px;
+    `}
+  background: ${({ current, theme }) => current && theme.main.strongText};
   cursor: pointer;
+  transition: all 0.2s ease-in-out 0.1s;
 `;
