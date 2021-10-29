@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useState } from "react";
 import { GridSection } from "react-align";
+import tinycolor from "tinycolor2";
 
 import Slide from "@reearth/components/atoms/Slide";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
@@ -68,13 +69,13 @@ export default function MobileZone({
       <Controls publishedTheme={publishedTheme}>
         <Control onClick={() => setPos(pos > 0 ? pos - 1 : 2)} />
         <Control onClick={() => setPos(0)}>
-          <Page current={pos === 0} />
+          <PageIcon current={pos === 0} publishedTheme={publishedTheme} />
         </Control>
         <Control onClick={() => setPos(1)}>
-          <Page current={pos === 1} />
+          <PageIcon current={pos === 1} publishedTheme={publishedTheme} />
         </Control>
         <Control onClick={() => setPos(2)}>
-          <Page current={pos === 2} />
+          <PageIcon current={pos === 2} publishedTheme={publishedTheme} />
         </Control>
         <Control onClick={() => setPos(pos < 2 ? pos + 1 : 0)} />
       </Controls>
@@ -108,10 +109,10 @@ const Control = styled.div<{ children?: React.ReactNode }>`
   transition: all 0.2s ease-in-out 0.1s;
 `;
 
-const Page = styled.div<{ current?: boolean }>`
-  border: 1px solid ${({ theme }) => theme.main.strongText};
+const PageIcon = styled.div<{ current?: boolean; publishedTheme?: PublishTheme }>`
+  border: 1px solid ${({ theme, publishedTheme }) => tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black};
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${({ current, theme }) => (current ? theme.main.strongText : null)};
+  background: ${({ current, theme, publishedTheme }) => (current ? tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black : null)};
 `;
