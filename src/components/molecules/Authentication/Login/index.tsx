@@ -73,7 +73,6 @@ const Login: React.FC<Props> = ({ onLogin }) => {
       <StyledButton
         className="form-item"
         large
-        disabled // ************ disabled until backend is setup ************
         onClick={handleLogin}
         text={intl.formatMessage({ defaultMessage: "Continue" })}
       />
