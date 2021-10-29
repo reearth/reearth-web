@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useState } from "react";
 import { GridSection } from "react-align";
 
 import Slide from "@reearth/components/atoms/Slide";
-import { styled, usePublishTheme, PublishTheme, css } from "@reearth/theme";
+import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
@@ -38,7 +38,7 @@ export default function MobileZone({
     <>
       <StyledSlide pos={pos}>
         {sections.map(s => (
-          <GridSection key={s} stretch style={{ border: "1px solid red" }}>
+          <GridSection key={s} stretch>
             {areas.map(a =>
               s === "center" && children && a === "middle" ? (
                 <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
@@ -58,6 +58,7 @@ export default function MobileZone({
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}
+                  wrapContent
                 />
               ),
             )}
