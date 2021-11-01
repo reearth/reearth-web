@@ -2,6 +2,7 @@ import React, { PropsWithChildren, useState, useMemo } from "react";
 import { GridSection } from "react-align";
 import tinycolor from "tinycolor2";
 
+import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
@@ -73,13 +74,19 @@ export default function MobileZone({
       </StyledSlide>
       {filteredSections.length > 1 ? (
         <Controls publishedTheme={publishedTheme}>
-          <Control onClick={() => setPos(pos > 0 ? pos - 1 : 2)} />
-          {filteredSections.map((_, i) => (
-            <Control key={i} onClick={() => setPos(i)}>
-              <PageIcon current={pos === i} publishedTheme={publishedTheme} />
-            </Control>
-          ))}
-          <Control onClick={() => setPos(pos < filteredSections.length - 1 ? pos + 1 : 0)} />
+          <Control leftIcon onClick={() => pos > 0 && setPos(pos - 1)}>
+            {pos > 0 && <Icon icon="arrowLongLeft" size={24} />}
+          </Control>
+          <InnerControlWrapper>
+            {filteredSections.map((_, i) => (
+              <Control key={i} onClick={() => setPos(i)}>
+                <PageIcon current={pos === i} publishedTheme={publishedTheme} />
+              </Control>
+            ))}
+          </InnerControlWrapper>
+          <Control rightIcon onClick={() => pos < filteredSections.length - 1 && setPos(pos + 1)}>
+            {pos < filteredSections.length - 1 && <Icon icon="arrowLongRight" size={24} />}
+          </Control>
         </Controls>
       ) : null}
     </>
@@ -101,10 +108,16 @@ const Controls = styled.div<{ publishedTheme: PublishTheme }>`
   justify-content: center;
 `;
 
-const Control = styled.div<{ children?: React.ReactNode }>`
-  height: 100%;
-  ${({ children }) => !children && "flex: 1;"}
+const InnerControlWrapper = styled.div`
   display: flex;
+`;
+
+const Control = styled.div<{ leftIcon?: boolean; rightIcon?: boolean }>`
+  height: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: ${({ leftIcon, rightIcon }) =>
+    leftIcon ? "start" : rightIcon ? "end" : undefined};
   align-items: center;
   cursor: pointer;
   pointer-events: auto;
@@ -116,8 +129,8 @@ const PageIcon = styled.div<{ current?: boolean; publishedTheme?: PublishTheme }
   border: 1px solid
     ${({ theme, publishedTheme }) =>
       tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black};
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: ${({ current, theme, publishedTheme }) =>
     current
