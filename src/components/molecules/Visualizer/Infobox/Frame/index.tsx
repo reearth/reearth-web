@@ -55,7 +55,7 @@ const InfoBox: React.FC<Props> = ({
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(!isSmallWindow);
+  const [open, setOpen] = useState(true);
   useClickAway(ref, () => onClickAway?.());
 
   const handleOpen = useCallback(() => {
@@ -66,10 +66,6 @@ const InfoBox: React.FC<Props> = ({
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
-
-  useEffect(() => {
-    if (isSmallWindow) setOpen(false);
-  }, [infoboxKey, isSmallWindow]);
 
   useEffect(() => {
     if (!ref2.current) return;
@@ -89,6 +85,7 @@ const InfoBox: React.FC<Props> = ({
     <StyledFloatedPanel
       className={className}
       visible={visible}
+      open={open}
       styles={wrapperStyles}
       onClick={onClick}
       onEnter={onEnter}
@@ -97,17 +94,18 @@ const InfoBox: React.FC<Props> = ({
       onExited={onExited}
       floated>
       <Wrapper ref={ref} size={size} open={open}>
-        <TitleFlex
-          flex="0 0 auto"
-          justify={open ? "flex-start" : "space-evenly"}
-          direction="column"
-          onClick={handleOpen}>
+        <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
           {isSmallWindow && !noContent && (
-            <StyledIcon color={publishedTheme.mainIcon} icon="arrowUp" size={24} open={open} />
+            <MinimizeTab>
+              <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={24} open={open} />
+              <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
+            </MinimizeTab>
           )}
-          <Text size="m" weight="bold" customColor>
-            <TitleText>{title || " "}</TitleText>
-          </Text>
+          {isSmallWindow && !open ? null : (
+            <Text size="m" weight="bold" customColor>
+              <TitleText>{title || " "}</TitleText>
+            </Text>
+          )}
           {!isSmallWindow && (
             <StyledIcon color={publishedTheme.mainIcon} icon="arrowDown" size={24} open={open} />
           )}
@@ -129,6 +127,7 @@ const InfoBox: React.FC<Props> = ({
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
+  open?: boolean;
 }>`
   position: ${props => (props.floated ? "absolute" : "static")};
   top: 50px;
@@ -142,10 +141,12 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
 
   @media (max-width: 624px) {
-    left: 16px;
-    right: 16px;
-    top: auto;
-    bottom: 80px;
+    transition: all 0.6s;
+    right: ${({ open }) => (open ? "16px" : "-6px")};
+    top: 20vh;
+    bottom: auto;
+    width: ${({ open }) => (open ? "calc(100% - 33px);" : "70px")};
+    max-height: 60vh;
   }
 `;
 
@@ -158,8 +159,13 @@ const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
   min-height: ${({ open }) => (open ? "280px" : "100%")};
 
   @media (max-width: 624px) {
+    transition: all 0.4s;
     width: auto;
   }
+`;
+
+const MinimizeTab = styled(Flex)`
+  margin: -4px;
 `;
 
 const TitleFlex = styled(Flex)`
@@ -194,6 +200,7 @@ const Content = styled.div<{ open?: boolean }>`
   flex: auto;
   font-size: ${fonts.sizes.s}px;
   padding: 10px 0 20px 0;
+  transition: all 0.2s linear;
 
   -ms-overflow-style: none;
   scrollbar-width: none;
