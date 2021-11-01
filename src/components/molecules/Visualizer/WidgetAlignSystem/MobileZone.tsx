@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useState, useMemo } from "react";
 import { GridSection } from "react-align";
 import tinycolor from "tinycolor2";
 
@@ -33,12 +33,17 @@ export default function MobileZone({
   isBuilt,
   children,
 }: PropsWithChildren<Props>) {
-  const [pos, setPos] = useState(1);
+  const filteredSections = useMemo(() => {
+    return sections.filter(s => !!zone?.[s]);
+  }, [zone]);
+
+  const [pos, setPos] = useState(filteredSections.indexOf("center"));
   const publishedTheme = usePublishTheme(sceneProperty.theme);
+
   return (
     <>
-      <StyledSlide pos={pos}>
-        {sections.map(s => (
+      <StyledSlide pos={pos} filteredSections={filteredSections.length > 1}>
+        {filteredSections.map(s => (
           <GridSection key={s} stretch>
             {areas.map(a =>
               s === "center" && children && a === "middle" ? (
@@ -66,25 +71,23 @@ export default function MobileZone({
           </GridSection>
         ))}
       </StyledSlide>
-      <Controls publishedTheme={publishedTheme}>
-        <Control onClick={() => setPos(pos > 0 ? pos - 1 : 2)} />
-        <Control onClick={() => setPos(0)}>
-          <PageIcon current={pos === 0} publishedTheme={publishedTheme} />
-        </Control>
-        <Control onClick={() => setPos(1)}>
-          <PageIcon current={pos === 1} publishedTheme={publishedTheme} />
-        </Control>
-        <Control onClick={() => setPos(2)}>
-          <PageIcon current={pos === 2} publishedTheme={publishedTheme} />
-        </Control>
-        <Control onClick={() => setPos(pos < 2 ? pos + 1 : 0)} />
-      </Controls>
+      {filteredSections.length > 1 ? (
+        <Controls publishedTheme={publishedTheme}>
+          <Control onClick={() => setPos(pos > 0 ? pos - 1 : 2)} />
+          {filteredSections.map((_, i) => (
+            <Control key={i} onClick={() => setPos(i)}>
+              <PageIcon current={pos === i} publishedTheme={publishedTheme} />
+            </Control>
+          ))}
+          <Control onClick={() => setPos(pos < filteredSections.length - 1 ? pos + 1 : 0)} />
+        </Controls>
+      ) : null}
     </>
   );
 }
 
-const StyledSlide = styled(Slide)`
-  height: calc(100% - 32px);
+const StyledSlide = styled(Slide)<{ filteredSections?: boolean }>`
+  height: calc(100% ${({ filteredSections }) => filteredSections && "- 32px"});
 `;
 
 const Controls = styled.div<{ publishedTheme: PublishTheme }>`
@@ -110,9 +113,16 @@ const Control = styled.div<{ children?: React.ReactNode }>`
 `;
 
 const PageIcon = styled.div<{ current?: boolean; publishedTheme?: PublishTheme }>`
-  border: 1px solid ${({ theme, publishedTheme }) => tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black};
+  border: 1px solid
+    ${({ theme, publishedTheme }) =>
+      tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black};
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${({ current, theme, publishedTheme }) => (current ? tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black : null)};
+  background: ${({ current, theme, publishedTheme }) =>
+    current
+      ? tinycolor(publishedTheme?.background).isDark()
+        ? theme.other.white
+        : theme.other.black
+      : null};
 `;
