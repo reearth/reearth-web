@@ -92,22 +92,20 @@ const InfoBox: React.FC<Props> = ({
       onEntered={onEntered}
       onExit={onExit}
       onExited={onExited}
+      size={size}
       floated>
-      <Wrapper ref={ref} size={size} open={open}>
+      <Wrapper ref={ref} open={open}>
         <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
-          {isSmallWindow && !noContent && (
-            <MinimizeTab>
-              <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={24} open={open} />
+          {!noContent && (
+            <IconWrapper align="center" justify="space-around">
+              <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={16} open={open} />
               <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
-            </MinimizeTab>
+            </IconWrapper>
           )}
-          {isSmallWindow && !open ? null : (
+          {!open ? null : (
             <Text size="m" weight="bold" customColor>
               <TitleText>{title || " "}</TitleText>
             </Text>
-          )}
-          {!isSmallWindow && (
-            <StyledIcon color={publishedTheme.mainIcon} icon="arrowDown" size={24} open={open} />
           )}
         </TitleFlex>
         <CloseBtn
@@ -128,32 +126,33 @@ const InfoBox: React.FC<Props> = ({
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
   open?: boolean;
+  size?: "small" | "large";
 }>`
   position: ${props => (props.floated ? "absolute" : "static")};
-  top: 50px;
-  right: 10px;
-  max-height: calc(100% - 85px);
+  top: 15%;
+  right: ${({ open }) => (open ? "30px" : "-6px")};
+  max-height: 70%;
+  width: ${({ size, open }) => (open ? (size == "large" ? "624px" : "346px") : "80px")};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
+  z-index: ${({ theme }) => theme.zIndexes.propertyFieldPopup};
+  transition: all 0.6s;
 
   @media (max-width: 624px) {
-    transition: all 0.6s;
-    right: ${({ open }) => (open ? "16px" : "-6px")};
+    right: ${({ open }) => (open ? "16px" : "-8px")};
     top: 20vh;
     bottom: auto;
-    width: ${({ open }) => (open ? "calc(100% - 33px);" : "70px")};
+    width: ${({ open }) => (open ? "calc(100% - 33px)" : "70px")};
+    ${({ open }) => !open && "height: 40px;"}
     max-height: 60vh;
   }
 `;
 
-const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
+const Wrapper = styled.div<{ open?: boolean }>`
   overflow: hidden;
-  width: ${props => (props.size == "large" ? "624px" : "346px")};
-  max-height: calc(100% - 85px);
   display: flex;
   flex-direction: column;
   min-height: ${({ open }) => (open ? "280px" : "100%")};
@@ -164,12 +163,15 @@ const Wrapper = styled.div<{ size?: "small" | "large"; open?: boolean }>`
   }
 `;
 
-const MinimizeTab = styled(Flex)`
-  margin: -4px;
+const IconWrapper = styled(Flex)`
+  width: 52px;
+  @media (max-width: 624px) {
+    width: 42px;
+  }
 `;
 
-const TitleFlex = styled(Flex)`
-  margin: ${metricsSizes["m"]}px auto;
+const TitleFlex = styled(Flex)<{ open?: boolean }>`
+  margin: ${({ open }) => (!open ? metricsSizes["s"] : metricsSizes["m"]) + "px auto"};
   text-align: center;
   box-sizing: border-box;
   cursor: pointer;
