@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useState, useMemo } from "react";
 import { GridSection } from "react-align";
-import tinycolor from "tinycolor2";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
@@ -75,7 +74,7 @@ export default function MobileZone({
       {filteredSections.length > 1 ? (
         <Controls publishedTheme={publishedTheme}>
           <Control leftIcon onClick={() => pos > 0 && setPos(pos - 1)}>
-            {pos > 0 && <Icon icon="arrowLongLeft" size={24} />}
+            {pos > 0 && <Icon icon="arrowLongLeft" size={24} color={publishedTheme.mainIcon} />}
           </Control>
           <InnerControlWrapper>
             {filteredSections.map((_, i) => (
@@ -85,7 +84,9 @@ export default function MobileZone({
             ))}
           </InnerControlWrapper>
           <Control rightIcon onClick={() => pos < filteredSections.length - 1 && setPos(pos + 1)}>
-            {pos < filteredSections.length - 1 && <Icon icon="arrowLongRight" size={24} />}
+            {pos < filteredSections.length - 1 && (
+              <Icon icon="arrowLongRight" size={24} color={publishedTheme.mainIcon} />
+            )}
           </Control>
         </Controls>
       ) : null}
@@ -126,16 +127,9 @@ const Control = styled.div<{ leftIcon?: boolean; rightIcon?: boolean }>`
 `;
 
 const PageIcon = styled.div<{ current?: boolean; publishedTheme?: PublishTheme }>`
-  border: 1px solid
-    ${({ theme, publishedTheme }) =>
-      tinycolor(publishedTheme?.background).isDark() ? theme.other.white : theme.other.black};
+  border: 1px solid ${({ publishedTheme }) => publishedTheme?.mainIcon};
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: ${({ current, theme, publishedTheme }) =>
-    current
-      ? tinycolor(publishedTheme?.background).isDark()
-        ? theme.other.white
-        : theme.other.black
-      : null};
+  background: ${({ current, publishedTheme }) => (current ? publishedTheme?.mainIcon : null)};
 `;

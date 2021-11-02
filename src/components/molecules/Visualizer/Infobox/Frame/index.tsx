@@ -73,6 +73,12 @@ const InfoBox: React.FC<Props> = ({
     ref2.current.scrollTop = 0;
   }, [infoboxKey]);
 
+  useEffect(() => {
+    if (!visible) {
+      setOpen(true);
+    }
+  }, [visible]);
+
   const wrapperStyles = useMemo(
     () => css`
       background-color: ${styles?.bgcolor || publishedTheme?.background};
