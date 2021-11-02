@@ -3,35 +3,26 @@ import { useMemo } from "react";
 import { useGetDatasetsQuery } from "@reearth/gql";
 import { useSelected } from "@reearth/state";
 
-import { processDataset, processDatasetNames } from "./convert";
-
-// type DatasetSchemaFields = string[];
+import { processDatasets, processDatasetHeaders } from "./convert";
 
 export default () => {
-  const [selected, _] = useSelected();
-  // const [sceneId] = useSceneId();
-
-  // const { data: datasetSchemas, loading: datasetSchemaLoading } = useGetAllDataSetsQuery({
-  //   variables: { sceneId: sceneId || "" },
-  //   skip: !sceneId,
-  // });
+  const [selected] = useSelected();
 
   const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsQuery({
     variables: {
       datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
-      first: 100,
+      first: 10,
     },
     skip: selected?.type !== "dataset",
   });
+
   const datasets = useMemo(() => {
-    return rawDatasets?.datasets?.nodes ? processDataset(rawDatasets?.datasets?.nodes as any) : [];
+    return rawDatasets?.datasets?.nodes ? processDatasets(rawDatasets?.datasets?.nodes) : [];
   }, [rawDatasets?.datasets.nodes]);
 
-  const datasetSchemaFields = useMemo(() => {
-    return rawDatasets?.datasets.nodes
-      ? processDatasetNames(rawDatasets.datasets.nodes[0] as any)
-      : [];
+  const datasetHeaders = useMemo(() => {
+    return rawDatasets?.datasets.nodes ? processDatasetHeaders(rawDatasets.datasets.nodes) : [];
   }, [rawDatasets?.datasets.nodes]);
 
-  return { datasets, datasetSchemaFields, loading: datasetsLoading };
+  return { datasets, datasetHeaders, loading: datasetsLoading };
 };

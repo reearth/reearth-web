@@ -9,9 +9,8 @@ export type Props = {
 };
 
 const DatasetInfoPane: React.FC<Props> = () => {
-  const { datasetSchemaFields, datasets, loading } = useHooks();
-  console.log(datasetSchemaFields, datasets, loading);
-  return <Wrapper>hoge</Wrapper>;
+  const { datasetHeaders, datasets, loading } = useHooks();
+  return <Wrapper datasetHeaders={datasetHeaders} datasets={datasets} />;
 };
 
 export default DatasetInfoPane;

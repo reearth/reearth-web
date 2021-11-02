@@ -1,10 +1,11 @@
-import { fonts, styled } from "@reearth/theme";
 import React from "react";
 
-export type Props<T extends {}> = {
+import { fonts, styled } from "@reearth/theme";
+
+export type Props<T> = {
   className?: string;
-  headers: (keyof T)[];
-  items: T[];
+  headers?: (keyof T)[];
+  items?: T[];
   bg?: string;
   borderColor?: string;
   layout?: "auto" | "fixed";
@@ -16,7 +17,7 @@ export type Props<T extends {}> = {
   multiLine?: boolean;
 };
 
-const Table = <T extends {}>({
+export default function Table<T>({
   className,
   width,
   headers,
@@ -29,7 +30,7 @@ const Table = <T extends {}>({
   columnHeight,
   scroll = true,
   multiLine = false,
-}: Props<T>): ReturnType<React.FC<Props<T>>> => {
+}: Props<T>): JSX.Element | null {
   return (
     <StyledTable
       bg={bg}
@@ -44,7 +45,7 @@ const Table = <T extends {}>({
       scroll={scroll}>
       <thead>
         <tr>
-          {headers.map((h, i) => (
+          {headers?.map((h, i) => (
             <StyledTh key={i} width={columnWidth}>
               {h}
             </StyledTh>
@@ -52,10 +53,10 @@ const Table = <T extends {}>({
         </tr>
       </thead>
       <tbody>
-        {items.map((item, i) => {
+        {items?.map((item, i) => {
           return (
             <tr key={i}>
-              {headers.map((h, i) => {
+              {headers?.map((h, i) => {
                 return <StyledTd key={i}>{item[h]}</StyledTd>;
               })}
             </tr>
@@ -64,7 +65,7 @@ const Table = <T extends {}>({
       </tbody>
     </StyledTable>
   );
-};
+}
 
 const StyledTable = styled.table<{
   bg?: string;
@@ -101,5 +102,3 @@ const StyledTd = styled.td`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-
-export default Table;

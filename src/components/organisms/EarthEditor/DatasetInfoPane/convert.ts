@@ -1,26 +1,31 @@
-import { Maybe } from "graphql/jsutils/Maybe";
+import { DatasetFragmentFragment, Maybe } from "@reearth/gql";
 
-import { Dataset as RawDataset, DatasetField } from "@reearth/gql";
-
-// type Dataset = {[k in DatasetFields[number]]: any};
-
-export const processDataset = (rawDatasets: Maybe<RawDataset[]>): {}[] => {
+export const processDatasets = (
+  rawDatasets: Maybe<DatasetFragmentFragment | undefined>[] | undefined,
+): { [key: string]: string }[] => {
   return rawDatasets
-    ? rawDatasets.map(r => {
-        return extractValueFromDatasetFields(r.fields);
-      })
+    ? rawDatasets
+        .filter((r): r is DatasetFragmentFragment => !!r)
+        .map(r => processDataset(r.fields))
     : [];
 };
 
-// TODO: add type here
-const extractValueFromDatasetFields = (fields: DatasetField[]): {} => {
-  const datasetFields = fields.map((f): string[][] => {
-    if (!f || !f.field) return [];
-    return [f.field.name, f.value];
-  });
+const processDataset = (fields: DatasetFragmentFragment["fields"]): { [key: string]: string } => {
+  const datasetFields = fields
+    .map((f): [string, string] | undefined => {
+      if (!f || !f.field) return undefined;
+      return [f.field.name, String(f.value)];
+    })
+    .filter((f): f is [string, string] => !!f);
   return Object.fromEntries(datasetFields);
 };
 
-export const processDatasetNames = (rawDataset: Maybe<RawDataset>): string[] => {
-  return rawDataset?.fields ? rawDataset.fields.map(f => f.field?.name as string) : [];
+export const processDatasetHeaders = (
+  rawDatasets: Maybe<DatasetFragmentFragment | undefined>[] | undefined,
+): string[] => {
+  const headers =
+    rawDatasets?.flatMap(
+      d => d?.fields.map(f => f.field?.name).filter((f): f is string => !!f) || [],
+    ) || [];
+  return Array.from(new Set(headers));
 };

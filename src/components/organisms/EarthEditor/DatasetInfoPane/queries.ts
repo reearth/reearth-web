@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_DATASETS = gql`
-  query GetDatasets(
+  query GetDatasetsForDatasetInfoPane(
     $datasetSchemaId: ID!
     $first: Int
     $last: Int
