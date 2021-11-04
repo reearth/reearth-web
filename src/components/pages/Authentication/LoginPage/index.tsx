@@ -3,7 +3,7 @@ import React from "react";
 import Loading from "@reearth/components/atoms/Loading";
 import Login from "@reearth/components/organisms/Authentication/Login";
 
-import useHooks from "./hooks";
+import useHooks from "../hooks";
 
 export type Props = {
   path?: string;

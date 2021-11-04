@@ -10,11 +10,21 @@ import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
 
-export type Props = {
-  onLogin: (username: string, password: string) => void;
+export type PasswordPolicy = {
+  tooShort?: RegExp;
+  tooLong?: RegExp;
+  whitespace?: RegExp;
+  lowSecurity?: RegExp;
+  medSecurity?: RegExp;
+  highSecurity?: RegExp;
 };
 
-const Login: React.FC<Props> = ({ onLogin }) => {
+export type Props = {
+  onSignup: (username: string, password: string) => void;
+  passwordPolicy?: PasswordPolicy;
+};
+
+const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   const intl = useIntl();
   const theme = useTheme();
   const [username, setUsername] = useState<string>("");
@@ -36,18 +46,16 @@ const Login: React.FC<Props> = ({ onLogin }) => {
     [],
   );
 
-  const handleLogin = useCallback(() => {
-    onLogin(username, password);
-  }, [username, password, onLogin]);
+  const handleSignup = useCallback(() => {
+    onSignup(username, password);
+  }, [username, password, onSignup]);
+  console.log(passwordPolicy, "pp");
 
   return (
     <AuthPage>
       <Icon className="form-item" icon="logoColorful" size={60} />
       <Text className="form-item" size="l" customColor>
-        {intl.formatMessage({ defaultMessage: "Welcome" })}
-      </Text>
-      <Text className="form-item" size="s" customColor>
-        {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
+        {intl.formatMessage({ defaultMessage: "Create your Account" })}
       </Text>
       <StyledInput
         className="form-item"
@@ -66,28 +74,23 @@ const Login: React.FC<Props> = ({ onLogin }) => {
         value={password}
         onChange={handlePasswordInput}
       />
-      <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
-        <Text className="form-item" size="xs" color={theme.main.link}>
-          {intl.formatMessage({ defaultMessage: "Forgot password?" })}
-        </Text>
-      </StyledLink>
       <StyledButton
         className="form-item"
         large
-        onClick={handleLogin}
+        onClick={handleSignup}
         text={intl.formatMessage({ defaultMessage: "Continue" })}
       />
       <Footer className="form-item">
         <Text size="xs" color={theme.main.weak}>
-          {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
+          {intl.formatMessage({ defaultMessage: "Already have an account?" })}
         </Text>
-        <StyledLink to={"/signup"}>
+        <StyledLink to={"/login"}>
           <Text
             size="xs"
             color={theme.main.link}
             weight="bold"
             otherProperties={{ marginLeft: "6px" }}>
-            {intl.formatMessage({ defaultMessage: "Sign up" })}
+            {intl.formatMessage({ defaultMessage: "Log in" })}
           </Text>
         </StyledLink>
       </Footer>
@@ -128,4 +131,4 @@ const Footer = styled(Flex)`
   width: 100%;
 `;
 
-export default Login;
+export default Signup;

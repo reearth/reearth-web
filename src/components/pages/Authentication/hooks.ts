@@ -13,6 +13,7 @@ export default () => {
   const navigate = useNavigate();
   const [currentTeam, setTeam] = useTeam();
   const [, setNotification] = useNotification();
+  const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
   const { data, loading } = useTeamsQuery({ skip: !isAuthenticated });
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
@@ -40,9 +41,9 @@ export default () => {
     async (username: string, password: string) => {
       if (isAuthenticated) return;
       const res = await fetch(`${window.REEARTH_CONFIG?.api || "/api"}/login`, {
-        redirect: 'manual',
+        redirect: "manual",
         headers: {
-          'Content-Type': "application/json"
+          "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify({
@@ -70,5 +71,6 @@ export default () => {
     isLoading,
     isAuthenticated,
     onLogin,
+    passwordPolicy,
   };
 };
