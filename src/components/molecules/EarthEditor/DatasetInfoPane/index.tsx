@@ -9,16 +9,23 @@ import { useTheme } from "@reearth/theme";
 
 import DatasetPropertyItem from "./DatasetProperty/PropertyItem";
 
+export type PrimitiveItem = { name: string; extensionId: string; icon: string };
+
 export type Props = {
   className?: string;
   datasets?: { [key: string]: string }[];
   datasetHeaders?: string[];
-  primitiveTypes?: string[];
+  primitiveItems?: PrimitiveItem[];
 };
 
-const DatasetInfoPane: React.FC<Props> = ({ datasetHeaders, datasets }) => {
+const DatasetInfoPane: React.FC<Props> = ({ datasetHeaders, datasets, primitiveItems }) => {
   const intl = useIntl();
   const theme = useTheme();
+  const convertPrimitiveItemToDatasetPropertyItem = (
+    items?: PrimitiveItem[],
+  ): { key: string; label: string; icon: string }[] => {
+    return items?.map(i => ({ key: i.extensionId, label: i.name, icon: i.icon })) || [];
+  };
   return (
     <Flex direction="column">
       <TabCard name={intl.formatMessage({ defaultMessage: "Data" })}>
@@ -33,7 +40,9 @@ const DatasetInfoPane: React.FC<Props> = ({ datasetHeaders, datasets }) => {
         </Flex>
       </TabCard>
       <TabCard name={intl.formatMessage({ defaultMessage: "Import to scene" })}>
-        <DatasetPropertyItem />
+        <DatasetPropertyItem
+          primitiveItems={convertPrimitiveItemToDatasetPropertyItem(primitiveItems)}
+        />
       </TabCard>
     </Flex>
   );

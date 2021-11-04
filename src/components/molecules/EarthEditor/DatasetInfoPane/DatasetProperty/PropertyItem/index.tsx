@@ -7,16 +7,12 @@ import Text from "@reearth/components/atoms/Text";
 
 export type Props = {
   className?: string;
-  primitiveTypes?: { key: string; label: string }[];
+  primitiveItems?: { key: string; label: string; icon: string }[];
   onAddToScene?: (datasetSchemaId: string) => void;
 };
 
-const DatasetPropertyItem: React.FC<Props> = ({ className, primitiveTypes, onAddToScene }) => {
+const DatasetPropertyItem: React.FC<Props> = ({ className, primitiveItems, onAddToScene }) => {
   const intl = useIntl();
-  const sample = [
-    { key: "marker", label: "marker" },
-    { key: "sphere", label: "sphere" },
-  ];
   const handlePrimitiveTypeChange = (t: string) => {
     console.log(t);
   };
@@ -24,7 +20,7 @@ const DatasetPropertyItem: React.FC<Props> = ({ className, primitiveTypes, onAdd
     <Flex direction="column">
       <Flex>
         <Text size="m">{intl.formatMessage({ defaultMessage: "Layer style" })}</Text>
-        <SelectField items={sample} onChange={handlePrimitiveTypeChange} />
+        <SelectField items={primitiveItems} onChange={handlePrimitiveTypeChange} />
       </Flex>
     </Flex>
   );

@@ -1,4 +1,10 @@
-import { DatasetFragmentFragment, Maybe, Plugin, PluginExtensionType } from "@reearth/gql";
+import { PrimitiveItem } from "@reearth/components/molecules/EarthEditor/DatasetInfoPane";
+import {
+  DatasetFragmentFragment,
+  Maybe,
+  PluginExtensionType,
+  PluginFragmentFragment,
+} from "@reearth/gql";
 
 export const processDatasets = (
   rawDatasets: Maybe<DatasetFragmentFragment | undefined>[] | undefined,
@@ -31,11 +37,15 @@ export const processDatasetHeaders = (
 };
 
 export const processPrimitives = (
-  rawPlugins: Maybe<Pick<Plugin, "name" | "extensions"> | undefined>[],
-): string[] => {
-  const extensions =
-    rawPlugins?.flatMap(p => p?.extensions.filter(e => e.type === PluginExtensionType.Primitive)) ||
-    [];
-  console.log(extensions);
-  return [];
+  rawPlugins: Maybe<PluginFragmentFragment | undefined>[],
+): PrimitiveItem[] => {
+  const primitiveItems =
+    rawPlugins
+      .flatMap(p =>
+        p?.extensions
+          .filter(e => e.type === PluginExtensionType.Primitive)
+          .map(e => ({ name: e.name, extensionId: e.extensionId, icon: e.icon })),
+      )
+      .filter((e): e is PrimitiveItem => !!e) || [];
+  return primitiveItems;
 };

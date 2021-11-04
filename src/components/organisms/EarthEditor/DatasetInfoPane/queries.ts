@@ -35,15 +35,7 @@ export const GET_INSTALLED_PLUGINS = gql`
       plugins {
         pluginId
         plugin {
-          name
-          extensions {
-            extensionId
-            type
-            name
-            description
-            icon
-            translatedName
-          }
+          ...PluginFragment
         }
       }
     }

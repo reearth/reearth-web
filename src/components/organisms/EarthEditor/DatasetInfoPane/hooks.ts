@@ -37,17 +37,15 @@ export default () => {
     return rawDatasets?.datasets.nodes ? processDatasetHeaders(rawDatasets.datasets.nodes) : [];
   }, [rawDatasets?.datasets.nodes]);
 
-  // const [sceneId] = useSceneId();
-
-  // const { data: datasetSchemas, loading: datasetSchemaLoading } = useGetAllDataSetsQuery({
-  //   variables: { sceneId: sceneId || "" },
-  //   skip: !sceneId,
-  // });
-
-  // console.log(datasetSchemas);
-  const primitiveTypes = useMemo(() => {
-    return rawScene?.scene?.plugins ? processPrimitives(rawScene?.scene?.plugins) : [];
+  const primitiveItems = useMemo(() => {
+    const plugins = rawScene?.scene?.plugins.map(p => p.plugin);
+    return plugins ? processPrimitives(plugins) : [];
   }, [rawScene?.scene?.plugins]);
 
-  return { datasets, datasetHeaders, loading: datasetsLoading };
+  return {
+    datasets,
+    datasetHeaders,
+    loading: datasetsLoading || scenePluginLoading,
+    primitiveItems,
+  };
 };
