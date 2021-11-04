@@ -28,3 +28,24 @@ export const GET_DATASETS = gql`
     }
   }
 `;
+
+export const GET_INSTALLED_PLUGINS = gql`
+  query GetScenePluginsForDatasetInfoPane($projectId: ID!) {
+    scene(projectId: $projectId) {
+      plugins {
+        pluginId
+        plugin {
+          name
+          extensions {
+            extensionId
+            type
+            name
+            description
+            icon
+            translatedName
+          }
+        }
+      }
+    }
+  }
+`;

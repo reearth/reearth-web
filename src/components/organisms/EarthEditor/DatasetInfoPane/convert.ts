@@ -1,4 +1,4 @@
-import { DatasetFragmentFragment, Maybe } from "@reearth/gql";
+import { DatasetFragmentFragment, Maybe, Plugin, PluginExtensionType } from "@reearth/gql";
 
 export const processDatasets = (
   rawDatasets: Maybe<DatasetFragmentFragment | undefined>[] | undefined,
@@ -28,4 +28,14 @@ export const processDatasetHeaders = (
       d => d?.fields.map(f => f.field?.name).filter((f): f is string => !!f) || [],
     ) || [];
   return Array.from(new Set(headers));
+};
+
+export const processPrimitives = (
+  rawPlugins: Maybe<Pick<Plugin, "name" | "extensions"> | undefined>[],
+): string[] => {
+  const extensions =
+    rawPlugins?.flatMap(p => p?.extensions.filter(e => e.type === PluginExtensionType.Primitive)) ||
+    [];
+  console.log(extensions);
+  return [];
 };
