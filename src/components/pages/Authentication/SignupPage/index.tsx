@@ -10,12 +10,12 @@ export type Props = {
 };
 
 const SignupPage: React.FC<Props> = () => {
-  const { isLoading, isAuthenticated, onLogin, passwordPolicy } = useHooks();
+  const { isLoading, isAuthenticated, onSignup, passwordPolicy } = useHooks();
 
   return isLoading ? (
     <Loading />
   ) : !isAuthenticated ? (
-    <Signup onSignup={onLogin} passwordPolicy={passwordPolicy} />
+    <Signup onSignup={onSignup} passwordPolicy={passwordPolicy} />
   ) : null;
 };
 

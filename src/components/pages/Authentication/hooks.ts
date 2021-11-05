@@ -67,10 +67,41 @@ export default () => {
     [isAuthenticated, intl, setNotification],
   );
 
+  const onSignup = useCallback(
+    async (username: string, password: string) => {
+      if (isAuthenticated) return;
+      const res = await fetch(`${window.REEARTH_CONFIG?.api || "/api"}/login`, {
+        redirect: "manual",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          // TODO: the id value should be taken from the queryParams[id]
+          id: "01FK2YWGZ6MSRTEYJR01Q1Z5Q6",
+          username,
+          password,
+        }),
+      });
+      // TODO: here we need to check if the res is a redirection 301, 302 we need to make it manually
+      if (!res.ok) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({
+            defaultMessage:
+              "Could not log in. Please make sure you inputted the correct username and password and try again.",
+          }),
+        });
+      }
+    },
+    [intl, isAuthenticated, setNotification],
+  );
+
   return {
     isLoading,
     isAuthenticated,
-    onLogin,
     passwordPolicy,
+    onLogin,
+    onSignup,
   };
 };
