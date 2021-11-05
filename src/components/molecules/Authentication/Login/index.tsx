@@ -66,7 +66,7 @@ const Login: React.FC<Props> = ({ onLogin }) => {
         value={password}
         onChange={handlePasswordInput}
       />
-      <StyledLink to={"/reset-password"} style={{ width: "100%", alignSelf: "left" }}>
+      <StyledLink to={"/password-reset"} style={{ width: "100%", alignSelf: "left" }}>
         <Text className="form-item" size="xs" color={theme.main.link}>
           {intl.formatMessage({ defaultMessage: "Forgot password?" })}
         </Text>
