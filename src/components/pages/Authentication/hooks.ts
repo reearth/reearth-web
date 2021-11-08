@@ -62,6 +62,11 @@ export default () => {
           }),
         });
       }
+      // TODO: Remove manual redirection, use form instead of fetch request
+      if (res.redirected) {
+        console.log("redirecting...");
+        window.location.href = res.url;
+      }
     },
     [isAuthenticated, intl, setNotification],
   );
