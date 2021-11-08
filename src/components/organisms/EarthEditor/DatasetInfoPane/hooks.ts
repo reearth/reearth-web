@@ -1,16 +1,22 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
+  useAddLayerGroupFromDatasetSchemaMutation,
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
 } from "@reearth/gql";
-import { useProject, useSelected } from "@reearth/state";
+import { useProject, useRootLayerId, useSelected } from "@reearth/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives } from "./convert";
+import { useIntl } from "react-intl";
 
 export default () => {
   const [selected] = useSelected();
   const [project] = useProject();
+  const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation()
+  const intl = useIntl();
+  const selectedDatasetSchemaId = selected?.type === "dataset" ? selected.datasetSchemaId : "";
+  const [rootLayerId, _] = useRootLayerId()
 
   const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
@@ -42,10 +48,27 @@ export default () => {
     return plugins ? processPrimitives(plugins) : [];
   }, [rawScene?.scene?.plugins]);
 
+  const handleAddLayerGroupFromDatasetSchema = useCallback(
+    async(pluginId: string, extensionId: string) => {
+      if(!rootLayerId || !selectedDatasetSchemaId)return;
+      await addLayerGroupFromDatasetSchemaMutation({
+        variables: {
+          parentLayerId: rootLayerId,
+          datasetSchemaId: selectedDatasetSchemaId,
+          pluginId,
+          extensionId,
+          lang: intl.locale
+        },
+        refetchQueries: {"GetLayers"},
+      })
+    },[]
+  );
+
   return {
     datasets,
     datasetHeaders,
     loading: datasetsLoading || scenePluginLoading,
     primitiveItems,
+    handleAddLayerGroupFromDatasetSchema
   };
 };

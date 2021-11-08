@@ -44,7 +44,7 @@ export const processPrimitives = (
       .flatMap(p =>
         p?.extensions
           .filter(e => e.type === PluginExtensionType.Primitive)
-          .map(e => ({ name: e.name, extensionId: e.extensionId, icon: e.icon })),
+          .map(e => ({ name: e.name, extensionId: e.extensionId, icon: e.icon, pluginId: p.id })),
       )
       .filter((e): e is PrimitiveItem => !!e) || [];
   return primitiveItems;

@@ -9,9 +9,20 @@ export type Props = {
 };
 
 const DatasetInfoPane: React.FC<Props> = () => {
-  const { datasetHeaders, datasets, loading, primitiveItems } = useHooks();
+  const {
+    datasetHeaders,
+    datasets,
+    primitiveItems,
+    loading,
+    handleAddLayerGroupFromDatasetSchema,
+  } = useHooks();
   return (
-    <Wrapper datasetHeaders={datasetHeaders} datasets={datasets} primitiveItems={primitiveItems} />
+    <Wrapper
+      datasetHeaders={datasetHeaders}
+      datasets={datasets}
+      primitiveItems={primitiveItems}
+      onCreateLayerGroup={handleAddLayerGroupFromDatasetSchema}
+    />
   );
 };
 
