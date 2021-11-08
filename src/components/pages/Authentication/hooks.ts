@@ -40,20 +40,19 @@ export default () => {
   const onLogin = useCallback(
     async (username: string, password: string) => {
       if (isAuthenticated) return;
+      const id = new URL(document.location.toString()).searchParams.get("id");
+      if (!id) return;
       const res = await fetch(`${window.REEARTH_CONFIG?.api || "/api"}/login`, {
-        redirect: "manual",
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify({
-          // TODO: the id value should be taken from the queryParams[id]
-          id: "01FK2YWGZ6MSRTEYJR01Q1Z5Q6",
+          id,
           username,
           password,
         }),
       });
-      // TODO: here we need to check if the res is a redirection 301, 302 we need to make it manually
       if (!res.ok) {
         setNotification({
           type: "error",
