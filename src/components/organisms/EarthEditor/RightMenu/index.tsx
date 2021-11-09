@@ -35,6 +35,8 @@ const RightMenu: React.FC = () => {
     [intl],
   );
 
+  console.log("selecetd----", selected);
+
   return (
     <TabArea<Tab>
       menuAlignment="top"
@@ -74,13 +76,11 @@ const RightMenu: React.FC = () => {
             <PropertyPane mode="infobox" />
           </>
         ),
-        export:
-          selected === "layer" ||
-          (selected === "scene" && (
-            <>
-              <ExportPane />
-            </>
-          )),
+        export: (selected === "layer" || selected === "scene") && (
+          <>
+            <ExportPane />
+          </>
+        ),
         dataset: selected === "dataset" && <DatasetInfoPane />,
       }}
     </TabArea>
