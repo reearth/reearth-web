@@ -1,6 +1,7 @@
 import React from "react";
 
 import theme, { fonts, styled } from "@reearth/theme";
+import { TypographySize } from "@reearth/theme/fonts";
 
 export type Props<T> = {
   className?: string;
@@ -9,6 +10,7 @@ export type Props<T> = {
   bg?: string;
   borderColor?: string;
   textColor?: string;
+  textSize?: TypographySize;
   layout?: "auto" | "fixed";
   textAlign?: "left" | "center" | "right";
   width?: string;
@@ -26,6 +28,7 @@ export default function Table<T>({
   bg,
   borderColor,
   textColor,
+  textSize = "s",
   layout = "auto",
   textAlign = "left",
   columnWidth,
@@ -38,6 +41,7 @@ export default function Table<T>({
       bg={bg}
       borderColor={borderColor}
       textColor={textColor}
+      textSize={fonts.sizes[textSize]}
       layout={layout}
       className={className}
       textAlign={textAlign}
@@ -74,6 +78,7 @@ const StyledTable = styled.table<{
   bg?: string;
   borderColor?: string;
   textColor?: string;
+  textSize?: number;
   layout?: "auto" | "fixed";
   textAlign?: "left" | "center" | "right";
   multiLine?: boolean;
@@ -88,6 +93,7 @@ const StyledTable = styled.table<{
   background: ${({ bg, theme }) => (bg ? bg : theme.main.bg)};
   border-color: ${({ borderColor, theme }) => (borderColor ? borderColor : theme.main.lighterBg)};
   color: ${({ textColor }) => (textColor ? textColor : theme.main.text)};
+  font-size: ${({ textSize }) => `${textSize}px`};
   width: ${({ width }) => (width ? width : "100%")};
   height: ${({ columnHeight }) => columnHeight};
   overflow: ${({ scroll }) => (scroll ? "scroll" : "hidden")};

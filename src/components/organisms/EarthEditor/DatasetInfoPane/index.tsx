@@ -1,5 +1,6 @@
 import React from "react";
 
+import Loading from "@reearth/components/atoms/Loading";
 import { default as Wrapper } from "@reearth/components/molecules/EarthEditor/DatasetInfoPane";
 
 import useHooks from "./hooks";
@@ -17,12 +18,15 @@ const DatasetInfoPane: React.FC<Props> = () => {
     handleAddLayerGroupFromDatasetSchema,
   } = useHooks();
   return (
-    <Wrapper
-      datasetHeaders={datasetHeaders}
-      datasets={datasets}
-      primitiveItems={primitiveItems}
-      onCreateLayerGroup={handleAddLayerGroupFromDatasetSchema}
-    />
+    <>
+      <Wrapper
+        datasetHeaders={datasetHeaders}
+        datasets={datasets}
+        primitiveItems={primitiveItems}
+        onCreateLayerGroup={handleAddLayerGroupFromDatasetSchema}
+      />
+      {loading && <Loading />}
+    </>
   );
 };
 

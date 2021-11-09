@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -23,6 +23,10 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
     }
   };
 
+  useEffect(() => {
+    console.log("type----", selectedPrimitiveType);
+  }, [selectedPrimitiveType]);
+
   const handleSubmit = useCallback(() => {
     const item = primitiveItems?.find(p => p.extensionId === selectedPrimitiveType);
     if (!item) return;
@@ -37,16 +41,22 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
   return (
     <Flex direction="column">
       <Flex>
-        <Text size="m">{intl.formatMessage({ defaultMessage: "Layer style" })}</Text>
-        <SelectField
-          items={convertPrimitiveItemToDatasetPropertyItem(primitiveItems)}
-          onChange={handlePrimitiveTypeChange}
-        />
+        <Flex flex={1}>
+          <Text size="xs">{intl.formatMessage({ defaultMessage: "Layer style" })}</Text>
+        </Flex>
+        <Flex flex={2}>
+          <SelectField
+            items={convertPrimitiveItemToDatasetPropertyItem(primitiveItems)}
+            selected={selectedPrimitiveType}
+            onChange={handlePrimitiveTypeChange}
+          />
+        </Flex>
       </Flex>
       <Button
         type="button"
         text={intl.formatMessage({ defaultMessage: "import" })}
         buttonType="primary"
+        disabled={!selectedPrimitiveType}
         onClick={handleSubmit}
       />
     </Flex>
