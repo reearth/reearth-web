@@ -1,11 +1,9 @@
 import React from "react";
 import { useIntl } from "react-intl";
 
-import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import TabCard from "@reearth/components/atoms/TabCard";
 import Table from "@reearth/components/atoms/Table";
-import Text from "@reearth/components/atoms/Text";
 import { useTheme } from "@reearth/theme";
 
 import DatasetPropertyItem, {
@@ -34,9 +32,9 @@ const DatasetInfoPane: React.FC<Props> = ({
     <Flex direction="column">
       <TabCard name={intl.formatMessage({ defaultMessage: "Data" })}>
         <Flex direction="column">
-          <Box mv="l">
+          {/* <Box mv="l">
             <Text size="xs">from PC file</Text>
-          </Box>
+          </Box> */}
           <Table
             headers={datasetHeaders}
             items={datasets}
@@ -44,6 +42,13 @@ const DatasetInfoPane: React.FC<Props> = ({
             borderColor={theme.properties.border}
             textSize="xs"
           />
+          {/* <Button
+            type="button"
+            text={intl.formatMessage({ defaultMessage: "Update" })}
+            buttonType="secondary"
+            icon="update"
+            onClick={onDatasetUpdate}
+          /> */}
         </Flex>
       </TabCard>
       <TabCard name={intl.formatMessage({ defaultMessage: "Import to scene" })}>

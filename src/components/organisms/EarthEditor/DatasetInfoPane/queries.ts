@@ -50,7 +50,6 @@ export const ADD_LAYER_GROUP_FROM_DATASET_SCHEMA = gql`
     $pluginId: PluginID
     $extensionId: PluginExtensionID
     $datasetSchemaId: ID
-    # $index: Int
     $lang: String
   ) {
     addLayerGroup(

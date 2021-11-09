@@ -5,14 +5,11 @@ import { styled, fonts } from "@reearth/theme";
 
 import DatasetDeleteModal from "../DatasetDeleteModal";
 
-import useHooks from "./hooks";
-
 export type DatasetSchemaProps = {
   className?: string;
   id?: string;
   name?: string;
   totalCount?: number;
-  onDrop?: (layerId: string, index?: number) => void;
   onRemove?: (schemaId: string) => void;
   selected?: boolean;
   selectDatasetSchema?: (datasetSchemaId: string) => void;
@@ -21,14 +18,12 @@ export type DatasetSchemaProps = {
 const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   className,
   id,
-  onDrop,
   onRemove,
   name,
   totalCount,
   selected,
   selectDatasetSchema,
 }) => {
-  const ref = useHooks(onDrop);
   const handleSelect = useCallback(() => {
     if (!id) return;
     selectDatasetSchema?.(id);
@@ -36,7 +31,7 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   const [showDeleteModal, setDeleteModal] = useState(false);
 
   return (
-    <Wrapper className={className} ref={ref} selected={selected} onClick={handleSelect}>
+    <Wrapper className={className} selected={selected} onClick={handleSelect}>
       <StyledIcon icon="dataset" size={16} />
       <Name>{name}</Name>
       <Count>({totalCount ?? ""})</Count>
