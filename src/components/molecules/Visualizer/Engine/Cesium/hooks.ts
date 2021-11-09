@@ -6,6 +6,9 @@ import {
   EllipsoidTerrainProvider,
   Cesium3DTileFeature,
   Cartesian3,
+  ConstantProperty,
+  Quaternion,
+  Math,
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -215,6 +218,63 @@ export default ({
     },
     [onLayerDrop],
   );
+
+  useEffect(() => {
+    const box: {
+      box_x: number;
+      box_y: number;
+      box_z: number;
+      box_width: number;
+      box_length: number;
+      box_height: number;
+    } = {
+      box_x: property?.cameraLimiter?.box_x || -100.0,
+      box_y: property?.cameraLimiter?.box_y || 45.0,
+      box_z: property?.cameraLimiter?.box_z || 300000,
+      box_width: property?.cameraLimiter?.box_width || 300000,
+      box_length: property?.cameraLimiter?.box_length || 1000000,
+      box_height: property?.cameraLimiter?.box_height || 500000,
+    };
+
+    const camera = getCamera(cesium?.current?.cesiumElement);
+    const viewer = cesium?.current?.cesiumElement;
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !onCameraChange ||
+      !property?.cameraLimiter?.enable_camera_limiter
+    )
+      return;
+    const centerForAxisAligned = Cartesian3.fromDegrees(box.box_x, box.box_y, box.box_z);
+    const dimensionsForAxisAligned = new Cartesian3(box.box_width, box.box_length, box.box_height);
+    const halfDimensionsAxisAligned = Cartesian3.multiplyByScalar(
+      dimensionsForAxisAligned,
+      0.5,
+      new Cartesian3(),
+    );
+
+    if (camera) {
+      const cameraPosition = Cartesian3.fromDegrees(camera?.lng, camera?.lat, camera?.height);
+      const minPos = new Cartesian3();
+      Cartesian3.subtract(centerForAxisAligned, halfDimensionsAxisAligned, minPos);
+      const maxPos = new Cartesian3();
+      Cartesian3.add(centerForAxisAligned, halfDimensionsAxisAligned, maxPos);
+      const destination = new Cartesian3(
+        Math.clamp(cameraPosition.x, minPos.x, maxPos.x),
+        Math.clamp(cameraPosition.y, minPos.y, maxPos.y),
+        Math.clamp(cameraPosition.z, minPos.z, maxPos.z),
+      );
+      viewer.camera.flyTo({
+        destination,
+        orientation: {
+          heading: viewer.camera.heading,
+          pitch: viewer.camera.pitch,
+          roll: viewer.camera.roll,
+          up: viewer.camera.up,
+        },
+      });
+    }
+  }, [camera, onCameraChange, engineAPI, property?.cameraLimiter]);
 
   const cesiumDnD = useRef<CesiumDnD>();
   useEffect(() => {

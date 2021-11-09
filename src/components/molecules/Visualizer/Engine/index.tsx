@@ -36,6 +36,15 @@ export type SceneProperty = {
     tile_maxLevel?: number;
     tile_minLevel?: number;
   }[];
+  cameraLimiter?: {
+    enable_camera_limiter?: boolean;
+    box_x?: number;
+    box_y?: number;
+    box_z?: number;
+    box_width?: number;
+    box_length?: number;
+    box_height?: number;
+  };
   atmosphere?: {
     enable_sun?: boolean;
     enable_lighting?: boolean;
