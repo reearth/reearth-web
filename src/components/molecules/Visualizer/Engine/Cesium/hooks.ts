@@ -265,6 +265,7 @@ export default ({
           roll: viewer.camera.roll,
           up: viewer.camera.up,
         },
+        duration: 1,
       });
     }
   }, [camera, onCameraChange, engineAPI, property?.cameraLimiter]);
