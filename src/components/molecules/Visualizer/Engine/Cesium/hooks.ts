@@ -6,8 +6,6 @@ import {
   EllipsoidTerrainProvider,
   Cesium3DTileFeature,
   Cartesian3,
-  ConstantProperty,
-  Quaternion,
   Math,
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
@@ -25,6 +23,8 @@ import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
 import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
+
+import { Box } from ".";
 
 export default ({
   ref,
@@ -48,6 +48,15 @@ export default ({
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
+
+  const box: Box = {
+    box_x: property?.cameraLimiter?.box_x || -100.0,
+    box_y: property?.cameraLimiter?.box_y || 45.0,
+    box_z: property?.cameraLimiter?.box_z || 300000,
+    box_width: property?.cameraLimiter?.box_width || 300000,
+    box_length: property?.cameraLimiter?.box_length || 1000000,
+    box_height: property?.cameraLimiter?.box_height || 500000,
+  };
 
   // Ensure to set Cesium Ion access token before the first rendering
   useLayoutEffect(() => {
@@ -220,22 +229,6 @@ export default ({
   );
 
   useEffect(() => {
-    const box: {
-      box_x: number;
-      box_y: number;
-      box_z: number;
-      box_width: number;
-      box_length: number;
-      box_height: number;
-    } = {
-      box_x: property?.cameraLimiter?.box_x || -100.0,
-      box_y: property?.cameraLimiter?.box_y || 45.0,
-      box_z: property?.cameraLimiter?.box_z || 300000,
-      box_width: property?.cameraLimiter?.box_width || 300000,
-      box_length: property?.cameraLimiter?.box_length || 1000000,
-      box_height: property?.cameraLimiter?.box_height || 500000,
-    };
-
     const camera = getCamera(cesium?.current?.cesiumElement);
     const viewer = cesium?.current?.cesiumElement;
     if (
@@ -297,6 +290,7 @@ export default ({
     backgroundColor,
     imageryLayers,
     cesium,
+    box,
     handleMount,
     handleUnmount,
     handleClick,

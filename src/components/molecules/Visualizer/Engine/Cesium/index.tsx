@@ -1,4 +1,4 @@
-import { ScreenSpaceEventType } from "cesium";
+import { Cartesian3, Color, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -13,6 +13,8 @@ import {
   Camera,
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
+  BoxGraphics,
+  Entity,
 } from "resium";
 
 import type { EngineProps, Ref as EngineRef } from "..";
@@ -21,6 +23,15 @@ import Event from "./Event";
 import useHooks from "./hooks";
 
 export type { EngineProps as Props } from "..";
+
+export type Box = {
+  box_x: number;
+  box_y: number;
+  box_z: number;
+  box_width: number;
+  box_length: number;
+  box_height: number;
+};
 
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
@@ -46,6 +57,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     backgroundColor,
     imageryLayers,
     cesium,
+    box,
     handleMount,
     handleUnmount,
     handleClick,
@@ -107,6 +119,15 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         />
         <Sun show={property?.atmosphere?.enable_sun ?? true} />
         <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
+        {property?.cameraLimiter?.enable_outline && (
+          <Entity position={Cartesian3.fromDegrees(box.box_x, box.box_y, box.box_z)}>
+            <BoxGraphics
+              dimensions={new Cartesian3(box.box_width, box.box_length, box.box_height)}
+              outline={true}
+              fill={false}
+              outlineColor={Color.RED}></BoxGraphics>
+          </Entity>
+        )}
         <Globe
           terrainProvider={terrainProvider}
           depthTestAgainstTerrain={!!property?.default?.depthTestAgainstTerrain}

@@ -38,6 +38,7 @@ export type SceneProperty = {
   }[];
   cameraLimiter?: {
     enable_camera_limiter?: boolean;
+    enable_outline?: boolean;
     box_x?: number;
     box_y?: number;
     box_z?: number;
