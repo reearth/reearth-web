@@ -30,6 +30,27 @@ export default () => {
     }
   }, [authError, data?.me, isAuthenticated, loading, logout]);
 
+
+  const loginError = new URL(document.location.toString()).searchParams.get("error");
+
+  if (loginError != null && loginError.length != 0) {
+    console.log("loginError:" + loginError);
+    setNotification({
+      type: "error",
+      text: loginError.toString(),
+    });
+
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete("error");
+    if (history.replaceState) {
+      const searchString = searchParams.toString().length > 0 ? '?' + searchParams.toString() : '';
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname +  searchString + window.location.hash;
+      history.replaceState(null, '', newUrl);
+    }
+
+  }
+
+
   if (error) {
     setNotification({
       type: "error",
