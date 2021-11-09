@@ -841,14 +841,14 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -5203,11 +5203,11 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "PropertySchemaFieldID",
+              "name": "PropertySchemaGroupID",
               "ofType": null
             },
             "defaultValue": null,
@@ -6041,7 +6041,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -6365,14 +6365,14 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -10208,7 +10208,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -10315,7 +10315,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -11104,7 +11104,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -11171,6 +11171,16 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "PropertySchemaGroupID",
+        "description": "",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -12656,11 +12666,11 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "PropertySchemaFieldID",
+              "name": "PropertySchemaGroupID",
               "ofType": null
             },
             "defaultValue": null,
@@ -12711,14 +12721,14 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -14787,11 +14797,11 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "PropertySchemaFieldID",
+              "name": "PropertySchemaGroupID",
               "ofType": null
             },
             "defaultValue": null,
@@ -15385,14 +15395,14 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "PropertySchemaFieldID",
+                "name": "PropertySchemaGroupID",
                 "ofType": null
               }
             },
@@ -15531,11 +15541,11 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "PropertySchemaFieldID",
+              "name": "PropertySchemaGroupID",
               "ofType": null
             },
             "defaultValue": null,
@@ -16122,11 +16132,11 @@
             "deprecationReason": null
           },
           {
-            "name": "schemaItemId",
+            "name": "schemaGroupId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "PropertySchemaFieldID",
+              "name": "PropertySchemaGroupID",
               "ofType": null
             },
             "defaultValue": null,
