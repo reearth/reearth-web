@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import SelectField from "@reearth/components/atoms/SelectBox";
 import Text from "@reearth/components/atoms/Text";
+import { styled } from "@reearth/theme";
 
 export type PrimitiveItem = { name: string; extensionId: string; icon: string; pluginId: string };
 
@@ -22,10 +23,6 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
       selectPrimitiveType(type);
     }
   };
-
-  useEffect(() => {
-    console.log("type----", selectedPrimitiveType);
-  }, [selectedPrimitiveType]);
 
   const handleSubmit = useCallback(() => {
     const item = primitiveItems?.find(p => p.extensionId === selectedPrimitiveType);
@@ -52,7 +49,7 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
           />
         </Flex>
       </Flex>
-      <Button
+      <StyledButton
         type="button"
         text={intl.formatMessage({ defaultMessage: "import" })}
         buttonType="primary"
@@ -62,5 +59,10 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
     </Flex>
   );
 };
+
+const StyledButton = styled(Button)`
+  width: 80px;
+  margin-left: auto;
+`;
 
 export default DatasetPropertyItem;
