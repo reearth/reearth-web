@@ -12,7 +12,7 @@ import { Selected } from "@reearth/state";
 
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "dataset";
+export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -157,16 +157,6 @@ export default ({
         items: convert(w?.property, null),
         title: layerPropertyData?.layer?.name,
         enabled: !!w?.enabled,
-      };
-    }
-
-    if (mode === "dataset") {
-      return {
-        id: "dataset",
-        mode: "dataset",
-        propertyId: undefined,
-        items: [],
-        title: "hoge",
       };
     }
 
