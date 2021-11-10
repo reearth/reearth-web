@@ -18,6 +18,7 @@ export const GET_DATASETS = gql`
       before: $before
     ) {
       nodes {
+        id
         ...DatasetFragment
       }
       pageInfo {
@@ -34,9 +35,11 @@ export const GET_DATASETS = gql`
 export const GET_INSTALLED_PLUGINS = gql`
   query GetScenePluginsForDatasetInfoPane($projectId: ID!) {
     scene(projectId: $projectId) {
+      id
       plugins {
         pluginId
         plugin {
+          id
           ...PluginFragment
         }
       }
@@ -58,7 +61,6 @@ export const ADD_LAYER_GROUP_FROM_DATASET_SCHEMA = gql`
         pluginId: $pluginId
         extensionId: $extensionId
         linkedDatasetSchemaID: $datasetSchemaId
-        # index: $index
       }
     ) {
       layer {

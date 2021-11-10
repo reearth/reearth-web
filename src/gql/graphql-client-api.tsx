@@ -2303,7 +2303,7 @@ export type GetScenePluginsForDatasetInfoPaneQueryVariables = Exact<{
 }>;
 
 
-export type GetScenePluginsForDatasetInfoPaneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', plugins: Array<{ __typename?: 'ScenePlugin', pluginId: string, plugin?: { __typename?: 'Plugin', id: string, name: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, name: string, description: string, icon: string, translatedName: string }> } | null | undefined }> } | null | undefined };
+export type GetScenePluginsForDatasetInfoPaneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', pluginId: string, plugin?: { __typename?: 'Plugin', id: string, name: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, name: string, description: string, icon: string, translatedName: string }> } | null | undefined }> } | null | undefined };
 
 export type AddLayerGroupFromDatasetSchemaMutationVariables = Exact<{
   parentLayerId: Scalars['ID'];
@@ -4355,6 +4355,7 @@ export const GetDatasetsForDatasetInfoPaneDocument = gql`
     before: $before
   ) {
     nodes {
+      id
       ...DatasetFragment
     }
     pageInfo {
@@ -4402,9 +4403,11 @@ export type GetDatasetsForDatasetInfoPaneQueryResult = Apollo.QueryResult<GetDat
 export const GetScenePluginsForDatasetInfoPaneDocument = gql`
     query GetScenePluginsForDatasetInfoPane($projectId: ID!) {
   scene(projectId: $projectId) {
+    id
     plugins {
       pluginId
       plugin {
+        id
         ...PluginFragment
       }
     }
