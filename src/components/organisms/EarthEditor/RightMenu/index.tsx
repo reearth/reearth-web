@@ -35,8 +35,6 @@ const RightMenu: React.FC = () => {
     [intl],
   );
 
-  console.log("selecetd----", selected);
-
   return (
     <TabArea<Tab>
       menuAlignment="top"
