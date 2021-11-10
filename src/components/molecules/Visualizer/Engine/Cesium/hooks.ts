@@ -49,15 +49,6 @@ export default ({
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
-  const box: Box = {
-    box_x: property?.cameraLimiter?.box_x || -100.0,
-    box_y: property?.cameraLimiter?.box_y || 45.0,
-    box_z: property?.cameraLimiter?.box_z || 300000,
-    box_width: property?.cameraLimiter?.box_width || 300000,
-    box_length: property?.cameraLimiter?.box_length || 1000000,
-    box_height: property?.cameraLimiter?.box_height || 500000,
-  };
-
   // Ensure to set Cesium Ion access token before the first rendering
   useLayoutEffect(() => {
     const { ion } = property?.default ?? {};
@@ -92,6 +83,17 @@ export default ({
       );
     setImageryLayers(newTiles);
   }, [property?.tiles ?? []]);
+
+  const box = useMemo((): Box => {
+    return {
+      box_x: property?.cameraLimiter?.box_x || -100.0,
+      box_y: property?.cameraLimiter?.box_y || 45.0,
+      box_z: property?.cameraLimiter?.box_z || 300000,
+      box_width: property?.cameraLimiter?.box_width || 300000,
+      box_length: property?.cameraLimiter?.box_length || 1000000,
+      box_height: property?.cameraLimiter?.box_height || 500000,
+    };
+  }, [property?.cameraLimiter]);
 
   const terrainProvider = useMemo((): TerrainProvider | undefined => {
     return property?.default?.terrain ? createWorldTerrain() : new EllipsoidTerrainProvider();
@@ -268,7 +270,7 @@ export default ({
         duration: 1,
       });
     }
-  }, [camera, onCameraChange, engineAPI, property?.cameraLimiter]);
+  }, [camera, onCameraChange, engineAPI, box, property?.cameraLimiter?.enable_camera_limiter]);
 
   const cesiumDnD = useRef<CesiumDnD>();
   useEffect(() => {
