@@ -57,12 +57,11 @@ export default () => {
           datasetSchemaId: selectedDatasetSchemaId,
           pluginId,
           extensionId,
-          lang: intl.locale,
         },
         refetchQueries: ["GetLayers"],
       });
     },
-    [],
+    [addLayerGroupFromDatasetSchemaMutation, rootLayerId, selectedDatasetSchemaId],
   );
 
   return {
