@@ -10,11 +10,7 @@ import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
 
-export type Props = {
-  onLogin: (username: string, password: string) => void;
-};
-
-const Login: React.FC<Props> = ({ onLogin }) => {
+const Login: React.FC = () => {
   const intl = useIntl();
   const theme = useTheme();
   const [username, setUsername] = useState<string>("");
@@ -36,10 +32,6 @@ const Login: React.FC<Props> = ({ onLogin }) => {
     [],
   );
 
-  const handleLogin = useCallback(() => {
-    onLogin(username, password);
-  }, [username, password, onLogin]);
-
   return (
     <AuthPage>
       <Icon className="form-item" icon="logoColorful" size={60} />
@@ -49,34 +41,56 @@ const Login: React.FC<Props> = ({ onLogin }) => {
       <Text className="form-item" size="s" customColor>
         {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
       </Text>
-      <StyledInput
-        className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
-        color={theme.main.weak}
-        value={username}
-        autoFocus
-        onChange={handleUsernameInput}
-      />
-      <StyledInput
-        className="form-item"
-        placeholder={intl.formatMessage({ defaultMessage: "Password" })}
-        type="password"
-        autoComplete="new-password"
-        color={theme.main.weak}
-        value={password}
-        onChange={handlePasswordInput}
-      />
-      <StyledLink to={"/password-reset"} style={{ width: "100%", alignSelf: "left" }}>
-        <Text className="form-item" size="xs" color={theme.main.link}>
-          {intl.formatMessage({ defaultMessage: "Forgot password?" })}
-        </Text>
-      </StyledLink>
-      <StyledButton
-        className="form-item"
-        large
-        onClick={handleLogin}
-        text={intl.formatMessage({ defaultMessage: "Continue" })}
-      />
+      <StyledForm
+        id="login-form"
+        action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}
+        method="post"
+        onSubmit={() => {
+          console.log(username, "un");
+          console.log(password, "pw");
+        }}>
+        <input
+          type="hidden"
+          name="id"
+          value={new URLSearchParams(window.location.search).get("id") ?? undefined}
+        />
+        <StyledInput
+          className="form-item"
+          name="username"
+          placeholder={intl.formatMessage({ defaultMessage: "Username or email" })}
+          color={theme.main.weak}
+          value={username}
+          autoFocus
+          onChange={handleUsernameInput}
+        />
+        <StyledInput
+          className="form-item"
+          name="password"
+          placeholder={intl.formatMessage({ defaultMessage: "Password" })}
+          type="password"
+          autoComplete="new-password"
+          color={theme.main.weak}
+          value={password}
+          onChange={handlePasswordInput}
+        />
+        <div style={{ width: "100%" }}>
+          <StyledLink to={"/password-reset"}>
+            <Text
+              className="form-item"
+              size="xs"
+              color={theme.main.link}
+              otherProperties={{ display: "inline-block" }}>
+              {intl.formatMessage({ defaultMessage: "Forgot password?" })}
+            </Text>
+          </StyledLink>
+        </div>
+        <StyledButton
+          className="form-item"
+          large
+          type="submit"
+          text={intl.formatMessage({ defaultMessage: "Continue" })}
+        />
+      </StyledForm>
       <Footer className="form-item">
         <Text size="xs" color={theme.main.weak}>
           {intl.formatMessage({ defaultMessage: "Don't have an account?" })}
@@ -94,6 +108,16 @@ const Login: React.FC<Props> = ({ onLogin }) => {
     </AuthPage>
   );
 };
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  > .form-item {
+    margin-bottom: 24px;
+  }
+`;
 
 const StyledButton = styled(Button)`
   width: 100%;
