@@ -465,6 +465,9 @@ src:
           '373918798': Failed to delete the dataset.
           '517189107': Successfully added the dataset!
           '1235836640': Failed to add the dataset.
+        DatasetInfoPane:
+          '646776720': Successfully created layer group
+          '1221302534': Failed to create layer group
         Header:
           '329817781': >-
             Successfully unpublished your project. Now nobody can access your

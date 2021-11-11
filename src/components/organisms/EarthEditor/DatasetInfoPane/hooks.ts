@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from "react";
+import { useIntl } from "react-intl";
 
 import {
   useAddLayerGroupFromDatasetSchemaMutation,
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
 } from "@reearth/gql";
-import { intl } from "@reearth/locale";
 import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives } from "./convert";
@@ -17,7 +17,7 @@ export default () => {
   const selectedDatasetSchemaId = selected?.type === "dataset" ? selected.datasetSchemaId : "";
   const [rootLayerId, _] = useRootLayerId();
   const [, setNotification] = useNotification();
-
+  const intl = useIntl();
   const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
       datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
