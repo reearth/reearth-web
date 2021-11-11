@@ -124,7 +124,7 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
-  const cb = useMemo(
+  const throttledCameraChange = useMemo(
     () =>
       throttle((c: Camera) => {
         onCameraChange?.(c);
@@ -138,12 +138,15 @@ export default ({
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
+    // restore camera
+
+    // update global state
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
       emittedCamera.current = c;
-      cb(c);
+      throttledCameraChange(c);
     }
-  }, [cb, onCameraChange, camera]);
+  }, [throttledCameraChange, camera]);
 
   // camera
   useEffect(() => {
