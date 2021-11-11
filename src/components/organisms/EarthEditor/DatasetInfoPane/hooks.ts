@@ -14,7 +14,6 @@ export default () => {
   const [selected] = useSelected();
   const [project] = useProject();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
-  const intl = useIntl();
   const selectedDatasetSchemaId = selected?.type === "dataset" ? selected.datasetSchemaId : "";
   const [rootLayerId, _] = useRootLayerId();
 

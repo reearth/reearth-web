@@ -20,7 +20,10 @@ const processDataset = (fields: DatasetFragmentFragment["fields"]): { [key: stri
   const datasetFields = fields
     .map((f): [string, string] | undefined => {
       if (!f || !f.field) return undefined;
-      return [f.field.name, String(f.value)];
+      return [
+        f.field.name,
+        String(typeof f.value === "object" && "lat" in f.value ? Object.values(f.value) : f.value),
+      ];
     })
     .filter((f): f is [string, string] => !!f);
   return Object.fromEntries(datasetFields);
