@@ -10,7 +10,7 @@ import {
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
-import { isEqual } from "lodash-es";
+import { isEqual, throttle } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
@@ -124,6 +124,14 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
+  const cb = useMemo(
+    () =>
+      throttle((c: Camera) => {
+        onCameraChange?.(c);
+      }, 100),
+    [onCameraChange],
+  );
+
   // call onCameraChange event after moving camera
   const emittedCamera = useRef<Camera>();
   const handleCameraMoveEnd = useCallback(() => {
@@ -133,9 +141,9 @@ export default ({
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
       emittedCamera.current = c;
-      onCameraChange(c);
+      cb(c);
     }
-  }, [onCameraChange, camera]);
+  }, [cb, onCameraChange, camera]);
 
   // camera
   useEffect(() => {
@@ -259,7 +267,9 @@ export default ({
         Math.clamp(cameraPosition.y, minPos.y, maxPos.y),
         Math.clamp(cameraPosition.z, minPos.z, maxPos.z),
       );
-      viewer.camera.flyTo({
+      // console.log(destination);
+
+      viewer.camera.setView({
         destination,
         orientation: {
           heading: viewer.camera.heading,
@@ -267,7 +277,6 @@ export default ({
           roll: viewer.camera.roll,
           up: viewer.camera.up,
         },
-        duration: 1,
       });
     }
   }, [camera, onCameraChange, engineAPI, box, property?.cameraLimiter?.enable_camera_limiter]);
