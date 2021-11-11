@@ -5,7 +5,8 @@ import {
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
 } from "@reearth/gql";
-import { useProject, useRootLayerId, useSelected } from "@reearth/state";
+import { intl } from "@reearth/locale";
+import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives } from "./convert";
 
@@ -15,6 +16,7 @@ export default () => {
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
   const selectedDatasetSchemaId = selected?.type === "dataset" ? selected.datasetSchemaId : "";
   const [rootLayerId, _] = useRootLayerId();
+  const [, setNotification] = useNotification();
 
   const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
@@ -46,10 +48,17 @@ export default () => {
     return plugins ? processPrimitives(plugins) : [];
   }, [rawScene?.scene?.plugins]);
 
+  const messageCreateLayerGroupSuccess = intl.formatMessage({
+    defaultMessage: "Successfully created layer group",
+  });
+  const messageCreateLayerGroupError = intl.formatMessage({
+    defaultMessage: "Failed to create layer group",
+  });
+
   const handleAddLayerGroupFromDatasetSchema = useCallback(
     async (pluginId: string, extensionId: string) => {
       if (!rootLayerId || !selectedDatasetSchemaId) return;
-      await addLayerGroupFromDatasetSchemaMutation({
+      const result = await addLayerGroupFromDatasetSchemaMutation({
         variables: {
           parentLayerId: rootLayerId,
           datasetSchemaId: selectedDatasetSchemaId,
@@ -58,8 +67,20 @@ export default () => {
         },
         refetchQueries: ["GetLayers"],
       });
+      setNotification(
+        result.errors
+          ? { type: "error", text: messageCreateLayerGroupError }
+          : { type: "success", text: messageCreateLayerGroupSuccess },
+      );
     },
-    [addLayerGroupFromDatasetSchemaMutation, rootLayerId, selectedDatasetSchemaId],
+    [
+      addLayerGroupFromDatasetSchemaMutation,
+      messageCreateLayerGroupError,
+      messageCreateLayerGroupSuccess,
+      rootLayerId,
+      selectedDatasetSchemaId,
+      setNotification,
+    ],
   );
 
   return {
