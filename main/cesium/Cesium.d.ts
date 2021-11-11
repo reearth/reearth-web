@@ -6208,6 +6208,23 @@ export namespace EventHelper {
 }
 
 /**
+ * Flags to enable experimental features in CesiumJS. Stability and performance
+ * may not be optimal when these are enabled. Experimental features are subject
+ * to change without Cesium's standard deprecation policy.
+ * <p>
+ * Experimental features must still uphold Cesium's quality standards. Here
+ * are some guidelines:
+ * </p>
+ * <ul>
+ *   <li>Experimental features must have high unit test coverage like any other feature.</li>
+ *   <li>Experimental features are intended for large features where there is benefit of merging some of the code sooner (e.g. to avoid long-running staging branches)</li>
+ *   <li>Experimental flags should be short-lived. Make it clear in the PR what it would take to promote the feature to a regular feature.</li>
+ *   <li>To avoid cluttering the code, check the flag in as few places as possible. Ideally this would be a single place.</li>
+ * </ul>
+ */
+export var ExperimentalFeatures: any;
+
+/**
  * Constants to determine how an interpolated value is extrapolated
  * when querying outside the bounds of available data.
  */
@@ -26832,6 +26849,35 @@ export class Cesium3DTileFeature {
      */
     getProperty(name: string): any;
     /**
+     * Returns a copy of the feature's property with the given name, examining all
+     * the metadata from 3D Tiles 1.0 formats, the EXT_mesh_features and legacy
+     * EXT_feature_metadata glTF extensions, and the 3DTILES_metadata 3D Tiles
+     * extension. Metadata is checked against name from most specific to most
+     * general and the first match is returned. Metadata is checked in this order:
+     *
+     * <ol>
+     *   <li>Batch table (feature metadata) property by semantic</li>
+     *   <li>Batch table (feature metadata) property by property ID</li>
+     *   <li>Tile metadata property by semantic</li>
+     *   <li>Tile metadata property by property ID</li>
+     *   <li>Group metadata property by semantic</li>
+     *   <li>Group metadata property by property ID</li>
+     *   <li>Tileset metadata property by semantic</li>
+     *   <li>Tileset metadata property by property ID</li>
+     *   <li>Otherwise, return undefined</li>
+     * </ol>
+     * <p>
+     * For 3D Tiles Next details, see the {@link https://github.com/CesiumGS/3d-tiles/tree/3d-tiles-next/extensions/3DTILES_metadata|3DTILES_metadata Extension}
+     * for 3D Tiles, as well as the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_mesh_features|EXT_mesh_features Extension}
+     * for glTF. For the legacy glTF extension, see {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_feature_metadata|EXT_feature_metadata Extension}
+     * </p>
+     * @param content - The content for accessing the metadata
+     * @param batchId - The batch ID (or feature ID) of the feature to get a property for
+     * @param name - The semantic or property ID of the feature. Semantics are checked before property IDs in each granularity of metadata.
+     * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
+     */
+    static getPropertyInherited(content: Cesium3DTileContent, batchId: number, name: string): any;
+    /**
      * Sets the value of the feature's property with the given name.
      * <p>
      * If a property with the given name doesn't exist, it is created.
@@ -28431,6 +28477,15 @@ export class Cesium3DTileset {
      * });
      */
     style: Cesium3DTileStyle | undefined;
+    /**
+     * A custom shader to apply to all tiles in the tileset. Only used for
+     * contents that use {@link ModelExperimental}. Using custom shaders with a
+     * {@link Cesium3DTileStyle} may lead to undefined behavior.
+     * <p>
+     * To enable {@link ModelExperimental}, set {@link ExperimentalFeatures.enableModelExperimental} to <code>true</code>.
+     * </p>
+     */
+    customShader: CustomShader | undefined;
     /**
      * The maximum screen space error used to drive level of detail refinement.  This value helps determine when a tile
      * refines to its descendants, and therefore plays a major role in balancing performance with visual quality.
@@ -34738,6 +34793,354 @@ export enum ModelAnimationLoop {
 }
 
 /**
+ * An object describing a uniform, its type, and an initial value
+ * @property type - The Glsl type of the uniform.
+ * @property value - The initial value of the uniform
+ */
+export type UniformSpecifier = {
+    type: UniformType;
+    value: boolean | number | Cartesian2 | Cartesian3 | Cartesian4 | Matrix2 | Matrix3 | Matrix4 | TextureUniform;
+};
+
+/**
+ * A user defined GLSL shader used with {@link ModelExperimental} as well
+ * as {@link Cesium3DTileset}.
+ * <p>
+ * If texture uniforms are used, additional resource management must be done:
+ * </p>
+ * <ul>
+ *   <li>
+ *      The <code>update</code> function must be called each frame. When a
+ *      custom shader is passed to a {@link ModelExperimental} or a
+ *      {@link Cesium3DTileset}, this step is handled automaticaly
+ *   </li>
+ *   <li>
+ *      {@link CustomShader#destroy} must be called when the custom shader is
+ *      no longer needed to clean up GPU resources properly. The application
+ *      is responsible for calling this method.
+ *   </li>
+ * </ul>
+ * <p>
+ * To enable the use of {@link ModelExperimental} in {@link Cesium3DTileset}, set {@link ExperimentalFeatures.enableModelExperimental} to <code>true</code>.
+ * </p>
+ * @example
+ * var customShader = new CustomShader({
+ *   uniforms: {
+ *     u_colorIndex: {
+ *       type: Cesium.UniformType.FLOAT,
+ *       value: 1.0
+ *     },
+ *     u_normalMap: {
+ *       type: Cesium.UniformType.SAMPLER_2D,
+ *       value: new Cesium.TextureUniform({
+ *         url: "http://example.com/normal.png"
+ *       })
+ *     }
+ *   },
+ *   varyings: {
+ *     v_selectedColor: Cesium.VaryingType.VEC3
+ *   },
+ *   vertexShaderText: `
+ *   void vertexMain(VertexInput vsInput, inout vec3 position) {
+ *     v_selectedColor = mix(vsInput.attributes.color_0, vsInput.attributes.color_1, u_colorIndex);
+ *     position += 0.1 * vsInput.attributes.normal;
+ *   }
+ *   `,
+ *   fragmentShaderText: `
+ *   void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+ *     material.normal = texture2D(u_normalMap, fsInput.attributes.texCoord_0);
+ *     material.diffuse = v_selectedColor;
+ *   }
+ *   `
+ * });
+ * @param options - An object with the following options
+ * @param [options.mode = CustomShaderMode.MODIFY_MATERIAL] - The custom shader mode, which determines how the custom shader code is inserted into the fragment shader.
+ * @param [options.lightingModel] - The lighting model (e.g. PBR or unlit). If present, this overrides the default lighting for the model.
+ * @param [options.isTranslucent = false] - If set, the model will be rendered as translucent. This overrides the default settings for the model.
+ * @param [options.uniforms] - A dictionary for user-defined uniforms. The key is the uniform name that will appear in the GLSL code. The value is an object that describes the uniform type and initial value
+ * @param [options.varyings] - A dictionary for declaring additional GLSL varyings used in the shader. The key is the varying name that will appear in the GLSL code. The value is the data type of the varying. For each varying, the declaration will be added to the top of the shader automatically. The caller is responsible for assigning a value in the vertex shader and using the value in the fragment shader.
+ * @param [options.vertexShaderText] - The custom vertex shader as a string of GLSL code. It must include a GLSL function called vertexMain. See the example for the expected signature. If not specified, the custom vertex shader step will be skipped in the computed vertex shader.
+ * @param [options.fragmentShaderText] - The custom fragment shader as a string of GLSL code. It must include a GLSL function called fragmentMain. See the example for the expected signature. If not specified, the custom fragment shader step will be skipped in the computed fragment shader.
+ */
+export class CustomShader {
+    constructor(options: {
+        mode?: CustomShaderMode;
+        lightingModel?: LightingModel;
+        isTranslucent?: boolean;
+        uniforms?: {
+            [key: string]: UniformSpecifier;
+        };
+        varyings?: {
+            [key: string]: VaryingType;
+        };
+        vertexShaderText?: string;
+        fragmentShaderText?: string;
+    });
+    /**
+     * Update the value of a uniform declared in the shader
+     * @param uniformName - The GLSL name of the uniform. This must match one of the uniforms declared in the constructor
+     * @param value - The new value of the uniform.
+     */
+    setUniform(uniformName: string, value: boolean | number | Cartesian2 | Cartesian3 | Cartesian4 | Matrix2 | Matrix3 | Matrix4 | string | Resource): void;
+}
+
+/**
+ * A value determining how the custom shader interacts with the overall
+ * fragment shader. This is used by {@link CustomShaderPipelineStage}
+ */
+export const mode: CustomShaderMode;
+
+/**
+ * The lighting model to use when using the custom shader.
+ * This is used by {@link CustomShaderPipelineStage}
+ */
+export const lightingModel: LightingModel;
+
+/**
+ * Additional uniforms as declared by the user.
+ */
+export const uniforms: {
+    [key: string]: UniformSpecifier;
+};
+
+/**
+ * Additional varyings as declared by the user.
+ * This is used by {@link CustomShaderPipelineStage}
+ */
+export const varyings: {
+    [key: string]: VaryingType;
+};
+
+/**
+ * The user-defined GLSL code for the vertex shader
+ */
+export const vertexShaderText: string;
+
+/**
+ * The user-defined GLSL code for the fragment shader
+ */
+export const fragmentShaderText: string;
+
+/**
+ * Whether the shader should be rendered as translucent
+ */
+export const isTranslucent: boolean;
+
+/**
+ * An enum describing how the {@link CustomShader} will be added to the
+ * fragment shader. This determines how the shader interacts with the material.
+ */
+export enum CustomShaderMode {
+    /**
+     * The custom shader will be used to modify the results of the material stage
+     * before lighting is applied.
+     */
+    MODIFY_MATERIAL = "MODIFY_MATERIAL",
+    /**
+     * The custom shader will be used instead of the material stage. This is a hint
+     * to optimize out the material processing code.
+     */
+    REPLACE_MATERIAL = "REPLACE_MATERIAL"
+}
+
+/**
+ * The lighting model to use for lighting a {@link ModelExperimental}.
+ */
+export enum LightingModel {
+    /**
+     * Use unlit shading, i.e. skip lighting calculations. The model's
+     * diffuse color (assumed to be linear RGB, not sRGB) is used directly
+     * when computing <code>gl_FragColor</code>. The alpha mode is still
+     * applied.
+     */
+    UNLIT = 0,
+    /**
+     * Use physically-based rendering lighting calculations. This includes
+     * both PBR metallic roughness and PBR specular glossiness. Image-based
+     * lighting is also applied when possible.
+     */
+    PBR = 1
+}
+
+/**
+ * A 3D model. This is a new architecture that is more decoupled than the older {@link Model}. This class is still experimental.
+ * <p>
+ * Do not call this function directly, instead use the `from` functions to create
+ * the Model from your source data type.
+ * </p>
+ * @param options - Object with the following properties:
+ * @param options.resource - The Resource to the 3D model.
+ * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms the model from model to world coordinates.
+ * @param [options.debugShowBoundingVolume = false] - For debugging only. Draws the bounding sphere for each draw command in the model.
+ * @param [options.cull = true] - Whether or not to cull the model using frustum/horizon culling. If the model is part of a 3D Tiles tileset, this property will always be false, since the 3D Tiles culling system is used.
+ * @param [options.opaquePass = Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
+ * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
+ * @param [options.customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
+ * @param [options.content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
+ * @param [options.show = true] - Whether or not to render the model.
+ * @param [options.color] - A color that blends with the model's rendered color.
+ * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
+ * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
+ * @param [options.featureIdAttributeIndex = 0] - The index of the feature ID attribute to use for picking features per-instance or per-primitive.
+ * @param [options.featureIdTextureIndex = 0] - The index of the feature ID texture to use for picking features per-primitive.
+ */
+export class ModelExperimental {
+    constructor(options: {
+        resource: Resource;
+        modelMatrix?: Matrix4;
+        debugShowBoundingVolume?: boolean;
+        cull?: boolean;
+        opaquePass?: boolean;
+        allowPicking?: boolean;
+        customShader?: CustomShader;
+        content?: Cesium3DTileContent;
+        show?: boolean;
+        color?: Color;
+        colorBlendMode?: ColorBlendMode;
+        colorBlendAmount?: number;
+        featureIdAttributeIndex?: number;
+        featureIdTextureIndex?: number;
+    });
+    /**
+     * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
+     * and shader files were downloaded and the WebGL resources were created.  This is set to
+     * <code>true</code> right before {@link ModelExperimental#readyPromise} is resolved.
+     */
+    readonly ready: boolean;
+    /**
+     * Gets the promise that will be resolved when this model is ready to render, i.e. when the external resources
+     * have been downloaded and the WebGL resources are created.
+     * <p>
+     * This promise is resolved at the end of the frame before the first frame the model is rendered in.
+     * </p>
+     */
+    readonly readyPromise: Promise<ModelExperimental>;
+    /**
+     * The model's custom shader, if it exists. Using custom shaders with a {@link Cesium3DTileStyle}
+     * may lead to undefined behavior.
+     */
+    customShader: CustomShader;
+    /**
+     * The color to blend with the model's rendered color.
+     */
+    color: Color;
+    /**
+     * Defines how the color blends with the model.
+     */
+    colorBlendMode: Cesium3DTileColorBlendMode | ColorBlendMode;
+    /**
+     * Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
+     */
+    colorBlendAmount: number;
+    /**
+     * Gets the model's bounding sphere.
+     */
+    readonly boundingSphere: BoundingSphere;
+    /**
+     * This property is for debugging only; it is not for production use nor is it optimized.
+     * <p>
+     * Draws the bounding sphere for each draw command in the model.
+     * </p>
+     */
+    debugShowBoundingVolume: boolean;
+    /**
+     * Whether or not to render the model.
+     */
+    show: boolean;
+    /**
+     * The index of the feature ID attribute to use for picking features per-instance or per-primitive.
+     */
+    featureIdAttributeIndex: number;
+    /**
+     * The index of the feature ID texture to use for picking features per-primitive.
+     */
+    featureIdTextureIndex: number;
+    /**
+     * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
+     * get the draw commands needed to render this primitive.
+     * <p>
+     * Do not call this function directly.  This is documented just to
+     * list the exceptions that may be propagated when the scene is rendered:
+     * </p>
+     */
+    update(): void;
+    /**
+     * Returns true if this object was destroyed; otherwise, false.
+     * <br /><br />
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
+     */
+    isDestroyed(): boolean;
+    /**
+     * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
+     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+     * <br /><br />
+     * Once an object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
+     * @example
+     * model = model && model.destroy();
+     */
+    destroy(): void;
+    /**
+     * <p>
+     * Creates a model from a glTF asset.  When the model is ready to render, i.e., when the external binary, image,
+     * and shader files are downloaded and the WebGL resources are created, the {@link Model#readyPromise} is resolved.
+     * </p>
+     * <p>
+     * The model can be a traditional glTF asset with a .gltf extension or a Binary glTF using the .glb extension.
+     * @param options - Object with the following properties:
+     * @param options.gltf - A Resource/URL to a glTF/glb file, a binary glTF buffer, or a JSON object containing the glTF contents
+     * @param [options.basePath = ''] - The base path that paths in the glTF JSON are relative to.
+     * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms the model from model to world coordinates.
+     * @param [options.incrementallyLoadTextures = true] - Determine if textures may continue to stream in after the model is loaded.
+     * @param [options.releaseGltfJson = false] - When true, the glTF JSON is released once the glTF is loaded. This is is especially useful for cases like 3D Tiles, where each .gltf model is unique and caching the glTF JSON is not effective.
+     * @param [options.debugShowBoundingVolume = false] - For debugging only. Draws the bounding sphere for each draw command in the model.
+     * @param [options.cull = true] - Whether or not to cull the model using frustum/horizon culling. If the model is part of a 3D Tiles tileset, this property will always be false, since the 3D Tiles culling system is used.
+     * @param [options.opaquePass = Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
+     * @param [options.upAxis = Axis.Y] - The up-axis of the glTF model.
+     * @param [options.forwardAxis = Axis.Z] - The forward-axis of the glTF model.
+     * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
+     * @param [options.customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
+     * @param [options.content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
+     * @param [options.show = true] - Whether or not to render the model.
+     * @param [options.color] - A color that blends with the model's rendered color.
+     * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
+     * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
+     * @param [options.featureIdAttributeIndex = 0] - The index of the feature ID attribute to use for picking features per-instance or per-primitive.
+     * @param [options.featureIdTextureIndex = 0] - The index of the feature ID texture to use for picking features per-primitive.
+     * @returns The newly created model.
+     */
+    static fromGltf(options: {
+        gltf: string | Resource | Uint8Array | any;
+        basePath?: string | Resource;
+        modelMatrix?: Matrix4;
+        incrementallyLoadTextures?: boolean;
+        releaseGltfJson?: boolean;
+        debugShowBoundingVolume?: boolean;
+        cull?: boolean;
+        opaquePass?: boolean;
+        upAxis?: Axis;
+        forwardAxis?: Axis;
+        allowPicking?: boolean;
+        customShader?: CustomShader;
+        content?: Cesium3DTileContent;
+        show?: boolean;
+        color?: Color;
+        colorBlendMode?: ColorBlendMode;
+        colorBlendAmount?: number;
+        featureIdAttributeIndex?: number;
+        featureIdTextureIndex?: number;
+    }): ModelExperimental;
+}
+
+/**
+ * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
+ */
+export var style: Cesium3DTileStyle;
+
+/**
  * The 4x4 transformation matrix that transforms the model from model to world coordinates.
  * When this is the identity matrix, the model is drawn in world coordinates, i.e., Earth's Cartesian WGS84 coordinates.
  * Local reference frames can be used by providing a different transformation matrix, like that returned
@@ -34749,9 +35152,245 @@ export enum ModelAnimationLoop {
 export var modelMatrix: Matrix4;
 
 /**
+ * A feature of a {@link ModelExperimental}.
+ * <p>
+ * Provides access to a feature's properties stored in the model's feature table.
+ * </p>
+ * <p>
+ * Modifications to a <code>ModelFeature</code> object have the lifetime of the model.
+ * </p>
+ * <p>
+ * Do not construct this directly. Access it through picking using {@link Scene#pick}.
+ * </p>
+ * @example
+ * // On mouse over, display all the properties for a feature in the console log.
+ * handler.setInputAction(function(movement) {
+ *     var feature = scene.pick(movement.endPosition);
+ *     if (feature instanceof Cesium.ModelFeature) {
+ *         console.log(feature);
+ *     }
+ * }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+ * @param options - Object with the following properties:
+ * @param options.model - The model the feature belongs to.
+ * @param options.featureId - The unique integral identifier for this feature.
+ */
+export class ModelFeature {
+    constructor(options: {
+        model: ModelExperimental;
+        featureId: number;
+    });
+    /**
+     * Gets or sets if the feature will be shown. This is set for all features
+     * when a style's show is evaluated.
+     */
+    show: boolean;
+    /**
+     * Gets or sets the highlight color multiplied with the feature's color.  When
+     * this is white, the feature's color is not changed. This is set for all features
+     * when a style's color is evaluated.
+     */
+    color: Color;
+    /**
+     * Returns whether the feature contains this property.
+     * @param name - The case-sensitive name of the property.
+     * @returns Whether the feature contains this property.
+     */
+    hasProperty(name: string): boolean;
+    /**
+     * Returns a copy of the value of the feature's property with the given name.
+     * @example
+     * // Display all the properties for a feature in the console log.
+     * var propertyNames = feature.getPropertyNames();
+     * var length = propertyNames.length;
+     * for (var i = 0; i < length; ++i) {
+     *     var propertyName = propertyNames[i];
+     *     console.log(propertyName + ': ' + feature.getProperty(propertyName));
+     * }
+     * @param name - The case-sensitive name of the property.
+     * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
+     */
+    getProperty(name: string): any;
+    /**
+     * Returns a copy of the feature's property with the given name, examining all
+     * the metadata from the EXT_mesh_features and legacy EXT_feature_metadata glTF
+     * extensions. Metadata is checked against name from most specific to most
+     * general and the first match is returned. Metadata is checked in this order:
+     * <ol>
+     *   <li>Feature metadata property by semantic</li>
+     *   <li>Feature metadata property by property ID</li>
+     * </ol>
+     * <p>
+     * See the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_mesh_features|EXT_mesh_features Extension} as well as the
+     * previous {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_feature_metadata|EXT_feature_metadata Extension} for glTF.
+     * </p>
+     * @param name - The semantic or property ID of the feature. Semantics are checked before property IDs in each granularity of metadata.
+     * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
+     */
+    getPropertyInherited(name: string): any;
+    /**
+     * Returns an array of property names for the feature.
+     * @param [results] - An array into which to store the results.
+     * @returns The names of the feature's properties.
+     */
+    getPropertyNames(results?: string[]): string[];
+    /**
+     * Sets the value of the feature's property with the given name.
+     * @example
+     * var height = feature.getProperty('Height'); // e.g., the height of a building
+     * @example
+     * var name = 'clicked';
+     * if (feature.getProperty(name)) {
+     *     console.log('already clicked');
+     * } else {
+     *     feature.setProperty(name, true);
+     *     console.log('first click');
+     * }
+     * @param name - The case-sensitive name of the property.
+     * @param value - The value of the property that will be copied.
+     * @returns <code>true</code> if the property was set, <code>false</code> otherwise.
+     */
+    setProperty(name: string, value: any): boolean;
+}
+
+/**
  * The bounding sphere that contains all the vertices in this primitive.
  */
 export var boundingSphere: BoundingSphere;
+
+/**
+ * A simple struct that serves as a value of a <code>sampler2D</code>-valued
+ * uniform. This is used with {@link CustomShader} and {@link TextureManager}
+ * @param options - An object with the following properties:
+ * @param [options.typedArray] - A typed array storing the contents of a texture. Values are stored in row-major order. Since WebGL uses a y-up convention for textures, rows are listed from bottom to top.
+ * @param [options.width] - The width of the image. Required when options.typedArray is present
+ * @param [options.height] - The height of the image. Required when options.typedArray is present.
+ * @param [options.url] - A URL string or resource pointing to a texture image.
+ * @param [options.repeat = true] - When defined, the texture sampler will be set to wrap in both directions
+ * @param [options.pixelFormat = PixelFormat.RGBA] - When options.typedArray is defined, this is used to determine the pixel format of the texture
+ * @param [options.pixelDatatype = PixelDatatype.UNSIGNED_BYTE] - When options.typedArray is defined, this is the data type of pixel values in the typed array.
+ * @param [textureMinificationFilter = TextureMinificationFilter.LINEAR] - The minification filter of the texture sampler.
+ * @param [textureMagnificationFilter = TextureMagnificationFilter.LINEAR] - The magnification filter of the texture sampler.
+ * @param [options.maximumAnisotropy = 1.0] - The maximum anisotropy of the texture sampler
+ */
+export class TextureUniform {
+    constructor(options: {
+        typedArray?: Uint8Array;
+        width?: number;
+        height?: number;
+        url?: string | Resource;
+        repeat?: boolean;
+        pixelFormat?: PixelFormat;
+        pixelDatatype?: PixelDatatype;
+        maximumAnisotropy?: number;
+    }, textureMinificationFilter?: TextureMinificationFilter, textureMagnificationFilter?: TextureMagnificationFilter);
+}
+
+/**
+ * An enum of the basic GLSL uniform types. These can be used with
+ * {@link CustomShader} to declare user-defined uniforms.
+ */
+export enum UniformType {
+    /**
+     * A single floating point value.
+     */
+    FLOAT = "float",
+    /**
+     * A vector of 2 floating point values.
+     */
+    VEC2 = "vec2",
+    /**
+     * A vector of 3 floating point values.
+     */
+    VEC3 = "vec3",
+    /**
+     * A vector of 4 floating point values.
+     */
+    VEC4 = "vec4",
+    /**
+     * A single integer value
+     */
+    INT = "int",
+    /**
+     * A vector of 2 integer values.
+     */
+    INT_VEC2 = "ivec2",
+    /**
+     * A vector of 3 integer values.
+     */
+    INT_VEC3 = "ivec3",
+    /**
+     * A vector of 4 integer values.
+     */
+    INT_VEC4 = "ivec4",
+    /**
+     * A single boolean value.
+     */
+    BOOL = "bool",
+    /**
+     * A vector of 2 boolean values.
+     */
+    BOOL_VEC2 = "bvec2",
+    /**
+     * A vector of 3 boolean values.
+     */
+    BOOL_VEC3 = "bvec3",
+    /**
+     * A vector of 4 boolean values.
+     */
+    BOOL_VEC4 = "bvec4",
+    /**
+     * A 2x2 matrix of floating point values.
+     */
+    MAT2 = "mat2",
+    /**
+     * A 3x3 matrix of floating point values.
+     */
+    MAT3 = "mat2",
+    /**
+     * A 3x3 matrix of floating point values.
+     */
+    MAT4 = "mat4",
+    /**
+     * A 2D sampled texture.
+     */
+    SAMPLER_2D = "sampler2D",
+    SAMPLER_CUBE = "samplerCube"
+}
+
+/**
+ * An enum for the GLSL varying types. These can be used for declaring varyings
+ * in {@link CustomShader}
+ */
+export enum VaryingType {
+    /**
+     * A single floating point value.
+     */
+    FLOAT = "float",
+    /**
+     * A vector of 2 floating point values.
+     */
+    VEC2 = "vec2",
+    /**
+     * A vector of 3 floating point values.
+     */
+    VEC3 = "vec3",
+    /**
+     * A vector of 4 floating point values.
+     */
+    VEC4 = "vec4",
+    /**
+     * A 2x2 matrix of floating point values.
+     */
+    MAT2 = "mat2",
+    /**
+     * A 3x3 matrix of floating point values.
+     */
+    MAT3 = "mat2",
+    /**
+     * A 3x3 matrix of floating point values.
+     */
+    MAT4 = "mat4"
+}
 
 /**
  * A model's material with modifiable parameters.  A glTF material
@@ -43383,6 +44022,14 @@ declare module "cesium/Source/Widgets/Command" { import { Command } from 'cesium
 declare module "cesium/Source/Widgets/SvgPathBindingHandler" { import { SvgPathBindingHandler } from 'cesium'; export default SvgPathBindingHandler; }
 declare module "cesium/Source/Widgets/ToggleButtonViewModel" { import { ToggleButtonViewModel } from 'cesium'; export default ToggleButtonViewModel; }
 declare module "cesium/Source/Widgets/createCommand" { import { createCommand } from 'cesium'; export default createCommand; }
+declare module "cesium/Source/Scene/ModelExperimental/CustomShader" { import { CustomShader } from 'cesium'; export default CustomShader; }
+declare module "cesium/Source/Scene/ModelExperimental/CustomShaderMode" { import { CustomShaderMode } from 'cesium'; export default CustomShaderMode; }
+declare module "cesium/Source/Scene/ModelExperimental/LightingModel" { import { LightingModel } from 'cesium'; export default LightingModel; }
+declare module "cesium/Source/Scene/ModelExperimental/ModelExperimental" { import { ModelExperimental } from 'cesium'; export default ModelExperimental; }
+declare module "cesium/Source/Scene/ModelExperimental/ModelFeature" { import { ModelFeature } from 'cesium'; export default ModelFeature; }
+declare module "cesium/Source/Scene/ModelExperimental/TextureUniform" { import { TextureUniform } from 'cesium'; export default TextureUniform; }
+declare module "cesium/Source/Scene/ModelExperimental/UniformType" { import { UniformType } from 'cesium'; export default UniformType; }
+declare module "cesium/Source/Scene/ModelExperimental/VaryingType" { import { VaryingType } from 'cesium'; export default VaryingType; }
 declare module "cesium/Source/Widgets/Animation/Animation" { import { Animation } from 'cesium'; export default Animation; }
 declare module "cesium/Source/Widgets/Animation/AnimationViewModel" { import { AnimationViewModel } from 'cesium'; export default AnimationViewModel; }
 declare module "cesium/Source/Widgets/BaseLayerPicker/BaseLayerPicker" { import { BaseLayerPicker } from 'cesium'; export default BaseLayerPicker; }
