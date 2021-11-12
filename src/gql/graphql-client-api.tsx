@@ -2712,7 +2712,7 @@ export type ProjectQueryVariables = Exact<{
 }>;
 
 
-export type ProjectQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null | undefined, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } | null | undefined> } };
+export type ProjectQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null | undefined, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null | undefined } | null | undefined> } };
 
 export type UpdateProjectBasicAuthMutationVariables = Exact<{
   projectId: Scalars['ID'];
@@ -6285,6 +6285,9 @@ export const ProjectDocument = gql`
       publicImage
       alias
       publishmentStatus
+      scene {
+        id
+      }
     }
   }
 }
