@@ -6,7 +6,7 @@ import {
   PluginFragmentFragment,
 } from "@reearth/gql";
 
-const excludePrimitiveType = ["polyline", "polygon", "rect"] as const;
+const excludePrimitiveType = ["polyline", "polygon", "rect"];
 
 export const processDatasets = (
   rawDatasets: Maybe<DatasetFragmentFragment | undefined>[] | undefined,
