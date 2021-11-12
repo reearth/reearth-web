@@ -6,6 +6,8 @@ import {
   PluginFragmentFragment,
 } from "@reearth/gql";
 
+const excludePrimitiveType = ["polyline", "polygon", "rect"] as const;
+
 export const processDatasets = (
   rawDatasets: Maybe<DatasetFragmentFragment | undefined>[] | undefined,
 ): { [key: string]: string }[] => {
@@ -47,6 +49,7 @@ export const processPrimitives = (
       .flatMap(p =>
         p?.extensions
           .filter(e => e.type === PluginExtensionType.Primitive)
+          .filter(e => !excludePrimitiveType.includes(e.extensionId))
           .map(e => ({ name: e.name, extensionId: e.extensionId, icon: e.icon, pluginId: p.id })),
       )
       .filter((e): e is PrimitiveItem => !!e) || [];
