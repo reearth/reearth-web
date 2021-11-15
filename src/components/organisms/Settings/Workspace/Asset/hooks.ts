@@ -31,8 +31,24 @@ export default (params: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const { data, refetch } = useAssetsQuery({ variables: { teamId: teamId ?? "" }, skip: !teamId });
-  const assets = data?.assets.nodes.filter(Boolean).reverse() as AssetNodes;
+  const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
+    variables: { teamId: teamId ?? "" },
+    notifyOnNetworkStatusChange: true,
+    skip: !teamId,
+  });
+  const hasNextPage = data?.assets.pageInfo.hasNextPage;
+  const isRefetching = networkStatus === 3;
+  const assets = data?.assets.edges.map(e => e.node).reverse() as AssetNodes;
+
+  const getMoreAssets = useCallback(() => {
+    fetchMore({
+      variables: {
+        first: 5,
+        after: data?.assets.pageInfo.endCursor,
+        delay: true,
+      },
+    });
+  }, [data?.assets.pageInfo, fetchMore]);
 
   const [createAssetMutation] = useCreateAssetMutation();
 
@@ -103,5 +119,8 @@ export default (params: Params) => {
     assets,
     createAssets,
     removeAsset,
+    getMoreAssets,
+    hasNextPage,
+    isLoading: loading ?? isRefetching,
   };
 };

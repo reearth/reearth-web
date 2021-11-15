@@ -15,9 +15,19 @@ type Props = {
   assets?: Asset[];
   onCreate?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
+  onGetMoreAssets: () => void;
+  hasNextPage?: boolean;
+  isLoading?: boolean;
 };
 
-const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {
+const AssetSection: React.FC<Props> = ({
+  assets = [],
+  onCreate,
+  onRemove,
+  onGetMoreAssets,
+  hasNextPage,
+  isLoading,
+}) => {
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
 
   return (
@@ -25,10 +35,13 @@ const AssetSection: React.FC<Props> = ({ assets = [], onCreate, onRemove }) => {
       assets={assets}
       onCreateAsset={onCreate}
       onRemove={onRemove}
+      onGetMoreAssets={onGetMoreAssets}
       selectedAssets={selectedAssets}
       isMultipleSelectable
       selectAsset={selectAsset}
       isHeightFixed={true}
+      hasNextPage={hasNextPage}
+      isLoading={isLoading}
     />
   );
 };

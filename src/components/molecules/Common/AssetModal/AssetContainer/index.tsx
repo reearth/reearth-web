@@ -5,6 +5,7 @@ import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
 import SearchBar from "@reearth/components/atoms/SearchBar";
 import Text from "@reearth/components/atoms/Text";
 import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
@@ -26,11 +27,14 @@ export type Props = {
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
+  onGetMoreAssets: () => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
   isHeightFixed?: boolean;
+  hasNextPage?: boolean;
+  isLoading?: boolean;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -39,11 +43,14 @@ const AssetContainer: React.FC<Props> = ({
   accept,
   onCreateAsset,
   onRemove,
+  onGetMoreAssets,
   initialAsset,
   selectedAssets,
   selectAsset,
   fileType,
   isHeightFixed,
+  hasNextPage,
+  isLoading,
 }) => {
   const intl = useIntl();
   const {
@@ -137,7 +144,7 @@ const AssetContainer: React.FC<Props> = ({
         <SearchBar onChange={handleSearch} />
       </NavBar>
       <AssetWrapper isHeightFixed={isHeightFixed}>
-        {!filteredAssets || filteredAssets.length < 1 ? (
+        {!isLoading && (!filteredAssets || filteredAssets.length < 1) ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
               {fileType === "image"
@@ -176,7 +183,14 @@ const AssetContainer: React.FC<Props> = ({
                 ))}
           </AssetList>
         )}
-        <Divider margin="0" />
+        {isLoading && <StyledLoading relative />}
+        {hasNextPage ? (
+          <button style={{ background: "white" }} onClick={onGetMoreAssets}>
+            load more
+          </button>
+        ) : (
+          <Divider margin="0" />
+        )}
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}
@@ -248,6 +262,10 @@ const StyledIcon = styled(Icon)<{ selected?: boolean }>`
     background: ${({ theme }) => theme.main.paleBg};
     color: ${({ theme }) => theme.main.text};
   }
+`;
+
+const StyledLoading = styled(Loading)`
+  margin: 52px auto;
 `;
 
 const Template = styled(Flex)`

@@ -1,6 +1,7 @@
 import { ApolloProvider, ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { relayStylePagination } from "@apollo/client/utilities";
 import { SentryLink } from "apollo-link-sentry";
 import { createUploadLink } from "apollo-upload-client";
 import React from "react";
@@ -53,6 +54,11 @@ const Provider: React.FC = ({ children }) => {
           layers: {
             merge: false,
           },
+        },
+      },
+      Query: {
+        fields: {
+          assets: relayStylePagination(),
         },
       },
     },
