@@ -6,6 +6,10 @@ import {
   EllipsoidTerrainProvider,
   Cesium3DTileFeature,
   Cartesian3,
+  Math,
+  Cartographic,
+  Rectangle,
+  Camera as CesiumCamera,
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -22,6 +26,8 @@ import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
 import imagery from "./imagery";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
+
+// import { PolygonLimit } from ".";
 
 export default ({
   ref,
@@ -45,6 +51,19 @@ export default ({
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
+
+  // const polygonLimit = useMemo((): PolygonLimit => {
+  //   return {
+  //     bottom_left_x: property?.cameraLimiter?.bottom_left_x || -99.0,
+  //     bottom_left_y: property?.cameraLimiter?.bottom_left_y || 30.0,
+  //     bottom_right_x: property?.cameraLimiter?.top_right_x || -85.0,
+  //     bottom_right_y: property?.cameraLimiter?.bottom_left_y || 30.0,
+  //     top_right_x: property?.cameraLimiter?.top_right_x || -85.0,
+  //     top_right_y: property?.cameraLimiter?.top_right_y || 40.0,
+  //     top_left_x: property?.cameraLimiter?.bottom_left_x || -99.0,
+  //     top_left_y: property?.cameraLimiter?.top_right_y || 40.0,
+  //   };
+  // }, [property?.cameraLimiter]);
 
   // Ensure to set Cesium Ion access token before the first rendering
   useLayoutEffect(() => {
@@ -232,6 +251,75 @@ export default ({
     };
   }, [handleLayerDrag, handleLayerDrop, isLayerDraggable]);
 
+  const viewBoundaries = useMemo((): Rectangle | undefined => {
+    const viewer = cesium?.current?.cesiumElement;
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !property?.cameraLimiter?.show_helper ||
+      !property?.cameraLimiter?.target_area
+    )
+      return undefined;
+    const camera = new CesiumCamera(viewer.scene);
+    camera.setView({
+      destination: Cartesian3.fromDegrees(
+        property?.cameraLimiter?.target_area.lng,
+        property?.cameraLimiter?.target_area.lat,
+        property?.cameraLimiter?.target_area.height,
+      ),
+      orientation: {
+        heading: property?.cameraLimiter?.target_area.heading,
+        pitch: property?.cameraLimiter?.target_area.pitch,
+        roll: property?.cameraLimiter?.target_area.roll,
+        up: camera.up,
+      },
+    });
+
+    return camera.computeViewRectangle();
+  }, [property?.cameraLimiter?.show_helper, property?.cameraLimiter?.target_area]);
+
+  useEffect(() => {
+    const camera = getCamera(cesium?.current?.cesiumElement);
+    const viewer = cesium?.current?.cesiumElement;
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !onCameraChange ||
+      !property?.cameraLimiter?.enable_camera_limiter ||
+      !viewBoundaries
+    )
+      return;
+    if (camera) {
+      const cameraPositionCartographic = Cartographic.fromDegrees(
+        camera?.lng,
+        camera?.lat,
+        camera?.height,
+      );
+      const destination = new Cartographic(
+        Math.clamp(
+          cameraPositionCartographic.longitude,
+          viewBoundaries?.west,
+          viewBoundaries?.east,
+        ),
+        Math.clamp(
+          cameraPositionCartographic.latitude,
+          viewBoundaries?.south,
+          viewBoundaries?.north,
+        ),
+        cameraPositionCartographic.height,
+      );
+      viewer.camera.setView({
+        destination: Cartographic.toCartesian(destination),
+        orientation: {
+          heading: viewer.camera.heading,
+          pitch: viewer.camera.pitch,
+          roll: viewer.camera.roll,
+          up: viewer.camera.up,
+        },
+      });
+    }
+  }, [camera, onCameraChange, engineAPI, property?.cameraLimiter?.enable_camera_limiter]);
+
   return {
     terrainProvider,
     backgroundColor,
@@ -241,6 +329,7 @@ export default ({
     handleUnmount,
     handleClick,
     handleCameraMoveEnd,
+    viewBoundaries,
   };
 };
 

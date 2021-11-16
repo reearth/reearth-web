@@ -1,4 +1,4 @@
-import { ScreenSpaceEventType } from "cesium";
+import { Color, Rectangle, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -13,6 +13,9 @@ import {
   Camera,
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
+  Entity,
+  RectangleGraphics,
+  ScreenSpaceCameraController,
 } from "resium";
 
 import type { EngineProps, Ref as EngineRef } from "..";
@@ -45,6 +48,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     terrainProvider,
     backgroundColor,
     imageryLayers,
+    viewBoundaries,
     cesium,
     handleMount,
     handleUnmount,
@@ -98,7 +102,18 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
-        <Camera onChange={handleCameraMoveEnd} />
+
+        <ScreenSpaceCameraController
+          maximumZoomDistance={
+            property?.cameraLimiter?.enable_camera_limiter
+              ? property.cameraLimiter?.target_area?.height || Number.POSITIVE_INFINITY
+              : Number.POSITIVE_INFINITY
+          }></ScreenSpaceCameraController>
+
+        <Camera
+          onChange={handleCameraMoveEnd}
+          percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.01 : 0.5}
+        />
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
@@ -107,6 +122,33 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         />
         <Sun show={property?.atmosphere?.enable_sun ?? true} />
         <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
+        {property?.cameraLimiter?.show_helper &&
+          property?.cameraLimiter?.target_area &&
+          viewBoundaries && (
+            <>
+              <Entity>
+                <RectangleGraphics
+                  coordinates={viewBoundaries}
+                  fill={false}
+                  outline={true}
+                  outlineWidth={3}
+                  outlineColor={Color.RED}></RectangleGraphics>
+              </Entity>
+              <Entity>
+                <RectangleGraphics
+                  coordinates={Rectangle.fromRadians(
+                    viewBoundaries.west - (viewBoundaries.east - viewBoundaries.west) / 2,
+                    viewBoundaries.south - (viewBoundaries.north - viewBoundaries.south) / 2,
+                    viewBoundaries.east + (viewBoundaries.east - viewBoundaries.west) / 2,
+                    viewBoundaries.north + (viewBoundaries.north - viewBoundaries.south) / 2,
+                  )}
+                  fill={false}
+                  outline={true}
+                  outlineWidth={3}
+                  outlineColor={Color.RED}></RectangleGraphics>
+              </Entity>
+            </>
+          )}
         <Globe
           terrainProvider={terrainProvider}
           depthTestAgainstTerrain={!!property?.default?.depthTestAgainstTerrain}
