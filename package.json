@@ -172,7 +172,7 @@
         "formik": "^2.2.6",
         "github-markdown-css": "^5.0.0",
         "graphiql": "^1.5.1",
-        "graphql": "^15.6.1",
+        "graphql": "^16.0.1",
         "jotai": "^1.4.3",
         "leaflet": "^1.7.1",
         "lodash-es": "^4.17.20",
