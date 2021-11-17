@@ -117,7 +117,7 @@
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-react": "^7.27.0",
         "eslint-plugin-react-hooks": "^4.3.0",
-        "eslint-plugin-testing-library": "^4.12.4",
+        "eslint-plugin-testing-library": "^5.0.0",
         "extract-react-intl-messages": "^4.1.1",
         "file-loader": "^6.1.0",
         "hard-source-webpack-plugin": "^0.13.1",
