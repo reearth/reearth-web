@@ -163,7 +163,7 @@
         "apollo-link-sentry": "^3.0.2",
         "apollo-upload-client": "^16.0.0",
         "array-move": "^4.0.0",
-        "axios": "^0.23.0",
+        "axios": "^0.24.0",
         "cesium": "^1.87.1",
         "cesium-dnd": "1.0.3",
         "core-js": "^3.19.1",
