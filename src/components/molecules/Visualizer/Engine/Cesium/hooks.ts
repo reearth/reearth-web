@@ -13,7 +13,7 @@ import {
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
-import { isEqual } from "lodash-es";
+import { isEqual, throttle } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
@@ -51,19 +51,6 @@ export default ({
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
-
-  // const polygonLimit = useMemo((): PolygonLimit => {
-  //   return {
-  //     bottom_left_x: property?.cameraLimiter?.bottom_left_x || -99.0,
-  //     bottom_left_y: property?.cameraLimiter?.bottom_left_y || 30.0,
-  //     bottom_right_x: property?.cameraLimiter?.top_right_x || -85.0,
-  //     bottom_right_y: property?.cameraLimiter?.bottom_left_y || 30.0,
-  //     top_right_x: property?.cameraLimiter?.top_right_x || -85.0,
-  //     top_right_y: property?.cameraLimiter?.top_right_y || 40.0,
-  //     top_left_x: property?.cameraLimiter?.bottom_left_x || -99.0,
-  //     top_left_y: property?.cameraLimiter?.top_right_y || 40.0,
-  //   };
-  // }, [property?.cameraLimiter]);
 
   // Ensure to set Cesium Ion access token before the first rendering
   useLayoutEffect(() => {
@@ -129,6 +116,14 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
+  const throttledCameraChange = useMemo(
+    () =>
+      throttle((c: Camera) => {
+        onCameraChange?.(c);
+      }, 50),
+    [onCameraChange],
+  );
+
   // call onCameraChange event after moving camera
   const emittedCamera = useRef<Camera>();
   const handleCameraMoveEnd = useCallback(() => {
@@ -138,9 +133,9 @@ export default ({
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
       emittedCamera.current = c;
-      onCameraChange(c);
+      throttledCameraChange(c);
     }
-  }, [onCameraChange, camera]);
+  }, [throttledCameraChange, camera]);
 
   // camera
   useEffect(() => {
@@ -253,6 +248,7 @@ export default ({
 
   const viewBoundaries = useMemo((): Rectangle | undefined => {
     const viewer = cesium?.current?.cesiumElement;
+
     if (
       !viewer ||
       viewer.isDestroyed() ||
@@ -276,7 +272,12 @@ export default ({
     });
 
     return camera.computeViewRectangle();
-  }, [property?.cameraLimiter?.show_helper, property?.cameraLimiter?.target_area]);
+  }, [
+    property?.cameraLimiter?.show_helper,
+    property?.cameraLimiter?.target_area,
+    cesium?.current?.cesiumElement?.canvas?.clientWidth,
+    cesium?.current?.cesiumElement?.canvas?.clientHeight,
+  ]);
 
   useEffect(() => {
     const camera = getCamera(cesium?.current?.cesiumElement);
