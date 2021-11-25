@@ -23,3 +23,12 @@ export const Default = () => (
     ))}
   </Select>
 );
+export const Searchable = () => (
+  <Select value="0" onChange={action("onchange")} searchable>
+    {items.map(({ value, label }) => (
+      <li key={value} value={value}>
+        {label}
+      </li>
+    ))}
+  </Select>
+);
