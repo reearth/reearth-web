@@ -23,6 +23,21 @@ const addItem = (value: string) => {
   sampleItems.push({ value, label: value });
 };
 
+const handleSelect = (value: string) => {
+  console.log("select ", value);
+};
+
+const handleCreate = (value: string) => {
+  console.log("create ", value);
+  addItem(value);
+};
+
 export const Default: Story<Props<string>> = () => {
-  return <AutoComplete items={sampleItems} onCreate={addItem} />;
+  return <AutoComplete items={sampleItems} onCreate={handleCreate} onSelect={handleSelect} />;
+};
+
+export const Creatable: Story<Props<string>> = () => {
+  return (
+    <AutoComplete items={sampleItems} onCreate={handleCreate} onSelect={handleSelect} creatable />
+  );
 };
