@@ -32,7 +32,7 @@ export default ({ projectId }: Params) => {
   const teamId = currentTeam?.id;
 
   const { data } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 

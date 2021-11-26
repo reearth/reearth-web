@@ -105,7 +105,7 @@ export default (teamId?: string) => {
   );
 
   const { data: projectData } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 

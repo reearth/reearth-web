@@ -2778,6 +2778,10 @@ export type UninstallPluginMutation = { __typename?: 'Mutation', uninstallPlugin
 
 export type ProjectQueryVariables = Exact<{
   teamId: Scalars['ID'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
 }>;
 
 
@@ -6342,8 +6346,14 @@ export type UninstallPluginMutationHookResult = ReturnType<typeof useUninstallPl
 export type UninstallPluginMutationResult = Apollo.MutationResult<UninstallPluginMutation>;
 export type UninstallPluginMutationOptions = Apollo.BaseMutationOptions<UninstallPluginMutation, UninstallPluginMutationVariables>;
 export const ProjectDocument = gql`
-    query Project($teamId: ID!) {
-  projects(teamId: $teamId, first: 0, last: 100) {
+    query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  projects(
+    teamId: $teamId
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+  ) {
     nodes {
       id
       name
@@ -6379,6 +6389,10 @@ export const ProjectDocument = gql`
  * const { data, loading, error } = useProjectQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
  *   },
  * });
  */
