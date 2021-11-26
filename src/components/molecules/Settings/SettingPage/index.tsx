@@ -7,22 +7,30 @@ import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
 
-type Props = {} & HeaderProps;
+type Props = {
+  onInfiniteScroll?: () => void;
+} & HeaderProps;
 
 const SettingPage: React.FC<Props> = ({
   children,
   currentTeam,
   currentProject,
   sceneId,
+  onInfiniteScroll,
   ...props
 }) => {
-  const center = currentProject && (
-    <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
-  );
-
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = () => {
     setIsOpen(o => !o);
+  };
+
+  const handleScroll = (
+    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+    onLoadMore?: () => void,
+  ) => {
+    if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
+      onLoadMore?.();
+    }
   };
 
   return (
@@ -37,9 +45,11 @@ const SettingPage: React.FC<Props> = ({
             </StyledLink>
           )
         }
-        center={center}
+        center={
+          currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
+        }
       />
-      <BodyWrapper>
+      <BodyWrapper onScroll={e => handleScroll(e, onInfiniteScroll)}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>

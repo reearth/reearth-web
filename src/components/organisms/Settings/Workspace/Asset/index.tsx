@@ -25,7 +25,7 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
   } = useHooks({ teamId });
 
   return (
-    <SettingPage teamId={teamId} projectId={currentProject?.id}>
+    <SettingPage teamId={teamId} projectId={currentProject?.id} onInfiniteScroll={getMoreAssets}>
       <SettingsHeader
         title={intl.formatMessage({ defaultMessage: "Assets" })}
         currentWorkspace={currentTeam}
@@ -34,7 +34,6 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
         assets={assets}
         onCreate={createAssets}
         onRemove={removeAsset}
-        onGetMoreAssets={getMoreAssets}
         hasNextPage={hasNextPage}
         isLoading={isLoading}
       />

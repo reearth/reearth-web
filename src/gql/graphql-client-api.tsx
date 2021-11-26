@@ -28,6 +28,18 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AddClusterInput = {
+  name: Scalars['String'];
+  propertyId: Scalars['ID'];
+  sceneId: Scalars['ID'];
+};
+
+export type AddClusterPayload = {
+  __typename?: 'AddClusterPayload';
+  cluster: Cluster;
+  scene: Scene;
+};
+
 export type AddDatasetSchemaInput = {
   name: Scalars['String'];
   representativefield?: Maybe<Scalars['ID']>;
@@ -167,6 +179,12 @@ export type AssetEdge = {
   node?: Maybe<Asset>;
 };
 
+export enum AssetSortType {
+  Date = 'DATE',
+  Name = 'NAME',
+  Size = 'SIZE'
+}
+
 export type AttachTagItemToGroupInput = {
   groupID: Scalars['ID'];
   itemID: Scalars['ID'];
@@ -196,6 +214,13 @@ export type Camera = {
   lng: Scalars['Float'];
   pitch: Scalars['Float'];
   roll: Scalars['Float'];
+};
+
+export type Cluster = {
+  __typename?: 'Cluster';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  property: Scalars['ID'];
 };
 
 export type CreateAssetInput = {
@@ -698,6 +723,7 @@ export type MovePropertyItemInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addCluster?: Maybe<AddClusterPayload>;
   addDatasetSchema?: Maybe<AddDatasetSchemaPayload>;
   addDynamicDataset?: Maybe<AddDynamicDatasetPayload>;
   addDynamicDatasetSchema?: Maybe<AddDynamicDatasetSchemaPayload>;
@@ -731,6 +757,7 @@ export type Mutation = {
   movePropertyItem?: Maybe<PropertyItemPayload>;
   publishProject?: Maybe<ProjectPayload>;
   removeAsset?: Maybe<RemoveAssetPayload>;
+  removeCluster?: Maybe<RemoveClusterPayload>;
   removeDatasetSchema?: Maybe<RemoveDatasetSchemaPayload>;
   removeInfobox?: Maybe<RemoveInfoboxPayload>;
   removeInfoboxField?: Maybe<RemoveInfoboxFieldPayload>;
@@ -745,6 +772,7 @@ export type Mutation = {
   syncDataset?: Maybe<SyncDatasetPayload>;
   uninstallPlugin?: Maybe<UninstallPluginPayload>;
   unlinkPropertyValue?: Maybe<PropertyFieldPayload>;
+  updateCluster?: Maybe<UpdateClusterPayload>;
   updateDatasetSchema?: Maybe<UpdateDatasetSchemaPayload>;
   updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
@@ -759,6 +787,11 @@ export type Mutation = {
   upgradePlugin?: Maybe<UpgradePluginPayload>;
   uploadFileToProperty?: Maybe<PropertyFieldPayload>;
   uploadPlugin?: Maybe<UploadPluginPayload>;
+};
+
+
+export type MutationAddClusterArgs = {
+  input: AddClusterInput;
 };
 
 
@@ -927,6 +960,11 @@ export type MutationRemoveAssetArgs = {
 };
 
 
+export type MutationRemoveClusterArgs = {
+  input: RemoveClusterInput;
+};
+
+
 export type MutationRemoveDatasetSchemaArgs = {
   input: RemoveDatasetSchemaInput;
 };
@@ -994,6 +1032,11 @@ export type MutationUninstallPluginArgs = {
 
 export type MutationUnlinkPropertyValueArgs = {
   input: UnlinkPropertyValueInput;
+};
+
+
+export type MutationUpdateClusterArgs = {
+  input: UpdateClusterInput;
 };
 
 
@@ -1441,6 +1484,7 @@ export type QueryAssetsArgs = {
   before?: Maybe<Scalars['Cursor']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  sort?: Maybe<AssetSortType>;
   teamId: Scalars['ID'];
 };
 
@@ -1551,6 +1595,17 @@ export type RemoveAssetPayload = {
   assetId: Scalars['ID'];
 };
 
+export type RemoveClusterInput = {
+  clusterId: Scalars['ID'];
+  sceneId: Scalars['ID'];
+};
+
+export type RemoveClusterPayload = {
+  __typename?: 'RemoveClusterPayload';
+  clusterId: Scalars['ID'];
+  scene: Scene;
+};
+
 export type RemoveDatasetSchemaInput = {
   force?: Maybe<Scalars['Boolean']>;
   schemaId: Scalars['ID'];
@@ -1646,6 +1701,7 @@ export enum Role {
 
 export type Scene = Node & {
   __typename?: 'Scene';
+  clusters: Array<Cluster>;
   createdAt: Scalars['DateTime'];
   datasetSchemas: DatasetSchemaConnection;
   dynamicDatasetSchemas: Array<DatasetSchema>;
@@ -1843,6 +1899,19 @@ export type UnlinkPropertyValueInput = {
   itemId?: Maybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
   schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
+};
+
+export type UpdateClusterInput = {
+  clusterId: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  propertyId?: Maybe<Scalars['ID']>;
+  sceneId: Scalars['ID'];
+};
+
+export type UpdateClusterPayload = {
+  __typename?: 'UpdateClusterPayload';
+  cluster: Cluster;
+  scene: Scene;
 };
 
 export type UpdateDatasetSchemaInput = {
@@ -2769,7 +2838,10 @@ export type SceneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene',
 
 export type AssetsQueryVariables = Exact<{
   teamId: Scalars['ID'];
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
 }>;
 
 
@@ -6577,8 +6649,14 @@ export type SceneQueryHookResult = ReturnType<typeof useSceneQuery>;
 export type SceneLazyQueryHookResult = ReturnType<typeof useSceneLazyQuery>;
 export type SceneQueryResult = Apollo.QueryResult<SceneQuery, SceneQueryVariables>;
 export const AssetsDocument = gql`
-    query Assets($teamId: ID!, $after: Cursor) {
-  assets(teamId: $teamId, first: 5, after: $after) {
+    query Assets($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  assets(
+    teamId: $teamId
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+  ) {
     edges {
       cursor
       node {
@@ -6622,7 +6700,10 @@ export const AssetsDocument = gql`
  * const { data, loading, error } = useAssetsQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
  *      after: // value for 'after'
+ *      before: // value for 'before'
  *   },
  * });
  */

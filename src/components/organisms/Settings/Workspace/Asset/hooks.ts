@@ -32,7 +32,7 @@ export default (params: Params) => {
   const teamId = currentTeam?.id;
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 5 },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
@@ -41,14 +41,16 @@ export default (params: Params) => {
   const assets = data?.assets.edges.map(e => e.node).reverse() as AssetNodes;
 
   const getMoreAssets = useCallback(() => {
-    fetchMore({
-      variables: {
-        first: 5,
-        after: data?.assets.pageInfo.endCursor,
-        delay: true,
-      },
-    });
-  }, [data?.assets.pageInfo, fetchMore]);
+    if (hasNextPage) {
+      fetchMore({
+        variables: {
+          first: 5,
+          after: data?.assets.pageInfo.endCursor,
+          delay: true,
+        },
+      });
+    }
+  }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
 
   const [createAssetMutation] = useCreateAssetMutation();
 

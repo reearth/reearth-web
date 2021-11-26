@@ -27,7 +27,6 @@ export type Props = {
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
-  onGetMoreAssets: () => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
@@ -43,7 +42,6 @@ const AssetContainer: React.FC<Props> = ({
   accept,
   onCreateAsset,
   onRemove,
-  onGetMoreAssets,
   initialAsset,
   selectedAssets,
   selectAsset,
@@ -184,13 +182,7 @@ const AssetContainer: React.FC<Props> = ({
           </AssetList>
         )}
         {isLoading && <StyledLoading relative />}
-        {hasNextPage ? (
-          <button style={{ background: "white" }} onClick={onGetMoreAssets}>
-            load more
-          </button>
-        ) : (
-          <Divider margin="0" />
-        )}
+        {!hasNextPage && <Divider margin="0" />}
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}

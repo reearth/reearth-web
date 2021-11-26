@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const ASSETS = gql`
-  query Assets($teamId: ID!, $after: Cursor) {
-    assets(teamId: $teamId, first: 5, after: $after) {
+  query Assets($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+    assets(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
       edges {
         cursor
         node {
