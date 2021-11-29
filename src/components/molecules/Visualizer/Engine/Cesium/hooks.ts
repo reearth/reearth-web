@@ -1,18 +1,11 @@
-import {
-  createWorldTerrain,
-  Color,
-  Entity,
-  Ion,
-  EllipsoidTerrainProvider,
-  Cesium3DTileFeature,
-  Cartesian3,
-} from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
+import { useCustomCompareCallback } from "use-custom-compare";
 
 import { Camera, LatLng } from "@reearth/util/value";
 
@@ -20,6 +13,7 @@ import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 
 import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
 import imagery from "./imagery";
+import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
@@ -81,9 +75,40 @@ export default ({
     setImageryLayers(newTiles);
   }, [property?.tiles ?? []]);
 
+  // terrain
+  const terrainProperty = useMemo(
+    () => ({
+      terrain: property?.terrain?.terrain || property?.default?.terrain,
+      terrainType: property?.terrain?.terrainType || property?.default?.terrainType,
+      terrainExaggeration:
+        property?.terrain?.terrainExaggeration || property?.default?.terrainExaggeration,
+      terrainExaggerationRelativeHeight:
+        property?.terrain?.terrainExaggerationRelativeHeight ||
+        property?.default?.terrainExaggerationRelativeHeight,
+      depthTestAgainstTerrain:
+        property?.terrain?.depthTestAgainstTerrain || property?.default?.depthTestAgainstTerrain,
+    }),
+    [
+      property?.default?.terrain,
+      property?.default?.terrainType,
+      property?.default?.terrainExaggeration,
+      property?.default?.terrainExaggerationRelativeHeight,
+      property?.default?.depthTestAgainstTerrain,
+      property?.terrain?.terrain,
+      property?.terrain?.terrainType,
+      property?.terrain?.terrainExaggeration,
+      property?.terrain?.terrainExaggerationRelativeHeight,
+      property?.terrain?.depthTestAgainstTerrain,
+    ],
+  );
+
   const terrainProvider = useMemo((): TerrainProvider | undefined => {
-    return property?.default?.terrain ? createWorldTerrain() : new EllipsoidTerrainProvider();
-  }, [property?.default?.terrain]);
+    return terrainProperty.terrain
+      ? terrainProperty.terrainType
+        ? terrain[terrainProperty.terrainType] || terrain.default
+        : terrain.cesium
+      : terrain.default;
+  }, [terrainProperty.terrain, terrainProperty.terrainType]);
 
   const backgroundColor = useMemo(
     () =>
@@ -94,17 +119,24 @@ export default ({
   // move to initial position at startup
   const initialCameraFlight = useRef(false);
 
-  const handleMount = useCallback(() => {
-    if (initialCameraFlight.current) return;
-    initialCameraFlight.current = true;
-    if (property?.default?.camera) {
-      engineAPI.flyTo(property.default.camera, { duration: 0 });
-    }
-    const camera = getCamera(cesium?.current?.cesiumElement);
-    if (camera) {
-      onCameraChange?.(camera);
-    }
-  }, [engineAPI, onCameraChange, property?.default?.camera]);
+  const handleMount = useCustomCompareCallback(
+    () => {
+      if (initialCameraFlight.current) return;
+      initialCameraFlight.current = true;
+      if (property?.default?.camera) {
+        engineAPI.flyTo(property.default.camera, { duration: 0 });
+      }
+      const camera = getCamera(cesium?.current?.cesiumElement);
+      if (camera) {
+        onCameraChange?.(camera);
+      }
+    },
+    [engineAPI, onCameraChange, property?.default?.camera],
+    (prevDeps, nextDeps) =>
+      prevDeps[0] === nextDeps[0] &&
+      prevDeps[1] === nextDeps[1] &&
+      isEqual(prevDeps[2], nextDeps[2]),
+  );
 
   const handleUnmount = useCallback(() => {
     initialCameraFlight.current = false;
@@ -234,6 +266,7 @@ export default ({
 
   return {
     terrainProvider,
+    terrainProperty,
     backgroundColor,
     imageryLayers,
     cesium,
