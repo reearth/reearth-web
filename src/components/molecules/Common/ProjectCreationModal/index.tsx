@@ -7,8 +7,7 @@ import Divider from "@reearth/components/atoms/Divider";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
-import AssetModal from "@reearth/components/molecules/Common/AssetModal";
-import { Asset } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
+import AssetModal, { Asset } from "@reearth/components/molecules/Common/AssetModal";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
@@ -25,6 +24,7 @@ export interface Props {
   onSubmit?: (values: FormValues) => Promise<void> | void;
   assets?: Asset[];
   createAssets?: (files: FileList) => Promise<void>;
+  assetsContainer?: React.ReactNode;
 }
 
 const initialValues: FormValues = {
@@ -39,6 +39,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   onSubmit,
   assets,
   createAssets,
+  assetsContainer,
 }) => {
   const intl = useIntl();
   const [openAssets, setOpenAssets] = useState(false);

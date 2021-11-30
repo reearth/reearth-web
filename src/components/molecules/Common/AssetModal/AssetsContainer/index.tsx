@@ -22,28 +22,28 @@ export type Asset = AssetType;
 export type Props = {
   className?: string;
   assets?: Asset[];
+  initialAsset?: Asset;
+  selectedAssets?: string[];
+  accept?: "file" | "image" | "video";
   isMultipleSelectable?: boolean;
-  accept?: string;
+  imagesOnly?: boolean;
+  isHeightFixed?: boolean;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
-  initialAsset?: Asset;
-  selectedAssets?: Asset[];
-  selectAsset?: (assets: Asset[]) => void;
-  fileType?: "image" | "video" | "file";
-  isHeightFixed?: boolean;
+  selectAsset: (id?: string | undefined) => void;
 };
 
-const AssetContainer: React.FC<Props> = ({
+const AssetsContainer: React.FC<Props> = ({
   assets,
-  isMultipleSelectable = false,
-  accept,
-  onCreateAsset,
-  onRemove,
   initialAsset,
   selectedAssets,
-  selectAsset,
-  fileType,
+  accept,
+  isMultipleSelectable = false,
+  imagesOnly = false,
   isHeightFixed,
+  onCreateAsset,
+  onRemove,
+  selectAsset,
 }) => {
   const intl = useIntl();
   const {
@@ -55,7 +55,6 @@ const AssetContainer: React.FC<Props> = ({
     currentSaved,
     searchResults,
     iconChoice,
-    handleAssetsSelect,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
@@ -85,7 +84,7 @@ const AssetContainer: React.FC<Props> = ({
         <Button
           large
           text={
-            fileType === "image"
+            imagesOnly
               ? intl.formatMessage({ defaultMessage: "Upload image" })
               : intl.formatMessage({ defaultMessage: "Upload file" })
           }
@@ -140,7 +139,7 @@ const AssetContainer: React.FC<Props> = ({
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
-              {fileType === "image"
+              {imagesOnly
                 ? intl.formatMessage({
                     defaultMessage:
                       "You haven't uploaded any image assets yet. Click the upload button above and select an image from your computer.",
@@ -158,8 +157,8 @@ const AssetContainer: React.FC<Props> = ({
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    onCheck={() => handleAssetsSelect(a)}
-                    selected={selectedAssets?.includes(a)}
+                    onCheck={() => selectAsset(a.id)}
+                    selected={selectedAssets?.includes(a.id)}
                     checked={currentSaved === a}
                   />
                 ))
@@ -169,8 +168,8 @@ const AssetContainer: React.FC<Props> = ({
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    onCheck={() => handleAssetsSelect(a)}
-                    selected={selectedAssets?.includes(a)}
+                    onCheck={() => selectAsset(a.id)}
+                    selected={selectedAssets?.includes(a.id)}
                     checked={currentSaved === a}
                   />
                 ))}
@@ -192,8 +191,7 @@ const Wrapper = styled.div`
 `;
 
 const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
-  height: ${({ isHeightFixed }) => (isHeightFixed ? "" : "425px")};
-  min-height: 400px;
+  max-height: ${({ isHeightFixed }) => (isHeightFixed ? "575px" : "auto")};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -258,4 +256,4 @@ const TemplateText = styled(Text)`
   width: 390px;
 `;
 
-export default AssetContainer;
+export default AssetsContainer;

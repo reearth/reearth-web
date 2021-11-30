@@ -27,6 +27,9 @@ export const useSelected = () => useAtom(selected);
 const selectedBlock = atom<string | undefined>(undefined);
 export const useSelectedBlock = () => useAtom(selectedBlock);
 
+const selectedAssets = atom<string[] | undefined>(undefined);
+export const useSelectedAssets = () => useAtom(selectedAssets);
+
 const isCapturing = atom<boolean>(false);
 export const useIsCapturing = () => useAtom(isCapturing);
 

@@ -6,7 +6,7 @@ import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { Asset } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
+import { Asset } from "@reearth/components/molecules/Common/AssetModal";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import { styled, useTheme, metrics, css } from "@reearth/theme";

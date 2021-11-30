@@ -26,11 +26,11 @@ export default ({
 }: {
   assets?: Asset[];
   isMultipleSelectable?: boolean;
-  accept?: string;
+  accept?: "file" | "image" | "video";
   onCreateAsset?: (files: FileList) => void;
   initialAsset?: Asset;
-  selectAsset?: (assets: Asset[]) => void;
-  selectedAssets?: Asset[];
+  selectAsset: (id?: string | undefined) => void;
+  selectedAssets?: string[];
   onRemove?: (assetIds: string[]) => void;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
@@ -46,8 +46,8 @@ export default ({
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
-      onRemove?.(selectedAssets.map(a => a.id));
-      selectAsset?.([]);
+      onRemove?.(selectedAssets);
+      selectAsset?.(undefined);
       setDeleteModalVisible(false);
     }
   }, [onRemove, selectAsset, selectedAssets]);
@@ -93,16 +93,8 @@ export default ({
     handleFilterChange(filterSelected);
   }, [handleFilterChange, filterSelected, assets]);
 
-  const handleAssetsSelect = (asset: Asset) => {
-    selectedAssets?.includes(asset)
-      ? selectAsset?.(selectedAssets?.filter(a => a !== asset))
-      : selectAsset?.(
-          isMultipleSelectable && selectedAssets ? [...selectedAssets, asset] : [asset],
-        );
-  };
-
   const handleFileSelect = useFileInput(files => onCreateAsset?.(files), {
-    accept,
+    accept: accept ? `${accept === "file" ? "*" : accept}/*` : undefined,
     multiple: isMultipleSelectable,
   });
 
@@ -137,7 +129,6 @@ export default ({
     currentSaved,
     searchResults,
     iconChoice,
-    handleAssetsSelect,
     handleUploadToAsset,
     handleReverse,
     handleSearch,

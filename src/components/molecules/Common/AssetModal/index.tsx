@@ -10,57 +10,47 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import AssetsContainer, { Asset as AssetType } from "./AssetContainer";
+export type Asset = {
+  id: string;
+  teamId: string;
+  name: string;
+  size: number;
+  url: string;
+  contentType: string;
+};
 
 export type Mode = "asset" | "url";
 
-export type Asset = AssetType;
-
 export type Props = {
   className?: string;
-  assets?: Asset[];
-  isMultipleSelectable?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
-  onCreateAsset?: (files: FileList) => void;
   onSelect?: (value: string | null) => void;
   value?: string;
-  fileType?: "image" | "video";
+  fileType?: "image" | "video" | "file";
+  assetsContainer?: React.ReactNode;
 };
 
 type Tabs = "assets" | "url";
 
 const AssetModal: React.FC<Props> = ({
-  assets,
-  isMultipleSelectable = false,
   isOpen,
   onClose,
-  onCreateAsset,
   onSelect,
   value,
   fileType,
+  assetsContainer,
 }) => {
   const intl = useIntl();
   const labels: { [t in Tabs]: string } = {
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL = fileType === "video" || (value && !assets?.some(e => e.url === value));
+  const showURL = fileType === "video" || !!value;
 
   const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
 
-  const initialAsset = assets?.find(a => a.url === value);
-
-  const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
   const [textUrl, setTextUrl] = useState(showURL ? value : undefined);
-  const accept =
-    fileType === "image"
-      ? "image/*"
-      : fileType === "video"
-      ? "video/*"
-      : fileType
-      ? "*/*"
-      : undefined;
 
   const handleSetUrl = useCallback(() => {
     onSelect?.(
@@ -77,8 +67,7 @@ const AssetModal: React.FC<Props> = ({
   const resetValues = useCallback(() => {
     setTextUrl(showURL ? value : undefined);
     selectTab(showURL ? "url" : "assets");
-    selectAsset(initialAsset ? [initialAsset] : []);
-  }, [value, showURL, initialAsset]);
+  }, [value, showURL]);
 
   const handleModalClose = useCallback(() => {
     resetValues();
@@ -88,7 +77,7 @@ const AssetModal: React.FC<Props> = ({
   useEffect(() => {
     resetValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialAsset, showURL, value]);
+  }, [showURL, value]);
 
   const filteredAssets = useMemo(() => {
     if (!assets) return;
@@ -157,18 +146,7 @@ const AssetModal: React.FC<Props> = ({
           onClick={handleModalClose}
         />
       }>
-      {selectedTab === "assets" && (
-        <AssetsContainer
-          assets={filteredAssets}
-          isMultipleSelectable={isMultipleSelectable}
-          accept={accept}
-          onCreateAsset={onCreateAsset}
-          initialAsset={initialAsset}
-          selectedAssets={selectedAssets}
-          selectAsset={selectAsset}
-          fileType={fileType}
-        />
-      )}
+      {selectedTab === "assets" && assetsContainer}
       {selectedTab === "url" && (
         <TextContainer align="center">
           <Title size="s">
