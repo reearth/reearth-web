@@ -6,8 +6,9 @@ import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { Asset } from "@reearth/components/molecules/Common/AssetModal";
-import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
+import ProjectCreationModal, {
+  Asset,
+} from "@reearth/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import { styled, useTheme, metrics, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -20,16 +21,18 @@ export interface Props {
     description: string;
     imageUrl: string;
   }) => Promise<void>;
-  assets?: Asset[];
-  createAssets?: (files: FileList) => Promise<void>;
+  selectedAsset?: Asset[];
+  onAssetSelect?: (asset?: Asset) => void;
+  assetsContainer?: React.ReactNode;
 }
 
 const QuickStart: React.FC<Props> = ({
   className,
   onCreateTeam,
   onCreateProject,
-  assets,
-  createAssets,
+  selectedAsset,
+  onAssetSelect,
+  assetsContainer,
 }) => {
   const intl = useIntl();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
@@ -81,8 +84,9 @@ const QuickStart: React.FC<Props> = ({
         open={projCreateOpen}
         onClose={() => setProjCreateOpen(false)}
         onSubmit={onCreateProject}
-        assets={assets}
-        createAssets={createAssets}
+        selectedAsset={selectedAsset}
+        onAssetSelect={onAssetSelect}
+        assetsContainer={assetsContainer}
       />
       <WorkspaceCreationModal
         open={workCreateOpen}

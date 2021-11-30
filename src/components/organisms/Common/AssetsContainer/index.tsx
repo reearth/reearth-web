@@ -9,23 +9,26 @@ export type Asset = AssetType;
 type Props = {
   teamId: string;
   allowedAssetType?: "image" | "video" | "file";
+  initialAssetId?: string;
   isMultipleSelectable?: boolean;
   creationEnabled?: boolean;
   deletionEnabled?: boolean;
-  isHeightFixed?: boolean;
+  height?: number;
 };
 
 const AssetsContainer: React.FC<Props> = ({
   teamId,
   allowedAssetType,
+  initialAssetId,
   isMultipleSelectable,
   creationEnabled,
   deletionEnabled,
-  isHeightFixed,
+  height,
 }) => {
   const { assets, selectedAssets, selectAsset, createAssets, removeAsset } = useHooks({
     teamId,
     allowedAssetType,
+    initialAssetId,
     isMultipleSelectable,
     creationEnabled,
     deletionEnabled,
@@ -38,7 +41,7 @@ const AssetsContainer: React.FC<Props> = ({
       selectAsset={selectAsset}
       onCreateAsset={createAssets}
       onRemove={removeAsset}
-      isHeightFixed={isHeightFixed}
+      height={height}
     />
   );
 };

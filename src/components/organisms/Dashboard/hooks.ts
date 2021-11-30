@@ -4,6 +4,7 @@ import { useIntl } from "react-intl";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
+import type { Asset } from "@reearth/components/organisms/Common/AssetsContainer";
 import {
   useMeQuery,
   useProjectQuery,
@@ -12,19 +13,21 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
-  useCreateAssetMutation,
-  AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
-import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
+import {
+  useTeam,
+  useProject,
+  useUnselectProject,
+  useNotification,
+  useSelectedAssets,
+} from "@reearth/state";
 
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
-
-export default (teamId?: string) => {
+export default (teamId: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
+  const [selectedAsset, selectAsset] = useSelectedAssets();
 
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -172,26 +175,7 @@ export default (teamId?: string) => {
     [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
-
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const handleAssetSelect = (asset?: Asset) => selectAsset(asset ? [asset] : undefined);
 
   return {
     user,
@@ -204,7 +188,7 @@ export default (teamId?: string) => {
     modalShown,
     openModal,
     handleModalClose,
-    createAssets,
-    assets,
+    selectedAsset,
+    handleAssetSelect,
   };
 };

@@ -7,11 +7,12 @@ import Divider from "@reearth/components/atoms/Divider";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
-import AssetModal, { Asset } from "@reearth/components/molecules/Common/AssetModal";
+import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
 
+export type Asset = AssetType;
 export interface FormValues {
   name: string;
   description: string;
@@ -22,8 +23,8 @@ export interface Props {
   open?: boolean;
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
-  assets?: Asset[];
-  createAssets?: (files: FileList) => Promise<void>;
+  selectedAsset?: Asset[];
+  onAssetSelect?: (asset?: Asset) => void;
   assetsContainer?: React.ReactNode;
 }
 
@@ -37,42 +38,53 @@ const ProjectCreationModal: React.FC<Props> = ({
   open,
   onClose,
   onSubmit,
-  assets,
-  createAssets,
+  selectedAsset,
+  onAssetSelect,
   assetsContainer,
 }) => {
   const intl = useIntl();
+  const theme = useTheme();
+
   const [openAssets, setOpenAssets] = useState(false);
+  const [projectImage, setProjectImage] = useState(selectedAsset?.[0]);
+
   const formik = useFormik({
     initialValues,
     onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
       await onSubmit?.(data);
       onClose?.();
       resetForm({});
+      onAssetSelect?.();
       setStatus({ success: true });
     },
   });
+
+  const handleOpenAssetModal = useCallback(() => {
+    onAssetSelect?.(projectImage);
+    setOpenAssets(true);
+  }, [onAssetSelect, projectImage]);
 
   const handleClose = useCallback(() => {
     if (!formik.isSubmitting) {
       onClose?.();
       formik.resetForm();
+      onAssetSelect?.();
+      setProjectImage(undefined);
     }
-  }, [formik, onClose]);
+  }, [formik, onClose, onAssetSelect]);
 
   const handleSelect = useCallback(
     (value: string | null) => {
       formik.setFieldValue("imageUrl", value);
+      setProjectImage(selectedAsset?.[0]);
     },
-    [formik],
+    [formik, selectedAsset],
   );
 
   const handleCreate = useCallback(async () => {
     await formik.submitForm();
     handleClose();
   }, [formik, handleClose]);
-
-  const theme = useTheme();
 
   return (
     <Modal
@@ -127,16 +139,16 @@ const ProjectCreationModal: React.FC<Props> = ({
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
             {intl.formatMessage({ defaultMessage: "Select thumbnail image" })}
           </Text>
-          <Thumbnail url={formik.values.imageUrl} onClick={() => setOpenAssets(true)} />
+          <Thumbnail url={formik.values.imageUrl} onClick={() => handleOpenAssetModal()} />
         </FormInputWrapper>
       </NewProjectForm>
       <AssetModal
         isOpen={openAssets}
         onClose={() => setOpenAssets(false)}
-        assets={assets}
         fileType="image"
-        onCreateAsset={createAssets}
+        selectedAsset={selectedAsset}
         onSelect={handleSelect}
+        assetsContainer={assetsContainer}
       />
     </Modal>
   );

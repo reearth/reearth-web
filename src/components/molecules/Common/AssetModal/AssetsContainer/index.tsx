@@ -23,14 +23,14 @@ export type Props = {
   className?: string;
   assets?: Asset[];
   initialAsset?: Asset;
-  selectedAssets?: string[];
+  selectedAssets?: Asset[];
   accept?: "file" | "image" | "video";
   isMultipleSelectable?: boolean;
   imagesOnly?: boolean;
-  isHeightFixed?: boolean;
+  height?: number;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
-  selectAsset: (id?: string | undefined) => void;
+  selectAsset: (asset?: Asset | undefined) => void;
 };
 
 const AssetsContainer: React.FC<Props> = ({
@@ -40,7 +40,7 @@ const AssetsContainer: React.FC<Props> = ({
   accept,
   isMultipleSelectable = false,
   imagesOnly = false,
-  isHeightFixed,
+  height,
   onCreateAsset,
   onRemove,
   selectAsset,
@@ -135,7 +135,7 @@ const AssetsContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper isHeightFixed={isHeightFixed}>
+      <AssetWrapper height={height}>
         {!filteredAssets || filteredAssets.length < 1 ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -157,8 +157,8 @@ const AssetsContainer: React.FC<Props> = ({
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    onCheck={() => selectAsset(a.id)}
-                    selected={selectedAssets?.includes(a.id)}
+                    onCheck={() => selectAsset(a)}
+                    selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />
                 ))
@@ -168,8 +168,8 @@ const AssetsContainer: React.FC<Props> = ({
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    onCheck={() => selectAsset(a.id)}
-                    selected={selectedAssets?.includes(a.id)}
+                    onCheck={() => selectAsset(a)}
+                    selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />
                 ))}
@@ -190,8 +190,8 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
-  max-height: ${({ isHeightFixed }) => (isHeightFixed ? "575px" : "auto")};
+const AssetWrapper = styled.div<{ height?: number }>`
+  height: ${({ height }) => (height ? height + "px" : "auto")};
   display: flex;
   flex-direction: column;
   justify-content: space-between;

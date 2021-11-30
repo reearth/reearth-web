@@ -17,6 +17,7 @@ export type Asset = {
 type Params = {
   teamId: string;
   allowedAssetType?: "image" | "video" | "file";
+  initialAssetId?: string;
   isMultipleSelectable?: boolean;
   creationEnabled?: boolean;
   deletionEnabled?: boolean;
@@ -25,6 +26,7 @@ type Params = {
 export default ({
   teamId,
   allowedAssetType,
+  initialAssetId,
   isMultipleSelectable,
   creationEnabled,
   deletionEnabled,
@@ -37,14 +39,14 @@ export default ({
   const [selectedAssets, select] = useSelectedAssets();
 
   const selectAsset = useCallback(
-    (id?: string) => {
-      if (!id) return;
+    (asset?: Asset) => {
+      if (!asset) return;
       select(assets =>
         assets && isMultipleSelectable
-          ? assets.includes(id)
-            ? assets.filter(asset => asset !== id)
-            : [id, ...assets]
-          : [id],
+          ? assets.includes(asset)
+            ? assets.filter(asset2 => asset2 !== asset)
+            : [asset, ...assets]
+          : [asset],
       );
     },
     [select, isMultipleSelectable],
@@ -77,6 +79,8 @@ export default ({
           : Boolean),
     )
     .reverse() as Asset[];
+
+  const initialAsset = assets?.find(a => a.id === initialAssetId);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -140,6 +144,15 @@ export default ({
       })(),
     [removeAssetMutation, currentTeamId, setNotification, intl],
   );
+
+  useEffect(() => {
+    if (initialAsset) {
+      select([initialAsset]);
+    }
+    return () => {
+      select(undefined);
+    };
+  }, [initialAsset, select]);
 
   return {
     currentProject,

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -28,6 +28,7 @@ export type Props = {
   onSelect?: (value: string | null) => void;
   value?: string;
   fileType?: "image" | "video" | "file";
+  selectedAsset?: Asset[];
   assetsContainer?: React.ReactNode;
 };
 
@@ -39,6 +40,7 @@ const AssetModal: React.FC<Props> = ({
   onSelect,
   value,
   fileType,
+  selectedAsset,
   assetsContainer,
 }) => {
   const intl = useIntl();
@@ -54,11 +56,11 @@ const AssetModal: React.FC<Props> = ({
 
   const handleSetUrl = useCallback(() => {
     onSelect?.(
-      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssets[0]?.url) || null,
+      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAsset?.[0].url) || null,
     );
     onClose?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onClose, selectedAssets, selectedTab, onSelect, fileType, textUrl]);
+  }, [onClose, selectedAsset, selectedTab, onSelect, fileType, textUrl]);
 
   const handleTextUrlChange = useCallback(text => {
     setTextUrl(text);
@@ -78,17 +80,6 @@ const AssetModal: React.FC<Props> = ({
     resetValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showURL, value]);
-
-  const filteredAssets = useMemo(() => {
-    if (!assets) return;
-    return assets
-      .filter(
-        a =>
-          !fileType ||
-          a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp)$/ : /\.(mp4|webm)$/),
-      )
-      .reverse(); // reversed to show newest at the top
-  }, [assets, fileType]);
 
   return fileType === "video" ? (
     <Modal

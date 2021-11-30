@@ -24,9 +24,9 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
       <AssetSection
         teamId={teamId}
         isMultipleSelectable
-        isHeightFixed
         creationEnabled
         deletionEnabled
+        height={575}
       />
     </SettingPage>
   );

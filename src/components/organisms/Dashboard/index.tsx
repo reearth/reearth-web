@@ -7,11 +7,12 @@ import Logo from "@reearth/components/molecules/Dashboard/Logo";
 import ProjectList from "@reearth/components/molecules/Dashboard/ProjectList";
 import QuickStart from "@reearth/components/molecules/Dashboard/QuickStart";
 import Workspace from "@reearth/components/molecules/Dashboard/Workspace";
+import AssetsContainer from "@reearth/components/organisms/Common/AssetsContainer";
 
 import useHooks from "./hooks";
 
 export type Props = {
-  teamId?: string;
+  teamId: string;
 };
 
 const Dashboard: React.FC<Props> = ({ teamId }) => {
@@ -28,8 +29,8 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     modalShown,
     openModal,
     handleModalClose,
-    createAssets,
-    assets,
+    selectedAsset,
+    handleAssetSelect,
   } = useHooks(teamId);
 
   return (
@@ -52,8 +53,17 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
       <QuickStart
         onCreateTeam={createTeam}
         onCreateProject={createProject}
-        assets={assets}
-        createAssets={createAssets}
+        selectedAsset={selectedAsset}
+        onAssetSelect={handleAssetSelect}
+        assetsContainer={
+          <AssetsContainer
+            teamId={teamId}
+            initialAssetId={selectedAsset?.[0].id}
+            allowedAssetType="image"
+            creationEnabled
+            height={425}
+          />
+        }
       />
       <Logo />
       <ProjectList projects={projects} />
