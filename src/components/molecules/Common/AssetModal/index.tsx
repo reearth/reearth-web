@@ -26,7 +26,7 @@ export type Props = {
   isOpen?: boolean;
   onClose?: () => void;
   onSelect?: (value: string | null) => void;
-  value?: string;
+  url?: string;
   fileType?: "image" | "video" | "file";
   selectedAsset?: Asset[];
   assetsContainer?: React.ReactNode;
@@ -38,7 +38,7 @@ const AssetModal: React.FC<Props> = ({
   isOpen,
   onClose,
   onSelect,
-  value,
+  url,
   fileType,
   selectedAsset,
   assetsContainer,
@@ -48,11 +48,11 @@ const AssetModal: React.FC<Props> = ({
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL = fileType === "video" || !!value;
+  const showURL = fileType === "video" || !!url;
 
   const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
 
-  const [textUrl, setTextUrl] = useState(showURL ? value : undefined);
+  const [textUrl, setTextUrl] = useState(showURL ? url : undefined);
 
   const handleSetUrl = useCallback(() => {
     onSelect?.(
@@ -67,9 +67,9 @@ const AssetModal: React.FC<Props> = ({
   }, []);
 
   const resetValues = useCallback(() => {
-    setTextUrl(showURL ? value : undefined);
+    setTextUrl(showURL ? url : undefined);
     selectTab(showURL ? "url" : "assets");
-  }, [value, showURL]);
+  }, [url, showURL]);
 
   const handleModalClose = useCallback(() => {
     resetValues();
@@ -79,7 +79,7 @@ const AssetModal: React.FC<Props> = ({
   useEffect(() => {
     resetValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showURL, value]);
+  }, [showURL, url]);
 
   return fileType === "video" ? (
     <Modal

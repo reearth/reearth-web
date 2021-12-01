@@ -17,7 +17,7 @@ export type Asset = {
 type Params = {
   teamId: string;
   allowedAssetType?: "image" | "video" | "file";
-  initialAssetId?: string;
+  url?: string;
   isMultipleSelectable?: boolean;
   creationEnabled?: boolean;
   deletionEnabled?: boolean;
@@ -26,7 +26,7 @@ type Params = {
 export default ({
   teamId,
   allowedAssetType,
-  initialAssetId,
+  url,
   isMultipleSelectable,
   creationEnabled,
   deletionEnabled,
@@ -80,7 +80,7 @@ export default ({
     )
     .reverse() as Asset[];
 
-  const initialAsset = assets?.find(a => a.id === initialAssetId);
+  const initialAsset = assets?.find(a => a.url === url);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
