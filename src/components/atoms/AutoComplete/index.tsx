@@ -14,7 +14,6 @@ export type Item<Value extends string | number = string> = {
 
 export type Props<Value extends string | number> = {
   className?: string;
-  // ref?: React.Ref<HTMLDivElement>;
   items?: Item<Value>[];
   fullWidth?: boolean;
   creatable?: boolean;
@@ -54,7 +53,6 @@ function AutoComplete<Value extends string | number>({
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        // onCreate?()
         console.log("key down");
         if (!isValueType(filterText)) return;
         itemState.length ? onSelect?.(filterText) : creatable && onCreate?.(filterText);
@@ -103,6 +101,7 @@ const StyledTextBox = styled.input`
   padding-right: ${metricsSizes.xs}px;
   height: ${metrics.propertyTextInputHeight}px;
   caret-color: ${({ theme }) => theme.main.text};
+  color: ${({ theme }) => theme.main.text};
 `;
 
 export default AutoComplete;

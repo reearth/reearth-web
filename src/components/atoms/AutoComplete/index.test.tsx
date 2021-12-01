@@ -1,8 +1,8 @@
-import { render } from "@testing-library/react";
-import { text } from "node:stream/consumers";
 import React from "react";
 
-import SelectInput from "./index";
+import { act, fireEvent, render, screen } from "@reearth/test/utils";
+
+import AutoComplete from "./index";
 
 const sampleItems: { value: string; label: string }[] = [
   {
@@ -15,10 +15,36 @@ const sampleItems: { value: string; label: string }[] = [
   },
 ];
 
-test("component should be renered", () => {
-  render(<SelectInput />);
+test("component should be renered", async () => {
+  await act(async () => {
+    render(<AutoComplete />);
+  });
 });
 
-test("component should render items", () => {
-  render(<SelectInput items={sampleItems} />);
+test("component should render items", async () => {
+  await act(async () => {
+    render(<AutoComplete items={sampleItems} />);
+  });
+  expect(screen.getByText(/hoge/)).toBeInTheDocument();
+  expect(screen.getByText(/fuga/)).toBeInTheDocument();
+});
+
+test("component should be inputtable", async () => {
+  await act(async () => {
+    render(<AutoComplete items={sampleItems} />);
+  });
+
+  const input = screen.getByRole("textbox");
+  fireEvent.change(input, { target: { value: "hoge" } });
+  expect(screen.getByText("hoge")).toBeInTheDocument();
+});
+test("component should trigger keydown event", async () => {
+  await act(async () => {
+    render(<AutoComplete items={sampleItems} />);
+  });
+
+  const input = screen.getByRole("textbox");
+  fireEvent.change(input, { target: { value: "hoge" } });
+  // fireEvent.keyDown(input, { key: "Enter" });
+  // expect(screen.getByText("hoge")).toBeInTheDocument();
 });
