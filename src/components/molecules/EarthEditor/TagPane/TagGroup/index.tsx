@@ -15,8 +15,8 @@ export type Props = {
   onTagCreate?: (value: string) => void;
   onTagRemove?: (value: string) => void;
   onSelect?: (value: string) => void;
-  allTags: string[];
-  attachedTags: string[];
+  allTags?: string[];
+  attachedTags?: string[];
 };
 
 const TagGroup: React.FC<Props> = ({
