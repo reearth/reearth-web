@@ -49,26 +49,25 @@ function AutoComplete<Value extends string | number>({
     return !!value;
   };
 
+  const handleSelect = useCallback(
+    (value: Value) => {
+      itemState.length ? onSelect?.(value) : creatable && onCreate?.(value);
+      setFilterText("");
+    },
+    [creatable, itemState.length, onCreate, onSelect],
+  );
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault();
         console.log("key down");
         if (!isValueType(filterText)) return;
-        itemState.length ? onSelect?.(filterText) : creatable && onCreate?.(filterText);
-        setFilterText("");
+        handleSelect(filterText);
       }
     },
-    [filterText, isValueType, itemState.length, onCreate, onSelect],
+    [filterText, handleSelect, isValueType],
   );
 
-  const handleChange = useCallback(
-    (value: Value) => {
-      itemState.length ? onSelect?.(value) : onCreate?.(value);
-      setFilterText("");
-    },
-    [itemState.length, onCreate, onSelect],
-  );
   return (
     <SelectCore
       className={className}
@@ -76,14 +75,11 @@ function AutoComplete<Value extends string | number>({
       selectComponent={
         <StyledTextBox value={filterText} onChange={handleInputChange} onKeyDown={handleKeyDown} />
       }
-      onChange={handleChange}
+      onChange={handleSelect}
       ref={ref}
       options={itemState?.map(i => {
         return (
           <Option key={i.value} value={i.value} label={i.label}>
-            {/* <OptionCheck size="xs">
-              {i.value === selectedOption && <Icon icon="check" size={12} />}
-            </OptionCheck> */}
             <OptionIcon size="xs">{i.icon && <Icon icon={i.icon} />}</OptionIcon>
             {i.label}
           </Option>
