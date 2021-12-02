@@ -18,7 +18,6 @@ export type Props<Value extends string | number> = {
   fullWidth?: boolean;
   creatable?: boolean;
   onCreate?: (value: Value) => void;
-  onFilter?: (filterText: string) => void;
   onSelect?: (value: Value) => void;
 };
 
@@ -51,6 +50,7 @@ function AutoComplete<Value extends string | number>({
 
   const handleSelect = useCallback(
     (value: Value) => {
+      console.log("called");
       itemState.length ? onSelect?.(value) : creatable && onCreate?.(value);
       setFilterText("");
     },
@@ -60,7 +60,6 @@ function AutoComplete<Value extends string | number>({
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        console.log("key down");
         if (!isValueType(filterText)) return;
         handleSelect(filterText);
       }
@@ -95,7 +94,6 @@ const StyledTextBox = styled.input`
   background-color: ${({ theme }) => theme.properties.bg};
   padding-left: ${metricsSizes.xs}px;
   padding-right: ${metricsSizes.xs}px;
-  height: ${metrics.propertyTextInputHeight}px;
   caret-color: ${({ theme }) => theme.main.text};
   color: ${({ theme }) => theme.main.text};
 `;

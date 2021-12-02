@@ -71,8 +71,6 @@ describe("Ccomponent should be searchable", () => {
       const input = screen.getByRole("textbox");
       await act(async () => {
         fireEvent.change(input, { target: { value: "hoge" } });
-        screen.debug();
-        // fireEvent.keyDown(input, { key: "Enter" });
         const option = screen.getByText(/hoge/);
         fireEvent.click(option);
       });
