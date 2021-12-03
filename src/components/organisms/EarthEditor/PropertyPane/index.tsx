@@ -2,6 +2,7 @@ import React from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import Wrapper from "@reearth/components/molecules/EarthEditor/PropertyPane";
+import AssetsContainer from "@reearth/components/organisms/Common/AssetsContainer";
 
 import useHooks, { Mode as RawMode } from "./hooks";
 
@@ -22,14 +23,12 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     datasetSchemas,
     loading,
     layers,
-    assets,
     selectedWidget,
     widgetAlignEditorActivated,
     changeValue,
     removeField,
     link,
     uploadFile,
-    createAssets,
     removeFile,
     createInfobox,
     removeInfobox,
@@ -41,6 +40,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     removePropertyItem,
     onWidgetAlignEditorActivate,
     updatePropertyItems,
+    teamId,
   } = useHooks(mode);
   return (
     <>
@@ -60,7 +60,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
           layers={layers}
-          assets={assets}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
           onCreateInfobox={createInfobox}
@@ -68,7 +67,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onRemove={removeField}
           onLink={link}
           onUploadFile={uploadFile}
-          onCreateAsset={createAssets}
           onRemoveFile={removeFile}
           onIsCapturingChange={onIsCapturingChange}
           onCameraChange={onCameraChange}
@@ -79,6 +77,16 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onWidgetAlignEditorActivate={onWidgetAlignEditorActivate}
           onRemovePane={
             mode === "infobox" ? removeInfobox : mode === "block" ? removeInfoboxField : undefined
+          }
+          assetsContainer={
+            teamId && (
+              <AssetsContainer
+                teamId={teamId}
+                allowedAssetType="image"
+                creationEnabled
+                height={425}
+              />
+            )
           }
         />
       )}

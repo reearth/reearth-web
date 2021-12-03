@@ -107,8 +107,7 @@ export type Props = {
   | "isLinkable"
   | "onDatasetPickerOpen"
   | "layers"
-  | "assets"
-  | "onCreateAsset"
+  | "assetsContainer"
 > &
   ExtendedFuncProps2<
     Pick<FieldProps, "onChange" | "onRemove" | "onLink" | "onUploadFile" | "onRemoveFile">,
@@ -135,7 +134,6 @@ const PropertyItem: React.FC<Props> = ({
   ...props
 }) => {
   const intl = useIntl();
-
   const theme = useTheme();
 
   const [selected, select] = useState(-1);

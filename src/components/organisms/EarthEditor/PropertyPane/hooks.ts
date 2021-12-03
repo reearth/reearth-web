@@ -16,7 +16,6 @@ import {
   useLinkDatasetMutation,
   useUpdatePropertyItemsMutation,
   ListOperation,
-  useCreateAssetMutation,
 } from "@reearth/gql";
 import {
   useSelected,
@@ -61,7 +60,6 @@ export default (mode: Mode) => {
     isInfoboxCreatable,
     datasetSchemas,
     layers,
-    assets,
     selectedWidget,
   } = useQueries({
     mode,
@@ -69,7 +67,6 @@ export default (mode: Mode) => {
     rootLayerId,
     selectedBlock,
     selected,
-    teamId: team?.id,
     locale: intl.locale,
   });
 
@@ -143,24 +140,6 @@ export default (mode: Mode) => {
       });
     },
     [intl.locale, uploadFileMutation],
-  );
-
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (team?.id) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({
-                variables: { teamId: team.id, file },
-                refetchQueries: ["Assets"],
-              }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, team?.id],
   );
 
   const removeFile = useCallback(
@@ -339,7 +318,6 @@ export default (mode: Mode) => {
     removeField,
     link,
     uploadFile,
-    createAssets,
     removeFile,
     createInfobox,
     removeInfobox,
@@ -358,6 +336,6 @@ export default (mode: Mode) => {
     updatePropertyItems,
     datasetSchemas,
     layers,
-    assets,
+    teamId: team?.id,
   };
 };

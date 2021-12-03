@@ -29,8 +29,11 @@ export default ({
   accept?: "file" | "image" | "video";
   onCreateAsset?: (files: FileList) => void;
   initialAsset?: Asset;
-  selectAsset: (asset?: Asset | undefined) => void;
-  selectedAssets?: Asset[];
+  selectAsset: (asset?: { id?: string; url: string }) => void;
+  selectedAssets?: {
+    id?: string | undefined;
+    url: string;
+  }[];
   onRemove?: (assetIds: string[]) => void;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
@@ -46,7 +49,7 @@ export default ({
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
-      onRemove?.(selectedAssets.map(a => a.id));
+      onRemove?.(selectedAssets.filter(Boolean).map(a => a.id) as string[]);
       selectAsset?.(undefined);
       setDeleteModalVisible(false);
     }

@@ -39,7 +39,7 @@ export default ({
   const [selectedAssets, select] = useSelectedAssets();
 
   const selectAsset = useCallback(
-    (asset?: Asset) => {
+    (asset?: { id?: string; url: string }) => {
       if (!asset) return;
       select(assets =>
         assets && isMultipleSelectable

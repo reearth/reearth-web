@@ -38,13 +38,15 @@ const Project: React.FC<Props> = ({ projectId }) => {
           selectedAsset={selectedAsset}
           resetAssetSelect={resetAssetSelect}
           assetsContainer={
-            <AssetsContainer
-              teamId={currentTeam?.id}
-              url={project?.imageUrl ?? undefined}
-              allowedAssetType="image"
-              creationEnabled
-              height={425}
-            />
+            currentTeam && (
+              <AssetsContainer
+                teamId={currentTeam?.id}
+                url={project?.imageUrl ?? undefined}
+                allowedAssetType="image"
+                creationEnabled
+                height={425}
+              />
+            )
           }
         />
       ) : (

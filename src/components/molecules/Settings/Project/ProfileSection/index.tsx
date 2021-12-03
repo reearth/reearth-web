@@ -18,7 +18,10 @@ export type Props = {
   updateProjectName?: (name: string) => void;
   updateProjectDescription?: (description: string) => void;
   updateProjectImageUrl?: (imageUrl: string | null) => void;
-  selectedAsset?: Asset[];
+  selectedAsset?: {
+    id?: string;
+    url: string;
+  }[];
   resetAssetSelect: () => void;
   assetsContainer?: React.ReactNode;
 };

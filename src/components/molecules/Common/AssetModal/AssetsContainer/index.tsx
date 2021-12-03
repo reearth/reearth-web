@@ -23,13 +23,16 @@ export type Props = {
   className?: string;
   assets?: Asset[];
   initialAsset?: Asset;
-  selectedAssets?: Asset[];
+  selectedAssets?: {
+    id?: string;
+    url: string;
+  }[];
   accept?: "file" | "image" | "video";
   isMultipleSelectable?: boolean;
   height?: number;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
-  selectAsset: (asset?: Asset | undefined) => void;
+  selectAsset: (asset?: { id?: string; url: string }) => void;
 };
 
 const AssetsContainer: React.FC<Props> = ({
@@ -157,7 +160,7 @@ const AssetsContainer: React.FC<Props> = ({
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    onCheck={() => selectAsset(a)}
+                    onCheck={() => selectAsset({ id: a.id, url: a.url })}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />
@@ -168,7 +171,7 @@ const AssetsContainer: React.FC<Props> = ({
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    onCheck={() => selectAsset(a)}
+                    onCheck={() => selectAsset({ id: a.id, url: a.url })}
                     selected={selectedAssets?.includes(a)}
                     checked={currentSaved === a}
                   />

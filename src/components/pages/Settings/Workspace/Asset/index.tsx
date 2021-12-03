@@ -8,10 +8,8 @@ export type Props = {
   teamId?: string;
 };
 
-const AssetPage: React.FC<Props> = ({ teamId = "" }) => (
-  <AuthenticationRequiredPage>
-    <Asset teamId={teamId} />
-  </AuthenticationRequiredPage>
+const AssetPage: React.FC<Props> = ({ teamId }) => (
+  <AuthenticationRequiredPage>{teamId && <Asset teamId={teamId} />}</AuthenticationRequiredPage>
 );
 
 export default AssetPage;

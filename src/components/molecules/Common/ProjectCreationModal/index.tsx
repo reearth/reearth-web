@@ -23,7 +23,10 @@ export interface Props {
   open?: boolean;
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
-  selectedAsset?: Asset[];
+  selectedAsset?: {
+    id?: string;
+    url: string;
+  }[];
   onAssetSelect?: (asset?: Asset) => void;
   onImageSet?: (url: string) => void;
   assetsContainer?: React.ReactNode;

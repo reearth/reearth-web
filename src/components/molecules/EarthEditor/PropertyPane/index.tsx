@@ -23,7 +23,6 @@ import PropertyItem, {
   DatasetField as ItemDatasetField,
   DatasetType as ItemDatasetType,
   Layer as LayerType,
-  Asset as AssetType,
   Mode as ModeType,
 } from "./PropertyItem";
 import WidgetAlignSystemToggle from "./WidgetAlignSystemToggle";
@@ -41,7 +40,6 @@ export type DatasetSchema = ItemDatasetSchema;
 export type DatasetField = ItemDatasetField;
 export type DatasetType = ItemDatasetType;
 export type Layer = LayerType;
-export type Asset = AssetType;
 export type Mode = ModeType;
 
 export type Widget = {
@@ -57,12 +55,11 @@ export type Props = {
   isTemplate?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
-  onCreateAsset?: (files: FileList) => void;
   onRemovePane?: () => void;
-  assets?: Asset[];
   selectedWidget?: Widget;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   widgetAlignEditorActivated?: boolean;
+  assetsContainer?: React.ReactNode;
 } & Pick<
   PropertyItemProps,
   | "datasetSchemas"

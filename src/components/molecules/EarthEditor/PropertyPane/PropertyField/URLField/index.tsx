@@ -12,9 +12,8 @@ export type Asset = AssetType;
 
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";
-  assets?: Asset[];
   onRemoveFile?: () => void;
-  onCreateAsset?: (files: FileList) => void;
+  assetsContainer?: React.ReactNode;
 };
 
 const URLField: React.FC<Props> = ({
@@ -23,16 +22,15 @@ const URLField: React.FC<Props> = ({
   linked,
   overridden,
   fileType,
-  assets,
   onChange,
-  onCreateAsset,
+  assetsContainer,
 }) => {
   const intl = useIntl();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
   const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
   const closeAssetModal = useCallback(() => setAssetModalOpen(false), []);
   const deleteValue = useCallback(() => onChange?.(null), [onChange]);
-
+  console.log(value, "v");
   return (
     <Wrapper>
       <InputWrapper>
@@ -59,11 +57,10 @@ const URLField: React.FC<Props> = ({
       <AssetModal
         isOpen={isAssetModalOpen}
         onClose={closeAssetModal}
-        assets={assets}
         fileType={fileType}
-        onCreateAsset={onCreateAsset}
         onSelect={onChange}
-        value={value}
+        url={value}
+        assetsContainer={assetsContainer}
       />
     </Wrapper>
   );

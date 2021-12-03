@@ -28,7 +28,10 @@ export type Props = {
   onSelect?: (value: string | null, type?: "assets" | "url") => void;
   url?: string;
   fileType?: "image" | "video" | "file";
-  selectedAsset?: Asset[];
+  selectedAsset?: {
+    id?: string;
+    url: string;
+  }[];
   assetsContainer?: React.ReactNode;
 };
 
@@ -49,6 +52,7 @@ const AssetModal: React.FC<Props> = ({
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
 
+  console.log(selectedAsset, "sa");
   const [selectedTab, selectTab] = useState<Tabs>("assets");
   const [textUrl, setTextUrl] = useState(url);
 

@@ -95,15 +95,14 @@ export type Props<T extends ValueType = ValueType> = {
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
-  assets?: Asset[];
   onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
   onUploadFile?: (id: string, file: File) => void;
   onRemoveFile?: (id: string) => void;
-  onCreateAsset?: (files: FileList) => void;
   onIsCapturingChange?: (isCapturing: boolean) => void;
   onCameraChange?: (camera: Partial<Camera>) => void;
+  assetsContainer?: React.ReactNode;
 } & Pick<PropertyTitleProps, "datasetSchemas" | "onDatasetPickerOpen">;
 
 const PropertyField: React.FC<Props> = ({
@@ -112,7 +111,6 @@ const PropertyField: React.FC<Props> = ({
   field,
   schema,
   onUploadFile,
-  onCreateAsset,
   onRemoveFile,
   hidden,
   isCapturing,
@@ -127,7 +125,7 @@ const PropertyField: React.FC<Props> = ({
   linkedDatasetSchemaId,
   linkedDatasetId,
   layers,
-  assets,
+  assetsContainer,
 }) => {
   const rawEvents = useMemo(
     () => ({
@@ -217,9 +215,8 @@ const PropertyField: React.FC<Props> = ({
         ) : type === "url" ? (
           <URLField
             {...commonProps}
+            assetsContainer={assetsContainer}
             fileType={schema.ui === "image" || schema.ui === "video" ? schema.ui : undefined}
-            assets={assets}
-            onCreateAsset={onCreateAsset}
           />
         ) : type === "typography" ? (
           <TypographyField {...commonProps} />

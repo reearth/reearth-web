@@ -22,7 +22,7 @@ import {
   useSelectedAssets,
 } from "@reearth/state";
 
-export default (teamId: string) => {
+export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
@@ -176,7 +176,8 @@ export default (teamId: string) => {
     [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
-  const handleAssetSelect = (asset?: Asset) => selectAsset(asset ? [asset] : undefined);
+  const handleAssetSelect = (asset?: Asset) =>
+    selectAsset(asset ? [{ id: asset.id, url: asset.url }] : undefined);
   const handleProjectImageUrl = (url: string) => setProjectImageUrl(url);
 
   return {

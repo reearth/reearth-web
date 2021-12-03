@@ -21,7 +21,10 @@ export interface Props {
     description: string;
     imageUrl: string;
   }) => Promise<void>;
-  selectedAsset?: Asset[];
+  selectedAsset?: {
+    id?: string;
+    url: string;
+  }[];
   onAssetSelect?: (asset?: Asset) => void;
   onImageSet?: (url: string) => void;
   assetsContainer?: React.ReactNode;

@@ -12,7 +12,7 @@ import AssetsContainer from "@reearth/components/organisms/Common/AssetsContaine
 import useHooks from "./hooks";
 
 export type Props = {
-  teamId: string;
+  teamId?: string;
 };
 
 const Dashboard: React.FC<Props> = ({ teamId }) => {
@@ -59,13 +59,15 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
         onAssetSelect={handleAssetSelect}
         onImageSet={handleProjectImageUrl}
         assetsContainer={
-          <AssetsContainer
-            teamId={teamId}
-            url={projectImageUrl}
-            allowedAssetType="image"
-            creationEnabled
-            height={425}
-          />
+          teamId && (
+            <AssetsContainer
+              teamId={teamId}
+              url={projectImageUrl}
+              allowedAssetType="image"
+              creationEnabled
+              height={425}
+            />
+          )
         }
       />
       <Logo />

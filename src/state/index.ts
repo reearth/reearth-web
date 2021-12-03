@@ -1,6 +1,5 @@
 import { atom, useAtom } from "jotai";
 
-import { Asset } from "@reearth/components/molecules/Common/AssetModal";
 import { Camera } from "@reearth/util/value";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
@@ -28,7 +27,7 @@ export const useSelected = () => useAtom(selected);
 const selectedBlock = atom<string | undefined>(undefined);
 export const useSelectedBlock = () => useAtom(selectedBlock);
 
-const selectedAssets = atom<Asset[] | undefined>(undefined);
+const selectedAssets = atom<{ id?: string; url: string }[] | undefined>(undefined);
 export const useSelectedAssets = () => useAtom(selectedAssets);
 
 const isCapturing = atom<boolean>(false);
