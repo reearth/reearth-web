@@ -56,13 +56,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
         selectedAsset={selectedAsset}
         onAssetSelect={handleAssetSelect}
         assetsContainer={
-          <AssetsContainer
-            teamId={teamId}
-            initialAssetId={selectedAsset?.[0].id}
-            allowedAssetType="image"
-            creationEnabled
-            height={425}
-          />
+          <AssetsContainer teamId={teamId} allowedAssetType="image" creationEnabled height={425} />
         }
       />
       <Logo />

@@ -7,7 +7,7 @@ import useHooks, { Asset as AssetType } from "./hooks";
 export type Asset = AssetType;
 
 type Props = {
-  teamId: string;
+  teamId?: string;
   allowedAssetType?: "image" | "video" | "file";
   url?: string;
   isMultipleSelectable?: boolean;

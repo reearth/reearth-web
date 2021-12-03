@@ -26,7 +26,6 @@ export type Props = {
   selectedAssets?: Asset[];
   accept?: "file" | "image" | "video";
   isMultipleSelectable?: boolean;
-  imagesOnly?: boolean;
   height?: number;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
@@ -39,7 +38,6 @@ const AssetsContainer: React.FC<Props> = ({
   selectedAssets,
   accept,
   isMultipleSelectable = false,
-  imagesOnly = false,
   height,
   onCreateAsset,
   onRemove,
@@ -71,6 +69,8 @@ const AssetsContainer: React.FC<Props> = ({
     selectedAssets,
     onRemove,
   });
+
+  const imagesOnly = accept === "image";
 
   const filterOptions: { key: FilterTypes; label: string }[] = [
     { key: "time", label: intl.formatMessage({ defaultMessage: "Time" }) },

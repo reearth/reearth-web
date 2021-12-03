@@ -25,7 +25,7 @@ export type Props = {
   className?: string;
   isOpen?: boolean;
   onClose?: () => void;
-  onSelect?: (value: string | null) => void;
+  onSelect?: (value: string | null, type?: "assets" | "url") => void;
   url?: string;
   fileType?: "image" | "video" | "file";
   selectedAsset?: Asset[];
@@ -48,15 +48,22 @@ const AssetModal: React.FC<Props> = ({
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL = fileType === "video" || !!url;
 
-  const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
+  const [selectedTab, selectTab] = useState<Tabs>("assets");
+  const [textUrl, setTextUrl] = useState(url);
 
-  const [textUrl, setTextUrl] = useState(showURL ? url : undefined);
+  useEffect(() => {
+    if (url && isOpen) {
+      setTextUrl(url);
+    } else if (selectedAsset || !isOpen) {
+      setTextUrl("");
+    }
+  }, [selectedAsset, url, isOpen]);
 
   const handleSetUrl = useCallback(() => {
     onSelect?.(
       (selectedTab === "url" || fileType === "video" ? textUrl : selectedAsset?.[0].url) || null,
+      selectedTab,
     );
     onClose?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,20 +73,11 @@ const AssetModal: React.FC<Props> = ({
     setTextUrl(text);
   }, []);
 
-  const resetValues = useCallback(() => {
-    setTextUrl(showURL ? url : undefined);
-    selectTab(showURL ? "url" : "assets");
-  }, [url, showURL]);
-
   const handleModalClose = useCallback(() => {
-    resetValues();
+    setTextUrl(undefined);
+    selectTab("assets");
     onClose?.();
-  }, [onClose, resetValues]);
-
-  useEffect(() => {
-    resetValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showURL, url]);
+  }, [onClose]);
 
   return fileType === "video" ? (
     <Modal
@@ -137,8 +135,9 @@ const AssetModal: React.FC<Props> = ({
           onClick={handleModalClose}
         />
       }>
-      {selectedTab === "assets" && assetsContainer}
-      {selectedTab === "url" && (
+      {selectedTab === "assets" ? (
+        assetsContainer
+      ) : selectedTab === "url" ? (
         <TextContainer align="center">
           <Title size="s">
             {fileType === "image"
@@ -147,7 +146,7 @@ const AssetModal: React.FC<Props> = ({
           </Title>
           <StyledTextField value={textUrl} onChange={handleTextUrlChange} />
         </TextContainer>
-      )}
+      ) : null}
     </TabularModal>
   );
 };

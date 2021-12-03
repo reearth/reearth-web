@@ -6,13 +6,8 @@ import {
   useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
-  useCreateAssetMutation,
-  AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
-import { useTeam, useNotification } from "@reearth/state";
-
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
+import { useTeam, useNotification, useSelectedAssets } from "@reearth/state";
 
 type Params = {
   projectId: string;
@@ -21,8 +16,10 @@ type Params = {
 export default ({ projectId }: Params) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
+  const [selectedAsset, selectAsset] = useSelectedAssets();
   const [currentTeam] = useTeam();
 
+  const resetAssetSelect = () => selectAsset(undefined);
   const teamId = currentTeam?.id;
 
   const { data } = useProjectQuery({
@@ -127,27 +124,6 @@ export default ({ projectId }: Params) => {
     }
   }, [projectId, intl, setNotification, deleteProjectMutation]);
 
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
-
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
-
   return {
     project,
     projectId,
@@ -157,7 +133,7 @@ export default ({ projectId }: Params) => {
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    createAssets,
-    assets,
+    selectedAsset,
+    resetAssetSelect,
   };
 };

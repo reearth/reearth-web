@@ -1,5 +1,5 @@
 import { useNavigate } from "@reach/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import { useAssetsQuery, useCreateAssetMutation, useRemoveAssetMutation } from "@reearth/gql";
@@ -15,7 +15,7 @@ export type Asset = {
 };
 
 type Params = {
-  teamId: string;
+  teamId?: string;
   allowedAssetType?: "image" | "video" | "file";
   url?: string;
   isMultipleSelectable?: boolean;
@@ -80,7 +80,7 @@ export default ({
     )
     .reverse() as Asset[];
 
-  const initialAsset = assets?.find(a => a.url === url);
+  const initialAsset = useMemo(() => assets?.find(a => a.url === url), [assets, url]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -149,9 +149,6 @@ export default ({
     if (initialAsset) {
       select([initialAsset]);
     }
-    return () => {
-      select(undefined);
-    };
   }, [initialAsset, select]);
 
   return {

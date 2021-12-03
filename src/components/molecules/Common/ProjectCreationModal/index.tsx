@@ -46,7 +46,6 @@ const ProjectCreationModal: React.FC<Props> = ({
   const theme = useTheme();
 
   const [openAssets, setOpenAssets] = useState(false);
-  const [projectImage, setProjectImage] = useState(selectedAsset?.[0]);
 
   const formik = useFormik({
     initialValues,
@@ -59,26 +58,30 @@ const ProjectCreationModal: React.FC<Props> = ({
     },
   });
 
-  const handleOpenAssetModal = useCallback(() => {
-    onAssetSelect?.(projectImage);
+  const handleAssetModalOpen = useCallback(() => {
     setOpenAssets(true);
-  }, [onAssetSelect, projectImage]);
+  }, []);
+
+  const handleAssetModalClose = useCallback(() => {
+    setOpenAssets(false);
+  }, []);
 
   const handleClose = useCallback(() => {
     if (!formik.isSubmitting) {
       onClose?.();
       formik.resetForm();
-      onAssetSelect?.();
-      setProjectImage(undefined);
+      onAssetSelect?.(undefined);
     }
   }, [formik, onClose, onAssetSelect]);
 
   const handleSelect = useCallback(
-    (value: string | null) => {
+    (value: string | null, type?: "assets" | "url") => {
       formik.setFieldValue("imageUrl", value);
-      setProjectImage(selectedAsset?.[0]);
+      if (type === "url") {
+        onAssetSelect?.(undefined);
+      }
     },
-    [formik, selectedAsset],
+    [formik, onAssetSelect],
   );
 
   const handleCreate = useCallback(async () => {
@@ -139,14 +142,15 @@ const ProjectCreationModal: React.FC<Props> = ({
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
             {intl.formatMessage({ defaultMessage: "Select thumbnail image" })}
           </Text>
-          <Thumbnail url={formik.values.imageUrl} onClick={() => handleOpenAssetModal()} />
+          <Thumbnail url={formik.values.imageUrl} onClick={() => handleAssetModalOpen()} />
         </FormInputWrapper>
       </NewProjectForm>
       <AssetModal
         isOpen={openAssets}
-        onClose={() => setOpenAssets(false)}
         fileType="image"
         selectedAsset={selectedAsset}
+        url={!selectedAsset ? formik.values.imageUrl : undefined}
+        onClose={handleAssetModalClose}
         onSelect={handleSelect}
         assetsContainer={assetsContainer}
       />

@@ -4,6 +4,7 @@ import ArchivedMessage from "@reearth/components/molecules/Settings/Project/Arch
 import DangerSection from "@reearth/components/molecules/Settings/Project/DangerSection";
 import ProfileSection from "@reearth/components/molecules/Settings/Project/ProfileSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
+import AssetsContainer from "@reearth/components/organisms/Common/AssetsContainer";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 
 import useHooks from "./hooks";
@@ -21,8 +22,8 @@ const Project: React.FC<Props> = ({ projectId }) => {
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    createAssets,
-    assets,
+    selectedAsset,
+    resetAssetSelect,
   } = useHooks({ projectId });
 
   return (
@@ -34,8 +35,17 @@ const Project: React.FC<Props> = ({ projectId }) => {
           updateProjectName={updateProjectName}
           updateProjectDescription={updateProjectDescription}
           updateProjectImageUrl={updateProjectImageUrl}
-          assets={assets}
-          createAssets={createAssets}
+          selectedAsset={selectedAsset}
+          resetAssetSelect={resetAssetSelect}
+          assetsContainer={
+            <AssetsContainer
+              teamId={currentTeam?.id}
+              url={project?.imageUrl ?? undefined}
+              allowedAssetType="image"
+              creationEnabled
+              height={425}
+            />
+          }
         />
       ) : (
         <ArchivedMessage />

@@ -18,8 +18,9 @@ export type Props = {
   updateProjectName?: (name: string) => void;
   updateProjectDescription?: (description: string) => void;
   updateProjectImageUrl?: (imageUrl: string | null) => void;
-  assets?: Asset[];
-  createAssets?: (files: FileList) => Promise<void>;
+  selectedAsset?: Asset[];
+  resetAssetSelect: () => void;
+  assetsContainer?: React.ReactNode;
 };
 
 const ProfileSection: React.FC<Props> = ({
@@ -27,13 +28,17 @@ const ProfileSection: React.FC<Props> = ({
   updateProjectName,
   updateProjectDescription,
   updateProjectImageUrl,
-  assets,
-  createAssets,
+  selectedAsset,
+  resetAssetSelect,
+  assetsContainer,
 }) => {
   const intl = useIntl();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
   const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
-  const closeAssetModal = useCallback(() => setAssetModalOpen(false), []);
+  const closeAssetModal = useCallback(() => {
+    resetAssetSelect();
+    setAssetModalOpen(false);
+  }, [resetAssetSelect]);
 
   return (
     <Wrapper>
@@ -60,12 +65,12 @@ const ProfileSection: React.FC<Props> = ({
       </Section>
       <AssetModal
         isOpen={isAssetModalOpen}
-        onClose={closeAssetModal}
-        assets={assets}
         fileType="image"
-        onCreateAsset={createAssets}
+        selectedAsset={selectedAsset}
+        url={!selectedAsset ? (currentProject?.imageUrl as string) : undefined}
+        onClose={closeAssetModal}
         onSelect={updateProjectImageUrl}
-        value={currentProject?.imageUrl as string | undefined}
+        assetsContainer={assetsContainer}
       />
     </Wrapper>
   );
