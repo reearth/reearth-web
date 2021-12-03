@@ -4,7 +4,6 @@ import { useIntl } from "react-intl";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
-import type { Asset } from "@reearth/components/organisms/Common/AssetsContainer";
 import {
   useMeQuery,
   useProjectQuery,
@@ -28,7 +27,7 @@ export default (teamId?: string) => {
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
   const [selectedAsset, selectAsset] = useSelectedAssets();
-  const [projectImageUrl, setProjectImageUrl] = useState<string>();
+  const [projectImage, setProjectImage] = useState<{ id?: string; url: string }>();
 
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -176,9 +175,10 @@ export default (teamId?: string) => {
     [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
-  const handleAssetSelect = (asset?: Asset) =>
-    selectAsset(asset ? [{ id: asset.id, url: asset.url }] : undefined);
-  const handleProjectImageUrl = (url: string) => setProjectImageUrl(url);
+  const handleAssetSelect = (asset?: { id?: string; url: string }) => {
+    setProjectImage(asset);
+    selectAsset(asset ? [asset] : undefined);
+  };
 
   return {
     user,
@@ -191,9 +191,8 @@ export default (teamId?: string) => {
     modalShown,
     openModal,
     handleModalClose,
-    selectedAsset,
+    selectedAsset: selectedAsset?.[0],
     handleAssetSelect,
-    projectImageUrl,
-    handleProjectImageUrl,
+    projectImage,
   };
 };

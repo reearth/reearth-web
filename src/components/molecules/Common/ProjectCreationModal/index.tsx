@@ -26,9 +26,8 @@ export interface Props {
   selectedAsset?: {
     id?: string;
     url: string;
-  }[];
-  onAssetSelect?: (asset?: Asset) => void;
-  onImageSet?: (url: string) => void;
+  };
+  onAssetSelect?: (asset?: { id?: string; url: string }) => void;
   assetsContainer?: React.ReactNode;
 }
 
@@ -44,7 +43,6 @@ const ProjectCreationModal: React.FC<Props> = ({
   onSubmit,
   selectedAsset,
   onAssetSelect,
-  onImageSet,
   assetsContainer,
 }) => {
   const intl = useIntl();
@@ -58,7 +56,7 @@ const ProjectCreationModal: React.FC<Props> = ({
       await onSubmit?.(data);
       onClose?.();
       resetForm({});
-      onAssetSelect?.();
+      onAssetSelect?.(undefined);
       setStatus({ success: true });
     },
   });
@@ -80,15 +78,12 @@ const ProjectCreationModal: React.FC<Props> = ({
   }, [formik, onClose, onAssetSelect]);
 
   const handleSelect = useCallback(
-    (value: string | null, type?: "assets" | "url") => {
-      if (!value) return;
-      onImageSet?.(value);
-      formik.setFieldValue("imageUrl", value);
-      if (type === "url") {
-        onAssetSelect?.(undefined);
-      }
+    (asset?: { id?: string; url: string }) => {
+      if (!asset) return;
+      formik.setFieldValue("imageUrl", asset.url);
+      onAssetSelect?.(asset);
     },
-    [formik, onAssetSelect, onImageSet],
+    [formik, onAssetSelect],
   );
 
   const handleCreate = useCallback(async () => {
@@ -156,7 +151,6 @@ const ProjectCreationModal: React.FC<Props> = ({
         isOpen={openAssets}
         fileType="image"
         selectedAsset={selectedAsset}
-        url={!selectedAsset ? formik.values.imageUrl : undefined}
         onClose={handleAssetModalClose}
         onSelect={handleSelect}
         assetsContainer={assetsContainer}

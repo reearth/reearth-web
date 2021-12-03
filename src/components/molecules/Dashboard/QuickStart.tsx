@@ -6,9 +6,7 @@ import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import ProjectCreationModal, {
-  Asset,
-} from "@reearth/components/molecules/Common/ProjectCreationModal";
+import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/components/molecules/Common/WorkspaceCreationModal";
 import { styled, useTheme, metrics, css } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -24,9 +22,8 @@ export interface Props {
   selectedAsset?: {
     id?: string;
     url: string;
-  }[];
-  onAssetSelect?: (asset?: Asset) => void;
-  onImageSet?: (url: string) => void;
+  };
+  onAssetSelect?: (asset?: { id?: string; url: string }) => void;
   assetsContainer?: React.ReactNode;
 }
 
@@ -36,7 +33,6 @@ const QuickStart: React.FC<Props> = ({
   onCreateProject,
   selectedAsset,
   onAssetSelect,
-  onImageSet,
   assetsContainer,
 }) => {
   const intl = useIntl();
@@ -91,7 +87,6 @@ const QuickStart: React.FC<Props> = ({
         onSubmit={onCreateProject}
         selectedAsset={selectedAsset}
         onAssetSelect={onAssetSelect}
-        onImageSet={onImageSet}
         assetsContainer={assetsContainer}
       />
       <WorkspaceCreationModal

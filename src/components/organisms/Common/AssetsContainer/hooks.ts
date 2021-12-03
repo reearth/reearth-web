@@ -17,7 +17,7 @@ export type Asset = {
 type Params = {
   teamId: string;
   allowedAssetType?: "image" | "video" | "file";
-  url?: string;
+  initialAsset?: { id?: string; url: string };
   isMultipleSelectable?: boolean;
   creationEnabled?: boolean;
   deletionEnabled?: boolean;
@@ -26,7 +26,7 @@ type Params = {
 export default ({
   teamId,
   allowedAssetType,
-  url,
+  initialAsset,
   isMultipleSelectable,
   creationEnabled,
   deletionEnabled,
@@ -80,7 +80,9 @@ export default ({
     )
     .reverse() as Asset[];
 
-  const initialAsset = assets?.find(a => a.url === url);
+  const initialAsset2 = initialAsset?.id
+    ? assets?.find(a => a.id === initialAsset?.id)
+    : initialAsset;
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -147,13 +149,13 @@ export default ({
   );
 
   useEffect(() => {
-    if (initialAsset) {
-      select([initialAsset]);
+    if (initialAsset2) {
+      select([initialAsset2]);
     }
     return () => {
       select(undefined);
     };
-  }, [initialAsset, select]);
+  }, [initialAsset2, select]);
 
   return {
     currentProject,

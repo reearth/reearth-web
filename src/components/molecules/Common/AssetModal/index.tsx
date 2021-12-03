@@ -25,13 +25,12 @@ export type Props = {
   className?: string;
   isOpen?: boolean;
   onClose?: () => void;
-  onSelect?: (value: string | null, type?: "assets" | "url") => void;
-  url?: string;
+  onSelect?: (asset?: { id?: string; url: string }) => void;
   fileType?: "image" | "video" | "file";
   selectedAsset?: {
     id?: string;
     url: string;
-  }[];
+  };
   assetsContainer?: React.ReactNode;
 };
 
@@ -41,7 +40,6 @@ const AssetModal: React.FC<Props> = ({
   isOpen,
   onClose,
   onSelect,
-  url,
   fileType,
   selectedAsset,
   assetsContainer,
@@ -53,21 +51,18 @@ const AssetModal: React.FC<Props> = ({
   };
 
   const [selectedTab, selectTab] = useState<Tabs>("assets");
-  const [textUrl, setTextUrl] = useState(url);
+  const [textUrl, setTextUrl] = useState<string>();
 
   useEffect(() => {
-    if (url && isOpen) {
-      setTextUrl(url);
-    } else if (selectedAsset || !isOpen) {
-      setTextUrl("");
+    if (isOpen && selectedAsset && !selectedAsset.id) {
+      setTextUrl(selectedAsset.url);
+    } else {
+      setTextUrl(undefined);
     }
-  }, [selectedAsset, url, isOpen]);
+  }, [selectedAsset, isOpen]);
 
   const handleSetUrl = useCallback(() => {
-    onSelect?.(
-      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAsset?.[0].url) || null,
-      selectedTab,
-    );
+    onSelect?.((textUrl ? { url: textUrl } : selectedAsset) || undefined);
     onClose?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onClose, selectedAsset, selectedTab, onSelect, fileType, textUrl]);
