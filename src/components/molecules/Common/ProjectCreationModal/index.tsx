@@ -25,6 +25,7 @@ export interface Props {
   onSubmit?: (values: FormValues) => Promise<void> | void;
   selectedAsset?: Asset[];
   onAssetSelect?: (asset?: Asset) => void;
+  onImageSet?: (url: string) => void;
   assetsContainer?: React.ReactNode;
 }
 
@@ -40,6 +41,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   onSubmit,
   selectedAsset,
   onAssetSelect,
+  onImageSet,
   assetsContainer,
 }) => {
   const intl = useIntl();
@@ -76,12 +78,14 @@ const ProjectCreationModal: React.FC<Props> = ({
 
   const handleSelect = useCallback(
     (value: string | null, type?: "assets" | "url") => {
+      if (!value) return;
+      onImageSet?.(value);
       formik.setFieldValue("imageUrl", value);
       if (type === "url") {
         onAssetSelect?.(undefined);
       }
     },
-    [formik, onAssetSelect],
+    [formik, onAssetSelect, onImageSet],
   );
 
   const handleCreate = useCallback(async () => {

@@ -23,6 +23,7 @@ export interface Props {
   }) => Promise<void>;
   selectedAsset?: Asset[];
   onAssetSelect?: (asset?: Asset) => void;
+  onImageSet?: (url: string) => void;
   assetsContainer?: React.ReactNode;
 }
 
@@ -32,6 +33,7 @@ const QuickStart: React.FC<Props> = ({
   onCreateProject,
   selectedAsset,
   onAssetSelect,
+  onImageSet,
   assetsContainer,
 }) => {
   const intl = useIntl();
@@ -86,6 +88,7 @@ const QuickStart: React.FC<Props> = ({
         onSubmit={onCreateProject}
         selectedAsset={selectedAsset}
         onAssetSelect={onAssetSelect}
+        onImageSet={onImageSet}
         assetsContainer={assetsContainer}
       />
       <WorkspaceCreationModal

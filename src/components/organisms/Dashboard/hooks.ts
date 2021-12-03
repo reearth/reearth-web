@@ -28,6 +28,7 @@ export default (teamId: string) => {
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
   const [selectedAsset, selectAsset] = useSelectedAssets();
+  const [projectImageUrl, setProjectImageUrl] = useState<string>();
 
   const { data, refetch } = useMeQuery();
   const [modalShown, setModalShown] = useState(false);
@@ -176,6 +177,7 @@ export default (teamId: string) => {
   );
 
   const handleAssetSelect = (asset?: Asset) => selectAsset(asset ? [asset] : undefined);
+  const handleProjectImageUrl = (url: string) => setProjectImageUrl(url);
 
   return {
     user,
@@ -190,5 +192,7 @@ export default (teamId: string) => {
     handleModalClose,
     selectedAsset,
     handleAssetSelect,
+    projectImageUrl,
+    handleProjectImageUrl,
   };
 };

@@ -31,6 +31,8 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     handleModalClose,
     selectedAsset,
     handleAssetSelect,
+    projectImageUrl,
+    handleProjectImageUrl,
   } = useHooks(teamId);
 
   return (
@@ -55,8 +57,15 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
         onCreateProject={createProject}
         selectedAsset={selectedAsset}
         onAssetSelect={handleAssetSelect}
+        onImageSet={handleProjectImageUrl}
         assetsContainer={
-          <AssetsContainer teamId={teamId} allowedAssetType="image" creationEnabled height={425} />
+          <AssetsContainer
+            teamId={teamId}
+            url={projectImageUrl}
+            allowedAssetType="image"
+            creationEnabled
+            height={425}
+          />
         }
       />
       <Logo />
