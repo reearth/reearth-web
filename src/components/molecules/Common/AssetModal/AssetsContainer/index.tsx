@@ -172,7 +172,7 @@ const AssetsContainer: React.FC<Props> = ({
                     cardSize={layoutType}
                     url={a.url}
                     onCheck={() => selectAsset({ id: a.id, url: a.url })}
-                    selected={selectedAssets?.includes(a)}
+                    selected={!!selectedAssets?.find(a2 => a2.id === a.id)}
                     checked={currentSaved === a}
                   />
                 ))}

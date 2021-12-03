@@ -43,8 +43,8 @@ export default ({
       if (!asset) return;
       select(assets =>
         assets && isMultipleSelectable
-          ? assets.includes(asset)
-            ? assets.filter(asset2 => asset2 !== asset)
+          ? assets.find(a => a.id === asset.id)
+            ? assets.filter(asset2 => asset2.id !== asset.id)
             : [asset, ...assets]
           : [asset],
       );
@@ -141,8 +141,9 @@ export default ({
             }),
           });
         }
+        select();
       })(),
-    [removeAssetMutation, currentTeamId, setNotification, intl],
+    [removeAssetMutation, currentTeamId, setNotification, select, intl],
   );
 
   useEffect(() => {
