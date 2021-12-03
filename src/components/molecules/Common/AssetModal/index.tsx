@@ -52,7 +52,6 @@ const AssetModal: React.FC<Props> = ({
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
 
-  console.log(selectedAsset, "sa");
   const [selectedTab, selectTab] = useState<Tabs>("assets");
   const [textUrl, setTextUrl] = useState(url);
 
