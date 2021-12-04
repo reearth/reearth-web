@@ -13,6 +13,7 @@ import {
   Camera,
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
+  ScreenSpaceCameraController,
 } from "resium";
 
 import type { EngineProps, Ref as EngineRef } from "..";
@@ -99,6 +100,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
+        <ScreenSpaceCameraController
+          maximumZoomDistance={
+            property?.cameraLimiter?.enable_camera_limiter
+              ? property.cameraLimiter?.target_area?.height || Number.POSITIVE_INFINITY
+              : Number.POSITIVE_INFINITY
+          }></ScreenSpaceCameraController>
         <Camera onChange={handleCameraMoveEnd} percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.01 : 0.5} />
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
