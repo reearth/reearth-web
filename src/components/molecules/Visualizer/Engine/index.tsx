@@ -30,6 +30,23 @@ export type SceneProperty = {
     bgcolor?: string;
     ion?: string;
   };
+  cameraLimiter?: {
+    id: string;
+    enable_camera_limiter?: boolean;
+    show_helper?: boolean;
+    target_area: {
+      altitude: number;
+      fov: number;
+      heading: number;
+      height: number;
+      lat: number;
+      lng: number;
+      pitch: number;
+      roll: number;
+    };
+    target_width: number;
+    target_height: number;
+  };
   tiles?: {
     id: string;
     tile_type?: string;
