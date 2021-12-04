@@ -99,7 +99,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
-        <Camera onChange={handleCameraMoveEnd} />
+        <Camera onChange={handleCameraMoveEnd} percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.01 : 0.5} />
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
