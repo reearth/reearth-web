@@ -1,4 +1,4 @@
-import { ScreenSpaceEventType } from "cesium";
+import { ArcType, Cartesian2, Cartesian3, Color, Plane, PolylineDashMaterialProperty, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -14,6 +14,12 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
   ScreenSpaceCameraController,
+  PolygonGraphics,
+  Entity,
+  PointGraphics,
+  PolylineGraphics,
+  RectangleGraphics,
+  PlaneGraphics,
 } from "resium";
 
 import type { EngineProps, Ref as EngineRef } from "..";
@@ -48,6 +54,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     backgroundColor,
     imageryLayers,
     cesium,
+    limiterDimensions,
+    cameraViewOuterBoundaries,
     handleMount,
     handleUnmount,
     handleClick,
@@ -106,7 +114,32 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               ? property.cameraLimiter?.target_area?.height || Number.POSITIVE_INFINITY
               : Number.POSITIVE_INFINITY
           }></ScreenSpaceCameraController>
-        <Camera onChange={handleCameraMoveEnd} percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.01 : 0.5} />
+        <Camera onChange={handleCameraMoveEnd} percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.001 : 0.5} />
+
+        {limiterDimensions && property?.cameraLimiter?.show_helper && (
+          <Entity>
+            <PolylineGraphics
+              positions={limiterDimensions.cartesianArray}
+              width={1}
+              material={Color.RED}
+              arcType={ArcType.RHUMB}
+            ></PolylineGraphics>
+          </Entity>
+
+        )}
+        {cameraViewOuterBoundaries && property?.cameraLimiter?.show_helper && (
+
+          <Entity>
+            <PolylineGraphics
+              positions={cameraViewOuterBoundaries.cartesianArray}
+              width={1}
+              material={new PolylineDashMaterialProperty({
+                color: Color.RED
+              })}
+              arcType={ArcType.RHUMB}
+            ></PolylineGraphics>
+          </Entity>
+        )}
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
