@@ -124,7 +124,9 @@ export default ({
     () => {
       if (initialCameraFlight.current) return;
       initialCameraFlight.current = true;
-      if (property?.default?.camera) {
+      if (property?.cameraLimiter?.enable_camera_limiter) {
+        engineAPI.flyTo(property?.cameraLimiter?.target_area, { duration: 0 });
+      } else if (property?.default?.camera) {
         engineAPI.flyTo(property.default.camera, { duration: 0 });
       }
       const camera = getCamera(cesium?.current?.cesiumElement);
@@ -132,12 +134,12 @@ export default ({
         onCameraChange?.(camera);
       }
     },
-    [engineAPI, onCameraChange, property?.default?.camera],
+    [engineAPI, onCameraChange, property?.default?.camera, property?.cameraLimiter?.enable_camera_limiter],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
-      isEqual(prevDeps[2], nextDeps[2]),
-  );
+      isEqual(prevDeps[2], nextDeps[2]) &&
+      isEqual(prevDeps[3], nextDeps[3]));
 
   const handleUnmount = useCallback(() => {
     initialCameraFlight.current = false;
@@ -204,13 +206,7 @@ export default ({
       topDemention: Cartographic;
       bottomDemention: Cartographic;
     }
-    cartesianArray: Cartesian3[],
-    cartesianDimensions: {
-      rightTop: Cartesian3;
-      leftTop: Cartesian3;
-      leftBottom: Cartesian3;
-      rightBottom: Cartesian3;
-    }
+    cartesianArray: Cartesian3[]
   } => {
     const viewer = cesium.current?.cesiumElement;
     if (
@@ -248,13 +244,7 @@ export default ({
         Cartographic.toCartesian(leftBottom),
         Cartographic.toCartesian(rightBottom),
         Cartographic.toCartesian(rightTop)
-      ],
-      cartesianDimensions: {
-        rightTop: Cartographic.toCartesian(rightTop),
-        leftTop: Cartographic.toCartesian(leftTop),
-        leftBottom: Cartographic.toCartesian(leftBottom),
-        rightBottom: Cartographic.toCartesian(rightBottom)
-      }
+      ]
     };
   }, [property?.cameraLimiter, geodsic]);
 
@@ -262,6 +252,10 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (
       !viewer ||
+      !viewer.scene ||
+      !viewer.scene.canvas ||
+      !viewer.scene.canvas.clientWidth ||
+      !viewer.scene.canvas.clientHeight ||
       viewer.isDestroyed() ||
       !property?.cameraLimiter ||
       !property?.cameraLimiter.target_area ||
@@ -270,7 +264,6 @@ export default ({
       return undefined;
 
 
-    // CAMERA
     const camera = new CesiumCamera(viewer.scene);
     camera.setView({
       destination: Cartesian3.fromDegrees(property.cameraLimiter.target_area.lng, property.cameraLimiter.target_area.lat, property.cameraLimiter.target_area.height),
@@ -295,7 +288,6 @@ export default ({
     const recLeftTop = new Cartographic(recLeftDemention.longitude, recTopDemention.latitude, 0);
     const recRightBottom = new Cartographic(recRightDemention.longitude, recBottomDemention.latitude, 0);
     const recLeftBottom = new Cartographic(recLeftDemention.longitude, recBottomDemention.latitude, 0);
-    // END CAMERA
 
     return {
       cartesianArray: [
@@ -306,7 +298,7 @@ export default ({
         Cartographic.toCartesian(recRightTop)
       ],
     };
-  }, [geodsic])
+  }, [geodsic, camera])
 
   useEffect(() => {
     const camera = getCamera(cesium?.current?.cesiumElement);
@@ -346,7 +338,7 @@ export default ({
         },
       });
     }
-  }, [camera, onCameraChange, engineAPI, property?.cameraLimiter, limiterDimensions]);
+  }, [camera, onCameraChange, property?.cameraLimiter, limiterDimensions]);
 
 
   // manage layer selection
