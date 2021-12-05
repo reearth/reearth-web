@@ -198,7 +198,7 @@ export default ({
     return { geodesicVertical, geodesicHorizontal }
   }, [property?.cameraLimiter?.target_area])
 
-  //manage camera limiter
+  // calculate inner limiter dimensions
   const limiterDimensions = useMemo((): undefined | {
     cartographicDimensions: {
       rightDemention: Cartographic;
@@ -248,6 +248,7 @@ export default ({
     };
   }, [property?.cameraLimiter, geodsic]);
 
+  // calculate maximum camera view (outer boundaries)
   const cameraViewOuterBoundaries = useMemo((): undefined | { cartesianArray: Cartesian3[] } => {
     const viewer = cesium.current?.cesiumElement;
     if (
@@ -300,6 +301,7 @@ export default ({
     };
   }, [geodsic, camera])
 
+  // Manage camera limiter conditions
   useEffect(() => {
     const camera = getCamera(cesium?.current?.cesiumElement);
     const viewer = cesium?.current?.cesiumElement;
