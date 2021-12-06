@@ -110,7 +110,10 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               ? property.cameraLimiter?.target_area?.height || Number.POSITIVE_INFINITY
               : Number.POSITIVE_INFINITY
           }></ScreenSpaceCameraController>
-        <Camera onChange={handleCameraMoveEnd} percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.001 : 0.5} />
+        <Camera
+          onChange={handleCameraMoveEnd}
+          percentageChanged={property?.cameraLimiter?.enable_camera_limiter ? 0.001 : 0.5}
+        />
 
         {limiterDimensions && property?.cameraLimiter?.show_helper && (
           <Entity>
@@ -118,22 +121,20 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               positions={limiterDimensions.cartesianArray}
               width={1}
               material={Color.RED}
-              arcType={ArcType.RHUMB}
-            ></PolylineGraphics>
+              arcType={ArcType.RHUMB}></PolylineGraphics>
           </Entity>
-
         )}
         {cameraViewOuterBoundaries && property?.cameraLimiter?.show_helper && (
-
           <Entity>
             <PolylineGraphics
               positions={cameraViewOuterBoundaries.cartesianArray}
               width={1}
-              material={new PolylineDashMaterialProperty({
-                color: Color.RED
-              })}
-              arcType={ArcType.RHUMB}
-            ></PolylineGraphics>
+              material={
+                new PolylineDashMaterialProperty({
+                  color: Color.RED,
+                })
+              }
+              arcType={ArcType.RHUMB}></PolylineGraphics>
           </Entity>
         )}
         <Scene backgroundColor={backgroundColor} />
