@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Cartographic, Camera as CesiumCamera, Math, EllipsoidGeodesic, Ellipsoid, Rectangle, BoundingRectangle } from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Cartographic, Camera as CesiumCamera, Math, EllipsoidGeodesic, Ellipsoid, Rectangle } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual, throttle } from "lodash-es";

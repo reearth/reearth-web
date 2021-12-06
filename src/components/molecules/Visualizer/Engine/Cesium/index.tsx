@@ -1,4 +1,4 @@
-import { ArcType, Cartesian2, Cartesian3, Color, Plane, PolylineDashMaterialProperty, ScreenSpaceEventType } from "cesium";
+import { ArcType, Color, PolylineDashMaterialProperty, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -14,12 +14,8 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
   ScreenSpaceCameraController,
-  PolygonGraphics,
   Entity,
-  PointGraphics,
   PolylineGraphics,
-  RectangleGraphics,
-  PlaneGraphics,
 } from "resium";
 
 import type { EngineProps, Ref as EngineRef } from "..";
