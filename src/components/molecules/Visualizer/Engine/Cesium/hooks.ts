@@ -235,6 +235,8 @@ export default ({
   }, [property?.cameraLimiter?.target_area]);
 
   // calculate inner limiter dimensions
+  const targetWidth = 1000000;
+  const targetHeight = 1000000;
   const limiterDimensions = useMemo(():
     | undefined
     | {
@@ -255,20 +257,12 @@ export default ({
       !geodsic
     )
       return undefined;
-
-    const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
-      property.cameraLimiter.target_height / 2,
-    );
-    const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
-      -property.cameraLimiter.target_height / 2,
-    );
-
-    const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
-      property.cameraLimiter.target_width / 2,
-    );
-    const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
-      -property.cameraLimiter.target_width / 2,
-    );
+    const targetHalfWidth = (property.cameraLimiter.target_width || targetWidth) / 2;
+    const targetHalfHeight = (property.cameraLimiter.target_height || targetHeight) / 2;
+    const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(targetHalfHeight);
+    const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-targetHalfHeight);
+    const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth);
+    const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-targetHalfWidth);
 
     const rightTop = new Cartographic(rightDemention.longitude, topDemention.latitude, 0);
     const leftTop = new Cartographic(leftDemention.longitude, topDemention.latitude, 0);
@@ -324,18 +318,12 @@ export default ({
     const rectangleHalfWidth = Rectangle.computeWidth(computedViewRectangle) * Math.PI * 1000000;
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
 
-    const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
-      property.cameraLimiter.target_height / 2 + rectangleHalfHeight,
-    );
-    const recBottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
-      -(property.cameraLimiter.target_height / 2 + rectangleHalfHeight),
-    );
-    const recRightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
-      property.cameraLimiter.target_width / 2 + rectangleHalfWidth,
-    );
-    const recLeftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
-      -(property.cameraLimiter.target_width / 2 + rectangleHalfWidth),
-    );
+    const targetHalfWidth = (property.cameraLimiter.target_width || targetWidth) / 2;
+    const targetHalfHeight = (property.cameraLimiter.target_height || targetHeight) / 2;
+    const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(targetHalfHeight + rectangleHalfHeight);
+    const recBottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-(targetHalfHeight + rectangleHalfHeight),);
+    const recRightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth + rectangleHalfWidth);
+    const recLeftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-(targetHalfWidth + rectangleHalfWidth),);
 
     const recRightTop = new Cartographic(recRightDemention.longitude, recTopDemention.latitude, 0);
     const recLeftTop = new Cartographic(recLeftDemention.longitude, recTopDemention.latitude, 0);
