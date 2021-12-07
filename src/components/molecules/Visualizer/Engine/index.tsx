@@ -45,7 +45,7 @@ export type SceneProperty = {
       roll: number;
     };
     target_width: number;
-    target_height: number;
+    target_length: number;
   };
   tiles?: {
     id: string;
