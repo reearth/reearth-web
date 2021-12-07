@@ -304,9 +304,6 @@ export default ({
     if (
       !viewer ||
       !viewer.scene ||
-      !viewer.scene.canvas ||
-      !viewer.scene.canvas.clientWidth ||
-      !viewer.scene.canvas.clientHeight ||
       viewer.isDestroyed() ||
       !property?.cameraLimiter ||
       !property?.cameraLimiter.target_area ||
