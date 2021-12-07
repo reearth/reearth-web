@@ -238,14 +238,14 @@ export default ({
   const limiterDimensions = useMemo(():
     | undefined
     | {
-        cartographicDimensions: {
-          rightDemention: Cartographic;
-          leftDemention: Cartographic;
-          topDemention: Cartographic;
-          bottomDemention: Cartographic;
-        };
-        cartesianArray: Cartesian3[];
-      } => {
+      cartographicDimensions: {
+        rightDemention: Cartographic;
+        leftDemention: Cartographic;
+        topDemention: Cartographic;
+        bottomDemention: Cartographic;
+      };
+      cartesianArray: Cartesian3[];
+    } => {
     const viewer = cesium.current?.cesiumElement;
     if (
       !viewer ||
@@ -255,7 +255,13 @@ export default ({
       !geodsic
     )
       return undefined;
-
+    // TODO: default values to fill
+    if (!property.cameraLimiter.target_width) {
+      property.cameraLimiter.target_width = 1000000;
+    }
+    if (!property.cameraLimiter.target_height) {
+      property.cameraLimiter.target_height = 1000000;
+    }
     const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
       property.cameraLimiter.target_height / 2,
     );
@@ -326,6 +332,14 @@ export default ({
     const computedViewRectangle = camera.computeViewRectangle() as Rectangle;
     const rectangleHalfWidth = Rectangle.computeWidth(computedViewRectangle) * Math.PI * 1000000;
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
+
+    // TODO: default values to fill
+    if (!property.cameraLimiter.target_width) {
+      property.cameraLimiter.target_width = 1000000;
+    }
+    if (!property.cameraLimiter.target_height) {
+      property.cameraLimiter.target_height = 1000000;
+    }
 
     const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
       property.cameraLimiter.target_height / 2 + rectangleHalfHeight,
