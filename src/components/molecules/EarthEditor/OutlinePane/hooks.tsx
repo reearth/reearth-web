@@ -35,6 +35,12 @@ export type Widget = {
   enabled?: boolean;
 };
 
+export type Cluster = {
+  id: string;
+  name: string;
+  propertyId: string;
+};
+
 export type WidgetType = {
   pluginId: string;
   extensionId: string;
@@ -45,11 +51,11 @@ export type WidgetType = {
 
 export type ItemType = ItemEx["type"];
 export type ItemEx =
-  | { type: "root" | "scene" | "layer" | "scenes" | "widgets" }
+  | { type: "root" | "scene" | "layer" | "scenes" | "widgets" | "cluster" }
   | {
-      type: "widget";
-      id?: string;
-    }
+    type: "widget";
+    id?: string;
+  }
   | { type: "dataset"; datasetSchemaId: string };
 
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
@@ -58,10 +64,12 @@ export default ({
   rootLayerId,
   layers,
   widgets,
+  clusters,
   widgetTypes,
   sceneDescription,
   selectedLayerId,
   selectedWidgetId,
+  selectedClusterId,
   selectedType,
   onLayerSelect,
   onSceneSelect,
@@ -69,6 +77,9 @@ export default ({
   onWidgetSelect,
   onWidgetAdd,
   onWidgetActivation,
+  onClusterSelect,
+  onClusterAdd,
+  onClusterRemove,
   onLayerMove,
   onLayerRemove,
   onLayerRename,
@@ -81,11 +92,13 @@ export default ({
   rootLayerId?: string;
   layers?: Layer[];
   widgets?: Widget[];
+  clusters?: Cluster[];
   widgetTypes?: WidgetType[];
   sceneDescription?: string;
   selectedLayerId?: string;
   selectedIndex?: number[];
   selectedWidgetId?: string;
+  selectedClusterId?: string;
   selectedType?: ItemType;
   onLayerSelect?: (id: string, ...i: number[]) => void;
   onLayerImport?: (file: File, format: Format) => void;
@@ -95,6 +108,9 @@ export default ({
   onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
   onWidgetAdd?: (id?: string) => Promise<void>;
   onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
+  onClusterSelect?: (clusterId: string) => void;
+  onClusterAdd?: (id?: string) => Promise<void>;
+  onClusterRemove?: (layerId: string) => Promise<void>;
   onLayerMove?: (
     src: string,
     dest: string,
@@ -118,7 +134,6 @@ export default ({
 
       const item = items[0];
       if (!item) return;
-
       if (item.content.type === "scene") {
         onSceneSelect?.();
       } else if (item.id === "widgets") {
@@ -126,6 +141,11 @@ export default ({
       } else if (item.content.type === "widget") {
         const [pluginId, extensionId, widgetId] = item.content.id?.split("/") ?? [];
         onWidgetSelect?.(widgetId, pluginId, extensionId);
+      } else if (item.content.type === "cluster") {
+        // console.log(item.content);
+        onClusterSelect?.(item.id);
+        // const [pluginId, extensionId, widgetId] = item.content.id?.split("/") ?? [];
+        // onWidgetSelect?.(widgetId, pluginId, extensionId);
       } else if (item.content.type === "layer") {
         onLayerSelect?.(
           item.id,
@@ -172,6 +192,8 @@ export default ({
   const sceneTitle = intl.formatMessage({ defaultMessage: "Scene" });
   const widgetTitle = intl.formatMessage({ defaultMessage: "Widgets" });
   const layerTitle = intl.formatMessage({ defaultMessage: "Layers" });
+  const clusterTitle = intl.formatMessage({ defaultMessage: "Clusters" });
+  console.log(widgetTypes);
 
   const sceneWidgetsItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
     () => ({
@@ -245,32 +267,83 @@ export default ({
     () =>
       rootLayerId
         ? {
+          id: "root",
+          content: {
             id: "root",
-            content: {
-              id: "root",
-              type: "root",
-            },
-            children: [
-              {
+            type: "root",
+          },
+          children: [
+            {
+              id: rootLayerId,
+              content: {
                 id: rootLayerId,
-                content: {
-                  id: rootLayerId,
-                  type: "layer",
-                  icon: "layer",
-                  title: layerTitle,
-                  childrenCount: layers?.length,
-                  showLayerActions: true,
-                  underlined: true,
-                  showChildrenCount: false,
-                  group: true,
-                },
-                expandable: true,
-                children: [...(convertLayers(layers) ?? [])],
+                type: "layer",
+                icon: "layer",
+                title: layerTitle,
+                childrenCount: layers?.length,
+                showLayerActions: true,
+                underlined: true,
+                showChildrenCount: false,
+                group: true,
               },
-            ],
-          }
+              expandable: true,
+              children: [...(convertLayers(layers) ?? [])],
+            },
+          ],
+        }
         : undefined,
     [layerTitle, rootLayerId, layers],
+  );
+
+
+  const clustersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
+    () => ({
+      id: "root",
+      content: {
+        id: "root",
+        type: "root",
+      },
+      children: [{
+        id: "cluster",
+        content: {
+          id: rootLayerId,
+          type: "cluster",
+          icon: "cluster",
+          title: clusterTitle,
+          childrenCount: clusters?.length,
+          showLayerActions: true,
+          actionItems: [],
+          // widgetTypes?.map(w => ({
+          //   type: "cluster",
+          //   id: `${w.pluginId}/${w.extensionId}`,
+          //   title: w.title,
+          //   icon: w.icon,
+          //   disabled: w.disabled,
+          // }))
+          underlined: true,
+          showChildrenCount: false,
+          group: false,
+        },
+        expandable: true,
+        children: clusters?.map(c => ({
+          id: c.id,
+          content: {
+            id: c.id,
+            name: c.name,
+            property: c.propertyId,
+            type: "cluster",
+            icon: "cluster",
+            title: clusterTitle,
+          },
+          draggable: false,
+          droppable: false,
+          droppableIntoChildren: false,
+          expandable: false,
+          selectable: true,
+        })),
+      },]
+    }),
+    [clusterTitle, clusters],
   );
 
   const layerTreeViewItemOnRename = useCallback(
@@ -310,29 +383,40 @@ export default ({
     rootLayerId,
   });
 
+  const ClusterTreeViewItem = useLayerTreeViewItem<ItemEx>({
+    onAdd: onClusterAdd,
+    onRemove: onClusterRemove,
+    visibilityShown: true,
+    selectedLayerId: selectedClusterId,
+  });
+
   useEffect(() => {
     const newState =
       selectedType === "scene"
         ? ["scene"]
         : selectedType === "widgets"
-        ? ["widgets"]
-        : selectedType === "layer" && selectedLayerId
-        ? [selectedLayerId]
-        : selectedType === "widget" && selectedWidgetId
-        ? [selectedWidgetId]
-        : [];
+          ? ["widgets"]
+          : selectedType === "layer" && selectedLayerId
+            ? [selectedLayerId]
+            : selectedType === "cluster" && selectedClusterId
+              ? [selectedClusterId]
+              : selectedType === "widget" && selectedWidgetId
+                ? [selectedWidgetId]
+                : [];
     setSelected(ids => (arrayEquals(ids, newState) ? ids : newState));
   }, [selectedLayerId, selectedType, selectedWidgetId]);
 
   return {
     sceneWidgetsItem,
     layersItem,
+    clustersItem,
     select,
     drop,
     dropExternals,
     removeLayer,
     SceneTreeViewItem,
     LayerTreeViewItem,
+    ClusterTreeViewItem,
     selected,
   };
 };

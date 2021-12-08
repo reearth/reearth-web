@@ -5,9 +5,11 @@ import {
   Format,
   Layer,
   Widget,
+  Cluster,
   WidgetType,
 } from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
+  useAddPropertyItemMutation,
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
   useUpdateLayerMutation,
@@ -17,9 +19,12 @@ import {
   useAddWidgetMutation,
   useRemoveWidgetMutation,
   useUpdateWidgetMutation,
+  useAddClusterMutation,
+  useRemoveClusterMutation,
   LayerEncodingFormat,
   Maybe,
   useGetWidgetsQuery,
+  useGetClustersQuery,
   PluginExtensionType,
   GetLayersFromLayerIdQuery,
 } from "@reearth/gql";
@@ -61,12 +66,17 @@ export default () => {
     skip: !sceneId,
   });
 
+  const { loading: clusterLoading, data: clusterData } = useGetClustersQuery({
+    variables: { sceneId: sceneId ?? "" },
+    skip: !sceneId,
+  });
+
   const sceneDescription = useMemo(
     () =>
       widgetData?.node?.__typename === "Scene"
         ? widgetData.node.plugins
-            .find(p => p.plugin?.id === "reearth")
-            ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
+          .find(p => p.plugin?.id === "reearth")
+          ?.plugin?.extensions.find(e => e.extensionId === "cesium")?.description
         : undefined,
     [widgetData?.node],
   );
@@ -120,6 +130,22 @@ export default () => {
     [data?.layer],
   );
 
+  const clusters = useMemo(
+    () =>
+      (clusterData?.node?.__typename === "Scene" ? clusterData.node.clusters : undefined)
+        ?.map((c): Cluster => {
+          return {
+            id: c.id,
+            name: c.name,
+            propertyId: c.propertyId
+          }
+        })
+        .reverse() ?? [],
+    [clusterData],
+  );
+
+
+
   const [moveLayerMutation] = useMoveLayerMutation();
   const [updateLayerMutation] = useUpdateLayerMutation();
   const [removeLayerMutation] = useRemoveLayerMutation();
@@ -128,6 +154,8 @@ export default () => {
   const [addWidgetMutation] = useAddWidgetMutation();
   const [removeWidgetMutation] = useRemoveWidgetMutation();
   const [updateWidgetMutation] = useUpdateWidgetMutation();
+  const [addClusterMutation] = useAddClusterMutation();
+  const [removeClusterMutation] = useRemoveClusterMutation();
 
   const selectLayer = useCallback(
     (id: string) => {
@@ -251,10 +279,10 @@ export default () => {
     const layerIndex =
       selected?.type === "layer"
         ? deepFind<Maybe<GQLLayer> | undefined>(
-            layers,
-            l => l?.id === selected.layerId,
-            children,
-          )[1]
+          layers,
+          l => l?.id === selected.layerId,
+          children,
+        )[1]
         : undefined;
     const parentLayer = layerIndex?.length
       ? deepGet<Maybe<GQLLayer> | undefined>(layers, layerIndex.slice(0, -1), children)
@@ -336,14 +364,62 @@ export default () => {
     [sceneId, updateWidgetMutation],
   );
 
+  const selectCluster = useCallback(
+    (id: string) => {
+      select({ type: "cluster", clusterId: id });
+      selectBlock(undefined);
+    },
+    [select, selectBlock],
+  );
+
+
+  const addCluster = useCallback(
+    async (id?: string) => {
+      if (!sceneId || !id) return;
+      const [propertyId, name] = id.split("/");
+      const { data } = await addClusterMutation({
+        variables: {
+          sceneId,
+          name,
+          propertyId,
+        },
+        refetchQueries: ["GetClusters"],
+      });
+      if (data?.addCluster?.cluster) {
+        select({
+          type: "cluster",
+          clusterId: data.addCluster.cluster.id,
+        });
+      }
+    },
+    [addClusterMutation, intl.locale, sceneId, select],
+  );
+
+  const removeCluster = useCallback(
+    async (clusterId: string) => {
+      if (!sceneId) return;
+      await removeClusterMutation({
+        variables: {
+          sceneId,
+          clusterId,
+        },
+        refetchQueries: ["GetClusters"],
+      });
+      select(undefined);
+    },
+    [sceneId, select, removeClusterMutation],
+  );
+
   return {
     rootLayerId,
     layers,
     widgets,
+    clusters,
     widgetTypes,
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedClusterId: selected?.type === "cluster" ? selected.clusterId : undefined,
     selectedWidgetId:
       selected?.type === "widget"
         ? `${selected.pluginId}/${selected.extensionId}/${selected.widgetId}`
@@ -363,6 +439,9 @@ export default () => {
     addWidget,
     removeWidget,
     activateWidget,
+    selectCluster,
+    addCluster,
+    removeCluster
   };
 };
 
@@ -376,7 +455,7 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"
-    ? {
+      ? {
         id: layer.id,
         title: layer.name,
         type: "group",
@@ -387,13 +466,13 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
           .filter((l): l is Layer => !!l)
           .reverse(),
       }
-    : layer.__typename === "LayerItem"
-    ? {
-        id: layer.id,
-        title: layer.name,
-        visible: layer.isVisible,
-        linked: !!layer.linkedDatasetId,
-        icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
-        type: "item",
-      }
-    : undefined;
+      : layer.__typename === "LayerItem"
+        ? {
+          id: layer.id,
+          title: layer.name,
+          visible: layer.isVisible,
+          linked: !!layer.linkedDatasetId,
+          icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
+          type: "item",
+        }
+        : undefined;

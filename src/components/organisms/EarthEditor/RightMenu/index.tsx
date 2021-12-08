@@ -42,8 +42,8 @@ const RightMenu: React.FC = () => {
         selectedBlock || selectedTab === "infobox"
           ? "infobox"
           : selectedTab === "export"
-          ? "export"
-          : selected
+            ? "export"
+            : selected
       }
       disabled={isCapturing}
       labels={labels}
@@ -53,20 +53,24 @@ const RightMenu: React.FC = () => {
       {{
         ...(selected
           ? {
-              [selected]: (
-                <>
-                  {selected === "layer" ? (
-                    <PropertyPane mode="layer" />
-                  ) : selected === "widget" ? (
-                    <PropertyPane mode="widget" />
-                  ) : selected === "widgets" ? (
-                    <PropertyPane mode="widgets" />
-                  ) : (
-                    <PropertyPane mode="scene" />
-                  )}
-                </>
-              ),
-            }
+            [selected]: (
+              <>
+                {selected === "layer" ? (
+                  <PropertyPane mode="layer" />
+                ) : selected === "widget" ? (
+                  <PropertyPane mode="widget" />
+                ) : selected === "widgets" ? (
+                  <PropertyPane mode="widgets" />
+                ) : selected === "cluster" ? (
+                  <>
+                    <PropertyPane mode="cluster" />
+                  </>
+                ) : (
+                          <PropertyPane mode="scene" />
+                        )}
+              </>
+            ),
+          }
           : {}),
         infobox: selected === "layer" && (
           <>

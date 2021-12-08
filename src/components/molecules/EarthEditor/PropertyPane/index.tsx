@@ -161,35 +161,35 @@ const PropertyPane: React.FC<Props> = ({
       )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||
         (mode !== "widget" && (propertyId || infoboxCreatable))) && (
-        <Wrapper className={className}>
-          {infoboxCreatable && (
-            <StyledButton
-              buttonType="primary"
-              text={intl.formatMessage({ defaultMessage: "Create Infobox" })}
-              onClick={onCreateInfobox}
-            />
-          )}
-          {mode === "layer" && props.isTemplate && (
-            <GroupWrapper
-              className={className}
-              name={intl.formatMessage({ defaultMessage: "Dataset" })}>
-              <Text size="xs" color={theme.main.strongText}>
-                {props.title}
-              </Text>
-            </GroupWrapper>
-          )}
-          {visibleItems?.map(item => (
-            <PropertyItem
-              key={`${propertyId}/${item.id || item.schemaGroup}`}
-              item={item}
-              onRemovePane={onRemovePane}
-              mode={mode}
-              {...props}
-              {...events}
-            />
-          ))}
-        </Wrapper>
-      )}
+          <Wrapper className={className}>
+            {infoboxCreatable && (
+              <StyledButton
+                buttonType="primary"
+                text={intl.formatMessage({ defaultMessage: "Create Infobox" })}
+                onClick={onCreateInfobox}
+              />
+            )}
+            {mode === "layer" && props.isTemplate && (
+              <GroupWrapper
+                className={className}
+                name={intl.formatMessage({ defaultMessage: "Dataset" })}>
+                <Text size="xs" color={theme.main.strongText}>
+                  {props.title}
+                </Text>
+              </GroupWrapper>
+            )}
+            {visibleItems?.map(item => (
+              <PropertyItem
+                key={`${propertyId}/${item.id || item.schemaGroup}`}
+                item={item}
+                onRemovePane={onRemovePane}
+                mode={mode}
+                {...props}
+                {...events}
+              />
+            ))}
+          </Wrapper>
+        )}
     </>
   );
 };

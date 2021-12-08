@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
 
+import {
+  propertyFragment,
+} from "@reearth/gql/fragments";
+
 const fragments = gql`
   fragment LayerSystemLayer on Layer {
     id
@@ -199,6 +203,55 @@ export const GET_WIDGETS = gql`
           extended
           pluginId
           extensionId
+          propertyId
+        }
+      }
+    }
+  }
+`;
+
+
+export const GET_CLUSTERS = gql`
+  query GetClusters($sceneId: ID!) {
+    node(id: $sceneId, type: SCENE) {
+      id
+      ... on Scene {
+        clusters {
+          id
+          name
+          propertyId
+        }
+      }
+    }
+  }
+`;
+
+export const ADD_CLUSTER = gql`
+  mutation AddCluster($sceneId: ID!, $name: String!, $propertyId: ID!, $lang: String) {
+    addCluster(input: { sceneId: $sceneId, name: $name, propertyId: $propertyId }) {
+      cluster {
+        id
+        name
+        propertyId
+        property {
+            id
+            ...PropertyFragment
+          }
+      }
+    }
+  }
+
+  ${propertyFragment}
+`;
+
+export const REMOVE_CLUSTER = gql`
+  mutation removeCluster($sceneId: ID!, $clusterId: ID!) {
+    removeCluster(input: { sceneId: $sceneId, clusterId: $clusterId }) {
+      scene {
+        id
+        clusters {
+          id
+          name
           propertyId
         }
       }

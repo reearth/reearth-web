@@ -42,27 +42,27 @@ export default function BlockComponent<P = any, PP = any>({
   return Builtin ? (
     <Builtin {...props} />
   ) : (
-    <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
-      <Plugin
-        pluginId={props.block?.pluginId}
-        extensionId={props.block?.extensionId}
-        sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
-        extensionType="block"
-        pluginBaseUrl={pluginBaseUrl}
-        visible
-        property={props.pluginProperty}
-        pluginProperty={props.pluginProperty}
-        layer={props.layer}
-        block={props.block}
-      />
-    </Wrapper>
-  );
+      <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
+        <Plugin
+          pluginId={props.block?.pluginId}
+          extensionId={props.block?.extensionId}
+          sourceCode={(props.block as any)?.__REEARTH_SOURCECODE} // for debugging
+          extensionType="block"
+          pluginBaseUrl={pluginBaseUrl}
+          visible
+          property={props.pluginProperty}
+          pluginProperty={props.pluginProperty}
+          layer={props.layer}
+          block={props.block}
+        />
+      </Wrapper>
+    );
 }
 
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
     ${({ selected, editable, theme }) =>
-      editable && selected ? theme.infoBox.accent2 : "transparent"};
+    editable && selected ? theme.infoBox.accent2 : "transparent"};
   border-radius: 6px;
 
   &:hover {

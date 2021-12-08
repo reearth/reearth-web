@@ -10,20 +10,22 @@ import TreeView from "@reearth/components/atoms/TreeView";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import useHooks, { Format, Layer, Widget, WidgetType, TreeViewItem } from "./hooks";
+import useHooks, { Format, Layer, Widget, Cluster, WidgetType, TreeViewItem } from "./hooks";
 
-export type { Format, Layer, Widget, WidgetType } from "./hooks";
+export type { Format, Layer, Widget, Cluster, WidgetType } from "./hooks";
 
 export type Props = {
   className?: string;
   rootLayerId?: string;
   selectedLayerId?: string;
   selectedWidgetId?: string;
+  selectedClusterId?: string;
   layers?: Layer[];
   widgets?: Widget[];
+  clusters?: Cluster[];
   widgetTypes?: WidgetType[];
   sceneDescription?: string;
-  selectedType?: "scene" | "layer" | "widgets" | "widget" | "dataset";
+  selectedType?: "scene" | "layer" | "widgets" | "widget" | "cluster" | "dataset";
   loading?: boolean;
   onLayerRename?: (id: string, name: string) => void;
   onLayerVisibilityChange?: (id: string, visibility: boolean) => void;
@@ -35,6 +37,9 @@ export type Props = {
   onWidgetAdd?: (id?: string) => Promise<void>;
   onWidgetRemove?: (widgetId: string) => Promise<void>;
   onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
+  onClusterSelect?: (clusterId: string) => void;
+  onClusterAdd?: (id?: string) => Promise<void>;
+  onClusterRemove?: (layerId: string) => Promise<void>;
   onLayerMove?: (
     layer: string,
     destLayer: string,
@@ -53,9 +58,11 @@ const OutlinePane: React.FC<Props> = ({
   rootLayerId,
   selectedLayerId,
   selectedWidgetId,
+  selectedClusterId,
   selectedType,
   layers,
   widgets,
+  clusters,
   widgetTypes,
   sceneDescription,
   onLayerRename,
@@ -68,6 +75,9 @@ const OutlinePane: React.FC<Props> = ({
   onWidgetAdd,
   onWidgetRemove,
   onWidgetActivation,
+  onClusterSelect,
+  onClusterAdd,
+  onClusterRemove,
   onLayerMove,
   onLayerImport,
   onLayerGroupCreate,
@@ -82,20 +92,24 @@ const OutlinePane: React.FC<Props> = ({
   const {
     sceneWidgetsItem,
     layersItem,
+    clustersItem,
     select,
     drop,
     dropExternals,
     SceneTreeViewItem,
     LayerTreeViewItem,
+    ClusterTreeViewItem,
     selected,
   } = useHooks({
     rootLayerId,
     layers,
     widgets,
+    clusters,
     widgetTypes,
     sceneDescription,
     selectedLayerId,
     selectedWidgetId,
+    selectedClusterId,
     selectedType,
     onLayerSelect,
     onLayerImport,
@@ -105,6 +119,9 @@ const OutlinePane: React.FC<Props> = ({
     onWidgetSelect,
     onWidgetAdd,
     onWidgetActivation,
+    onClusterSelect,
+    onClusterAdd,
+    onClusterRemove,
     onLayerMove,
     onLayerRename,
     onLayerVisibilityChange,
@@ -131,7 +148,7 @@ const OutlinePane: React.FC<Props> = ({
           />
         )}
       </OutlineItemsWrapper>
-      <LayersItemWrapper>
+      <ItemsGroupWrapper>
         {layersItem && (
           <TreeView<TreeViewItem, HTMLDivElement>
             item={layersItem}
@@ -150,7 +167,24 @@ const OutlinePane: React.FC<Props> = ({
           />
         )}
         {loading && <Loading />}
-      </LayersItemWrapper>
+      </ItemsGroupWrapper>
+
+      <ItemsGroupWrapper>
+        {clustersItem && (
+          <TreeView<TreeViewItem, HTMLDivElement>
+            item={clustersItem}
+            selected={selected}
+            renderItem={ClusterTreeViewItem}
+            selectable
+            expandable
+            expanded={['rootCluster']}
+            onSelect={select}
+          />
+        )}
+        {loading && <Loading />}
+      </ItemsGroupWrapper>
+
+
       <ConfirmationModal
         title={intl.formatMessage({ defaultMessage: "Delete widget" })}
         body={
@@ -199,7 +233,7 @@ const OutlineItemsWrapper = styled.div`
   background-color: ${props => props.theme.layers.bg};
 `;
 
-const LayersItemWrapper = styled(OutlineItemsWrapper)`
+const ItemsGroupWrapper = styled(OutlineItemsWrapper)`
   min-height: 0;
 `;
 
