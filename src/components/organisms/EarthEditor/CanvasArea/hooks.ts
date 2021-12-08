@@ -7,6 +7,7 @@ import {
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   useGetLayersQuery,
+  useGetClustersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
@@ -80,6 +81,12 @@ export default (isBuilt?: boolean) => {
     skip: !sceneId,
   });
   const { data: widgetData } = useGetEarthWidgetsQuery({
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    skip: !sceneId,
+  });
+
+  // TODO
+  const { data: clusterData } = useGetClustersQuery({
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
@@ -208,10 +215,10 @@ export default (isBuilt?: boolean) => {
           enabled: true,
           location: update.location
             ? {
-                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-                section: update.location.section?.toUpperCase() as WidgetSectionType,
-                area: update.location.area?.toUpperCase() as WidgetAreaType,
-              }
+              zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+              section: update.location.section?.toUpperCase() as WidgetSectionType,
+              area: update.location.area?.toUpperCase() as WidgetAreaType,
+            }
             : undefined,
           extended: update.extended,
           index: update.index,

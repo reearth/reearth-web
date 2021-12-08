@@ -1518,7 +1518,7 @@ export type QueryLayerArgs = {
 
 
 export type QueryNodeArgs = {
-  id?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID'];
   type: NodeType;
 };
 
@@ -2509,10 +2509,11 @@ export type GetWidgetsQuery = { __typename?: 'Query', node?: { __typename?: 'Ass
 
 export type GetClustersQueryVariables = Exact<{
   sceneId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
 }>;
 
 
-export type GetClustersQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
+export type GetClustersQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
 
 export type AddClusterMutationVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -5060,7 +5061,7 @@ export type GetWidgetsQueryHookResult = ReturnType<typeof useGetWidgetsQuery>;
 export type GetWidgetsLazyQueryHookResult = ReturnType<typeof useGetWidgetsLazyQuery>;
 export type GetWidgetsQueryResult = Apollo.QueryResult<GetWidgetsQuery, GetWidgetsQueryVariables>;
 export const GetClustersDocument = gql`
-    query GetClusters($sceneId: ID!) {
+    query GetClusters($sceneId: ID!, $lang: String) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
@@ -5068,11 +5069,15 @@ export const GetClustersDocument = gql`
         id
         name
         propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
       }
     }
   }
 }
-    `;
+    ${PropertyFragmentFragmentDoc}`;
 
 /**
  * __useGetClustersQuery__
@@ -5087,6 +5092,7 @@ export const GetClustersDocument = gql`
  * const { data, loading, error } = useGetClustersQuery({
  *   variables: {
  *      sceneId: // value for 'sceneId'
+ *      lang: // value for 'lang'
  *   },
  * });
  */

@@ -212,7 +212,7 @@ export const GET_WIDGETS = gql`
 
 
 export const GET_CLUSTERS = gql`
-  query GetClusters($sceneId: ID!) {
+  query GetClusters($sceneId: ID!, $lang: String) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -220,6 +220,10 @@ export const GET_CLUSTERS = gql`
           id
           name
           propertyId
+          property {
+              id
+              ...PropertyFragment
+            }
         }
       }
     }
