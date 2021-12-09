@@ -12,7 +12,7 @@ export type Props = {
   title?: string;
   icon?: "bin" | "cancel";
   onRemove?: () => void;
-  onTagCreate?: (value: string) => void;
+  onTagAdd?: (value: string) => void;
   onTagRemove?: (value: string) => void;
   onSelect?: (value: string) => void;
   allTags?: string[];
@@ -24,7 +24,8 @@ const TagGroup: React.FC<Props> = ({
   title,
   icon,
   onRemove,
-  onTagCreate,
+  onTagAdd,
+  onTagRemove,
   onSelect,
   allTags,
   attachedTags,
@@ -45,15 +46,15 @@ const TagGroup: React.FC<Props> = ({
         </IconWrapper>
       </TitleWrapper>
       <TagsWrapper wrap="wrap">
-        {attachedTags.map(t => (
-          <Tag icon="cancel" text={t} key={t} />
+        {attachedTags?.map(t => (
+          <Tag icon="cancel" text={t} key={t} onRemove={() => onTagRemove?.(t)} />
         ))}
       </TagsWrapper>
       <AutoComplete
-        items={allTags.map(t => ({ value: t, label: t }))}
+        items={allTags?.filter(t => !attachedTags?.includes(t)).map(t => ({ value: t, label: t }))}
         onSelect={onSelect}
         creatable
-        onCreate={onTagCreate}
+        onCreate={onTagAdd}
       />
     </Wrapper>
   );

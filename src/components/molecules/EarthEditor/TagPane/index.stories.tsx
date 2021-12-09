@@ -10,26 +10,52 @@ export default {
 } as Meta;
 
 export const Default: Story<Props> = () => {
-  const [allTags, setAllTags] = useState(["hoge", "fuga", "foo", "wow", "1995", "2000", "2005"]);
-  const [tagGroups, setTagGroups] = useState<TagGroup[]>([
-    { name: "Default", tags: ["hoge", "fuga"] },
+  const [allTagGroups, setAllTagGroups] = useState<TagGroup[]>([
+    { name: "Default", tags: ["hoge", "fuga", "foo", "wow"] },
     { name: "Year", tags: ["1995", "2000", "2005"] },
   ]);
+  const [tagGroups, setTagGroups] = useState<TagGroup[]>([
+    { name: "Default", tags: ["hoge", "fuga"] },
+    { name: "Year", tags: ["1995", "2000"] },
+  ]);
   const isTagGroup = (tagGroup: any): tagGroup is TagGroup => {
-    return "name" in tagGroup && "tag" in tagGroup && isArray(tagGroup["tag"]) && !!tagGroup;
+    return "name" in tagGroup && "tags" in tagGroup && isArray(tagGroup["tags"]) && !!tagGroup;
   };
   const handleAddTagGroup = (value: string) => {
+    setAllTagGroups(old =>
+      old.find(g => g.name === value) ? old : [...old, { name: value, tags: [] }],
+    );
     setTagGroups(old => [...old, { name: value, tags: [] }]);
   };
   const handleAddTag = (tagGroup: string, tag: string) => {
-    setAllTags(old => [...old, tag]);
-    setTagGroups(old => {
+    setAllTagGroups(old => {
       const targetTagGroup = old.find(tg => tg.name === tagGroup);
-
-      return isTagGroup(tagGroup)
-        ? [old.filter(tg => tg.name !== tagGroup), targetTagGroup?.tags.push(tag)]
+      const result = targetTagGroup?.tags.includes(tag)
+        ? old
+        : isTagGroup(targetTagGroup)
+        ? [
+            ...old.filter(g => g !== targetTagGroup),
+            { name: targetTagGroup?.name, tags: [...targetTagGroup?.tags, tag] },
+          ]
         : [];
+      return result;
+    });
+
+    setTagGroups(old => {
+      return old.map(tg => {
+        if (tg.name === tagGroup) {
+          tg.tags.push(tag);
+        }
+        return tg;
+      });
     });
   };
-  return <TagPane allTags={allTags} tagGroups={tagGroups} />;
+  return (
+    <TagPane
+      allTagGroups={allTagGroups}
+      tagGroups={tagGroups}
+      onTagGroupAdd={handleAddTagGroup}
+      onTagAdd={handleAddTag}
+    />
+  );
 };

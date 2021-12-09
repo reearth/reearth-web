@@ -9,18 +9,16 @@ export default {
 } as Meta;
 
 export const Default: Story<Props> = () => {
-  const [attachedTags, attachTag] = useState(["hoge", "fuga"]);
+  const [attachedTags, setAttachedTags] = useState(["hoge", "fuga"]);
   const [allTags, setAllTags] = useState(["hoge", "fuga", "foo"]);
   const handleSelect = (value: string) => {
-    console.log("select");
-    attachTag(old => [...old, value]);
+    setAttachedTags(old => [...old, value]);
   };
   const handleDetach = (value: string) => {
-    attachTag(old => old.filter(t => t != value));
+    setAttachedTags(old => old.filter(t => t != value));
   };
   const handleCreate = (value: string) => {
-    console.log("create!");
-    attachTag(old => [...old, value]);
+    setAttachedTags(old => [...old, value]);
     setAllTags(old => [...old, value]);
   };
   return (
@@ -28,7 +26,7 @@ export const Default: Story<Props> = () => {
       attachedTags={attachedTags}
       allTags={allTags}
       onSelect={handleSelect}
-      onTagCreate={handleCreate}
+      onTagAdd={handleCreate}
       onTagRemove={handleDetach}
       title="Default"
       icon="cancel"
