@@ -6,6 +6,7 @@ import DatasetInfoPane from "@reearth/components/organisms/EarthEditor/DatasetIn
 import ExportPane from "@reearth/components/organisms/EarthEditor/ExportPane";
 
 import PropertyPane from "../PropertyPane";
+import TagPane from "../TagPane";
 
 import useHooks, { Tab } from "./hooks";
 
@@ -30,6 +31,7 @@ const RightMenu: React.FC = () => {
       widgets: intl.formatMessage({ defaultMessage: "Widgets" }),
       scene: intl.formatMessage({ defaultMessage: "Scene" }),
       infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
+      tag: intl.formatMessage({ defaultMessage: "Tag" }),
       export: intl.formatMessage({ defaultMessage: "Export" }),
     }),
     [intl],
@@ -74,6 +76,7 @@ const RightMenu: React.FC = () => {
             <PropertyPane mode="infobox" />
           </>
         ),
+        tag: selected === "layer" && <TagPane />,
         export: (selected === "layer" || selected === "scene") && (
           <>
             <ExportPane />
