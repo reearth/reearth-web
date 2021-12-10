@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_TAGS = gql`
+export const GET_SCENE_TAGS = gql`
   query getSceneTags($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
       id
@@ -16,7 +16,7 @@ export const GET_TAGS = gql`
   }
 `;
 
-export const CREATE_TAG = gql`
+export const CREATE_TAG_GROUP = gql`
   mutation createTagGroup($sceneId: ID!, $label: String!) {
     createTagGroup(input: { sceneId: $sceneId, label: $label }) {
       tag {
@@ -63,6 +63,7 @@ export const ATTACH_TAG_ITEM_TO_GROUP = gql`
     }
   }
 `;
+
 export const DETACH_TAG_ITEM_FROM_GROUP = gql`
   mutation detachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
     detachTagItemFromGroup(input: { itemID: $itemId, groupID: $groupId }) {
@@ -70,6 +71,37 @@ export const DETACH_TAG_ITEM_FROM_GROUP = gql`
         id
         label
         tags
+      }
+    }
+  }
+`;
+
+export const ATTACH_TAG_TO_LAYER = gql`
+  mutation attachTagToLayer($tagId: ID!, $layerId: ID!) {
+    attachTagToLayer(input: { tagID: $tagId, layerID: $layerId }) {
+      layer {
+        id
+        propertyId
+        tags {
+          id
+          label
+        }
+        tagIds
+      }
+    }
+  }
+`;
+export const DETACH_TAG_FROM_LAYER = gql`
+  mutation detachTagFromLayer($tagId: ID!, $layerId: ID!) {
+    detachTagFromLayer(input: { tagID: $tagId, layerID: $layerId }) {
+      layer {
+        id
+        propertyId
+        tags {
+          id
+          label
+        }
+        tagIds
       }
     }
   }

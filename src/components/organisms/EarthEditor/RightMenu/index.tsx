@@ -76,7 +76,7 @@ const RightMenu: React.FC = () => {
             <PropertyPane mode="infobox" />
           </>
         ),
-        tag: selected === "layer" && <TagPane />,
+        tag: (selected === "layer" || selected === "scene") && <TagPane />,
         export: (selected === "layer" || selected === "scene") && (
           <>
             <ExportPane />
