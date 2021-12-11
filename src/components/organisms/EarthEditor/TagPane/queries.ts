@@ -106,3 +106,21 @@ export const DETACH_TAG_FROM_LAYER = gql`
     }
   }
 `;
+
+export const REMOVE_TAG = gql`
+  mutation removeTag($tagId: ID!) {
+    removeTag(input: { tagID: $tagId }) {
+      tagId
+    }
+  }
+`;
+export const UPDATE_TAG = gql`
+  mutation updateTag($tagId: ID!, $sceneId: ID!, $label: String) {
+    updateTag(input: { tagId: $tagId, sceneId: $sceneId, label: $label }) {
+      tag {
+        id
+        label
+      }
+    }
+  }
+`;
