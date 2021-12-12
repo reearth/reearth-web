@@ -83,6 +83,7 @@ export default ({
   onLayerMove,
   onLayerRemove,
   onLayerRename,
+  onClusterRename,
   onLayerVisibilityChange,
   onDrop,
   onLayerGroupCreate,
@@ -109,7 +110,7 @@ export default ({
   onWidgetAdd?: (id?: string) => Promise<void>;
   onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
   onClusterSelect?: (clusterId: string) => void;
-  onClusterAdd?: (id?: string) => Promise<void>;
+  onClusterAdd?: (name?: string) => Promise<void>;
   onClusterRemove?: (layerId: string) => Promise<void>;
   onLayerMove?: (
     src: string,
@@ -119,6 +120,7 @@ export default ({
     parent: string,
   ) => void;
   onLayerRename?: (id: string, name: string) => void;
+  onClusterRename?: (id: string, name: string) => void;
   onLayerVisibilityChange?: (id: string, visibility: boolean) => void;
   onDrop?: (layer: string, index: number, childrenCount: number) => any;
   onLayerGroupCreate?: () => void;
@@ -312,17 +314,15 @@ export default ({
           title: clusterTitle,
           childrenCount: clusters?.length,
           showLayerActions: true,
-          actionItems: [],
-          // widgetTypes?.map(w => ({
-          //   type: "cluster",
-          //   id: `${w.pluginId}/${w.extensionId}`,
-          //   title: w.title,
-          //   icon: w.icon,
-          //   disabled: w.disabled,
-          // }))
+          actionItems: [{
+            type: "cluster",
+            id: "",
+            title: "Cluster",
+            icon: "cluster",
+          }],
           underlined: true,
           showChildrenCount: false,
-          group: false,
+          group: true,
         },
         expandable: true,
         children: clusters?.map(c => ({
@@ -333,7 +333,8 @@ export default ({
             property: c.propertyId,
             type: "cluster",
             icon: "cluster",
-            title: clusterTitle,
+            title: c.name,
+            renamable: true,
           },
           draggable: false,
           droppable: false,
@@ -383,7 +384,14 @@ export default ({
     rootLayerId,
   });
 
+  const clusterTreeViewItemOnRename = useCallback(
+    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, name: string) =>
+      onClusterRename?.(item.id, name),
+    [onClusterRename],
+  );
+
   const ClusterTreeViewItem = useLayerTreeViewItem<ItemEx>({
+    onRename: clusterTreeViewItemOnRename,
     onAdd: onClusterAdd,
     onRemove: onClusterRemove,
     visibilityShown: true,

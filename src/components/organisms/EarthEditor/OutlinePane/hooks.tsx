@@ -13,6 +13,7 @@ import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
   useUpdateLayerMutation,
+  useUpdateClusterMutation,
   useRemoveLayerMutation,
   useImportLayerMutation,
   useAddLayerGroupMutation,
@@ -156,6 +157,7 @@ export default () => {
   const [updateWidgetMutation] = useUpdateWidgetMutation();
   const [addClusterMutation] = useAddClusterMutation();
   const [removeClusterMutation] = useRemoveClusterMutation();
+  const [updateClusterMutation] = useUpdateClusterMutation();
 
   const selectLayer = useCallback(
     (id: string) => {
@@ -373,15 +375,28 @@ export default () => {
   );
 
 
+  const renameCluster = useCallback(
+    (clusterId: string, name: string) => {
+      if (!sceneId) return;
+      updateClusterMutation({
+        variables: {
+          clusterId,
+          name,
+          sceneId
+        },
+      });
+    },
+    [updateClusterMutation],
+  );
+
   const addCluster = useCallback(
-    async (id?: string) => {
-      if (!sceneId || !id) return;
-      const [propertyId, name] = id.split("/");
+    async () => {
+      const name = 'cluster';
+      if (!sceneId) return;
       const { data } = await addClusterMutation({
         variables: {
           sceneId,
           name,
-          propertyId,
         },
         refetchQueries: ["GetClusters"],
       });
@@ -431,6 +446,7 @@ export default () => {
     selectWidget,
     moveLayer,
     renameLayer,
+    renameCluster,
     removeLayer,
     updateLayerVisibility,
     importLayer,

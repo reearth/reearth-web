@@ -37,6 +37,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     handleDrop,
     selectCluster,
     addCluster,
+    renameCluster,
     removeCluster
   } = useHooks();
 
@@ -57,6 +58,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
       onLayerMove={moveLayer}
       onLayerVisibilityChange={updateLayerVisibility}
       onLayerRename={renameLayer}
+      onClusterRename={renameCluster}
       onLayerRemove={removeLayer}
       onLayerImport={importLayer}
       onLayerSelect={selectLayer}

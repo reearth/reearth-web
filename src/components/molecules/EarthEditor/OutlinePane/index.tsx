@@ -38,7 +38,8 @@ export type Props = {
   onWidgetRemove?: (widgetId: string) => Promise<void>;
   onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
   onClusterSelect?: (clusterId: string) => void;
-  onClusterAdd?: (id?: string) => Promise<void>;
+  onClusterAdd?: () => Promise<void>;
+  onClusterRename?: (clusterId: string, name: string) => void;
   onClusterRemove?: (layerId: string) => Promise<void>;
   onLayerMove?: (
     layer: string,
@@ -77,6 +78,7 @@ const OutlinePane: React.FC<Props> = ({
   onWidgetActivation,
   onClusterSelect,
   onClusterAdd,
+  onClusterRename,
   onClusterRemove,
   onLayerMove,
   onLayerImport,
@@ -124,6 +126,7 @@ const OutlinePane: React.FC<Props> = ({
     onClusterRemove,
     onLayerMove,
     onLayerRename,
+    onClusterRename,
     onLayerVisibilityChange,
     onDrop,
     onLayerGroupCreate,

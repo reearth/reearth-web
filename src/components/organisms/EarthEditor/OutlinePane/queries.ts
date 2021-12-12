@@ -231,8 +231,8 @@ export const GET_CLUSTERS = gql`
 `;
 
 export const ADD_CLUSTER = gql`
-  mutation AddCluster($sceneId: ID!, $name: String!, $propertyId: ID!, $lang: String) {
-    addCluster(input: { sceneId: $sceneId, name: $name, propertyId: $propertyId }) {
+  mutation AddCluster($sceneId: ID!, $name: String!, $lang: String) {
+    addCluster(input: { sceneId: $sceneId, name: $name }) {
       cluster {
         id
         name
@@ -258,6 +258,19 @@ export const REMOVE_CLUSTER = gql`
           name
           propertyId
         }
+      }
+    }
+  }
+`;
+
+
+export const UPDATE_CLUSTER = gql`
+  mutation UpdateCluster($sceneId: ID!, $clusterId: ID!, $name: String!) {
+    updateCluster(input: { sceneId: $sceneId, clusterId: $clusterId,name: $name }) {
+      cluster {
+        id
+        name
+        propertyId
       }
     }
   }

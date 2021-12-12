@@ -31,7 +31,6 @@ export type Scalars = {
 
 export type AddClusterInput = {
   name: Scalars['String'];
-  propertyId: Scalars['ID'];
   sceneId: Scalars['ID'];
 };
 
@@ -2518,7 +2517,6 @@ export type GetClustersQuery = { __typename?: 'Query', node?: { __typename?: 'As
 export type AddClusterMutationVariables = Exact<{
   sceneId: Scalars['ID'];
   name: Scalars['String'];
-  propertyId: Scalars['ID'];
   lang?: Maybe<Scalars['String']>;
 }>;
 
@@ -2532,6 +2530,15 @@ export type RemoveClusterMutationVariables = Exact<{
 
 
 export type RemoveClusterMutation = { __typename?: 'Mutation', removeCluster?: { __typename?: 'RemoveClusterPayload', scene: { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string }> } } | null | undefined };
+
+export type UpdateClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateClusterMutation = { __typename?: 'Mutation', updateCluster?: { __typename?: 'UpdateClusterPayload', cluster: { __typename?: 'Cluster', id: string, name: string, propertyId: string } } | null | undefined };
 
 export type GetPrimitivesQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -5108,8 +5115,8 @@ export type GetClustersQueryHookResult = ReturnType<typeof useGetClustersQuery>;
 export type GetClustersLazyQueryHookResult = ReturnType<typeof useGetClustersLazyQuery>;
 export type GetClustersQueryResult = Apollo.QueryResult<GetClustersQuery, GetClustersQueryVariables>;
 export const AddClusterDocument = gql`
-    mutation AddCluster($sceneId: ID!, $name: String!, $propertyId: ID!, $lang: String) {
-  addCluster(input: {sceneId: $sceneId, name: $name, propertyId: $propertyId}) {
+    mutation AddCluster($sceneId: ID!, $name: String!, $lang: String) {
+  addCluster(input: {sceneId: $sceneId, name: $name}) {
     cluster {
       id
       name
@@ -5139,7 +5146,6 @@ export type AddClusterMutationFn = Apollo.MutationFunction<AddClusterMutation, A
  *   variables: {
  *      sceneId: // value for 'sceneId'
  *      name: // value for 'name'
- *      propertyId: // value for 'propertyId'
  *      lang: // value for 'lang'
  *   },
  * });
@@ -5192,6 +5198,45 @@ export function useRemoveClusterMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveClusterMutationHookResult = ReturnType<typeof useRemoveClusterMutation>;
 export type RemoveClusterMutationResult = Apollo.MutationResult<RemoveClusterMutation>;
 export type RemoveClusterMutationOptions = Apollo.BaseMutationOptions<RemoveClusterMutation, RemoveClusterMutationVariables>;
+export const UpdateClusterDocument = gql`
+    mutation UpdateCluster($sceneId: ID!, $clusterId: ID!, $name: String!) {
+  updateCluster(input: {sceneId: $sceneId, clusterId: $clusterId, name: $name}) {
+    cluster {
+      id
+      name
+      propertyId
+    }
+  }
+}
+    `;
+export type UpdateClusterMutationFn = Apollo.MutationFunction<UpdateClusterMutation, UpdateClusterMutationVariables>;
+
+/**
+ * __useUpdateClusterMutation__
+ *
+ * To run a mutation, you first call `useUpdateClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateClusterMutation, { data, loading, error }] = useUpdateClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      clusterId: // value for 'clusterId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUpdateClusterMutation(baseOptions?: Apollo.MutationHookOptions<UpdateClusterMutation, UpdateClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateClusterMutation, UpdateClusterMutationVariables>(UpdateClusterDocument, options);
+      }
+export type UpdateClusterMutationHookResult = ReturnType<typeof useUpdateClusterMutation>;
+export type UpdateClusterMutationResult = Apollo.MutationResult<UpdateClusterMutation>;
+export type UpdateClusterMutationOptions = Apollo.BaseMutationOptions<UpdateClusterMutation, UpdateClusterMutationVariables>;
 export const GetPrimitivesDocument = gql`
     query GetPrimitives($sceneId: ID!, $lang: String) {
   node(id: $sceneId, type: SCENE) {
