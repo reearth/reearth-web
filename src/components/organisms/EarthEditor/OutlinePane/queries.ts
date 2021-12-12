@@ -212,7 +212,7 @@ export const GET_WIDGETS = gql`
 
 
 export const GET_CLUSTERS = gql`
-  query GetClusters($sceneId: ID!, $lang: String) {
+  query GetClusters($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -231,7 +231,7 @@ export const GET_CLUSTERS = gql`
 `;
 
 export const ADD_CLUSTER = gql`
-  mutation AddCluster($sceneId: ID!, $name: String!, $lang: String) {
+  mutation AddCluster($sceneId: ID!, $name: String!) {
     addCluster(input: { sceneId: $sceneId, name: $name }) {
       cluster {
         id

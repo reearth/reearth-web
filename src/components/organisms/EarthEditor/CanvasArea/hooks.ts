@@ -90,6 +90,7 @@ export default (isBuilt?: boolean) => {
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
+  console.log(clusterData);
 
   const rootLayerId =
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;

@@ -9,7 +9,6 @@ import {
   WidgetType,
 } from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
-  useAddPropertyItemMutation,
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
   useUpdateLayerMutation,
@@ -67,7 +66,7 @@ export default () => {
     skip: !sceneId,
   });
 
-  const { loading: clusterLoading, data: clusterData } = useGetClustersQuery({
+  const { data: clusterData } = useGetClustersQuery({
     variables: { sceneId: sceneId ?? "" },
     skip: !sceneId,
   });
