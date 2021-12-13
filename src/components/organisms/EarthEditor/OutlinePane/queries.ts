@@ -1,8 +1,6 @@
 import { gql } from "@apollo/client";
 
-import {
-  propertyFragment,
-} from "@reearth/gql/fragments";
+import { propertyFragment } from "@reearth/gql/fragments";
 
 const fragments = gql`
   fragment LayerSystemLayer on Layer {
@@ -210,7 +208,6 @@ export const GET_WIDGETS = gql`
   }
 `;
 
-
 export const GET_CLUSTERS = gql`
   query GetClusters($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
@@ -221,9 +218,9 @@ export const GET_CLUSTERS = gql`
           name
           propertyId
           property {
-              id
-              ...PropertyFragment
-            }
+            id
+            ...PropertyFragment
+          }
         }
       }
     }
@@ -238,9 +235,9 @@ export const ADD_CLUSTER = gql`
         name
         propertyId
         property {
-            id
-            ...PropertyFragment
-          }
+          id
+          ...PropertyFragment
+        }
       }
     }
   }
@@ -263,10 +260,9 @@ export const REMOVE_CLUSTER = gql`
   }
 `;
 
-
 export const UPDATE_CLUSTER = gql`
   mutation UpdateCluster($sceneId: ID!, $clusterId: ID!, $name: String!) {
-    updateCluster(input: { sceneId: $sceneId, clusterId: $clusterId,name: $name }) {
+    updateCluster(input: { sceneId: $sceneId, clusterId: $clusterId, name: $name }) {
       cluster {
         id
         name

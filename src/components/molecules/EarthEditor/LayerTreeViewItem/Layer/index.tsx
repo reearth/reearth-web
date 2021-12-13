@@ -161,96 +161,96 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             selected
               ? theme.layers.selectedTextColor
               : deactivated
-                ? isHover
-                  ? theme.layers.highlight
-                  : theme.layers.disableTextColor
-                : theme.layers.textColor
+              ? isHover
+                ? theme.layers.highlight
+                : theme.layers.disableTextColor
+              : theme.layers.textColor
           }
         />
       </Flex>
       {editing ? (
         <Input type="text" {...inputProps} onClick={stopPropagation} />
       ) : (
-          <>
-            <LayerName
+        <>
+          <LayerName
+            size="xs"
+            selected={selected}
+            disabled={deactivated}
+            color={
+              selected
+                ? theme.layers.selectedTextColor
+                : deactivated
+                ? isHover
+                  ? theme.layers.highlight
+                  : theme.layers.disableTextColor
+                : theme.layers.textColor
+            }>
+            {editingName}
+          </LayerName>
+          {group && typeof childrenCount === "number" && showChildrenCount && (
+            <LayerCount
               size="xs"
               selected={selected}
-              disabled={deactivated}
               color={
                 selected
                   ? theme.layers.selectedTextColor
                   : deactivated
-                    ? isHover
-                      ? theme.layers.highlight
-                      : theme.layers.disableTextColor
-                    : theme.layers.textColor
+                  ? theme.layers.disableTextColor
+                  : theme.layers.textColor
               }>
-              {editingName}
-            </LayerName>
-            {group && typeof childrenCount === "number" && showChildrenCount && (
-              <LayerCount
-                size="xs"
+              {childrenCount}
+            </LayerCount>
+          )}
+          {visibilityShown && visible !== undefined && (
+            <HideableDiv
+              isVisible={!visible || isHover || selected}
+              onClick={handleVisibilityChange}>
+              <LayerIcon
+                icon={!visible ? "hidden" : "visible"}
+                size={16}
                 selected={selected}
-                color={
-                  selected
-                    ? theme.layers.selectedTextColor
-                    : deactivated
-                      ? theme.layers.disableTextColor
-                      : theme.layers.textColor
-                }>
-                {childrenCount}
-              </LayerCount>
-            )}
-            {visibilityShown && visible !== undefined && (
-              <HideableDiv
-                isVisible={!visible || isHover || selected}
-                onClick={handleVisibilityChange}>
-                <LayerIcon
-                  icon={!visible ? "hidden" : "visible"}
-                  size={16}
-                  selected={selected}
-                  disabled={deactivated}
-                  type={type}
+                disabled={deactivated}
+                type={type}
+              />
+            </HideableDiv>
+          )}
+          {deactivated !== undefined && (
+            <HideableDiv isVisible={isHover || selected} onClick={handleActivationChange}>
+              <ToggleButton size="sm" checked={!deactivated} parentSelected={selected} />
+            </HideableDiv>
+          )}
+          {showHelp && description && (
+            <HelpButton
+              balloonDirection="right"
+              gap={16}
+              descriptionTitle={title}
+              description={description}>
+              <StyledIcon icon="question" size={"15px"} />
+            </HelpButton>
+          )}
+          {showLayerActions && (
+            <LayerActionsWrapper>
+              {actionItems ? (
+                <LayerActionsList
+                  selectedLayerId={selectedLayerId}
+                  items={actionItems}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  onWarning={onWarning}
                 />
-              </HideableDiv>
-            )}
-            {deactivated !== undefined && (
-              <HideableDiv isVisible={isHover || selected} onClick={handleActivationChange}>
-                <ToggleButton size="sm" checked={!deactivated} parentSelected={selected} />
-              </HideableDiv>
-            )}
-            {showHelp && description && (
-              <HelpButton
-                balloonDirection="right"
-                gap={16}
-                descriptionTitle={title}
-                description={description}>
-                <StyledIcon icon="question" size={"15px"} />
-              </HelpButton>
-            )}
-            {showLayerActions && (
-              <LayerActionsWrapper>
-                {actionItems ? (
-                  <LayerActionsList
-                    selectedLayerId={selectedLayerId}
-                    items={actionItems}
-                    onAdd={onAdd}
-                    onRemove={onRemove}
-                    onWarning={onWarning}
-                  />
-                ) : (
-                    <LayerActions
-                      rootLayerId={rootLayerId}
-                      selectedLayerId={selectedLayerId}
-                      onLayerImport={onImport}
-                      onLayerRemove={onRemove}
-                      onLayerGroupCreate={onGroupCreate}
-                    />
-                  )}
-              </LayerActionsWrapper>
-            )}
-          </>
-        )}
+              ) : (
+                <LayerActions
+                  rootLayerId={rootLayerId}
+                  selectedLayerId={selectedLayerId}
+                  onLayerImport={onImport}
+                  onLayerRemove={onRemove}
+                  onLayerGroupCreate={onGroupCreate}
+                />
+              )}
+            </LayerActionsWrapper>
+          )}
+        </>
+      )}
     </Wrapper>
   );
 };
@@ -276,11 +276,11 @@ const Wrapper = styled.div<{
       ? disabled && !selected
         ? theme.main.weak
         : selected || !disabled
-          ? theme.main.strongText
-          : theme.main.text
-      : selected
         ? theme.main.strongText
-        : theme.main.text};
+        : theme.main.text
+      : selected
+      ? theme.main.strongText
+      : theme.main.text};
   box-sizing: border-box;
   background-color: ${({ selected, theme, hover }) =>
     selected ? theme.layers.selectedLayer : hover ? theme.main.bg : "transparent"};
@@ -290,11 +290,11 @@ const Wrapper = styled.div<{
       ? dropType === "top"
         ? `${theme.main.danger} transparent transparent transparent`
         : dropType === "bottom"
-          ? `transparent transparent ${theme.main.danger} transparent`
-          : theme.main.danger
+        ? `transparent transparent ${theme.main.danger} transparent`
+        : theme.main.danger
       : selected
-        ? theme.layers.selectedLayer
-        : "transparent"};
+      ? theme.layers.selectedLayer
+      : "transparent"};
   border-bottom-color: ${({ underlined, theme }) => underlined && theme.layers.bottomBorder};
   font-size: ${fonts.sizes.xs}px;
   border-right: ${({ childSelected, theme }) =>
@@ -314,7 +314,7 @@ const StyledIcon = styled(Icon)`
   color: ${props => props.theme.main.strongText};
 `;
 
-const ArrowIcon = styled(Icon) <{ open?: boolean }>`
+const ArrowIcon = styled(Icon)<{ open?: boolean }>`
   transition: transform 0.15s ease;
   transform: ${({ open }) => open && "translateY(10%) rotate(90deg)"};
 `;
@@ -329,12 +329,12 @@ const Input = styled.input`
   overflow: hidden;
 `;
 
-const LayerIcon = styled(Icon) <{ disabled?: boolean; selected?: boolean; type?: string }>`
+const LayerIcon = styled(Icon)<{ disabled?: boolean; selected?: boolean; type?: string }>`
   margin: 0 5px;
   flex: 0 0 auto;
 `;
 
-const LayerName = styled(Text) <{ disabled?: boolean; selected?: boolean }>`
+const LayerName = styled(Text)<{ disabled?: boolean; selected?: boolean }>`
   user-select: none;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -343,7 +343,7 @@ const LayerName = styled(Text) <{ disabled?: boolean; selected?: boolean }>`
   overflow: hidden;
 `;
 
-const LayerCount = styled(Text) <{ selected?: boolean }>`
+const LayerCount = styled(Text)<{ selected?: boolean }>`
   margin-right: 10px;
   &::before {
     content: "(";

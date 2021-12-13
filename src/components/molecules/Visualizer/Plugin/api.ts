@@ -42,8 +42,8 @@ export function exposed({
               html: string,
               options?:
                 | {
-                  visible?: boolean | undefined;
-                }
+                    visible?: boolean | undefined;
+                  }
                 | undefined,
             ) => {
               render(html, options);
@@ -68,24 +68,24 @@ export function exposed({
         },
         plugin?.extensionType === "primitive"
           ? {
-            get layer() {
-              return layer?.();
-            },
-          }
+              get layer() {
+                return layer?.();
+              },
+            }
           : {},
         plugin?.extensionType === "block"
           ? {
-            get block() {
-              return block?.();
-            },
-          }
+              get block() {
+                return block?.();
+              },
+            }
           : {},
         plugin?.extensionType === "widget"
           ? {
-            get widget() {
-              return widget?.();
-            },
-          }
+              get widget() {
+                return widget?.();
+              },
+            }
           : {},
       ),
     },

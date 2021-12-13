@@ -97,7 +97,7 @@ const Action = styled.span<{ disabled?: boolean }>`
   user-select: none;
 `;
 
-const StyledIcon = styled(Icon) <{ disabled?: boolean }>`
+const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   color: ${({ disabled, theme }) => (disabled ? theme.main.weak : theme.main.text)};
@@ -117,14 +117,14 @@ const Menu = styled.div`
   border-radius: 5px;
 `;
 
-const MenuItem = styled(Flex) <{ disabled?: boolean }>`
+const MenuItem = styled(Flex)<{ disabled?: boolean }>`
   padding: ${metricsSizes.xs}px ${metricsSizes.m}px;
   color: ${({ disabled, theme }) => (disabled ? theme.layers.disableTextColor : undefined)};
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 
   &:hover {
     background: ${({ disabled, theme }) =>
-    !disabled ? theme.selectList.option.hoverBg : undefined};
+      !disabled ? theme.selectList.option.hoverBg : undefined};
   }
 `;
 

@@ -53,9 +53,9 @@ export type ItemType = ItemEx["type"];
 export type ItemEx =
   | { type: "root" | "scene" | "layer" | "scenes" | "widgets" | "cluster" }
   | {
-    type: "widget";
-    id?: string;
-  }
+      type: "widget";
+      id?: string;
+    }
   | { type: "dataset"; datasetSchemaId: string };
 
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
@@ -269,34 +269,33 @@ export default ({
     () =>
       rootLayerId
         ? {
-          id: "root",
-          content: {
             id: "root",
-            type: "root",
-          },
-          children: [
-            {
-              id: rootLayerId,
-              content: {
-                id: rootLayerId,
-                type: "layer",
-                icon: "layer",
-                title: layerTitle,
-                childrenCount: layers?.length,
-                showLayerActions: true,
-                underlined: true,
-                showChildrenCount: false,
-                group: true,
-              },
-              expandable: true,
-              children: [...(convertLayers(layers) ?? [])],
+            content: {
+              id: "root",
+              type: "root",
             },
-          ],
-        }
+            children: [
+              {
+                id: rootLayerId,
+                content: {
+                  id: rootLayerId,
+                  type: "layer",
+                  icon: "layer",
+                  title: layerTitle,
+                  childrenCount: layers?.length,
+                  showLayerActions: true,
+                  underlined: true,
+                  showChildrenCount: false,
+                  group: true,
+                },
+                expandable: true,
+                children: [...(convertLayers(layers) ?? [])],
+              },
+            ],
+          }
         : undefined,
     [layerTitle, rootLayerId, layers],
   );
-
 
   const clustersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
     () => ({
@@ -305,44 +304,48 @@ export default ({
         id: "root",
         type: "root",
       },
-      children: [{
-        id: "cluster",
-        content: {
-          id: rootLayerId,
-          type: "cluster",
-          icon: "cluster",
-          title: clusterTitle,
-          childrenCount: clusters?.length,
-          showLayerActions: true,
-          actionItems: [{
-            type: "cluster",
-            id: "",
-            title: "Cluster",
-            icon: "cluster",
-          }],
-          underlined: true,
-          showChildrenCount: false,
-          group: true,
-        },
-        expandable: true,
-        children: clusters?.map(c => ({
-          id: c.id,
+      children: [
+        {
+          id: "cluster",
           content: {
-            id: c.id,
-            name: c.name,
-            property: c.propertyId,
+            id: rootLayerId,
             type: "cluster",
             icon: "cluster",
-            title: c.name,
-            renamable: true,
+            title: clusterTitle,
+            childrenCount: clusters?.length,
+            showLayerActions: true,
+            actionItems: [
+              {
+                type: "cluster",
+                id: "",
+                title: "Cluster",
+                icon: "cluster",
+              },
+            ],
+            underlined: true,
+            showChildrenCount: false,
+            group: true,
           },
-          draggable: false,
-          droppable: false,
-          droppableIntoChildren: false,
-          expandable: false,
-          selectable: true,
-        })),
-      },]
+          expandable: true,
+          children: clusters?.map(c => ({
+            id: c.id,
+            content: {
+              id: c.id,
+              name: c.name,
+              property: c.propertyId,
+              type: "cluster",
+              icon: "cluster",
+              title: c.name,
+              renamable: true,
+            },
+            draggable: false,
+            droppable: false,
+            droppableIntoChildren: false,
+            expandable: false,
+            selectable: true,
+          })),
+        },
+      ],
     }),
     [clusterTitle, clusters],
   );
@@ -403,14 +406,14 @@ export default ({
       selectedType === "scene"
         ? ["scene"]
         : selectedType === "widgets"
-          ? ["widgets"]
-          : selectedType === "layer" && selectedLayerId
-            ? [selectedLayerId]
-            : selectedType === "cluster" && selectedClusterId
-              ? [selectedClusterId]
-              : selectedType === "widget" && selectedWidgetId
-                ? [selectedWidgetId]
-                : [];
+        ? ["widgets"]
+        : selectedType === "layer" && selectedLayerId
+        ? [selectedLayerId]
+        : selectedType === "cluster" && selectedClusterId
+        ? [selectedClusterId]
+        : selectedType === "widget" && selectedWidgetId
+        ? [selectedWidgetId]
+        : [];
     setSelected(ids => (arrayEquals(ids, newState) ? ids : newState));
   }, [selectedLayerId, selectedType, selectedWidgetId]);
 

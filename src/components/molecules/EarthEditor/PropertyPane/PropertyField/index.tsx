@@ -48,16 +48,16 @@ export type SchemaField<T extends ValueType = ValueType> = {
   isLinkable?: boolean;
   isTemplate?: boolean;
   ui?:
-  | "color"
-  | "multiline"
-  | "selection"
-  | "buttons"
-  | "range"
-  | "image"
-  | "video"
-  | "file"
-  | "layer"
-  | "cameraPose";
+    | "color"
+    | "multiline"
+    | "selection"
+    | "buttons"
+    | "range"
+    | "image"
+    | "video"
+    | "file"
+    | "layer"
+    | "cameraPose";
   choices?: {
     key: string;
     label: string;
@@ -207,13 +207,13 @@ const PropertyField: React.FC<Props> = ({
           ) : schema.ui === "buttons" ? (
             <RadioField {...commonProps} items={schema.choices} />
           ) : (
-                  <TextField
-                    {...commonProps}
-                    prefix={schema?.prefix}
-                    suffix={schema?.suffix}
-                    multiline={schema.ui === "multiline"}
-                  />
-                )
+            <TextField
+              {...commonProps}
+              prefix={schema?.prefix}
+              suffix={schema?.suffix}
+              multiline={schema.ui === "multiline"}
+            />
+          )
         ) : type === "url" ? (
           <URLField
             {...commonProps}
@@ -236,14 +236,14 @@ const PropertyField: React.FC<Props> = ({
         ) : type === "ref" && schema.ui === "layer" ? (
           <LayerField {...commonProps} layers={layers} />
         ) : (
-                            <NonEditableField />
-                          )}
+          <NonEditableField />
+        )}
       </StyledPropertyFieldWrapper>
     </FormItemWrapper>
   );
 };
 
-const FormItemWrapper = styled(Flex) <{ schema?: SchemaField }>`
+const FormItemWrapper = styled(Flex)<{ schema?: SchemaField }>`
   margin-bottom: ${metricsSizes.l}px;
 `;
 

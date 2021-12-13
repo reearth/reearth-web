@@ -24,7 +24,15 @@ import PropertyField, {
 } from "../PropertyField";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
-export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "dataset" | "cluster";
+export type Mode =
+  | "infobox"
+  | "scene"
+  | "layer"
+  | "block"
+  | "widgets"
+  | "widget"
+  | "dataset"
+  | "cluster";
 
 export type {
   Dataset,
@@ -189,27 +197,27 @@ const PropertyItem: React.FC<Props> = ({
     () =>
       selectedItem
         ? item?.schemaFields.map(f => {
-          const events = mapValues(
-            { onChange, onRemove, onLink, onUploadFile, onRemoveFile },
-            f =>
-              (...args: any[]) =>
-                f?.(item.schemaGroup, selectedItemId, ...args),
-          );
-          const field = selectedItem?.fields.find(f2 => f2.id === f.id);
-          const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
-          const condsf = f.only && item.schemaFields.find(f2 => f2.id === f.only?.field);
-          const condv =
-            condf?.value ??
-            condf?.mergedValue ??
-            condsf?.defaultValue ??
-            (condsf?.type ? zeroValues[condsf.type] : undefined);
-          return {
-            schemaField: f,
-            field,
-            events,
-            hidden: f.only && (!condv || condv !== f.only.value),
-          };
-        })
+            const events = mapValues(
+              { onChange, onRemove, onLink, onUploadFile, onRemoveFile },
+              f =>
+                (...args: any[]) =>
+                  f?.(item.schemaGroup, selectedItemId, ...args),
+            );
+            const field = selectedItem?.fields.find(f2 => f2.id === f.id);
+            const condf = f.only && selectedItem?.fields.find(f2 => f2.id === f.only?.field);
+            const condsf = f.only && item.schemaFields.find(f2 => f2.id === f.only?.field);
+            const condv =
+              condf?.value ??
+              condf?.mergedValue ??
+              condsf?.defaultValue ??
+              (condsf?.type ? zeroValues[condsf.type] : undefined);
+            return {
+              schemaField: f,
+              field,
+              events,
+              hidden: f.only && (!condv || condv !== f.only.value),
+            };
+          })
         : [],
     [
       item?.schemaFields,
@@ -266,8 +274,8 @@ const PropertyItem: React.FC<Props> = ({
         mode === "layer" && isTemplate
           ? intl.formatMessage({ defaultMessage: "Template" })
           : isTemplate
-            ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
-            : item?.title
+          ? `${item?.title} ${intl.formatMessage({ defaultMessage: "template" })}`
+          : item?.title
       }>
       {isList && !!item && (
         <StyledPropertyList

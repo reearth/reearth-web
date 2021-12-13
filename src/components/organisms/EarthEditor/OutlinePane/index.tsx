@@ -38,7 +38,7 @@ const OutlinePane: React.FC<Props> = ({ className }) => {
     selectCluster,
     addCluster,
     renameCluster,
-    removeCluster
+    removeCluster,
   } = useHooks();
 
   return (

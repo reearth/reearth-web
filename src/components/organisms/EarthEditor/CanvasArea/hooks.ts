@@ -216,10 +216,10 @@ export default (isBuilt?: boolean) => {
           enabled: true,
           location: update.location
             ? {
-              zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-              section: update.location.section?.toUpperCase() as WidgetSectionType,
-              area: update.location.area?.toUpperCase() as WidgetAreaType,
-            }
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
             : undefined,
           extended: update.extended,
           index: update.index,

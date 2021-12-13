@@ -180,13 +180,12 @@ const OutlinePane: React.FC<Props> = ({
             renderItem={ClusterTreeViewItem}
             selectable
             expandable
-            expanded={['rootCluster']}
+            expanded={["rootCluster"]}
             onSelect={select}
           />
         )}
         {loading && <Loading />}
       </ItemsGroupWrapper>
-
 
       <ConfirmationModal
         title={intl.formatMessage({ defaultMessage: "Delete widget" })}
