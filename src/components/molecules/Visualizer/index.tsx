@@ -45,6 +45,7 @@ export type Props = PropsWithChildren<
     };
     sceneProperty?: SceneProperty;
     pluginProperty?: { [key: string]: any };
+    clusterProperty?: { [key: string]: any };
     selectedLayerId?: string;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
@@ -56,10 +57,10 @@ export type Props = PropsWithChildren<
     onLayerSelect?: (id?: string) => void;
     onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
   } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
-    Pick<
-      InfoboxProps,
-      "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
-    >
+  Pick<
+    InfoboxProps,
+    "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
+  >
 >;
 
 export default function Visualizer({
@@ -70,6 +71,7 @@ export default function Visualizer({
   sceneProperty,
   children,
   pluginProperty,
+  clusterProperty,
   pluginBaseUrl,
   isPublished,
   selectedLayerId: outerSelectedLayerId,
@@ -158,6 +160,7 @@ export default function Visualizer({
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
+            clusterProperty={clusterProperty}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}

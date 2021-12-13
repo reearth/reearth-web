@@ -8,6 +8,7 @@ export type { Layer } from "../Primitive";
 
 export type Props = {
   pluginProperty?: { [key: string]: any };
+  clusterProperty?: { [key: string]: any }
   sceneProperty?: any;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -23,6 +24,7 @@ export { LayerStore, empty as emptyLayerStore } from "./store";
 export default function Layers({
   pluginProperty,
   sceneProperty,
+  clusterProperty,
   isEditable,
   isBuilt,
   pluginBaseUrl,

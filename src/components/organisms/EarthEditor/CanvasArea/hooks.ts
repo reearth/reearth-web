@@ -90,11 +90,14 @@ export default (isBuilt?: boolean) => {
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
-  console.log(clusterData);
 
   const rootLayerId =
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+  // if (clusterData?.node) {
+  //   console.log(convertProperty(clusterData.node));
+  // }
+
 
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
@@ -102,6 +105,22 @@ export default (isBuilt?: boolean) => {
   const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const clusterScene = clusterData?.node?.__typename === "Scene" ? clusterData.node : undefined;
+
+  console.log(clusterScene?.clusters);
+
+  console.log(scene?.plugins);
+
+
+  const clusterProperty = useMemo(
+    () =>
+      clusterScene?.clusters.reduce<any[]>(
+        (a, b) => ([...a, convertProperty(b.property)]),
+        [],
+      ),
+    [clusterScene?.clusters],
+  );
+
   const pluginProperty = useMemo(
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
@@ -110,6 +129,9 @@ export default (isBuilt?: boolean) => {
       ),
     [scene?.plugins],
   );
+  console.log(clusterProperty);
+
+  console.log(pluginProperty);
 
   const selectLayer = useCallback(
     (id?: string) =>
@@ -216,10 +238,10 @@ export default (isBuilt?: boolean) => {
           enabled: true,
           location: update.location
             ? {
-                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-                section: update.location.section?.toUpperCase() as WidgetSectionType,
-                area: update.location.area?.toUpperCase() as WidgetAreaType,
-              }
+              zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+              section: update.location.section?.toUpperCase() as WidgetSectionType,
+              area: update.location.area?.toUpperCase() as WidgetAreaType,
+            }
             : undefined,
           extended: update.extended,
           index: update.index,
@@ -257,6 +279,7 @@ export default (isBuilt?: boolean) => {
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
+    clusterProperty,
     widgets,
     layers,
     selectedLayer,
