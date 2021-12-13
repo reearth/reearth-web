@@ -135,8 +135,8 @@ export default ({
     () => {
       if (initialCameraFlight.current) return;
       initialCameraFlight.current = true;
-      if (property?.cameraLimiter?.enable_camera_limiter) {
-        engineAPI.flyTo(property?.cameraLimiter?.target_area, { duration: 0 });
+      if (property?.cameraLimiter?.cameraLimitterEnabled) {
+        engineAPI.flyTo(property?.cameraLimiter?.cameraLimitterTargetArea, { duration: 0 });
       } else if (property?.default?.camera) {
         engineAPI.flyTo(property.default.camera, { duration: 0 });
       }
@@ -149,7 +149,7 @@ export default ({
       engineAPI,
       onCameraChange,
       property?.default?.camera,
-      property?.cameraLimiter?.enable_camera_limiter,
+      property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
@@ -200,14 +200,14 @@ export default ({
       !viewer.scene ||
       viewer.isDestroyed() ||
       !property?.cameraLimiter ||
-      !property?.cameraLimiter.target_area
+      !property?.cameraLimiter.cameraLimitterTargetArea
     )
       return undefined;
     const ellipsoid = viewer.scene.globe.ellipsoid;
 
     const centerPoint = Cartesian3.fromDegrees(
-      property.cameraLimiter.target_area.lng,
-      property.cameraLimiter.target_area.lat,
+      property.cameraLimiter.cameraLimitterTargetArea.lng,
+      property.cameraLimiter.cameraLimitterTargetArea.lat,
       0,
     );
 
@@ -233,7 +233,7 @@ export default ({
       ellipsoid,
     );
     return { geodesicVertical, geodesicHorizontal };
-  }, [property?.cameraLimiter?.target_area]);
+  }, [property?.cameraLimiter?.cameraLimitterTargetArea]);
 
   // calculate inner limiter dimensions
   const targetWidth = 1000000;
@@ -254,12 +254,12 @@ export default ({
       !viewer ||
       viewer.isDestroyed() ||
       !property?.cameraLimiter ||
-      !property?.cameraLimiter.target_area ||
+      !property?.cameraLimiter.cameraLimitterTargetArea ||
       !geodsic
     )
       return undefined;
-    const targetHalfWidth = (property.cameraLimiter.target_width || targetWidth) / 2;
-    const targetHalfHeight = (property.cameraLimiter.target_length || targetHeight) / 2;
+    const targetHalfWidth = (property.cameraLimiter.cameraLimitterTargetWidth || targetWidth) / 2;
+    const targetHalfHeight = (property.cameraLimiter.cameraLimitterTargetLength || targetHeight) / 2;
     const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(targetHalfHeight);
     const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-targetHalfHeight);
     const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth);
@@ -295,7 +295,7 @@ export default ({
       !viewer.scene ||
       viewer.isDestroyed() ||
       !property?.cameraLimiter ||
-      !property?.cameraLimiter.target_area ||
+      !property?.cameraLimiter.cameraLimitterTargetArea ||
       !geodsic
     )
       return undefined;
@@ -303,14 +303,14 @@ export default ({
     const camera = new CesiumCamera(viewer.scene);
     camera.setView({
       destination: Cartesian3.fromDegrees(
-        property.cameraLimiter.target_area.lng,
-        property.cameraLimiter.target_area.lat,
-        property.cameraLimiter.target_area.height,
+        property.cameraLimiter.cameraLimitterTargetArea.lng,
+        property.cameraLimiter.cameraLimitterTargetArea.lat,
+        property.cameraLimiter.cameraLimitterTargetArea.height,
       ),
       orientation: {
-        heading: property?.cameraLimiter?.target_area.heading,
-        pitch: property?.cameraLimiter?.target_area.pitch,
-        roll: property?.cameraLimiter?.target_area.roll,
+        heading: property?.cameraLimiter?.cameraLimitterTargetArea.heading,
+        pitch: property?.cameraLimiter?.cameraLimitterTargetArea.pitch,
+        roll: property?.cameraLimiter?.cameraLimitterTargetArea.roll,
         up: camera.up,
       },
     });
@@ -319,8 +319,8 @@ export default ({
     const rectangleHalfWidth = Rectangle.computeWidth(computedViewRectangle) * Math.PI * 1000000;
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
 
-    const targetHalfWidth = (property.cameraLimiter.target_width || targetWidth) / 2;
-    const targetHalfHeight = (property.cameraLimiter.target_length || targetHeight) / 2;
+    const targetHalfWidth = (property.cameraLimiter.cameraLimitterTargetWidth || targetWidth) / 2;
+    const targetHalfHeight = (property.cameraLimiter.cameraLimitterTargetLength || targetHeight) / 2;
     const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(targetHalfHeight + rectangleHalfHeight);
     const recBottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-(targetHalfHeight + rectangleHalfHeight),);
     const recRightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth + rectangleHalfWidth);
@@ -358,7 +358,7 @@ export default ({
       !viewer ||
       viewer.isDestroyed() ||
       !onCameraChange ||
-      !property?.cameraLimiter?.enable_camera_limiter ||
+      !property?.cameraLimiter?.cameraLimitterEnabled ||
       !limiterDimensions
     )
       return;

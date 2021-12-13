@@ -32,9 +32,9 @@ export type SceneProperty = {
   };
   cameraLimiter?: {
     id: string;
-    enable_camera_limiter?: boolean;
-    show_helper?: boolean;
-    target_area: {
+    cameraLimitterEnabled?: boolean;
+    cameraLimitterShowHelper?: boolean;
+    cameraLimitterTargetArea: {
       altitude: number;
       fov: number;
       heading: number;
@@ -44,8 +44,8 @@ export type SceneProperty = {
       pitch: number;
       roll: number;
     };
-    target_width: number;
-    target_length: number;
+    cameraLimitterTargetWidth: number;
+    cameraLimitterTargetLength: number;
   };
   tiles?: {
     id: string;
