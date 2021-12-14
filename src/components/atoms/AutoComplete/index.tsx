@@ -43,7 +43,6 @@ function AutoComplete<Value extends string | number>({
     [setFilterText],
   );
 
-  // TODO: fix here
   const isValueType = (value: any): value is Value => {
     return !!value;
   };

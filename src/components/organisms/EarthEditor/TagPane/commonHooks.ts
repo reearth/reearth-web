@@ -87,14 +87,14 @@ export default () => {
     return [defaultTagGroup, ...formattedGroups];
   }, [selectedLayerTags]);
 
-  const [createTagGroup] = useCreateTagGroupMutation();
+  const [createTagGroup] = useCreateTagGroupMutation({ refetchQueries: ["getSceneTags"] });
   const [createTagItem] = useCreateTagItemMutation();
   const [removeTag] = useRemoveTagMutation();
   const [updateTag] = useUpdateTagMutation();
   const [attachTagItemToGroup] = useAttachTagItemToGroupMutation();
   const [detachTagItemFromGroup] = useDetachTagItemFromGroupMutation();
-  const [attachTagToLayer] = useAttachTagToLayerMutation();
-  const [detachTagFromLayer] = useDetachTagFromLayerMutation();
+  const [attachTagToLayer] = useAttachTagToLayerMutation({ refetchQueries: ["getLayerTags"] });
+  const [detachTagFromLayer] = useDetachTagFromLayerMutation({ refetchQueries: ["getLayerTags"] });
 
   const handleCreateTagGroup = useCallback(
     async (label: string) => {
@@ -189,7 +189,6 @@ export default () => {
       if (selected?.type !== "layer") return;
       await attachTagToLayer({
         variables: { tagId, layerId: selected.layerId },
-        refetchQueries: ["getLayerTags"],
       });
     },
     [attachTagToLayer, selected],

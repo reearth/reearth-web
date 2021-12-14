@@ -42,7 +42,7 @@ export default () => {
   );
 
   const handleAttachTagItemToLayer = useCallback(
-    async tagItemId => {
+    async (tagItemId: string) => {
       await attachTagItemToLayer(tagItemId);
     },
     [attachTagItemToLayer],
