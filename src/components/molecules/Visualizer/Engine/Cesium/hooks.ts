@@ -374,7 +374,6 @@ export default ({
     if (
       !viewer ||
       viewer.isDestroyed() ||
-      !onCameraChange ||
       !property?.cameraLimiter?.cameraLimitterEnabled ||
       !limiterDimensions
     )
@@ -406,7 +405,7 @@ export default ({
         },
       });
     }
-  }, [camera, onCameraChange, property?.cameraLimiter, limiterDimensions]);
+  }, [camera, property?.cameraLimiter, limiterDimensions]);
 
   const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
     color: Color.RED,
