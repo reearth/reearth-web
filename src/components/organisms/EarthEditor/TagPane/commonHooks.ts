@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useIntl } from "react-intl";
 
 import { useAuth } from "@reearth/auth";
 import { TagGroup } from "@reearth/components/molecules/EarthEditor/TagPane";
@@ -15,12 +16,22 @@ import {
   useRemoveTagMutation,
   useUpdateTagMutation,
 } from "@reearth/gql";
-import { useSceneId, useSelected } from "@reearth/state";
+import { useNotification, useSceneId, useSelected } from "@reearth/state";
 
 export default () => {
   const { isAuthenticated } = useAuth();
   const [sceneId] = useSceneId();
   const [selected] = useSelected();
+  const [, setNotification] = useNotification();
+  const intl = useIntl();
+  const tagErrorMessage = {
+    alreadyExist: intl.formatMessage({
+      defaultMessage: "Same label tag already exist. Please type different label.",
+    }),
+    tagGroupHasTags: intl.formatMessage({
+      defaultMessage: "Tag group has tags, you need to remove all tags under the tag group",
+    }),
+  };
   const { loading: sceneTagLoading, data: sceneData } = useGetSceneTagsQuery({
     variables: { sceneId: sceneId || "" },
     skip: !isAuthenticated || !sceneId,
@@ -88,8 +99,8 @@ export default () => {
   const handleCreateTagGroup = useCallback(
     async (label: string) => {
       if (!sceneId) return;
-      if (sceneTagGroups.map(tg => tg.label).includes(label)) {
-        alert("err!!!"); //TODO: change here
+      if (_doesSameLabelTagGroupExist(sceneTagGroups, label)) {
+        setNotification({ type: "error", text: tagErrorMessage.alreadyExist });
         return;
       }
       return await createTagGroup({
@@ -100,7 +111,7 @@ export default () => {
         refetchQueries: ["getSceneTags"],
       });
     },
-    [createTagGroup, sceneId, sceneTagGroups],
+    [createTagGroup, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
   );
 
   const handleAttachTagItemToGroup = useCallback(
@@ -117,17 +128,12 @@ export default () => {
   const handleCreateTagItem = useCallback(
     async (label: string, tagGroupId: string) => {
       if (!sceneId) return;
-      // TODO: make valiation method
-      if (
-        sceneTagGroups
-          .find(tg => tg.id === tagGroupId)
-          ?.tags?.map(t => t.label)
-          .includes(label)
-      ) {
-        alert("errrrrr");
+      const tagGroup = sceneTagGroups.find(tg => tg.id === tagGroupId);
+      if (!tagGroup) return;
+      if (_doesSameLabelTagItemExist(tagGroup, label)) {
+        setNotification({ type: "error", text: tagErrorMessage.alreadyExist });
         return;
       }
-      console.log("label, tg--", label, tagGroupId);
       const tag = await createTagItem({
         variables: {
           sceneId,
@@ -140,7 +146,14 @@ export default () => {
       await handleAttachTagItemToGroup(tag.data?.createTagItem?.tag.id, tagGroupId);
       return tag;
     },
-    [createTagItem, handleAttachTagItemToGroup, sceneId, sceneTagGroups],
+    [
+      createTagItem,
+      handleAttachTagItemToGroup,
+      sceneId,
+      sceneTagGroups,
+      setNotification,
+      tagErrorMessage.alreadyExist,
+    ],
   );
 
   const handleDetachTagItemFromGroup = useCallback(
@@ -203,20 +216,20 @@ export default () => {
     async (tagGroupId: string) => {
       if (tagGroupId === DEFAULT_TAG_ID) return;
       const tagGroup = sceneTagGroups.find(tg => tg.id === tagGroupId);
-      if (!tagGroup || !tagGroup.tags || tagGroup.tags.length) {
-        alert("error!!!!!");
+      if (_doesTagGroupHasTags(tagGroup)) {
+        setNotification({ type: "error", text: tagErrorMessage.tagGroupHasTags });
         return;
       }
       await removeTag({ variables: { tagId: tagGroupId }, refetchQueries: ["getSceneTags"] });
     },
-    [removeTag, sceneTagGroups],
+    [removeTag, sceneTagGroups, setNotification, tagErrorMessage.tagGroupHasTags],
   );
 
   const handleUpdateTagGroup = useCallback(
     async (tagGroupId: string, label: string) => {
       if (!sceneId) return;
-      if (sceneTagGroups.map(tg => tg.label).includes(label)) {
-        alert("err!!!"); //TODO: change here, validation
+      if (_doesSameLabelTagGroupExist(sceneTagGroups, label)) {
+        setNotification({ type: "error", text: tagErrorMessage.alreadyExist });
         return;
       }
       await updateTag({
@@ -224,7 +237,7 @@ export default () => {
         refetchQueries: ["getSceneTags"],
       });
     },
-    [sceneId, sceneTagGroups, updateTag],
+    [sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist, updateTag],
   );
 
   const handleUpdateTagItem = useCallback(
@@ -234,6 +247,18 @@ export default () => {
     },
     [updateTag, sceneId],
   );
+
+  const _doesSameLabelTagGroupExist = (tagGroups: TagGroup[], label: string) => {
+    return tagGroups.map(tg => tg.label).includes(label);
+  };
+
+  const _doesSameLabelTagItemExist = (tagGroup: TagGroup, label: string) => {
+    return tagGroup.tags?.map(t => t.label).includes(label);
+  };
+
+  const _doesTagGroupHasTags = (tagGroup?: TagGroup) => {
+    return tagGroup?.tags.length;
+  };
 
   return {
     createTagGroup: handleCreateTagGroup,
