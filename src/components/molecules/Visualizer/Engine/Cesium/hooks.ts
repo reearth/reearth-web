@@ -155,7 +155,7 @@ export default ({
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
       isEqual(prevDeps[2], nextDeps[2]) &&
-      isEqual(prevDeps[3], nextDeps[3]),
+      prevDeps[3] === nextDeps[3],
   );
 
   const handleUnmount = useCallback(() => {

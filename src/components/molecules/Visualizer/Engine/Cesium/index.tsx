@@ -107,7 +107,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <ScreenSpaceCameraController
           maximumZoomDistance={
             property?.cameraLimiter?.cameraLimitterEnabled
-              ? property.cameraLimiter?.cameraLimitterTargetArea?.height || Number.POSITIVE_INFINITY
+              ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
               : Number.POSITIVE_INFINITY
           }></ScreenSpaceCameraController>
         <Camera
