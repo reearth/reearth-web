@@ -128,7 +128,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         {cameraViewOuterBoundaries && property?.cameraLimiter?.cameraLimitterShowHelper && (
           <Entity>
             <PolylineGraphics
-              positions={cameraViewOuterBoundaries.cartesianArray}
+              positions={cameraViewOuterBoundaries}
               width={1}
               material={cameraViewBoundariesMaterial}
               arcType={ArcType.RHUMB}></PolylineGraphics>

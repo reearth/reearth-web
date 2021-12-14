@@ -294,8 +294,11 @@ export default ({
     };
   }, [property?.cameraLimiter, geodsic]);
 
+
   // calculate maximum camera view (outer boundaries)
-  const cameraViewOuterBoundaries = useMemo((): undefined | { cartesianArray: Cartesian3[] } => {
+  const [cameraViewOuterBoundaries, setCameraViewOuterBoundaries] = useState<Cartesian3[] | undefined>();
+
+  useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (
       !viewer ||
@@ -305,7 +308,7 @@ export default ({
       !property?.cameraLimiter.cameraLimitterTargetArea ||
       !geodsic
     )
-      return undefined;
+      return;
 
     const camera = new CesiumCamera(viewer.scene);
     camera.setView({
@@ -323,7 +326,7 @@ export default ({
     });
 
     const computedViewRectangle = camera.computeViewRectangle();
-    if (!computedViewRectangle) return undefined;
+    if (!computedViewRectangle) return;
     const rectangleHalfWidth = Rectangle.computeWidth(computedViewRectangle) * Math.PI * 1000000;
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
 
@@ -355,16 +358,13 @@ export default ({
       recBottomDemention.latitude,
       0,
     );
-
-    return {
-      cartesianArray: [
-        Cartographic.toCartesian(recRightTop),
-        Cartographic.toCartesian(recLeftTop),
-        Cartographic.toCartesian(recLeftBottom),
-        Cartographic.toCartesian(recRightBottom),
-        Cartographic.toCartesian(recRightTop),
-      ],
-    };
+    setCameraViewOuterBoundaries([
+      Cartographic.toCartesian(recRightTop),
+      Cartographic.toCartesian(recLeftTop),
+      Cartographic.toCartesian(recLeftBottom),
+      Cartographic.toCartesian(recRightBottom),
+      Cartographic.toCartesian(recRightTop),
+    ]);
   }, [geodsic, camera]);
 
   // Manage camera limiter conditions
