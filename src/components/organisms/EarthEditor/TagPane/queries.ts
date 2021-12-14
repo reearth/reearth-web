@@ -1,3 +1,4 @@
+/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 export const GET_SCENE_TAGS = gql`
@@ -118,6 +119,19 @@ export const UPDATE_TAG = gql`
   mutation updateTag($tagId: ID!, $sceneId: ID!, $label: String) {
     updateTag(input: { tagId: $tagId, sceneId: $sceneId, label: $label }) {
       tag {
+        id
+        label
+      }
+    }
+  }
+`;
+
+export const GET_LAYER_TAGS = gql`
+  query GetLayerTags($layerId: ID!, $lang: String) {
+    layer(id: $layerId) {
+      id
+      tagIds
+      tags {
         id
         label
       }

@@ -10,15 +10,23 @@ export type Props = {
 };
 
 const TagPane: React.FC<Props> = () => {
-  const { loading, handleCreateTagGroup, handleCreateTagItem, sceneTagGroups } = useHooks();
+  const {
+    loading,
+    attachedTags,
+    handleAddTag,
+    handleAddTagGroup,
+    handleRemoveTag,
+    handleRemoveTagGroup,
+    sceneTags,
+  } = useHooks();
   return loading ? (
     <Loading />
   ) : (
     <Wrapper
-      allTagGroups={sceneTagGroups}
-      tagGroups={sceneTagGroups}
-      onTagGroupAdd={handleCreateTagGroup}
-      onTagAdd={handleCreateTagItem}
+      allTagGroups={sceneTags}
+      tagGroups={attachedTags}
+      onTagGroupAdd={handleAddTagGroup}
+      onTagAdd={handleAddTag}
     />
   );
 };

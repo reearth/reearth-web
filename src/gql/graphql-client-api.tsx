@@ -2775,6 +2775,14 @@ export type UpdateTagMutationVariables = Exact<{
 
 export type UpdateTagMutation = { __typename?: 'Mutation', updateTag?: { __typename?: 'UpdateTagPayload', tag: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } } | null | undefined };
 
+export type GetLayerTagsQueryVariables = Exact<{
+  layerId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetLayerTagsQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, tagIds: Array<string>, tags: Array<{ __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string }> } | { __typename?: 'LayerItem', id: string, tagIds: Array<string>, tags: Array<{ __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string }> } | null | undefined };
+
 export type UpdateMeMutationVariables = Exact<{
   name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -6372,6 +6380,47 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const GetLayerTagsDocument = gql`
+    query GetLayerTags($layerId: ID!, $lang: String) {
+  layer(id: $layerId) {
+    id
+    tagIds
+    tags {
+      id
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLayerTagsQuery__
+ *
+ * To run a query within a React component, call `useGetLayerTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLayerTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLayerTagsQuery({
+ *   variables: {
+ *      layerId: // value for 'layerId'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useGetLayerTagsQuery(baseOptions: Apollo.QueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+      }
+export function useGetLayerTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+        }
+export type GetLayerTagsQueryHookResult = ReturnType<typeof useGetLayerTagsQuery>;
+export type GetLayerTagsLazyQueryHookResult = ReturnType<typeof useGetLayerTagsLazyQuery>;
+export type GetLayerTagsQueryResult = Apollo.QueryResult<GetLayerTagsQuery, GetLayerTagsQueryVariables>;
 export const UpdateMeDocument = gql`
     mutation updateMe($name: String, $email: String, $lang: Lang, $theme: Theme, $password: String, $passwordConfirmation: String) {
   updateMe(

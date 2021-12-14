@@ -7,16 +7,21 @@ import Tag from "@reearth/components/atoms/Tag";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 
+export type Tag = {
+  id: string;
+  label: string;
+};
+
 export type Props = {
   className?: string;
   title?: string;
   icon?: "bin" | "cancel";
   onRemove?: () => void;
   onTagAdd?: (value: string) => void;
-  onTagRemove?: (value: string) => void;
-  onSelect?: (value: string) => void;
-  allTags?: string[];
-  attachedTags?: string[];
+  onTagRemove?: (id: string) => void;
+  onSelect?: (id: string) => void;
+  allTags?: Tag[];
+  attachedTags?: Tag[];
 };
 
 const TagGroup: React.FC<Props> = ({
@@ -47,11 +52,13 @@ const TagGroup: React.FC<Props> = ({
       </TitleWrapper>
       <TagsWrapper wrap="wrap">
         {attachedTags?.map(t => (
-          <Tag icon="cancel" text={t} key={t} onRemove={() => onTagRemove?.(t)} />
+          <Tag icon="cancel" text={t.label} key={t.id} onRemove={() => onTagRemove?.(t.id)} />
         ))}
       </TagsWrapper>
       <AutoComplete
-        items={allTags?.filter(t => !attachedTags?.includes(t)).map(t => ({ value: t, label: t }))}
+        items={allTags
+          ?.filter(t => !attachedTags?.map(t2 => t2.id).includes(t.id))
+          .map(t => ({ value: t.label, label: t.label }))}
         onSelect={onSelect}
         creatable
         onCreate={onTagAdd}
@@ -65,7 +72,7 @@ const Wrapper = styled(Flex)`
     `0px 4px 4px${theme.descriptionBalloon.shadowColor}`}; //TODO: don't use balloon's color
   padding: ${({ theme }) => `${theme.metrics.s}px`};
   min-width: 60px;
-  width: fit-content;
+  width: auto;
   background: ${({ theme }) => theme.properties.bg};
 `;
 

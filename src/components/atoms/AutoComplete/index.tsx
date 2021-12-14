@@ -50,7 +50,6 @@ function AutoComplete<Value extends string | number>({
 
   const handleSelect = useCallback(
     (value: Value) => {
-      console.log("called");
       itemState.length ? onSelect?.(value) : creatable && onCreate?.(value);
       setFilterText("");
     },

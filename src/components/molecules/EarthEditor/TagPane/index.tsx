@@ -5,7 +5,9 @@ import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import { styled } from "@reearth/theme";
 
-import TagGroup from "./TagGroup";
+import TagGroup, { Tag as TagType } from "./TagGroup";
+
+export type Tag = TagType;
 
 export type Props = {
   className?: string;
@@ -16,8 +18,9 @@ export type Props = {
 };
 
 export type TagGroup = {
-  name: string;
-  tags: string[];
+  id: string;
+  label: string;
+  tags: Tag[];
 };
 
 const TagPane: React.FC<Props> = ({
@@ -30,14 +33,14 @@ const TagPane: React.FC<Props> = ({
   return (
     <Wrapper className={className} direction="column">
       {tagGroups?.map(tg => (
-        <Box key={tg.name} mb="l">
+        <Box key={tg.id} mb="l">
           <TagGroup
-            title={tg.name}
+            title={tg.label}
             icon="cancel"
-            allTags={allTagGroups?.find(atg => atg.name === tg.name)?.tags}
+            allTags={allTagGroups?.find(atg => atg.label === tg.label)?.tags}
             attachedTags={tg.tags}
-            onTagAdd={(t: string) => onTagAdd?.(tg.name, t)}
-            onSelect={(t: string) => onTagAdd?.(tg.name, t)}
+            onTagAdd={(t: string) => onTagAdd?.(tg.label, t)}
+            onSelect={(t: string) => onTagAdd?.(tg.label, t)}
           />
         </Box>
       ))}
