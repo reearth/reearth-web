@@ -126,7 +126,7 @@ export const UPDATE_TAG = gql`
 `;
 
 export const GET_LAYER_TAGS = gql`
-  query GetLayerTags($layerId: ID!) {
+  query getLayerTags($layerId: ID!) {
     layer(id: $layerId) {
       id
       tagIds

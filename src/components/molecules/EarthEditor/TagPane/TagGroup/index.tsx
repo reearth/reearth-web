@@ -24,7 +24,7 @@ export type Props = {
   onTitleEdit?: (value: string) => void;
   onTagAdd?: (value: string) => void;
   onTagRemove?: (id: string) => void;
-  onSelect?: (id: string) => void;
+  onSelect?: (tagId: string) => void;
   allTags?: Tag[];
   attachedTags?: Tag[];
 };
@@ -54,6 +54,14 @@ const TagGroup: React.FC<Props> = ({
   );
   const titleRef = useRef(null);
   useClickAway(titleRef, () => setEditing(false));
+  const handleSelectTag = useCallback(
+    (tagLabel: string) => {
+      const targetTag = allTags?.find(t => t.label === tagLabel);
+      if (!targetTag) return;
+      onSelect?.(targetTag?.id);
+    },
+    [allTags, onSelect],
+  );
   return (
     <Wrapper direction="column" align="center" justify="space-between" className={className}>
       <TitleWrapper ref={titleRef}>
@@ -91,7 +99,7 @@ const TagGroup: React.FC<Props> = ({
         items={allTags
           ?.filter(t => !attachedTags?.map(t2 => t2.id).includes(t.id))
           .map(t => ({ value: t.label, label: t.label }))}
-        onSelect={onSelect}
+        onSelect={handleSelectTag}
         creatable
         onCreate={onTagAdd}
       />

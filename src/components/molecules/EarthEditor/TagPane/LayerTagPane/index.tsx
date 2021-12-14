@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
 import Box from "@reearth/components/atoms/Box";
@@ -40,6 +40,14 @@ const SceneTagPane: React.FC<Props> = ({
   onTagGroupDetach,
   onTagItemDetach,
 }) => {
+  const handleTagGroupSelect = useCallback(
+    (tagGroupLabel: string) => {
+      const targetTagGroup = allTagGroups?.find(tg => tg.label === tagGroupLabel);
+      if (!targetTagGroup) return;
+      onTagGroupAttach?.(targetTagGroup?.id);
+    },
+    [allTagGroups, onTagGroupAttach],
+  );
   return (
     <Wrapper className={className} direction="column">
       {layerTagGroups?.map(tg => (
@@ -58,7 +66,14 @@ const SceneTagPane: React.FC<Props> = ({
           />
         </Box>
       ))}
-      <AutoComplete onCreate={onTagGroupAdd} creatable />
+      <AutoComplete
+        onCreate={onTagGroupAdd}
+        creatable
+        items={allTagGroups
+          ?.filter(tg => !layerTagGroups?.map(tg2 => tg2.id).includes(tg.id))
+          .map(tg => ({ value: tg.label, label: tg.label }))}
+        onSelect={handleTagGroupSelect}
+      />
     </Wrapper>
   );
 };

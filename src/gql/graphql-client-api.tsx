@@ -6380,7 +6380,7 @@ export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
 export const GetLayerTagsDocument = gql`
-    query GetLayerTags($layerId: ID!) {
+    query getLayerTags($layerId: ID!) {
   layer(id: $layerId) {
     id
     tagIds
