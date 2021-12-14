@@ -46,6 +46,7 @@ export type Props = PropsWithChildren<
     sceneProperty?: SceneProperty;
     pluginProperty?: { [key: string]: any };
     clusterProperty?: { [key: string]: any };
+    clusterLayers?: string[];
     selectedLayerId?: string;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
@@ -72,6 +73,7 @@ export default function Visualizer({
   children,
   pluginProperty,
   clusterProperty,
+  clusterLayers,
   pluginBaseUrl,
   isPublished,
   selectedLayerId: outerSelectedLayerId,
@@ -161,6 +163,7 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
             clusterProperty={clusterProperty}
+            clusterLayers={clusterLayers}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}

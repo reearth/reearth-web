@@ -33,6 +33,7 @@ import {
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
+import { flatMap } from "lodash";
 
 export default (isBuilt?: boolean) => {
   const intl = useIntl();
@@ -94,9 +95,6 @@ export default (isBuilt?: boolean) => {
   const rootLayerId =
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
-  // if (clusterData?.node) {
-  //   console.log(convertProperty(clusterData.node));
-  // }
 
 
   // convert data
@@ -107,11 +105,6 @@ export default (isBuilt?: boolean) => {
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const clusterScene = clusterData?.node?.__typename === "Scene" ? clusterData.node : undefined;
 
-  console.log(clusterScene?.clusters);
-
-  console.log(scene?.plugins);
-
-
   const clusterProperty = useMemo(
     () =>
       clusterScene?.clusters.reduce<any[]>(
@@ -121,6 +114,16 @@ export default (isBuilt?: boolean) => {
     [clusterScene?.clusters],
   );
 
+  const clusterLayers = useMemo(
+    () =>
+      clusterScene?.clusters.reduce<any[]>(
+        (a, b) => flatMap([...a, convertProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer)]).filter(item => !!item),
+        [],
+      ),
+    [clusterScene?.clusters],
+  );
+
+
   const pluginProperty = useMemo(
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
@@ -129,9 +132,6 @@ export default (isBuilt?: boolean) => {
       ),
     [scene?.plugins],
   );
-  console.log(clusterProperty);
-
-  console.log(pluginProperty);
 
   const selectLayer = useCallback(
     (id?: string) =>
@@ -280,6 +280,7 @@ export default (isBuilt?: boolean) => {
     sceneProperty,
     pluginProperty,
     clusterProperty,
+    clusterLayers,
     widgets,
     layers,
     selectedLayer,

@@ -12,7 +12,6 @@ export type Props = {
     isBuilt?: boolean;
     pluginBaseUrl?: string;
     layers?: LayerStore;
-    clusterLayers?: any[];
     selectedLayerId?: string;
     overriddenProperties?: { [id in string]: any };
     isLayerHidden?: (id: string) => boolean;
@@ -25,7 +24,6 @@ const Cluster: React.FC<Props> = ({
     isBuilt,
     pluginBaseUrl,
     layers,
-    clusterLayers,
     selectedLayerId,
     overriddenProperties,
     isLayerHidden,
@@ -129,7 +127,7 @@ const Cluster: React.FC<Props> = ({
                 <div style={{ backgroundColor: "red" }}>
                     {layers?.flattenLayersRaw
                         ?.filter(layer =>
-                            clusterLayers?.some(clusterLayer => clusterLayer.cluster_layer === layer.id),
+                            cluster?.layers && cluster?.layers.some((clusterLayer: any) => clusterLayer.layer === layer.id),
                         )
                         .map(layer =>
                             !layer.isVisible || !!layer.children ? null : (
