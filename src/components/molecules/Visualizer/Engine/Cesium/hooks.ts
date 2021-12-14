@@ -266,30 +266,15 @@ export default ({
       cameraLimitterTargetLength: length = targetLength,
     } = property?.cameraLimiter ?? {};
 
-    const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(length / 2);
-    const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-length / 2);
-    const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(width / 2);
-    const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-width / 2);
-
-    const rightTop = new Cartographic(rightDemention.longitude, topDemention.latitude, 0);
-    const leftTop = new Cartographic(leftDemention.longitude, topDemention.latitude, 0);
-    const rightBottom = new Cartographic(rightDemention.longitude, bottomDemention.latitude, 0);
-    const leftBottom = new Cartographic(leftDemention.longitude, bottomDemention.latitude, 0);
+    const { cartesianArray, cartographicDimensions } = calcBoundaryBox(
+      geodsic,
+      length / 2,
+      width / 2,
+    );
 
     return {
-      cartographicDimensions: {
-        rightDemention,
-        leftDemention,
-        topDemention,
-        bottomDemention,
-      },
-      cartesianArray: [
-        Cartographic.toCartesian(rightTop),
-        Cartographic.toCartesian(leftTop),
-        Cartographic.toCartesian(leftBottom),
-        Cartographic.toCartesian(rightBottom),
-        Cartographic.toCartesian(rightTop),
-      ],
+      cartographicDimensions,
+      cartesianArray,
     };
   }, [property?.cameraLimiter, geodsic]);
 
@@ -334,39 +319,15 @@ export default ({
       cameraLimitterTargetWidth: width = targetWidth,
       cameraLimitterTargetLength: length = targetLength,
     } = property?.cameraLimiter ?? {};
-    const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
+
+    const { cartesianArray } = calcBoundaryBox(
+      geodsic,
       length / 2 + rectangleHalfHeight,
-    );
-    const recBottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
-      -(length / 2 + rectangleHalfHeight),
-    );
-    const recRightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
       width / 2 + rectangleHalfWidth,
     );
-    const recLeftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
-      -(width / 2 + rectangleHalfWidth),
-    );
 
-    const recRightTop = new Cartographic(recRightDemention.longitude, recTopDemention.latitude, 0);
-    const recLeftTop = new Cartographic(recLeftDemention.longitude, recTopDemention.latitude, 0);
-    const recRightBottom = new Cartographic(
-      recRightDemention.longitude,
-      recBottomDemention.latitude,
-      0,
-    );
-    const recLeftBottom = new Cartographic(
-      recLeftDemention.longitude,
-      recBottomDemention.latitude,
-      0,
-    );
-    setCameraViewOuterBoundaries([
-      Cartographic.toCartesian(recRightTop),
-      Cartographic.toCartesian(recLeftTop),
-      Cartographic.toCartesian(recLeftBottom),
-      Cartographic.toCartesian(recRightBottom),
-      Cartographic.toCartesian(recRightTop),
-    ]);
-  }, [geodsic, camera]);
+    setCameraViewOuterBoundaries(cartesianArray);
+  }, [property?.cameraLimiter, geodsic, camera]);
 
   // Manage camera limiter conditions
   useEffect(() => {
@@ -528,6 +489,45 @@ export default ({
     handleCameraMoveEnd,
   };
 };
+
+function calcBoundaryBox(
+  geodsic: { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic },
+  halfLength: number,
+  halfWidth: number,
+): {
+  cartographicDimensions: {
+    rightDemention: Cartographic;
+    leftDemention: Cartographic;
+    topDemention: Cartographic;
+    bottomDemention: Cartographic;
+  };
+  cartesianArray: Cartesian3[];
+} {
+  const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(halfLength);
+  const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-halfLength);
+  const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(halfWidth);
+  const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-halfWidth);
+
+  const rightTop = new Cartographic(rightDemention.longitude, topDemention.latitude, 0);
+  const leftTop = new Cartographic(leftDemention.longitude, topDemention.latitude, 0);
+  const rightBottom = new Cartographic(rightDemention.longitude, bottomDemention.latitude, 0);
+  const leftBottom = new Cartographic(leftDemention.longitude, bottomDemention.latitude, 0);
+  return {
+    cartographicDimensions: {
+      rightDemention,
+      leftDemention,
+      topDemention,
+      bottomDemention,
+    },
+    cartesianArray: [
+      Cartographic.toCartesian(rightTop),
+      Cartographic.toCartesian(leftTop),
+      Cartographic.toCartesian(leftBottom),
+      Cartographic.toCartesian(rightBottom),
+      Cartographic.toCartesian(rightTop),
+    ],
+  };
+}
 
 function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
   return t
