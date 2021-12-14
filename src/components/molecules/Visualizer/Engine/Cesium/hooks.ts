@@ -241,14 +241,14 @@ export default ({
   const limiterDimensions = useMemo(():
     | undefined
     | {
-      cartographicDimensions: {
-        rightDemention: Cartographic;
-        leftDemention: Cartographic;
-        topDemention: Cartographic;
-        bottomDemention: Cartographic;
-      };
-      cartesianArray: Cartesian3[];
-    } => {
+        cartographicDimensions: {
+          rightDemention: Cartographic;
+          leftDemention: Cartographic;
+          topDemention: Cartographic;
+          bottomDemention: Cartographic;
+        };
+        cartesianArray: Cartesian3[];
+      } => {
     const viewer = cesium.current?.cesiumElement;
     if (
       !viewer ||
@@ -259,11 +259,17 @@ export default ({
     )
       return undefined;
     const targetHalfWidth = (property.cameraLimiter.cameraLimitterTargetWidth || targetWidth) / 2;
-    const targetHalfHeight = (property.cameraLimiter.cameraLimitterTargetLength || targetHeight) / 2;
+    const targetHalfHeight =
+      (property.cameraLimiter.cameraLimitterTargetLength || targetHeight) / 2;
     const topDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(targetHalfHeight);
-    const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-targetHalfHeight);
-    const rightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth);
-    const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-targetHalfWidth);
+    const bottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
+      -targetHalfHeight,
+    );
+    const rightDemention =
+      geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth);
+    const leftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
+      -targetHalfWidth,
+    );
 
     const rightTop = new Cartographic(rightDemention.longitude, topDemention.latitude, 0);
     const leftTop = new Cartographic(leftDemention.longitude, topDemention.latitude, 0);
@@ -320,11 +326,20 @@ export default ({
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
 
     const targetHalfWidth = (property.cameraLimiter.cameraLimitterTargetWidth || targetWidth) / 2;
-    const targetHalfHeight = (property.cameraLimiter.cameraLimitterTargetLength || targetHeight) / 2;
-    const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(targetHalfHeight + rectangleHalfHeight);
-    const recBottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(-(targetHalfHeight + rectangleHalfHeight),);
-    const recRightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(targetHalfWidth + rectangleHalfWidth);
-    const recLeftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(-(targetHalfWidth + rectangleHalfWidth),);
+    const targetHalfHeight =
+      (property.cameraLimiter.cameraLimitterTargetLength || targetHeight) / 2;
+    const recTopDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
+      targetHalfHeight + rectangleHalfHeight,
+    );
+    const recBottomDemention = geodsic.geodesicVertical.interpolateUsingSurfaceDistance(
+      -(targetHalfHeight + rectangleHalfHeight),
+    );
+    const recRightDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
+      targetHalfWidth + rectangleHalfWidth,
+    );
+    const recLeftDemention = geodsic.geodesicHorizontal.interpolateUsingSurfaceDistance(
+      -(targetHalfWidth + rectangleHalfWidth),
+    );
 
     const recRightTop = new Cartographic(recRightDemention.longitude, recTopDemention.latitude, 0);
     const recLeftTop = new Cartographic(recLeftDemention.longitude, recTopDemention.latitude, 0);
