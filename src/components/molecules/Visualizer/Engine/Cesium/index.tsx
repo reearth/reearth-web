@@ -1,4 +1,4 @@
-import { ArcType, Color, PolylineDashMaterialProperty, ScreenSpaceEventType } from "cesium";
+import { ArcType, Color, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -52,6 +52,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cesium,
     limiterDimensions,
     cameraViewOuterBoundaries,
+    cameraViewBoundariesMaterial,
     handleMount,
     handleUnmount,
     handleClick,
@@ -129,11 +130,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
             <PolylineGraphics
               positions={cameraViewOuterBoundaries.cartesianArray}
               width={1}
-              material={
-                new PolylineDashMaterialProperty({
-                  color: Color.RED,
-                })
-              }
+              material={cameraViewBoundariesMaterial}
               arcType={ArcType.RHUMB}></PolylineGraphics>
           </Entity>
         )}

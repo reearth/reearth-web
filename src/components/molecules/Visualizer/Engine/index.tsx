@@ -31,19 +31,9 @@ export type SceneProperty = {
     ion?: string;
   };
   cameraLimiter?: {
-    id: string;
     cameraLimitterEnabled?: boolean;
     cameraLimitterShowHelper?: boolean;
-    cameraLimitterTargetArea: {
-      altitude: number;
-      fov: number;
-      heading: number;
-      height: number;
-      lat: number;
-      lng: number;
-      pitch: number;
-      roll: number;
-    };
+    cameraLimitterTargetArea?: Camera;
     cameraLimitterTargetWidth: number;
     cameraLimitterTargetLength: number;
   };

@@ -10,6 +10,7 @@ import {
   EllipsoidGeodesic,
   Ellipsoid,
   Rectangle,
+  PolylineDashMaterialProperty,
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -135,7 +136,7 @@ export default ({
     () => {
       if (initialCameraFlight.current) return;
       initialCameraFlight.current = true;
-      if (property?.cameraLimiter?.cameraLimitterEnabled) {
+      if (property?.cameraLimiter?.cameraLimitterEnabled && property?.cameraLimiter?.cameraLimitterTargetArea) {
         engineAPI.flyTo(property?.cameraLimiter?.cameraLimitterTargetArea, { duration: 0 });
       } else if (property?.default?.camera) {
         engineAPI.flyTo(property.default.camera, { duration: 0 });
@@ -212,7 +213,7 @@ export default ({
     );
 
     const CartographicCenterPoint = Cartographic.fromCartesian(centerPoint);
-    const normal = Ellipsoid.WGS84.geodeticSurfaceNormal(centerPoint);
+    const normal = ellipsoid.geodeticSurfaceNormal(centerPoint);
     const east = Cartesian3.normalize(
       Cartesian3.cross(Cartesian3.UNIT_Z, normal, new Cartesian3()),
       new Cartesian3(),
@@ -241,14 +242,14 @@ export default ({
   const limiterDimensions = useMemo(():
     | undefined
     | {
-        cartographicDimensions: {
-          rightDemention: Cartographic;
-          leftDemention: Cartographic;
-          topDemention: Cartographic;
-          bottomDemention: Cartographic;
-        };
-        cartesianArray: Cartesian3[];
-      } => {
+      cartographicDimensions: {
+        rightDemention: Cartographic;
+        leftDemention: Cartographic;
+        topDemention: Cartographic;
+        bottomDemention: Cartographic;
+      };
+      cartesianArray: Cartesian3[];
+    } => {
     const viewer = cesium.current?.cesiumElement;
     if (
       !viewer ||
@@ -406,6 +407,10 @@ export default ({
     }
   }, [camera, onCameraChange, property?.cameraLimiter, limiterDimensions]);
 
+  const cameraViewBoundariesMaterial = useMemo(() => new PolylineDashMaterialProperty({
+    color: Color.RED,
+  }), [])
+
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
@@ -515,6 +520,7 @@ export default ({
     cesium,
     limiterDimensions,
     cameraViewOuterBoundaries,
+    cameraViewBoundariesMaterial,
     handleMount,
     handleUnmount,
     handleClick,
