@@ -212,7 +212,7 @@ export default ({
       0,
     );
 
-    const CartographicCenterPoint = Cartographic.fromCartesian(centerPoint);
+    const cartographicCenterPoint = Cartographic.fromCartesian(centerPoint);
     const normal = ellipsoid.geodeticSurfaceNormal(centerPoint);
     const east = Cartesian3.normalize(
       Cartesian3.cross(Cartesian3.UNIT_Z, normal, new Cartesian3()),
@@ -224,12 +224,12 @@ export default ({
     );
 
     const geodesicVertical = new EllipsoidGeodesic(
-      CartographicCenterPoint,
+      cartographicCenterPoint,
       Cartographic.fromCartesian(north),
       ellipsoid,
     );
     const geodesicHorizontal = new EllipsoidGeodesic(
-      CartographicCenterPoint,
+      cartographicCenterPoint,
       Cartographic.fromCartesian(east),
       ellipsoid,
     );
