@@ -407,9 +407,9 @@ export default ({
     }
   }, [camera, onCameraChange, property?.cameraLimiter, limiterDimensions]);
 
-  const cameraViewBoundariesMaterial = useMemo(() => new PolylineDashMaterialProperty({
+  const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
     color: Color.RED,
-  }), [])
+  });
 
   // manage layer selection
   useEffect(() => {
