@@ -5,16 +5,20 @@ import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import { styled } from "@reearth/theme";
 
-import TagGroup, { Tag as TagType } from "./TagGroup";
+import TagGroup, { Tag as TagType } from "../TagGroup";
 
 export type Tag = TagType;
 
+export const DEFAULT_TAG_ID = "default";
+
 export type Props = {
   className?: string;
-  tagGroups?: TagGroup[];
   allTagGroups?: TagGroup[];
   onTagGroupAdd?: (value: string) => void;
-  onTagAdd?: (tag: string, tagGroupId: string) => void;
+  onTagAdd?: (label: string, tagGroupId: string) => void;
+  onTagGroupRemove?: (tagGroupId: string) => void;
+  onTagItemRemove?: (tagItemId: string) => void;
+  onTagGroupUpdate?: (tagGroupId: string, label: string) => void;
 };
 
 export type TagGroup = {
@@ -23,24 +27,30 @@ export type TagGroup = {
   tags: Tag[];
 };
 
-const TagPane: React.FC<Props> = ({
+const SceneTagPane: React.FC<Props> = ({
   className,
-  tagGroups,
   onTagGroupAdd,
   onTagAdd,
   allTagGroups,
+  onTagGroupRemove,
+  onTagItemRemove,
+  onTagGroupUpdate,
 }) => {
   return (
     <Wrapper className={className} direction="column">
-      {tagGroups?.map(tg => (
+      {allTagGroups?.map(tg => (
         <Box key={tg.id} mb="l">
           <TagGroup
             title={tg.label}
-            icon="cancel"
-            allTags={allTagGroups?.find(atg => atg.label === tg.label)?.tags}
+            icon="bin"
+            allTags={tg.tags}
             attachedTags={tg.tags}
-            onTagAdd={(t: string) => onTagAdd?.(tg.label, t)}
-            onSelect={(t: string) => onTagAdd?.(tg.label, t)}
+            onTagAdd={(t: string) => onTagAdd?.(t, tg.id)}
+            onRemove={() => onTagGroupRemove?.(tg.id)}
+            onTagRemove={onTagItemRemove}
+            onTitleEdit={(label: string) => onTagGroupUpdate?.(tg.id, label)}
+            editable={tg.id !== DEFAULT_TAG_ID}
+            removable={tg.id != DEFAULT_TAG_ID}
           />
         </Box>
       ))}
@@ -53,4 +63,4 @@ const Wrapper = styled(Flex)`
   padding: ${({ theme }) => `${theme.metrics.l}px`};
 `;
 
-export default TagPane;
+export default SceneTagPane;

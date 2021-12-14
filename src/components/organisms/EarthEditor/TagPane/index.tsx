@@ -1,34 +1,15 @@
 import React from "react";
 
-import Loading from "@reearth/components/atoms/Loading";
-import { default as Wrapper } from "@reearth/components/molecules/EarthEditor/TagPane";
-
-import useHooks from "./hooks";
+import LayerTagPane from "./LayerTagPane";
+import SceneTagPane from "./SceneTagPane";
 
 export type Props = {
   className?: string;
+  mode: "scene" | "layer";
 };
 
-const TagPane: React.FC<Props> = () => {
-  const {
-    loading,
-    attachedTags,
-    handleAddTag,
-    handleAddTagGroup,
-    handleRemoveTag,
-    handleRemoveTagGroup,
-    sceneTags,
-  } = useHooks();
-  return loading ? (
-    <Loading />
-  ) : (
-    <Wrapper
-      allTagGroups={sceneTags}
-      tagGroups={attachedTags}
-      onTagGroupAdd={handleAddTagGroup}
-      onTagAdd={handleAddTag}
-    />
-  );
+const TagPane: React.FC<Props> = ({ mode }) => {
+  return mode === "layer" ? <LayerTagPane /> : <SceneTagPane />;
 };
 
 export default TagPane;

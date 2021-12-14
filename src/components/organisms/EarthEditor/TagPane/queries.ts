@@ -1,4 +1,3 @@
-/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 export const GET_SCENE_TAGS = gql`
@@ -127,7 +126,7 @@ export const UPDATE_TAG = gql`
 `;
 
 export const GET_LAYER_TAGS = gql`
-  query GetLayerTags($layerId: ID!, $lang: String) {
+  query GetLayerTags($layerId: ID!) {
     layer(id: $layerId) {
       id
       tagIds

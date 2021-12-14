@@ -2777,7 +2777,6 @@ export type UpdateTagMutation = { __typename?: 'Mutation', updateTag?: { __typen
 
 export type GetLayerTagsQueryVariables = Exact<{
   layerId: Scalars['ID'];
-  lang?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -6381,7 +6380,7 @@ export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
 export const GetLayerTagsDocument = gql`
-    query GetLayerTags($layerId: ID!, $lang: String) {
+    query GetLayerTags($layerId: ID!) {
   layer(id: $layerId) {
     id
     tagIds
@@ -6406,7 +6405,6 @@ export const GetLayerTagsDocument = gql`
  * const { data, loading, error } = useGetLayerTagsQuery({
  *   variables: {
  *      layerId: // value for 'layerId'
- *      lang: // value for 'lang'
  *   },
  * });
  */

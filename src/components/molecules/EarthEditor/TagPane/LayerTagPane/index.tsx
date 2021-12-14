@@ -1,0 +1,70 @@
+import React from "react";
+
+import AutoComplete from "@reearth/components/atoms/AutoComplete";
+import Box from "@reearth/components/atoms/Box";
+import Flex from "@reearth/components/atoms/Flex";
+import { styled } from "@reearth/theme";
+
+import TagGroup, { Tag as TagType } from "../TagGroup";
+
+export type Tag = TagType;
+
+export const DEFAULT_TAG_ID = "default";
+
+export type Props = {
+  className?: string;
+  allTagGroups?: TagGroup[];
+  layerTagGroups?: TagGroup[];
+  onTagGroupAdd?: (value: string) => void;
+  onTagAdd?: (label: string, tagGroupId: string) => void;
+  onTagGroupAttach?: (tagGroupId: string) => void;
+  onTagAttach?: (tagId: string) => void;
+  onTagGroupDetach?: (tagGroupId: string) => void;
+  onTagItemDetach?: (tagItemId: string) => void;
+};
+
+export type TagGroup = {
+  id: string;
+  label: string;
+  tags: Tag[];
+};
+
+const SceneTagPane: React.FC<Props> = ({
+  className,
+  allTagGroups,
+  layerTagGroups,
+  onTagGroupAdd,
+  onTagAdd,
+  onTagAttach,
+  onTagGroupAttach,
+  onTagGroupDetach,
+  onTagItemDetach,
+}) => {
+  return (
+    <Wrapper className={className} direction="column">
+      {layerTagGroups?.map(tg => (
+        <Box key={tg.id} mb="l">
+          <TagGroup
+            title={tg.label}
+            icon="cancel"
+            allTags={allTagGroups?.find(atg => atg.id === tg.id)?.tags}
+            attachedTags={tg.tags}
+            onTagAdd={(t: string) => onTagAdd?.(t, tg.id)}
+            onRemove={() => onTagGroupDetach?.(tg.id)}
+            onSelect={(tagId: string) => onTagAttach?.(tagId)}
+            onTagRemove={(tagId: string) => onTagItemDetach?.(tagId)}
+            editable={false}
+            removable={tg.id != DEFAULT_TAG_ID}
+          />
+        </Box>
+      ))}
+      <AutoComplete onCreate={onTagGroupAdd} creatable />
+    </Wrapper>
+  );
+};
+
+const Wrapper = styled(Flex)`
+  padding: ${({ theme }) => `${theme.metrics.l}px`};
+`;
+
+export default SceneTagPane;
