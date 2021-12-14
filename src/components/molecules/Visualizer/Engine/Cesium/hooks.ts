@@ -322,7 +322,8 @@ export default ({
       },
     });
 
-    const computedViewRectangle = camera.computeViewRectangle() as Rectangle;
+    const computedViewRectangle = camera.computeViewRectangle();
+    if (!computedViewRectangle) return undefined;
     const rectangleHalfWidth = Rectangle.computeWidth(computedViewRectangle) * Math.PI * 1000000;
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
 
