@@ -194,6 +194,7 @@ export default ({
     layerPropertyData?.layer?.__typename,
     selected,
     scene?.widgets,
+    scene?.clusters,
   ]);
   const datasetSchemas = useMemo(
     () => convertLinkableDatasets(linkableDatasets),

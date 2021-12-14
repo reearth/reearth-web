@@ -53,9 +53,9 @@ export type ItemType = ItemEx["type"];
 export type ItemEx =
   | { type: "root" | "scene" | "layer" | "scenes" | "widgets" | "cluster" }
   | {
-    type: "widget";
-    id?: string;
-  }
+      type: "widget";
+      id?: string;
+    }
   | { type: "dataset"; datasetSchemaId: string };
 
 export type TreeViewItem = LayerTreeViewItemItem<ItemEx>;
@@ -156,7 +156,7 @@ export default ({
         );
       }
     },
-    [onLayerSelect, onSceneSelect, onWidgetsSelect, onWidgetSelect],
+    [onClusterSelect, onLayerSelect, onSceneSelect, onWidgetsSelect, onWidgetSelect],
   );
 
   const drop = useCallback(
@@ -268,30 +268,30 @@ export default ({
     () =>
       rootLayerId
         ? {
-          id: "root",
-          content: {
             id: "root",
-            type: "root",
-          },
-          children: [
-            {
-              id: rootLayerId,
-              content: {
-                id: rootLayerId,
-                type: "layer",
-                icon: "layer",
-                title: layerTitle,
-                childrenCount: layers?.length,
-                showLayerActions: true,
-                underlined: true,
-                showChildrenCount: false,
-                group: true,
-              },
-              expandable: true,
-              children: [...(convertLayers(layers) ?? [])],
+            content: {
+              id: "root",
+              type: "root",
             },
-          ],
-        }
+            children: [
+              {
+                id: rootLayerId,
+                content: {
+                  id: rootLayerId,
+                  type: "layer",
+                  icon: "layer",
+                  title: layerTitle,
+                  childrenCount: layers?.length,
+                  showLayerActions: true,
+                  underlined: true,
+                  showChildrenCount: false,
+                  group: true,
+                },
+                expandable: true,
+                children: [...(convertLayers(layers) ?? [])],
+              },
+            ],
+          }
         : undefined,
     [layerTitle, rootLayerId, layers],
   );
@@ -307,7 +307,7 @@ export default ({
         {
           id: "cluster",
           content: {
-            id: rootLayerId,
+            id: "cluster",
             type: "cluster",
             icon: "cluster",
             title: clusterTitle,
@@ -405,16 +405,16 @@ export default ({
       selectedType === "scene"
         ? ["scene"]
         : selectedType === "widgets"
-          ? ["widgets"]
-          : selectedType === "layer" && selectedLayerId
-            ? [selectedLayerId]
-            : selectedType === "cluster" && selectedClusterId
-              ? [selectedClusterId]
-              : selectedType === "widget" && selectedWidgetId
-                ? [selectedWidgetId]
-                : [];
+        ? ["widgets"]
+        : selectedType === "layer" && selectedLayerId
+        ? [selectedLayerId]
+        : selectedType === "cluster" && selectedClusterId
+        ? [selectedClusterId]
+        : selectedType === "widget" && selectedWidgetId
+        ? [selectedWidgetId]
+        : [];
     setSelected(ids => (arrayEquals(ids, newState) ? ids : newState));
-  }, [selectedLayerId, selectedType, selectedWidgetId]);
+  }, [selectedLayerId, selectedType, selectedWidgetId, selectedClusterId]);
 
   return {
     sceneWidgetsItem,

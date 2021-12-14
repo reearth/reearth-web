@@ -1,8 +1,7 @@
 import React from "react";
 
-import P from "../Primitive";
-
 import Cluster from "../Engine/Cesium/Cluster";
+import P from "../Primitive";
 
 import { LayerStore } from "./store";
 
@@ -53,14 +52,8 @@ export default function Layers({
           isLayerHidden={isLayerHidden}></Cluster>
       ))}
 
-
       {layers?.flattenLayersRaw
-        ?.filter(
-          layer =>
-            !clusterLayers?.some(
-              clusterLayer => clusterLayer === layer.id,
-            ),
-        )
+        ?.filter(layer => !clusterLayers?.some(clusterLayer => clusterLayer === layer.id))
         .map(layer =>
           !layer.isVisible || !!layer.children ? null : (
             <P

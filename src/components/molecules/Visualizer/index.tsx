@@ -58,10 +58,10 @@ export type Props = PropsWithChildren<
     onLayerSelect?: (id?: string) => void;
     onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
   } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
-  Pick<
-    InfoboxProps,
-    "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
-  >
+    Pick<
+      InfoboxProps,
+      "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
+    >
 >;
 
 export default function Visualizer({

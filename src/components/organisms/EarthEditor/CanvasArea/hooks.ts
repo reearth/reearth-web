@@ -1,3 +1,4 @@
+import { flatMap } from "lodash";
 import { useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
@@ -33,7 +34,6 @@ import {
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
 import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
-import { flatMap } from "lodash";
 
 export default (isBuilt?: boolean) => {
   const intl = useIntl();
@@ -96,7 +96,6 @@ export default (isBuilt?: boolean) => {
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
 
-
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
@@ -106,23 +105,22 @@ export default (isBuilt?: boolean) => {
   const clusterScene = clusterData?.node?.__typename === "Scene" ? clusterData.node : undefined;
 
   const clusterProperty = useMemo(
-    () =>
-      clusterScene?.clusters.reduce<any[]>(
-        (a, b) => ([...a, convertProperty(b.property)]),
-        [],
-      ),
+    () => clusterScene?.clusters.reduce<any[]>((a, b) => [...a, convertProperty(b.property)], []),
     [clusterScene?.clusters],
   );
 
   const clusterLayers = useMemo(
     () =>
       clusterScene?.clusters.reduce<any[]>(
-        (a, b) => flatMap([...a, convertProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer)]).filter(item => !!item),
+        (a, b) =>
+          flatMap([
+            ...a,
+            convertProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer),
+          ]).filter(item => !!item),
         [],
       ),
     [clusterScene?.clusters],
   );
-
 
   const pluginProperty = useMemo(
     () =>
@@ -238,10 +236,10 @@ export default (isBuilt?: boolean) => {
           enabled: true,
           location: update.location
             ? {
-              zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-              section: update.location.section?.toUpperCase() as WidgetSectionType,
-              area: update.location.area?.toUpperCase() as WidgetAreaType,
-            }
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
             : undefined,
           extended: update.extended,
           index: update.index,

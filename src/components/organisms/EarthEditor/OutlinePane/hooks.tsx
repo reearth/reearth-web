@@ -382,7 +382,7 @@ export default () => {
         },
       });
     },
-    [updateClusterMutation],
+    [sceneId, updateClusterMutation],
   );
 
   const addCluster = useCallback(async () => {
@@ -401,7 +401,7 @@ export default () => {
         clusterId: data.addCluster.cluster.id,
       });
     }
-  }, [addClusterMutation, intl.locale, sceneId, select]);
+  }, [addClusterMutation, sceneId, select]);
 
   const removeCluster = useCallback(
     async (clusterId: string) => {
