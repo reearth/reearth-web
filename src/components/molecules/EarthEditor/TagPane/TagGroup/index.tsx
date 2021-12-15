@@ -133,6 +133,7 @@ const IconWrapper = styled(Flex)`
 
 const TagsWrapper = styled(Flex)`
   margin: ${({ theme }) => `${theme.metrics.l}px 0px`};
+  width: 100%;
 `;
 
 export default TagGroup;

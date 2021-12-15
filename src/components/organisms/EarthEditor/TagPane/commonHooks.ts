@@ -51,18 +51,18 @@ export default () => {
 
   const sceneTagGroups = useMemo(() => {
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
-    const defaultTagGroup: TagGroup = { id: "default", label: DEFAULT_TAG_ID, tags: [] };
+    const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_ID, label: "Default", tags: [] };
     const formattedGroups: TagGroup[] = sceneTags
       ? sceneTags
           ?.map(t => {
             if (t.__typename === "TagGroup") {
-              return { id: t.id, label: t.label, tags: [] as any }; //TODO: fix here
+              return { id: t.id, label: t.label, tags: t.tags };
             }
             defaultTagGroup.tags.push({ id: t.id, label: t.label });
             return;
           })
           .filter((t): t is TagGroup => {
-            return !!t && "label" in t;
+            return !!t && "label" in t && "tags" in t;
           })
       : [];
     return [defaultTagGroup, ...formattedGroups];
@@ -75,26 +75,26 @@ export default () => {
       ? selectedLayerTags
           ?.map(t => {
             if (t.__typename === "TagGroup") {
-              return { id: t.id, label: t.label, tags: [] as any }; //TODO: fix here
+              return { id: t.id, label: t.label, tags: t.tags };
             }
             defaultTagGroup.tags.push({ id: t.id, label: t.label });
             return;
           })
           .filter((t): t is TagGroup => {
-            return !!t && "label" in t;
+            return !!t && "label" in t && "tags" in t;
           })
       : [];
     return [defaultTagGroup, ...formattedGroups];
   }, [selectedLayerTags]);
 
-  const [createTagGroup] = useCreateTagGroupMutation({ refetchQueries: ["getSceneTags"] });
+  const [createTagGroup] = useCreateTagGroupMutation();
   const [createTagItem] = useCreateTagItemMutation();
   const [removeTag] = useRemoveTagMutation();
   const [updateTag] = useUpdateTagMutation();
   const [attachTagItemToGroup] = useAttachTagItemToGroupMutation();
   const [detachTagItemFromGroup] = useDetachTagItemFromGroupMutation();
-  const [attachTagToLayer] = useAttachTagToLayerMutation({ refetchQueries: ["getLayerTags"] });
-  const [detachTagFromLayer] = useDetachTagFromLayerMutation({ refetchQueries: ["getLayerTags"] });
+  const [attachTagToLayer] = useAttachTagToLayerMutation();
+  const [detachTagFromLayer] = useDetachTagFromLayerMutation();
 
   const handleCreateTagGroup = useCallback(
     async (label: string) => {
@@ -138,22 +138,12 @@ export default () => {
         variables: {
           sceneId,
           label,
+          parent: tagGroupId === DEFAULT_TAG_ID ? undefined : tagGroupId,
         },
-        refetchQueries: ["getSceneTags"],
       });
-      if (tagGroupId === DEFAULT_TAG_ID) return tag;
-      if (!tag.data?.createTagItem?.tag.id) return tag;
-      await handleAttachTagItemToGroup(tag.data?.createTagItem?.tag.id, tagGroupId);
       return tag;
     },
-    [
-      createTagItem,
-      handleAttachTagItemToGroup,
-      sceneId,
-      sceneTagGroups,
-      setNotification,
-      tagErrorMessage.alreadyExist,
-    ],
+    [createTagItem, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
   );
 
   const handleDetachTagItemFromGroup = useCallback(
@@ -199,7 +189,6 @@ export default () => {
       if (selected?.type !== "layer") return;
       await detachTagFromLayer({
         variables: { tagId: tagGroupId, layerId: selected.layerId },
-        refetchQueries: ["getLayerTags"],
       });
     },
     [detachTagFromLayer, selected],
@@ -207,7 +196,7 @@ export default () => {
 
   const handleRemoveTagItemFromScene = useCallback(
     async (tagId: string) => {
-      await removeTag({ variables: { tagId }, refetchQueries: ["getSceneTags"] });
+      await removeTag({ variables: { tagId } });
     },
     [removeTag],
   );
@@ -219,7 +208,7 @@ export default () => {
         setNotification({ type: "error", text: tagErrorMessage.tagGroupHasTags });
         return;
       }
-      await removeTag({ variables: { tagId: tagGroupId }, refetchQueries: ["getSceneTags"] });
+      await removeTag({ variables: { tagId: tagGroupId } });
     },
     [removeTag, sceneTagGroups, setNotification, tagErrorMessage.tagGroupHasTags],
   );
@@ -233,7 +222,6 @@ export default () => {
       }
       await updateTag({
         variables: { tagId: tagGroupId, sceneId: sceneId, label },
-        refetchQueries: ["getSceneTags"],
       });
     },
     [sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist, updateTag],

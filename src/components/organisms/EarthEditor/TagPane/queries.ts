@@ -5,11 +5,15 @@ export const GET_SCENE_TAGS = gql`
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
-        tagIds
         tags {
           id
           label
-          sceneId
+          ... on TagGroup {
+            tags {
+              id
+              label
+            }
+          }
         }
       }
     }
@@ -22,6 +26,10 @@ export const CREATE_TAG_GROUP = gql`
       tag {
         id
         label
+        tags {
+          id
+          label
+        }
       }
     }
   }
@@ -31,6 +39,7 @@ export const CREATE_TAG_ITEM = gql`
   mutation createTagItem(
     $sceneId: ID!
     $label: String!
+    $parent: ID
     $linkedDatasetSchemaId: ID
     $linkedDatasetID: ID
     $linkedDatasetField: ID
@@ -39,6 +48,7 @@ export const CREATE_TAG_ITEM = gql`
       input: {
         sceneId: $sceneId
         label: $label
+        parent: $parent
         linkedDatasetSchemaID: $linkedDatasetSchemaId
         linkedDatasetID: $linkedDatasetID
         linkedDatasetField: $linkedDatasetField
@@ -47,6 +57,14 @@ export const CREATE_TAG_ITEM = gql`
       tag {
         id
         label
+      }
+      parent {
+        id
+        label
+        tags {
+          id
+          label
+        }
       }
     }
   }
@@ -58,7 +76,10 @@ export const ATTACH_TAG_ITEM_TO_GROUP = gql`
       tag {
         id
         label
-        tags
+        tags {
+          id
+          label
+        }
       }
     }
   }
@@ -70,7 +91,10 @@ export const DETACH_TAG_ITEM_FROM_GROUP = gql`
       tag {
         id
         label
-        tags
+        tags {
+          id
+          label
+        }
       }
     }
   }
@@ -81,12 +105,16 @@ export const ATTACH_TAG_TO_LAYER = gql`
     attachTagToLayer(input: { tagID: $tagId, layerID: $layerId }) {
       layer {
         id
-        propertyId
         tags {
           id
           label
+          ... on TagGroup {
+            tags {
+              id
+              label
+            }
+          }
         }
-        tagIds
       }
     }
   }
@@ -96,12 +124,16 @@ export const DETACH_TAG_FROM_LAYER = gql`
     detachTagFromLayer(input: { tagID: $tagId, layerID: $layerId }) {
       layer {
         id
-        propertyId
         tags {
           id
           label
+          ... on TagGroup {
+            tags {
+              id
+              label
+            }
+          }
         }
-        tagIds
       }
     }
   }
@@ -129,10 +161,15 @@ export const GET_LAYER_TAGS = gql`
   query getLayerTags($layerId: ID!) {
     layer(id: $layerId) {
       id
-      tagIds
       tags {
         id
         label
+        ... on TagGroup {
+          tags {
+            id
+            label
+          }
+        }
       }
     }
   }
