@@ -5,11 +5,7 @@ import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import { styled } from "@reearth/theme";
 
-import TagGroup, { Tag as TagType } from "../TagGroup";
-
-export type Tag = TagType;
-
-export const DEFAULT_TAG_ID = "default";
+import TagGroup, { Tag } from "../TagGroup";
 
 export type Props = {
   className?: string;

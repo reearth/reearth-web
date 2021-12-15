@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import { useAuth } from "@reearth/auth";
-import { TagGroup } from "@reearth/components/molecules/EarthEditor/TagPane";
-import { DEFAULT_TAG_ID } from "@reearth/components/molecules/EarthEditor/TagPane/SceneTagPane";
+import { DEFAULT_TAG_ID } from "@reearth/components/molecules/EarthEditor/TagPane/common";
+import { TagGroup } from "@reearth/components/molecules/EarthEditor/TagPane/SceneTagPane";
 import {
   useAttachTagItemToGroupMutation,
   useAttachTagToLayerMutation,
@@ -69,6 +69,7 @@ export default () => {
   }, [sceneTags]);
 
   const layerTagGroups = useMemo(() => {
+    console.log("selecte layer tag-------", selectedLayerTags);
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
     const defaultTagGroup: TagGroup = { id: "default", label: DEFAULT_TAG_ID, tags: [] };
     const formattedGroups: TagGroup[] = selectedLayerTags
@@ -140,6 +141,7 @@ export default () => {
           label,
           parent: tagGroupId === DEFAULT_TAG_ID ? undefined : tagGroupId,
         },
+        refetchQueries: tagGroupId === DEFAULT_TAG_ID ? ["getSceneTags"] : [],
       });
       return tag;
     },
@@ -185,10 +187,11 @@ export default () => {
   );
 
   const handleDetachTagItemFromLayer = useCallback(
-    async (tagGroupId: string) => {
+    async (tagItemId: string) => {
       if (selected?.type !== "layer") return;
       await detachTagFromLayer({
-        variables: { tagId: tagGroupId, layerId: selected.layerId },
+        variables: { tagId: tagItemId, layerId: selected.layerId },
+        refetchQueries: ["getSceneTags"],
       });
     },
     [detachTagFromLayer, selected],
@@ -196,10 +199,11 @@ export default () => {
 
   const handleRemoveTagItemFromScene = useCallback(
     async (tagId: string) => {
-      await removeTag({ variables: { tagId } });
+      await removeTag({ variables: { tagId }, refetchQueries: ["getSceneTags"] });
     },
     [removeTag],
   );
+
   const handleRemoveTagGroupFromScene = useCallback(
     async (tagGroupId: string) => {
       if (tagGroupId === DEFAULT_TAG_ID) return;
@@ -208,7 +212,7 @@ export default () => {
         setNotification({ type: "error", text: tagErrorMessage.tagGroupHasTags });
         return;
       }
-      await removeTag({ variables: { tagId: tagGroupId } });
+      await removeTag({ variables: { tagId: tagGroupId }, refetchQueries: ["getSceneTags"] });
     },
     [removeTag, sceneTagGroups, setNotification, tagErrorMessage.tagGroupHasTags],
   );

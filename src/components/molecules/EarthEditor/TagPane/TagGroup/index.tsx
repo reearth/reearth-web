@@ -108,17 +108,12 @@ const TagGroup: React.FC<Props> = ({
 };
 
 const Wrapper = styled(Flex)`
-  box-shadow: ${({ theme }) =>
-    `0px 4px 4px${theme.descriptionBalloon.shadowColor}`}; //TODO: don't use balloon's color
+  box-shadow: ${({ theme }) => `0px 4px 4px${theme.descriptionBalloon.shadowColor}`};
   padding: ${({ theme }) => `${theme.metrics.s}px`};
   min-width: 60px;
   width: auto;
   background: ${({ theme }) => theme.properties.bg};
 `;
-
-// const TitleWrapper = styled(Flex)`
-//   width: 100%;
-// `;
 
 const TitleWrapper = styled.div`
   display: flex;
