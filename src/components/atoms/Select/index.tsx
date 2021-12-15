@@ -74,9 +74,7 @@ const SelectWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: ${metricsSizes.xs}px;
   width: 100%;
-  height: ${metrics.propertyTextInputHeight}px;
   box-sizing: border-box;
 `;
 
