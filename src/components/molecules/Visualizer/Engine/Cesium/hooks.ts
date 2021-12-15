@@ -184,7 +184,7 @@ export default ({
       emittedCamera.current = c;
       throttledCameraChange(c);
     }
-  }, [throttledCameraChange, camera]);
+  }, [throttledCameraChange, camera, onCameraChange]);
 
   // camera
   useEffect(() => {
@@ -236,7 +236,7 @@ export default ({
       ellipsoid,
     );
     return { geodesicVertical, geodesicHorizontal };
-  }, [property?.cameraLimiter?.cameraLimitterTargetArea]);
+  }, [property?.cameraLimiter]);
 
   // calculate inner limiter dimensions
   const targetWidth = 1000000;
