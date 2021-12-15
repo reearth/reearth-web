@@ -2720,7 +2720,7 @@ export type CreateTagGroupMutationVariables = Exact<{
 }>;
 
 
-export type CreateTagGroupMutation = { __typename?: 'Mutation', createTagGroup?: { __typename?: 'CreateTagGroupPayload', tag: { __typename?: 'TagGroup', id: string, label: string } } | null | undefined };
+export type CreateTagGroupMutation = { __typename?: 'Mutation', createTagGroup?: { __typename?: 'CreateTagGroupPayload', tag: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } } | null | undefined };
 
 export type CreateTagItemMutationVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -2732,7 +2732,7 @@ export type CreateTagItemMutationVariables = Exact<{
 }>;
 
 
-export type CreateTagItemMutation = { __typename?: 'Mutation', createTagItem?: { __typename?: 'CreateTagItemPayload', tag: { __typename?: 'TagItem', id: string, label: string }, parent?: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | null | undefined } | null | undefined };
+export type CreateTagItemMutation = { __typename?: 'Mutation', createTagItem?: { __typename?: 'CreateTagItemPayload', tag: { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }, parent?: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | null | undefined } | null | undefined };
 
 export type AttachTagItemToGroupMutationVariables = Exact<{
   itemId: Scalars['ID'];
@@ -6086,6 +6086,10 @@ export const CreateTagGroupDocument = gql`
     tag {
       id
       label
+      tags {
+        id
+        label
+      }
     }
   }
 }
@@ -6125,6 +6129,7 @@ export const CreateTagItemDocument = gql`
     tag {
       id
       label
+      parentId
     }
     parent {
       id

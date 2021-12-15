@@ -57,6 +57,7 @@ export const CREATE_TAG_ITEM = gql`
       tag {
         id
         label
+        parentId
       }
       parent {
         id
