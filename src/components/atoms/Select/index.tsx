@@ -3,8 +3,7 @@ import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { styled, useTheme, metrics } from "@reearth/theme";
-import { metricsSizes } from "@reearth/theme/metrics";
+import { styled, useTheme } from "@reearth/theme";
 
 import SelectCore, { OptionElement } from "./core";
 

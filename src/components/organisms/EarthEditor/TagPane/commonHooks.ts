@@ -5,12 +5,10 @@ import { useAuth } from "@reearth/auth";
 import { DEFAULT_TAG_ID } from "@reearth/components/molecules/EarthEditor/TagPane/common";
 import { TagGroup } from "@reearth/components/molecules/EarthEditor/TagPane/SceneTagPane";
 import {
-  useAttachTagItemToGroupMutation,
   useAttachTagToLayerMutation,
   useCreateTagGroupMutation,
   useCreateTagItemMutation,
   useDetachTagFromLayerMutation,
-  useDetachTagItemFromGroupMutation,
   useGetLayerTagsQuery,
   useGetSceneTagsQuery,
   useRemoveTagMutation,
@@ -92,8 +90,6 @@ export default () => {
   const [createTagItem] = useCreateTagItemMutation();
   const [removeTag] = useRemoveTagMutation();
   const [updateTag] = useUpdateTagMutation();
-  const [attachTagItemToGroup] = useAttachTagItemToGroupMutation();
-  const [detachTagItemFromGroup] = useDetachTagItemFromGroupMutation();
   const [attachTagToLayer] = useAttachTagToLayerMutation();
   const [detachTagFromLayer] = useDetachTagFromLayerMutation();
 
@@ -115,17 +111,6 @@ export default () => {
     [createTagGroup, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
   );
 
-  const handleAttachTagItemToGroup = useCallback(
-    async (itemId: string, groupId: string) => {
-      await attachTagItemToGroup({
-        variables: {
-          itemId,
-          groupId,
-        },
-      });
-    },
-    [attachTagItemToGroup],
-  );
   const handleCreateTagItem = useCallback(
     async (label: string, tagGroupId: string) => {
       if (!sceneId) return;
@@ -146,18 +131,6 @@ export default () => {
       return tag;
     },
     [createTagItem, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
-  );
-
-  const handleDetachTagItemFromGroup = useCallback(
-    async (itemId: string, groupId: string) => {
-      await detachTagItemFromGroup({
-        variables: {
-          itemId,
-          groupId,
-        },
-      });
-    },
-    [detachTagItemFromGroup],
   );
 
   const handleAttachTagGroupToLayer = useCallback(
@@ -229,14 +202,6 @@ export default () => {
       });
     },
     [sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist, updateTag],
-  );
-
-  const handleUpdateTagItem = useCallback(
-    async (tagId: string, label: string) => {
-      if (!sceneId) return;
-      await updateTag({ variables: { tagId, sceneId: sceneId, label } });
-    },
-    [updateTag, sceneId],
   );
 
   const _doesSameLabelTagGroupExist = (tagGroups: TagGroup[], label: string) => {
