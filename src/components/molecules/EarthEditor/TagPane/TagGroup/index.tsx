@@ -1,16 +1,18 @@
-import { useMemo } from "hoist-non-react-statics/node_modules/@types/react";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, useMemo } from "react";
 import { useClickAway } from "react-use";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import TagComponent, { Tag as TagType } from "@reearth/components/atoms/Tag";
+import Tag from "@reearth/components/atoms/Tag";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
 import { styled, useTheme } from "@reearth/theme";
 
-export type Tag = TagType;
+export type Tag = {
+  id: string;
+  label: string;
+};
 
 export type Props = {
   className?: string;
@@ -98,7 +100,7 @@ const TagGroup: React.FC<Props> = ({
       </TitleWrapper>
       <TagsWrapper wrap="wrap">
         {attachedTags?.map(t => (
-          <TagComponent icon="cancel" tag={t} key={t.id} onRemove={onTagRemove} />
+          <Tag icon="cancel" id={t.id} label={t.label} key={t.id} onRemove={onTagRemove} />
         ))}
       </TagsWrapper>
       <AutoComplete
