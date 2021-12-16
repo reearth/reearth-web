@@ -45,7 +45,7 @@ export default () => {
 
   const selectedLayerTags = useMemo(() => {
     return layerTags?.layer?.tags;
-  }, [layerTags?.layer?.tags]);
+  }, [layerTags?.layer]);
 
   const sceneTagGroups = useMemo(() => {
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
@@ -67,16 +67,20 @@ export default () => {
   }, [sceneTags]);
 
   const layerTagGroups = useMemo(() => {
-    console.log("selecte layer tag-------", selectedLayerTags);
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
     const defaultTagGroup: TagGroup = { id: "default", label: DEFAULT_TAG_ID, tags: [] };
     const formattedGroups: TagGroup[] = selectedLayerTags
       ? selectedLayerTags
           ?.map(t => {
-            if (t.__typename === "TagGroup") {
-              return { id: t.id, label: t.label, tags: t.tags };
+            if (!t.tag) return;
+            if (t.tag?.__typename === "TagGroup") {
+              return {
+                id: t.tag?.id,
+                label: t.tag?.label,
+                tags: t.tag.tags.map(t => ({ id: t.id, label: t.label })),
+              };
             }
-            defaultTagGroup.tags.push({ id: t.id, label: t.label });
+            defaultTagGroup.tags.push({ id: t.tag?.id, label: t.tag?.label });
             return;
           })
           .filter((t): t is TagGroup => {
@@ -164,7 +168,7 @@ export default () => {
       if (selected?.type !== "layer") return;
       await detachTagFromLayer({
         variables: { tagId: tagItemId, layerId: selected.layerId },
-        refetchQueries: ["getSceneTags"],
+        refetchQueries: ["getLayerTags"],
       });
     },
     [detachTagFromLayer, selected],

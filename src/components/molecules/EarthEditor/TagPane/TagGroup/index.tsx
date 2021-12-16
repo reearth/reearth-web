@@ -20,6 +20,7 @@ export type Props = {
   icon?: "bin" | "cancel";
   removable?: boolean;
   editable?: boolean;
+  tagDeletable?: boolean;
   onRemove?: () => void;
   onTitleEdit?: (value: string) => void;
   onTagAdd?: (value: string) => void;
@@ -33,8 +34,9 @@ const TagGroup: React.FC<Props> = ({
   className,
   title,
   icon,
-  removable = "true",
-  editable = "true",
+  removable = true,
+  editable = true,
+  tagDeletable = false,
   onRemove,
   onTagAdd,
   onTagRemove,
@@ -71,6 +73,8 @@ const TagGroup: React.FC<Props> = ({
       .map(t => ({ value: t.label, label: t.label }));
   }, [allTags, attachedTags]);
 
+  const isGroupRemovable = attachedTags?.length === 0;
+
   return (
     <Wrapper direction="column" align="center" justify="space-between" className={className}>
       <TitleWrapper ref={titleRef}>
@@ -82,7 +86,12 @@ const TagGroup: React.FC<Props> = ({
         <Flex>
           {editable && (
             <IconWrapper align="center" onClick={() => setEditing(true)}>
-              <Icon icon="edit" size={12} alt="tag-remove-icon" color={theme.text.default} />
+              <Icon
+                icon="edit"
+                size={12}
+                alt="tag-remove-icon"
+                color={isGroupRemovable ? theme.text.default : theme.text.pale}
+              />
             </IconWrapper>
           )}
           {removable && (
@@ -100,7 +109,13 @@ const TagGroup: React.FC<Props> = ({
       </TitleWrapper>
       <TagsWrapper wrap="wrap">
         {attachedTags?.map(t => (
-          <Tag icon="cancel" id={t.id} label={t.label} key={t.id} onRemove={onTagRemove} />
+          <Tag
+            icon={tagDeletable ? "bin" : "cancel"}
+            id={t.id}
+            label={t.label}
+            key={t.id}
+            onRemove={onTagRemove}
+          />
         ))}
       </TagsWrapper>
       <AutoComplete

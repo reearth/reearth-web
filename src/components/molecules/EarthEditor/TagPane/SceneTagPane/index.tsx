@@ -48,6 +48,7 @@ const SceneTagPane: React.FC<Props> = ({
             onTitleEdit={(label: string) => onTagGroupUpdate?.(tg.id, label)}
             editable={tg.id !== DEFAULT_TAG_ID}
             removable={tg.id != DEFAULT_TAG_ID}
+            tagDeletable
           />
         </Box>
       ))}

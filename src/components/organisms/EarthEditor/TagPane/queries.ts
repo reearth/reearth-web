@@ -14,6 +14,17 @@ export const GET_SCENE_TAGS = gql`
               label
             }
           }
+          ... on TagItem {
+            parentId
+            parent {
+              id
+              label
+              tags {
+                id
+                label
+              }
+            }
+          }
         }
       }
     }
@@ -107,12 +118,28 @@ export const ATTACH_TAG_TO_LAYER = gql`
       layer {
         id
         tags {
-          id
-          label
-          ... on TagGroup {
-            tags {
+          tagId
+          tag {
+            id
+            label
+            ... on TagGroup {
+              tagIds
               id
               label
+              tags {
+                id
+                label
+                parentId
+              }
+            }
+            ... on TagItem {
+              id
+              label
+              parentId
+              parent {
+                id
+                label
+              }
             }
           }
         }
@@ -126,12 +153,28 @@ export const DETACH_TAG_FROM_LAYER = gql`
       layer {
         id
         tags {
-          id
-          label
-          ... on TagGroup {
-            tags {
+          tagId
+          tag {
+            id
+            label
+            ... on TagGroup {
+              tagIds
               id
               label
+              tags {
+                id
+                label
+                parentId
+              }
+            }
+            ... on TagItem {
+              parentId
+              id
+              label
+              parent {
+                id
+                label
+              }
             }
           }
         }
@@ -144,6 +187,35 @@ export const REMOVE_TAG = gql`
   mutation removeTag($tagId: ID!) {
     removeTag(input: { tagID: $tagId }) {
       tagId
+      updatedLayers {
+        id
+        tags {
+          tagId
+          tag {
+            id
+            label
+            ... on TagGroup {
+              tagIds
+              id
+              label
+              tags {
+                id
+                label
+                parentId
+              }
+            }
+            ... on TagItem {
+              id
+              label
+              parentId
+              parent {
+                id
+                label
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -163,12 +235,28 @@ export const GET_LAYER_TAGS = gql`
     layer(id: $layerId) {
       id
       tags {
-        id
-        label
-        ... on TagGroup {
-          tags {
+        tagId
+        tag {
+          id
+          label
+          ... on TagGroup {
+            tagIds
             id
             label
+            tags {
+              parentId
+              id
+              label
+            }
+          }
+          ... on TagItem {
+            id
+            label
+            parentId
+            parent {
+              id
+              label
+            }
           }
         }
       }
