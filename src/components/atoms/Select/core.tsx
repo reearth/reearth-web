@@ -190,12 +190,6 @@ const SelectCore = <Value extends string | number>(
 
   useClickAway(mergedRef, closeList);
 
-  // const optionListWithRef = optionListComponent
-  //   ? React.cloneElement(optionListComponent, {
-  //       ...optionListComponent?.props,
-  //       ref: listRef,
-  //     })
-  //   : undefined;
   return (
     <Wrapper
       className={className}

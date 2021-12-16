@@ -1,3 +1,5 @@
+/* eslint-disable testing-library/no-wait-for-multiple-assertions */
+/* eslint-disable testing-library/no-unnecessary-act */
 import React from "react";
 
 import { act, fireEvent, render, screen, waitFor } from "@reearth/test/utils";
@@ -40,7 +42,6 @@ test("component should be inputtable", async () => {
 });
 
 describe("Ccomponent should be searchable", () => {
-  //コンポーネントは入力された文字に一致する選択肢を残す
   test("component should leave selects hit", async () => {
     await act(async () => {
       render(<AutoComplete items={sampleItems} />);
@@ -50,7 +51,6 @@ describe("Ccomponent should be searchable", () => {
     });
   });
 
-  //コンポーネントは入力された選択肢以外は残さない
   test("component shouldn't leave selects which don't hit inputted text", async () => {
     await act(async () => {
       render(<AutoComplete items={sampleItems} />);
@@ -80,22 +80,4 @@ describe("Ccomponent should be searchable", () => {
       });
     });
   });
-  // test("component should trigger onSelect function with 'enter' key press event", async () => {
-  //   await act(async () => {
-  //     const handleSelect = jest.fn((value: string) => {
-  //       console.log(value);
-  //     });
-  //     render(<AutoComplete items={sampleItems} onSelect={handleSelect} />);
-  //     const input = screen.getByRole("textbox");
-  //     await act(async () => {
-  //       fireEvent.change(input, { target: { value: "hoge" } });
-  //       screen.debug();
-  //       fireEvent.keyDown(input, { key: "Enter" });
-  //     });
-  //     await waitFor(() => {
-  //       expect(handleSelect).toBeCalled();
-  //       expect(handleSelect.mock.calls[0][0]).toBe("hoge");
-  //     });
-  //   });
-  // });
 });

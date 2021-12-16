@@ -1,18 +1,16 @@
+import { useMemo } from "hoist-non-react-statics/node_modules/@types/react";
 import React, { useCallback, useRef, useState } from "react";
 import { useClickAway } from "react-use";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import Tag from "@reearth/components/atoms/Tag";
+import TagComponent, { Tag as TagType } from "@reearth/components/atoms/Tag";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
 import { styled, useTheme } from "@reearth/theme";
 
-export type Tag = {
-  id: string;
-  label: string;
-};
+export type Tag = TagType;
 
 export type Props = {
   className?: string;
@@ -45,6 +43,9 @@ const TagGroup: React.FC<Props> = ({
 }) => {
   const theme = useTheme();
   const [editing, setEditing] = useState(false);
+  const titleRef = useRef(null);
+  useClickAway(titleRef, () => setEditing(false));
+
   const handleEditTitle = useCallback(
     (value: string) => {
       onTitleEdit?.(value);
@@ -52,8 +53,7 @@ const TagGroup: React.FC<Props> = ({
     },
     [onTitleEdit],
   );
-  const titleRef = useRef(null);
-  useClickAway(titleRef, () => setEditing(false));
+
   const handleSelectTag = useCallback(
     (tagLabel: string) => {
       const targetTag = allTags?.find(t => t.label === tagLabel);
@@ -62,10 +62,16 @@ const TagGroup: React.FC<Props> = ({
     },
     [allTags, onSelect],
   );
+
+  const autoCompleteItems = useMemo(() => {
+    return allTags
+      ?.filter(t => !attachedTags?.map(t2 => t2.id).includes(t.id))
+      .map(t => ({ value: t.label, label: t.label }));
+  }, [allTags, attachedTags]);
+
   return (
     <Wrapper direction="column" align="center" justify="space-between" className={className}>
       <TitleWrapper ref={titleRef}>
-        {/* <TitleWrapper justify="space-between"> */}
         {editing ? (
           <TextBox value={title} onChange={handleEditTitle} />
         ) : (
@@ -92,13 +98,11 @@ const TagGroup: React.FC<Props> = ({
       </TitleWrapper>
       <TagsWrapper wrap="wrap">
         {attachedTags?.map(t => (
-          <Tag icon="cancel" text={t.label} key={t.id} onRemove={() => onTagRemove?.(t.id)} />
+          <TagComponent icon="cancel" tag={t} key={t.id} onRemove={onTagRemove} />
         ))}
       </TagsWrapper>
       <AutoComplete
-        items={allTags
-          ?.filter(t => !attachedTags?.map(t2 => t2.id).includes(t.id))
-          .map(t => ({ value: t.label, label: t.label }))}
+        items={autoCompleteItems}
         onSelect={handleSelectTag}
         creatable
         onCreate={onTagAdd}

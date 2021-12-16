@@ -1,3 +1,4 @@
+import { useCallback } from "hoist-non-react-statics/node_modules/@types/react";
 import React from "react";
 
 import { styled, useTheme } from "@reearth/theme";
@@ -9,18 +10,26 @@ import Text from "../Text";
 
 export type Props = {
   className?: string;
-  text?: string;
+  tag?: Tag;
   icon?: "bin" | "cancel";
-  onRemove?: () => void;
+  onRemove?: (id: string) => void;
 };
 
-const Tag: React.FC<Props> = ({ className, text, icon, onRemove }) => {
+export type Tag = {
+  id: string;
+  label: string;
+};
+
+const Tag: React.FC<Props> = ({ className, tag, icon, onRemove }) => {
   const theme = useTheme();
+  const handleRemove = useCallback(() => {
+    tag?.id && onRemove?.(tag?.id);
+  }, [onRemove, tag?.id]);
   return (
     <Wrapper align="center" justify="space-between" className={className}>
-      <Text size="xs">{text}</Text>
+      <Text size="xs">{tag?.label}</Text>
       <Box m="xs">
-        <IconWrapper align="center" onClick={onRemove} testId="atoms-tag-event-trigger">
+        <IconWrapper align="center" onClick={handleRemove} testId="atoms-tag-event-trigger">
           <Icon
             icon={icon}
             color={theme.text.default}
