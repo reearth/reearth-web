@@ -1,13 +1,30 @@
-import { defined, Color, PinBuilder, EntityCluster } from "cesium";
-import React, { useEffect, useMemo, useRef } from "react";
-import { CustomDataSource } from "resium";
+import {
+  defined,
+  Color,
+  EntityCluster,
+  PinBuilder,
+  CustomDataSource as CustomDataSourceType,
+  HorizontalOrigin,
+} from "cesium";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { CesiumComponentRef, CustomDataSource } from "resium";
+
+import { toCSSFont, Typography } from "@reearth/util/value";
 
 import { LayerStore } from "../../..";
 import P from "../../../Primitive";
+import { ho } from "../common";
 
 export type Props = {
+  property: {
+    default: {
+      clusterPixelRange: number;
+      clusterMinSize: number;
+      clusterLabelTypography?: Typography;
+    };
+    layers: any;
+  };
   pluginProperty?: { [key: string]: any };
-  cluster: any;
   isEditable?: boolean;
   isBuilt?: boolean;
   pluginBaseUrl?: string;
@@ -18,8 +35,8 @@ export type Props = {
 };
 
 const Cluster: React.FC<Props> = ({
+  property,
   pluginProperty,
-  cluster,
   isEditable,
   isBuilt,
   pluginBaseUrl,
@@ -28,131 +45,103 @@ const Cluster: React.FC<Props> = ({
   overriddenProperties,
   isLayerHidden,
 }) => {
-  const clusteringObj = useMemo(
-    () =>
+  const [cluster, setCluster] = useState<EntityCluster>();
+
+  useEffect(() => {
+    setCluster(
       new EntityCluster({
         enabled: true,
-        pixelRange: 15,
+        pixelRange: 200,
         minimumClusterSize: 2,
         clusterBillboards: true,
         clusterLabels: true,
         clusterPoints: true,
       }),
-    [],
-  );
-  const clusterRef = useRef(cluster);
-  console.log(clusterRef);
+    );
+  }, []);
 
+  const {
+    clusterPixelRange = 15,
+    clusterMinSize = 3,
+    clusterLabelTypography = {
+      fontFamily: "sans-serif",
+      fontSize: 30,
+      fontWeight: 400,
+      color: "#FFF",
+      textAlign: "center",
+      bold: false,
+      italic: false,
+      underline: false,
+    },
+  } = property?.default ?? {};
+
+  const propertyRef = useRef(property);
   let removeListener: any;
   const removeListenerRef = useRef(removeListener);
+
   useEffect(() => {
-    clusterRef.current = cluster;
-    if (defined(removeListenerRef.current)) {
-      removeListenerRef.current();
-      removeListenerRef.current = undefined;
-    }
-    removeListenerRef.current = clusteringObj.clusterEvent.addEventListener(
+    if (!cluster) return;
+
+    propertyRef.current = property;
+
+    removeListenerRef.current = cluster.clusterEvent.addEventListener(
       (clusteredEntities, clusterParam) => {
-        if (clusterRef.current?.default?.cluster_shapeType === "label") {
-          clusterParam.billboard.show = false;
-          clusterParam.label.show = true;
-
-          // clusterParam.label.font = clusterRef.current.cluster_sizeType
-          //     ? clusterRef.current.cluster_sizeType + "px sans-serif"
-          //     : "80px sans-serif";
-          clusterParam.label.fillColor = Color.fromCssColorString(
-            clusterRef.current?.default?.cluster_textColor
-              ? clusterRef.current?.default?.cluster_textColor
-              : "#ffffff",
-          );
-          if (clusterRef.current?.default?.cluster_backgroundColor) {
-            clusterParam.label.showBackground = true;
-            clusterParam.label.backgroundColor = Color.fromCssColorString(
-              clusterRef.current?.default?.cluster_backgroundColor
-                ? clusterRef.current?.default?.cluster_backgroundColor
-                : "#ffffff",
-            );
-          } else {
-            clusterParam.label.showBackground = false;
-          }
-          if (clusterRef.current?.default?.cluster_image) {
-            clusterParam.billboard.show = true;
-            clusterParam.label.show = false;
-            clusterParam.billboard.image = clusterRef.current?.default?.cluster_image;
-          }
-        } else {
-          clusterParam.billboard.show = true;
-          clusterParam.label.show = false;
-          clusterParam.billboard.id = clusterParam.label.id;
-
-          if (clusterRef.current?.default?.cluster_image) {
-            clusterParam.billboard.image = new PinBuilder().fromUrl(
-              clusterRef.current?.default?.cluster_image,
-              Color.fromCssColorString(
-                clusterRef.current?.default?.cluster_backgroundColor
-                  ? clusterRef.current?.default?.cluster_backgroundColor.toString()
-                  : "#000000",
-              ),
-              clusterRef.current?.default?.cluster_maxSize
-                ? clusterRef.current?.default?.cluster_maxSize
-                : 48,
-            );
-          } else {
-            clusterParam.billboard.image = new PinBuilder()
-              .fromText(
-                clusterParam.label.text,
-                Color.fromCssColorString(
-                  clusterRef.current?.default?.cluster_backgroundColor
-                    ? clusterRef.current?.default?.cluster_backgroundColor.toString()
-                    : "#000000",
-                ),
-                clusterRef.current?.default?.cluster_maxSize
-                  ? clusterRef.current?.default?.cluster_maxSize
-                  : 48,
-              )
-              .toDataURL();
-          }
-        }
+        clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
+        clusterParam.label.horizontalOrigin =
+          clusterLabelTypography.textAlign === "right"
+            ? HorizontalOrigin.LEFT
+            : clusterLabelTypography.textAlign === "left"
+            ? HorizontalOrigin.RIGHT
+            : HorizontalOrigin.CENTER;
+        clusterParam.label.fillColor = Color.fromCssColorString(
+          clusterLabelTypography.color ?? "#FFF",
+        );
+        console.log(clusterParam.label.text);
       },
     );
-    clusteringObj.pixelRange = 0;
-    clusteringObj.pixelRange = clusterRef.current?.default?.cluster_pixelRange
-      ? clusterRef.current?.default?.cluster_pixelRange
-      : 15;
-    clusteringObj.minimumClusterSize = clusterRef.current?.default?.cluster_minSize
-      ? clusterRef.current?.default?.cluster_minSize
-      : 3;
-  }, [cluster, cluster?.default, clusteringObj, clusteringObj.clusterEvent]);
+
+    cluster.pixelRange = 0;
+    cluster.minimumClusterSize = clusterMinSize;
+    cluster.pixelRange = clusterPixelRange;
+    return () => {
+      if (defined(removeListenerRef.current)) {
+        removeListenerRef.current();
+        removeListenerRef.current = undefined;
+      }
+    };
+  }, [property, clusterMinSize, clusterPixelRange, cluster, clusterLabelTypography]);
 
   return (
     <>
-      <CustomDataSource show clustering={clusteringObj}>
-        {layers?.flattenLayersRaw
-          ?.filter(
-            layer =>
-              cluster?.layers &&
-              cluster?.layers.some((clusterLayer: any) => clusterLayer.layer === layer.id),
-          )
-          .map(layer =>
-            !layer.isVisible || !!layer.children ? null : (
-              <P
-                key={layer.id}
-                layer={layer}
-                pluginProperty={
-                  layer.pluginId && layer.extensionId
-                    ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-                    : undefined
-                }
-                isHidden={isLayerHidden?.(layer.id)}
-                isEditable={isEditable}
-                isBuilt={isBuilt}
-                isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-                pluginBaseUrl={pluginBaseUrl}
-                overriddenProperties={overriddenProperties}
-              />
-            ),
-          )}
-      </CustomDataSource>
+      {cluster && (
+        <CustomDataSource show clustering={cluster}>
+          {layers?.flattenLayersRaw
+            ?.filter(
+              layer =>
+                property?.layers &&
+                property?.layers.some((clusterLayer: any) => clusterLayer.layer === layer.id),
+            )
+            .map(layer =>
+              !layer.isVisible || !!layer.children ? null : (
+                <P
+                  key={layer.id}
+                  layer={layer}
+                  pluginProperty={
+                    layer.pluginId && layer.extensionId
+                      ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
+                      : undefined
+                  }
+                  isHidden={isLayerHidden?.(layer.id)}
+                  isEditable={isEditable}
+                  isBuilt={isBuilt}
+                  isSelected={!!selectedLayerId && selectedLayerId === layer.id}
+                  pluginBaseUrl={pluginBaseUrl}
+                  overriddenProperties={overriddenProperties}
+                />
+              ),
+            )}
+        </CustomDataSource>
+      )}
     </>
   );
 };

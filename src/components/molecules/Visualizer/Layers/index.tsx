@@ -41,7 +41,7 @@ export default function Layers({
       {clusterProperty?.map((cluster: any) => (
         <Cluster
           key={cluster.id}
-          cluster={cluster}
+          property={cluster}
           layers={layers}
           pluginProperty={pluginProperty}
           isEditable={isEditable}
