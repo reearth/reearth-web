@@ -68,7 +68,6 @@ const Select = <Value extends string | number>(
 };
 
 const SelectWrapper = styled.div`
-  /* border: solid 1px ${props => props.theme.properties.border}; */
   background: ${props => props.theme.properties.bg};
   display: flex;
   justify-content: center;
