@@ -490,8 +490,8 @@ src:
           '2793623359': Widgets
           '3590336714': Export
         TagPane:
-          '1982056879': Same label tag already exist. Please type different label.
-          '4149491408': 'Tag group has tags, you need to remove all tags under the tag group'
+          '1982056879': A tag with the same label already exist. Please input a different label and try again.
+          '4149491408': 'This tag group still has tags. You must remove all tags in the tag group before you can delete it.'
       Notification:
         '687096634': Warning
         '1354606874': Notice
