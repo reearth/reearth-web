@@ -2771,7 +2771,7 @@ export type AttachTagToLayerMutationVariables = Exact<{
 }>;
 
 
-export type AttachTagToLayerMutation = { __typename?: 'Mutation', attachTagToLayer?: { __typename?: 'AttachTagToLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } } | null | undefined };
+export type AttachTagToLayerMutation = { __typename?: 'Mutation', attachTagToLayer?: { __typename?: 'AttachTagToLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } } | null | undefined };
 
 export type DetachTagFromLayerMutationVariables = Exact<{
   tagId: Scalars['ID'];
@@ -2779,14 +2779,14 @@ export type DetachTagFromLayerMutationVariables = Exact<{
 }>;
 
 
-export type DetachTagFromLayerMutation = { __typename?: 'Mutation', detachTagFromLayer?: { __typename?: 'DetachTagFromLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } } | null | undefined };
+export type DetachTagFromLayerMutation = { __typename?: 'Mutation', detachTagFromLayer?: { __typename?: 'DetachTagFromLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } } | null | undefined };
 
 export type RemoveTagMutationVariables = Exact<{
   tagId: Scalars['ID'];
 }>;
 
 
-export type RemoveTagMutation = { __typename?: 'Mutation', removeTag?: { __typename?: 'RemoveTagPayload', tagId: string, updatedLayers: Array<{ __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> }> } | null | undefined };
+export type RemoveTagMutation = { __typename?: 'Mutation', removeTag?: { __typename?: 'RemoveTagPayload', tagId: string, updatedLayers: Array<{ __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> }> } | null | undefined };
 
 export type UpdateTagMutationVariables = Exact<{
   tagId: Scalars['ID'];
@@ -2802,7 +2802,7 @@ export type GetLayerTagsQueryVariables = Exact<{
 }>;
 
 
-export type GetLayerTagsQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', tagIds?: Array<string> | null | undefined, id: string, label: string, tags: Array<{ __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string }> } | { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined, parent?: { __typename?: 'TagGroup', id: string, label: string } | null | undefined } | null | undefined }> } | null | undefined };
+export type GetLayerTagsQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | null | undefined };
 
 export type UpdateMeMutationVariables = Exact<{
   name?: Maybe<Scalars['String']>;
@@ -6291,21 +6291,10 @@ export const AttachTagToLayerDocument = gql`
         tag {
           id
           label
-          ... on TagGroup {
-            tagIds
-            id
-            label
-            tags {
-              id
-              label
-              parentId
-            }
-          }
-          ... on TagItem {
-            id
-            label
-            parentId
-            parent {
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
               id
               label
             }
@@ -6353,21 +6342,10 @@ export const DetachTagFromLayerDocument = gql`
         tag {
           id
           label
-          ... on TagGroup {
-            tagIds
-            id
-            label
-            tags {
-              id
-              label
-              parentId
-            }
-          }
-          ... on TagItem {
-            parentId
-            id
-            label
-            parent {
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
               id
               label
             }
@@ -6416,21 +6394,10 @@ export const RemoveTagDocument = gql`
         tag {
           id
           label
-          ... on TagGroup {
-            tagIds
-            id
-            label
-            tags {
-              id
-              label
-              parentId
-            }
-          }
-          ... on TagItem {
-            id
-            label
-            parentId
-            parent {
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
               id
               label
             }
@@ -6514,21 +6481,10 @@ export const GetLayerTagsDocument = gql`
       tag {
         id
         label
-        ... on TagGroup {
-          tagIds
-          id
-          label
-          tags {
-            parentId
-            id
-            label
-          }
-        }
-        ... on TagItem {
-          id
-          label
-          parentId
-          parent {
+      }
+      ... on LayerTagGroup {
+        children {
+          tag {
             id
             label
           }

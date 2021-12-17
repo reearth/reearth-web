@@ -73,14 +73,14 @@ export default () => {
       ? selectedLayerTags
           ?.map(t => {
             if (!t.tag) return;
-            if (t.tag?.__typename === "TagGroup") {
+            if (t.__typename === "LayerTagGroup") {
               return {
                 id: t.tag?.id,
                 label: t.tag?.label,
-                tags: t.tag.tags.map(t => ({ id: t.id, label: t.label })),
+                tags: t.children.map(c => ({ id: c.tag?.id, label: c.tag?.label })),
               };
             }
-            defaultTagGroup.tags.push({ id: t.tag?.id, label: t.tag?.label });
+            defaultTagGroup.tags.push({ id: t.tag.id, label: t.tag.label });
             return;
           })
           .filter((t): t is TagGroup => {
@@ -213,7 +213,7 @@ export default () => {
   };
 
   const _doesSameLabelTagItemExist = (tagGroup: TagGroup, label: string) => {
-    return tagGroup.tags?.map(t => t.label).includes(label);
+    return tagGroup?.tags?.map(t => t.label).includes(label);
   };
 
   const _doesTagGroupHasTags = (tagGroup?: TagGroup) => {

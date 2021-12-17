@@ -122,21 +122,10 @@ export const ATTACH_TAG_TO_LAYER = gql`
           tag {
             id
             label
-            ... on TagGroup {
-              tagIds
-              id
-              label
-              tags {
-                id
-                label
-                parentId
-              }
-            }
-            ... on TagItem {
-              id
-              label
-              parentId
-              parent {
+          }
+          ... on LayerTagGroup {
+            children {
+              tag {
                 id
                 label
               }
@@ -157,21 +146,10 @@ export const DETACH_TAG_FROM_LAYER = gql`
           tag {
             id
             label
-            ... on TagGroup {
-              tagIds
-              id
-              label
-              tags {
-                id
-                label
-                parentId
-              }
-            }
-            ... on TagItem {
-              parentId
-              id
-              label
-              parent {
+          }
+          ... on LayerTagGroup {
+            children {
+              tag {
                 id
                 label
               }
@@ -194,21 +172,10 @@ export const REMOVE_TAG = gql`
           tag {
             id
             label
-            ... on TagGroup {
-              tagIds
-              id
-              label
-              tags {
-                id
-                label
-                parentId
-              }
-            }
-            ... on TagItem {
-              id
-              label
-              parentId
-              parent {
+          }
+          ... on LayerTagGroup {
+            children {
+              tag {
                 id
                 label
               }
@@ -239,21 +206,10 @@ export const GET_LAYER_TAGS = gql`
         tag {
           id
           label
-          ... on TagGroup {
-            tagIds
-            id
-            label
-            tags {
-              parentId
-              id
-              label
-            }
-          }
-          ... on TagItem {
-            id
-            label
-            parentId
-            parent {
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
               id
               label
             }
