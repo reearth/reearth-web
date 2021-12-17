@@ -31,7 +31,6 @@ export type Scalars = {
 
 export type AddClusterInput = {
   name: Scalars['String'];
-  propertyId: Scalars['ID'];
   sceneId: Scalars['ID'];
 };
 
@@ -215,7 +214,8 @@ export type Cluster = {
   __typename?: 'Cluster';
   id: Scalars['ID'];
   name: Scalars['String'];
-  property: Scalars['ID'];
+  property?: Maybe<Property>;
+  propertyId: Scalars['ID'];
 };
 
 export type CreateAssetInput = {
@@ -2527,6 +2527,40 @@ export type GetWidgetsQueryVariables = Exact<{
 
 export type GetWidgetsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, description: string, name: string, translatedDescription: string, translatedName: string, icon: string, singleOnly?: boolean | null | undefined, type: PluginExtensionType, widgetLayout?: { __typename?: 'WidgetLayout', extended: boolean, floating: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: { __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType } | null | undefined } | null | undefined }> } | null | undefined }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
 
+export type GetClustersQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetClustersQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
+
+export type AddClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  name: Scalars['String'];
+  lang?: Maybe<Scalars['String']>;
+}>;
+
+
+export type AddClusterMutation = { __typename?: 'Mutation', addCluster?: { __typename?: 'AddClusterPayload', cluster: { __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined } } | null | undefined };
+
+export type RemoveClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID'];
+}>;
+
+
+export type RemoveClusterMutation = { __typename?: 'Mutation', removeCluster?: { __typename?: 'RemoveClusterPayload', scene: { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string }> } } | null | undefined };
+
+export type UpdateClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateClusterMutation = { __typename?: 'Mutation', updateCluster?: { __typename?: 'UpdateClusterPayload', cluster: { __typename?: 'Cluster', id: string, name: string, propertyId: string } } | null | undefined };
+
 export type GetPrimitivesQueryVariables = Exact<{
   sceneId: Scalars['ID'];
   lang?: Maybe<Scalars['String']>;
@@ -2683,7 +2717,7 @@ export type GetScenePropertyQueryVariables = Exact<{
 }>;
 
 
-export type GetScenePropertyQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined, widgets: Array<{ __typename?: 'SceneWidget', id: string, pluginId: string, extensionId: string, enabled: boolean, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
+export type GetScenePropertyQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined, widgets: Array<{ __typename?: 'SceneWidget', id: string, pluginId: string, extensionId: string, enabled: boolean, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }>, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
 
 export type GetLinkableDatasetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -5136,6 +5170,176 @@ export function useGetWidgetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetWidgetsQueryHookResult = ReturnType<typeof useGetWidgetsQuery>;
 export type GetWidgetsLazyQueryHookResult = ReturnType<typeof useGetWidgetsLazyQuery>;
 export type GetWidgetsQueryResult = Apollo.QueryResult<GetWidgetsQuery, GetWidgetsQueryVariables>;
+export const GetClustersDocument = gql`
+    query GetClusters($sceneId: ID!, $lang: String) {
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      clusters {
+        id
+        name
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+    }
+  }
+}
+    ${PropertyFragmentFragmentDoc}`;
+
+/**
+ * __useGetClustersQuery__
+ *
+ * To run a query within a React component, call `useGetClustersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClustersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClustersQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useGetClustersQuery(baseOptions: Apollo.QueryHookOptions<GetClustersQuery, GetClustersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClustersQuery, GetClustersQueryVariables>(GetClustersDocument, options);
+      }
+export function useGetClustersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClustersQuery, GetClustersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClustersQuery, GetClustersQueryVariables>(GetClustersDocument, options);
+        }
+export type GetClustersQueryHookResult = ReturnType<typeof useGetClustersQuery>;
+export type GetClustersLazyQueryHookResult = ReturnType<typeof useGetClustersLazyQuery>;
+export type GetClustersQueryResult = Apollo.QueryResult<GetClustersQuery, GetClustersQueryVariables>;
+export const AddClusterDocument = gql`
+    mutation AddCluster($sceneId: ID!, $name: String!, $lang: String) {
+  addCluster(input: {sceneId: $sceneId, name: $name}) {
+    cluster {
+      id
+      name
+      propertyId
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
+  }
+}
+    ${PropertyFragmentFragmentDoc}`;
+export type AddClusterMutationFn = Apollo.MutationFunction<AddClusterMutation, AddClusterMutationVariables>;
+
+/**
+ * __useAddClusterMutation__
+ *
+ * To run a mutation, you first call `useAddClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addClusterMutation, { data, loading, error }] = useAddClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      name: // value for 'name'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useAddClusterMutation(baseOptions?: Apollo.MutationHookOptions<AddClusterMutation, AddClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddClusterMutation, AddClusterMutationVariables>(AddClusterDocument, options);
+      }
+export type AddClusterMutationHookResult = ReturnType<typeof useAddClusterMutation>;
+export type AddClusterMutationResult = Apollo.MutationResult<AddClusterMutation>;
+export type AddClusterMutationOptions = Apollo.BaseMutationOptions<AddClusterMutation, AddClusterMutationVariables>;
+export const RemoveClusterDocument = gql`
+    mutation removeCluster($sceneId: ID!, $clusterId: ID!) {
+  removeCluster(input: {sceneId: $sceneId, clusterId: $clusterId}) {
+    scene {
+      id
+      clusters {
+        id
+        name
+        propertyId
+      }
+    }
+  }
+}
+    `;
+export type RemoveClusterMutationFn = Apollo.MutationFunction<RemoveClusterMutation, RemoveClusterMutationVariables>;
+
+/**
+ * __useRemoveClusterMutation__
+ *
+ * To run a mutation, you first call `useRemoveClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeClusterMutation, { data, loading, error }] = useRemoveClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      clusterId: // value for 'clusterId'
+ *   },
+ * });
+ */
+export function useRemoveClusterMutation(baseOptions?: Apollo.MutationHookOptions<RemoveClusterMutation, RemoveClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveClusterMutation, RemoveClusterMutationVariables>(RemoveClusterDocument, options);
+      }
+export type RemoveClusterMutationHookResult = ReturnType<typeof useRemoveClusterMutation>;
+export type RemoveClusterMutationResult = Apollo.MutationResult<RemoveClusterMutation>;
+export type RemoveClusterMutationOptions = Apollo.BaseMutationOptions<RemoveClusterMutation, RemoveClusterMutationVariables>;
+export const UpdateClusterDocument = gql`
+    mutation UpdateCluster($sceneId: ID!, $clusterId: ID!, $name: String!) {
+  updateCluster(input: {sceneId: $sceneId, clusterId: $clusterId, name: $name}) {
+    cluster {
+      id
+      name
+      propertyId
+    }
+  }
+}
+    `;
+export type UpdateClusterMutationFn = Apollo.MutationFunction<UpdateClusterMutation, UpdateClusterMutationVariables>;
+
+/**
+ * __useUpdateClusterMutation__
+ *
+ * To run a mutation, you first call `useUpdateClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateClusterMutation, { data, loading, error }] = useUpdateClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      clusterId: // value for 'clusterId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUpdateClusterMutation(baseOptions?: Apollo.MutationHookOptions<UpdateClusterMutation, UpdateClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateClusterMutation, UpdateClusterMutationVariables>(UpdateClusterDocument, options);
+      }
+export type UpdateClusterMutationHookResult = ReturnType<typeof useUpdateClusterMutation>;
+export type UpdateClusterMutationResult = Apollo.MutationResult<UpdateClusterMutation>;
+export type UpdateClusterMutationOptions = Apollo.BaseMutationOptions<UpdateClusterMutation, UpdateClusterMutationVariables>;
 export const GetPrimitivesDocument = gql`
     query GetPrimitives($sceneId: ID!, $lang: String) {
   node(id: $sceneId, type: SCENE) {
@@ -5804,6 +6008,15 @@ export const GetScenePropertyDocument = gql`
         pluginId
         extensionId
         enabled
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+      clusters {
+        id
+        name
         propertyId
         property {
           id

@@ -10,7 +10,8 @@ export type Tab =
   | "infobox"
   | "export"
   | "dataset"
-  | "tag";
+  | "tag"
+  | "cluster";
 
 export default () => {
   const [selected] = useSelected();

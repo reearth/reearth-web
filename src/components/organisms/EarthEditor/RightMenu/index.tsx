@@ -63,6 +63,10 @@ const RightMenu: React.FC = () => {
                     <PropertyPane mode="widget" />
                   ) : selected === "widgets" ? (
                     <PropertyPane mode="widgets" />
+                  ) : selected === "cluster" ? (
+                    <>
+                      <PropertyPane mode="cluster" />
+                    </>
                   ) : (
                     <PropertyPane mode="scene" />
                   )}

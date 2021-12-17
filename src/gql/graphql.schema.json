@@ -31,22 +31,6 @@
             "deprecationReason": null
           },
           {
-            "name": "propertyId",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "sceneId",
             "description": null,
             "type": {
@@ -1654,6 +1638,18 @@
           },
           {
             "name": "property",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Property",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "propertyId",
             "description": null,
             "args": [],
             "type": {
