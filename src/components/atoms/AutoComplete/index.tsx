@@ -43,9 +43,9 @@ function AutoComplete<Value extends string | number>({
     [setFilterText],
   );
 
-  const isValueType = (value: any): value is Value => {
+  const isValueType = useCallback((value: any): value is Value => {
     return !!value;
-  };
+  }, []);
 
   const handleSelect = useCallback(
     (value: Value) => {
