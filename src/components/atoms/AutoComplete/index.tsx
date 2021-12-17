@@ -14,6 +14,7 @@ export type Item<Value extends string | number = string> = {
 
 export type Props<Value extends string | number> = {
   className?: string;
+  placeholder?: string;
   items?: Item<Value>[];
   fullWidth?: boolean;
   creatable?: boolean;
@@ -23,6 +24,7 @@ export type Props<Value extends string | number> = {
 
 function AutoComplete<Value extends string | number>({
   className,
+  placeholder,
   items,
   fullWidth = false,
   creatable,
@@ -70,7 +72,12 @@ function AutoComplete<Value extends string | number>({
       className={className}
       fullWidth={fullWidth}
       selectComponent={
-        <StyledTextBox value={filterText} onChange={handleInputChange} onKeyDown={handleKeyDown} />
+        <StyledTextBox
+          value={filterText}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+        />
       }
       onChange={handleSelect}
       ref={ref}

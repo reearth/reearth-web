@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState, useMemo } from "react";
+import { useIntl } from "react-intl";
 import { useClickAway } from "react-use";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
@@ -46,6 +47,7 @@ const TagGroup: React.FC<Props> = ({
   onTitleEdit,
 }) => {
   const theme = useTheme();
+  const intl = useIntl();
   const [editing, setEditing] = useState(false);
   const titleRef = useRef(null);
   useClickAway(titleRef, () => setEditing(false));
@@ -123,6 +125,7 @@ const TagGroup: React.FC<Props> = ({
         onSelect={handleSelectTag}
         creatable
         onCreate={onTagAdd}
+        placeholder={intl.formatMessage({ defaultMessage: "Add a tag" })}
       />
     </Wrapper>
   );

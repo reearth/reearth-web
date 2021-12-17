@@ -68,7 +68,7 @@ export default () => {
 
   const layerTagGroups = useMemo(() => {
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
-    const defaultTagGroup: TagGroup = { id: "default", label: DEFAULT_TAG_ID, tags: [] };
+    const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_ID, label: "Default", tags: [] };
     const formattedGroups: TagGroup[] = selectedLayerTags
       ? selectedLayerTags
           ?.map(t => {
