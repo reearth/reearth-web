@@ -1,19 +1,11 @@
-import {
-  defined,
-  Color,
-  EntityCluster,
-  PinBuilder,
-  CustomDataSource as CustomDataSourceType,
-  HorizontalOrigin,
-} from "cesium";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { CesiumComponentRef, CustomDataSource } from "resium";
+import { defined, Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
+import React, { useEffect, useRef, useState } from "react";
+import { CustomDataSource } from "resium";
 
 import { toCSSFont, Typography } from "@reearth/util/value";
 
 import { LayerStore } from "../../..";
 import P from "../../../Primitive";
-import { ho } from "../common";
 
 export type Props = {
   property: {
@@ -21,6 +13,9 @@ export type Props = {
       clusterPixelRange: number;
       clusterMinSize: number;
       clusterLabelTypography?: Typography;
+      clusterImage?: string;
+      clusterImageHeight?: number;
+      clusterImageWidth?: number;
     };
     layers: any;
   };
@@ -73,6 +68,9 @@ const Cluster: React.FC<Props> = ({
       italic: false,
       underline: false,
     },
+    clusterImage,
+    clusterImageWidth,
+    clusterImageHeight,
   } = property?.default ?? {};
 
   const propertyRef = useRef(property);
@@ -93,10 +91,14 @@ const Cluster: React.FC<Props> = ({
             : clusterLabelTypography.textAlign === "left"
             ? HorizontalOrigin.RIGHT
             : HorizontalOrigin.CENTER;
+        clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
         clusterParam.label.fillColor = Color.fromCssColorString(
           clusterLabelTypography.color ?? "#FFF",
         );
-        console.log(clusterParam.label.text);
+        clusterParam.billboard.show = true;
+        clusterParam.billboard.image = clusterImage;
+        clusterParam.billboard.height = clusterImageWidth;
+        clusterParam.billboard.width = clusterImageHeight;
       },
     );
 
@@ -109,7 +111,16 @@ const Cluster: React.FC<Props> = ({
         removeListenerRef.current = undefined;
       }
     };
-  }, [property, clusterMinSize, clusterPixelRange, cluster, clusterLabelTypography]);
+  }, [
+    property,
+    clusterMinSize,
+    clusterPixelRange,
+    cluster,
+    clusterLabelTypography,
+    clusterImage,
+    clusterImageHeight,
+    clusterImageWidth,
+  ]);
 
   return (
     <>
