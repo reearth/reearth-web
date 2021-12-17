@@ -369,10 +369,6 @@ export default ({
     }
   }, [camera, property?.cameraLimiter, limiterDimensions]);
 
-  const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
-    color: Color.RED,
-  });
-
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
@@ -537,3 +533,7 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       [],
     );
 }
+
+const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
+  color: Color.RED,
+});
