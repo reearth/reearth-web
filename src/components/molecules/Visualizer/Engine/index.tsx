@@ -31,11 +31,11 @@ export type SceneProperty = {
     ion?: string;
   };
   cameraLimiter?: {
-    cameraLimitterEnabled?: boolean;
-    cameraLimitterShowHelper?: boolean;
-    cameraLimitterTargetArea?: Camera;
-    cameraLimitterTargetWidth: number;
-    cameraLimitterTargetLength: number;
+    cameraLimiterEnabled?: boolean;
+    cameraLimiterShowHelper?: boolean;
+    cameraLimiterTargetArea?: Camera;
+    cameraLimiterTargetWidth?: number;
+    cameraLimiterTargetLength?: number;
   };
   tiles?: {
     id: string;
