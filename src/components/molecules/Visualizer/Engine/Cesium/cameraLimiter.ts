@@ -100,8 +100,6 @@ export function useCameraLimiter(
 
   // Manage camera limiter conditions
   useEffect(() => {
-    console.log("why");
-
     const camera = getCamera(cesium?.current?.cesiumElement);
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !property?.cameraLimiterEnabled || !limiterDimensions)
