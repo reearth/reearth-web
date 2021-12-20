@@ -11,6 +11,9 @@ import PrimRect from "./Icons/primRect.svg";
 import PrimModel from "./Icons/primModel.svg";
 import PrimTileset from "./Icons/primTileset.svg";
 
+// Cluster
+import Cluster from "./Icons/cluster.svg";
+
 // Built-in Widgets
 import Widgets from "./Icons/widgetsIcon.svg";
 import WidgetMenu from "./Icons/widgetMenu.svg";
@@ -31,6 +34,7 @@ import File from "./Icons/fileIcon.svg";
 import PcIcon from "./Icons/pcIcon.svg";
 import GoogleDriveIcon from "./Icons/googleDriveIcon.svg";
 import SheetFileIcon from "./Icons/sheet-file.svg";
+import Update from "./Icons/update.svg";
 
 // Asset
 import AssetGrid from "./Icons/assetGrid.svg";
@@ -119,6 +123,7 @@ import Moon from "./Icons/moon.svg";
 import Sun from "./Icons/sun.svg";
 import CheckCircle2 from "./Icons/checkCircle2.svg";
 import MailCircle from "./Icons/mailCircle.svg";
+import Tag from "./Icons/tag.svg";
 
 // Plug-ins
 import Plugin from "./Icons/plugin.svg";
@@ -137,6 +142,7 @@ export default {
   rect: PrimRect,
   model: PrimModel,
   tileset: PrimTileset,
+  cluster: Cluster,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,
@@ -150,6 +156,7 @@ export default {
   dataset: Dataset,
   datasetAdd: DatasetAdd,
   file: File,
+  update: Update,
   googleDrive: GoogleDriveIcon,
   sheetFile: SheetFileIcon,
   computer: PcIcon,
@@ -234,4 +241,5 @@ export default {
   publicGitHubRepo: PublicGitHubRepo,
   menuForDevice: MenuForDevice,
   plugin: Plugin,
+  tag: Tag,
 };

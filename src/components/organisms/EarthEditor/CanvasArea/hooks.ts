@@ -1,3 +1,4 @@
+import { flatMap } from "lodash";
 import { useMemo, useEffect, useCallback } from "react";
 import { useIntl } from "react-intl";
 
@@ -7,6 +8,7 @@ import {
 } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   useGetLayersQuery,
+  useGetClustersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
   useRemoveInfoboxFieldMutation,
@@ -84,6 +86,12 @@ export default (isBuilt?: boolean) => {
     skip: !sceneId,
   });
 
+  // TODO
+  const { data: clusterData } = useGetClustersQuery({
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    skip: !sceneId,
+  });
+
   const rootLayerId =
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
   const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
@@ -94,6 +102,26 @@ export default (isBuilt?: boolean) => {
   const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
   const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const clusterScene = clusterData?.node?.__typename === "Scene" ? clusterData.node : undefined;
+
+  const clusterProperty = useMemo(
+    () => clusterScene?.clusters.reduce<any[]>((a, b) => [...a, convertProperty(b.property)], []),
+    [clusterScene?.clusters],
+  );
+
+  const clusterLayers = useMemo(
+    () =>
+      clusterScene?.clusters.reduce<any[]>(
+        (a, b) =>
+          flatMap([
+            ...a,
+            convertProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer),
+          ]).filter(item => !!item),
+        [],
+      ),
+    [clusterScene?.clusters],
+  );
+
   const pluginProperty = useMemo(
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
@@ -112,7 +140,7 @@ export default (isBuilt?: boolean) => {
   const onBlockChange = useCallback(
     async <T extends keyof ValueTypes>(
       blockId: string,
-      schemaItemId: string,
+      schemaGroupId: string,
       fid: string,
       v: ValueTypes[T],
       vt: T,
@@ -127,7 +155,7 @@ export default (isBuilt?: boolean) => {
       await changePropertyValue({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           fieldId: fid,
           type: gvt,
           value: valueToGQL(v, vt),
@@ -178,12 +206,12 @@ export default (isBuilt?: boolean) => {
       if (!propertyId) return;
 
       // propertyKey will be "default.location" for example
-      const [schemaItemId, fieldId] = propertyKey.split(".", 2);
+      const [schemaGroupId, fieldId] = propertyKey.split(".", 2);
 
       await changePropertyValue({
         variables: {
           propertyId,
-          schemaItemId,
+          schemaGroupId,
           fieldId,
           type: ValueType.Latlng,
           value: {
@@ -249,6 +277,8 @@ export default (isBuilt?: boolean) => {
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
+    clusterProperty,
+    clusterLayers,
     widgets,
     layers,
     selectedLayer,

@@ -7,15 +7,20 @@
     ":enableVulnerabilityAlertsWithLabel(security)",
     ":semanticCommitTypeAll(chore)"
   ],
-  "rangeStrategy": "bump",
   "enabledManagers": [
     "npm"
   ],
-  "lockFileMaintenance": {
-    "automerge": true,
-    "automergeType": "branch"
-  },
+  "lockFileMaintenance": false,
+  "rangeStrategy": "bump",
+  "separateMajorMinor": false,
   "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "cesium"
+      ],
+      "groupName": "cesium",
+      "groupSlug": "cesium"
+    },
     {
       "packagePatterns": [
         "*"
@@ -23,7 +28,11 @@
       "excludePackagePatterns": [
         "cesium"
       ],
-      "enabled": false
+      "groupName": "all dependencies",
+      "groupSlug": "all",
+      "extends": [
+        "schedule:earlyMondays"
+      ]
     }
   ]
 }

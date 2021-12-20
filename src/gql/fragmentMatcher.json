@@ -4,9 +4,9 @@
       "LayerGroup",
       "LayerItem"
     ],
-    "Layers": [
-      "LayerGroup",
-      "LayerItem"
+    "LayerTag": [
+      "LayerTagGroup",
+      "LayerTagItem"
     ],
     "Node": [
       "Asset",
@@ -22,6 +22,10 @@
     "PropertyItem": [
       "PropertyGroup",
       "PropertyGroupList"
+    ],
+    "Tag": [
+      "TagGroup",
+      "TagItem"
     ]
   }
 }

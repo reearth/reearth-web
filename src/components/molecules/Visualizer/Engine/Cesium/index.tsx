@@ -1,4 +1,4 @@
-import { ScreenSpaceEventType } from "cesium";
+import { ArcType, Color, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -13,6 +13,9 @@ import {
   Camera,
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
+  ScreenSpaceCameraController,
+  Entity,
+  PolylineGraphics,
 } from "resium";
 
 import type { EngineProps, Ref as EngineRef } from "..";
@@ -32,20 +35,24 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     ready,
     children,
     selectedLayerId,
+    isLayerDraggable,
+    isLayerDragging,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
     onLayerDrop,
-    isLayerDraggable,
-    isLayerDragging,
   },
   ref,
 ) => {
   const {
     terrainProvider,
+    terrainProperty,
     backgroundColor,
     imageryLayers,
     cesium,
+    limiterDimensions,
+    cameraViewOuterBoundaries,
+    cameraViewBoundariesMaterial,
     handleMount,
     handleUnmount,
     handleClick,
@@ -95,10 +102,37 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock shouldAnimate={!!property?.timeline?.animation} />
         <ScreenSpaceEventHandler useDefault>
+          {/* remove default click event */}
+          <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
-        <Camera onChange={handleCameraMoveEnd} />
+        <ScreenSpaceCameraController
+          maximumZoomDistance={
+            property?.cameraLimiter?.cameraLimitterEnabled
+              ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
+              : Number.POSITIVE_INFINITY
+          }></ScreenSpaceCameraController>
+        <Camera onChange={handleCameraMoveEnd} percentageChanged={0.2} />
+
+        {limiterDimensions && property?.cameraLimiter?.cameraLimitterShowHelper && (
+          <Entity>
+            <PolylineGraphics
+              positions={limiterDimensions.cartesianArray}
+              width={1}
+              material={Color.RED}
+              arcType={ArcType.RHUMB}></PolylineGraphics>
+          </Entity>
+        )}
+        {cameraViewOuterBoundaries && property?.cameraLimiter?.cameraLimitterShowHelper && (
+          <Entity>
+            <PolylineGraphics
+              positions={cameraViewOuterBoundaries}
+              width={1}
+              material={cameraViewBoundariesMaterial}
+              arcType={ArcType.RHUMB}></PolylineGraphics>
+          </Entity>
+        )}
         <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
@@ -108,15 +142,15 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <Sun show={property?.atmosphere?.enable_sun ?? true} />
         <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
         <Globe
-          terrainProvider={terrainProvider}
-          depthTestAgainstTerrain={!!property?.default?.depthTestAgainstTerrain}
           enableLighting={!!property?.atmosphere?.enable_lighting}
           showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
           atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
           atmosphereHueShift={property?.atmosphere?.hue_shift}
           atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
-          terrainExaggeration={property?.default?.terrainExaggeration}
-          terrainExaggerationRelativeHeight={property?.default?.terrainExaggerationRelativeHeight}
+          terrainProvider={terrainProvider}
+          depthTestAgainstTerrain={!!terrainProperty.depthTestAgainstTerrain}
+          terrainExaggerationRelativeHeight={terrainProperty.terrainExaggerationRelativeHeight}
+          terrainExaggeration={terrainProperty.terrainExaggeration}
         />
         {imageryLayers?.map(([id, im, min, max]) => (
           <ImageryLayer

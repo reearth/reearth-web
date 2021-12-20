@@ -5,22 +5,28 @@ import {
   Format,
   Layer,
   Widget,
+  Cluster,
   WidgetType,
 } from "@reearth/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
   useUpdateLayerMutation,
+  useUpdateClusterMutation,
   useRemoveLayerMutation,
   useImportLayerMutation,
   useAddLayerGroupMutation,
   useAddWidgetMutation,
   useRemoveWidgetMutation,
   useUpdateWidgetMutation,
+  useAddClusterMutation,
+  useRemoveClusterMutation,
   LayerEncodingFormat,
   Maybe,
   useGetWidgetsQuery,
+  useGetClustersQuery,
   PluginExtensionType,
+  GetLayersFromLayerIdQuery,
 } from "@reearth/gql";
 import {
   useSceneId,
@@ -42,18 +48,6 @@ const convertFormat = (format: Format) => {
   return undefined;
 };
 
-type GQLLayer = {
-  __typename?: "LayerGroup" | "LayerItem";
-  id: string;
-  name: string;
-  isVisible: boolean;
-  pluginId?: string | null;
-  extensionId?: string | null;
-  linkedDatasetSchemaId?: string | null;
-  linkedDatasetId?: string | null;
-  layers?: Maybe<GQLLayer>[];
-};
-
 export default () => {
   const intl = useIntl();
   const [sceneId] = useSceneId();
@@ -68,6 +62,11 @@ export default () => {
   });
 
   const { loading: WidgetLoading, data: widgetData } = useGetWidgetsQuery({
+    variables: { sceneId: sceneId ?? "", lang: intl.locale },
+    skip: !sceneId,
+  });
+
+  const { data: clusterData } = useGetClustersQuery({
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
@@ -131,6 +130,20 @@ export default () => {
     [data?.layer],
   );
 
+  const clusters = useMemo(
+    () =>
+      (clusterData?.node?.__typename === "Scene" ? clusterData.node.clusters : undefined)
+        ?.map((c): Cluster => {
+          return {
+            id: c.id,
+            name: c.name,
+            propertyId: c.propertyId,
+          };
+        })
+        .reverse() ?? [],
+    [clusterData],
+  );
+
   const [moveLayerMutation] = useMoveLayerMutation();
   const [updateLayerMutation] = useUpdateLayerMutation();
   const [removeLayerMutation] = useRemoveLayerMutation();
@@ -139,6 +152,9 @@ export default () => {
   const [addWidgetMutation] = useAddWidgetMutation();
   const [removeWidgetMutation] = useRemoveWidgetMutation();
   const [updateWidgetMutation] = useUpdateWidgetMutation();
+  const [addClusterMutation] = useAddClusterMutation();
+  const [removeClusterMutation] = useRemoveClusterMutation();
+  const [updateClusterMutation] = useUpdateClusterMutation();
 
   const selectLayer = useCallback(
     (id: string) => {
@@ -254,16 +270,21 @@ export default () => {
   const addLayerGroup = useCallback(() => {
     if (!rootLayerId) return;
 
-    const layers: Maybe<GQLLayer>[] =
+    const layers: (Maybe<GQLLayer> | undefined)[] =
       data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
-    const children = (l: Maybe<GQLLayer>) => (l?.__typename == "LayerGroup" ? l.layers : undefined);
+    const children = (l: Maybe<GQLLayer> | undefined) =>
+      l?.__typename == "LayerGroup" ? l.layers : undefined;
 
     const layerIndex =
       selected?.type === "layer"
-        ? deepFind(layers, l => l?.id === selected.layerId, children)[1]
+        ? deepFind<Maybe<GQLLayer> | undefined>(
+            layers,
+            l => l?.id === selected.layerId,
+            children,
+          )[1]
         : undefined;
     const parentLayer = layerIndex?.length
-      ? deepGet(layers, layerIndex.slice(0, -1), children)
+      ? deepGet<Maybe<GQLLayer> | undefined>(layers, layerIndex.slice(0, -1), children)
       : undefined;
     if ((layerIndex && layerIndex.length > 5) || parentLayer?.linkedDatasetSchemaId) return;
 
@@ -342,14 +363,72 @@ export default () => {
     [sceneId, updateWidgetMutation],
   );
 
+  const selectCluster = useCallback(
+    (id: string) => {
+      select({ type: "cluster", clusterId: id });
+      selectBlock(undefined);
+    },
+    [select, selectBlock],
+  );
+
+  const renameCluster = useCallback(
+    (clusterId: string, name: string) => {
+      if (!sceneId) return;
+      updateClusterMutation({
+        variables: {
+          clusterId,
+          name,
+          sceneId,
+        },
+      });
+    },
+    [sceneId, updateClusterMutation],
+  );
+
+  const addCluster = useCallback(async () => {
+    const name = "cluster";
+    if (!sceneId) return;
+    const { data } = await addClusterMutation({
+      variables: {
+        sceneId,
+        name,
+        lang: intl.locale,
+      },
+      refetchQueries: ["GetClusters"],
+    });
+    if (data?.addCluster?.cluster) {
+      select({
+        type: "cluster",
+        clusterId: data.addCluster.cluster.id,
+      });
+    }
+  }, [addClusterMutation, intl.locale, sceneId, select]);
+
+  const removeCluster = useCallback(
+    async (clusterId: string) => {
+      if (!sceneId) return;
+      await removeClusterMutation({
+        variables: {
+          sceneId,
+          clusterId,
+        },
+        refetchQueries: ["GetClusters"],
+      });
+      select(undefined);
+    },
+    [sceneId, select, removeClusterMutation],
+  );
+
   return {
     rootLayerId,
     layers,
     widgets,
+    clusters,
     widgetTypes,
     sceneDescription,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
+    selectedClusterId: selected?.type === "cluster" ? selected.clusterId : undefined,
     selectedWidgetId:
       selected?.type === "widget"
         ? `${selected.pluginId}/${selected.extensionId}/${selected.widgetId}`
@@ -361,6 +440,7 @@ export default () => {
     selectWidget,
     moveLayer,
     renameLayer,
+    renameCluster,
     removeLayer,
     updateLayerVisibility,
     importLayer,
@@ -369,10 +449,19 @@ export default () => {
     addWidget,
     removeWidget,
     activateWidget,
+    selectCluster,
+    addCluster,
+    removeCluster,
   };
 };
 
-const convertLayer = (layer: Maybe<GQLLayer>): Layer | undefined =>
+type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> & {
+  linkedDatasetSchemaId?: string | null;
+  linkedDatasetId?: string | null;
+  layers?: (GQLLayer | null | undefined)[];
+};
+
+const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"

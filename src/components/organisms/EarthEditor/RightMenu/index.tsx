@@ -2,15 +2,17 @@ import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import TabArea from "@reearth/components/atoms/TabArea";
+import DatasetInfoPane from "@reearth/components/organisms/EarthEditor/DatasetInfoPane";
 import ExportPane from "@reearth/components/organisms/EarthEditor/ExportPane";
 
 import PropertyPane from "../PropertyPane";
+import TagPane from "../TagPane";
 
-import useHooks from "./hooks";
+import useHooks, { Tab } from "./hooks";
 
-const layerMode = ["property", "infobox", "export"];
+const layerMode = ["property", "infobox", "tag", "export"];
 const widgetMode = ["property"];
-const sceneMode = ["property"];
+const sceneMode = ["property", "tag"];
 export type LayerMode = typeof layerMode[number];
 export type WidgetMode = typeof widgetMode[number];
 export type SceneMode = typeof sceneMode[number];
@@ -29,13 +31,14 @@ const RightMenu: React.FC = () => {
       widgets: intl.formatMessage({ defaultMessage: "Widgets" }),
       scene: intl.formatMessage({ defaultMessage: "Scene" }),
       infobox: intl.formatMessage({ defaultMessage: "Infobox" }),
+      tag: intl.formatMessage({ defaultMessage: "Tag" }),
       export: intl.formatMessage({ defaultMessage: "Export" }),
     }),
     [intl],
   );
 
   return (
-    <TabArea<"layer" | "widget" | "widgets" | "scene" | "infobox" | "export">
+    <TabArea<Tab>
       menuAlignment="top"
       selected={
         selectedBlock || selectedTab === "infobox"
@@ -60,6 +63,10 @@ const RightMenu: React.FC = () => {
                     <PropertyPane mode="widget" />
                   ) : selected === "widgets" ? (
                     <PropertyPane mode="widgets" />
+                  ) : selected === "cluster" ? (
+                    <>
+                      <PropertyPane mode="cluster" />
+                    </>
                   ) : (
                     <PropertyPane mode="scene" />
                   )}
@@ -73,11 +80,13 @@ const RightMenu: React.FC = () => {
             <PropertyPane mode="infobox" />
           </>
         ),
+        tag: (selected === "layer" || selected === "scene") && <TagPane mode={selected} />,
         export: (selected === "layer" || selected === "scene") && (
           <>
             <ExportPane />
           </>
         ),
+        dataset: selected === "dataset" && <DatasetInfoPane />,
       }}
     </TabArea>
   );

@@ -22,12 +22,20 @@ export type SceneProperty = {
   default?: {
     camera?: Camera;
     terrain?: boolean;
+    terrainType?: "cesium" | "arcgis"; // default: cesium
     terrainExaggeration?: number; // default: 1
     terrainExaggerationRelativeHeight?: number; // default: 0
     depthTestAgainstTerrain?: boolean;
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
+  };
+  cameraLimiter?: {
+    cameraLimitterEnabled?: boolean;
+    cameraLimitterShowHelper?: boolean;
+    cameraLimitterTargetArea?: Camera;
+    cameraLimitterTargetWidth: number;
+    cameraLimitterTargetLength: number;
   };
   tiles?: {
     id: string;
@@ -36,6 +44,13 @@ export type SceneProperty = {
     tile_maxLevel?: number;
     tile_minLevel?: number;
   }[];
+  terrain?: {
+    terrain?: boolean;
+    terrainType?: "cesium" | "arcgis"; // default: cesium
+    terrainExaggeration?: number; // default: 1
+    terrainExaggerationRelativeHeight?: number; // default: 0
+    depthTestAgainstTerrain?: boolean;
+  };
   atmosphere?: {
     enable_sun?: boolean;
     enable_lighting?: boolean;
