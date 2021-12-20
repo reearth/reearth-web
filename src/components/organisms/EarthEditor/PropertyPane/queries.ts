@@ -1,4 +1,3 @@
-/* eslint-disable graphql/template-strings */
 import { gql } from "@apollo/client";
 
 import {
@@ -347,6 +346,15 @@ export const GET_SCENE_PROPERTY = gql`
           pluginId
           extensionId
           enabled
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+        clusters {
+          id
+          name
           propertyId
           property {
             id
