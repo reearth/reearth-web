@@ -13,7 +13,7 @@ import {
 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
-import { isEqual, throttle } from "lodash-es";
+import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
@@ -165,13 +165,13 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
-  const throttledCameraChange = useMemo(
-    () =>
-      throttle((c: Camera) => {
-        onCameraChange?.(c);
-      }, 100),
-    [onCameraChange],
-  );
+  // const throttledCameraChange = useMemo(
+  //   () =>
+  //     throttle((c: Camera) => {
+  //       onCameraChange?.(c);
+  //     }, 100),
+  //   [onCameraChange],
+  // );
 
   // call onCameraChange event after moving camera
   const emittedCamera = useRef<Camera>();
@@ -182,9 +182,9 @@ export default ({
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
       emittedCamera.current = c;
-      throttledCameraChange(c);
+      onCameraChange?.(c);
     }
-  }, [throttledCameraChange, camera, onCameraChange]);
+  }, [camera, onCameraChange]);
 
   // camera
   useEffect(() => {
