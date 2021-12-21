@@ -107,12 +107,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           {/* remove default double click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
         </ScreenSpaceEventHandler>
-        <ScreenSpaceCameraController
+        {/* <ScreenSpaceCameraController
           maximumZoomDistance={
             property?.cameraLimiter?.cameraLimitterEnabled
               ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
               : Number.POSITIVE_INFINITY
-          }></ScreenSpaceCameraController>
+          }></ScreenSpaceCameraController> */}
         <Camera
           onChange={handleCameraMoveEnd}
           percentageChanged={property?.cameraLimiter?.cameraLimitterEnabled ? 0.2 : 0.5}
