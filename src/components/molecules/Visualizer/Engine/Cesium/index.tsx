@@ -13,7 +13,7 @@ import {
   Camera,
   ScreenSpaceEventHandler,
   ScreenSpaceEvent,
-  ScreenSpaceCameraController,
+  // ScreenSpaceCameraController,
   Entity,
   PolylineGraphics,
 } from "resium";
