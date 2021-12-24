@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 
 import { styled, useTheme } from "@reearth/theme";
 
@@ -7,28 +7,21 @@ import Flex from "../Flex";
 import Icon from "../Icon";
 import Text from "../Text";
 
-export type TagItem = {
-  id: string;
-  label: string;
-};
-
 export type Props = {
-  tag: TagItem;
   className?: string;
+  label: string;
   icon?: "bin" | "cancel";
-  onRemove?: (id: string) => void;
+  onRemove?: () => void;
 };
 
-const Tag: React.FC<Props> = ({ className, tag, icon, onRemove }) => {
+const Tag: React.FC<Props> = ({ className, label, icon, onRemove }) => {
   const theme = useTheme();
-  const handleRemove = useCallback(() => {
-    onRemove?.(tag.id);
-  }, [onRemove, tag.id]);
+
   return (
     <Wrapper align="center" justify="space-between" className={className}>
-      <Text size="xs">{tag.label}</Text>
+      <Text size="xs">{label}</Text>
       <Box m="xs">
-        <IconWrapper align="center" onClick={handleRemove} testId="atoms-tag-event-trigger">
+        <IconWrapper align="center" onClick={onRemove} testId="atoms-tag-event-trigger">
           <Icon
             icon={icon}
             color={theme.text.default}
