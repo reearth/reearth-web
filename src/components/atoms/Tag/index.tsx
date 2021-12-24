@@ -7,22 +7,26 @@ import Flex from "../Flex";
 import Icon from "../Icon";
 import Text from "../Text";
 
-export type Props = {
+export type TagItem = {
   id: string;
   label: string;
+};
+
+export type Props = {
+  tag: TagItem;
   className?: string;
   icon?: "bin" | "cancel";
   onRemove?: (id: string) => void;
 };
 
-const Tag: React.FC<Props> = ({ className, id, label, icon, onRemove }) => {
+const Tag: React.FC<Props> = ({ className, tag, icon, onRemove }) => {
   const theme = useTheme();
   const handleRemove = useCallback(() => {
-    onRemove?.(id);
-  }, [onRemove, id]);
+    onRemove?.(tag.id);
+  }, [onRemove, tag.id]);
   return (
     <Wrapper align="center" justify="space-between" className={className}>
-      <Text size="xs">{label}</Text>
+      <Text size="xs">{tag.label}</Text>
       <Box m="xs">
         <IconWrapper align="center" onClick={handleRemove} testId="atoms-tag-event-trigger">
           <Icon
@@ -39,8 +43,7 @@ const Tag: React.FC<Props> = ({ className, id, label, icon, onRemove }) => {
 };
 
 const Wrapper = styled(Flex)`
-  box-shadow: ${({ theme }) =>
-    `0px 4px 4px${theme.descriptionBalloon.shadowColor}`}; //TODO: don't use balloon's color
+  box-shadow: ${({ theme }) => `0px 4px 4px${theme.descriptionBalloon.shadowColor}`};
   padding: ${({ theme }) => `${theme.metrics.xs}px`};
   min-width: 60px;
   width: fit-content;

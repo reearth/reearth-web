@@ -14,12 +14,16 @@ export const Remove: Story<Props> = args => <Tag {...args} />;
 Default.args = {
   icon: "cancel",
   onRemove: () => console.log("detatch!"),
-  id: "tag",
-  label: "tag",
+  tag: {
+    id: "tag",
+    label: "tag",
+  },
 };
 Remove.args = {
   icon: "bin",
   onRemove: () => console.log("remove!"),
-  id: "tag",
-  label: "tag",
+  tag: {
+    id: "tag",
+    label: "tag",
+  },
 };
