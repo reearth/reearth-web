@@ -20,7 +20,6 @@ export type Props = {
   tagGroup: TagGroup;
   icon?: "bin" | "cancel";
   removable?: boolean;
-  editable?: boolean;
   tagDeletable?: boolean;
   onLabelEdit?: (tagGroupId: string, label: string) => void;
   onRemove?: (tagGroupId: string) => void;
@@ -35,7 +34,6 @@ const TagGroup: React.FC<Props> = ({
   tagGroup,
   icon,
   removable = true,
-  editable = true,
   tagDeletable = false,
   onRemove,
   onTagItemAdd,
@@ -76,7 +74,7 @@ const TagGroup: React.FC<Props> = ({
           <Text size="s">{tagGroup.label}</Text>
         )}
         <Flex>
-          {editable && (
+          {!!onLabelEdit && (
             <IconWrapper align="center" onClick={handleStartEditing}>
               <Icon
                 icon="edit"
