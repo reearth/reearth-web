@@ -1,93 +1,83 @@
-import React, { useCallback, useRef, useState, useMemo } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
-import { useClickAway } from "react-use";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import Tag from "@reearth/components/atoms/Tag";
 import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
 import { styled, useTheme } from "@reearth/theme";
 
-export type Tag = {
-  id: string;
-  label: string;
-};
+import { default as TagItemComponent } from "../TagItem";
+
+import useHooks, { TagItem as TagItemType, TagGroup as TagGroupType } from "./hook";
+
+export type TagItem = TagItemType;
+export type TagGroup = TagGroupType;
 
 export type Props = {
   className?: string;
-  title?: string;
+  tagGroup: TagGroup;
   icon?: "bin" | "cancel";
   removable?: boolean;
   editable?: boolean;
   tagDeletable?: boolean;
-  onRemove?: () => void;
-  onTitleEdit?: (value: string) => void;
-  onTagAdd?: (value: string) => void;
-  onTagRemove?: (id: string) => void;
-  onSelect?: (tagId: string) => void;
-  allTags?: Tag[];
-  attachedTags?: Tag[];
+  onLabelEdit?: (tagGroupId: string, label: string) => void;
+  onRemove?: (tagGroupId: string) => void;
+  onTagItemAdd?: (tagGroupId: string, tagItemLabel: string) => void;
+  onTagItemRemove?: (tagGroupId: string, tagItemId: string) => void;
+  onTagItemSelect?: (tagGroupId: string, tagItemId: string) => void;
+  attachableTags?: TagItem[];
 };
 
 const TagGroup: React.FC<Props> = ({
   className,
-  title,
+  tagGroup,
   icon,
   removable = true,
   editable = true,
   tagDeletable = false,
   onRemove,
-  onTagAdd,
-  onTagRemove,
-  onSelect,
-  allTags,
-  attachedTags,
-  onTitleEdit,
+  onTagItemAdd,
+  onTagItemRemove,
+  onLabelEdit,
+  onTagItemSelect,
+  attachableTags,
 }) => {
   const theme = useTheme();
   const intl = useIntl();
-  const [editing, setEditing] = useState(false);
-  const titleRef = useRef(null);
-  useClickAway(titleRef, () => setEditing(false));
 
-  const handleEditTitle = useCallback(
-    (value: string) => {
-      onTitleEdit?.(value);
-      setEditing(false);
-    },
-    [onTitleEdit],
-  );
-
-  const handleSelectTag = useCallback(
-    (tagLabel: string) => {
-      const targetTag = allTags?.find(t => t.label === tagLabel);
-      if (!targetTag) return;
-      onSelect?.(targetTag?.id);
-    },
-    [allTags, onSelect],
-  );
-
-  const autoCompleteItems = useMemo(() => {
-    return allTags
-      ?.filter(t => !attachedTags?.map(t2 => t2.id).includes(t.id))
-      .map(t => ({ value: t.label, label: t.label }));
-  }, [allTags, attachedTags]);
-
-  const isGroupRemovable = attachedTags?.length === 0;
-
+  const {
+    labelRef,
+    isLabelEditing,
+    handleStartEditing,
+    handleLabelEdit,
+    handleRemove,
+    handleTagItemAdd,
+    handleTagItemRemove,
+    handleTagItemSelect,
+    isGroupRemovable,
+    autoCompleteItems,
+  } = useHooks({
+    tagGroup,
+    onLabelEdit,
+    onRemove,
+    onTagItemAdd,
+    onTagItemRemove,
+    onTagItemSelect,
+    attachableTags,
+  });
   return (
     <Wrapper direction="column" align="center" justify="space-between" className={className}>
-      <TitleWrapper ref={titleRef}>
-        {editing ? (
-          <TextBox value={title} onChange={handleEditTitle} />
+      <TitleWrapper ref={labelRef}>
+        {isLabelEditing ? (
+          <TextBox value={tagGroup.label} onChange={handleLabelEdit} />
         ) : (
-          <Text size="s">{title}</Text>
+          <Text size="s">{tagGroup.label}</Text>
         )}
         <Flex>
           {editable && (
-            <IconWrapper align="center" onClick={() => setEditing(true)}>
+            <IconWrapper align="center" onClick={handleStartEditing}>
               <Icon
                 icon="edit"
                 size={12}
@@ -97,7 +87,7 @@ const TagGroup: React.FC<Props> = ({
             </IconWrapper>
           )}
           {removable && (
-            <IconWrapper align="center" onClick={onRemove} testId="atoms-tag-event-trigger">
+            <IconWrapper align="center" onClick={handleRemove} testId="atoms-tag-event-trigger">
               <Icon
                 icon={icon}
                 color={theme.text.default}
@@ -110,21 +100,20 @@ const TagGroup: React.FC<Props> = ({
         </Flex>
       </TitleWrapper>
       <TagsWrapper wrap="wrap">
-        {attachedTags?.map(t => (
-          <Tag
+        {tagGroup.tagItems?.map(t => (
+          <TagItemComponent
+            tagItem={t}
             icon={tagDeletable ? "bin" : "cancel"}
-            id={t.id}
-            label={t.label}
             key={t.id}
-            onRemove={onTagRemove}
+            onRemove={handleTagItemRemove.bind(undefined, t.id)}
           />
         ))}
       </TagsWrapper>
       <AutoComplete
         items={autoCompleteItems}
-        onSelect={handleSelectTag}
+        onSelect={handleTagItemSelect}
         creatable
-        onCreate={onTagAdd}
+        onCreate={handleTagItemAdd}
         placeholder={intl.formatMessage({ defaultMessage: "Add a tag" })}
       />
     </Wrapper>
