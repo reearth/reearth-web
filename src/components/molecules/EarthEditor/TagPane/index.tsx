@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import AutoComplete from "@reearth/components/atoms/AutoComplete";
@@ -6,12 +6,13 @@ import Box from "@reearth/components/atoms/Box";
 import Flex from "@reearth/components/atoms/Flex";
 import { styled } from "@reearth/theme";
 
-import { default as TagGroupComponent, TagGroup } from "./TagGroup";
+import { default as TagGroupComponent, TagGroup as TagGroupType } from "./TagGroup";
 import { TagItem } from "./TagItem";
 
 export const DEFAULT_TAG_GROUP_ID = "default";
 
-type Mode = "layer" | "scene";
+export type Mode = "layer" | "scene";
+export type TagGroup = TagGroupType;
 
 export type Props<T extends Mode> = T extends "layer"
   ? CommonProps<T> & LayerTagProps
@@ -31,7 +32,6 @@ type LayerTagProps = {
   onTagGroupDetach?: (tagGroupId: string) => void;
   onTagItemAttach?: (tagGroupId: string, tagId: string) => void;
   onTagItemDetach?: (tagGroupId: string, tagItemId: string) => void;
-  isTagGroupCreatable?: boolean;
   onTagGroupCreate?: (tagGroupLabel: string) => void;
   onTagItemCreate?: (tagGroupId: string, tagItemLabel: string) => void;
 };
@@ -44,12 +44,18 @@ type SceneTagProps = {
   onTagGroupUpdate?: (tagGroupId: string, tagGroupLabel: string) => void;
 };
 
-const isLayerTagProps = (props: LayerTagProps | SceneTagProps): props is LayerTagProps => {
-  return !!props;
+const isLayerTagProps = (
+  props: LayerTagProps | SceneTagProps,
+  mode: Mode,
+): props is LayerTagProps => {
+  return mode === "layer";
 };
 
-const isSceneTagProps = (props: LayerTagProps | SceneTagProps): props is SceneTagProps => {
-  return !!props;
+const isSceneTagProps = (
+  props: LayerTagProps | SceneTagProps,
+  mode: Mode,
+): props is SceneTagProps => {
+  return mode === "scene";
 };
 
 function TagPane<T extends Mode>({
@@ -67,34 +73,53 @@ function TagPane<T extends Mode>({
 
   const props = mode === "layer" ? (rawProps as LayerTagProps) : (rawProps as SceneTagProps);
 
+  const autoCompleteItems = useMemo(() => {
+    return isLayerTagProps(props, mode)
+      ? props.attachableTagGroups
+          ?.filter(tg => !attachedTagGroups?.map(atg => atg.id).includes(tg.id))
+          .map(tg => ({ label: tg.label, value: tg.label }))
+      : undefined;
+  }, [attachedTagGroups, mode, props]);
+
+  const handleTagGroupSelect = useCallback(
+    (tagGroupLabel: string) => {
+      if (isLayerTagProps(props, mode)) {
+        const tagGroup = props.attachableTagGroups?.find(tg => tg.label === tagGroupLabel);
+        if (!tagGroup) return;
+        props.onTagGroupAttach?.(tagGroup.id);
+      }
+    },
+    [mode, props],
+  );
+
   return (
     <Wrapper className={className} direction="column">
       {attachedTagGroups?.map(tg => {
-        // const attachableTagGroup = attachableTagGroups?.find(t => t.id === tg.id);
         return (
           <Box key={tg.id} mb="l">
-            {mode === "layer" && isLayerTagProps(props) ? (
+            {mode === "layer" && isLayerTagProps(props, mode) ? (
               <TagGroupComponent
                 tagGroup={tg}
                 icon="cancel"
                 onRemove={props.onTagGroupDetach}
-                onTagItemAdd={props.onTagItemAttach}
+                onTagItemAdd={props.onTagItemCreate}
                 onTagItemRemove={props.onTagItemDetach}
                 onTagItemSelect={props.onTagItemAttach}
                 attachableTags={getAttachableTags(
-                  props.attachableTagGroups?.find(t => t.id === tg.id)?.tagItems,
+                  props.attachableTagGroups?.find(atg => atg.id === tg.id)?.tagItems,
                   tg.tagItems,
                 )}
               />
-            ) : isSceneTagProps(props) ? (
+            ) : isSceneTagProps(props, mode) ? (
               <TagGroupComponent
                 tagGroup={tg}
-                icon="bin"
-                onLabelEdit={props.onTagGroupUpdate}
+                icon={tg.id === DEFAULT_TAG_GROUP_ID ? undefined : "bin"}
+                onLabelEdit={tg.id === DEFAULT_TAG_GROUP_ID ? undefined : props.onTagGroupUpdate}
                 onRemove={props.onTagGroupDelete}
-                onTagItemAdd={props.onTagGroupCreate}
+                onTagItemAdd={props.onTagItemCreate}
                 onTagItemRemove={props.onTagItemDelete}
                 removable={tg.id !== DEFAULT_TAG_GROUP_ID}
+                tagDeletable
               />
             ) : null}
           </Box>
@@ -103,6 +128,8 @@ function TagPane<T extends Mode>({
       <AutoComplete
         onCreate={props.onTagGroupCreate}
         creatable
+        onSelect={handleTagGroupSelect}
+        items={autoCompleteItems}
         placeholder={intl.formatMessage({ defaultMessage: "Add a tag group" })}
       />
     </Wrapper>

@@ -2,8 +2,11 @@ import { useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 
 import { useAuth } from "@reearth/auth";
-import { DEFAULT_TAG_ID } from "@reearth/components/molecules/EarthEditor/TagPane/common";
-import { TagGroup } from "@reearth/components/molecules/EarthEditor/TagPane/SceneTagPane";
+import {
+  Mode as ModeType,
+  DEFAULT_TAG_GROUP_ID,
+  TagGroup,
+} from "@reearth/components/molecules/EarthEditor/TagPane";
 import {
   useAttachTagToLayerMutation,
   useCreateTagGroupMutation,
@@ -16,7 +19,10 @@ import {
 } from "@reearth/gql";
 import { useNotification, useSceneId, useSelected } from "@reearth/state";
 
-export default () => {
+export type Mode = ModeType;
+export { DEFAULT_TAG_GROUP_ID } from "@reearth/components/molecules/EarthEditor/TagPane";
+
+export default ({ mode }: { mode: Mode }) => {
   const { isAuthenticated } = useAuth();
   const [sceneId] = useSceneId();
   const [selected] = useSelected();
@@ -49,18 +55,18 @@ export default () => {
 
   const sceneTagGroups = useMemo(() => {
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
-    const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_ID, label: "Default", tags: [] };
+    const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_GROUP_ID, label: "Default", tagItems: [] };
     const formattedGroups: TagGroup[] = sceneTags
       ? sceneTags
           ?.map(t => {
             if (t.__typename === "TagGroup") {
-              return { id: t.id, label: t.label, tags: t.tags };
+              return { id: t.id, label: t.label, tagItems: t.tags };
             }
-            defaultTagGroup.tags.push({ id: t.id, label: t.label });
+            defaultTagGroup.tagItems.push({ id: t.id, label: t.label });
             return;
           })
           .filter((t): t is TagGroup => {
-            return !!t && "label" in t && "tags" in t;
+            return !!t && "label" in t && "tagItems" in t;
           })
       : [];
     return [defaultTagGroup, ...formattedGroups];
@@ -68,7 +74,7 @@ export default () => {
 
   const layerTagGroups = useMemo(() => {
     // TagItems which don't belong to any TagGroup will be in "Default" tag group
-    const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_ID, label: "Default", tags: [] };
+    const defaultTagGroup: TagGroup = { id: DEFAULT_TAG_GROUP_ID, label: "Default", tagItems: [] };
     const formattedGroups: TagGroup[] = selectedLayerTags
       ? selectedLayerTags
           ?.map(t => {
@@ -77,19 +83,20 @@ export default () => {
               return {
                 id: t.tag?.id,
                 label: t.tag?.label,
-                tags: t.children.map(c => ({ id: c.tag?.id, label: c.tag?.label })),
+                tagItems: t.children.map(c => ({ id: c.tag?.id, label: c.tag?.label })),
               };
             }
-            defaultTagGroup.tags.push({ id: t.tag.id, label: t.tag.label });
+            defaultTagGroup.tagItems.push({ id: t.tag.id, label: t.tag.label });
             return;
           })
           .filter((t): t is TagGroup => {
-            return !!t && "label" in t && "tags" in t;
+            return !!t && "label" in t && "tagItems" in t;
           })
       : [];
     return [defaultTagGroup, ...formattedGroups];
   }, [selectedLayerTags]);
 
+  // Mutation //
   const [createTagGroup] = useCreateTagGroupMutation();
   const [createTagItem] = useCreateTagItemMutation();
   const [removeTag] = useRemoveTagMutation();
@@ -104,19 +111,36 @@ export default () => {
         setNotification({ type: "error", text: tagErrorMessage.alreadyExist });
         return;
       }
-      return await createTagGroup({
+      const tagGroup = await createTagGroup({
         variables: {
           sceneId,
           label,
         },
         refetchQueries: ["getSceneTags"],
       });
+      if (mode !== "layer" || selected?.type !== "layer" || !tagGroup.data?.createTagGroup?.tag.id)
+        return;
+      await attachTagToLayer({
+        variables: {
+          tagId: tagGroup.data.createTagGroup.tag.id,
+          layerId: selected.layerId,
+        },
+      });
     },
-    [createTagGroup, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
+    [
+      createTagGroup,
+      sceneId,
+      sceneTagGroups,
+      setNotification,
+      tagErrorMessage.alreadyExist,
+      mode,
+      attachTagToLayer,
+      selected,
+    ],
   );
 
   const handleCreateTagItem = useCallback(
-    async (label: string, tagGroupId: string) => {
+    async (tagGroupId: string, label: string) => {
       if (!sceneId) return;
       const tagGroup = sceneTagGroups.find(tg => tg.id === tagGroupId);
       if (!tagGroup) return;
@@ -124,17 +148,33 @@ export default () => {
         setNotification({ type: "error", text: tagErrorMessage.alreadyExist });
         return;
       }
-      const tag = await createTagItem({
+      const tagItem = await createTagItem({
         variables: {
           sceneId,
           label,
-          parent: tagGroupId === DEFAULT_TAG_ID ? undefined : tagGroupId,
+          parent: tagGroupId === DEFAULT_TAG_GROUP_ID ? undefined : tagGroupId,
         },
-        refetchQueries: tagGroupId === DEFAULT_TAG_ID ? ["getSceneTags"] : [],
+        refetchQueries: tagGroupId === DEFAULT_TAG_GROUP_ID ? ["getSceneTags"] : [],
       });
-      return tag;
+      if (mode !== "layer" || selected?.type !== "layer" || !tagItem.data?.createTagItem?.tag.id)
+        return;
+      await attachTagToLayer({
+        variables: {
+          tagId: tagItem.data.createTagItem.tag.id,
+          layerId: selected.layerId,
+        },
+      });
     },
-    [createTagItem, sceneId, sceneTagGroups, setNotification, tagErrorMessage.alreadyExist],
+    [
+      createTagItem,
+      sceneId,
+      sceneTagGroups,
+      setNotification,
+      tagErrorMessage.alreadyExist,
+      attachTagToLayer,
+      mode,
+      selected,
+    ],
   );
 
   const handleAttachTagGroupToLayer = useCallback(
@@ -154,17 +194,17 @@ export default () => {
   );
 
   const handleAttachTagItemToLayer = useCallback(
-    async (tagId: string) => {
+    async (tagItemId: string) => {
       if (selected?.type !== "layer") return;
       await attachTagToLayer({
-        variables: { tagId, layerId: selected.layerId },
+        variables: { tagId: tagItemId, layerId: selected.layerId },
       });
     },
     [attachTagToLayer, selected],
   );
 
   const handleDetachTagItemFromLayer = useCallback(
-    async (tagItemId: string) => {
+    async (_tagGroupId: string, tagItemId: string) => {
       if (selected?.type !== "layer") return;
       await detachTagFromLayer({
         variables: { tagId: tagItemId, layerId: selected.layerId },
@@ -175,15 +215,15 @@ export default () => {
   );
 
   const handleRemoveTagItemFromScene = useCallback(
-    async (tagId: string) => {
-      await removeTag({ variables: { tagId }, refetchQueries: ["getSceneTags"] });
+    async (_tagGroupId: string, tagItemId: string) => {
+      await removeTag({ variables: { tagId: tagItemId }, refetchQueries: ["getSceneTags"] });
     },
     [removeTag],
   );
 
   const handleRemoveTagGroupFromScene = useCallback(
     async (tagGroupId: string) => {
-      if (tagGroupId === DEFAULT_TAG_ID) return;
+      if (tagGroupId === DEFAULT_TAG_GROUP_ID) return;
       const tagGroup = sceneTagGroups.find(tg => tg.id === tagGroupId);
       if (_doesTagGroupHasTags(tagGroup)) {
         setNotification({ type: "error", text: tagErrorMessage.tagGroupHasTags });
@@ -213,25 +253,32 @@ export default () => {
   };
 
   const _doesSameLabelTagItemExist = (tagGroup: TagGroup, label: string) => {
-    return tagGroup?.tags?.map(t => t.label).includes(label);
+    return tagGroup?.tagItems?.map(t => t.label).includes(label);
   };
 
   const _doesTagGroupHasTags = (tagGroup?: TagGroup) => {
-    return tagGroup?.tags.length;
+    return tagGroup?.tagItems.length;
   };
 
-  return {
-    createTagGroup: handleCreateTagGroup,
-    createTagItem: handleCreateTagItem,
-    attachTagGroupToLayer: handleAttachTagGroupToLayer,
-    attachTagItemToLayer: handleAttachTagItemToLayer,
-    detachTagGroupFromLayer: handleDetachTagGroupFromLayer,
-    detachTagItemFromLayer: handleDetachTagItemFromLayer,
-    removeTagGroupFromScene: handleRemoveTagGroupFromScene,
-    removeTagItemFromScene: handleRemoveTagItemFromScene,
-    updateTagGroup: handleUpdateTagGroup,
-    sceneTagGroups,
-    loading: sceneTagLoading || layerTagsLoading,
-    layerTagGroups,
-  };
+  return mode === "layer"
+    ? {
+        loading: sceneTagLoading || layerTagsLoading,
+        attachedTagGroups: layerTagGroups,
+        attachableTagGroups: sceneTagGroups,
+        onTagGroupAttach: handleAttachTagGroupToLayer,
+        onTagGroupDetach: handleDetachTagGroupFromLayer,
+        onTagItemAttach: handleAttachTagItemToLayer,
+        onTagItemDetach: handleDetachTagItemFromLayer,
+        onTagGroupCreate: handleCreateTagGroup,
+        onTagItemCreate: handleCreateTagItem,
+      }
+    : {
+        loading: sceneTagLoading || layerTagsLoading,
+        attachedTagGroups: sceneTagGroups,
+        onTagGroupCreate: handleCreateTagGroup,
+        onTagItemCreate: handleCreateTagItem,
+        onTagGroupDelete: handleRemoveTagGroupFromScene,
+        onTagItemDelete: handleRemoveTagItemFromScene,
+        onTagGroupUpdate: handleUpdateTagGroup,
+      };
 };

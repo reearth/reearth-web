@@ -45,6 +45,7 @@ function AutoComplete<Value extends string | number>({
     [setFilterText],
   );
 
+  // TODO: fix here
   const isValueType = useCallback((value: any): value is Value => {
     return !!value;
   }, []);
@@ -56,6 +57,7 @@ function AutoComplete<Value extends string | number>({
     },
     [creatable, itemState.length, onCreate, onSelect],
   );
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {

@@ -88,7 +88,9 @@ const TagGroup: React.FC<Props> = ({
             <IconWrapper align="center" onClick={handleRemove} testId="atoms-tag-event-trigger">
               <Icon
                 icon={icon}
-                color={theme.text.default}
+                color={
+                  icon === "bin" && !tagGroup.tagItems.length ? theme.text.pale : theme.text.default
+                }
                 data-testid="atoms-tag-icon"
                 alt="tag-icon"
                 size={12}
