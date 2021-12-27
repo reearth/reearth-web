@@ -82,36 +82,6 @@ export const CREATE_TAG_ITEM = gql`
   }
 `;
 
-export const ATTACH_TAG_ITEM_TO_GROUP = gql`
-  mutation attachTagItemToGroup($itemId: ID!, $groupId: ID!) {
-    attachTagItemToGroup(input: { itemID: $itemId, groupID: $groupId }) {
-      tag {
-        id
-        label
-        tags {
-          id
-          label
-        }
-      }
-    }
-  }
-`;
-
-export const DETACH_TAG_ITEM_FROM_GROUP = gql`
-  mutation detachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
-    detachTagItemFromGroup(input: { itemID: $itemId, groupID: $groupId }) {
-      tag {
-        id
-        label
-        tags {
-          id
-          label
-        }
-      }
-    }
-  }
-`;
-
 export const ATTACH_TAG_TO_LAYER = gql`
   mutation attachTagToLayer($tagId: ID!, $layerId: ID!) {
     attachTagToLayer(input: { tagID: $tagId, layerID: $layerId }) {

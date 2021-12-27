@@ -208,7 +208,6 @@ export default ({ mode }: { mode: Mode }) => {
       if (selected?.type !== "layer") return;
       await detachTagFromLayer({
         variables: { tagId: tagItemId, layerId: selected.layerId },
-        refetchQueries: ["getLayerTags"],
       });
     },
     [detachTagFromLayer, selected],
