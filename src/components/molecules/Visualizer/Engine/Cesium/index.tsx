@@ -109,13 +109,13 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         </ScreenSpaceEventHandler>
         <ScreenSpaceCameraController
           maximumZoomDistance={
-            property?.cameraLimiter?.cameraLimiterEnabled
-              ? property.cameraLimiter?.cameraLimiterTargetArea?.height ?? Number.POSITIVE_INFINITY
+            property?.cameraLimiter?.cameraLimitterEnabled
+              ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
               : Number.POSITIVE_INFINITY
           }></ScreenSpaceCameraController>
         <Camera onChange={handleCameraMoveEnd} percentageChanged={0.2} />
 
-        {limiterDimensions && property?.cameraLimiter?.cameraLimiterShowHelper && (
+        {limiterDimensions && property?.cameraLimiter?.cameraLimitterShowHelper && (
           <Entity>
             <PolylineGraphics
               positions={limiterDimensions.cartesianArray}
@@ -124,7 +124,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               arcType={ArcType.RHUMB}></PolylineGraphics>
           </Entity>
         )}
-        {cameraViewOuterBoundaries && property?.cameraLimiter?.cameraLimiterShowHelper && (
+        {cameraViewOuterBoundaries && property?.cameraLimiter?.cameraLimitterShowHelper && (
           <Entity>
             <PolylineGraphics
               positions={cameraViewOuterBoundaries}

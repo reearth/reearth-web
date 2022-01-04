@@ -39,8 +39,8 @@ export function useCameraLimiter(
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !geodsic) return undefined;
     const {
-      cameraLimiterTargetWidth: width = targetWidth,
-      cameraLimiterTargetLength: length = targetLength,
+      cameraLimitterTargetWidth: width = targetWidth,
+      cameraLimitterTargetLength: length = targetLength,
     } = property ?? {};
 
     const { cartesianArray, cartographicDimensions } = calcBoundaryBox(
@@ -62,19 +62,19 @@ export function useCameraLimiter(
 
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed() || !property?.cameraLimiterTargetArea || !geodsic) return;
+    if (!viewer || viewer.isDestroyed() || !property?.cameraLimitterTargetArea || !geodsic) return;
 
     const camera = new CesiumCamera(viewer.scene);
     camera.setView({
       destination: Cartesian3.fromDegrees(
-        property.cameraLimiterTargetArea.lng,
-        property.cameraLimiterTargetArea.lat,
-        property.cameraLimiterTargetArea.height,
+        property.cameraLimitterTargetArea.lng,
+        property.cameraLimitterTargetArea.lat,
+        property.cameraLimitterTargetArea.height,
       ),
       orientation: {
-        heading: property?.cameraLimiterTargetArea.heading,
-        pitch: property?.cameraLimiterTargetArea.pitch,
-        roll: property?.cameraLimiterTargetArea.roll,
+        heading: property?.cameraLimitterTargetArea.heading,
+        pitch: property?.cameraLimitterTargetArea.pitch,
+        roll: property?.cameraLimitterTargetArea.roll,
         up: camera.up,
       },
     });
@@ -85,8 +85,8 @@ export function useCameraLimiter(
     const rectangleHalfHeight = Rectangle.computeHeight(computedViewRectangle) * Math.PI * 1000000;
 
     const {
-      cameraLimiterTargetWidth: width = targetWidth,
-      cameraLimiterTargetLength: length = targetLength,
+      cameraLimitterTargetWidth: width = targetWidth,
+      cameraLimitterTargetLength: length = targetLength,
     } = property ?? {};
 
     const { cartesianArray } = calcBoundaryBox(
@@ -102,7 +102,7 @@ export function useCameraLimiter(
   useEffect(() => {
     const camera = getCamera(cesium?.current?.cesiumElement);
     const viewer = cesium?.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed() || !property?.cameraLimiterEnabled || !limiterDimensions)
+    if (!viewer || viewer.isDestroyed() || !property?.cameraLimitterEnabled || !limiterDimensions)
       return;
     if (camera) {
       viewer.camera.setView({
@@ -142,12 +142,12 @@ export const getGeodsic = (
   viewer: CesiumViewer,
   property: SceneProperty["cameraLimiter"] | undefined,
 ): { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic } | undefined => {
-  if (!property || !property?.cameraLimiterTargetArea) return undefined;
+  if (!property || !property?.cameraLimitterTargetArea) return undefined;
   const ellipsoid = viewer.scene.globe.ellipsoid;
 
   const centerPoint = Cartesian3.fromDegrees(
-    property.cameraLimiterTargetArea.lng,
-    property.cameraLimiterTargetArea.lat,
+    property.cameraLimitterTargetArea.lng,
+    property.cameraLimitterTargetArea.lat,
     0,
   );
 

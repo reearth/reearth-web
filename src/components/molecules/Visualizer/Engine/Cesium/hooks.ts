@@ -125,10 +125,10 @@ export default ({
       if (initialCameraFlight.current) return;
       initialCameraFlight.current = true;
       if (
-        property?.cameraLimiter?.cameraLimiterEnabled &&
-        property?.cameraLimiter?.cameraLimiterTargetArea
+        property?.cameraLimiter?.cameraLimitterEnabled &&
+        property?.cameraLimiter?.cameraLimitterTargetArea
       ) {
-        engineAPI.flyTo(property?.cameraLimiter?.cameraLimiterTargetArea, { duration: 0 });
+        engineAPI.flyTo(property?.cameraLimiter?.cameraLimitterTargetArea, { duration: 0 });
       } else if (property?.default?.camera) {
         engineAPI.flyTo(property.default.camera, { duration: 0 });
       }
@@ -141,7 +141,7 @@ export default ({
       engineAPI,
       onCameraChange,
       property?.default?.camera,
-      property?.cameraLimiter?.cameraLimiterEnabled,
+      property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
