@@ -1,13 +1,11 @@
 import { useNavigate } from "@reach/router";
 import { useCallback, useEffect } from "react";
-// import { useIntl } from "react-intl";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
 export default () => {
-  // const intl = useIntl();
   const { isAuthenticated, isLoading, error: authError, logout } = useAuth();
   const error = useCleanUrl();
   const navigate = useNavigate();
@@ -71,10 +69,18 @@ export default () => {
     [isAuthenticated],
   );
 
-  const onPasswordReset = useCallback(
-    async (username: string, password: string) => {
+  const onPasswordResetRequest = useCallback(
+    async (email: string) => {
       if (isAuthenticated) return;
-      console.log(username + " " + password, "up");
+      console.log(email);
+    },
+    [isAuthenticated],
+  );
+
+  const onNewPasswordSubmit = useCallback(
+    async (password: string) => {
+      if (isAuthenticated) return;
+      console.log("NEEDS TOKEN" + password, "up");
     },
     [isAuthenticated],
   );
@@ -84,6 +90,7 @@ export default () => {
     isAuthenticated,
     passwordPolicy,
     onSignup,
-    onPasswordReset,
+    onPasswordResetRequest,
+    onNewPasswordSubmit,
   };
 };

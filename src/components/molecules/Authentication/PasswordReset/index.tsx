@@ -9,101 +9,39 @@ import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
+import { PasswordPolicy as PasswordPolicyType } from "../common";
 
-export type PasswordPolicy = {
-  tooShort?: RegExp;
-  tooLong?: RegExp;
-  whitespace?: RegExp;
-  lowSecurity?: RegExp;
-  medSecurity?: RegExp;
-  highSecurity?: RegExp;
-};
+export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onPasswordReset: (username: string, password: string) => void;
-  passwordPolicy?: PasswordPolicy;
+  onPasswordResetRequest: (email: string) => void;
 };
 
-const PasswordReset: React.FC<Props> = ({ onPasswordReset, passwordPolicy }) => {
+const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
   const intl = useIntl();
   const theme = useTheme();
-  // const [regexMessage, setRegexMessage] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [disabled, setDisabled] = useState(true);
+  const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    setDisabled(email.length < 1);
+    console.log(email);
+    console.log(email.length > 0);
+  }, [email]);
 
   const handleUsernameInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
-      setUsername(newValue);
+      setEmail(newValue);
     },
     [],
   );
 
-  // const handlePasswordInput = useCallback(
-  //   (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  //     const password = e.currentTarget.value;
-  //     setPassword(password);
-  //     switch (true) {
-  //       case passwordPolicy?.whitespace?.test(password):
-  //         setRegexMessage(
-  //           intl.formatMessage({
-  //             defaultMessage: "No whitespace is allowed.",
-  //           }),
-  //         );
-  //         break;
-  //       case passwordPolicy?.tooShort?.test(password):
-  //         setRegexMessage(
-  //           intl.formatMessage({
-  //             defaultMessage: "Too short.",
-  //           }),
-  //         );
-  //         break;
-  //       case passwordPolicy?.tooLong?.test(password):
-  //         setRegexMessage(
-  //           intl.formatMessage({
-  //             defaultMessage: "That is terribly long.",
-  //           }),
-  //         );
-  //         break;
-  //       case passwordPolicy?.highSecurity?.test(password):
-  //         setRegexMessage(intl.formatMessage({ defaultMessage: "That password is great!" }));
-  //         break;
-  //       case passwordPolicy?.medSecurity?.test(password):
-  //         setRegexMessage(intl.formatMessage({ defaultMessage: "That password is better." }));
-  //         break;
-  //       case passwordPolicy?.lowSecurity?.test(password):
-  //         setRegexMessage(intl.formatMessage({ defaultMessage: "That password is okay." }));
-  //         break;
-  //       default:
-  //         setRegexMessage(
-  //           intl.formatMessage({
-  //             defaultMessage: "That password confuses me, but might be okay.",
-  //           }),
-  //         );
-  //         break;
-  //     }
-  //   },
-  //   [password], // eslint-disable-line react-hooks/exhaustive-deps
-  // );
-
-  const handlePasswordReset = useCallback(() => {
-    onPasswordReset(username, password);
+  const handlePasswordResetRequest = useCallback(() => {
+    onPasswordResetRequest(email);
     setSent(true);
-  }, [username, password, onPasswordReset]);
-
-  useEffect(() => {
-    if (
-      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(password)) ||
-      passwordPolicy?.tooShort?.test(password) ||
-      passwordPolicy?.tooLong?.test(password)
-    ) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
-  }, [password, passwordPolicy]);
+  }, [email, onPasswordResetRequest]);
 
   return (
     <AuthPage>
@@ -123,7 +61,7 @@ const PasswordReset: React.FC<Props> = ({ onPasswordReset, passwordPolicy }) => 
             <StyledButton
               className="form-item"
               large
-              onClick={handlePasswordReset}
+              onClick={handlePasswordResetRequest}
               border
               color={theme.main.weak}
               background={theme.other.white}
@@ -156,26 +94,26 @@ const PasswordReset: React.FC<Props> = ({ onPasswordReset, passwordPolicy }) => 
             className="form-item"
             placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
             color={theme.main.weak}
-            value={username}
+            value={email}
             autoFocus
             onChange={handleUsernameInput}
           />
           <StyledButton
             className="form-item"
             large
-            onClick={handlePasswordReset}
+            onClick={handlePasswordResetRequest}
             disabled={disabled}
             color={disabled ? theme.main.text : theme.other.white}
             background={disabled ? theme.main.weak : theme.main.link}
             text={intl.formatMessage({ defaultMessage: "Continue" })}
           />
+          <StyledLink to={"/login"}>
+            <Text size="xs" color={theme.main.link} weight="bold">
+              {intl.formatMessage({ defaultMessage: "Go back to log in page" })}
+            </Text>
+          </StyledLink>
         </>
       )}
-      <StyledLink to={"/login"}>
-        <Text size="xs" color={theme.main.link} weight="bold">
-          {intl.formatMessage({ defaultMessage: "Go back to log in page" })}
-        </Text>
-      </StyledLink>
     </AuthPage>
   );
 };

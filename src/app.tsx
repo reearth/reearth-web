@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBanner from "@reearth/components/organisms/Notification";
 import LoginPage from "@reearth/components/pages/Authentication/LoginPage";
-import PasswordResetPage from "@reearth/components/pages/Authentication/PasswordResetPage";
+import PasswordResetPage from "@reearth/components/pages/Authentication/PasswordReset/PasswordResetPage";
 import SignupPage from "@reearth/components/pages/Authentication/SignupPage";
 import NotFound from "@reearth/components/pages/NotFound";
 import AccountSettings from "@reearth/components/pages/Settings/Account";

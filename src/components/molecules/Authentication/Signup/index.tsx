@@ -9,15 +9,9 @@ import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
 import AuthPage from "..";
+import { PasswordPolicy as PasswordPolicyType } from "../common";
 
-export type PasswordPolicy = {
-  tooShort?: RegExp;
-  tooLong?: RegExp;
-  whitespace?: RegExp;
-  lowSecurity?: RegExp;
-  medSecurity?: RegExp;
-  highSecurity?: RegExp;
-};
+export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
   onSignup: (username: string, password: string) => void;
