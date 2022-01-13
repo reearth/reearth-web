@@ -1,6 +1,6 @@
 {
     "name": "reearth-web",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "",
     "repository": "git@github.com:reearth/reearth-web.git",
     "author": "reearth",
@@ -8,6 +8,7 @@
     "license": "Apache-2.0",
     "scripts": {
         "start": "yarn && webpack serve --progress",
+        "start:local": "yarn && webpack serve --progress --env local",
         "test": "jest --coverage",
         "prepare": "husky install",
         "test:watch": "jest --watch",
@@ -164,7 +165,7 @@
         "apollo-upload-client": "^16.0.0",
         "array-move": "^4.0.0",
         "axios": "^0.24.0",
-        "cesium": "^1.87.1",
+        "cesium": "^1.89.0",
         "cesium-dnd": "1.0.3",
         "core-js": "^3.19.1",
         "date-fns": "^2.24.0",

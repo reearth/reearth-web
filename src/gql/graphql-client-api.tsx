@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -30,7 +31,6 @@ export type Scalars = {
 
 export type AddClusterInput = {
   name: Scalars['String'];
-  propertyId: Scalars['ID'];
   sceneId: Scalars['ID'];
 };
 
@@ -42,7 +42,7 @@ export type AddClusterPayload = {
 
 export type AddDatasetSchemaInput = {
   name: Scalars['String'];
-  representativefield?: Maybe<Scalars['ID']>;
+  representativefield?: InputMaybe<Scalars['ID']>;
   sceneId: Scalars['ID'];
 };
 
@@ -55,9 +55,9 @@ export type AddDynamicDatasetInput = {
   author: Scalars['String'];
   content: Scalars['String'];
   datasetSchemaId: Scalars['ID'];
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-  target?: Maybe<Scalars['String']>;
+  lat?: InputMaybe<Scalars['Float']>;
+  lng?: InputMaybe<Scalars['Float']>;
+  target?: InputMaybe<Scalars['String']>;
 };
 
 export type AddDynamicDatasetPayload = {
@@ -77,7 +77,7 @@ export type AddDynamicDatasetSchemaPayload = {
 
 export type AddInfoboxFieldInput = {
   extensionId: Scalars['PluginExtensionID'];
-  index?: Maybe<Scalars['Int']>;
+  index?: InputMaybe<Scalars['Int']>;
   layerId: Scalars['ID'];
   pluginId: Scalars['PluginID'];
 };
@@ -89,13 +89,13 @@ export type AddInfoboxFieldPayload = {
 };
 
 export type AddLayerGroupInput = {
-  extensionId?: Maybe<Scalars['PluginExtensionID']>;
-  index?: Maybe<Scalars['Int']>;
-  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
+  extensionId?: InputMaybe<Scalars['PluginExtensionID']>;
+  index?: InputMaybe<Scalars['Int']>;
+  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
   parentLayerId: Scalars['ID'];
-  pluginId?: Maybe<Scalars['PluginID']>;
-  representativeFieldId?: Maybe<Scalars['DatasetSchemaFieldID']>;
+  pluginId?: InputMaybe<Scalars['PluginID']>;
+  representativeFieldId?: InputMaybe<Scalars['DatasetSchemaFieldID']>;
 };
 
 export type AddLayerGroupPayload = {
@@ -107,10 +107,10 @@ export type AddLayerGroupPayload = {
 
 export type AddLayerItemInput = {
   extensionId: Scalars['PluginExtensionID'];
-  index?: Maybe<Scalars['Int']>;
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
-  name?: Maybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
+  lat?: InputMaybe<Scalars['Float']>;
+  lng?: InputMaybe<Scalars['Float']>;
+  name?: InputMaybe<Scalars['String']>;
   parentLayerId: Scalars['ID'];
   pluginId: Scalars['PluginID'];
 };
@@ -134,9 +134,9 @@ export type AddMemberToTeamPayload = {
 };
 
 export type AddPropertyItemInput = {
-  index?: Maybe<Scalars['Int']>;
-  nameFieldType?: Maybe<ValueType>;
-  nameFieldValue?: Maybe<Scalars['Any']>;
+  index?: InputMaybe<Scalars['Int']>;
+  nameFieldType?: InputMaybe<ValueType>;
+  nameFieldValue?: InputMaybe<Scalars['Any']>;
   propertyId: Scalars['ID'];
   schemaGroupId: Scalars['PropertySchemaGroupID'];
 };
@@ -220,7 +220,8 @@ export type Cluster = {
   __typename?: 'Cluster';
   id: Scalars['ID'];
   name: Scalars['String'];
-  property: Scalars['ID'];
+  property?: Maybe<Property>;
+  propertyId: Scalars['ID'];
 };
 
 export type CreateAssetInput = {
@@ -243,11 +244,11 @@ export type CreateInfoboxPayload = {
 };
 
 export type CreateProjectInput = {
-  alias?: Maybe<Scalars['String']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  description?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['URL']>;
-  name?: Maybe<Scalars['String']>;
+  alias?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  imageUrl?: InputMaybe<Scalars['URL']>;
+  name?: InputMaybe<Scalars['String']>;
   teamId: Scalars['ID'];
   visualizer: Visualizer;
 };
@@ -264,7 +265,7 @@ export type CreateScenePayload = {
 export type CreateTagGroupInput = {
   label: Scalars['String'];
   sceneId: Scalars['ID'];
-  tags?: Maybe<Array<Scalars['ID']>>;
+  tags?: InputMaybe<Array<Scalars['ID']>>;
 };
 
 export type CreateTagGroupPayload = {
@@ -274,14 +275,16 @@ export type CreateTagGroupPayload = {
 
 export type CreateTagItemInput = {
   label: Scalars['String'];
-  linkedDatasetField?: Maybe<Scalars['ID']>;
-  linkedDatasetID?: Maybe<Scalars['ID']>;
-  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
+  linkedDatasetField?: InputMaybe<Scalars['ID']>;
+  linkedDatasetID?: InputMaybe<Scalars['ID']>;
+  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']>;
+  parent?: InputMaybe<Scalars['ID']>;
   sceneId: Scalars['ID'];
 };
 
 export type CreateTagItemPayload = {
   __typename?: 'CreateTagItemPayload';
+  parent?: Maybe<TagGroup>;
   tag: TagItem;
 };
 
@@ -346,10 +349,10 @@ export type DatasetSchema = Node & {
 
 
 export type DatasetSchemaDatasetsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type DatasetSchemaConnection = {
@@ -427,14 +430,14 @@ export type DetachTagItemFromGroupPayload = {
 
 export type ImportDatasetFromGoogleSheetInput = {
   accessToken: Scalars['String'];
-  datasetSchemaId?: Maybe<Scalars['ID']>;
+  datasetSchemaId?: InputMaybe<Scalars['ID']>;
   fileId: Scalars['String'];
   sceneId: Scalars['ID'];
   sheetName: Scalars['String'];
 };
 
 export type ImportDatasetInput = {
-  datasetSchemaId?: Maybe<Scalars['ID']>;
+  datasetSchemaId?: InputMaybe<Scalars['ID']>;
   file: Scalars['Upload'];
   sceneId: Scalars['ID'];
 };
@@ -529,8 +532,7 @@ export type Layer = {
   propertyId?: Maybe<Scalars['ID']>;
   sceneId: Scalars['ID'];
   scenePlugin?: Maybe<ScenePlugin>;
-  tagIds: Array<Scalars['ID']>;
-  tags: Array<Tag>;
+  tags: Array<LayerTag>;
 };
 
 export enum LayerEncodingFormat {
@@ -563,8 +565,7 @@ export type LayerGroup = Layer & {
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID'];
   scenePlugin?: Maybe<ScenePlugin>;
-  tagIds: Array<Scalars['ID']>;
-  tags: Array<Tag>;
+  tags: Array<LayerTag>;
 };
 
 export type LayerItem = Layer & {
@@ -587,20 +588,35 @@ export type LayerItem = Layer & {
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID'];
   scenePlugin?: Maybe<ScenePlugin>;
-  tagIds: Array<Scalars['ID']>;
-  tags: Array<Tag>;
+  tags: Array<LayerTag>;
 };
 
-export type Layers = LayerGroup | LayerItem;
+export type LayerTag = {
+  tag?: Maybe<Tag>;
+  tagId: Scalars['ID'];
+};
+
+export type LayerTagGroup = LayerTag & {
+  __typename?: 'LayerTagGroup';
+  children: Array<LayerTagItem>;
+  tag?: Maybe<Tag>;
+  tagId: Scalars['ID'];
+};
+
+export type LayerTagItem = LayerTag & {
+  __typename?: 'LayerTagItem';
+  tag?: Maybe<Tag>;
+  tagId: Scalars['ID'];
+};
 
 export type LinkDatasetToPropertyValueInput = {
-  datasetIds?: Maybe<Array<Scalars['ID']>>;
+  datasetIds?: InputMaybe<Array<Scalars['ID']>>;
   datasetSchemaFieldIds: Array<Scalars['ID']>;
   datasetSchemaIds: Array<Scalars['ID']>;
   fieldId: Scalars['PropertySchemaFieldID'];
-  itemId?: Maybe<Scalars['ID']>;
+  itemId?: InputMaybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
+  schemaGroupId?: InputMaybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export enum ListOperation {
@@ -701,8 +717,8 @@ export type MoveInfoboxFieldPayload = {
 };
 
 export type MoveLayerInput = {
-  destLayerId?: Maybe<Scalars['ID']>;
-  index?: Maybe<Scalars['Int']>;
+  destLayerId?: InputMaybe<Scalars['ID']>;
+  index?: InputMaybe<Scalars['Int']>;
   layerId: Scalars['ID'];
 };
 
@@ -1158,17 +1174,17 @@ export type Plugin = {
 
 
 export type PluginScenePluginArgs = {
-  sceneId?: Maybe<Scalars['ID']>;
+  sceneId?: InputMaybe<Scalars['ID']>;
 };
 
 
 export type PluginTranslatedDescriptionArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 
 export type PluginTranslatedNameArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 export type PluginExtension = {
@@ -1199,12 +1215,12 @@ export type PluginExtensionSceneWidgetArgs = {
 
 
 export type PluginExtensionTranslatedDescriptionArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 
 export type PluginExtensionTranslatedNameArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 export enum PluginExtensionType {
@@ -1296,7 +1312,7 @@ export type PropertyField = {
   actualValue?: Maybe<Scalars['Any']>;
   field?: Maybe<PropertySchemaField>;
   fieldId: Scalars['PropertySchemaFieldID'];
-  id: Scalars['PropertySchemaFieldID'];
+  id: Scalars['String'];
   links?: Maybe<Array<PropertyFieldLink>>;
   parent?: Maybe<Property>;
   parentId: Scalars['ID'];
@@ -1390,12 +1406,12 @@ export type PropertySchemaField = {
 
 
 export type PropertySchemaFieldTranslatedDescriptionArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 
 export type PropertySchemaFieldTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 export type PropertySchemaFieldChoice = {
@@ -1409,7 +1425,7 @@ export type PropertySchemaFieldChoice = {
 
 
 export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 export enum PropertySchemaFieldUi {
@@ -1441,11 +1457,11 @@ export type PropertySchemaGroup = {
 
 
 export type PropertySchemaGroupTranslatedTitleArgs = {
-  lang?: Maybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 export type PublishProjectInput = {
-  alias?: Maybe<Scalars['String']>;
+  alias?: InputMaybe<Scalars['String']>;
   projectId: Scalars['ID'];
   status: PublishmentStatus;
 };
@@ -1480,11 +1496,11 @@ export type Query = {
 
 
 export type QueryAssetsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  sort?: Maybe<AssetSortType>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sort?: InputMaybe<AssetSortType>;
   teamId: Scalars['ID'];
 };
 
@@ -1495,20 +1511,20 @@ export type QueryCheckProjectAliasArgs = {
 
 
 export type QueryDatasetSchemasArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   sceneId: Scalars['ID'];
 };
 
 
 export type QueryDatasetsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
   datasetSchemaId: Scalars['ID'];
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1545,11 +1561,11 @@ export type QueryPluginsArgs = {
 
 
 export type QueryProjectsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  includeArchived?: Maybe<Scalars['Boolean']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  includeArchived?: InputMaybe<Scalars['Boolean']>;
+  last?: InputMaybe<Scalars['Int']>;
   teamId: Scalars['ID'];
 };
 
@@ -1607,7 +1623,7 @@ export type RemoveClusterPayload = {
 };
 
 export type RemoveDatasetSchemaInput = {
-  force?: Maybe<Scalars['Boolean']>;
+  force?: InputMaybe<Scalars['Boolean']>;
   schemaId: Scalars['ID'];
 };
 
@@ -1662,9 +1678,9 @@ export type RemoveMyAuthInput = {
 
 export type RemovePropertyFieldInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
-  itemId?: Maybe<Scalars['ID']>;
+  itemId?: InputMaybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
+  schemaGroupId?: InputMaybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export type RemovePropertyItemInput = {
@@ -1680,6 +1696,7 @@ export type RemoveTagInput = {
 export type RemoveTagPayload = {
   __typename?: 'RemoveTagPayload';
   tagId: Scalars['ID'];
+  updatedLayers: Array<Layer>;
 };
 
 export type RemoveWidgetInput = {
@@ -1725,10 +1742,10 @@ export type Scene = Node & {
 
 
 export type SceneDatasetSchemasArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export enum SceneLockMode {
@@ -1768,11 +1785,11 @@ export type SearchedUser = {
 };
 
 export type SignupInput = {
-  lang?: Maybe<Scalars['Lang']>;
-  secret?: Maybe<Scalars['String']>;
-  teamId?: Maybe<Scalars['ID']>;
-  theme?: Maybe<Theme>;
-  userId?: Maybe<Scalars['ID']>;
+  lang?: InputMaybe<Scalars['Lang']>;
+  secret?: InputMaybe<Scalars['String']>;
+  teamId?: InputMaybe<Scalars['ID']>;
+  theme?: InputMaybe<Theme>;
+  userId?: InputMaybe<Scalars['ID']>;
 };
 
 export type SignupPayload = {
@@ -1797,6 +1814,7 @@ export type SyncDatasetPayload = {
 export type Tag = {
   id: Scalars['ID'];
   label: Scalars['String'];
+  layers: Array<Layer>;
   sceneId: Scalars['ID'];
 };
 
@@ -1804,24 +1822,28 @@ export type TagGroup = Tag & {
   __typename?: 'TagGroup';
   id: Scalars['ID'];
   label: Scalars['String'];
+  layers: Array<Layer>;
+  scene?: Maybe<Scene>;
   sceneId: Scalars['ID'];
-  tags?: Maybe<Array<Scalars['ID']>>;
+  tagIds?: Maybe<Array<Scalars['ID']>>;
+  tags: Array<TagItem>;
 };
 
 export type TagItem = Tag & {
   __typename?: 'TagItem';
   id: Scalars['ID'];
   label: Scalars['String'];
+  layers: Array<Layer>;
   linkedDataset?: Maybe<Dataset>;
   linkedDatasetField?: Maybe<DatasetField>;
   linkedDatasetFieldID?: Maybe<Scalars['ID']>;
   linkedDatasetID?: Maybe<Scalars['ID']>;
   linkedDatasetSchema?: Maybe<DatasetSchema>;
   linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
+  parent?: Maybe<TagGroup>;
+  parentId?: Maybe<Scalars['ID']>;
   sceneId: Scalars['ID'];
 };
-
-export type Tags = TagGroup | TagItem;
 
 export type Team = Node & {
   __typename?: 'Team';
@@ -1835,19 +1857,19 @@ export type Team = Node & {
 
 
 export type TeamAssetsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type TeamProjectsArgs = {
-  after?: Maybe<Scalars['Cursor']>;
-  before?: Maybe<Scalars['Cursor']>;
-  first?: Maybe<Scalars['Int']>;
-  includeArchived?: Maybe<Scalars['Boolean']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  first?: InputMaybe<Scalars['Int']>;
+  includeArchived?: InputMaybe<Scalars['Boolean']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type TeamMember = {
@@ -1896,15 +1918,15 @@ export type UninstallPluginPayload = {
 
 export type UnlinkPropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
-  itemId?: Maybe<Scalars['ID']>;
+  itemId?: InputMaybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
+  schemaGroupId?: InputMaybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export type UpdateClusterInput = {
   clusterId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  propertyId?: Maybe<Scalars['ID']>;
+  name?: InputMaybe<Scalars['String']>;
+  propertyId?: InputMaybe<Scalars['ID']>;
   sceneId: Scalars['ID'];
 };
 
@@ -1926,8 +1948,8 @@ export type UpdateDatasetSchemaPayload = {
 
 export type UpdateLayerInput = {
   layerId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  visible?: Maybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  visible?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateLayerPayload = {
@@ -1936,12 +1958,12 @@ export type UpdateLayerPayload = {
 };
 
 export type UpdateMeInput = {
-  email?: Maybe<Scalars['String']>;
-  lang?: Maybe<Scalars['Lang']>;
-  name?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
-  passwordConfirmation?: Maybe<Scalars['String']>;
-  theme?: Maybe<Theme>;
+  email?: InputMaybe<Scalars['String']>;
+  lang?: InputMaybe<Scalars['Lang']>;
+  name?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
+  passwordConfirmation?: InputMaybe<Scalars['String']>;
+  theme?: InputMaybe<Theme>;
 };
 
 export type UpdateMePayload = {
@@ -1961,21 +1983,21 @@ export type UpdateMemberOfTeamPayload = {
 };
 
 export type UpdateProjectInput = {
-  alias?: Maybe<Scalars['String']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  basicAuthPassword?: Maybe<Scalars['String']>;
-  basicAuthUsername?: Maybe<Scalars['String']>;
-  deleteImageUrl?: Maybe<Scalars['Boolean']>;
-  deletePublicImage?: Maybe<Scalars['Boolean']>;
-  description?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['URL']>;
-  isBasicAuthActive?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  alias?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  basicAuthPassword?: InputMaybe<Scalars['String']>;
+  basicAuthUsername?: InputMaybe<Scalars['String']>;
+  deleteImageUrl?: InputMaybe<Scalars['Boolean']>;
+  deletePublicImage?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  imageUrl?: InputMaybe<Scalars['URL']>;
+  isBasicAuthActive?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
   projectId: Scalars['ID'];
-  publicDescription?: Maybe<Scalars['String']>;
-  publicImage?: Maybe<Scalars['String']>;
-  publicNoIndex?: Maybe<Scalars['Boolean']>;
-  publicTitle?: Maybe<Scalars['String']>;
+  publicDescription?: InputMaybe<Scalars['String']>;
+  publicImage?: InputMaybe<Scalars['String']>;
+  publicNoIndex?: InputMaybe<Scalars['Boolean']>;
+  publicTitle?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePropertyItemInput = {
@@ -1985,24 +2007,24 @@ export type UpdatePropertyItemInput = {
 };
 
 export type UpdatePropertyItemOperationInput = {
-  index?: Maybe<Scalars['Int']>;
-  itemId?: Maybe<Scalars['ID']>;
-  nameFieldType?: Maybe<ValueType>;
-  nameFieldValue?: Maybe<Scalars['Any']>;
+  index?: InputMaybe<Scalars['Int']>;
+  itemId?: InputMaybe<Scalars['ID']>;
+  nameFieldType?: InputMaybe<ValueType>;
+  nameFieldValue?: InputMaybe<Scalars['Any']>;
   operation: ListOperation;
 };
 
 export type UpdatePropertyValueInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
-  itemId?: Maybe<Scalars['ID']>;
+  itemId?: InputMaybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
+  schemaGroupId?: InputMaybe<Scalars['PropertySchemaGroupID']>;
   type: ValueType;
-  value?: Maybe<Scalars['Any']>;
+  value?: InputMaybe<Scalars['Any']>;
 };
 
 export type UpdateTagInput = {
-  label?: Maybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
   sceneId: Scalars['ID'];
   tagId: Scalars['ID'];
 };
@@ -2023,7 +2045,7 @@ export type UpdateTeamPayload = {
 };
 
 export type UpdateWidgetAlignSystemInput = {
-  align?: Maybe<WidgetAreaAlign>;
+  align?: InputMaybe<WidgetAreaAlign>;
   location: WidgetLocationInput;
   sceneId: Scalars['ID'];
 };
@@ -2034,10 +2056,10 @@ export type UpdateWidgetAlignSystemPayload = {
 };
 
 export type UpdateWidgetInput = {
-  enabled?: Maybe<Scalars['Boolean']>;
-  extended?: Maybe<Scalars['Boolean']>;
-  index?: Maybe<Scalars['Int']>;
-  location?: Maybe<WidgetLocationInput>;
+  enabled?: InputMaybe<Scalars['Boolean']>;
+  extended?: InputMaybe<Scalars['Boolean']>;
+  index?: InputMaybe<Scalars['Int']>;
+  location?: InputMaybe<WidgetLocationInput>;
   sceneId: Scalars['ID'];
   widgetId: Scalars['ID'];
 };
@@ -2063,15 +2085,15 @@ export type UpgradePluginPayload = {
 export type UploadFileToPropertyInput = {
   fieldId: Scalars['PropertySchemaFieldID'];
   file: Scalars['Upload'];
-  itemId?: Maybe<Scalars['ID']>;
+  itemId?: InputMaybe<Scalars['ID']>;
   propertyId: Scalars['ID'];
-  schemaGroupId?: Maybe<Scalars['PropertySchemaGroupID']>;
+  schemaGroupId?: InputMaybe<Scalars['PropertySchemaGroupID']>;
 };
 
 export type UploadPluginInput = {
-  file?: Maybe<Scalars['Upload']>;
+  file?: InputMaybe<Scalars['Upload']>;
   sceneId: Scalars['ID'];
-  url?: Maybe<Scalars['URL']>;
+  url?: InputMaybe<Scalars['URL']>;
 };
 
 export type UploadPluginPayload = {
@@ -2512,6 +2534,40 @@ export type GetWidgetsQueryVariables = Exact<{
 
 export type GetWidgetsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, description: string, name: string, translatedDescription: string, translatedName: string, icon: string, singleOnly?: boolean | null | undefined, type: PluginExtensionType, widgetLayout?: { __typename?: 'WidgetLayout', extended: boolean, floating: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: { __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType } | null | undefined } | null | undefined }> } | null | undefined }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
 
+export type GetClustersQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+  lang?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetClustersQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
+
+export type AddClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  name: Scalars['String'];
+  lang?: Maybe<Scalars['String']>;
+}>;
+
+
+export type AddClusterMutation = { __typename?: 'Mutation', addCluster?: { __typename?: 'AddClusterPayload', cluster: { __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined } } | null | undefined };
+
+export type RemoveClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID'];
+}>;
+
+
+export type RemoveClusterMutation = { __typename?: 'Mutation', removeCluster?: { __typename?: 'RemoveClusterPayload', scene: { __typename?: 'Scene', id: string, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string }> } } | null | undefined };
+
+export type UpdateClusterMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateClusterMutation = { __typename?: 'Mutation', updateCluster?: { __typename?: 'UpdateClusterPayload', cluster: { __typename?: 'Cluster', id: string, name: string, propertyId: string } } | null | undefined };
+
 export type GetPrimitivesQueryVariables = Exact<{
   sceneId: Scalars['ID'];
   lang?: Maybe<Scalars['String']>;
@@ -2668,7 +2724,7 @@ export type GetScenePropertyQueryVariables = Exact<{
 }>;
 
 
-export type GetScenePropertyQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined, widgets: Array<{ __typename?: 'SceneWidget', id: string, pluginId: string, extensionId: string, enabled: boolean, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
+export type GetScenePropertyQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined, widgets: Array<{ __typename?: 'SceneWidget', id: string, pluginId: string, extensionId: string, enabled: boolean, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }>, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null | undefined, translatedTitle: string, isList: boolean, representativeFieldId?: string | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null | undefined, suffix?: string | null | undefined, type: ValueType, defaultValue?: any | null | undefined, ui?: PropertySchemaFieldUi | null | undefined, min?: number | null | undefined, max?: number | null | undefined, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null | undefined, title: string, translatedTitle: string }> | null | undefined, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null | undefined } | null | undefined }> }> } | null | undefined, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null | undefined, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null | undefined, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null | undefined, dataset?: { __typename?: 'Dataset', id: string, name?: string | null | undefined } | null | undefined, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null | undefined }> | null | undefined }> }> }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
 
 export type GetLinkableDatasetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -2706,6 +2762,88 @@ export type UpdateWidgetMutationVariables = Exact<{
 
 
 export type UpdateWidgetMutation = { __typename?: 'Mutation', updateWidget?: { __typename?: 'UpdateWidgetPayload', scene: { __typename?: 'Scene', id: string, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } } | null | undefined };
+
+export type GetSceneTagsQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+}>;
+
+
+export type GetSceneTagsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, tags: Array<{ __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | { __typename?: 'TagItem', parentId?: string | null | undefined, id: string, label: string, parent?: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | null | undefined }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null | undefined };
+
+export type CreateTagGroupMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  label: Scalars['String'];
+}>;
+
+
+export type CreateTagGroupMutation = { __typename?: 'Mutation', createTagGroup?: { __typename?: 'CreateTagGroupPayload', tag: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } } | null | undefined };
+
+export type CreateTagItemMutationVariables = Exact<{
+  sceneId: Scalars['ID'];
+  label: Scalars['String'];
+  parent?: Maybe<Scalars['ID']>;
+  linkedDatasetSchemaId?: Maybe<Scalars['ID']>;
+  linkedDatasetID?: Maybe<Scalars['ID']>;
+  linkedDatasetField?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type CreateTagItemMutation = { __typename?: 'Mutation', createTagItem?: { __typename?: 'CreateTagItemPayload', tag: { __typename?: 'TagItem', id: string, label: string, parentId?: string | null | undefined }, parent?: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | null | undefined } | null | undefined };
+
+export type AttachTagItemToGroupMutationVariables = Exact<{
+  itemId: Scalars['ID'];
+  groupId: Scalars['ID'];
+}>;
+
+
+export type AttachTagItemToGroupMutation = { __typename?: 'Mutation', attachTagItemToGroup?: { __typename?: 'AttachTagItemToGroupPayload', tag: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } } | null | undefined };
+
+export type DetachTagItemFromGroupMutationVariables = Exact<{
+  itemId: Scalars['ID'];
+  groupId: Scalars['ID'];
+}>;
+
+
+export type DetachTagItemFromGroupMutation = { __typename?: 'Mutation', detachTagItemFromGroup?: { __typename?: 'DetachTagItemFromGroupPayload', tag: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } } | null | undefined };
+
+export type AttachTagToLayerMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  layerId: Scalars['ID'];
+}>;
+
+
+export type AttachTagToLayerMutation = { __typename?: 'Mutation', attachTagToLayer?: { __typename?: 'AttachTagToLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } } | null | undefined };
+
+export type DetachTagFromLayerMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  layerId: Scalars['ID'];
+}>;
+
+
+export type DetachTagFromLayerMutation = { __typename?: 'Mutation', detachTagFromLayer?: { __typename?: 'DetachTagFromLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } } | null | undefined };
+
+export type RemoveTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+}>;
+
+
+export type RemoveTagMutation = { __typename?: 'Mutation', removeTag?: { __typename?: 'RemoveTagPayload', tagId: string, updatedLayers: Array<{ __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> }> } | null | undefined };
+
+export type UpdateTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  sceneId: Scalars['ID'];
+  label?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateTagMutation = { __typename?: 'Mutation', updateTag?: { __typename?: 'UpdateTagPayload', tag: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } } | null | undefined };
+
+export type GetLayerTagsQueryVariables = Exact<{
+  layerId: Scalars['ID'];
+}>;
+
+
+export type GetLayerTagsQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null | undefined }> } | null | undefined };
 
 export type UpdateMeMutationVariables = Exact<{
   name?: Maybe<Scalars['String']>;
@@ -5048,6 +5186,176 @@ export function useGetWidgetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetWidgetsQueryHookResult = ReturnType<typeof useGetWidgetsQuery>;
 export type GetWidgetsLazyQueryHookResult = ReturnType<typeof useGetWidgetsLazyQuery>;
 export type GetWidgetsQueryResult = Apollo.QueryResult<GetWidgetsQuery, GetWidgetsQueryVariables>;
+export const GetClustersDocument = gql`
+    query GetClusters($sceneId: ID!, $lang: String) {
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      clusters {
+        id
+        name
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+    }
+  }
+}
+    ${PropertyFragmentFragmentDoc}`;
+
+/**
+ * __useGetClustersQuery__
+ *
+ * To run a query within a React component, call `useGetClustersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClustersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClustersQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useGetClustersQuery(baseOptions: Apollo.QueryHookOptions<GetClustersQuery, GetClustersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClustersQuery, GetClustersQueryVariables>(GetClustersDocument, options);
+      }
+export function useGetClustersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClustersQuery, GetClustersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClustersQuery, GetClustersQueryVariables>(GetClustersDocument, options);
+        }
+export type GetClustersQueryHookResult = ReturnType<typeof useGetClustersQuery>;
+export type GetClustersLazyQueryHookResult = ReturnType<typeof useGetClustersLazyQuery>;
+export type GetClustersQueryResult = Apollo.QueryResult<GetClustersQuery, GetClustersQueryVariables>;
+export const AddClusterDocument = gql`
+    mutation AddCluster($sceneId: ID!, $name: String!, $lang: String) {
+  addCluster(input: {sceneId: $sceneId, name: $name}) {
+    cluster {
+      id
+      name
+      propertyId
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
+  }
+}
+    ${PropertyFragmentFragmentDoc}`;
+export type AddClusterMutationFn = Apollo.MutationFunction<AddClusterMutation, AddClusterMutationVariables>;
+
+/**
+ * __useAddClusterMutation__
+ *
+ * To run a mutation, you first call `useAddClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addClusterMutation, { data, loading, error }] = useAddClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      name: // value for 'name'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useAddClusterMutation(baseOptions?: Apollo.MutationHookOptions<AddClusterMutation, AddClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddClusterMutation, AddClusterMutationVariables>(AddClusterDocument, options);
+      }
+export type AddClusterMutationHookResult = ReturnType<typeof useAddClusterMutation>;
+export type AddClusterMutationResult = Apollo.MutationResult<AddClusterMutation>;
+export type AddClusterMutationOptions = Apollo.BaseMutationOptions<AddClusterMutation, AddClusterMutationVariables>;
+export const RemoveClusterDocument = gql`
+    mutation removeCluster($sceneId: ID!, $clusterId: ID!) {
+  removeCluster(input: {sceneId: $sceneId, clusterId: $clusterId}) {
+    scene {
+      id
+      clusters {
+        id
+        name
+        propertyId
+      }
+    }
+  }
+}
+    `;
+export type RemoveClusterMutationFn = Apollo.MutationFunction<RemoveClusterMutation, RemoveClusterMutationVariables>;
+
+/**
+ * __useRemoveClusterMutation__
+ *
+ * To run a mutation, you first call `useRemoveClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeClusterMutation, { data, loading, error }] = useRemoveClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      clusterId: // value for 'clusterId'
+ *   },
+ * });
+ */
+export function useRemoveClusterMutation(baseOptions?: Apollo.MutationHookOptions<RemoveClusterMutation, RemoveClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveClusterMutation, RemoveClusterMutationVariables>(RemoveClusterDocument, options);
+      }
+export type RemoveClusterMutationHookResult = ReturnType<typeof useRemoveClusterMutation>;
+export type RemoveClusterMutationResult = Apollo.MutationResult<RemoveClusterMutation>;
+export type RemoveClusterMutationOptions = Apollo.BaseMutationOptions<RemoveClusterMutation, RemoveClusterMutationVariables>;
+export const UpdateClusterDocument = gql`
+    mutation UpdateCluster($sceneId: ID!, $clusterId: ID!, $name: String!) {
+  updateCluster(input: {sceneId: $sceneId, clusterId: $clusterId, name: $name}) {
+    cluster {
+      id
+      name
+      propertyId
+    }
+  }
+}
+    `;
+export type UpdateClusterMutationFn = Apollo.MutationFunction<UpdateClusterMutation, UpdateClusterMutationVariables>;
+
+/**
+ * __useUpdateClusterMutation__
+ *
+ * To run a mutation, you first call `useUpdateClusterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateClusterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateClusterMutation, { data, loading, error }] = useUpdateClusterMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      clusterId: // value for 'clusterId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUpdateClusterMutation(baseOptions?: Apollo.MutationHookOptions<UpdateClusterMutation, UpdateClusterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateClusterMutation, UpdateClusterMutationVariables>(UpdateClusterDocument, options);
+      }
+export type UpdateClusterMutationHookResult = ReturnType<typeof useUpdateClusterMutation>;
+export type UpdateClusterMutationResult = Apollo.MutationResult<UpdateClusterMutation>;
+export type UpdateClusterMutationOptions = Apollo.BaseMutationOptions<UpdateClusterMutation, UpdateClusterMutationVariables>;
 export const GetPrimitivesDocument = gql`
     query GetPrimitives($sceneId: ID!, $lang: String) {
   node(id: $sceneId, type: SCENE) {
@@ -5722,6 +6030,15 @@ export const GetScenePropertyDocument = gql`
           ...PropertyFragment
         }
       }
+      clusters {
+        id
+        name
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
     }
   }
 }
@@ -5960,6 +6277,480 @@ export function useUpdateWidgetMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateWidgetMutationHookResult = ReturnType<typeof useUpdateWidgetMutation>;
 export type UpdateWidgetMutationResult = Apollo.MutationResult<UpdateWidgetMutation>;
 export type UpdateWidgetMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetMutation, UpdateWidgetMutationVariables>;
+export const GetSceneTagsDocument = gql`
+    query getSceneTags($sceneId: ID!) {
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      tags {
+        id
+        label
+        ... on TagGroup {
+          tags {
+            id
+            label
+          }
+        }
+        ... on TagItem {
+          parentId
+          parent {
+            id
+            label
+            tags {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSceneTagsQuery__
+ *
+ * To run a query within a React component, call `useGetSceneTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSceneTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSceneTagsQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *   },
+ * });
+ */
+export function useGetSceneTagsQuery(baseOptions: Apollo.QueryHookOptions<GetSceneTagsQuery, GetSceneTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSceneTagsQuery, GetSceneTagsQueryVariables>(GetSceneTagsDocument, options);
+      }
+export function useGetSceneTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSceneTagsQuery, GetSceneTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSceneTagsQuery, GetSceneTagsQueryVariables>(GetSceneTagsDocument, options);
+        }
+export type GetSceneTagsQueryHookResult = ReturnType<typeof useGetSceneTagsQuery>;
+export type GetSceneTagsLazyQueryHookResult = ReturnType<typeof useGetSceneTagsLazyQuery>;
+export type GetSceneTagsQueryResult = Apollo.QueryResult<GetSceneTagsQuery, GetSceneTagsQueryVariables>;
+export const CreateTagGroupDocument = gql`
+    mutation createTagGroup($sceneId: ID!, $label: String!) {
+  createTagGroup(input: {sceneId: $sceneId, label: $label}) {
+    tag {
+      id
+      label
+      tags {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+export type CreateTagGroupMutationFn = Apollo.MutationFunction<CreateTagGroupMutation, CreateTagGroupMutationVariables>;
+
+/**
+ * __useCreateTagGroupMutation__
+ *
+ * To run a mutation, you first call `useCreateTagGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTagGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTagGroupMutation, { data, loading, error }] = useCreateTagGroupMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      label: // value for 'label'
+ *   },
+ * });
+ */
+export function useCreateTagGroupMutation(baseOptions?: Apollo.MutationHookOptions<CreateTagGroupMutation, CreateTagGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTagGroupMutation, CreateTagGroupMutationVariables>(CreateTagGroupDocument, options);
+      }
+export type CreateTagGroupMutationHookResult = ReturnType<typeof useCreateTagGroupMutation>;
+export type CreateTagGroupMutationResult = Apollo.MutationResult<CreateTagGroupMutation>;
+export type CreateTagGroupMutationOptions = Apollo.BaseMutationOptions<CreateTagGroupMutation, CreateTagGroupMutationVariables>;
+export const CreateTagItemDocument = gql`
+    mutation createTagItem($sceneId: ID!, $label: String!, $parent: ID, $linkedDatasetSchemaId: ID, $linkedDatasetID: ID, $linkedDatasetField: ID) {
+  createTagItem(
+    input: {sceneId: $sceneId, label: $label, parent: $parent, linkedDatasetSchemaID: $linkedDatasetSchemaId, linkedDatasetID: $linkedDatasetID, linkedDatasetField: $linkedDatasetField}
+  ) {
+    tag {
+      id
+      label
+      parentId
+    }
+    parent {
+      id
+      label
+      tags {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+export type CreateTagItemMutationFn = Apollo.MutationFunction<CreateTagItemMutation, CreateTagItemMutationVariables>;
+
+/**
+ * __useCreateTagItemMutation__
+ *
+ * To run a mutation, you first call `useCreateTagItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTagItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTagItemMutation, { data, loading, error }] = useCreateTagItemMutation({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      label: // value for 'label'
+ *      parent: // value for 'parent'
+ *      linkedDatasetSchemaId: // value for 'linkedDatasetSchemaId'
+ *      linkedDatasetID: // value for 'linkedDatasetID'
+ *      linkedDatasetField: // value for 'linkedDatasetField'
+ *   },
+ * });
+ */
+export function useCreateTagItemMutation(baseOptions?: Apollo.MutationHookOptions<CreateTagItemMutation, CreateTagItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTagItemMutation, CreateTagItemMutationVariables>(CreateTagItemDocument, options);
+      }
+export type CreateTagItemMutationHookResult = ReturnType<typeof useCreateTagItemMutation>;
+export type CreateTagItemMutationResult = Apollo.MutationResult<CreateTagItemMutation>;
+export type CreateTagItemMutationOptions = Apollo.BaseMutationOptions<CreateTagItemMutation, CreateTagItemMutationVariables>;
+export const AttachTagItemToGroupDocument = gql`
+    mutation attachTagItemToGroup($itemId: ID!, $groupId: ID!) {
+  attachTagItemToGroup(input: {itemID: $itemId, groupID: $groupId}) {
+    tag {
+      id
+      label
+      tags {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+export type AttachTagItemToGroupMutationFn = Apollo.MutationFunction<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>;
+
+/**
+ * __useAttachTagItemToGroupMutation__
+ *
+ * To run a mutation, you first call `useAttachTagItemToGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachTagItemToGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachTagItemToGroupMutation, { data, loading, error }] = useAttachTagItemToGroupMutation({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useAttachTagItemToGroupMutation(baseOptions?: Apollo.MutationHookOptions<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>(AttachTagItemToGroupDocument, options);
+      }
+export type AttachTagItemToGroupMutationHookResult = ReturnType<typeof useAttachTagItemToGroupMutation>;
+export type AttachTagItemToGroupMutationResult = Apollo.MutationResult<AttachTagItemToGroupMutation>;
+export type AttachTagItemToGroupMutationOptions = Apollo.BaseMutationOptions<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>;
+export const DetachTagItemFromGroupDocument = gql`
+    mutation detachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
+  detachTagItemFromGroup(input: {itemID: $itemId, groupID: $groupId}) {
+    tag {
+      id
+      label
+      tags {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+export type DetachTagItemFromGroupMutationFn = Apollo.MutationFunction<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>;
+
+/**
+ * __useDetachTagItemFromGroupMutation__
+ *
+ * To run a mutation, you first call `useDetachTagItemFromGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachTagItemFromGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachTagItemFromGroupMutation, { data, loading, error }] = useDetachTagItemFromGroupMutation({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useDetachTagItemFromGroupMutation(baseOptions?: Apollo.MutationHookOptions<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>(DetachTagItemFromGroupDocument, options);
+      }
+export type DetachTagItemFromGroupMutationHookResult = ReturnType<typeof useDetachTagItemFromGroupMutation>;
+export type DetachTagItemFromGroupMutationResult = Apollo.MutationResult<DetachTagItemFromGroupMutation>;
+export type DetachTagItemFromGroupMutationOptions = Apollo.BaseMutationOptions<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>;
+export const AttachTagToLayerDocument = gql`
+    mutation attachTagToLayer($tagId: ID!, $layerId: ID!) {
+  attachTagToLayer(input: {tagID: $tagId, layerID: $layerId}) {
+    layer {
+      id
+      tags {
+        tagId
+        tag {
+          id
+          label
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type AttachTagToLayerMutationFn = Apollo.MutationFunction<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>;
+
+/**
+ * __useAttachTagToLayerMutation__
+ *
+ * To run a mutation, you first call `useAttachTagToLayerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachTagToLayerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachTagToLayerMutation, { data, loading, error }] = useAttachTagToLayerMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useAttachTagToLayerMutation(baseOptions?: Apollo.MutationHookOptions<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>(AttachTagToLayerDocument, options);
+      }
+export type AttachTagToLayerMutationHookResult = ReturnType<typeof useAttachTagToLayerMutation>;
+export type AttachTagToLayerMutationResult = Apollo.MutationResult<AttachTagToLayerMutation>;
+export type AttachTagToLayerMutationOptions = Apollo.BaseMutationOptions<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>;
+export const DetachTagFromLayerDocument = gql`
+    mutation detachTagFromLayer($tagId: ID!, $layerId: ID!) {
+  detachTagFromLayer(input: {tagID: $tagId, layerID: $layerId}) {
+    layer {
+      id
+      tags {
+        tagId
+        tag {
+          id
+          label
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type DetachTagFromLayerMutationFn = Apollo.MutationFunction<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>;
+
+/**
+ * __useDetachTagFromLayerMutation__
+ *
+ * To run a mutation, you first call `useDetachTagFromLayerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachTagFromLayerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachTagFromLayerMutation, { data, loading, error }] = useDetachTagFromLayerMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useDetachTagFromLayerMutation(baseOptions?: Apollo.MutationHookOptions<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>(DetachTagFromLayerDocument, options);
+      }
+export type DetachTagFromLayerMutationHookResult = ReturnType<typeof useDetachTagFromLayerMutation>;
+export type DetachTagFromLayerMutationResult = Apollo.MutationResult<DetachTagFromLayerMutation>;
+export type DetachTagFromLayerMutationOptions = Apollo.BaseMutationOptions<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>;
+export const RemoveTagDocument = gql`
+    mutation removeTag($tagId: ID!) {
+  removeTag(input: {tagID: $tagId}) {
+    tagId
+    updatedLayers {
+      id
+      tags {
+        tagId
+        tag {
+          id
+          label
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type RemoveTagMutationFn = Apollo.MutationFunction<RemoveTagMutation, RemoveTagMutationVariables>;
+
+/**
+ * __useRemoveTagMutation__
+ *
+ * To run a mutation, you first call `useRemoveTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTagMutation, { data, loading, error }] = useRemoveTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *   },
+ * });
+ */
+export function useRemoveTagMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTagMutation, RemoveTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveTagMutation, RemoveTagMutationVariables>(RemoveTagDocument, options);
+      }
+export type RemoveTagMutationHookResult = ReturnType<typeof useRemoveTagMutation>;
+export type RemoveTagMutationResult = Apollo.MutationResult<RemoveTagMutation>;
+export type RemoveTagMutationOptions = Apollo.BaseMutationOptions<RemoveTagMutation, RemoveTagMutationVariables>;
+export const UpdateTagDocument = gql`
+    mutation updateTag($tagId: ID!, $sceneId: ID!, $label: String) {
+  updateTag(input: {tagId: $tagId, sceneId: $sceneId, label: $label}) {
+    tag {
+      id
+      label
+    }
+  }
+}
+    `;
+export type UpdateTagMutationFn = Apollo.MutationFunction<UpdateTagMutation, UpdateTagMutationVariables>;
+
+/**
+ * __useUpdateTagMutation__
+ *
+ * To run a mutation, you first call `useUpdateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTagMutation, { data, loading, error }] = useUpdateTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      sceneId: // value for 'sceneId'
+ *      label: // value for 'label'
+ *   },
+ * });
+ */
+export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTagMutation, UpdateTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTagMutation, UpdateTagMutationVariables>(UpdateTagDocument, options);
+      }
+export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
+export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
+export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const GetLayerTagsDocument = gql`
+    query getLayerTags($layerId: ID!) {
+  layer(id: $layerId) {
+    id
+    tags {
+      tagId
+      tag {
+        id
+        label
+      }
+      ... on LayerTagGroup {
+        children {
+          tag {
+            id
+            label
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLayerTagsQuery__
+ *
+ * To run a query within a React component, call `useGetLayerTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLayerTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLayerTagsQuery({
+ *   variables: {
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useGetLayerTagsQuery(baseOptions: Apollo.QueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+      }
+export function useGetLayerTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+        }
+export type GetLayerTagsQueryHookResult = ReturnType<typeof useGetLayerTagsQuery>;
+export type GetLayerTagsLazyQueryHookResult = ReturnType<typeof useGetLayerTagsLazyQuery>;
+export type GetLayerTagsQueryResult = Apollo.QueryResult<GetLayerTagsQuery, GetLayerTagsQueryVariables>;
 export const UpdateMeDocument = gql`
     mutation updateMe($name: String, $email: String, $lang: Lang, $theme: Theme, $password: String, $passwordConfirmation: String) {
   updateMe(
