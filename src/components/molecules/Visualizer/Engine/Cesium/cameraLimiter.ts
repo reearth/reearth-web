@@ -36,8 +36,7 @@ export function useCameraLimiter(
   const targetWidth = 1000000;
   const targetLength = 1000000;
   const limiterDimensions = useMemo((): InnerLimiterDimensions | undefined => {
-    const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed() || !geodesic) return undefined;
+    if (!geodesic) return undefined;
     const {
       cameraLimitterTargetWidth: width = targetWidth,
       cameraLimitterTargetLength: length = targetLength,
@@ -53,7 +52,7 @@ export function useCameraLimiter(
       cartographicDimensions,
       cartesianArray,
     };
-  }, [cesium, property, geodesic]);
+  }, [property, geodesic]);
 
   // calculate maximum camera view (outer boundaries)
   const [cameraViewOuterBoundaries, setCameraViewOuterBoundaries] = useState<
