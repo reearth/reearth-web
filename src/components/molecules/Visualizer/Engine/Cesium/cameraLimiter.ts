@@ -130,10 +130,10 @@ export const cameraViewBoundariesMaterial = new PolylineDashMaterialProperty({
 
 export type InnerLimiterDimensions = {
   cartographicDimensions: {
-    rightDemention: Cartographic;
-    leftDemention: Cartographic;
-    topDemention: Cartographic;
-    bottomDemention: Cartographic;
+    rightDimension: Cartographic;
+    leftDimension: Cartographic;
+    topDimension: Cartographic;
+    bottomDimension: Cartographic;
   };
   cartesianArray: Cartesian3[];
 };
@@ -181,28 +181,28 @@ export const calcBoundaryBox = (
   halfWidth: number,
 ): {
   cartographicDimensions: {
-    rightDemention: Cartographic;
-    leftDemention: Cartographic;
-    topDemention: Cartographic;
-    bottomDemention: Cartographic;
+    rightDimension: Cartographic;
+    leftDimension: Cartographic;
+    topDimension: Cartographic;
+    bottomDimension: Cartographic;
   };
   cartesianArray: Cartesian3[];
 } => {
-  const topDemention = geodesic.geodesicVertical.interpolateUsingSurfaceDistance(halfLength);
-  const bottomDemention = geodesic.geodesicVertical.interpolateUsingSurfaceDistance(-halfLength);
-  const rightDemention = geodesic.geodesicHorizontal.interpolateUsingSurfaceDistance(halfWidth);
-  const leftDemention = geodesic.geodesicHorizontal.interpolateUsingSurfaceDistance(-halfWidth);
+  const topDimension = geodesic.geodesicVertical.interpolateUsingSurfaceDistance(halfLength);
+  const bottomDimension = geodesic.geodesicVertical.interpolateUsingSurfaceDistance(-halfLength);
+  const rightDimension = geodesic.geodesicHorizontal.interpolateUsingSurfaceDistance(halfWidth);
+  const leftDimension = geodesic.geodesicHorizontal.interpolateUsingSurfaceDistance(-halfWidth);
 
-  const rightTop = new Cartographic(rightDemention.longitude, topDemention.latitude, 0);
-  const leftTop = new Cartographic(leftDemention.longitude, topDemention.latitude, 0);
-  const rightBottom = new Cartographic(rightDemention.longitude, bottomDemention.latitude, 0);
-  const leftBottom = new Cartographic(leftDemention.longitude, bottomDemention.latitude, 0);
+  const rightTop = new Cartographic(rightDimension.longitude, topDimension.latitude, 0);
+  const leftTop = new Cartographic(leftDimension.longitude, topDimension.latitude, 0);
+  const rightBottom = new Cartographic(rightDimension.longitude, bottomDimension.latitude, 0);
+  const leftBottom = new Cartographic(leftDimension.longitude, bottomDimension.latitude, 0);
   return {
     cartographicDimensions: {
-      rightDemention,
-      leftDemention,
-      topDemention,
-      bottomDemention,
+      rightDimension,
+      leftDimension,
+      topDimension,
+      bottomDimension,
     },
     cartesianArray: [
       Cartographic.toCartesian(rightTop),
@@ -223,13 +223,13 @@ export const getAllowedCameraDestination = (
   const destination = new Cartographic(
     Math.clamp(
       cameraPosition.longitude,
-      limiterDimensions.cartographicDimensions.leftDemention.longitude,
-      limiterDimensions.cartographicDimensions.rightDemention.longitude,
+      limiterDimensions.cartographicDimensions.leftDimension.longitude,
+      limiterDimensions.cartographicDimensions.rightDimension.longitude,
     ),
     Math.clamp(
       cameraPosition.latitude,
-      limiterDimensions.cartographicDimensions.bottomDemention.latitude,
-      limiterDimensions.cartographicDimensions.topDemention.latitude,
+      limiterDimensions.cartographicDimensions.bottomDimension.latitude,
+      limiterDimensions.cartographicDimensions.topDimension.latitude,
     ),
     cameraPosition.height,
   );
