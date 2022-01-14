@@ -9,15 +9,17 @@ import {
   Rectangle,
 } from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, RefObject } from "react";
 import { CesiumComponentRef } from "resium";
-import { RefObject } from "use-callback-ref/dist/es5/types";
 
 import { Camera } from "@reearth/util/value";
 
 import type { SceneProperty } from "..";
 
 import { getCamera } from "./common";
+
+const targetWidth = 1000000;
+const targetLength = 1000000;
 
 export function useCameraLimiter(
   cesium: RefObject<CesiumComponentRef<CesiumViewer>>,
@@ -29,18 +31,22 @@ export function useCameraLimiter(
     | { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic } => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return undefined;
-    return getGeodesic(viewer, property);
-  }, [cesium, property]);
+    return property?.cameraLimitterTargetArea?.lng && property.cameraLimitterTargetArea.lat
+      ? getGeodesic(
+        viewer,
+        property.cameraLimitterTargetArea.lng,
+        property.cameraLimitterTargetArea.lat,
+      )
+      : undefined;
+  }, [cesium, property?.cameraLimitterTargetArea?.lng, property?.cameraLimitterTargetArea?.lat]);
 
   // calculate inner limiter dimensions
-  const targetWidth = 1000000;
-  const targetLength = 1000000;
   const limiterDimensions = useMemo((): InnerLimiterDimensions | undefined => {
     if (!geodesic) return undefined;
-    const {
-      cameraLimitterTargetWidth: width = targetWidth,
-      cameraLimitterTargetLength: length = targetLength,
-    } = property ?? {};
+
+    const width = property?.cameraLimitterTargetWidth;
+    const length = property?.cameraLimitterTargetLength;
+    if (typeof width === "undefined" || typeof length === "undefined") return undefined;
 
     const { cartesianArray, cartographicDimensions } = calcBoundaryBox(
       geodesic,
@@ -52,7 +58,7 @@ export function useCameraLimiter(
       cartographicDimensions,
       cartesianArray,
     };
-  }, [property, geodesic]);
+  }, [property?.cameraLimitterTargetWidth, property?.cameraLimitterTargetLength, geodesic]);
 
   // calculate maximum camera view (outer boundaries)
   const [cameraViewOuterBoundaries, setCameraViewOuterBoundaries] = useState<
@@ -99,21 +105,25 @@ export function useCameraLimiter(
 
   // Manage camera limiter conditions
   useEffect(() => {
-    const camera = getCamera(cesium?.current?.cesiumElement);
     const viewer = cesium?.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed() || !property?.cameraLimitterEnabled || !limiterDimensions)
+    const camera = getCamera(cesium?.current?.cesiumElement);
+    if (
+      !viewer ||
+      viewer.isDestroyed() ||
+      !camera ||
+      !property?.cameraLimitterEnabled ||
+      !limiterDimensions
+    )
       return;
-    if (camera) {
-      viewer.camera.setView({
-        destination: getAllowedCameraDestination(camera, limiterDimensions),
-        orientation: {
-          heading: viewer.camera.heading,
-          pitch: viewer.camera.pitch,
-          roll: viewer.camera.roll,
-          up: viewer.camera.up,
-        },
-      });
-    }
+    viewer.camera.setView({
+      destination: getAllowedCameraDestination(camera, limiterDimensions),
+      orientation: {
+        heading: viewer.camera.heading,
+        pitch: viewer.camera.pitch,
+        roll: viewer.camera.roll,
+        up: viewer.camera.up,
+      },
+    });
   }, [camera, cesium, property, limiterDimensions]);
 
   return {
@@ -139,16 +149,12 @@ export type InnerLimiterDimensions = {
 
 export const getGeodesic = (
   viewer: CesiumViewer,
-  property: SceneProperty["cameraLimiter"] | undefined,
+  lng: number,
+  lat: number,
 ): { geodesicVertical: EllipsoidGeodesic; geodesicHorizontal: EllipsoidGeodesic } | undefined => {
-  if (!property || !property?.cameraLimitterTargetArea) return undefined;
   const ellipsoid = viewer.scene.globe.ellipsoid;
 
-  const centerPoint = Cartesian3.fromDegrees(
-    property.cameraLimitterTargetArea.lng,
-    property.cameraLimitterTargetArea.lat,
-    0,
-  );
+  const centerPoint = Cartesian3.fromDegrees(lng, lat, 0);
 
   const cartographicCenterPoint = Cartographic.fromCartesian(centerPoint);
   const normal = ellipsoid.geodeticSurfaceNormal(centerPoint);
