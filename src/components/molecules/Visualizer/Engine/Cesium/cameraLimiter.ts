@@ -33,10 +33,10 @@ export function useCameraLimiter(
     if (!viewer || viewer.isDestroyed()) return undefined;
     return property?.cameraLimitterTargetArea?.lng && property.cameraLimitterTargetArea.lat
       ? getGeodesic(
-        viewer,
-        property.cameraLimitterTargetArea.lng,
-        property.cameraLimitterTargetArea.lat,
-      )
+          viewer,
+          property.cameraLimitterTargetArea.lng,
+          property.cameraLimitterTargetArea.lat,
+        )
       : undefined;
   }, [cesium, property?.cameraLimitterTargetArea?.lng, property?.cameraLimitterTargetArea?.lat]);
 
