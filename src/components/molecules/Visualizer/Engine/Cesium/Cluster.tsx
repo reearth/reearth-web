@@ -54,7 +54,7 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
       clusterParam.billboard.height = clusterImageWidth;
       clusterParam.billboard.width = clusterImageHeight;
 
-      // force a re-cluster with the new styling https://sandcastle.cesium.com/index.html?src=Clustering.html
+      // force a re-cluster with the new styling
       cluster.pixelRange = 0;
       cluster.pixelRange = clusterPixelRange;
     });
