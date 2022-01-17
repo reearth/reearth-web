@@ -44,6 +44,7 @@ module.exports = (env, args = {}) => {
       historyApiFallback: true,
       hot: true,
       open: true,
+      // host: "local-ip",
       port: 3000,
       proxy: {
         "/api": {
