@@ -89,67 +89,85 @@ const Infobox: React.FC<Props> = ({
       onEnter={() => setIsReadyToRender(false)}
       onEntered={() => setIsReadyToRender(true)}
       onExit={() => setIsReadyToRender(false)}>
-      {blocks?.map((b, i) => (
-        <Field
-          key={b.id}
-          id={b.id}
-          index={i}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-          isSelected={selectedBlockId === b.id}
-          dragDisabled={blocks.length < 2}
-          renderInsertionPopUp={
-            isReadyToRender &&
-            insertionPopUpPosition?.[0] === i &&
-            renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)
-          }
-          insertionPopUpPosition={insertionPopUpPosition?.[1]}
-          onMove={onBlockMove}
-          onInsert={p => onInsertionButtonClick?.(i, p)}>
-          <PluginBlock
-            block={b}
-            isSelected={!!isEditable && !isBuilt && selectedBlockId === b.id}
+      <Wrapper
+        paddingTop={property?.default?.infoboxPaddingTop}
+        paddingBottom={property?.default?.infoboxPaddingBottom}
+        paddingLeft={property?.default?.infoboxPaddingLeft}
+        paddingRight={property?.default?.infoboxPaddingRight}>
+        {blocks?.map((b, i) => (
+          <Field
+            key={b.id}
+            id={b.id}
+            index={i}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            infoboxProperty={property}
-            pluginProperty={
-              b.pluginId && b.extensionId
-                ? pluginProperty?.[`${b.pluginId}/${b.extensionId}`]
-                : undefined
+            isSelected={selectedBlockId === b.id}
+            dragDisabled={blocks.length < 2}
+            renderInsertionPopUp={
+              isReadyToRender &&
+              insertionPopUpPosition?.[0] === i &&
+              renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)
             }
-            onChange={(...args) => onBlockChange?.(b.id, ...args)}
-            onClick={() => {
-              if (b.id && selectedBlockId !== b.id) {
-                onBlockSelect?.(b.id);
+            insertionPopUpPosition={insertionPopUpPosition?.[1]}
+            onMove={onBlockMove}
+            onInsert={p => onInsertionButtonClick?.(i, p)}>
+            <PluginBlock
+              block={b}
+              isSelected={!!isEditable && !isBuilt && selectedBlockId === b.id}
+              isEditable={isEditable}
+              isBuilt={isBuilt}
+              infoboxProperty={property}
+              pluginProperty={
+                b.pluginId && b.extensionId
+                  ? pluginProperty?.[`${b.pluginId}/${b.extensionId}`]
+                  : undefined
               }
-            }}
-            layer={layer}
-            pluginBaseUrl={pluginBaseUrl}
-          />
-        </Field>
-      ))}
-      {isEditable && (blocks?.length ?? 0) === 0 && (
-        <>
-          <AdditionButton onClick={() => onInsertionButtonClick?.(0)}>
-            {isReadyToRender &&
-              insertionPopUpPosition &&
-              renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)}
-          </AdditionButton>
-          <NoContentInfo>
-            <InnerWrapper size="xs" color={theme.infoBox.weakText}>
-              <StyledIcon icon="arrowLong" />
-              <span>
-                {intl.formatMessage({
-                  defaultMessage: `Move mouse here and click "+" to add content`,
-                })}
-              </span>
-            </InnerWrapper>
-          </NoContentInfo>
-        </>
-      )}
+              onChange={(...args) => onBlockChange?.(b.id, ...args)}
+              onClick={() => {
+                if (b.id && selectedBlockId !== b.id) {
+                  onBlockSelect?.(b.id);
+                }
+              }}
+              layer={layer}
+              pluginBaseUrl={pluginBaseUrl}
+            />
+          </Field>
+        ))}
+        {isEditable && (blocks?.length ?? 0) === 0 && (
+          <>
+            <AdditionButton onClick={() => onInsertionButtonClick?.(0)}>
+              {isReadyToRender &&
+                insertionPopUpPosition &&
+                renderInsertionPopUp?.(handleBlockInsert, onInsertionPopUpClose)}
+            </AdditionButton>
+            <NoContentInfo>
+              <InnerWrapper size="xs" color={theme.infoBox.weakText}>
+                <StyledIcon icon="arrowLong" />
+                <span>
+                  {intl.formatMessage({
+                    defaultMessage: `Move mouse here and click "+" to add content`,
+                  })}
+                </span>
+              </InnerWrapper>
+            </NoContentInfo>
+          </>
+        )}
+      </Wrapper>
     </Frame>
   );
 };
+
+const Wrapper = styled.div<{
+  paddingTop?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+}>`
+  padding-top: ${({ paddingTop }) => paddingTop + "px"};
+  padding-bottom: ${({ paddingBottom }) => paddingBottom + "px"};
+  padding-left: ${({ paddingLeft }) => paddingLeft + "px"};
+  padding-right: ${({ paddingRight }) => paddingRight + "px"};
+`;
 
 const NoContentInfo = styled.div`
   display: flex;
