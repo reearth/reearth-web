@@ -16,6 +16,10 @@ export type Props = BlockProps<Property>;
 export type Property = {
   default?: {
     text?: string;
+    textBlockPaddingTop?: number;
+    textBlockPaddingBottom?: number;
+    textBlockPaddingLeft?: number;
+    textBlockPaddingRight?: number;
     title?: string;
     markdown?: boolean;
     typography?: Typography;
@@ -32,7 +36,7 @@ const TextBlock: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const theme = useTheme();
-  const { text, title, markdown, typography } =
+  const { text, title,textBlockPaddingTop,textBlockPaddingBottom,textBlockPaddingLeft,textBlockPaddingRight, markdown, typography } =
     (block?.property as Property | undefined)?.default ?? {};
   const { bgcolor: bg } = infoboxProperty?.default ?? {};
 
@@ -94,6 +98,10 @@ const TextBlock: React.FC<Props> = ({
 
   return (
     <Wrapper
+      paddingTop={textBlockPaddingTop}
+      paddingBottom={textBlockPaddingBottom}
+      paddingLeft={textBlockPaddingLeft}
+      paddingRight={textBlockPaddingRight}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
@@ -137,7 +145,17 @@ const TextBlock: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled(Border)<{ isTemplate: boolean }>`
+const Wrapper = styled(Border)<{
+  isTemplate: boolean;
+  paddingTop?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+}>`
+  padding-top: ${({ paddingTop }) => paddingTop + "px"};
+  padding-bottom: ${({ paddingBottom }) => paddingBottom + "px"};
+  padding-left: ${({ paddingLeft }) => paddingLeft + "px"};
+  padding-right: ${({ paddingRight }) => paddingRight + "px"};
   margin: 0 8px;
   border: 1px solid
     ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
