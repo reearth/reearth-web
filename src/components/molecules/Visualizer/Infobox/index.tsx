@@ -90,10 +90,10 @@ const Infobox: React.FC<Props> = ({
       onEntered={() => setIsReadyToRender(true)}
       onExit={() => setIsReadyToRender(false)}>
       <Wrapper
-        paddingTop={property?.default?.infoboxPaddingTop}
-        paddingBottom={property?.default?.infoboxPaddingBottom}
-        paddingLeft={property?.default?.infoboxPaddingLeft}
-        paddingRight={property?.default?.infoboxPaddingRight}>
+        paddingTop={property?.default?.infoboxPaddingTop || 0}
+        paddingBottom={property?.default?.infoboxPaddingBottom || 0}
+        paddingLeft={property?.default?.infoboxPaddingLeft || 0}
+        paddingRight={property?.default?.infoboxPaddingRight || 0}>
         {blocks?.map((b, i) => (
           <Field
             key={b.id}

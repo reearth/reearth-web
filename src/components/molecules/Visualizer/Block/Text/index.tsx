@@ -16,10 +16,10 @@ export type Props = BlockProps<Property>;
 export type Property = {
   default?: {
     text?: string;
-    textBlockPaddingTop?: number;
-    textBlockPaddingBottom?: number;
-    textBlockPaddingLeft?: number;
-    textBlockPaddingRight?: number;
+    paddingTop?: number;
+    paddingBottom?: number;
+    paddingLeft?: number;
+    paddingRight?: number;
     title?: string;
     markdown?: boolean;
     typography?: Typography;
@@ -36,8 +36,16 @@ const TextBlock: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const theme = useTheme();
-  const { text, title,textBlockPaddingTop,textBlockPaddingBottom,textBlockPaddingLeft,textBlockPaddingRight, markdown, typography } =
-    (block?.property as Property | undefined)?.default ?? {};
+  const {
+    text,
+    title,
+    paddingTop,
+    paddingBottom,
+    paddingLeft,
+    paddingRight,
+    markdown,
+    typography,
+  } = (block?.property as Property | undefined)?.default ?? {};
   const { bgcolor: bg } = infoboxProperty?.default ?? {};
 
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -98,10 +106,10 @@ const TextBlock: React.FC<Props> = ({
 
   return (
     <Wrapper
-      paddingTop={textBlockPaddingTop}
-      paddingBottom={textBlockPaddingBottom}
-      paddingLeft={textBlockPaddingLeft}
-      paddingRight={textBlockPaddingRight}
+      paddingTop={paddingTop || 0}
+      paddingBottom={paddingBottom || 0}
+      paddingLeft={paddingLeft || 0}
+      paddingRight={paddingRight || 0}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
