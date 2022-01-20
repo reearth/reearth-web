@@ -6,7 +6,7 @@ import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
-import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
+import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import Layers, { LayerStore } from "./Layers";
@@ -19,7 +19,7 @@ import WidgetAlignSystem, {
   WidgetAlignSystem as WidgetAlignSystemType,
 } from "./WidgetAlignSystem";
 
-export type { SceneProperty } from "./Engine";
+export type { SceneProperty, ClusterProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Layer } from "./Layers";
 export type { Tag } from "./Plugin/types";
@@ -48,7 +48,7 @@ export type Props = PropsWithChildren<
     sceneProperty?: SceneProperty;
     tags?: Tag[];
     pluginProperty?: { [key: string]: any };
-    clusterProperty?: { [key: string]: any };
+    clusterProperty?: ClusterProperty[];
     clusterLayers?: string[];
     selectedLayerId?: string;
     selectedBlockId?: string;
@@ -174,6 +174,7 @@ export default function Visualizer({
             layers={layers}
             isLayerHidden={isLayerHidden}
             overriddenProperties={layerOverriddenProperties}
+            clusterComponent={engineRef.current?.clusterComponent}
           />
           {ready &&
             widgets?.floatingWidgets?.map(widget => (
