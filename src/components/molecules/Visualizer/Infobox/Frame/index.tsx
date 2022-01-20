@@ -11,6 +11,7 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";
+import { Layer } from "..";
 
 export type InfoboxStyles = {
   typography?: Typography;
@@ -20,6 +21,7 @@ export type InfoboxStyles = {
 export type Props = {
   className?: string;
   infoboxKey?: string;
+  layer?: Layer;
   sceneProperty?: SceneProperty;
   title?: string;
   size?: "small" | "large";
@@ -38,6 +40,7 @@ const InfoBox: React.FC<Props> = ({
   className,
   infoboxKey,
   sceneProperty,
+  layer,
   title,
   size,
   visible,
@@ -86,6 +89,7 @@ const InfoBox: React.FC<Props> = ({
     `,
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
+  const property = layer?.infobox?.property;
 
   return (
     <StyledFloatedPanel
@@ -121,7 +125,13 @@ const InfoBox: React.FC<Props> = ({
           onClick={handleClose}
           open={open}
         />
-        <Content ref={ref2} open={open}>
+        <Content
+          ref={ref2}
+          open={open}
+          paddingTop={property?.default?.infoboxPaddingTop}
+          paddingBottom={property?.default?.infoboxPaddingBottom}
+          paddingLeft={property?.default?.infoboxPaddingLeft}
+          paddingRight={property?.default?.infoboxPaddingRight}>
           {children}
         </Content>
       </Wrapper>
@@ -134,7 +144,6 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   open?: boolean;
   size?: "small" | "large";
 }>`
-  position: ${props => (props.floated ? "absolute" : "static")};
   top: 15%;
   right: ${({ open }) => (open ? "30px" : "-6px")};
   max-height: 70%;
@@ -202,7 +211,13 @@ const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
   display: ${({ open }) => (open ? "block" : "none")};
 `;
 
-const Content = styled.div<{ open?: boolean }>`
+const Content = styled.div<{
+  open?: boolean;
+  paddingTop?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+}>`
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   flex: auto;
@@ -222,6 +237,10 @@ const Content = styled.div<{ open?: boolean }>`
 
   max-height: ${({ open }) => (open ? "50vh" : "0")};
   padding: ${({ open }) => (open ? "20px 0" : "0")};
+  padding-top: ${({ paddingTop }) => (paddingTop ? paddingTop + "px" : "0")};
+  padding-bottom: ${({ paddingBottom }) => (paddingBottom ? paddingBottom + "px" : "0")};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft + "px" : "0")};
+  padding-right: ${({ paddingRight }) => (paddingRight ? paddingRight + "px" : "0")};
 `;
 
 export default InfoBox;
