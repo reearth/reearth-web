@@ -175,6 +175,15 @@ export const GET_EARTH_WIDGETS = gql`
           id
           ...PropertyFragment
         }
+        clusters {
+          id
+          name
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
         plugins {
           property {
             id
