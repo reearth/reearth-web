@@ -44,9 +44,8 @@ export function useCameraLimiter(
   const limiterDimensions = useMemo((): InnerLimiterDimensions | undefined => {
     if (!geodesic) return undefined;
 
-    const width = property?.cameraLimitterTargetWidth;
-    const length = property?.cameraLimitterTargetLength;
-    if (typeof width === "undefined" || typeof length === "undefined") return undefined;
+    const width = property?.cameraLimitterTargetWidth || targetWidth;
+    const length = property?.cameraLimitterTargetLength || targetLength;
 
     const { cartesianArray, cartographicDimensions } = calcBoundaryBox(
       geodesic,
