@@ -70,13 +70,15 @@ export default function Layers({
   return (
     <>
       {Cluster &&
-        clusterProperty?.map(cluster => (
-          <Cluster key={cluster.id} property={cluster}>
-            {layers?.flattenLayersRaw
-              ?.filter(layer => cluster?.layers?.some(l => l.layer === layer.id))
-              .map(renderLayer)}
-          </Cluster>
-        ))}
+        clusterProperty
+          ?.filter(cluster => !!cluster.id)
+          .map(cluster => (
+            <Cluster key={cluster.id} property={cluster}>
+              {layers?.flattenLayersRaw
+                ?.filter(layer => cluster?.layers?.some(l => l.layer === layer.id))
+                .map(renderLayer)}
+            </Cluster>
+          ))}
       {layers?.flattenLayersRaw
         ?.filter(
           layer =>
