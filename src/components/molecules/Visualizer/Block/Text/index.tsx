@@ -106,10 +106,10 @@ const TextBlock: React.FC<Props> = ({
 
   return (
     <Wrapper
-      paddingTop={paddingTop || 0}
-      paddingBottom={paddingBottom || 0}
-      paddingLeft={paddingLeft || 0}
-      paddingRight={paddingRight || 0}
+      paddingTop={paddingTop}
+      paddingBottom={paddingBottom}
+      paddingLeft={paddingLeft}
+      paddingRight={paddingRight}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
@@ -160,10 +160,10 @@ const Wrapper = styled(Border)<{
   paddingLeft?: number;
   paddingRight?: number;
 }>`
-  padding-top: ${({ paddingTop }) => paddingTop + "px"};
-  padding-bottom: ${({ paddingBottom }) => paddingBottom + "px"};
-  padding-left: ${({ paddingLeft }) => paddingLeft + "px"};
-  padding-right: ${({ paddingRight }) => paddingRight + "px"};
+  padding-top: ${({ paddingTop }) => (paddingTop ? paddingTop + "px" : "0")};
+  padding-bottom: ${({ paddingBottom }) => (paddingBottom ? paddingBottom + "px" : "0")};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft + "px" : "0")};
+  padding-right: ${({ paddingRight }) => (paddingRight ? paddingRight + "px" : "0")};
   margin: 0 8px;
   border: 1px solid
     ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
