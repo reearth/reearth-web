@@ -37,11 +37,7 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
   }, []);
 
   useEffect(() => {
-    const isClusterHidden = !!(
-      children &&
-      Array.isArray(children) &&
-      children.length < clusterMinSize
-    );
+    const isClusterHidden = React.Children.count(children) < clusterMinSize;
     const removeListener = cluster?.clusterEvent.addEventListener(
       (_clusteredEntities, clusterParam) => {
         clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
