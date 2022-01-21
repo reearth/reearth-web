@@ -114,6 +114,10 @@ export type Infobox<BP = any> = {
 export type InfoboxProperty = {
   default?: {
     title?: string;
+    infoboxPaddingTop?: number;
+    infoboxPaddingBottom?: number;
+    infoboxPaddingLeft?: number;
+    infoboxPaddingRight?: number;
     size?: "small" | "large";
     typography?: Typography;
     bgcolor?: string;
