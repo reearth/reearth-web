@@ -57,7 +57,9 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
         clusterParam.billboard.width = clusterImageHeight;
 
         // Workaround if minimumClusterSize is larger than number of layers event listner breaks
-        cluster.minimumClusterSize = isClusterHidden ? children.length : clusterMinSize;
+        cluster.minimumClusterSize = isClusterHidden
+          ? React.Children.count(children)
+          : clusterMinSize;
       },
     );
     cluster.enabled = !isClusterHidden;
