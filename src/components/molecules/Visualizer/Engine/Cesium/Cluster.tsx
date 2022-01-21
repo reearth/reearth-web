@@ -1,5 +1,5 @@
 import { Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useRef } from "react";
 import { CustomDataSource } from "resium";
 
 import { toCSSFont } from "@reearth/util/value";
@@ -25,51 +25,54 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     clusterImageHeight,
   } = property?.default ?? {};
 
-  const cluster = useMemo(() => {
-    return new EntityCluster({
+  const cluster = useRef(
+    new EntityCluster({
       enabled: true,
       pixelRange: clusterPixelRange,
       minimumClusterSize: clusterMinSize,
       clusterBillboards: true,
       clusterLabels: true,
       clusterPoints: true,
-    });
-  }, [clusterMinSize, clusterPixelRange]);
+    }),
+  );
 
   useEffect(() => {
-    return cluster?.clusterEvent.addEventListener((_clusteredEntities, clusterParam) => {
-      clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
-      clusterParam.label.horizontalOrigin =
-        clusterLabelTypography.textAlign === "right"
-          ? HorizontalOrigin.LEFT
-          : clusterLabelTypography.textAlign === "left"
-          ? HorizontalOrigin.RIGHT
-          : HorizontalOrigin.CENTER;
-      clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
-      clusterParam.label.fillColor = Color.fromCssColorString(
-        clusterLabelTypography.color ?? "#FFF",
-      );
-      clusterParam.billboard.show = true;
-      clusterParam.billboard.image = clusterImage;
-      clusterParam.billboard.height = clusterImageWidth;
-      clusterParam.billboard.width = clusterImageHeight;
-
-      // force a re-cluster with the new styling
-      cluster.pixelRange = 0;
-      cluster.pixelRange = clusterPixelRange;
-    });
+    const removeListener = cluster.current?.clusterEvent.addEventListener(
+      (_clusteredEntities, clusterParam) => {
+        clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
+        clusterParam.label.horizontalOrigin =
+          clusterLabelTypography.textAlign === "right"
+            ? HorizontalOrigin.LEFT
+            : clusterLabelTypography.textAlign === "left"
+            ? HorizontalOrigin.RIGHT
+            : HorizontalOrigin.CENTER;
+        clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
+        clusterParam.label.fillColor = Color.fromCssColorString(
+          clusterLabelTypography.color ?? "#FFF",
+        );
+        clusterParam.billboard.show = true;
+        clusterParam.billboard.image = clusterImage;
+        clusterParam.billboard.height = clusterImageWidth;
+        clusterParam.billboard.width = clusterImageHeight;
+        cluster.current.minimumClusterSize = clusterMinSize;
+      },
+    );
+    cluster.current.pixelRange = 0;
+    cluster.current.pixelRange = clusterPixelRange;
+    return () => {
+      removeListener();
+    };
   }, [
     clusterMinSize,
     clusterPixelRange,
-    cluster,
     clusterLabelTypography,
     clusterImage,
     clusterImageHeight,
     clusterImageWidth,
   ]);
 
-  return cluster ? (
-    <CustomDataSource show clustering={cluster}>
+  return cluster.current ? (
+    <CustomDataSource show clustering={cluster.current}>
       {children}
     </CustomDataSource>
   ) : null;
