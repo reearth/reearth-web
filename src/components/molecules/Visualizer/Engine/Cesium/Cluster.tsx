@@ -29,7 +29,7 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     new EntityCluster({
       enabled: true,
       pixelRange: clusterPixelRange,
-      minimumClusterSize: clusterMinSize,
+      minimumClusterSize: 2,
       clusterBillboards: true,
       clusterLabels: true,
       clusterPoints: true,
@@ -37,6 +37,11 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
   );
 
   useEffect(() => {
+    const isClusterHidden = !!(
+      children &&
+      Array.isArray(children) &&
+      children.length < clusterMinSize
+    );
     const removeListener = cluster.current?.clusterEvent.addEventListener(
       (_clusteredEntities, clusterParam) => {
         clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
@@ -54,9 +59,12 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
         clusterParam.billboard.image = clusterImage;
         clusterParam.billboard.height = clusterImageWidth;
         clusterParam.billboard.width = clusterImageHeight;
-        cluster.current.minimumClusterSize = clusterMinSize;
+        // Workaround if minimumClusterSize is larger than number of layers event listner breaks
+        cluster.current.minimumClusterSize = isClusterHidden ? children.length : clusterMinSize;
       },
     );
+    cluster.current.enabled = !isClusterHidden;
+    // Workaround to re-style components
     cluster.current.pixelRange = 0;
     cluster.current.pixelRange = clusterPixelRange;
     return () => {
@@ -69,6 +77,7 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     clusterImage,
     clusterImageHeight,
     clusterImageWidth,
+    children,
   ]);
 
   return cluster.current ? (
