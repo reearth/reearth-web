@@ -54,6 +54,7 @@ export default function BlockComponent<P = any, PP = any>({
         pluginProperty={props.pluginProperty}
         layer={props.layer}
         block={props.block}
+        onClick={props.onClick}
       />
     </Wrapper>
   );
@@ -62,7 +63,7 @@ export default function BlockComponent<P = any, PP = any>({
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
     ${({ selected, editable, theme }) =>
-      editable && selected ? theme.infoBox.accent2 : "transparent"};
+    editable && selected ? theme.infoBox.accent2 : "transparent"};
   border-radius: 6px;
 
   &:hover {
