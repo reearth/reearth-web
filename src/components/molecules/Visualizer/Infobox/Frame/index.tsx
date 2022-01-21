@@ -11,17 +11,19 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";
-import { Layer } from "..";
 
 export type InfoboxStyles = {
   typography?: Typography;
   bgcolor?: string;
+  infoboxPaddingTop?: number;
+  infoboxPaddingBottom?: number;
+  infoboxPaddingLeft?: number;
+  infoboxPaddingRight?: number;
 };
 
 export type Props = {
   className?: string;
   infoboxKey?: string;
-  layer?: Layer;
   sceneProperty?: SceneProperty;
   title?: string;
   size?: "small" | "large";
@@ -40,7 +42,6 @@ const InfoBox: React.FC<Props> = ({
   className,
   infoboxKey,
   sceneProperty,
-  layer,
   title,
   size,
   visible,
@@ -89,8 +90,6 @@ const InfoBox: React.FC<Props> = ({
     `,
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
-  const property = layer?.infobox?.property;
-
   return (
     <StyledFloatedPanel
       className={className}
@@ -128,10 +127,10 @@ const InfoBox: React.FC<Props> = ({
         <Content
           ref={ref2}
           open={open}
-          paddingTop={property?.default?.infoboxPaddingTop}
-          paddingBottom={property?.default?.infoboxPaddingBottom}
-          paddingLeft={property?.default?.infoboxPaddingLeft}
-          paddingRight={property?.default?.infoboxPaddingRight}>
+          paddingTop={styles?.infoboxPaddingTop}
+          paddingBottom={styles?.infoboxPaddingBottom}
+          paddingLeft={styles?.infoboxPaddingLeft}
+          paddingRight={styles?.infoboxPaddingRight}>
           {children}
         </Content>
       </Wrapper>
@@ -237,10 +236,10 @@ const Content = styled.div<{
 
   max-height: ${({ open }) => (open ? "50vh" : "0")};
   padding: ${({ open }) => (open ? "20px 0" : "0")};
-  padding-top: ${({ paddingTop }) => (paddingTop ? paddingTop + "px" : "0")};
-  padding-bottom: ${({ paddingBottom }) => (paddingBottom ? paddingBottom + "px" : "0")};
-  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft + "px" : "0")};
-  padding-right: ${({ paddingRight }) => (paddingRight ? paddingRight + "px" : "0")};
+  padding-top: ${({ paddingTop }) => paddingTop && `${paddingTop}px`};
+  padding-bottom: ${({ paddingBottom }) => paddingBottom && `${paddingBottom}px`};
+  padding-left: ${({ paddingLeft }) => paddingLeft && `${paddingLeft}px`};
+  padding-right: ${({ paddingRight }) => paddingRight && `${paddingRight}px`};
 `;
 
 export default InfoBox;
