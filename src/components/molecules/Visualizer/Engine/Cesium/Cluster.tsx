@@ -1,5 +1,5 @@
 import { Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
 import { toCSSFont } from "@reearth/util/value";
@@ -25,16 +25,16 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     clusterImageHeight,
   } = property?.default ?? {};
 
-  const cluster = useRef(
-    new EntityCluster({
+  const cluster = useMemo(() => {
+    return new EntityCluster({
       enabled: true,
-      pixelRange: clusterPixelRange,
+      pixelRange: 15,
       minimumClusterSize: 2,
       clusterBillboards: true,
       clusterLabels: true,
       clusterPoints: true,
-    }),
-  );
+    });
+  }, []);
 
   useEffect(() => {
     const isClusterHidden = !!(
@@ -42,7 +42,7 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
       Array.isArray(children) &&
       children.length < clusterMinSize
     );
-    const removeListener = cluster.current?.clusterEvent.addEventListener(
+    const removeListener = cluster?.clusterEvent.addEventListener(
       (_clusteredEntities, clusterParam) => {
         clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
         clusterParam.label.horizontalOrigin =
@@ -59,14 +59,16 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
         clusterParam.billboard.image = clusterImage;
         clusterParam.billboard.height = clusterImageWidth;
         clusterParam.billboard.width = clusterImageHeight;
+        console.log(cluster);
+
         // Workaround if minimumClusterSize is larger than number of layers event listner breaks
-        cluster.current.minimumClusterSize = isClusterHidden ? children.length : clusterMinSize;
+        cluster.minimumClusterSize = isClusterHidden ? children.length : clusterMinSize;
       },
     );
-    cluster.current.enabled = !isClusterHidden;
+    cluster.enabled = !isClusterHidden;
     // Workaround to re-style components
-    cluster.current.pixelRange = 0;
-    cluster.current.pixelRange = clusterPixelRange;
+    cluster.pixelRange = 0;
+    cluster.pixelRange = clusterPixelRange;
     return () => {
       removeListener();
     };
@@ -78,10 +80,11 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     clusterImageHeight,
     clusterImageWidth,
     children,
+    cluster,
   ]);
 
-  return cluster.current ? (
-    <CustomDataSource show clustering={cluster.current}>
+  return cluster ? (
+    <CustomDataSource show clustering={cluster}>
       {children}
     </CustomDataSource>
   ) : null;
