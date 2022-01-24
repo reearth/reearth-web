@@ -28,7 +28,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     selectProject,
     assets,
     createAssets,
-  } = useHooks();
+  } = useHooks(teamId);
 
   return (
     <SettingPage teamId={teamId}>

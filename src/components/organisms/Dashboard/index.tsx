@@ -30,6 +30,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     handleModalClose,
     createAssets,
     assets,
+    getMoreAssets,
   } = useHooks(teamId);
 
   return (
@@ -53,6 +54,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
         onCreateTeam={createTeam}
         onCreateProject={createProject}
         assets={assets}
+        getMoreAssets={getMoreAssets}
         createAssets={createAssets}
       />
       <Logo />

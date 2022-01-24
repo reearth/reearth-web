@@ -21,6 +21,7 @@ export interface Props {
     imageUrl: string;
   }) => Promise<void>;
   assets?: Asset[];
+  getMoreAssets?: () => void;
   createAssets?: (files: FileList) => Promise<void>;
 }
 
@@ -30,6 +31,7 @@ const QuickStart: React.FC<Props> = ({
   onCreateProject,
   assets,
   createAssets,
+  getMoreAssets,
 }) => {
   const intl = useIntl();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
@@ -82,6 +84,7 @@ const QuickStart: React.FC<Props> = ({
         onClose={() => setProjCreateOpen(false)}
         onSubmit={onCreateProject}
         assets={assets}
+        getMoreAssets={getMoreAssets}
         createAssets={createAssets}
       />
       <WorkspaceCreationModal

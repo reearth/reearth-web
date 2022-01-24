@@ -1499,6 +1499,7 @@ export type QueryAssetsArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
   first?: InputMaybe<Scalars['Int']>;
+  keyword?: InputMaybe<Scalars['String']>;
   last?: InputMaybe<Scalars['Int']>;
   sort?: InputMaybe<AssetSortType>;
   teamId: Scalars['ID'];
@@ -2981,6 +2982,7 @@ export type SceneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene',
 export type AssetsQueryVariables = Exact<{
   teamId: Scalars['ID'];
   sort?: Maybe<AssetSortType>;
+  keyword?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['Cursor']>;
@@ -7455,9 +7457,10 @@ export type SceneQueryHookResult = ReturnType<typeof useSceneQuery>;
 export type SceneLazyQueryHookResult = ReturnType<typeof useSceneLazyQuery>;
 export type SceneQueryResult = Apollo.QueryResult<SceneQuery, SceneQueryVariables>;
 export const AssetsDocument = gql`
-    query Assets($teamId: ID!, $sort: AssetSortType, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+    query Assets($teamId: ID!, $sort: AssetSortType, $keyword: String, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
   assets(
     teamId: $teamId
+    keyword: $keyword
     sort: $sort
     first: $first
     last: $last
@@ -7508,6 +7511,7 @@ export const AssetsDocument = gql`
  *   variables: {
  *      teamId: // value for 'teamId'
  *      sort: // value for 'sort'
+ *      keyword: // value for 'keyword'
  *      first: // value for 'first'
  *      last: // value for 'last'
  *      after: // value for 'after'

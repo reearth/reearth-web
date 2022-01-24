@@ -187,11 +187,27 @@ export default (teamId?: string) => {
     [createAssetMutation, teamId],
   );
 
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
+  const assetsPerPage = 20;
+
+  const { data: assetsData, fetchMore } = useAssetsQuery({
+    variables: { teamId: teamId ?? "", first: assetsPerPage },
+    notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const hasNextPage = assetsData?.assets.pageInfo.hasNextPage;
+  const assets = assetsData?.assets.edges.map(e => e.node) as AssetNodes;
+
+  const getMoreAssets = useCallback(() => {
+    if (hasNextPage) {
+      fetchMore({
+        variables: {
+          first: assetsPerPage,
+          after: assetsData?.assets.pageInfo.endCursor,
+          delay: true,
+        },
+      });
+    }
+  }, [assetsData?.assets.pageInfo, fetchMore, hasNextPage]);
 
   return {
     user,
@@ -206,5 +222,6 @@ export default (teamId?: string) => {
     handleModalClose,
     createAssets,
     assets,
+    getMoreAssets,
   };
 };

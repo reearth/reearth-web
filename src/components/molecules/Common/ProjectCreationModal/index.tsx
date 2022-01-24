@@ -24,6 +24,7 @@ export interface Props {
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
   assets?: Asset[];
+  getMoreAssets?: () => void;
   createAssets?: (files: FileList) => Promise<void>;
 }
 
@@ -38,6 +39,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   onClose,
   onSubmit,
   assets,
+  getMoreAssets,
   createAssets,
 }) => {
   const intl = useIntl();
@@ -133,6 +135,7 @@ const ProjectCreationModal: React.FC<Props> = ({
         isOpen={openAssets}
         onClose={() => setOpenAssets(false)}
         assets={assets}
+        getMoreAssets={getMoreAssets}
         fileType="image"
         onCreateAsset={createAssets}
         onSelect={handleSelect}

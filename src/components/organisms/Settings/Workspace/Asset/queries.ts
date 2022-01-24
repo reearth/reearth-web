@@ -4,6 +4,7 @@ export const ASSETS = gql`
   query Assets(
     $teamId: ID!
     $sort: AssetSortType
+    $keyword: String
     $first: Int
     $last: Int
     $after: Cursor
@@ -11,6 +12,7 @@ export const ASSETS = gql`
   ) {
     assets(
       teamId: $teamId
+      keyword: $keyword
       sort: $sort
       first: $first
       last: $last

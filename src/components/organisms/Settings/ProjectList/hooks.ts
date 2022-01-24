@@ -23,7 +23,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     ? "limited"
     : "unpublished";
 
-export default () => {
+export default (teamId: string) => {
   const [, setNotification] = useNotification();
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
@@ -40,11 +40,13 @@ export default () => {
   const [createScene] = useCreateSceneMutation();
   const [createAssetMutation] = useCreateAssetMutation();
 
-  const teamId = currentTeam?.id;
+  if (currentTeam && currentTeam.id !== teamId) {
+    teamId = currentTeam?.id;
+  }
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
   const { data: projectData } = useProjectQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
 
@@ -149,10 +151,11 @@ export default () => {
   );
 
   const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
+    variables: { teamId: teamId ?? "", first: 20 },
+    notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const assets = assetsData?.assets.edges.map(e => e.node) as AssetNodes;
 
   const createAssets = useCallback(
     (files: FileList) =>

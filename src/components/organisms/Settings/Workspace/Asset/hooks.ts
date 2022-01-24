@@ -31,16 +31,17 @@ export default (params: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const assetsPerPage = 5;
+  const assetsPerPage = 20;
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: { teamId: teamId ?? "", first: assetsPerPage },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
+  console.log(data, "datadadat");
   const hasNextPage = data?.assets.pageInfo.hasNextPage;
   const isRefetching = networkStatus === 3;
-  const assets = data?.assets.edges.map(e => e.node).reverse() as AssetNodes;
+  const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
 
   const getMoreAssets = useCallback(() => {
     if (hasNextPage) {
@@ -53,6 +54,10 @@ export default (params: Params) => {
       });
     }
   }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
+
+  useEffect(() => {
+    console.log(data, "hey");
+  }, [data]);
 
   const [createAssetMutation] = useCreateAssetMutation();
 

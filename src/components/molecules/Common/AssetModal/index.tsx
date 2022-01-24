@@ -19,6 +19,7 @@ export type Asset = AssetType;
 export type Props = {
   className?: string;
   assets?: Asset[];
+  getMoreAssets?: () => void;
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
@@ -32,6 +33,7 @@ type Tabs = "assets" | "url";
 
 const AssetModal: React.FC<Props> = ({
   assets,
+  getMoreAssets,
   isMultipleSelectable = false,
   isOpen,
   onClose,
@@ -92,13 +94,11 @@ const AssetModal: React.FC<Props> = ({
 
   const filteredAssets = useMemo(() => {
     if (!assets) return;
-    return assets
-      .filter(
-        a =>
-          !fileType ||
-          a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp)$/ : /\.(mp4|webm)$/),
-      )
-      .reverse(); // reversed to show newest at the top
+    return assets.filter(
+      a =>
+        !fileType ||
+        a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp)$/ : /\.(mp4|webm)$/),
+    );
   }, [assets, fileType]);
 
   return fileType === "video" ? (
@@ -160,6 +160,7 @@ const AssetModal: React.FC<Props> = ({
       {selectedTab === "assets" && (
         <AssetsContainer
           assets={filteredAssets}
+          onGetMore={getMoreAssets}
           isMultipleSelectable={isMultipleSelectable}
           accept={accept}
           onCreateAsset={onCreateAsset}

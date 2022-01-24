@@ -10,10 +10,9 @@ type Props = {
   teamId?: string;
   projectId?: string;
   onBack?: () => void;
-  onInfiniteScroll?: () => void;
 };
 
-const SettingPage: React.FC<Props> = ({ teamId, projectId, onInfiniteScroll, children }) => {
+const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
   const { logout } = useAuth();
 
   const {
@@ -46,8 +45,7 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, onInfiniteScroll, chi
       onChangeTeam={changeTeam}
       modalShown={modalShown}
       openModal={openModal}
-      handleModalClose={handleModalClose}
-      onInfiniteScroll={onInfiniteScroll}>
+      handleModalClose={handleModalClose}>
       {children}
     </MoleculesSettingPage>
   );
