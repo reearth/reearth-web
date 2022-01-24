@@ -85,7 +85,6 @@ const ContentItem = styled.div`
 const ContentButton = styled.div`
   padding: 5px;
   width: 60px;
-  min-height: 60px;
   border: solid 0.5px transparent;
   box-sizing: border-box;
   text-align: center;
