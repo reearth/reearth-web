@@ -167,6 +167,7 @@ const AssetModal: React.FC<Props> = ({
           selectedAssets={selectedAssets}
           selectAsset={selectAsset}
           fileType={fileType}
+          height={425}
         />
       )}
       {selectedTab === "url" && (

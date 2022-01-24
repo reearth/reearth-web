@@ -15,6 +15,7 @@ type Props = {
   assets?: Asset[];
   onCreate?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
+  onGetMore?: () => void;
   hasNextPage?: boolean;
   isLoading?: boolean;
 };
@@ -23,6 +24,7 @@ const AssetSection: React.FC<Props> = ({
   assets = [],
   onCreate,
   onRemove,
+  onGetMore,
   hasNextPage,
   isLoading,
 }) => {
@@ -36,9 +38,10 @@ const AssetSection: React.FC<Props> = ({
       selectedAssets={selectedAssets}
       isMultipleSelectable
       selectAsset={selectAsset}
-      isHeightFixed={true}
+      height={700}
       hasNextPage={hasNextPage}
       isLoading={isLoading}
+      onGetMore={onGetMore}
     />
   );
 };

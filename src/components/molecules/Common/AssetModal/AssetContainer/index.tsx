@@ -27,11 +27,12 @@ export type Props = {
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
+  onGetMore?: () => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
-  isHeightFixed?: boolean;
+  height?: number;
   hasNextPage?: boolean;
   isLoading?: boolean;
 };
@@ -42,11 +43,12 @@ const AssetContainer: React.FC<Props> = ({
   accept,
   onCreateAsset,
   onRemove,
+  onGetMore,
   initialAsset,
   selectedAssets,
   selectAsset,
   fileType,
-  isHeightFixed,
+  height,
   hasNextPage,
   isLoading,
 }) => {
@@ -83,6 +85,15 @@ const AssetContainer: React.FC<Props> = ({
     { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
     { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
+
+  const handleScroll = (
+    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+    onLoadMore?: () => void,
+  ) => {
+    if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
+      onLoadMore?.();
+    }
+  };
 
   return (
     <Wrapper>
@@ -141,7 +152,7 @@ const AssetContainer: React.FC<Props> = ({
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>
-      <AssetWrapper isHeightFixed={isHeightFixed}>
+      <AssetWrapper height={height}>
         {!isLoading && (!filteredAssets || filteredAssets.length < 1) ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
@@ -157,7 +168,7 @@ const AssetContainer: React.FC<Props> = ({
             </TemplateText>
           </Template>
         ) : (
-          <AssetList layoutType={layoutType}>
+          <AssetList layoutType={layoutType} onScroll={e => handleScroll(e, onGetMore)}>
             {layoutType === "list"
               ? (searchResults || filteredAssets)?.map(a => (
                   <AssetListItem
@@ -182,7 +193,8 @@ const AssetContainer: React.FC<Props> = ({
           </AssetList>
         )}
         {isLoading && <StyledLoading relative />}
-        {!hasNextPage && <Divider margin="0" />}
+        {!hasNextPage && <Divider margin="2px" />}
+        <Divider margin="0" />
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}
@@ -197,9 +209,8 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const AssetWrapper = styled.div<{ isHeightFixed?: boolean }>`
-  height: ${({ isHeightFixed }) => (isHeightFixed ? "" : "425px")};
-  min-height: 400px;
+const AssetWrapper = styled.div<{ height?: number }>`
+  max-height: ${({ height }) => height ?? ""}px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -2,35 +2,21 @@ import { Link } from "@reach/router";
 import React, { useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
-import Header, { Props as HeaderProps } from "@reearth/components/molecules/Common/Header";
+import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
-
-type Props = {
-  onInfiniteScroll?: () => void;
-} & HeaderProps;
 
 const SettingPage: React.FC<Props> = ({
   children,
   currentTeam,
   currentProject,
   sceneId,
-  onInfiniteScroll,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = () => {
     setIsOpen(o => !o);
-  };
-
-  const handleScroll = (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-    onLoadMore?: () => void,
-  ) => {
-    if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
-      onLoadMore?.();
-    }
   };
 
   return (
@@ -49,7 +35,7 @@ const SettingPage: React.FC<Props> = ({
           currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
         }
       />
-      <BodyWrapper onScroll={e => handleScroll(e, onInfiniteScroll)}>
+      <BodyWrapper>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>
