@@ -32,7 +32,13 @@ import {
 } from "@reearth/state";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
-import { convertLayers, convertWidgets, convertToBlocks, convertProperty } from "./convert";
+import {
+  convertLayers,
+  convertWidgets,
+  convertToBlocks,
+  convertProperty,
+  processSceneTags,
+} from "./convert";
 
 export default (isBuilt?: boolean) => {
   const intl = useIntl();
@@ -80,21 +86,22 @@ export default (isBuilt?: boolean) => {
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
-  const { data: widgetData } = useGetEarthWidgetsQuery({
+  const { data: sceneData } = useGetEarthWidgetsQuery({
     variables: { sceneId: sceneId ?? "", lang: intl.locale },
     skip: !sceneId,
   });
 
   const rootLayerId =
     layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
-  const scene = widgetData?.node?.__typename === "Scene" ? widgetData.node : undefined;
+  const scene = sceneData?.node?.__typename === "Scene" ? sceneData.node : undefined;
 
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
   const selectedLayer = selectedLayerId ? layers?.findById(selectedLayerId) : undefined;
-  const widgets = useMemo(() => convertWidgets(widgetData), [widgetData]);
+  const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
   const clusterProperty = useMemo<ClusterProperty[]>(
     () =>
@@ -260,6 +267,7 @@ export default (isBuilt?: boolean) => {
     sceneProperty,
     pluginProperty,
     clusterProperty,
+    tags,
     widgets,
     layers,
     selectedLayer,
