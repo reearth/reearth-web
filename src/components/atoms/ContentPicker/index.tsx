@@ -73,6 +73,8 @@ const ContentsList = styled.div`
   display: flex;
   flex-wrap: wrap;
   height: 100%;
+  max-height: 200px;
+  overflow: auto;
 `;
 
 const ContentItem = styled.div`
