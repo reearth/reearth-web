@@ -20,6 +20,7 @@ export type Props = {
   className?: string;
   assets?: Asset[];
   getMoreAssets?: () => void;
+  hasNextPage?: boolean;
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
@@ -34,6 +35,7 @@ type Tabs = "assets" | "url";
 const AssetModal: React.FC<Props> = ({
   assets,
   getMoreAssets,
+  hasNextPage,
   isMultipleSelectable = false,
   isOpen,
   onClose,
@@ -161,6 +163,7 @@ const AssetModal: React.FC<Props> = ({
         <AssetsContainer
           assets={filteredAssets}
           onGetMore={getMoreAssets}
+          hasNextPage={hasNextPage}
           isMultipleSelectable={isMultipleSelectable}
           accept={accept}
           onCreateAsset={onCreateAsset}

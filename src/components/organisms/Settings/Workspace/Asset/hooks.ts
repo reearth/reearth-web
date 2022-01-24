@@ -38,7 +38,7 @@ export default (params: Params) => {
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
-  console.log(data, "datadadat");
+
   const hasNextPage = data?.assets.pageInfo.hasNextPage;
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
@@ -54,10 +54,6 @@ export default (params: Params) => {
       });
     }
   }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
-
-  useEffect(() => {
-    console.log(data, "hey");
-  }, [data]);
 
   const [createAssetMutation] = useCreateAssetMutation();
 

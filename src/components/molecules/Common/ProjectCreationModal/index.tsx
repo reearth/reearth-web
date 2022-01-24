@@ -25,6 +25,7 @@ export interface Props {
   onSubmit?: (values: FormValues) => Promise<void> | void;
   assets?: Asset[];
   getMoreAssets?: () => void;
+  hasNextPage?: boolean;
   createAssets?: (files: FileList) => Promise<void>;
 }
 
@@ -40,6 +41,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   onSubmit,
   assets,
   getMoreAssets,
+  hasNextPage,
   createAssets,
 }) => {
   const intl = useIntl();
@@ -136,6 +138,7 @@ const ProjectCreationModal: React.FC<Props> = ({
         onClose={() => setOpenAssets(false)}
         assets={assets}
         getMoreAssets={getMoreAssets}
+        hasNextPage={hasNextPage}
         fileType="image"
         onCreateAsset={createAssets}
         onSelect={handleSelect}

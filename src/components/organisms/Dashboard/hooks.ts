@@ -223,5 +223,6 @@ export default (teamId?: string) => {
     createAssets,
     assets,
     getMoreAssets,
+    hasNextPage,
   };
 };
