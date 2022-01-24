@@ -52,7 +52,6 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   border-radius: 3px;
   width: 288px;
-  height: 160px;
   color: ${props => props.theme.infoBox.mainText};
   box-shadow: 0 0 5px ${props => props.theme.infoBox.deepBg};
   &:after {
@@ -86,6 +85,7 @@ const ContentItem = styled.div`
 const ContentButton = styled.div`
   padding: 5px;
   width: 60px;
+  min-height: 60px;
   border: solid 0.5px transparent;
   box-sizing: border-box;
   text-align: center;
