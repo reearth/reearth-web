@@ -11,6 +11,7 @@ export type GlobalThis = {
 export type Reearth = {
   readonly version: string;
   readonly apiVersion: number;
+  readonly getLayersInViewport: () => void;
   readonly visualizer: Visualizer;
   readonly ui: UI;
   readonly plugin: Plugin;

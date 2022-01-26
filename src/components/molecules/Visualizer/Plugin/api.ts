@@ -107,6 +107,7 @@ export function exposed({
 export function commonReearth({
   engineName,
   events,
+  getLayersInViewport,
   layers,
   sceneProperty,
   tags,
@@ -126,6 +127,7 @@ export function commonReearth({
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
+  getLayersInViewport: () => any;
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
@@ -144,6 +146,9 @@ export function commonReearth({
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
 }): CommonReearth {
   return {
+    get getLayersInViewport() {
+      return getLayersInViewport();
+    },
     version: window.REEARTH_CONFIG?.version || "",
     apiVersion: 1,
     visualizer: {

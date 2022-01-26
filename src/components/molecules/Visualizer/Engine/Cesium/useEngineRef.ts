@@ -74,6 +74,24 @@ export default function useEngineRef(
           options,
         );
       },
+      getViewport: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const camera = getCamera(viewer);
+        const sceneCamera = new Cesium.Camera(viewer.scene);
+        if (camera) {
+          sceneCamera.setView({
+            destination: Cesium.Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height),
+            orientation: {
+              heading: camera.heading,
+              pitch: camera.pitch,
+              roll: camera.roll,
+              up: sceneCamera.up,
+            },
+          });
+        }
+        return sceneCamera.computeViewRectangle();
+      },
       zoomIn: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;

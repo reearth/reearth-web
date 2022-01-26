@@ -51,6 +51,7 @@ export type Props = {
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  getLayersInViewport: () => void;
 };
 
 export type Context = {
@@ -82,6 +83,7 @@ export function Provider({
   hideLayer,
   selectLayer,
   overrideLayerProperty,
+  getLayersInViewport,
   flyTo,
   lookAt,
   zoomIn,
@@ -125,6 +127,7 @@ export function Provider({
         hideLayer,
         selectLayer,
         overrideLayerProperty,
+        getLayersInViewport,
         flyTo,
         lookAt,
         zoomIn,
@@ -148,6 +151,7 @@ export function Provider({
       hideLayer,
       selectLayer,
       overrideLayerProperty,
+      getLayersInViewport,
       flyTo,
       lookAt,
       zoomIn,

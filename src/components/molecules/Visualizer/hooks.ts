@@ -1,3 +1,4 @@
+import { Rectangle, Cartographic } from "cesium";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -334,7 +335,10 @@ function overridenInfoboxBlocks(
 }
 
 function useProviderProps(
-  props: Omit<ProviderProps, "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut" | "layers">,
+  props: Omit<
+    ProviderProps,
+    "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut" | "layers" | "getLayersInViewport"
+  >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
 ): ProviderProps {
@@ -373,6 +377,22 @@ function useProviderProps(
     [engineRef],
   );
 
+  const getLayersInViewport = useCallback(() => {
+    const rect = engineRef.current?.getViewport();
+    return layers.findAll(
+      layer =>
+        rect &&
+        layer.property &&
+        Rectangle.contains(
+          rect,
+          Cartographic.fromDegrees(
+            layer.property.default.location.lng,
+            layer.property.default.location.lat,
+          ),
+        ),
+    );
+  }, [engineRef, layers]);
+
   const zoomIn = useCallback(
     (amount: number) => {
       engineRef.current?.zoomIn(amount);
@@ -395,5 +415,6 @@ function useProviderProps(
     zoomIn,
     zoomOut,
     layers,
+    getLayersInViewport,
   };
 }
