@@ -127,7 +127,6 @@ export function commonReearth({
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
-  getLayersInViewport: () => any;
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
@@ -137,6 +136,7 @@ export function commonReearth({
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
   layerOverriddenProperties: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
+  getLayersInViewport: GlobalThis["reearth"]["layers"]["getLayersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
@@ -146,9 +146,6 @@ export function commonReearth({
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
 }): CommonReearth {
   return {
-    get getLayersInViewport() {
-      return getLayersInViewport();
-    },
     version: window.REEARTH_CONFIG?.version || "",
     apiVersion: 1,
     visualizer: {
@@ -167,6 +164,9 @@ export function commonReearth({
       },
     },
     layers: {
+      get getLayersInViewport() {
+        return getLayersInViewport;
+      },
       get select() {
         return selectLayer;
       },

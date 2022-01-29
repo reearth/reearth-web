@@ -11,7 +11,6 @@ export type GlobalThis = {
 export type Reearth = {
   readonly version: string;
   readonly apiVersion: number;
-  readonly getLayersInViewport: () => void;
   readonly visualizer: Visualizer;
   readonly ui: UI;
   readonly plugin: Plugin;
@@ -58,6 +57,7 @@ export type Layers = {
   readonly overriddenInfobox?: OverriddenInfobox;
   readonly overriddenProperties?: { [id: string]: any };
   /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
+  readonly getLayersInViewport: () => void;
   readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
