@@ -147,11 +147,14 @@ export default (params: Params) => {
             variables: { userId, teamId, role: Role.Reader },
             refetchQueries: ["teams"],
           });
+          const team = result.data?.addMemberToTeam?.team;
           if (result.errors || !result.data?.addMemberToTeam) {
             setNotification({
               type: "error",
               text: intl.formatMessage({ defaultMessage: "Failed to add one or more members." }),
             });
+          } else {
+            setTeam(team);
           }
         }),
       );
@@ -170,9 +173,9 @@ export default (params: Params) => {
   const [updateMemberOfTeamMutation] = useUpdateMemberOfTeamMutation();
 
   const updateMemberOfTeam = useCallback(
-    (userId: string, role: RoleUnion) => {
+    async (userId: string, role: RoleUnion) => {
       if (teamId) {
-        updateMemberOfTeamMutation({
+        const results = await updateMemberOfTeamMutation({
           variables: {
             teamId,
             userId,
@@ -183,9 +186,13 @@ export default (params: Params) => {
             }[role],
           },
         });
+        const team = results.data?.updateMemberOfTeam?.team;
+        if (team) {
+          setTeam(team);
+        }
       }
     },
-    [teamId, updateMemberOfTeamMutation],
+    [teamId, setTeam, updateMemberOfTeamMutation],
   );
 
   const [removeMemberFromTeamMutation] = useRemoveMemberFromTeamMutation();
@@ -197,6 +204,7 @@ export default (params: Params) => {
         variables: { teamId, userId },
         refetchQueries: ["teams"],
       });
+      const team = result.data?.removeMemberFromTeam?.team;
       if (result.errors || !result.data?.removeMemberFromTeam) {
         setNotification({
           type: "error",
@@ -205,6 +213,7 @@ export default (params: Params) => {
           }),
         });
       } else {
+        setTeam(team);
         setNotification({
           type: "success",
           text: intl.formatMessage({
@@ -213,7 +222,7 @@ export default (params: Params) => {
         });
       }
     },
-    [teamId, removeMemberFromTeamMutation, intl, setNotification],
+    [teamId, removeMemberFromTeamMutation, setTeam, intl, setNotification],
   );
 
   const selectWorkspace = useCallback(
