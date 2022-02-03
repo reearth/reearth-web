@@ -5,7 +5,7 @@ import SignupMolecule, {
 } from "@reearth/components/molecules/Authentication/Signup";
 
 export type Props = {
-  onSignup: (username: string, password: string) => void;
+  onSignup: (email: string, username: string, password: string) => void;
   passwordPolicy?: PasswordPolicy;
 };
 

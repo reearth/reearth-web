@@ -5,6 +5,7 @@ import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
+const axios = require("axios");
 export default () => {
   const { isAuthenticated, isLoading, error: authError, logout } = useAuth();
   const error = useCleanUrl();
@@ -62,9 +63,26 @@ export default () => {
   }
 
   const onSignup = useCallback(
-    async (username: string, password: string) => {
+    async (email: string, username: string, password: string) => {
       if (isAuthenticated) return;
-      console.log(username + " " + password, "up");
+      try {
+        await axios.post(
+          "http://localhost:8080/api/signup",
+          {
+              "email": email,
+              "username": username,
+              "password": password
+          },
+          {
+            headers: {
+              Accept: "application/vnd.github.v3.html+json",
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+      } catch (error) {
+        console.error(error);
+      }
     },
     [isAuthenticated],
   );

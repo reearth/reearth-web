@@ -14,7 +14,7 @@ import { PasswordPolicy as PasswordPolicyType } from "../common";
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onSignup: (username: string, password: string) => void;
+  onSignup: (email: string, username: string, password: string) => void;
   passwordPolicy?: PasswordPolicy;
 };
 
@@ -23,6 +23,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   const theme = useTheme();
   const [regexMessage, setRegexMessage] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [sent, setSent] = useState(false);
@@ -31,6 +32,13 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
       setUsername(newValue);
+    },
+    [],
+  );
+  const handleEmailInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = e.currentTarget.value;
+      setEmail(newValue);
     },
     [],
   );
@@ -83,9 +91,9 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   );
 
   const handleSignup = useCallback(() => {
-    onSignup(username, password);
-    setSent(true);
-  }, [username, password, onSignup]);
+    onSignup(email, username, password);
+    // setSent(true);
+  }, [email, username, password, onSignup]);
 
   useEffect(() => {
     if (
@@ -143,6 +151,14 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           <StyledInput
             className="form-item"
             placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
+            color={theme.main.weak}
+            value={email}
+            autoFocus
+            onChange={handleEmailInput}
+          />
+          <StyledInput
+            className="form-item"
+            placeholder={intl.formatMessage({ defaultMessage: "User name" })}
             color={theme.main.weak}
             value={username}
             autoFocus
