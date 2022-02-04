@@ -148,14 +148,14 @@ export default (params: Params) => {
             refetchQueries: ["teams"],
           });
           const team = result.data?.addMemberToTeam?.team;
-          if (result.errors || !result.data?.addMemberToTeam) {
+          if (result.errors || !team) {
             setNotification({
               type: "error",
               text: intl.formatMessage({ defaultMessage: "Failed to add one or more members." }),
             });
-          } else {
-            setTeam(team);
+            return;
           }
+          setTeam(team);
         }),
       );
       if (results) {
@@ -167,7 +167,7 @@ export default (params: Params) => {
         });
       }
     },
-    [teamId, addMemberToTeamMutation, setNotification, intl],
+    [teamId, addMemberToTeamMutation, setTeam, setNotification, intl],
   );
 
   const [updateMemberOfTeamMutation] = useUpdateMemberOfTeamMutation();
@@ -205,22 +205,22 @@ export default (params: Params) => {
         refetchQueries: ["teams"],
       });
       const team = result.data?.removeMemberFromTeam?.team;
-      if (result.errors || !result.data?.removeMemberFromTeam) {
+      if (result.errors || !team) {
         setNotification({
           type: "error",
           text: intl.formatMessage({
             defaultMessage: "Failed to delete member from the workspace.",
           }),
         });
-      } else {
-        setTeam(team);
-        setNotification({
-          type: "success",
-          text: intl.formatMessage({
-            defaultMessage: "Successfully removed member from the workspace.",
-          }),
-        });
+        return;
       }
+      setTeam(team);
+      setNotification({
+        type: "success",
+        text: intl.formatMessage({
+          defaultMessage: "Successfully removed member from the workspace.",
+        }),
+      });
     },
     [teamId, removeMemberFromTeamMutation, setTeam, intl, setNotification],
   );
