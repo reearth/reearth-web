@@ -337,7 +337,14 @@ function overridenInfoboxBlocks(
 function useProviderProps(
   props: Omit<
     ProviderProps,
-    "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut" | "layers" | "getLayersInViewport"
+    | "engine"
+    | "flyTo"
+    | "lookAt"
+    | "zoomIn"
+    | "zoomOut"
+    | "layers"
+    | "layersInViewport"
+    | "viewport"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -377,7 +384,11 @@ function useProviderProps(
     [engineRef],
   );
 
-  const getLayersInViewport = useCallback(() => {
+  const viewport = useCallback(() => {
+    return engineRef.current?.getViewport();
+  }, [engineRef]);
+
+  const layersInViewport = useCallback(() => {
     const rect = engineRef.current?.getViewport();
     return layers.findAll(
       layer =>
@@ -415,6 +426,7 @@ function useProviderProps(
     zoomIn,
     zoomOut,
     layers,
-    getLayersInViewport,
+    layersInViewport,
+    viewport,
   };
 }
