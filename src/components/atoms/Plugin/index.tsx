@@ -54,7 +54,6 @@ const Plugin: React.FC<Props> = ({
     onError,
     onDispose,
   });
-  console.log(filledHorizontally);
 
   return iFrameHtml ? (
     <IFrame
