@@ -25,6 +25,7 @@ const DangerSection: React.FC<Props> = ({ team, deleteTeam }) => {
       <Section title={intl.formatMessage({ defaultMessage: "Danger Zone" })}>
         <Field header={intl.formatMessage({ defaultMessage: "Delete this workspace" })} />
         <Field
+          className="largeAction"
           body={intl.formatMessage({
             defaultMessage: `Once you delete a workspace, there is no going back. Please be certain.`,
           })}

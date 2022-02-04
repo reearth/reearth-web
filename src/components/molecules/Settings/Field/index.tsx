@@ -22,7 +22,7 @@ const Field: React.FC<Props> = ({ className, header, action, secondaryAction, bo
         </Header>
       )}
       <Content>{body ? <StyledText size="s">{body}</StyledText> : children && children}</Content>
-      <ActionArea>
+      <ActionArea className="action-area">
         {secondaryAction && <Action>{secondaryAction}</Action>}
         {action && <Action>{action}</Action>}
       </ActionArea>
@@ -39,15 +39,22 @@ const Wrapper = styled.div`
   &:not(:last-child) {
     margin-bottom: ${metricsSizes["2xl"]}px;
   }
-  align-items: center;
+  &.largeAction .action-area {
+    height: unset !important;
+  }
 `;
 
 const Header = styled.div`
   width: 216px;
+  max-height: 32px;
+  display: flex;
+  align-items: center;
 `;
 
 const Content = styled.div`
   flex: 1;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledText = styled(Text)`
@@ -58,7 +65,8 @@ const StyledText = styled(Text)`
 const ActionArea = styled.div`
   display: flex;
   align-content: flex-end;
-  align-items: flex-start;
+  align-items: center;
+  height: 32px;
 `;
 
 const Action = styled.div`

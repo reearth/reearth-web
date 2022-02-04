@@ -58,6 +58,7 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
           }
         />
         <Field
+          className="largeAction"
           body={
             project?.isArchived
               ? intl.formatMessage({
@@ -83,6 +84,7 @@ const DangerSection: React.FC<Props> = ({ project, teamId, archiveProject, delet
         <Divider />
         <Field header={intl.formatMessage({ defaultMessage: "Delete this project" })} />
         <Field
+          className="largeAction"
           body={intl.formatMessage({
             defaultMessage: `Once you delete a project, there is no going back. Please be sure.`,
           })}
