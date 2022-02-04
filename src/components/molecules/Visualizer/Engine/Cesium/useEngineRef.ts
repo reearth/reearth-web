@@ -77,7 +77,15 @@ export default function useEngineRef(
       getViewport: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return viewer.camera.computeViewRectangle();
+        const rect = viewer.camera.computeViewRectangle();
+        return rect
+          ? {
+              north: rect.north,
+              south: rect.south,
+              west: rect.west,
+              east: rect.east,
+            }
+          : undefined;
       },
       zoomIn: amount => {
         const viewer = cesium.current?.cesiumElement;

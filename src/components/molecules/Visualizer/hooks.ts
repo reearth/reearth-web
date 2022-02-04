@@ -384,7 +384,7 @@ function useProviderProps(
         rect &&
         layer.property &&
         Rectangle.contains(
-          rect,
+          new Rectangle(rect.west, rect.south, rect.east, rect.north),
           Cartographic.fromDegrees(
             layer.property.default.location.lng,
             layer.property.default.location.lat,
