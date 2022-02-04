@@ -18,7 +18,8 @@ export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
   html,
   ref,
-  autoResize,
+  autoResizeHorizontally,
+  autoResizeVertically,
   visible,
   iFrameProps,
   onLoad,
@@ -28,7 +29,8 @@ export default function useHook({
   autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
-  autoResize?: boolean;
+  autoResizeHorizontally?: boolean;
+  autoResizeVertically?: boolean;
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
@@ -73,7 +75,7 @@ export default function useHook({
     return () => {
       window.removeEventListener("message", cb);
     };
-  }, [autoResize, autoResizeMessageKey, onMessage]);
+  }, [autoResizeHorizontally, autoResizeVertically, autoResizeMessageKey, onMessage]);
 
   const onIframeLoad = useCallback(() => {
     const win = iFrameRef.current?.contentWindow;
@@ -137,15 +139,16 @@ export default function useHook({
     () => ({
       style: {
         display: visible ? undefined : "none",
-        width: visible ? (autoResize ? iFrameSize?.[0] : "100%") : "0px",
-        height: visible ? (autoResize ? iFrameSize?.[1] : "100%") : "0px",
+        // TODO: width iFrameSize?.[0]
+        width: visible ? (autoResizeHorizontally ? iFrameSize?.[0] : "100%") : "0px",
+        height: visible ? (autoResizeVertically ? iFrameSize?.[1] : "100%") : "0px",
         minWidth: "100%",
         maxWidth: "100%",
         ...iFrameProps?.style,
       },
       ...iFrameProps,
     }),
-    [autoResize, iFrameProps, iFrameSize, visible],
+    [autoResizeHorizontally, autoResizeVertically, iFrameProps, iFrameSize, visible],
   );
 
   useEffect(() => {

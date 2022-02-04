@@ -13,7 +13,8 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   renderPlaceholder?: ReactNode;
-  filled?: boolean;
+  filledHorizontally?: boolean;
+  filledVertically?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
@@ -31,7 +32,8 @@ const Plugin: React.FC<Props> = ({
   src,
   sourceCode,
   renderPlaceholder,
-  filled,
+  filledHorizontally,
+  filledVertically,
   iFrameProps,
   isMarshalable,
   exposed,
@@ -52,10 +54,12 @@ const Plugin: React.FC<Props> = ({
     onError,
     onDispose,
   });
+  console.log(filledHorizontally);
 
   return iFrameHtml ? (
     <IFrame
-      autoResize={!filled}
+      autoResizeHorizontally={!filledHorizontally}
+      autoResizeVertically={!filledVertically}
       className={className}
       html={iFrameHtml}
       ref={iFrameRef}

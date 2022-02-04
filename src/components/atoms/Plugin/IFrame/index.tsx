@@ -5,7 +5,8 @@ import useHook, { RefType } from "./hooks";
 export type Ref = RefType;
 
 export type Props = {
-  autoResize?: boolean;
+  autoResizeHorizontally?: boolean;
+  autoResizeVertically?: boolean;
   className?: string;
   html?: string;
   visible?: boolean;
@@ -16,7 +17,17 @@ export type Props = {
 };
 
 const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
-  { autoResize, className, html, visible, iFrameProps, onLoad, onMessage, onClick },
+  {
+    autoResizeHorizontally,
+    autoResizeVertically,
+    className,
+    html,
+    visible,
+    iFrameProps,
+    onLoad,
+    onMessage,
+    onClick,
+  },
   ref,
 ) => {
   const {
@@ -26,7 +37,8 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   } = useHook({
     visible,
     iFrameProps,
-    autoResize,
+    autoResizeHorizontally,
+    autoResizeVertically,
     html,
     ref,
     onLoad,
@@ -37,7 +49,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   return html ? (
     <iframe
       frameBorder="no"
-      scrolling={autoResize ? "no" : undefined}
+      scrolling={autoResizeHorizontally || autoResizeVertically ? "no" : undefined}
       data-testid="iframe"
       srcDoc=""
       key={html}
