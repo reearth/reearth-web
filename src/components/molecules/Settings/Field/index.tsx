@@ -53,8 +53,6 @@ const Header = styled.div`
 
 const Content = styled.div`
   flex: 1;
-  display: flex;
-  align-items: center;
 `;
 
 const StyledText = styled(Text)`
