@@ -71,7 +71,6 @@ export default function WidgetAreaComponent({
         const extendable =
           (section === "center" && constraint?.extendable?.horizontally) ||
           (area === "middle" && constraint?.extendable?.vertically);
-        console.log(widget.extended);
 
         return (
           <GridItem
