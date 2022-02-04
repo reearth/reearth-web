@@ -51,6 +51,13 @@ export default function ({
       ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
       : undefined;
 
+  const autoResize = useMemo((): "both" | "width-only" | "height-only" | undefined => {
+    if (!!widget?.extended?.horizontally && !!widget?.extended?.vertically) return "both";
+    if (widget?.extended?.horizontally) return "width-only";
+    if (widget?.extended?.vertically) return "height-only";
+    return undefined;
+  }, [widget?.extended?.horizontally, widget?.extended?.vertically]);
+
   return {
     skip: !staticExposed,
     src,
@@ -60,6 +67,7 @@ export default function ({
     onMessage,
     onPreInit,
     onDispose,
+    autoResize,
   };
 }
 

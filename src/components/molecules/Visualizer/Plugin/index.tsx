@@ -49,7 +49,17 @@ export default function Plugin({
   pluginProperty,
   onClick,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
+  const {
+    skip,
+    src,
+    isMarshalable,
+    autoResize,
+    onPreInit,
+    onDispose,
+    exposed,
+    onError,
+    onMessage,
+  } = useHooks({
     pluginId,
     extensionId,
     extensionType,
@@ -65,8 +75,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      filledHorizontally={!!widget?.extended?.horizontally}
-      filledVertically={!!widget?.extended?.vertically}
+      autoResize={autoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
