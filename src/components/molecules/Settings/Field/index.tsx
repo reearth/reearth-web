@@ -39,6 +39,7 @@ const Wrapper = styled.div`
   &:not(:last-child) {
     margin-bottom: ${metricsSizes["2xl"]}px;
   }
+  align-items: center;
 `;
 
 const Header = styled.div`
