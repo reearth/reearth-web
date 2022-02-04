@@ -1,14 +1,13 @@
-import Rectangle from "cesium/Source/Core/Rectangle";
 import { ComponentType, ReactNode } from "react";
 
-import { LatLngHeight, Camera, Typography } from "@reearth/util/value";
+import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
 import type { Component } from "../Primitive";
 
 export type EngineRef = {
   name: string;
   requestRender: () => void;
-  getViewport: () => Rectangle | undefined;
+  getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
   getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
