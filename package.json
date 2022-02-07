@@ -179,7 +179,7 @@
         "lodash-es": "^4.17.20",
         "mini-svg-data-uri": "^1.4.3",
         "parse-domain": "^7.0.0",
-        "quickjs-emscripten": "^0.13.0",
+        "quickjs-emscripten": "^0.15.0",
         "quickjs-emscripten-sync": "^1.2.0",
         "rc-slider": "9.7.5",
         "react": "^17.0.2",

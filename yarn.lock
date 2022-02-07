@@ -17258,10 +17258,10 @@ quickjs-emscripten-sync@^1.2.0:
   resolved "https://registry.yarnpkg.com/quickjs-emscripten-sync/-/quickjs-emscripten-sync-1.2.0.tgz#7bfc1b1fa3fee6b264162bfbc884fc6c363ffa69"
   integrity sha512-fQep7mjCz0LAXkIvT/W6cuDply4HaSbDoOk/QlvSvvcE0RoVIkr+4XH3QWoCMxS7q51jyS0DDA9NnrPGZXmzKQ==
 
-quickjs-emscripten@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/quickjs-emscripten/-/quickjs-emscripten-0.13.0.tgz#f980a7a7dcbce51ed5715c5ac5a8cffc8dd790c8"
-  integrity sha512-+8oz1u1Xs1I/FlQuH7p0xb9/GTPNvcLDTbfSmIgUoe4wtFrDtgxlHekmEaToXZyFJ3/rJYzjuG4djjfXTn+3lA==
+quickjs-emscripten@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/quickjs-emscripten/-/quickjs-emscripten-0.15.0.tgz#636b87d09a9ae79772fca20cce8ad74a1c1a5542"
+  integrity sha512-7b32VY45/Rmo/S81W0VcHnsPW9yvCbGOCjf+xl8XYcQIL/FmbfmwroJPnyXHRYC0HO8mk8cTkvsMC+0bR/NrJA==
 
 raf-schd@^4.0.2:
   version "4.0.3"
