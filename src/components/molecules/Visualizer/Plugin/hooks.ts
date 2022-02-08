@@ -53,14 +53,15 @@ export default function ({
       ? `${pluginBaseUrl}/${`${pluginId}/${extensionId}`.replace(/\.\./g, "")}.js`
       : undefined;
 
-  const autoResizeDirection = useMemo((): "both" | "width-only" | "height-only" | undefined => {
-    if (autoResize) return autoResize;
-    const { horizontally, vertically } = widget?.extended ?? {};
-    if (horizontally && vertically) return "both";
-    if (vertically) return "width-only";
-    if (horizontally) return "height-only";
-    return undefined;
-  }, [widget?.extended, autoResize]);
+  const actualAutoResize =
+    autoResize ??
+    (widget?.extended?.horizontally && widget.extended.vertically
+      ? "both"
+      : widget?.extended?.vertically
+      ? "width-only"
+      : widget?.extended?.horizontally
+      ? "height-only"
+      : undefined);
 
   return {
     skip: !staticExposed,
@@ -71,7 +72,7 @@ export default function ({
     onMessage,
     onPreInit,
     onDispose,
-    autoResizeDirection,
+    actualAutoResize,
   };
 }
 

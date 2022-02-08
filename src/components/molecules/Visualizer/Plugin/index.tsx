@@ -55,7 +55,7 @@ export default function Plugin({
     skip,
     src,
     isMarshalable,
-    autoResizeDirection,
+    actualAutoResize,
     onPreInit,
     onDispose,
     exposed,
@@ -78,7 +78,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      autoResize={autoResizeDirection}
+      autoResize={actualAutoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
