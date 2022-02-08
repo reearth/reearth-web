@@ -1,4 +1,4 @@
-import { Rectangle, Cartographic } from "cesium";
+import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -395,7 +395,12 @@ function useProviderProps(
         rect &&
         layer.property &&
         Rectangle.contains(
-          new Rectangle(rect.west, rect.south, rect.east, rect.north),
+          new Rectangle(
+            CesiumMath.toRadians(rect.west),
+            CesiumMath.toRadians(rect.south),
+            CesiumMath.toRadians(rect.east),
+            CesiumMath.toRadians(rect.north),
+          ),
           Cartographic.fromDegrees(
             layer.property.default.location.lng,
             layer.property.default.location.lat,

@@ -1,4 +1,5 @@
 import * as Cesium from "cesium";
+import { Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
@@ -80,10 +81,10 @@ export default function useEngineRef(
         const rect = viewer.camera.computeViewRectangle();
         return rect
           ? {
-              north: rect.north,
-              south: rect.south,
-              west: rect.west,
-              east: rect.east,
+              north: CesiumMath.toDegrees(rect.north),
+              south: CesiumMath.toDegrees(rect.south),
+              west: CesiumMath.toDegrees(rect.west),
+              east: CesiumMath.toDegrees(rect.east),
             }
           : undefined;
       },
