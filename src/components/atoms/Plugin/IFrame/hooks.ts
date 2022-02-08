@@ -139,12 +139,12 @@ export default function useHook({
         display: visible ? undefined : "none",
         // TODO: width iFrameSize?.[0]
         width: visible
-          ? autoResize == "width-only" || autoResize == "both"
+          ? autoResize == "height-only" || autoResize == "both"
             ? "100%"
             : iFrameSize?.[0]
           : "0px",
         height: visible
-          ? autoResize == "height-only" || autoResize == "both"
+          ? autoResize == "width-only" || autoResize == "both"
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
