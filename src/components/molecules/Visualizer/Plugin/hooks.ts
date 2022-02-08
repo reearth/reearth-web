@@ -52,11 +52,12 @@ export default function ({
       : undefined;
 
   const autoResize = useMemo((): "both" | "width-only" | "height-only" | undefined => {
-    if (!!widget?.extended?.horizontally && !!widget?.extended?.vertically) return "both";
-    if (widget?.extended?.horizontally) return "width-only";
-    if (widget?.extended?.vertically) return "height-only";
+    const { horizontally, vertically } = widget?.extended ?? {};
+    if (horizontally && vertically) return "both";
+    if (vertically) return "width-only";
+    if (horizontally) return "height-only";
     return undefined;
-  }, [widget?.extended?.horizontally, widget?.extended?.vertically]);
+  }, [widget?.extended]);
 
   return {
     skip: !staticExposed,
