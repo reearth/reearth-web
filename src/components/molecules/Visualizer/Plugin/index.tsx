@@ -23,6 +23,7 @@ export type Props = {
   pluginId?: string;
   extensionId?: string;
   extensionType?: string;
+  autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
   iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
@@ -40,6 +41,7 @@ export default function Plugin({
   pluginId,
   extensionId,
   extensionType,
+  autoResize,
   iFrameProps,
   visible,
   pluginBaseUrl = "/plugins",
@@ -53,7 +55,7 @@ export default function Plugin({
     skip,
     src,
     isMarshalable,
-    autoResize,
+    autoResizeDirection,
     onPreInit,
     onDispose,
     exposed,
@@ -64,6 +66,7 @@ export default function Plugin({
     extensionId,
     extensionType,
     pluginBaseUrl,
+    autoResize,
     layer,
     widget,
     block,
@@ -75,7 +78,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      autoResize={autoResize}
+      autoResize={autoResizeDirection}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
