@@ -43,6 +43,7 @@ export type Props = {
   sceneProperty?: SceneProperty;
 };
 
+// eslint-disable-next-line react/display-name
 export default function ({ button: b, menuItems, pos, sceneProperty }: Props): JSX.Element {
   const ctx = useContext();
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
