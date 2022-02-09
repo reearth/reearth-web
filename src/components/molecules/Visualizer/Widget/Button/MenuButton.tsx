@@ -42,8 +42,7 @@ export type Props = {
   sceneProperty?: SceneProperty;
 };
 
-// eslint-disable-next-line react/display-name
-export default function ({
+export default function MenuButton({
   button: b,
   menuItems,
   location: position,
