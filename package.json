@@ -99,6 +99,7 @@
         "@typescript-eslint/eslint-plugin": "^5.11.0",
         "@typescript-eslint/parser": "^5.11.0",
         "@welldone-software/why-did-you-render": "^6.2.3",
+        "babel-jest": "^27.5.1",
         "babel-loader": "^8.2.3",
         "babel-plugin-react-intl-auto": "^3.1.0",
         "clean-webpack-plugin": "^4.0.0",
