@@ -146,6 +146,7 @@ export function Provider({
       ev,
       getLayers,
       getSceneProperty,
+      getTags,
       getCamera,
       getSelectedLayer,
       getLayerSelectionReason,
