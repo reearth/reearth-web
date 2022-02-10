@@ -75,7 +75,6 @@ const Infobox: React.FC<Props> = ({
   const [isReadyToRender, setIsReadyToRender] = useState(false);
   const blocks = overridenBlocks ?? layer?.infobox?.blocks;
   const property = layer?.infobox?.property;
-
   return (
     <Frame
       className={className}
@@ -87,6 +86,7 @@ const Infobox: React.FC<Props> = ({
       heightType={property?.default?.heightType}
       position={property?.default?.position}
       outlineColor={property?.default?.outlineColor}
+      useMask={property?.default?.useMask}
       outlineWidth={property?.default?.outlineWidth}
       visible={visible}
       noContent={!blocks?.length}

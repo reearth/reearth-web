@@ -1,3 +1,4 @@
+import { left } from "@popperjs/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useClickAway, useMedia } from "react-use";
 
@@ -11,7 +12,6 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";
-import { left } from "@popperjs/core";
 
 export type InfoboxStyles = {
   typography?: Typography;
@@ -35,6 +35,7 @@ export type Props = {
   position?: "right" | "mid" | "left";
   visible?: boolean;
   noContent?: boolean;
+  useMask?: boolean;
   styles?: InfoboxStyles;
   showTitle?: boolean;
   onClick?: () => void;
@@ -58,6 +59,7 @@ const InfoBox: React.FC<Props> = ({
   outlineWidth,
   visible,
   noContent,
+  useMask,
   styles,
   showTitle,
   children,
@@ -104,57 +106,77 @@ const InfoBox: React.FC<Props> = ({
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
   return (
-    <StyledFloatedPanel
-      className={className}
-      visible={visible}
-      open={open}
-      styles={wrapperStyles}
-      onClick={onClick}
-      onEnter={onEnter}
-      onEntered={onEntered}
-      onExit={onExit}
-      onExited={onExited}
-      position={position}
-      size={size}
-      height={height}
-      heightType={heightType}
-      outlineColor={outlineColor}
-      outlineWidth={outlineWidth}
-      floated>
-      <Wrapper ref={ref} open={open}>
-        <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
-          {!open && (
-            <IconWrapper align="center" justify="space-around">
-              <StyledIcon color={publishedTheme.mainIcon} icon="arrowLeft" size={16} open={open} />
-              <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
-            </IconWrapper>
-          )}
-          {!open ? null : (
-            <Text size="m" weight="bold" customColor>
-              <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
-            </Text>
-          )}
-        </TitleFlex>
-        <CloseBtn
-          color={publishedTheme.mainIcon}
-          icon="cancel"
-          size={16}
-          onClick={handleClose}
-          open={open}
-        />
-        <Content
-          ref={ref2}
-          open={open}
-          paddingTop={styles?.infoboxPaddingTop}
-          paddingBottom={styles?.infoboxPaddingBottom}
-          paddingLeft={styles?.infoboxPaddingLeft}
-          paddingRight={styles?.infoboxPaddingRight}>
-          {children}
-        </Content>
-      </Wrapper>
-    </StyledFloatedPanel>
+    <Mask activate={open && useMask}>
+      <StyledFloatedPanel
+        className={className}
+        visible={visible}
+        open={open}
+        styles={wrapperStyles}
+        onClick={onClick}
+        onEnter={onEnter}
+        onEntered={onEntered}
+        onExit={onExit}
+        onExited={onExited}
+        position={position}
+        size={size}
+        height={height}
+        heightType={heightType}
+        outlineColor={outlineColor}
+        outlineWidth={outlineWidth}
+        floated>
+        <Wrapper ref={ref} open={open}>
+          <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
+            {!open && (
+              <IconWrapper align="center" justify="space-around">
+                <StyledIcon
+                  color={publishedTheme.mainIcon}
+                  icon="arrowLeft"
+                  size={16}
+                  open={open}
+                />
+                <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
+              </IconWrapper>
+            )}
+            {!open ? null : (
+              <Text size="m" weight="bold" customColor>
+                <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
+              </Text>
+            )}
+          </TitleFlex>
+          <CloseBtn
+            color={publishedTheme.mainIcon}
+            icon="cancel"
+            size={16}
+            onClick={handleClose}
+            open={open}
+          />
+          <Content
+            ref={ref2}
+            open={open}
+            paddingTop={styles?.infoboxPaddingTop}
+            paddingBottom={styles?.infoboxPaddingBottom}
+            paddingLeft={styles?.infoboxPaddingLeft}
+            paddingRight={styles?.infoboxPaddingRight}>
+            {children}
+          </Content>
+        </Wrapper>
+      </StyledFloatedPanel>
+    </Mask>
   );
 };
+
+const Mask = styled.div<{ activate?: boolean }>`
+  display: ${({ activate }) => (activate ? "block" : "none")};
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.6);
+  overflow-x: hidden;
+`;
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
@@ -173,9 +195,9 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
         ? "right: 30px"
         : position == left
         ? "left: 30px"
-        : `left: 0; 
-  right: 0; 
-  margin-left: auto; 
+        : `left: 0;
+  right: 0;
+  margin-left: auto;
   margin-right: auto; `
       : "right: -6px"};
   ${({ heightType, height, open }) =>

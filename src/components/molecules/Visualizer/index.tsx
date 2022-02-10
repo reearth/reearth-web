@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren } from "react";
 
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
@@ -132,7 +132,6 @@ export default function Visualizer({
 
   return (
     <Provider {...providerProps}>
-      {/* <Mask open={infoboxOpened}></Mask> */}
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
         {ready && widgets?.alignSystem && (
@@ -234,15 +233,3 @@ const LoadingWrapper = styled.div`
   background-color: #000;
   z-index: ${({ theme }) => theme.zIndexes.loading};
 `;
-const Mask = styled.div<{ open?: boolean }>`
-display: ${({ open }) => (open ? "block" : "none")};
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.6);
-  overflow-x: hidden;
-}>`;

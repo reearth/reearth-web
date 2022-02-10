@@ -127,6 +127,7 @@ export type InfoboxProperty = {
     bgcolor?: string;
     outlineColor?: string;
     outlineWidth?: number;
+    useMask?: boolean;
   };
 };
 
