@@ -11,6 +11,7 @@ import { metricsSizes } from "@reearth/theme/metrics";
 import { Typography, typographyStyles } from "@reearth/util/value";
 
 import { SceneProperty } from "../../Engine";
+import { left } from "@popperjs/core";
 
 export type InfoboxStyles = {
   typography?: Typography;
@@ -26,10 +27,16 @@ export type Props = {
   infoboxKey?: string;
   sceneProperty?: SceneProperty;
   title?: string;
-  size?: "small" | "large";
+  height?: number;
+  outlineColor?: string;
+  outlineWidth?: number;
+  heightType?: "auto" | "manual";
+  size?: "small" | "mid" | "large";
+  position?: "right" | "mid" | "left";
   visible?: boolean;
   noContent?: boolean;
   styles?: InfoboxStyles;
+  showTitle?: boolean;
   onClick?: () => void;
   onClickAway?: () => void;
   onEnter?: () => void;
@@ -44,9 +51,15 @@ const InfoBox: React.FC<Props> = ({
   sceneProperty,
   title,
   size,
+  height,
+  heightType,
+  position,
+  outlineColor,
+  outlineWidth,
   visible,
   noContent,
   styles,
+  showTitle,
   children,
   onClick,
   onClickAway,
@@ -101,7 +114,12 @@ const InfoBox: React.FC<Props> = ({
       onEntered={onEntered}
       onExit={onExit}
       onExited={onExited}
+      position={position}
       size={size}
+      height={height}
+      heightType={heightType}
+      outlineColor={outlineColor}
+      outlineWidth={outlineWidth}
       floated>
       <Wrapper ref={ref} open={open}>
         <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
@@ -113,7 +131,7 @@ const InfoBox: React.FC<Props> = ({
           )}
           {!open ? null : (
             <Text size="m" weight="bold" customColor>
-              <TitleText>{title || " "}</TitleText>
+              <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
             </Text>
           )}
         </TitleFlex>
@@ -141,13 +159,32 @@ const InfoBox: React.FC<Props> = ({
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
   open?: boolean;
-  size?: "small" | "large";
+  position?: "right" | "mid" | "left";
+  size?: "small" | "mid" | "large";
+  height?: number;
+  heightType?: "auto" | "manual";
+  outlineColor?: string;
+  outlineWidth?: number;
 }>`
   top: 15%;
-  right: ${({ open }) => (open ? "30px" : "-6px")};
-  max-height: 70%;
-  width: ${({ size, open }) => (open ? (size == "large" ? "624px" : "346px") : "80px")};
+  ${({ open, position }) =>
+    open
+      ? position == "right"
+        ? "right: 30px"
+        : position == left
+        ? "left: 30px"
+        : `left: 0; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto; `
+      : "right: -6px"};
+  ${({ heightType, height, open }) =>
+    heightType == "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
+  width: ${({ size, open }) =>
+    open ? (size == "large" ? "624px" : size == "small" ? "346px" : "540px") : "80px"};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  ${({ outlineWidth, outlineColor, open }) =>
+    outlineWidth && open ? `border: ${outlineWidth}px ${outlineColor} solid` : ""};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -197,8 +234,11 @@ const StyledIcon = styled(Icon)<{ open?: boolean; color: string }>`
   color: ${({ color }) => color};
 `;
 
-const TitleText = styled.span`
+const TitleText = styled.span<{
+  show: boolean;
+}>`
   line-height: ${metricsSizes["2xl"]}px;
+  display: ${({ show }) => (show ? "block" : "none")};
 `;
 
 const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
@@ -236,10 +276,10 @@ const Content = styled.div<{
 
   max-height: ${({ open }) => (open ? "50vh" : "0")};
   padding: ${({ open }) => (open ? "20px 0" : "0")};
-  padding-top: ${({ paddingTop }) => paddingTop ?`${paddingTop}px` : null};
-  padding-bottom: ${({ paddingBottom }) => paddingBottom ? `${paddingBottom}px` : null};
-  padding-left: ${({ paddingLeft }) => paddingLeft ? `${paddingLeft}px` : null};
-  padding-right: ${({ paddingRight }) => paddingRight ? `${paddingRight}px` : null};
+  padding-top: ${({ paddingTop }) => (paddingTop ? `${paddingTop}px` : null)};
+  padding-bottom: ${({ paddingBottom }) => (paddingBottom ? `${paddingBottom}px` : null)};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? `${paddingLeft}px` : null)};
+  padding-right: ${({ paddingRight }) => (paddingRight ? `${paddingRight}px` : null)};
 `;
 
 export default InfoBox;
