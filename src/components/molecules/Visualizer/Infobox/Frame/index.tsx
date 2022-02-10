@@ -105,8 +105,10 @@ const InfoBox: React.FC<Props> = ({
     `,
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
+
   return (
-    <Mask activate={open && useMask}>
+    <>
+      <Mask activate={open && useMask} />
       <StyledFloatedPanel
         className={className}
         visible={visible}
@@ -161,15 +163,15 @@ const InfoBox: React.FC<Props> = ({
           </Content>
         </Wrapper>
       </StyledFloatedPanel>
-    </Mask>
+    </>
   );
 };
 
 const Mask = styled.div<{ activate?: boolean }>`
-  display: ${({ activate }) => (activate ? "block" : "none")};
+  display: ${({ activate }) => (activate ? "flex" : "none")};
   height: 100%;
   width: 100%;
-  position: fixed;
+  position: absolute;
   z-index: 1;
   top: 0;
   left: 0;
