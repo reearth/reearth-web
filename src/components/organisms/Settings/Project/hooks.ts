@@ -124,7 +124,7 @@ export default ({ projectId }: Params) => {
 
   const [assetModalOpened, setOpenAssets] = useState(false);
 
-  const toggleAssetsModal = useCallback(
+  const toggleAssetModal = useCallback(
     (open?: boolean) => {
       if (!open) {
         setOpenAssets(!assetModalOpened);
@@ -145,6 +145,6 @@ export default ({ projectId }: Params) => {
     archiveProject,
     deleteProject,
     assetModalOpened,
-    toggleAssetsModal,
+    toggleAssetModal,
   };
 };

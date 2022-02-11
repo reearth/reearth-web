@@ -27,7 +27,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     selectProject,
     selectedAsset,
     assetModalOpened,
-    toggleAssetsModal,
+    toggleAssetModal,
     onAssetSelect,
   } = useHooks(teamId);
 
@@ -44,14 +44,14 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         open={modalShown}
         onClose={handleModalClose}
         onSubmit={createProject}
-        toggleAssetsModal={toggleAssetsModal}
+        toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}
         assetModal={
           <AssetModal
             teamId={teamId}
             openAssets={assetModalOpened}
             onSelect={onAssetSelect}
-            setOpenAssets={toggleAssetsModal}
+            setOpenAssets={toggleAssetModal}
           />
         }
       />

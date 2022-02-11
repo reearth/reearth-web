@@ -23,7 +23,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
     archiveProject,
     deleteProject,
     assetModalOpened,
-    toggleAssetsModal,
+    toggleAssetModal,
   } = useHooks({ projectId });
 
   return (
@@ -35,13 +35,13 @@ const Project: React.FC<Props> = ({ projectId }) => {
           updateProjectName={updateProjectName}
           updateProjectDescription={updateProjectDescription}
           updateProjectImageUrl={updateProjectImageUrl}
-          toggleAssetsModal={toggleAssetsModal}
+          toggleAssetModal={toggleAssetModal}
           assetModal={
             <AssetModal
               teamId={currentTeam?.id}
               openAssets={assetModalOpened}
               onSelect={updateProjectImageUrl}
-              setOpenAssets={toggleAssetsModal}
+              setOpenAssets={toggleAssetModal}
             />
           }
         />

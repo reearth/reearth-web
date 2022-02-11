@@ -16,7 +16,7 @@ export type Props = {
   updateProjectDescription?: (description: string) => void;
   updateProjectImageUrl?: (imageUrl: string | null) => void;
   assetModal?: React.ReactNode;
-  toggleAssetsModal?: (open?: boolean) => void;
+  toggleAssetModal?: (open?: boolean) => void;
 };
 
 const ProfileSection: React.FC<Props> = ({
@@ -25,7 +25,7 @@ const ProfileSection: React.FC<Props> = ({
   updateProjectDescription,
   updateProjectImageUrl,
   assetModal,
-  toggleAssetsModal,
+  toggleAssetModal,
 }) => {
   const intl = useIntl();
 
@@ -48,8 +48,8 @@ const ProfileSection: React.FC<Props> = ({
           onSubmit={updateProjectImageUrl}
           imageSrc={currentProject?.imageUrl as string}
           isImage
-          onEditStart={() => toggleAssetsModal?.(true)}
-          onEditCancel={() => toggleAssetsModal?.(false)}
+          onEditStart={() => toggleAssetModal?.(true)}
+          onEditCancel={() => toggleAssetModal?.(false)}
         />
       </Section>
       {assetModal}

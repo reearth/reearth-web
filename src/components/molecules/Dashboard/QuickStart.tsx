@@ -20,7 +20,7 @@ export interface Props {
     imageUrl: string;
   }) => Promise<void>;
   assetModal?: React.ReactNode;
-  toggleAssetsModal?: () => void;
+  toggleAssetModal?: () => void;
   selectedAsset?: string;
 }
 
@@ -29,7 +29,7 @@ const QuickStart: React.FC<Props> = ({
   onCreateTeam,
   onCreateProject,
   assetModal,
-  toggleAssetsModal,
+  toggleAssetModal,
   selectedAsset,
 }) => {
   const intl = useIntl();
@@ -82,7 +82,7 @@ const QuickStart: React.FC<Props> = ({
         open={projCreateOpen}
         onClose={() => setProjCreateOpen(false)}
         onSubmit={onCreateProject}
-        toggleAssetsModal={toggleAssetsModal}
+        toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}
         assetModal={assetModal}
       />

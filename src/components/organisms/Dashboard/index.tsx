@@ -31,7 +31,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     handleModalClose,
     selectedAsset,
     assetModalOpened,
-    toggleAssetsModal,
+    toggleAssetModal,
     onAssetSelect,
   } = useHooks(teamId);
 
@@ -56,13 +56,13 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
         onCreateTeam={createTeam}
         onCreateProject={createProject}
         selectedAsset={selectedAsset}
-        toggleAssetsModal={toggleAssetsModal}
+        toggleAssetModal={toggleAssetModal}
         assetModal={
           <AssetModal
             teamId={teamId}
             openAssets={assetModalOpened}
             onSelect={onAssetSelect}
-            setOpenAssets={toggleAssetsModal}
+            setOpenAssets={toggleAssetModal}
           />
         }
       />

@@ -23,7 +23,7 @@ export interface Props {
   onSubmit?: (values: FormValues) => Promise<void> | void;
   selectedAsset?: string;
   assetModal?: React.ReactNode;
-  toggleAssetsModal?: () => void;
+  toggleAssetModal?: () => void;
 }
 
 const initialValues: FormValues = {
@@ -38,7 +38,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   onSubmit,
   selectedAsset,
   assetModal,
-  toggleAssetsModal,
+  toggleAssetModal,
 }) => {
   const intl = useIntl();
   const formik = useFormik({
@@ -124,7 +124,7 @@ const ProjectCreationModal: React.FC<Props> = ({
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
             {intl.formatMessage({ defaultMessage: "Select thumbnail image" })}
           </Text>
-          <Thumbnail url={formik.values.imageUrl} onClick={toggleAssetsModal} />
+          <Thumbnail url={formik.values.imageUrl} onClick={toggleAssetModal} />
         </FormInputWrapper>
       </NewProjectForm>
       {assetModal}

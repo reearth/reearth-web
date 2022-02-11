@@ -3,17 +3,13 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import {
   useProjectQuery,
-  useAssetsQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-  useCreateAssetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
-
-import { AssetNodes } from "../hooks";
 
 type Params = {
   projectId: string;
@@ -25,7 +21,6 @@ export default ({ projectId }: Params) => {
 
   const [updateProjectBasicAuthMutation] = useUpdateProjectBasicAuthMutation();
   const [updateProject] = useUpdateProjectMutation();
-  const [createAssetMutation] = useCreateAssetMutation();
   const [publishProjectMutation, { loading: loading }] = usePublishProjectMutation();
   const [validAlias, setValidAlias] = useState(false);
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
@@ -127,27 +122,6 @@ export default ({ projectId }: Params) => {
     [projectId, updateProject],
   );
 
-  // Assets
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
-
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
-
   // Publication
   const publishProject = useCallback(
     async (alias: string | undefined, s: Status) => {
@@ -165,6 +139,19 @@ export default ({ projectId }: Params) => {
     [projectId, publishProjectMutation],
   );
 
+  const [assetModalOpened, setOpenAssets] = useState(false);
+
+  const toggleAssetModal = useCallback(
+    (open?: boolean) => {
+      if (!open) {
+        setOpenAssets(!assetModalOpened);
+      } else {
+        setOpenAssets(open);
+      }
+    },
+    [assetModalOpened, setOpenAssets],
+  );
+
   return {
     currentTeam,
     currentProject,
@@ -180,8 +167,8 @@ export default ({ projectId }: Params) => {
     updatePublicTitle,
     updatePublicDescription,
     updatePublicImage,
-    assets,
-    createAssets,
+    assetModalOpened,
+    toggleAssetModal,
   };
 };
 
