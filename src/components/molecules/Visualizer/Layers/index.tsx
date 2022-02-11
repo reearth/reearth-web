@@ -1,16 +1,15 @@
-import React from "react";
+import React, { ComponentType, useMemo, useCallback } from "react";
 
-import Cluster from "../Engine/Cesium/Cluster";
+import { ClusterProperty, ClusterProps } from "../Engine";
 import P from "../Primitive";
 
-import { LayerStore } from "./store";
+import type { LayerStore, Layer } from "./store";
 
 export type { Layer } from "../Primitive";
 
 export type Props = {
   pluginProperty?: { [key: string]: any };
-  clusterProperty?: { [key: string]: any };
-  clusterLayers?: string[];
+  clusterProperty?: ClusterProperty[];
   sceneProperty?: any;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -18,6 +17,7 @@ export type Props = {
   layers?: LayerStore;
   selectedLayerId?: string;
   overriddenProperties?: { [id in string]: any };
+  clusterComponent?: ComponentType<ClusterProps>;
   isLayerHidden?: (id: string) => boolean;
 };
 
@@ -27,7 +27,6 @@ export default function Layers({
   pluginProperty,
   sceneProperty,
   clusterProperty,
-  clusterLayers,
   isEditable,
   isBuilt,
   pluginBaseUrl,
@@ -35,46 +34,65 @@ export default function Layers({
   selectedLayerId,
   overriddenProperties,
   isLayerHidden,
+  clusterComponent,
 }: Props): JSX.Element | null {
-  return (
-    <>
-      {clusterProperty?.map((cluster: any) => (
-        // TODO: NEED REFACTORING: invalid dependency flow and duplicated codes
-        <Cluster
-          key={cluster.id}
-          property={cluster}
-          layers={layers}
-          pluginProperty={pluginProperty}
+  const Cluster = clusterComponent;
+  const clusteredLayers = useMemo<Set<string>>(
+    () =>
+      new Set(
+        clusterProperty?.flatMap(c =>
+          (c.layers ?? []).map(l => l.layer).filter((l): l is string => !!l),
+        ),
+      ),
+    [clusterProperty],
+  );
+
+  const renderLayer = useCallback(
+    (layer: Layer<any, any>) => {
+      return !layer.id || !layer.isVisible || !!layer.children ? null : (
+        <P
+          key={layer.id}
+          layer={layer}
+          sceneProperty={sceneProperty}
+          pluginProperty={
+            layer.pluginId && layer.extensionId
+              ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
+              : undefined
+          }
+          isHidden={isLayerHidden?.(layer.id)}
           isEditable={isEditable}
           isBuilt={isBuilt}
+          isSelected={!!selectedLayerId && selectedLayerId === layer.id}
           pluginBaseUrl={pluginBaseUrl}
-          selectedLayerId={selectedLayerId}
           overriddenProperties={overriddenProperties}
-          isLayerHidden={isLayerHidden}></Cluster>
-      ))}
+        />
+      );
+    },
+    [
+      isBuilt,
+      isEditable,
+      isLayerHidden,
+      overriddenProperties,
+      pluginBaseUrl,
+      pluginProperty,
+      sceneProperty,
+      selectedLayerId,
+    ],
+  );
 
-      {layers?.flattenLayersRaw
-        ?.filter(layer => !clusterLayers?.some(clusterLayer => clusterLayer === layer.id))
-        .map(layer =>
-          !layer.isVisible || !!layer.children ? null : (
-            <P
-              key={layer.id}
-              layer={layer}
-              sceneProperty={sceneProperty}
-              pluginProperty={
-                layer.pluginId && layer.extensionId
-                  ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-                  : undefined
-              }
-              isHidden={isLayerHidden?.(layer.id)}
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-              isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-              pluginBaseUrl={pluginBaseUrl}
-              overriddenProperties={overriddenProperties}
-            />
-          ),
-        )}
+  return (
+    <>
+      {Cluster &&
+        clusterProperty
+          ?.filter(cluster => !!cluster.id)
+          .map(cluster => (
+            <Cluster key={cluster.id} property={cluster}>
+              {layers?.flattenLayersRaw
+                ?.filter(layer => cluster?.layers?.some(l => l.layer === layer.id))
+                .map(renderLayer)}
+            </Cluster>
+          ))}
+      {layers?.flattenLayersRaw?.filter(layer => !clusteredLayers.has(layer.id)).map(renderLayer)}
     </>
   );
 }

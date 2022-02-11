@@ -1,4 +1,3 @@
-import { flatMap } from "lodash";
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
@@ -8,10 +7,11 @@ import type {
   Block,
   WidgetAlignSystem,
   Alignment,
+  ClusterProperty,
 } from "@reearth/components/molecules/Visualizer";
 import { LayerStore } from "@reearth/components/molecules/Visualizer";
 
-import { PublishedData, WidgetZone, WidgetSection, WidgetArea } from "./types";
+import { PublishedData, WidgetZone, WidgetSection, WidgetArea, Layer as RawLayer } from "./types";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
@@ -23,20 +23,8 @@ export default (alias?: string) => {
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
     {},
   );
-  const clusterProperty = useMemo(
-    () => data?.clusters?.reduce<any[]>((a, b) => [...a, processProperty(b.property)], []),
-    [data],
-  );
-  const clusterLayers = useMemo(
-    () =>
-      data?.clusters?.reduce<any[]>(
-        (a, b) =>
-          flatMap([
-            ...a,
-            processProperty(b.property)?.layers?.map((layerItem: any) => layerItem.layer),
-          ]).filter(item => !!item),
-        [],
-      ),
+  const clusterProperty = useMemo<ClusterProperty[]>(
+    () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
     [data],
   );
 
@@ -44,30 +32,14 @@ export default (alias?: string) => {
     () =>
       new LayerStore({
         id: "",
-        children: data?.layers?.map<Layer>(l => ({
-          id: l.id,
-          title: l.name || "",
-          pluginId: l.pluginId,
-          extensionId: l.extensionId,
-          isVisible: true,
-          property: processProperty(l.property),
-          infobox: l.infobox
-            ? {
-                property: processProperty(l.infobox.property),
-                blocks: l.infobox.fields.map<Block>(f => ({
-                  id: f.id,
-                  pluginId: f.pluginId,
-                  extensionId: f.extensionId,
-                  property: processProperty(f.property),
-                })),
-              }
-            : undefined,
-        })),
+        children: data?.layers?.map(processLayer),
       }),
     [data],
   );
 
-  const widgetSystem = useMemo<
+  const tags = data?.tags; // Currently no need to convert tags
+
+  const widgets = useMemo<
     { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
   >(() => {
     if (!data || !data.widgets) return undefined;
@@ -202,13 +174,38 @@ export default (alias?: string) => {
     sceneProperty,
     pluginProperty,
     layers,
+    tags,
     clusterProperty,
-    clusterLayers,
-    widgets: widgetSystem,
+    widgets,
     ready,
     error,
   };
 };
+
+function processLayer(l: RawLayer): Layer {
+  return {
+    id: l.id,
+    title: l.name || "",
+    pluginId: l.pluginId,
+    extensionId: l.extensionId,
+    isVisible: l.isVisible ?? true,
+    propertyId: l.propertyId,
+    property: processProperty(l.property),
+    infobox: l.infobox
+      ? {
+          property: processProperty(l.infobox.property),
+          blocks: l.infobox.fields.map<Block>(f => ({
+            id: f.id,
+            pluginId: f.pluginId,
+            extensionId: f.extensionId,
+            property: processProperty(f.property),
+          })),
+        }
+      : undefined,
+    tags: l.tags, // Currently no need to convert tags
+    children: l.children?.map(processLayer),
+  };
+}
 
 function processProperty(p: any): any {
   if (typeof p !== "object") return p;

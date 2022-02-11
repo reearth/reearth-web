@@ -23,15 +23,17 @@ export default function useHook({
   iFrameProps,
   onLoad,
   onMessage,
+  onClick,
 }: {
   autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
-  autoResize?: boolean;
+  autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
+  onClick?: () => void;
 } = {}): {
   ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
@@ -135,15 +137,37 @@ export default function useHook({
     () => ({
       style: {
         display: visible ? undefined : "none",
-        width: visible ? (autoResize ? iFrameSize?.[0] : "100%") : "0px",
-        height: visible ? (autoResize ? iFrameSize?.[1] : "100%") : "0px",
+        // TODO: width iFrameSize?.[0]
+        width: visible
+          ? autoResize == "height-only" || autoResize == "both"
+            ? "100%"
+            : iFrameSize?.[0]
+          : "0px",
+        height: visible
+          ? autoResize == "width-only" || autoResize == "both"
+            ? "100%"
+            : iFrameSize?.[1]
+          : "0px",
         minWidth: "100%",
+        maxWidth: "100%",
         ...iFrameProps?.style,
       },
       ...iFrameProps,
     }),
     [autoResize, iFrameProps, iFrameSize, visible],
   );
+
+  useEffect(() => {
+    const handleBlur = () => {
+      if (iFrameRef.current && iFrameRef.current === document.activeElement) {
+        onClick?.();
+      }
+    };
+    window.addEventListener("blur", handleBlur);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, [onClick]);
 
   return {
     ref: iFrameRef,

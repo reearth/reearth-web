@@ -1,3 +1,4 @@
+import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -14,7 +15,7 @@ import type {
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, emptyLayerStore } from "./Layers";
 import type { ProviderProps } from "./Plugin";
-import { CameraOptions, FlyToDestination, LookAtDestination } from "./Plugin/types";
+import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
 
 export default ({
   engineType,
@@ -27,6 +28,7 @@ export default ({
   selectedBlockId: outerSelectedBlockId,
   camera,
   sceneProperty,
+  tags,
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
@@ -42,6 +44,7 @@ export default ({
   selectedBlockId?: string;
   camera?: Camera;
   sceneProperty?: SceneProperty;
+  tags?: Tag[];
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onCameraChange?: (c: Camera) => void;
@@ -139,6 +142,7 @@ export default ({
     {
       engineName: engineType || "",
       sceneProperty,
+      tags,
       camera,
       selectedLayer,
       layerSelectionReason,
@@ -331,7 +335,17 @@ function overridenInfoboxBlocks(
 }
 
 function useProviderProps(
-  props: Omit<ProviderProps, "engine" | "flyTo" | "lookAt" | "zoomIn" | "zoomOut" | "layers">,
+  props: Omit<
+    ProviderProps,
+    | "engine"
+    | "flyTo"
+    | "lookAt"
+    | "zoomIn"
+    | "zoomOut"
+    | "layers"
+    | "layersInViewport"
+    | "viewport"
+  >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
 ): ProviderProps {
@@ -370,6 +384,31 @@ function useProviderProps(
     [engineRef],
   );
 
+  const viewport = useCallback(() => {
+    return engineRef.current?.getViewport();
+  }, [engineRef]);
+
+  const layersInViewport = useCallback(() => {
+    const rect = engineRef.current?.getViewport();
+    return layers.findAll(
+      layer =>
+        rect &&
+        layer.property &&
+        Rectangle.contains(
+          new Rectangle(
+            CesiumMath.toRadians(rect.west),
+            CesiumMath.toRadians(rect.south),
+            CesiumMath.toRadians(rect.east),
+            CesiumMath.toRadians(rect.north),
+          ),
+          Cartographic.fromDegrees(
+            layer.property.default.location.lng,
+            layer.property.default.location.lat,
+          ),
+        ),
+    );
+  }, [engineRef, layers]);
+
   const zoomIn = useCallback(
     (amount: number) => {
       engineRef.current?.zoomIn(amount);
@@ -392,5 +431,7 @@ function useProviderProps(
     zoomIn,
     zoomOut,
     layers,
+    layersInViewport,
+    viewport,
   };
 }

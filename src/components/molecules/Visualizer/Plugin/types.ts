@@ -52,15 +52,19 @@ export type Plugin = {
 export type Layers = {
   readonly layers: Layer[];
   readonly selected?: Layer;
+  readonly tags?: Tag[];
   readonly selectionReason?: string;
   readonly overriddenInfobox?: OverriddenInfobox;
   readonly overriddenProperties?: { [id: string]: any };
   /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
+  readonly layersInViewport: Layer[];
   readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
   readonly findById: (id: string) => Layer | undefined;
   readonly findByIds: (...id: string[]) => (Layer | undefined)[];
+  readonly findByTags: (...tagIds: string[]) => Layer[];
+  readonly findByTagLabels: (...tagLabels: string[]) => Layer[];
   readonly find: (
     fn: (layer: Layer, index: number, parents: Layer[]) => boolean,
   ) => Layer | undefined;
@@ -93,7 +97,14 @@ export type Layer<P = any, IBP = any> = {
   infobox?: Infobox<IBP>;
   isVisible?: boolean;
   propertyId?: string;
+  tags?: Tag[];
   readonly children?: Layer<P, IBP>[];
+};
+
+export type Tag = {
+  id: string;
+  label: string;
+  tags?: Tag[];
 };
 
 export type Infobox<BP = any> = {
@@ -104,6 +115,10 @@ export type Infobox<BP = any> = {
 export type InfoboxProperty = {
   default?: {
     title?: string;
+    infoboxPaddingTop?: number;
+    infoboxPaddingBottom?: number;
+    infoboxPaddingLeft?: number;
+    infoboxPaddingRight?: number;
     size?: "small" | "large";
     typography?: Typography;
     bgcolor?: string;
@@ -175,9 +190,17 @@ export type Visualizer = {
   readonly property?: any;
 };
 
+type Rect = {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+};
+
 export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
+  readonly viewport: Rect | undefined;
   readonly zoomIn: (amount: number) => void;
   readonly zoomOut: (amount: number) => void;
   /** Moves the camera position to the specified destination. */

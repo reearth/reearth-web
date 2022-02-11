@@ -258,7 +258,7 @@ const PropertyItem: React.FC<Props> = ({
 
   const itemTitle = intl.formatMessage({ defaultMessage: "Basic" });
   const handleDelete = useCallback(() => {
-    if (!onRemovePane || !item?.title) return;
+    if (!onRemovePane) return;
     if (item?.title === itemTitle) {
       setModal(true);
     } else {

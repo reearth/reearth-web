@@ -13,7 +13,7 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   renderPlaceholder?: ReactNode;
-  filled?: boolean;
+  autoResize?: "both" | "width-only" | "height-only";
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
@@ -21,6 +21,7 @@ export type Props = {
   onPreInit?: () => void;
   onError?: (err: any) => void;
   onDispose?: () => void;
+  onClick?: () => void;
 };
 
 const Plugin: React.FC<Props> = ({
@@ -30,7 +31,7 @@ const Plugin: React.FC<Props> = ({
   src,
   sourceCode,
   renderPlaceholder,
-  filled,
+  autoResize,
   iFrameProps,
   isMarshalable,
   exposed,
@@ -38,6 +39,7 @@ const Plugin: React.FC<Props> = ({
   onPreInit,
   onError,
   onDispose,
+  onClick,
 }) => {
   const { iFrameRef, iFrameHtml, iFrameVisible } = useHook({
     iframeCanBeVisible: canBeVisible,
@@ -53,13 +55,14 @@ const Plugin: React.FC<Props> = ({
 
   return iFrameHtml ? (
     <IFrame
-      autoResize={!filled}
+      autoResize={autoResize}
       className={className}
       html={iFrameHtml}
       ref={iFrameRef}
       visible={iFrameVisible}
       onMessage={onMessage}
       iFrameProps={iFrameProps}
+      onClick={onClick}
     />
   ) : renderPlaceholder ? (
     <>{renderPlaceholder}</>
