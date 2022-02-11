@@ -18,13 +18,15 @@ export type Asset = AssetType;
 
 export type Props = {
   className?: string;
-  assets?: Asset[];
-  getMoreAssets?: () => void;
-  hasNextPage?: boolean;
+  assetsData?: {
+    assets: AssetType[];
+    getMoreAssets: () => void;
+    createAssets: (files: FileList) => Promise<void>;
+    hasNextPage?: boolean;
+  };
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
-  onCreateAsset?: (files: FileList) => void;
   onSelect?: (value: string | null) => void;
   value?: string;
   fileType?: "image" | "video";
@@ -33,13 +35,10 @@ export type Props = {
 type Tabs = "assets" | "url";
 
 const AssetModal: React.FC<Props> = ({
-  assets,
-  getMoreAssets,
-  hasNextPage,
+  assetsData,
   isMultipleSelectable = false,
   isOpen,
   onClose,
-  onCreateAsset,
   onSelect,
   value,
   fileType,
@@ -49,11 +48,11 @@ const AssetModal: React.FC<Props> = ({
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL = fileType === "video" || (value && !assets?.some(e => e.url === value));
+  const showURL = fileType === "video" || (value && !assetsData?.assets.some(e => e.url === value));
 
   const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
 
-  const initialAsset = assets?.find(a => a.url === value);
+  const initialAsset = assetsData?.assets?.find(a => a.url === value);
 
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
   const [textUrl, setTextUrl] = useState(showURL ? value : undefined);
@@ -95,13 +94,13 @@ const AssetModal: React.FC<Props> = ({
   }, [initialAsset, showURL, value]);
 
   const filteredAssets = useMemo(() => {
-    if (!assets) return;
-    return assets.filter(
+    if (!assetsData?.assets) return;
+    return assetsData?.assets.filter(
       a =>
         !fileType ||
         a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp)$/ : /\.(mp4|webm)$/),
     );
-  }, [assets, fileType]);
+  }, [assetsData?.assets, fileType]);
 
   return fileType === "video" ? (
     <Modal
@@ -162,14 +161,14 @@ const AssetModal: React.FC<Props> = ({
       {selectedTab === "assets" && (
         <AssetsContainer
           assets={filteredAssets}
-          onGetMore={getMoreAssets}
-          hasNextPage={hasNextPage}
-          isMultipleSelectable={isMultipleSelectable}
-          accept={accept}
-          onCreateAsset={onCreateAsset}
           initialAsset={initialAsset}
           selectedAssets={selectedAssets}
           selectAsset={selectAsset}
+          onGetMore={assetsData?.getMoreAssets}
+          onCreateAsset={assetsData?.createAssets}
+          hasNextPage={assetsData?.hasNextPage}
+          isMultipleSelectable={isMultipleSelectable}
+          accept={accept}
           fileType={fileType}
           height={425}
         />

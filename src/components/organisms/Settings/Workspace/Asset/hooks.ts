@@ -121,11 +121,13 @@ export default (params: Params) => {
   return {
     currentProject,
     currentTeam,
-    assets,
-    createAssets,
-    removeAsset,
-    getMoreAssets,
-    hasNextPage,
-    isLoading: loading ?? isRefetching,
+    assetsData: {
+      assets,
+      isLoading: loading ?? isRefetching,
+      getMoreAssets,
+      createAssets,
+      hasNextPage,
+      removeAsset,
+    },
   };
 };

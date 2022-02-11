@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
-import AssetContainer from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
+import AssetContainer, {
+  Asset as AssetType,
+} from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
 
 type Asset = {
   id: string;
@@ -12,36 +14,31 @@ type Asset = {
 };
 
 type Props = {
-  assets?: Asset[];
-  onCreate?: (files: FileList) => void;
-  onRemove?: (assetIds: string[]) => void;
-  onGetMore?: () => void;
-  hasNextPage?: boolean;
-  isLoading?: boolean;
+  assetsData: {
+    assets: AssetType[];
+    isLoading: boolean;
+    getMoreAssets: () => void;
+    createAssets: (files: FileList) => Promise<void>;
+    hasNextPage: boolean | undefined;
+    removeAsset: (assetIds: string[]) => Promise<void>;
+  };
 };
 
-const AssetSection: React.FC<Props> = ({
-  assets = [],
-  onCreate,
-  onRemove,
-  onGetMore,
-  hasNextPage,
-  isLoading,
-}) => {
+const AssetSection: React.FC<Props> = ({ assetsData }) => {
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
 
   return (
     <AssetContainer
-      assets={assets}
-      onCreateAsset={onCreate}
-      onRemove={onRemove}
+      assets={assetsData?.assets}
+      onCreateAsset={assetsData?.createAssets}
+      onRemove={assetsData?.removeAsset}
       selectedAssets={selectedAssets}
       isMultipleSelectable
       selectAsset={selectAsset}
       height={700}
-      hasNextPage={hasNextPage}
-      isLoading={isLoading}
-      onGetMore={onGetMore}
+      hasNextPage={assetsData?.hasNextPage}
+      isLoading={assetsData?.isLoading}
+      onGetMore={assetsData?.getMoreAssets}
     />
   );
 };

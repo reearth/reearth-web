@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
-import { AssetNodes } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks-queries";
 import {
   useMeQuery,
   PublishmentStatus,
@@ -11,8 +10,6 @@ import {
   useCreateSceneMutation,
   useProjectQuery,
   Visualizer,
-  useAssetsQuery,
-  useCreateAssetMutation,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
@@ -38,7 +35,6 @@ export default (teamId: string) => {
     refetchQueries: ["Project"],
   });
   const [createScene] = useCreateSceneMutation();
-  const [createAssetMutation] = useCreateAssetMutation();
 
   if (currentTeam && currentTeam.id !== teamId) {
     teamId = currentTeam?.id;
@@ -150,26 +146,18 @@ export default (teamId: string) => {
     [navigate, setProject],
   );
 
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "", first: 20 },
-    notifyOnNetworkStatusChange: true,
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.edges.map(e => e.node) as AssetNodes;
+  const [assetsModalOpened, setOpenAssets] = useState(false);
+  const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
+  const toggleAssetsModal = useCallback(
+    () => setOpenAssets(!assetsModalOpened),
+    [assetsModalOpened, setOpenAssets],
   );
+
+  const onAssetSelect = useCallback((asset: string | null) => {
+    if (!asset) return;
+    selectAsset(asset);
+  }, []);
 
   return {
     currentProjects,
@@ -181,7 +169,9 @@ export default (teamId: string) => {
     handleModalClose,
     createProject,
     selectProject,
-    assets,
-    createAssets,
+    selectedAsset,
+    assetsModalOpened,
+    toggleAssetsModal,
+    onAssetSelect,
   };
 };

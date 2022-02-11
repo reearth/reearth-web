@@ -13,16 +13,7 @@ type Props = {
 
 const Asset: React.FC<Props> = ({ teamId }: Props) => {
   const intl = useIntl();
-  const {
-    currentProject,
-    currentTeam,
-    assets,
-    createAssets,
-    removeAsset,
-    getMoreAssets,
-    hasNextPage,
-    isLoading,
-  } = useHooks({ teamId });
+  const { currentProject, currentTeam, assetsData } = useHooks({ teamId });
 
   return (
     <SettingPage teamId={teamId} projectId={currentProject?.id}>
@@ -30,14 +21,7 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
         title={intl.formatMessage({ defaultMessage: "Assets" })}
         currentWorkspace={currentTeam}
       />
-      <AssetSection
-        assets={assets}
-        onCreate={createAssets}
-        onRemove={removeAsset}
-        onGetMore={getMoreAssets}
-        hasNextPage={hasNextPage}
-        isLoading={isLoading}
-      />
+      <AssetSection assetsData={assetsData} />
     </SettingPage>
   );
 };

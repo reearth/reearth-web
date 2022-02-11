@@ -12,9 +12,7 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
-  useCreateAssetMutation,
   AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
@@ -172,42 +170,17 @@ export default (teamId?: string) => {
     [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
+  const [assetsModalOpened, setOpenAssets] = useState(false);
+  const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
-  const assetsPerPage = 20;
+  const toggleAssetsModal = useCallback(() => {
+    setOpenAssets(!assetsModalOpened);
+  }, [assetsModalOpened, setOpenAssets]);
 
-  const { data: assetsData, fetchMore } = useAssetsQuery({
-    variables: { teamId: teamId ?? "", first: assetsPerPage },
-    notifyOnNetworkStatusChange: true,
-    skip: !teamId,
-  });
-  const hasNextPage = assetsData?.assets.pageInfo.hasNextPage;
-  const assets = assetsData?.assets.edges.map(e => e.node) as AssetNodes;
-
-  const getMoreAssets = useCallback(() => {
-    if (hasNextPage) {
-      fetchMore({
-        variables: {
-          first: assetsPerPage,
-          after: assetsData?.assets.pageInfo.endCursor,
-          delay: true,
-        },
-      });
-    }
-  }, [assetsData?.assets.pageInfo, fetchMore, hasNextPage]);
+  const onAssetSelect = useCallback((asset: string | null) => {
+    if (!asset) return;
+    selectAsset(asset);
+  }, []);
 
   return {
     user,
@@ -220,9 +193,9 @@ export default (teamId?: string) => {
     modalShown,
     openModal,
     handleModalClose,
-    createAssets,
-    assets,
-    getMoreAssets,
-    hasNextPage,
+    selectedAsset,
+    assetsModalOpened,
+    toggleAssetsModal,
+    onAssetSelect,
   };
 };

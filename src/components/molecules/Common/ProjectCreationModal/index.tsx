@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -7,8 +7,6 @@ import Divider from "@reearth/components/atoms/Divider";
 import Loading from "@reearth/components/atoms/Loading";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
-import AssetModal from "@reearth/components/molecules/Common/AssetModal";
-import { Asset } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 import { styled, useTheme } from "@reearth/theme";
 import fonts from "@reearth/theme/fonts";
@@ -23,10 +21,9 @@ export interface Props {
   open?: boolean;
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
-  assets?: Asset[];
-  getMoreAssets?: () => void;
-  hasNextPage?: boolean;
-  createAssets?: (files: FileList) => Promise<void>;
+  selectedAsset?: string;
+  assetsModal?: React.ReactNode;
+  toggleAssetsModal?: () => void;
 }
 
 const initialValues: FormValues = {
@@ -39,13 +36,11 @@ const ProjectCreationModal: React.FC<Props> = ({
   open,
   onClose,
   onSubmit,
-  assets,
-  getMoreAssets,
-  hasNextPage,
-  createAssets,
+  selectedAsset,
+  assetsModal,
+  toggleAssetsModal,
 }) => {
   const intl = useIntl();
-  const [openAssets, setOpenAssets] = useState(false);
   const formik = useFormik({
     initialValues,
     onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
@@ -63,12 +58,11 @@ const ProjectCreationModal: React.FC<Props> = ({
     }
   }, [formik, onClose]);
 
-  const handleSelect = useCallback(
-    (value: string | null) => {
-      formik.setFieldValue("imageUrl", value);
-    },
-    [formik],
-  );
+  useEffect(() => {
+    if (selectedAsset) {
+      formik.setFieldValue("imageUrl", selectedAsset);
+    }
+  }, [selectedAsset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreate = useCallback(async () => {
     await formik.submitForm();
@@ -130,19 +124,10 @@ const ProjectCreationModal: React.FC<Props> = ({
           <Text size="s" color={theme.main.text} otherProperties={{ margin: "14px 0" }}>
             {intl.formatMessage({ defaultMessage: "Select thumbnail image" })}
           </Text>
-          <Thumbnail url={formik.values.imageUrl} onClick={() => setOpenAssets(true)} />
+          <Thumbnail url={formik.values.imageUrl} onClick={toggleAssetsModal} />
         </FormInputWrapper>
       </NewProjectForm>
-      <AssetModal
-        isOpen={openAssets}
-        onClose={() => setOpenAssets(false)}
-        assets={assets}
-        getMoreAssets={getMoreAssets}
-        hasNextPage={hasNextPage}
-        fileType="image"
-        onCreateAsset={createAssets}
-        onSelect={handleSelect}
-      />
+      {assetsModal}
     </Modal>
   );
 };
