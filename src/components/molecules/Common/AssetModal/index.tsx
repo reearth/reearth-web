@@ -48,7 +48,8 @@ const AssetModal: React.FC<Props> = ({
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL = fileType === "video" || (value && !assetsData?.assets.some(e => e.url === value));
+  const showURL =
+    fileType === "video" || (value && !assetsData?.assets?.some(e => e.url === value));
 
   const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
 

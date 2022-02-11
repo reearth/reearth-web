@@ -81,7 +81,7 @@ export default ({
     fetchMore,
     networkStatus,
   } = useAssetsQuery({
-    variables: { teamId: teamId ?? "", first: assetsPerPage },
+    variables: { teamId: teamId ?? "", pagination: { first: assetsPerPage } },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
