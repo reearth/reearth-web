@@ -122,17 +122,17 @@ export default ({ projectId }: Params) => {
     }
   }, [projectId, intl, setNotification, deleteProjectMutation]);
 
-  const [assetsModalOpened, setOpenAssets] = useState(false);
+  const [assetModalOpened, setOpenAssets] = useState(false);
 
   const toggleAssetsModal = useCallback(
     (open?: boolean) => {
       if (!open) {
-        setOpenAssets(!assetsModalOpened);
+        setOpenAssets(!assetModalOpened);
       } else {
         setOpenAssets(open);
       }
     },
-    [assetsModalOpened, setOpenAssets],
+    [assetModalOpened, setOpenAssets],
   );
 
   return {
@@ -144,7 +144,7 @@ export default ({ projectId }: Params) => {
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    assetsModalOpened,
+    assetModalOpened,
     toggleAssetsModal,
   };
 };

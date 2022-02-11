@@ -170,12 +170,12 @@ export default (teamId?: string) => {
     [createNewProject, createScene, teamId, refetch, intl, setNotification],
   );
 
-  const [assetsModalOpened, setOpenAssets] = useState(false);
+  const [assetModalOpened, setOpenAssets] = useState(false);
   const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
   const toggleAssetsModal = useCallback(() => {
-    setOpenAssets(!assetsModalOpened);
-  }, [assetsModalOpened, setOpenAssets]);
+    setOpenAssets(!assetModalOpened);
+  }, [assetModalOpened, setOpenAssets]);
 
   const onAssetSelect = useCallback((asset: string | null) => {
     if (!asset) return;
@@ -194,7 +194,7 @@ export default (teamId?: string) => {
     openModal,
     handleModalClose,
     selectedAsset,
-    assetsModalOpened,
+    assetModalOpened,
     toggleAssetsModal,
     onAssetSelect,
   };

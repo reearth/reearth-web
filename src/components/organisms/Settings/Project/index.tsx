@@ -4,7 +4,7 @@ import ArchivedMessage from "@reearth/components/molecules/Settings/Project/Arch
 import DangerSection from "@reearth/components/molecules/Settings/Project/DangerSection";
 import ProfileSection from "@reearth/components/molecules/Settings/Project/ProfileSection";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import AssetsModal from "@reearth/components/organisms/Common/AssetModal";
+import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 
 import useHooks from "./hooks";
@@ -22,7 +22,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    assetsModalOpened,
+    assetModalOpened,
     toggleAssetsModal,
   } = useHooks({ projectId });
 
@@ -36,10 +36,10 @@ const Project: React.FC<Props> = ({ projectId }) => {
           updateProjectDescription={updateProjectDescription}
           updateProjectImageUrl={updateProjectImageUrl}
           toggleAssetsModal={toggleAssetsModal}
-          assetsModal={
-            <AssetsModal
+          assetModal={
+            <AssetModal
               teamId={currentTeam?.id}
-              openAssets={assetsModalOpened}
+              openAssets={assetModalOpened}
               onSelect={updateProjectImageUrl}
               setOpenAssets={toggleAssetsModal}
             />

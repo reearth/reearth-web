@@ -15,7 +15,7 @@ export type Props = {
   updateProjectName?: (name: string) => void;
   updateProjectDescription?: (description: string) => void;
   updateProjectImageUrl?: (imageUrl: string | null) => void;
-  assetsModal?: React.ReactNode;
+  assetModal?: React.ReactNode;
   toggleAssetsModal?: (open?: boolean) => void;
 };
 
@@ -24,7 +24,7 @@ const ProfileSection: React.FC<Props> = ({
   updateProjectName,
   updateProjectDescription,
   updateProjectImageUrl,
-  assetsModal,
+  assetModal,
   toggleAssetsModal,
 }) => {
   const intl = useIntl();
@@ -52,7 +52,7 @@ const ProfileSection: React.FC<Props> = ({
           onEditCancel={() => toggleAssetsModal?.(false)}
         />
       </Section>
-      {assetsModal}
+      {assetModal}
     </Wrapper>
   );
 };

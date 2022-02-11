@@ -146,12 +146,12 @@ export default (teamId: string) => {
     [navigate, setProject],
   );
 
-  const [assetsModalOpened, setOpenAssets] = useState(false);
+  const [assetModalOpened, setOpenAssets] = useState(false);
   const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
   const toggleAssetsModal = useCallback(
-    () => setOpenAssets(!assetsModalOpened),
-    [assetsModalOpened, setOpenAssets],
+    () => setOpenAssets(!assetModalOpened),
+    [assetModalOpened, setOpenAssets],
   );
 
   const onAssetSelect = useCallback((asset: string | null) => {
@@ -170,7 +170,7 @@ export default (teamId: string) => {
     createProject,
     selectProject,
     selectedAsset,
-    assetsModalOpened,
+    assetModalOpened,
     toggleAssetsModal,
     onAssetSelect,
   };

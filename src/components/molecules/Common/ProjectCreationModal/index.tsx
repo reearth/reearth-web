@@ -22,7 +22,7 @@ export interface Props {
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
   selectedAsset?: string;
-  assetsModal?: React.ReactNode;
+  assetModal?: React.ReactNode;
   toggleAssetsModal?: () => void;
 }
 
@@ -37,7 +37,7 @@ const ProjectCreationModal: React.FC<Props> = ({
   onClose,
   onSubmit,
   selectedAsset,
-  assetsModal,
+  assetModal,
   toggleAssetsModal,
 }) => {
   const intl = useIntl();
@@ -127,7 +127,7 @@ const ProjectCreationModal: React.FC<Props> = ({
           <Thumbnail url={formik.values.imageUrl} onClick={toggleAssetsModal} />
         </FormInputWrapper>
       </NewProjectForm>
-      {assetsModal}
+      {assetModal}
     </Modal>
   );
 };

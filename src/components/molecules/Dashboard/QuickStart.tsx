@@ -19,7 +19,7 @@ export interface Props {
     description: string;
     imageUrl: string;
   }) => Promise<void>;
-  assetsModal?: React.ReactNode;
+  assetModal?: React.ReactNode;
   toggleAssetsModal?: () => void;
   selectedAsset?: string;
 }
@@ -28,7 +28,7 @@ const QuickStart: React.FC<Props> = ({
   className,
   onCreateTeam,
   onCreateProject,
-  assetsModal,
+  assetModal,
   toggleAssetsModal,
   selectedAsset,
 }) => {
@@ -84,7 +84,7 @@ const QuickStart: React.FC<Props> = ({
         onSubmit={onCreateProject}
         toggleAssetsModal={toggleAssetsModal}
         selectedAsset={selectedAsset}
-        assetsModal={assetsModal}
+        assetModal={assetModal}
       />
       <WorkspaceCreationModal
         open={workCreateOpen}

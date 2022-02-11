@@ -5,7 +5,7 @@ import Loading from "@reearth/components/atoms/Loading";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import AssetsModal from "@reearth/components/organisms/Common/AssetModal";
+import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 
 import useHooks from "./hooks";
@@ -26,7 +26,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     createProject,
     selectProject,
     selectedAsset,
-    assetsModalOpened,
+    assetModalOpened,
     toggleAssetsModal,
     onAssetSelect,
   } = useHooks(teamId);
@@ -46,10 +46,10 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         onSubmit={createProject}
         toggleAssetsModal={toggleAssetsModal}
         selectedAsset={selectedAsset}
-        assetsModal={
-          <AssetsModal
+        assetModal={
+          <AssetModal
             teamId={teamId}
-            openAssets={assetsModalOpened}
+            openAssets={assetModalOpened}
             onSelect={onAssetSelect}
             setOpenAssets={toggleAssetsModal}
           />
