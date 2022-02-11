@@ -22,14 +22,13 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     datasetSchemas,
     loading,
     layers,
-    assets,
+    assetsData,
     selectedWidget,
     widgetAlignEditorActivated,
     changeValue,
     removeField,
     link,
     uploadFile,
-    createAssets,
     removeFile,
     createInfobox,
     removeInfobox,
@@ -60,7 +59,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
           layers={layers}
-          assets={assets}
+          assetsData={assetsData}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
           onCreateInfobox={createInfobox}
@@ -68,7 +67,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onRemove={removeField}
           onLink={link}
           onUploadFile={uploadFile}
-          onCreateAsset={createAssets}
           onRemoveFile={removeFile}
           onIsCapturingChange={onIsCapturingChange}
           onCameraChange={onCameraChange}

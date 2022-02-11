@@ -57,9 +57,13 @@ export type Props = {
   isTemplate?: boolean;
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
-  onCreateAsset?: (files: FileList) => void;
   onRemovePane?: () => void;
-  assets?: Asset[];
+  assetsData?: {
+    assets: Asset[];
+    getMoreAssets: () => void;
+    createAssets: (files: FileList) => Promise<void>;
+    hasNextPage?: boolean;
+  };
   selectedWidget?: Widget;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   widgetAlignEditorActivated?: boolean;
