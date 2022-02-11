@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 
 import {
@@ -6,13 +6,8 @@ import {
   useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
-  useCreateAssetMutation,
-  AssetsQuery,
-  useAssetsQuery,
 } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
-
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 type Params = {
   projectId: string;
@@ -127,26 +122,18 @@ export default ({ projectId }: Params) => {
     }
   }, [projectId, intl, setNotification, deleteProjectMutation]);
 
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
+  const [assetsModalOpened, setOpenAssets] = useState(false);
 
-  const { data: assetsData } = useAssetsQuery({
-    variables: { teamId: teamId ?? "" },
-    skip: !teamId,
-  });
-  const assets = assetsData?.assets.nodes.filter(Boolean) as AssetNodes;
+  const toggleAssetsModal = useCallback(
+    (open?: boolean) => {
+      if (!open) {
+        setOpenAssets(!assetsModalOpened);
+      } else {
+        setOpenAssets(open);
+      }
+    },
+    [assetsModalOpened, setOpenAssets],
+  );
 
   return {
     project,
@@ -157,7 +144,7 @@ export default ({ projectId }: Params) => {
     updateProjectImageUrl,
     archiveProject,
     deleteProject,
-    createAssets,
-    assets,
+    assetsModalOpened,
+    toggleAssetsModal,
   };
 };

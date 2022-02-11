@@ -1,39 +1,24 @@
 import { useCallback } from "react";
+import { useIntl } from "react-intl";
 
 import { AssetsQuery, useAssetsQuery, useCreateAssetMutation } from "@reearth/gql";
+import { useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (teamId) {
-          await Promise.all(
-            Array.from(files).map(file =>
-              createAssetMutation({ variables: { teamId, file }, refetchQueries: ["Assets"] }),
-            ),
-          );
-        }
-      })(),
-    [createAssetMutation, teamId],
-  );
+  const intl = useIntl();
+  const [, setNotification] = useNotification();
 
   const assetsPerPage = 20;
 
-  const {
-    data,
-    // refetch,
-    // loading,
-    fetchMore,
-    // networkStatus,
-  } = useAssetsQuery({
+  const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: { teamId: teamId ?? "", first: assetsPerPage },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
   const hasNextPage = data?.assets.pageInfo.hasNextPage;
+  const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
 
   const getMoreAssets = useCallback(() => {
@@ -48,11 +33,38 @@ export default (teamId?: string) => {
     }
   }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
 
+  const [createAssetMutation] = useCreateAssetMutation();
+  const createAssets = useCallback(
+    (files: FileList) =>
+      (async () => {
+        if (!teamId) return;
+
+        const results = await Promise.all(
+          Array.from(files).map(async file => {
+            const result = await createAssetMutation({ variables: { teamId, file } });
+            if (result.errors || !result.data?.createAsset) {
+              setNotification({
+                type: "error",
+                text: intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
+              });
+            }
+          }),
+        );
+        if (results) {
+          setNotification({
+            type: "success",
+            text: intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
+          });
+          await refetch();
+        }
+      })(),
+    [createAssetMutation, setNotification, refetch, teamId, intl],
+  );
+
   return {
     assetsData: {
       assets,
-      //   refetch,
-      //   loading,
+      isLoading: loading ?? isRefetching,
       getMoreAssets,
       createAssets,
       hasNextPage,
