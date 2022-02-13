@@ -31,8 +31,8 @@ export type Props = {
   outlineColor?: string;
   outlineWidth?: number;
   heightType?: "auto" | "manual";
-  size?: "small" | "mid" | "large";
-  position?: "right" | "mid" | "left";
+  size?: "small" | "medium" | "large";
+  position?: "right" | "middle" | "left";
   visible?: boolean;
   noContent?: boolean;
   useMask?: boolean;
@@ -183,8 +183,8 @@ const Mask = styled.div<{ activate?: boolean }>`
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
   open?: boolean;
-  position?: "right" | "mid" | "left";
-  size?: "small" | "mid" | "large";
+  position?: "right" | "middle" | "left";
+  size?: "small" | "medium" | "large";
   height?: number;
   heightType?: "auto" | "manual";
   outlineColor?: string;
@@ -193,19 +193,19 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   top: 15%;
   ${({ open, position }) =>
     open
-      ? position == "right"
-        ? "right: 30px"
-        : position == left
-        ? "left: 30px"
-        : `left: 0;
+      ? position == "middle"
+        ? `left: 0;
   right: 0;
   margin-left: auto;
-  margin-right: auto; `
+  margin-right: auto;`
+        : position == "left"
+        ? "left: 30px"
+        : `right: 30px`
       : "right: -6px"};
   ${({ heightType, height, open }) =>
     heightType == "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
   width: ${({ size, open }) =>
-    open ? (size == "large" ? "624px" : size == "small" ? "346px" : "540px") : "80px"};
+    open ? (size == "large" ? "624px" : size == "medium" ? "540px" : "346px") : "80px"};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   ${({ outlineWidth, outlineColor, open }) =>
     outlineWidth && open ? `border: ${outlineWidth}px ${outlineColor} solid` : ""};

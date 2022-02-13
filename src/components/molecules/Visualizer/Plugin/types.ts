@@ -121,8 +121,8 @@ export type InfoboxProperty = {
     infoboxPaddingBottom?: number;
     infoboxPaddingLeft?: number;
     infoboxPaddingRight?: number;
-    size?: "small" | "mid" | "large";
-    position?: "right" | "mid" | "left";
+    size?: "small" | "medium" | "large";
+    position?: "right" | "middle" | "left";
     typography?: Typography;
     bgcolor?: string;
     outlineColor?: string;
