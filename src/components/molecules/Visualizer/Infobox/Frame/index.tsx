@@ -107,7 +107,7 @@ const InfoBox: React.FC<Props> = ({
 
   return (
     <>
-      <Mask activate={open && useMask} />
+      <Mask activate={open && useMask} onClick={handleClose} />
       <StyledFloatedPanel
         className={className}
         visible={visible}
@@ -122,7 +122,7 @@ const InfoBox: React.FC<Props> = ({
         size={size}
         height={height}
         heightType={heightType}
-        outlineColor={outlineColor}
+        outlineColor={outlineColor ? outlineColor : publishedTheme.mainText}
         outlineWidth={outlineWidth}
         floated>
         <Wrapper ref={ref} open={open}>
