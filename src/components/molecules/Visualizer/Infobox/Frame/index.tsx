@@ -192,19 +192,19 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   top: 15%;
   ${({ open, position }) =>
     open
-      ? position == "middle"
+      ? position === "middle"
         ? `left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;`
-        : position == "left"
+        : position === "left"
         ? "left: 30px"
         : `right: 30px`
       : "right: -6px"};
   ${({ heightType, height, open }) =>
-    heightType == "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
+    heightType === "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
   width: ${({ size, open }) =>
-    open ? (size == "large" ? "624px" : size == "medium" ? "540px" : "346px") : "80px"};
+    open ? (size === "large" ? "624px" : size === "medium" ? "540px" : "346px") : "80px"};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   ${({ outlineWidth, outlineColor, open }) =>
     outlineWidth && open ? `border: ${outlineWidth}px ${outlineColor} solid` : ""};
