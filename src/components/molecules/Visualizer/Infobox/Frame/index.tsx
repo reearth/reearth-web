@@ -138,7 +138,7 @@ const InfoBox: React.FC<Props> = ({
                 <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
               </IconWrapper>
             )}
-            {!open ? null : (
+            {open && (
               <Text size="m" weight="bold" customColor>
                 <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
               </Text>
