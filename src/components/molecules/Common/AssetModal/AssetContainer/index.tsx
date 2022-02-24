@@ -35,6 +35,7 @@ export type Props = {
   height?: number;
   hasNextPage?: boolean;
   isLoading?: boolean;
+  smallCardOnly?: boolean;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -51,6 +52,7 @@ const AssetContainer: React.FC<Props> = ({
   height,
   hasNextPage,
   isLoading,
+  smallCardOnly,
 }) => {
   const intl = useIntl();
   const {
@@ -78,6 +80,7 @@ const AssetContainer: React.FC<Props> = ({
     selectAsset,
     selectedAssets,
     onRemove,
+    smallCardOnly,
   });
 
   const filterOptions: { key: FilterTypes; label: string }[] = [
@@ -139,16 +142,19 @@ const AssetContainer: React.FC<Props> = ({
             onClick={() => setLayoutType("list")}
             selected={layoutType === "list"}
           />
-          <StyledIcon
-            icon="assetGridSmall"
-            onClick={() => setLayoutType("small")}
-            selected={layoutType === "small"}
-          />
-          <StyledIcon
-            icon="assetGrid"
-            onClick={() => setLayoutType("medium")}
-            selected={layoutType === "medium"}
-          />
+          {smallCardOnly ? (
+            <StyledIcon
+              icon="assetGridSmall"
+              onClick={() => setLayoutType("small")}
+              selected={layoutType === "small"}
+            />
+          ) : (
+            <StyledIcon
+              icon="assetGrid"
+              onClick={() => setLayoutType("medium")}
+              selected={layoutType === "medium"}
+            />
+          )}
         </LayoutButtons>
         <SearchBar onChange={handleSearch} />
       </NavBar>

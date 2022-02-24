@@ -23,6 +23,7 @@ export default ({
   selectAsset,
   selectedAssets,
   onRemove,
+  smallCardOnly,
 }: {
   assets?: Asset[];
   isMultipleSelectable?: boolean;
@@ -32,8 +33,9 @@ export default ({
   selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
   onRemove?: (assetIds: string[]) => void;
+  smallCardOnly?: boolean;
 }) => {
-  const [layoutType, setLayoutType] = useState<LayoutTypes>("medium");
+  const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [currentSaved, setCurrentSaved] = useState(initialAsset);
   const [reverse, setReverse] = useState(false);
 

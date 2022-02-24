@@ -29,6 +29,7 @@ export type Props = {
   onClose?: () => void;
   onSelect?: (value: string | null) => void;
   value?: string;
+  smallCardOnly?: boolean;
   fileType?: "image" | "video";
 };
 
@@ -41,6 +42,7 @@ const AssetModal: React.FC<Props> = ({
   onClose,
   onSelect,
   value,
+  smallCardOnly,
   fileType,
 }) => {
   const intl = useIntl();
@@ -171,6 +173,7 @@ const AssetModal: React.FC<Props> = ({
           isMultipleSelectable={isMultipleSelectable}
           accept={accept}
           fileType={fileType}
+          smallCardOnly={smallCardOnly}
           height={425}
         />
       )}

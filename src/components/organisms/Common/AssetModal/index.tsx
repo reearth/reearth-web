@@ -21,6 +21,7 @@ const AssetModal: React.FC<Props> = ({ teamId, openAssets, setOpenAssets, onSele
       onClose={() => setOpenAssets?.(false)}
       assetsData={assetsData}
       fileType="image"
+      smallCardOnly
       onSelect={onSelect}
     />
   );
