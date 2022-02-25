@@ -13,7 +13,10 @@ export default (teamId?: string) => {
   const assetsPerPage = 20;
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
-    variables: { teamId: teamId ?? "", pagination: { first: assetsPerPage } },
+    variables: {
+      teamId: teamId ?? "",
+      pagination: { first: assetsPerPage },
+    },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
@@ -25,8 +28,10 @@ export default (teamId?: string) => {
     if (hasNextPage) {
       fetchMore({
         variables: {
-          first: assetsPerPage,
-          after: data?.assets.pageInfo.endCursor,
+          pagination: {
+            first: assetsPerPage,
+            after: data?.assets.pageInfo.endCursor,
+          },
           delay: true,
         },
       });

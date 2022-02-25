@@ -47,8 +47,10 @@ export default (params: Params) => {
     if (hasNextPage) {
       fetchMore({
         variables: {
-          first: assetsPerPage,
-          after: data?.assets.pageInfo.endCursor,
+          pagination: {
+            first: assetsPerPage,
+            after: data?.assets.pageInfo.endCursor,
+          },
           delay: true,
         },
       });
