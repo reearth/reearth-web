@@ -10,7 +10,7 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import AssetsContainer, { Asset as AssetType } from "./AssetContainer";
+import AssetContainer, { Asset as AssetType } from "./AssetContainer";
 
 export type Mode = "asset" | "url";
 
@@ -162,7 +162,7 @@ const AssetModal: React.FC<Props> = ({
         />
       }>
       {selectedTab === "assets" && (
-        <AssetsContainer
+        <AssetContainer
           assets={filteredAssets}
           initialAsset={initialAsset}
           selectedAssets={selectedAssets}

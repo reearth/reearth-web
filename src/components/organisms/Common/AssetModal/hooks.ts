@@ -1,20 +1,30 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
-import { AssetsQuery, useAssetsQuery, useCreateAssetMutation } from "@reearth/gql";
+import { AssetsQuery, useAssetsQuery, useCreateAssetMutation, Maybe } from "@reearth/gql";
 import { useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
+export enum AssetSortType {
+  Date = "DATE",
+  Name = "NAME",
+  Size = "SIZE",
+}
+
 export default (teamId?: string) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
+  const [sortType, setSortType] = useState<Maybe<AssetSortType>>();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const assetsPerPage = 20;
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
+      sort: sortType,
+      keyword: searchTerm,
       pagination: { first: assetsPerPage },
     },
     notifyOnNetworkStatusChange: true,
@@ -74,5 +84,7 @@ export default (teamId?: string) => {
       createAssets,
       hasNextPage,
     },
+    setSearchTerm,
+    setSortType,
   };
 };

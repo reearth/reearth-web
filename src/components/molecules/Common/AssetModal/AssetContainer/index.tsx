@@ -16,9 +16,11 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset as AssetType, LayoutTypes, FilterTypes } from "./hooks";
+import useHooks, { Asset as AssetType, LayoutTypes, SortTypes } from "./hooks";
 
 export type Asset = AssetType;
+
+export type AssetSortTypes = SortTypes;
 
 export type Props = {
   className?: string;
@@ -35,6 +37,10 @@ export type Props = {
   height?: number;
   hasNextPage?: boolean;
   isLoading?: boolean;
+  sortType?: AssetSortTypes | null;
+  handleSortType: (sort?: SortTypes) => void;
+  searchTerm?: string;
+  handleSearchTerm: (term?: string) => void;
   smallCardOnly?: boolean;
 };
 
@@ -52,6 +58,10 @@ const AssetContainer: React.FC<Props> = ({
   height,
   hasNextPage,
   isLoading,
+  sortType,
+  handleSortType,
+  // searchTerm,
+  handleSearchTerm,
   smallCardOnly,
 }) => {
   const intl = useIntl();
@@ -59,8 +69,7 @@ const AssetContainer: React.FC<Props> = ({
     layoutType,
     setLayoutType,
     filteredAssets,
-    handleFilterChange,
-    filterSelected,
+    // handleSortChange,
     currentSaved,
     searchResults,
     iconChoice,
@@ -80,13 +89,14 @@ const AssetContainer: React.FC<Props> = ({
     selectAsset,
     selectedAssets,
     onRemove,
+    handleSearchTerm,
     smallCardOnly,
   });
 
-  const filterOptions: { key: FilterTypes; label: string }[] = [
-    { key: "time", label: intl.formatMessage({ defaultMessage: "Time" }) },
-    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
-    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+  const sortOptions: { key: SortTypes; label: string }[] = [
+    { key: "DATE", label: intl.formatMessage({ defaultMessage: "Date" }) },
+    { key: "SIZE", label: intl.formatMessage({ defaultMessage: "File size" }) },
+    { key: "NAME", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
 
   const handleScroll = (
@@ -128,10 +138,10 @@ const AssetContainer: React.FC<Props> = ({
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
-          <AssetSelect<"time" | "size" | "name">
-            value={filterSelected}
-            items={filterOptions}
-            onChange={handleFilterChange}
+          <AssetSelect<SortTypes>
+            value={sortType ?? "DATE"}
+            items={sortOptions}
+            onChange={handleSortType}
           />
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>

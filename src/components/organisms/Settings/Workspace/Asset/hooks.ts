@@ -1,5 +1,5 @@
 import { useNavigate } from "@reach/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 
 import {
@@ -7,10 +7,17 @@ import {
   useAssetsQuery,
   useCreateAssetMutation,
   useRemoveAssetMutation,
+  Maybe,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
 type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
+
+export enum AssetSortType {
+  Date = "DATE",
+  Name = "NAME",
+  Size = "SIZE",
+}
 
 type Params = {
   teamId: string;
@@ -23,6 +30,19 @@ export default (params: Params) => {
   const [currentProject] = useProject();
   const navigate = useNavigate();
 
+  const [sortType, setSortType] = useState<Maybe<AssetSortType>>();
+  const [searchTerm, setSearchTerm] = useState<string>();
+
+  const handleSortType = useCallback((sort?: string) => {
+    if (!sort) return;
+    setSortType(sort as AssetSortType);
+  }, []);
+
+  const handleSearchTerm = useCallback((term?: string) => {
+    if (!term) return;
+    setSearchTerm(term);
+  }, []);
+
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
       navigate(`/settings/workspace/${currentTeam?.id}/asset`);
@@ -34,10 +54,22 @@ export default (params: Params) => {
   const assetsPerPage = 20;
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
-    variables: { teamId: teamId ?? "", pagination: { first: assetsPerPage } },
+    variables: {
+      teamId: teamId ?? "",
+      sort: sortType,
+      keyword: searchTerm,
+      pagination: { first: assetsPerPage },
+    },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
+
+  useEffect(() => {
+    if (sortType) {
+      refetch();
+      // console.log(data, "ddddata");
+    }
+  }, [sortType, refetch]);
 
   const hasNextPage = data?.assets.pageInfo.hasNextPage;
   const isRefetching = networkStatus === 3;
@@ -130,6 +162,10 @@ export default (params: Params) => {
       createAssets,
       hasNextPage,
       removeAsset,
+      sortType,
+      handleSortType,
+      searchTerm,
+      handleSearchTerm,
     },
   };
 };

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import useFileInput from "use-file-input";
 
-export type FilterTypes = "time" | "size" | "name";
+export type SortTypes = "DATE" | "SIZE" | "NAME";
 
 export type LayoutTypes = "medium" | "small" | "list";
 
@@ -23,6 +23,9 @@ export default ({
   selectAsset,
   selectedAssets,
   onRemove,
+  sortType,
+  // searchTerm,
+  // handleSearchTerm,
   smallCardOnly,
 }: {
   assets?: Asset[];
@@ -33,14 +36,17 @@ export default ({
   selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
   onRemove?: (assetIds: string[]) => void;
+  sortType?: string;
+  searchTerm?: string;
+  handleSearchTerm: (term?: string | undefined) => void;
   smallCardOnly?: boolean;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
-  const [currentSaved, setCurrentSaved] = useState(initialAsset);
+  // const [currentSaved, setCurrentSaved] = useState(initialAsset);
   const [reverse, setReverse] = useState(false);
 
   const [searchResults, setSearchResults] = useState<Asset[]>();
-  const [filterSelected, selectFilter] = useState<FilterTypes>("time");
+  // const [filterSelected, selectFilter] = useState<FilterTypes>("time");
 
   const [filteredAssets, setAssets] = useState(assets);
 
@@ -55,11 +61,11 @@ export default ({
   }, [onRemove, selectAsset, selectedAssets]);
 
   const iconChoice =
-    filterSelected === "name"
+    sortType === "name"
       ? reverse
         ? "filterNameReverse"
         : "filterName"
-      : filterSelected === "size"
+      : sortType === "size"
       ? reverse
         ? "filterSizeReverse"
         : "filterSize"
@@ -67,33 +73,33 @@ export default ({
       ? "filterTimeReverse"
       : "filterTime";
 
-  const handleFilterChange = useCallback(
-    (f: FilterTypes) => {
-      selectFilter(f);
-      setReverse(false);
-      setCurrentSaved(initialAsset);
-      if (!assets) return;
-      const newArray =
-        f === "time"
-          ? [...assets]
-          : [...assets].sort((a: Asset, a2: Asset) => {
-              return f === "name"
-                ? a.name.localeCompare(a2.name)
-                : a[f] < a2[f]
-                ? -1
-                : a[f] > a2[f]
-                ? 1
-                : 0;
-            });
-      setAssets(newArray);
-    },
-    [assets, initialAsset],
-  );
+  // const handleSortChange = useCallback(
+  //   (s: SortTypes) => {
+  //     handleSortType(s);
+  //     setReverse(false);
+  //     setCurrentSaved(initialAsset);
+  //     if (!assets) return;
+  //     const newArray =
+  //       s === "time"
+  //         ? [...assets]
+  //         : [...assets].sort((a: Asset, a2: Asset) => {
+  //             return s === "name"
+  //               ? a.name.localeCompare(a2.name)
+  //               : a[s] < a2[s]
+  //               ? -1
+  //               : a[s] > a2[s]
+  //               ? 1
+  //               : 0;
+  //           });
+  //     setAssets(newArray);
+  //   },
+  //   [assets, initialAsset, handleSortType],
+  // );
 
   useEffect(() => {
     if (!assets) return;
-    handleFilterChange(filterSelected);
-  }, [handleFilterChange, filterSelected, assets]);
+    setAssets(assets);
+  }, [assets]);
 
   const handleAssetsSelect = (asset: Asset) => {
     selectedAssets?.includes(asset)
@@ -134,9 +140,8 @@ export default ({
     layoutType,
     setLayoutType,
     filteredAssets,
-    handleFilterChange,
-    filterSelected,
-    currentSaved,
+    // handleSortChange,
+    currentSaved: initialAsset,
     searchResults,
     iconChoice,
     handleAssetsSelect,
