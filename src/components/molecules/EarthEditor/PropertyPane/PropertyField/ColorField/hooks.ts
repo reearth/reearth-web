@@ -8,7 +8,7 @@ export type RGBA = {
   a: number;
 };
 
-type Params = {
+export type Params = {
   value?: string;
   onChange?: (value: string | null) => void | undefined;
 };
