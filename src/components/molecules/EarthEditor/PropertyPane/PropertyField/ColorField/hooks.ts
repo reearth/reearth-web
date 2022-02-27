@@ -106,8 +106,9 @@ export default ({ value, onChange }: Params) => {
   }, [value]);
 
   useEffect(() => {
-    if (rgba && tinycolor(rgba).toHexString() !== value) {
-      setColor(tinycolor(rgba).toHexString());
+    if (!value) return;
+    if (rgba && tinycolor(rgba).toHex8String() !== value) {
+      setColor(tinycolor(rgba).toHex8String());
     }
   }, [rgba]); // eslint-disable-line react-hooks/exhaustive-deps
 
