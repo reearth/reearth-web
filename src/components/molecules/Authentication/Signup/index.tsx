@@ -92,7 +92,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
 
   const handleSignup = useCallback(() => {
     onSignup(email, username, password);
-    // setSent(true);
+    setSent(true);
   }, [email, username, password, onSignup]);
 
   useEffect(() => {
@@ -158,7 +158,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
           />
           <StyledInput
             className="form-item"
-            placeholder={intl.formatMessage({ defaultMessage: "User name" })}
+            placeholder={intl.formatMessage({ defaultMessage: "Username" })}
             color={theme.main.weak}
             value={username}
             autoFocus
@@ -183,6 +183,23 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
             <PasswordMessage size="xs" customColor>
               {password ? regexMessage : undefined}
             </PasswordMessage>
+            <PasswordPolicyDiv>
+              <Text size="s"  color="black">
+                {intl.formatMessage({ defaultMessage: "your password must contain:" })}
+              </Text>
+              <Text size="s" customColor>
+                {intl.formatMessage({ defaultMessage: "at least 8 charchters" })}
+              </Text>
+              <Text size="s" customColor>
+                {intl.formatMessage({ defaultMessage: "Lower case letters (a-z)" })}
+              </Text>
+              <Text size="s" customColor>
+                {intl.formatMessage({ defaultMessage: "Upper case letters (A-Z)" })}
+              </Text>
+              <Text size="s" customColor>
+                {intl.formatMessage({ defaultMessage: "Numbers (0-9)" })}
+              </Text>
+            </PasswordPolicyDiv>
           </PasswordWrapper>
           <StyledButton
             className="form-item"
@@ -257,6 +274,15 @@ const PasswordMessage = styled(Text)`
   margin-left: ${metricsSizes.m}px;
   margin-top: ${metricsSizes["2xs"]}px;
   font-style: italic;
+`;
+const PasswordPolicyDiv = styled.div`
+  border: 1px solid #ccc;
+  padding: 14px;
+  padding-bottom: 0px;
+  margin-top: 20px;
+  p {
+    padding-bottom: 14px;
+  }
 `;
 
 const SentFormWrapper = styled(Flex)`

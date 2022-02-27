@@ -41,6 +41,7 @@ const Login: React.FC = () => {
       <Text className="form-item" size="s" customColor>
         {intl.formatMessage({ defaultMessage: "Log in to Re:Earth to continue." })}
       </Text>
+      //@TODO: Maher check here
       <StyledForm
         id="login-form"
         action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}

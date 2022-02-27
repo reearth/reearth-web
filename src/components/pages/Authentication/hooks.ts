@@ -63,11 +63,12 @@ export default () => {
   }
 
   const onSignup = useCallback(
+    
     async (email: string, username: string, password: string) => {
       if (isAuthenticated) return;
       try {
-        await axios.post(
-          "http://localhost:8080/api/signup",
+      const res = await axios.post(
+        (window.REEARTH_CONFIG?.api || "/api")+"/signup",
           {
               "email": email,
               "username": username,
@@ -79,7 +80,7 @@ export default () => {
               'Content-Type': 'application/json',
             },
           },
-        );
+      );
       } catch (error) {
         console.error(error);
       }
@@ -90,7 +91,23 @@ export default () => {
   const onPasswordResetRequest = useCallback(
     async (email: string) => {
       if (isAuthenticated) return;
-      console.log(email);
+      try {
+        const res = await axios.post(
+          (window.REEARTH_CONFIG?.api || "/api") + "/password-reset",
+          {
+            "email": email,
+          },
+          {
+            headers: {
+              Accept: "application/vnd.github.v3.html+json",
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        console.log(res.status)
+      } catch (error) {
+        console.error(error);
+      }
     },
     [isAuthenticated],
   );
