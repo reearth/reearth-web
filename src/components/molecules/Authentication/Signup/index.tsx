@@ -14,7 +14,7 @@ import { PasswordPolicy as PasswordPolicyType } from "../common";
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onSignup: (email: string, username: string, password: string) => void;
+  onSignup: (email: string, username: string, password: string) => any;
   passwordPolicy?: PasswordPolicy;
 };
 
@@ -90,10 +90,15 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
     [password], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  const handleSignup = useCallback(() => {
-    onSignup(email, username, password);
-    setSent(true);
-  }, [email, username, password, onSignup]);
+   const handleSignup = useCallback(async () => {
+     const a: any = await onSignup(email, username, password);
+     console.log(a);
+     if (a.status === 200) {
+       setSent(true);
+     } else {
+       console.log("sad");
+     }
+   }, [email, username, password, onSignup]);
 
   useEffect(() => {
     if (

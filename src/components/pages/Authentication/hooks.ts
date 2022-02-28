@@ -81,8 +81,9 @@ export default () => {
             },
           },
       );
+        return res
       } catch (error) {
-        console.error(error);
+        return error;
       }
     },
     [isAuthenticated],
