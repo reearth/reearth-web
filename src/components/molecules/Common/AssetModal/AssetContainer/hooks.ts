@@ -19,7 +19,6 @@ export default ({
   isMultipleSelectable,
   accept,
   onCreateAsset,
-  initialAsset,
   selectAsset,
   selectedAssets,
   onRemove,
@@ -32,7 +31,6 @@ export default ({
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
-  initialAsset?: Asset;
   selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
   onRemove?: (assetIds: string[]) => void;
@@ -42,23 +40,10 @@ export default ({
   smallCardOnly?: boolean;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
-  // const [currentSaved, setCurrentSaved] = useState(initialAsset);
   const [reverse, setReverse] = useState(false);
-
   const [searchResults, setSearchResults] = useState<Asset[]>();
-  // const [filterSelected, selectFilter] = useState<FilterTypes>("time");
-
   const [filteredAssets, setAssets] = useState(assets);
-
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-
-  const handleRemove = useCallback(() => {
-    if (selectedAssets?.length) {
-      onRemove?.(selectedAssets.map(a => a.id));
-      selectAsset?.([]);
-      setDeleteModalVisible(false);
-    }
-  }, [onRemove, selectAsset, selectedAssets]);
 
   const iconChoice =
     sortType === "name"
@@ -72,29 +57,6 @@ export default ({
       : reverse
       ? "filterTimeReverse"
       : "filterTime";
-
-  // const handleSortChange = useCallback(
-  //   (s: SortTypes) => {
-  //     handleSortType(s);
-  //     setReverse(false);
-  //     setCurrentSaved(initialAsset);
-  //     if (!assets) return;
-  //     const newArray =
-  //       s === "time"
-  //         ? [...assets]
-  //         : [...assets].sort((a: Asset, a2: Asset) => {
-  //             return s === "name"
-  //               ? a.name.localeCompare(a2.name)
-  //               : a[s] < a2[s]
-  //               ? -1
-  //               : a[s] > a2[s]
-  //               ? 1
-  //               : 0;
-  //           });
-  //     setAssets(newArray);
-  //   },
-  //   [assets, initialAsset, handleSortType],
-  // );
 
   useEffect(() => {
     if (!assets) return;
@@ -124,6 +86,14 @@ export default ({
     setAssets(filteredAssets.reverse());
   }, [filteredAssets, reverse]);
 
+  const handleRemove = useCallback(() => {
+    if (selectedAssets?.length) {
+      onRemove?.(selectedAssets.map(a => a.id));
+      selectAsset?.([]);
+      setDeleteModalVisible(false);
+    }
+  }, [onRemove, selectAsset, selectedAssets]);
+
   const handleSearch = useCallback(
     (value: string) => {
       if (!value) {
@@ -140,8 +110,6 @@ export default ({
     layoutType,
     setLayoutType,
     filteredAssets,
-    // handleSortChange,
-    currentSaved: initialAsset,
     searchResults,
     iconChoice,
     handleAssetsSelect,

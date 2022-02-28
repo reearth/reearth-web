@@ -19,16 +19,18 @@ export enum AssetSortType {
   Size = "SIZE",
 }
 
-type Params = {
+export type Params = {
   teamId: string;
 };
 
 export default (params: Params) => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const [, setNotification] = useNotification();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
-  const navigate = useNavigate();
+  const teamId = currentTeam?.id;
+  const assetsPerPage = 20;
 
   const [sortType, setSortType] = useState<Maybe<AssetSortType>>();
   const [searchTerm, setSearchTerm] = useState<string>();
@@ -49,10 +51,6 @@ export default (params: Params) => {
     }
   }, [params, currentTeam, navigate]);
 
-  const teamId = currentTeam?.id;
-
-  const assetsPerPage = 20;
-
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
@@ -67,7 +65,6 @@ export default (params: Params) => {
   useEffect(() => {
     if (sortType) {
       refetch();
-      // console.log(data, "ddddata");
     }
   }, [sortType, refetch]);
 
@@ -90,7 +87,6 @@ export default (params: Params) => {
   }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
 
   const [createAssetMutation] = useCreateAssetMutation();
-
   const createAssets = useCallback(
     (files: FileList) =>
       (async () => {
@@ -119,7 +115,6 @@ export default (params: Params) => {
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
-
   const removeAsset = useCallback(
     (assetIds: string[]) =>
       (async () => {

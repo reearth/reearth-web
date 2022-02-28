@@ -69,8 +69,6 @@ const AssetContainer: React.FC<Props> = ({
     layoutType,
     setLayoutType,
     filteredAssets,
-    // handleSortChange,
-    currentSaved,
     searchResults,
     iconChoice,
     handleAssetsSelect,
@@ -85,7 +83,6 @@ const AssetContainer: React.FC<Props> = ({
     isMultipleSelectable,
     accept,
     onCreateAsset,
-    initialAsset,
     selectAsset,
     selectedAssets,
     onRemove,
@@ -192,7 +189,7 @@ const AssetContainer: React.FC<Props> = ({
                     asset={a}
                     onCheck={() => handleAssetsSelect(a)}
                     selected={selectedAssets?.includes(a)}
-                    checked={currentSaved === a}
+                    checked={initialAsset === a}
                   />
                 ))
               : (searchResults || filteredAssets)?.map(a => (
@@ -203,7 +200,7 @@ const AssetContainer: React.FC<Props> = ({
                     url={a.url}
                     onCheck={() => handleAssetsSelect(a)}
                     selected={selectedAssets?.includes(a)}
-                    checked={currentSaved === a}
+                    checked={initialAsset === a}
                   />
                 ))}
           </AssetList>
