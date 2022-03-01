@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import useFileInput from "use-file-input";
 
-export type SortTypes = "DATE" | "SIZE" | "NAME";
+export type SortType = "DATE" | "NAME" | "SIZE";
 
 export type LayoutTypes = "medium" | "small" | "list";
 
@@ -22,7 +22,8 @@ export default ({
   selectAsset,
   selectedAssets,
   onRemove,
-  sortType,
+  sort,
+  handleSortChange,
   // searchTerm,
   // handleSearchTerm,
   smallCardOnly,
@@ -34,34 +35,28 @@ export default ({
   selectAsset?: (assets: Asset[]) => void;
   selectedAssets?: Asset[];
   onRemove?: (assetIds: string[]) => void;
-  sortType?: string;
+  sort?: { type?: SortType | null; reverse?: boolean };
+  handleSortChange: (type?: string, reverse?: boolean) => void;
   searchTerm?: string;
   handleSearchTerm: (term?: string | undefined) => void;
   smallCardOnly?: boolean;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
-  const [reverse, setReverse] = useState(false);
   const [searchResults, setSearchResults] = useState<Asset[]>();
-  const [filteredAssets, setAssets] = useState(assets);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const iconChoice =
-    sortType === "name"
-      ? reverse
+    sort?.type === "NAME"
+      ? sort?.reverse
         ? "filterNameReverse"
         : "filterName"
-      : sortType === "size"
-      ? reverse
+      : sort?.type === "SIZE"
+      ? sort?.reverse
         ? "filterSizeReverse"
         : "filterSize"
-      : reverse
+      : sort?.reverse
       ? "filterTimeReverse"
       : "filterTime";
-
-  useEffect(() => {
-    if (!assets) return;
-    setAssets(assets);
-  }, [assets]);
 
   const handleAssetsSelect = (asset: Asset) => {
     selectedAssets?.includes(asset)
@@ -81,10 +76,8 @@ export default ({
   }, [handleFileSelect]);
 
   const handleReverse = useCallback(() => {
-    setReverse(!reverse);
-    if (!filteredAssets) return;
-    setAssets(filteredAssets.reverse());
-  }, [filteredAssets, reverse]);
+    handleSortChange?.(undefined, !sort?.reverse);
+  }, [handleSortChange, sort?.reverse]);
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
@@ -99,17 +92,16 @@ export default ({
       if (!value) {
         setSearchResults(undefined);
       } else {
-        if (!filteredAssets) return;
-        setSearchResults(filteredAssets.filter(a => a.name.toLowerCase().includes(value)));
+        if (!assets) return;
+        setSearchResults(assets.filter(a => a.name.toLowerCase().includes(value)));
       }
     },
-    [filteredAssets],
+    [assets],
   );
 
   return {
     layoutType,
     setLayoutType,
-    filteredAssets,
     searchResults,
     iconChoice,
     handleAssetsSelect,

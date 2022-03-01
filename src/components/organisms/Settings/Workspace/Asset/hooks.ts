@@ -1,5 +1,5 @@
 import { useNavigate } from "@reach/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 
 import {
@@ -32,18 +32,8 @@ export default (params: Params) => {
   const teamId = currentTeam?.id;
   const assetsPerPage = 20;
 
-  const [sortType, setSortType] = useState<Maybe<AssetSortType>>();
+  const [sort, setSort] = useState<{ type?: Maybe<AssetSortType>; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
-
-  const handleSortType = useCallback((sort?: string) => {
-    if (!sort) return;
-    setSortType(sort as AssetSortType);
-  }, []);
-
-  const handleSearchTerm = useCallback((term?: string) => {
-    if (!term) return;
-    setSearchTerm(term);
-  }, []);
 
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
@@ -51,26 +41,38 @@ export default (params: Params) => {
     }
   }, [params, currentTeam, navigate]);
 
+  const pagination = useMemo(() => {
+    if (!sort || (sort?.type === "DATE" && !sort?.reverse) || (sort?.type && sort?.reverse)) {
+      return {
+        last: assetsPerPage,
+      };
+    } else {
+      return {
+        first: assetsPerPage,
+      };
+    }
+  }, [sort]);
+
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
-      sort: sortType,
+      sort: sort?.type,
       keyword: searchTerm,
-      pagination: { first: assetsPerPage },
+      pagination,
     },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
 
-  useEffect(() => {
-    if (sortType) {
-      refetch();
-    }
-  }, [sortType, refetch]);
-
   const hasNextPage = data?.assets.pageInfo.hasNextPage;
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
+
+  useEffect(() => {
+    if (sort) {
+      refetch();
+    }
+  }, [sort, refetch]);
 
   const getMoreAssets = useCallback(() => {
     if (hasNextPage) {
@@ -147,6 +149,22 @@ export default (params: Params) => {
     [removeAssetMutation, teamId, setNotification, intl],
   );
 
+  const handleSortChange = useCallback(
+    (type?: string, reverse?: boolean) => {
+      if (!type && reverse === undefined) return;
+      setSort({
+        type: (type as AssetSortType) ?? sort?.type,
+        reverse: reverse ?? (type === "DATE" || type !== sort?.type ? false : sort?.reverse),
+      });
+    },
+    [sort],
+  );
+
+  const handleSearchTerm = useCallback((term?: string) => {
+    if (!term) return;
+    setSearchTerm(term);
+  }, []);
+
   return {
     currentProject,
     currentTeam,
@@ -157,8 +175,8 @@ export default (params: Params) => {
       createAssets,
       hasNextPage,
       removeAsset,
-      sortType,
-      handleSortType,
+      sort,
+      handleSortChange,
       searchTerm,
       handleSearchTerm,
     },

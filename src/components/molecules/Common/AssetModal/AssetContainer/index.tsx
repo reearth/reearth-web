@@ -16,11 +16,11 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset as AssetType, LayoutTypes, SortTypes } from "./hooks";
+import useHooks, { Asset as AssetType, LayoutTypes, SortType } from "./hooks";
 
 export type Asset = AssetType;
 
-export type AssetSortTypes = SortTypes;
+export type AssetSortType = SortType;
 
 export type Props = {
   className?: string;
@@ -37,8 +37,8 @@ export type Props = {
   height?: number;
   hasNextPage?: boolean;
   isLoading?: boolean;
-  sortType?: AssetSortTypes | null;
-  handleSortType: (sort?: SortTypes) => void;
+  sort?: { type?: AssetSortType | null; reverse?: boolean };
+  handleSortChange: (type?: string, reverse?: boolean) => void;
   searchTerm?: string;
   handleSearchTerm: (term?: string) => void;
   smallCardOnly?: boolean;
@@ -58,8 +58,8 @@ const AssetContainer: React.FC<Props> = ({
   height,
   hasNextPage,
   isLoading,
-  sortType,
-  handleSortType,
+  sort,
+  handleSortChange,
   // searchTerm,
   handleSearchTerm,
   smallCardOnly,
@@ -68,7 +68,6 @@ const AssetContainer: React.FC<Props> = ({
   const {
     layoutType,
     setLayoutType,
-    filteredAssets,
     searchResults,
     iconChoice,
     handleAssetsSelect,
@@ -80,6 +79,8 @@ const AssetContainer: React.FC<Props> = ({
     handleRemove,
   } = useHooks({
     assets,
+    sort,
+    handleSortChange,
     isMultipleSelectable,
     accept,
     onCreateAsset,
@@ -90,7 +91,7 @@ const AssetContainer: React.FC<Props> = ({
     smallCardOnly,
   });
 
-  const sortOptions: { key: SortTypes; label: string }[] = [
+  const sortOptions: { key: AssetSortType; label: string }[] = [
     { key: "DATE", label: intl.formatMessage({ defaultMessage: "Date" }) },
     { key: "SIZE", label: intl.formatMessage({ defaultMessage: "File size" }) },
     { key: "NAME", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
@@ -135,10 +136,10 @@ const AssetContainer: React.FC<Props> = ({
       <Divider margin="0" />
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
-          <AssetSelect<SortTypes>
-            value={sortType ?? "DATE"}
+          <AssetSelect<AssetSortType>
+            value={sort?.type ?? "DATE"}
             items={sortOptions}
-            onChange={handleSortType}
+            onChange={handleSortChange}
           />
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>
@@ -166,7 +167,7 @@ const AssetContainer: React.FC<Props> = ({
         <SearchBar onChange={handleSearch} />
       </NavBar>
       <AssetWrapper height={height}>
-        {!isLoading && (!filteredAssets || filteredAssets.length < 1) ? (
+        {!isLoading && (!assets || assets.length < 1) ? (
           <Template align="center" justify="center">
             <TemplateText size="m">
               {fileType === "image"
@@ -183,7 +184,7 @@ const AssetContainer: React.FC<Props> = ({
         ) : (
           <AssetList layoutType={layoutType} onScroll={e => handleScroll(e, onGetMore)}>
             {layoutType === "list"
-              ? (searchResults || filteredAssets)?.map(a => (
+              ? (searchResults || assets)?.map(a => (
                   <AssetListItem
                     key={a.id}
                     asset={a}
@@ -192,7 +193,7 @@ const AssetContainer: React.FC<Props> = ({
                     checked={initialAsset === a}
                   />
                 ))
-              : (searchResults || filteredAssets)?.map(a => (
+              : (searchResults || assets)?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}
