@@ -14,6 +14,8 @@ export type RefType = {
   postMessage: (message: any) => void;
 };
 
+export type AutoResize = "both" | "width-only" | "height-only";
+
 export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
   html,
@@ -28,7 +30,7 @@ export default function useHook({
   autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
-  autoResize?: "both" | "width-only" | "height-only";
+  autoResize?: AutoResize;
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
@@ -137,7 +139,6 @@ export default function useHook({
     () => ({
       style: {
         display: visible ? undefined : "none",
-        // TODO: width iFrameSize?.[0]
         width: visible
           ? autoResize == "height-only" || autoResize == "both"
             ? "100%"
@@ -148,8 +149,6 @@ export default function useHook({
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
-        minWidth: "100%",
-        maxWidth: "100%",
         ...iFrameProps?.style,
       },
       ...iFrameProps,

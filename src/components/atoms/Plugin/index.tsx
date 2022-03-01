@@ -1,10 +1,11 @@
 import React, { IframeHTMLAttributes, ReactNode } from "react";
 
 import useHook, { IFrameAPI } from "./hooks";
-import IFrame from "./IFrame";
+import IFrame, { AutoResize as AutoResizeType } from "./IFrame";
 
 export { defaultIsMarshalable } from "./hooks";
 export type { IFrameAPI } from "./hooks";
+export type AutoResize = AutoResizeType;
 
 export type Props = {
   className?: string;
@@ -13,7 +14,7 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   renderPlaceholder?: ReactNode;
-  autoResize?: "both" | "width-only" | "height-only";
+  autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };

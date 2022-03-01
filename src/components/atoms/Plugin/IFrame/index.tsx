@@ -1,11 +1,13 @@
 import React, { IframeHTMLAttributes } from "react";
 
-import useHook, { RefType } from "./hooks";
+import useHook, { RefType, AutoResize as AutoResizeType } from "./hooks";
 
 export type Ref = RefType;
 
+export type AutoResize = AutoResizeType;
+
 export type Props = {
-  autoResize?: "both" | "width-only" | "height-only";
+  autoResize?: AutoResize;
   className?: string;
   html?: string;
   visible?: boolean;
