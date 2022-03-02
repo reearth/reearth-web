@@ -147,9 +147,8 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ postMessage, render }: IFrameAPI) => {
+    return ({ postMessage, render, resize }: IFrameAPI) => {
       return exposed({
-        engineAPI: ctx.engine.api,
         commonReearth: ctx.reearth,
         events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },
         plugin: {
@@ -163,10 +162,10 @@ export function useAPI({
         widget: getWidget,
         postMessage,
         render,
+        resize,
       });
     };
   }, [
-    ctx?.engine.api,
     ctx?.reearth,
     extensionId,
     extensionType,

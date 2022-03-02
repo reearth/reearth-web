@@ -6,7 +6,10 @@ import type { Ref as IFrameRef } from "./IFrame";
 
 export type IFrameAPI = {
   render: (html: string, options?: { visible?: boolean }) => void;
-  resize: (width: string | null | undefined, height: string | null | undefined) => void;
+  resize: (
+    width: string | number | null | undefined,
+    height: string | number | null | undefined,
+  ) => void;
   postMessage: (message: any) => void;
 };
 

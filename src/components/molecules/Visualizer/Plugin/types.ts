@@ -186,6 +186,13 @@ export type UI = {
    * Sends a message to the iframe's window shown by the show method. Sent data will be automatically encoded as JSON and restored in the iframe's window. So any object that cannot be serialized to JSON will be ignored.
    */
   readonly postMessage: (message: any) => void;
+  /**
+   * Resize the iframe by the plugin. If the plugin try to resize the iframe by specifying width in the iframe's internal HTML, for example, in the body style, or by updating the CSS, iframe will not actually be resized. In that case, the plugin need to call this method explicitly to resize the iframe.
+   */
+  readonly resize: (
+    width: string | number | null | undefined,
+    height: string | number | null | undefined,
+  ) => void;
 };
 
 /** The API for the visualizer. This works regardless of the visualization engine you are using, which ensures the versatility of the plugin. It is recommended that you use this API whenever possible, and call the visualization engine's own low-layer API only when there is something you cannot do. */
