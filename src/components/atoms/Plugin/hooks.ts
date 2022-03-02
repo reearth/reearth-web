@@ -1,12 +1,21 @@
 import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo, useImperativeHandle, Ref } from "react";
 
 import type { Ref as IFrameRef } from "./IFrame";
 
 export type IFrameAPI = {
   render: (html: string, options?: { visible?: boolean }) => void;
+  resize: (width: string | null | undefined, height: string | null | undefined) => void;
   postMessage: (message: any) => void;
+};
+
+export type RefType = {
+  resize: (
+    width: string | number | null | undefined,
+    height: string | number | null | undefined,
+  ) => void;
+  arena: () => Arena | undefined;
 };
 
 export type Options = {
@@ -15,6 +24,7 @@ export type Options = {
   skip?: boolean;
   iframeCanBeVisible?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
+  ref?: Ref<RefType>;
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
@@ -41,6 +51,7 @@ export default function useHook({
   skip,
   iframeCanBeVisible,
   isMarshalable,
+  ref,
   onPreInit,
   onError = defaultOnError,
   onDispose,
@@ -88,6 +99,9 @@ export default function useHook({
     () => ({
       render: (html, { visible = true, ...options } = {}) => {
         setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
+      },
+      resize: (width, height) => {
+        iFrameRef.current?.resize(width, height);
       },
       postMessage: msg => {
         iFrameRef.current?.postMessage(JSON.parse(JSON.stringify(msg)));
@@ -145,6 +159,17 @@ export default function useHook({
       }
     };
   }, [code, evalCode, iFrameApi, isMarshalable, onDispose, onPreInit, skip, exposed]);
+
+  useImperativeHandle(
+    ref,
+    (): RefType => ({
+      resize: (width, height) => {
+        iFrameRef.current?.resize(width, height);
+      },
+      arena: () => arena.current,
+    }),
+    [],
+  );
 
   return {
     iFrameHtml,

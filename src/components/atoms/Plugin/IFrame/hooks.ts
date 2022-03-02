@@ -12,6 +12,10 @@ import {
 
 export type RefType = {
   postMessage: (message: any) => void;
+  resize: (
+    width: string | number | null | undefined,
+    height: string | number | null | undefined,
+  ) => void;
 };
 
 export type AutoResize = "both" | "width-only" | "height-only";
@@ -43,18 +47,23 @@ export default function useHook({
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameSize, setIFrameSize] = useState<[string, string]>();
+  const [iFrameSize, setIFrameSize] = useState<[string | undefined, string | undefined]>();
   const pendingMesages = useRef<any[]>([]);
 
   useImperativeHandle(
     ref,
-    () => ({
-      postMessage: (message: any) => {
+    (): RefType => ({
+      postMessage: message => {
         if (!loaded.current || !iFrameRef.current?.contentWindow) {
           pendingMesages.current.push(message);
           return;
         }
         iFrameRef.current.contentWindow.postMessage(message, "*");
+      },
+      resize: (width, height) => {
+        const width2 = typeof width === "number" ? width + "px" : width ?? undefined;
+        const height2 = typeof height === "number" ? height + "px" : height ?? undefined;
+        setIFrameSize(width2 || height2 ? [width2, height2] : undefined);
       },
     }),
     [],
@@ -140,12 +149,12 @@ export default function useHook({
       style: {
         display: visible ? undefined : "none",
         width: visible
-          ? autoResize == "height-only" || autoResize == "both"
+          ? !autoResize || autoResize == "height-only"
             ? "100%"
             : iFrameSize?.[0]
           : "0px",
         height: visible
-          ? autoResize == "width-only" || autoResize == "both"
+          ? !autoResize || autoResize == "width-only"
             ? "100%"
             : iFrameSize?.[1]
           : "0px",
