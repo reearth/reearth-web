@@ -60,7 +60,7 @@ const AssetContainer: React.FC<Props> = ({
   isLoading,
   sort,
   handleSortChange,
-  // searchTerm,
+  searchTerm,
   handleSearchTerm,
   smallCardOnly,
 }) => {
@@ -68,7 +68,6 @@ const AssetContainer: React.FC<Props> = ({
   const {
     layoutType,
     setLayoutType,
-    searchResults,
     iconChoice,
     handleAssetsSelect,
     handleUploadToAsset,
@@ -78,7 +77,6 @@ const AssetContainer: React.FC<Props> = ({
     setDeleteModalVisible,
     handleRemove,
   } = useHooks({
-    assets,
     sort,
     handleSortChange,
     isMultipleSelectable,
@@ -164,7 +162,7 @@ const AssetContainer: React.FC<Props> = ({
             />
           )}
         </LayoutButtons>
-        <SearchBar onChange={handleSearch} />
+        <SearchBar value={searchTerm ?? ""} onChange={handleSearch} />
       </NavBar>
       <AssetWrapper height={height}>
         {!isLoading && (!assets || assets.length < 1) ? (
@@ -184,7 +182,7 @@ const AssetContainer: React.FC<Props> = ({
         ) : (
           <AssetList layoutType={layoutType} onScroll={e => handleScroll(e, onGetMore)}>
             {layoutType === "list"
-              ? (searchResults || assets)?.map(a => (
+              ? assets?.map(a => (
                   <AssetListItem
                     key={a.id}
                     asset={a}
@@ -193,7 +191,7 @@ const AssetContainer: React.FC<Props> = ({
                     checked={initialAsset === a}
                   />
                 ))
-              : (searchResults || assets)?.map(a => (
+              : assets?.map(a => (
                   <AssetCard
                     key={a.id}
                     name={a.name}

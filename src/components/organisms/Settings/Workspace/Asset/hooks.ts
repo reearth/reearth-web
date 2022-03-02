@@ -56,8 +56,6 @@ export default (params: Params) => {
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
-      sort: sort?.type,
-      keyword: searchTerm,
       pagination,
     },
     notifyOnNetworkStatusChange: true,
@@ -67,12 +65,6 @@ export default (params: Params) => {
   const hasMoreAssets = data?.assets.pageInfo.hasNextPage || data?.assets.pageInfo.hasPreviousPage;
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
-
-  useEffect(() => {
-    if (sort) {
-      refetch();
-    }
-  }, [sort, refetch]);
 
   const getMoreAssets = useCallback(() => {
     if (hasMoreAssets) {
@@ -156,14 +148,23 @@ export default (params: Params) => {
         type: (type as AssetSortType) ?? sort?.type,
         reverse: reverse ?? (type === "DATE" || type !== sort?.type ? false : sort?.reverse),
       });
+      refetch({
+        sort: type as AssetSortType,
+      });
+      setSearchTerm(undefined);
     },
-    [sort],
+    [sort, refetch],
   );
 
-  const handleSearchTerm = useCallback((term?: string) => {
-    if (!term) return;
-    setSearchTerm(term);
-  }, []);
+  const handleSearchTerm = useCallback(
+    (term?: string) => {
+      setSearchTerm(term);
+      refetch({
+        keyword: term,
+      });
+    },
+    [refetch],
+  );
 
   return {
     currentProject,

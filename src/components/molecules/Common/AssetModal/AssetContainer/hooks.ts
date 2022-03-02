@@ -15,7 +15,6 @@ export type Asset = {
 };
 
 export default ({
-  assets,
   isMultipleSelectable,
   accept,
   onCreateAsset,
@@ -24,11 +23,9 @@ export default ({
   onRemove,
   sort,
   handleSortChange,
-  // searchTerm,
-  // handleSearchTerm,
+  handleSearchTerm,
   smallCardOnly,
 }: {
-  assets?: Asset[];
   isMultipleSelectable?: boolean;
   accept?: string;
   onCreateAsset?: (files: FileList) => void;
@@ -37,12 +34,10 @@ export default ({
   onRemove?: (assetIds: string[]) => void;
   sort?: { type?: SortType | null; reverse?: boolean };
   handleSortChange: (type?: string, reverse?: boolean) => void;
-  searchTerm?: string;
   handleSearchTerm: (term?: string | undefined) => void;
   smallCardOnly?: boolean;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
-  const [searchResults, setSearchResults] = useState<Asset[]>();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const iconChoice =
@@ -88,21 +83,19 @@ export default ({
   }, [onRemove, selectAsset, selectedAssets]);
 
   const handleSearch = useCallback(
-    (value: string) => {
-      if (!value) {
-        setSearchResults(undefined);
+    (term?: string) => {
+      if (!term || term.length < 1) {
+        handleSearchTerm(undefined);
       } else {
-        if (!assets) return;
-        setSearchResults(assets.filter(a => a.name.toLowerCase().includes(value)));
+        handleSearchTerm(term);
       }
     },
-    [assets],
+    [handleSearchTerm],
   );
 
   return {
     layoutType,
     setLayoutType,
-    searchResults,
     iconChoice,
     handleAssetsSelect,
     handleUploadToAsset,
