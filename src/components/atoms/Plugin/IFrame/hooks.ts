@@ -12,10 +12,7 @@ import {
 
 export type RefType = {
   postMessage: (message: any) => void;
-  resize: (
-    width: string | number | null | undefined,
-    height: string | number | null | undefined,
-  ) => void;
+  resize: (width: string | number | undefined, height: string | number | undefined) => void;
 };
 
 export type AutoResize = "both" | "width-only" | "height-only";

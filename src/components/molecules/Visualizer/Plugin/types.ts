@@ -181,17 +181,29 @@ export type UI = {
    *
    * When `show` has been called again druing the iframe has been already shown, the iframe will be destroyed and then a new iframe will be recreated with the new html and options.
    */
-  readonly show: (html: string, options?: { visible?: boolean }) => void;
+  readonly show: (
+    html: string,
+    options?: {
+      /** If true, display a iframe. Otherwise, hide the iframe and plugin works like headless mdoe. Default value is true. */
+      visible?: boolean;
+      /** Initial iframe width. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. */
+      width?: number | string;
+      /** Initial iframe height. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. */
+      height?: number | string;
+    },
+  ) => void;
   /**
    * Sends a message to the iframe's window shown by the show method. Sent data will be automatically encoded as JSON and restored in the iframe's window. So any object that cannot be serialized to JSON will be ignored.
    */
   readonly postMessage: (message: any) => void;
   /**
-   * Resize the iframe by the plugin. If the plugin try to resize the iframe by specifying width in the iframe's internal HTML, for example, in the body style, or by updating the CSS, iframe will not actually be resized. In that case, the plugin need to call this method explicitly to resize the iframe.
+   * Resize the iframe by the plugin. If width or height is undefined, it will be auto-resized. If a number is specified, it will be treated as pixels.
+   *
+   * If plugins try to resize the iframe by specifying size in the iframe's internal HTML, for example, in the body style, or by updating the CSS, iframe will not actually be resized. In that case, plugins need to call this method explicitly to resize the iframe.
    */
   readonly resize: (
-    width: string | number | null | undefined,
-    height: string | number | null | undefined,
+    width: string | number | undefined,
+    height: string | number | undefined,
   ) => void;
 };
 

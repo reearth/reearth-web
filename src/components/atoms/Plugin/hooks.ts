@@ -9,18 +9,12 @@ export type IFrameAPI = {
     html: string,
     options?: { visible?: boolean; width?: number | string; height?: number | string },
   ) => void;
-  resize: (
-    width: string | number | null | undefined,
-    height: string | number | null | undefined,
-  ) => void;
+  resize: (width: string | number | undefined, height: string | number | undefined) => void;
   postMessage: (message: any) => void;
 };
 
 export type RefType = {
-  resize: (
-    width: string | number | null | undefined,
-    height: string | number | null | undefined,
-  ) => void;
+  resize: (width: string | number | undefined, height: string | number | undefined) => void;
   arena: () => Arena | undefined;
 };
 
