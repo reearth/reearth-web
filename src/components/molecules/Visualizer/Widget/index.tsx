@@ -58,10 +58,17 @@ export default function WidgetComponent<PP = any, SP = any>({
   const Builtin =
     w?.pluginId && w.extensionId ? builtin[`${w.pluginId}/${w.extensionId}`] : undefined;
 
+  const autoResize = w?.extended?.vertically
+    ? "width-only"
+    : w?.extended?.horizontally
+    ? "height-only"
+    : "both";
+
   return Builtin ? (
     <Builtin {...props} widget={w} />
   ) : (
     <Plugin
+      autoResize={autoResize}
       pluginId={w?.pluginId}
       extensionId={w?.extensionId}
       sourceCode={(w as any)?.__REEARTH_SOURCECODE} // for debugging

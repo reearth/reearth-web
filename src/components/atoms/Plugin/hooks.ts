@@ -5,7 +5,10 @@ import { useCallback, useEffect, useRef, useState, useMemo, useImperativeHandle,
 import type { Ref as IFrameRef } from "./IFrame";
 
 export type IFrameAPI = {
-  render: (html: string, options?: { visible?: boolean }) => void;
+  render: (
+    html: string,
+    options?: { visible?: boolean; width?: number | string; height?: number | string },
+  ) => void;
   resize: (
     width: string | number | null | undefined,
     height: string | number | null | undefined,
@@ -66,7 +69,7 @@ export default function useHook({
   const [code, setCode] = useState("");
   const iFrameRef = useRef<IFrameRef>(null);
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
-    [string, { visible?: boolean } | undefined]
+    [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
   >(["", undefined]);
 
   const evalCode = useCallback(

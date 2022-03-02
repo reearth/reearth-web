@@ -22,6 +22,8 @@ export type AutoResize = "both" | "width-only" | "height-only";
 
 export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
+  width,
+  height,
   html,
   ref,
   autoResize,
@@ -31,6 +33,8 @@ export default function useHook({
   onMessage,
   onClick,
 }: {
+  width?: number | string;
+  height?: number | string;
   autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
@@ -176,6 +180,12 @@ export default function useHook({
       window.removeEventListener("blur", handleBlur);
     };
   }, [onClick]);
+
+  useEffect(() => {
+    const w = typeof width === "number" ? width + "px" : width;
+    const h = typeof height === "number" ? height + "px" : height;
+    setIFrameSize(w && h ? [w, h] : undefined);
+  }, [width, height]);
 
   return {
     ref: iFrameRef,
