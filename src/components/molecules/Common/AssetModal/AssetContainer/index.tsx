@@ -35,7 +35,7 @@ export type Props = {
   selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
   height?: number;
-  hasNextPage?: boolean;
+  hasMoreAssets?: boolean;
   isLoading?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
   handleSortChange: (type?: string, reverse?: boolean) => void;
@@ -56,7 +56,7 @@ const AssetContainer: React.FC<Props> = ({
   selectAsset,
   fileType,
   height,
-  hasNextPage,
+  hasMoreAssets,
   isLoading,
   sort,
   handleSortChange,
@@ -207,7 +207,7 @@ const AssetContainer: React.FC<Props> = ({
           </AssetList>
         )}
         {isLoading && <StyledLoading relative />}
-        {!hasNextPage && <Divider margin="2px" />}
+        {!hasMoreAssets && <Divider margin="2px" />}
         <Divider margin="0" />
       </AssetWrapper>
       <AssetDeleteModal

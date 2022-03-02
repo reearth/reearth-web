@@ -22,7 +22,7 @@ type Props = {
     isLoading: boolean;
     getMoreAssets: () => void;
     createAssets: (files: FileList) => Promise<void>;
-    hasNextPage: boolean | undefined;
+    hasMoreAssets: boolean | undefined;
     removeAsset: (assetIds: string[]) => Promise<void>;
     sort?: { type?: AssetSortType | null; reverse?: boolean };
     handleSortChange: (type?: string, reverse?: boolean) => void;
@@ -47,7 +47,7 @@ const AssetSection: React.FC<Props> = ({ assetsData }) => {
       isMultipleSelectable
       selectAsset={selectAsset}
       height={700}
-      hasNextPage={assetsData?.hasNextPage}
+      hasMoreAssets={assetsData?.hasMoreAssets}
       isLoading={assetsData?.isLoading}
       onGetMore={assetsData?.getMoreAssets}
     />

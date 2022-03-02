@@ -64,7 +64,7 @@ export default (params: Params) => {
     skip: !teamId,
   });
 
-  const hasNextPage = data?.assets.pageInfo.hasNextPage;
+  const hasMoreAssets = data?.assets.pageInfo.hasNextPage || data?.assets.pageInfo.hasPreviousPage;
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
 
@@ -75,7 +75,7 @@ export default (params: Params) => {
   }, [sort, refetch]);
 
   const getMoreAssets = useCallback(() => {
-    if (hasNextPage) {
+    if (hasMoreAssets) {
       fetchMore({
         variables: {
           pagination: {
@@ -86,7 +86,7 @@ export default (params: Params) => {
         },
       });
     }
-  }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
+  }, [data?.assets.pageInfo, fetchMore, hasMoreAssets]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -173,7 +173,7 @@ export default (params: Params) => {
       isLoading: loading ?? isRefetching,
       getMoreAssets,
       createAssets,
-      hasNextPage,
+      hasMoreAssets,
       removeAsset,
       sort,
       handleSortChange,
