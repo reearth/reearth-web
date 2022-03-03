@@ -33,8 +33,8 @@ export default ({
   selectedAssets?: Asset[];
   onRemove?: (assetIds: string[]) => void;
   sort?: { type?: SortType | null; reverse?: boolean };
-  handleSortChange: (type?: string, reverse?: boolean) => void;
-  handleSearchTerm: (term?: string | undefined) => void;
+  handleSortChange?: (type?: string, reverse?: boolean) => void;
+  handleSearchTerm?: (term?: string | undefined) => void;
   smallCardOnly?: boolean;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
@@ -85,9 +85,9 @@ export default ({
   const handleSearch = useCallback(
     (term?: string) => {
       if (!term || term.length < 1) {
-        handleSearchTerm(undefined);
+        handleSearchTerm?.(undefined);
       } else {
-        handleSearchTerm(term);
+        handleSearchTerm?.(term);
       }
     },
     [handleSearchTerm],

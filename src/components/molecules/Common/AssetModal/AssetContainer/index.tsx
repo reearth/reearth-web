@@ -38,9 +38,9 @@ export type Props = {
   hasMoreAssets?: boolean;
   isLoading?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
-  handleSortChange: (type?: string, reverse?: boolean) => void;
+  handleSortChange?: (type?: string, reverse?: boolean) => void;
   searchTerm?: string;
-  handleSearchTerm: (term?: string) => void;
+  handleSearchTerm?: (term?: string) => void;
   smallCardOnly?: boolean;
 };
 

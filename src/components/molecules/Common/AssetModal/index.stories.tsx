@@ -101,21 +101,29 @@ export const Video: Story<Props> = args => {
 };
 
 Default.args = {
-  assets: assets,
+  assetsData: {
+    assets,
+  },
   fileType: "image",
 };
 
 Selected.args = {
-  assets: assets,
+  assetsData: {
+    assets,
+  },
   value: `${process.env.PUBLIC_URL}/sample.svg`,
   fileType: "image",
 };
 
 File.args = {
-  assets: assets,
+  assetsData: {
+    assets,
+  },
 };
 
 Video.args = {
-  assets: assets,
+  assetsData: {
+    assets,
+  },
   fileType: "video",
 };

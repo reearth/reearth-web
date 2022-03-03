@@ -19,15 +19,15 @@ export type AssetSortType = SortType;
 export type Props = {
   className?: string;
   assetsData: {
-    assets: AssetType[];
-    isLoading: boolean;
-    getMoreAssets: () => void;
-    createAssets: (files: FileList) => Promise<void>;
-    hasMoreAssets: boolean | undefined;
+    assets?: AssetType[];
+    isLoading?: boolean;
+    getMoreAssets?: () => void;
+    createAssets?: (files: FileList) => Promise<void>;
+    hasMoreAssets?: boolean | undefined;
     sort?: { type?: AssetSortType | null; reverse?: boolean };
-    handleSortChange: (type?: string, reverse?: boolean) => void;
+    handleSortChange?: (type?: string, reverse?: boolean) => void;
     searchTerm?: string;
-    handleSearchTerm: (term?: string) => void;
+    handleSearchTerm?: (term?: string) => void;
   };
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
