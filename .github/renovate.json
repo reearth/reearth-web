@@ -32,7 +32,7 @@
       "groupSlug": "all",
       "extends": [
         {
-          "schedule": "0 0 4 * *"
+          "schedule": "before 3am on the fourth day of the month"
         }
       ]
     }
