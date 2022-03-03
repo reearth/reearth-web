@@ -21,7 +21,7 @@ export type Props<PP = any, SP = any> = {
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
-  layout: WidgetLayout;
+  layout?: WidgetLayout;
   editing?: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
 };
@@ -40,9 +40,9 @@ export default function WidgetComponent<PP = any, SP = any>({
   onExtend,
   ...props
 }: Props<PP, SP>) {
-  const { align, location } = layout;
-  const horizontal = isHorizontal(location);
-  const vertical = isVertical(location);
+  const { align, location } = layout ?? {};
+  const horizontal = location ? isHorizontal(location) : false;
+  const vertical = location ? isVertical(location) : false;
   const actualExtended = !!(extended ?? widget.extended);
 
   const w = useMemo<RawWidget | undefined>(
