@@ -100,13 +100,16 @@ export default function useHook({
       resize.textContent = `
         if ("ResizeObserver" in window) {
           new window.ResizeObserver(entries => {
-            const el = document.body.parentElement;
-            const st = document.defaultView.getComputedStyle(el, "");
-            horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
-            verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
+            const win = document.defaultView;
+            const html = document.body.parentElement;
+            const st = win.getComputedStyle(html, "");
+            horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
+            verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
+            const scrollbarW = win.innerWidth - html.offsetWidth;
+            const scrollbarH = win.innerHeight - html.offsetHeight;
             const resize = {
-              width: el.offsetWidth + horizontalMargin,
-              height: el.offsetHeight + verticalMargin,
+              width: html.offsetWidth + horizontalMargin + scrollbarW,
+              height: html.offsetHeight + verticalMargin + scrollbarH,
             };
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: resize
