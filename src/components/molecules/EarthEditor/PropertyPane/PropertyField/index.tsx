@@ -26,7 +26,7 @@ import SwitchField from "./SwitchField";
 import TextField from "./TextField";
 import { FieldProps } from "./types";
 import TypographyField from "./TypographyField";
-import URLField, { Asset as AssetType } from "./URLField";
+import URLField, { Asset as AssetType, AssetSortType as SortType } from "./URLField";
 
 export type { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
 
@@ -36,6 +36,7 @@ export type LatLng = LatLngType;
 export type Location = LocationType;
 export type Layer = LayerType;
 export type Asset = AssetType;
+export type AssetSortType = SortType;
 
 export type SchemaField<T extends ValueType = ValueType> = {
   id: string;
@@ -95,11 +96,16 @@ export type Props<T extends ValueType = ValueType> = {
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
-  assetsData?: {
+  assetsData: {
     assets: AssetType[];
+    isLoading: boolean;
     getMoreAssets: () => void;
     createAssets: (files: FileList) => Promise<void>;
-    hasNextPage?: boolean;
+    hasMoreAssets: boolean | undefined;
+    sort?: { type?: AssetSortType | null; reverse?: boolean };
+    handleSortChange: (type?: string, reverse?: boolean) => void;
+    searchTerm?: string;
+    handleSearchTerm: (term?: string) => void;
   };
   onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
   onRemove?: (id: string) => void;

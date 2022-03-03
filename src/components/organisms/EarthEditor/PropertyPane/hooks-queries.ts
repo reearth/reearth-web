@@ -1,22 +1,17 @@
-import { useMemo, useCallback } from "react";
-import { useIntl } from "react-intl";
+import { useMemo } from "react";
 
+import assetHooks from "@reearth/components/organisms/Common/AssetModal/hooks";
 import {
   useGetScenePropertyQuery,
   useGetLayerPropertyQuery,
   useGetLinkableDatasetsQuery,
   useGetLayersFromLayerIdQuery,
-  AssetsQuery,
-  useAssetsQuery,
-  useCreateAssetMutation,
 } from "@reearth/gql";
-import { Selected, useNotification } from "@reearth/state";
+import { Selected } from "@reearth/state";
 
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";
 
 export type Mode = "infobox" | "scene" | "layer" | "block" | "widgets" | "widget" | "cluster";
-
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default ({
   sceneId,
@@ -35,8 +30,8 @@ export default ({
   mode: Mode;
   locale: string;
 }) => {
-  const intl = useIntl();
-  const [, setNotification] = useNotification();
+  const { assetsData } = assetHooks(teamId);
+
   const {
     loading: layerLoading,
     error: layerError,
@@ -71,63 +66,6 @@ export default ({
     },
     skip: !sceneId,
   });
-
-  const assetsPerPage = 20;
-
-  const {
-    data: assetsData,
-    refetch,
-    loading: loadingAssets,
-    fetchMore,
-    networkStatus,
-  } = useAssetsQuery({
-    variables: { teamId: teamId ?? "", pagination: { first: assetsPerPage } },
-    notifyOnNetworkStatusChange: true,
-    skip: !teamId,
-  });
-  const hasNextPage = assetsData?.assets.pageInfo.hasNextPage;
-  const isRefetching = networkStatus === 3;
-  const assets = assetsData?.assets.edges.map(e => e.node) as AssetNodes;
-
-  const getMoreAssets = useCallback(() => {
-    if (hasNextPage) {
-      fetchMore({
-        variables: {
-          first: assetsPerPage,
-          after: assetsData?.assets.pageInfo.endCursor,
-          delay: true,
-        },
-      });
-    }
-  }, [assetsData?.assets.pageInfo, fetchMore, hasNextPage]);
-
-  const [createAssetMutation] = useCreateAssetMutation();
-  const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (!teamId) return;
-
-        const results = await Promise.all(
-          Array.from(files).map(async file => {
-            const result = await createAssetMutation({ variables: { teamId, file } });
-            if (result.errors || !result.data?.createAsset) {
-              setNotification({
-                type: "error",
-                text: intl.formatMessage({ defaultMessage: "Failed to add one or more assets." }),
-              });
-            }
-          }),
-        );
-        if (results) {
-          setNotification({
-            type: "success",
-            text: intl.formatMessage({ defaultMessage: "Successfully added one or more assets." }),
-          });
-          await refetch();
-        }
-      })(),
-    [createAssetMutation, setNotification, refetch, teamId, intl],
-  );
 
   const scene =
     scenePropertyData?.node?.__typename === "Scene" ? scenePropertyData.node : undefined;
@@ -268,13 +206,7 @@ export default ({
     isInfoboxCreatable,
     datasetSchemas,
     layers,
-    assetsData: {
-      assets,
-      isLoading: loadingAssets ?? isRefetching,
-      getMoreAssets,
-      createAssets,
-      hasNextPage,
-    },
+    assetsData,
     selectedWidget,
   };
 };

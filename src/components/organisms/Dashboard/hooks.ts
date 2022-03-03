@@ -12,11 +12,8 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
-  AssetsQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
-
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();

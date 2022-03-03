@@ -21,6 +21,7 @@ import PropertyField, {
   LatLng as LatLngType,
   SchemaField as SchemaFieldType,
   Asset as AssetType,
+  AssetSortType as SortType,
 } from "../PropertyField";
 import PropertyList, { Item as PropertyListItem } from "../PropertyList";
 
@@ -55,6 +56,7 @@ export type ValueType = ValueTypeType;
 export type ValueTypes = ValueTypesType;
 export type LatLng = LatLngType;
 export type Asset = AssetType;
+export type AssetSortType = SortType;
 
 export type ItemCommon = {
   id?: string;

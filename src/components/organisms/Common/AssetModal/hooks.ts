@@ -1,7 +1,13 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { useIntl } from "react-intl";
 
-import { AssetsQuery, useAssetsQuery, useCreateAssetMutation, Maybe } from "@reearth/gql";
+import {
+  AssetsQuery,
+  useAssetsQuery,
+  useCreateAssetMutation,
+  useRemoveAssetMutation,
+  Maybe,
+} from "@reearth/gql";
 import { useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
@@ -15,27 +21,36 @@ export enum AssetSortType {
 export default (teamId?: string) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
-  const [sortType, setSortType] = useState<Maybe<AssetSortType>>();
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const [sort, setSort] = useState<{ type?: Maybe<AssetSortType>; reverse?: boolean }>();
+  const [searchTerm, setSearchTerm] = useState<string>();
   const assetsPerPage = 20;
+
+  const pagination = useMemo(() => {
+    const reverseOrder =
+      (!sort?.type && !sort?.reverse) ||
+      (sort?.type === "DATE" && !sort?.reverse) ||
+      (sort?.type && sort?.reverse);
+    return {
+      last: reverseOrder ? assetsPerPage : undefined,
+      first: !reverseOrder ? assetsPerPage : undefined,
+    };
+  }, [sort]);
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
-      sort: sortType,
-      keyword: searchTerm,
-      pagination: { first: assetsPerPage },
+      pagination,
+      sort: sort?.type,
     },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
-  const hasNextPage = data?.assets.pageInfo.hasNextPage;
+  const hasMoreAssets = data?.assets.pageInfo.hasNextPage || data?.assets.pageInfo.hasPreviousPage;
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
 
   const getMoreAssets = useCallback(() => {
-    if (hasNextPage) {
+    if (hasMoreAssets) {
       fetchMore({
         variables: {
           pagination: {
@@ -46,7 +61,7 @@ export default (teamId?: string) => {
         },
       });
     }
-  }, [data?.assets.pageInfo, fetchMore, hasNextPage]);
+  }, [data?.assets.pageInfo, fetchMore, hasMoreAssets]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -76,15 +91,81 @@ export default (teamId?: string) => {
     [createAssetMutation, setNotification, refetch, teamId, intl],
   );
 
+  const [removeAssetMutation] = useRemoveAssetMutation();
+  const removeAsset = useCallback(
+    (assetIds: string[]) =>
+      (async () => {
+        if (!teamId) return;
+        const results = await Promise.all(
+          assetIds.map(async assetId => {
+            const result = await removeAssetMutation({
+              variables: { assetId },
+              refetchQueries: ["Assets"],
+            });
+            if (result.errors || result.data?.removeAsset) {
+              setNotification({
+                type: "error",
+                text: intl.formatMessage({
+                  defaultMessage: "Failed to delete one or more assets.",
+                }),
+              });
+            }
+          }),
+        );
+        if (results) {
+          setNotification({
+            type: "info",
+            text: intl.formatMessage({
+              defaultMessage: "One or more assets were successfully deleted.",
+            }),
+          });
+        }
+      })(),
+    [removeAssetMutation, teamId, setNotification, intl],
+  );
+
+  const handleSortChange = useCallback(
+    (type?: string, reverse?: boolean) => {
+      if (!type && reverse === undefined) return;
+      setSort({
+        type: (type as AssetSortType) ?? sort?.type,
+        reverse: reverse ?? (type === "DATE" || type !== sort?.type ? false : sort?.reverse),
+      });
+    },
+    [sort],
+  );
+
+  useEffect(() => {
+    if (sort) {
+      refetch({
+        keyword: searchTerm,
+      });
+    }
+  }, [sort, searchTerm, refetch]);
+
+  const handleSearchTerm = useCallback(
+    (term?: string) => {
+      setSearchTerm(term);
+      refetch({
+        sort: sort?.type,
+        keyword: term,
+      });
+    },
+    [refetch, sort],
+  );
+
   return {
     assetsData: {
       assets,
       isLoading: loading ?? isRefetching,
       getMoreAssets,
       createAssets,
-      hasNextPage,
+      removeAsset,
+      hasMoreAssets,
+      sort,
+      handleSortChange,
+      searchTerm,
+      handleSearchTerm,
     },
-    setSearchTerm,
-    setSortType,
   };
 };

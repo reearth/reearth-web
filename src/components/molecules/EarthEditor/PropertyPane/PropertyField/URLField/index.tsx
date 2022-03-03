@@ -2,7 +2,10 @@ import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
-import AssetModal, { Asset as AssetType } from "@reearth/components/molecules/Common/AssetModal";
+import AssetModal, {
+  Asset as AssetType,
+  AssetSortType as SortType,
+} from "@reearth/components/molecules/Common/AssetModal";
 import { styled } from "@reearth/theme";
 
 import TextField from "../TextField";
@@ -10,13 +13,20 @@ import { FieldProps } from "../types";
 
 export type Asset = AssetType;
 
+export type AssetSortType = SortType;
+
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";
-  assetsData?: {
+  assetsData: {
     assets: AssetType[];
+    isLoading: boolean;
     getMoreAssets: () => void;
     createAssets: (files: FileList) => Promise<void>;
-    hasNextPage?: boolean;
+    hasMoreAssets: boolean | undefined;
+    sort?: { type?: AssetSortType | null; reverse?: boolean };
+    handleSortChange: (type?: string, reverse?: boolean) => void;
+    searchTerm?: string;
+    handleSearchTerm: (term?: string) => void;
   };
   onRemoveFile?: () => void;
 };
@@ -63,6 +73,7 @@ const URLField: React.FC<Props> = ({
         isOpen={isAssetModalOpen}
         onClose={closeAssetModal}
         fileType={fileType}
+        smallCardOnly
         assetsData={assetsData}
         onSelect={onChange}
         value={value}

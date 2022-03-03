@@ -24,6 +24,7 @@ import PropertyItem, {
   DatasetType as ItemDatasetType,
   Layer as LayerType,
   Asset as AssetType,
+  AssetSortType as SortType,
   Mode as ModeType,
 } from "./PropertyItem";
 import WidgetAlignSystemToggle from "./WidgetAlignSystemToggle";
@@ -42,6 +43,7 @@ export type DatasetField = ItemDatasetField;
 export type DatasetType = ItemDatasetType;
 export type Layer = LayerType;
 export type Asset = AssetType;
+export type AssetSortType = SortType;
 export type Mode = ModeType;
 
 export type Widget = {
@@ -58,11 +60,16 @@ export type Props = {
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
   onRemovePane?: () => void;
-  assetsData?: {
-    assets: Asset[];
+  assetsData: {
+    assets: AssetType[];
+    isLoading: boolean;
     getMoreAssets: () => void;
     createAssets: (files: FileList) => Promise<void>;
-    hasNextPage?: boolean;
+    hasMoreAssets: boolean | undefined;
+    sort?: { type?: AssetSortType | null; reverse?: boolean };
+    handleSortChange: (type?: string, reverse?: boolean) => void;
+    searchTerm?: string;
+    handleSearchTerm: (term?: string) => void;
   };
   selectedWidget?: Widget;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;

@@ -10,19 +10,24 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import AssetContainer, { Asset as AssetType } from "./AssetContainer";
+import AssetContainer, { Asset as AssetType, AssetSortType as SortType } from "./AssetContainer";
 
 export type Mode = "asset" | "url";
-
 export type Asset = AssetType;
+export type AssetSortType = SortType;
 
 export type Props = {
   className?: string;
-  assetsData?: {
+  assetsData: {
     assets: AssetType[];
+    isLoading: boolean;
     getMoreAssets: () => void;
     createAssets: (files: FileList) => Promise<void>;
-    hasNextPage?: boolean;
+    hasMoreAssets: boolean | undefined;
+    sort?: { type?: AssetSortType | null; reverse?: boolean };
+    handleSortChange: (type?: string, reverse?: boolean) => void;
+    searchTerm?: string;
+    handleSearchTerm: (term?: string) => void;
   };
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
@@ -169,7 +174,11 @@ const AssetModal: React.FC<Props> = ({
           selectAsset={selectAsset}
           onGetMore={assetsData?.getMoreAssets}
           onCreateAsset={assetsData?.createAssets}
-          hasNextPage={assetsData?.hasNextPage}
+          hasMoreAssets={assetsData?.hasMoreAssets}
+          sort={assetsData?.sort}
+          handleSortChange={assetsData?.handleSortChange}
+          searchTerm={assetsData?.searchTerm}
+          handleSearchTerm={assetsData?.handleSearchTerm}
           isMultipleSelectable={isMultipleSelectable}
           accept={accept}
           fileType={fileType}
