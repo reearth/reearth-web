@@ -1,11 +1,11 @@
-import { omit } from "lodash-es";
+import { omit, pick } from "lodash-es";
 import React, { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
-import W from "../Widget";
+import W, { WidgetLayout } from "../Widget";
 
 import type { Widget, Alignment, WidgetLayoutConstraint, Location } from "./hooks";
 
@@ -20,11 +20,12 @@ type Props = {
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
+  // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
   wrapContent?: boolean;
 };
 
-export default function WidgetAreaComponent({
+export default function Area({
   zone,
   section,
   area,
@@ -36,31 +37,14 @@ export default function WidgetAreaComponent({
   ...props
 }: Props) {
   const theme = useTheme();
-  const layout = useMemo(
+  const layout = useMemo<WidgetLayout>(
     () => ({
       location: { zone, section, area },
       align,
     }),
     [align, area, section, zone],
   );
-
-  const [overriddenExtended, overrideExtend] = useState<{ [id in string]?: boolean }>({});
-  const handleExtend = useCallback((id: string, extended: boolean | undefined) => {
-    overrideExtend(oe =>
-      oe[id] === extended
-        ? oe
-        : {
-            ...omit(oe, id),
-            ...(typeof extended === "undefined" ? {} : { [id]: extended }),
-          },
-    );
-  }, []);
-  const widgetIds = widgets?.map(w => w.id) ?? [];
-  useDeepCompareEffect(() => {
-    overrideExtend(oe =>
-      Object.fromEntries(Object.entries(oe).filter(e => widgetIds.includes(e[0]))),
-    );
-  }, [widgetIds]);
+  const { overriddenExtended, handleExtend } = useOverriddenExtended({ layout, widgets });
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea
@@ -85,17 +69,17 @@ export default function WidgetAreaComponent({
           widget.pluginId && widget.extensionId
             ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
             : undefined;
-        const extendable =
+        const extended = overriddenExtended?.[widget.id];
+        const extendable2 =
           (section === "center" && constraint?.extendable?.horizontally) ||
           (area === "middle" && constraint?.extendable?.vertically);
-        const extended = extendable ? overriddenExtended[widget.id] : undefined;
         return (
           <GridItem
             key={widget.id}
             id={widget.id}
             index={i}
             extended={extended ?? widget.extended}
-            extendable={extendable}
+            extendable={extendable2}
             style={{ pointerEvents: "auto" }}>
             {({ editing }) => (
               <W
@@ -117,6 +101,40 @@ export default function WidgetAreaComponent({
       })}
     </GridArea>
   ) : null;
+}
+
+function useOverriddenExtended({
+  layout,
+  widgets,
+}: {
+  layout: WidgetLayout;
+  widgets: Widget[] | undefined;
+}) {
+  const extendable = layout.location.section === "center" || layout.location.area === "middle";
+  const [overriddenExtended, overrideExtend] = useState<{ [id in string]?: boolean }>({});
+  const handleExtend = useCallback(
+    (id: string, extended: boolean | undefined) => {
+      overrideExtend(oe =>
+        oe[id] === extended
+          ? oe
+          : {
+              ...omit(oe, id),
+              ...(typeof extended === "undefined" || !extendable ? {} : { [id]: extended }),
+            },
+      );
+    },
+    [extendable],
+  );
+
+  const widgetIds = widgets?.map(w => w.id) ?? [];
+  useDeepCompareEffect(() => {
+    overrideExtend(oe => pick(oe, Object.keys(widgetIds)));
+  }, [widgetIds]);
+
+  return {
+    overriddenExtended: extendable ? overriddenExtended : undefined,
+    handleExtend,
+  };
 }
 
 export function getLocationFromId(id: string): Location | undefined {
