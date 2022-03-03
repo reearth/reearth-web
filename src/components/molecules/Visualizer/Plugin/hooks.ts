@@ -18,6 +18,8 @@ export default function ({
   layer,
   widget,
   pluginProperty,
+  onRender,
+  onResize,
 }: {
   pluginId?: string;
   extensionId?: string;
@@ -27,6 +29,20 @@ export default function ({
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
+  onRender?: (
+    options:
+      | {
+          width?: string | number;
+          height?: string | number;
+          extended?: boolean;
+        }
+      | undefined,
+  ) => void;
+  onResize?: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+    extended: boolean | undefined,
+  ) => void;
 }) {
   const { staticExposed, isMarshalable, onPreInit, onDispose, onMessage } =
     useAPI({
@@ -37,6 +53,8 @@ export default function ({
       layer,
       widget,
       pluginProperty,
+      onRender,
+      onResize,
     }) ?? [];
 
   const onError = useCallback(
@@ -71,6 +89,8 @@ export function useAPI({
   layer,
   block,
   widget,
+  onRender,
+  onResize,
 }: {
   pluginId: string | undefined;
   extensionId: string | undefined;
@@ -79,6 +99,20 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
+  onRender?: (
+    options:
+      | {
+          width?: string | number;
+          height?: string | number;
+          extended?: boolean;
+        }
+      | undefined,
+  ) => void;
+  onResize?: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+    extended: boolean | undefined,
+  ) => void;
 }): {
   staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
   isMarshalable: Options["isMarshalable"] | undefined;
@@ -148,8 +182,16 @@ export function useAPI({
         layer: getLayer,
         widget: getWidget,
         postMessage,
-        render,
-        resize,
+        render: (html, { extended, ...options } = {}) => {
+          render(html, options);
+          onRender?.(
+            typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
+          );
+        },
+        resize: (width, height, extended) => {
+          resize(width, height);
+          onResize?.(width, height, extended);
+        },
       });
     };
   }, [
@@ -161,6 +203,8 @@ export function useAPI({
     getBlock,
     getLayer,
     getWidget,
+    onRender,
+    onResize,
   ]);
 
   useEffect(() => {

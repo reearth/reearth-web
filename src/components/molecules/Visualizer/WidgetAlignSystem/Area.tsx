@@ -1,5 +1,7 @@
-import React, { useMemo } from "react";
+import { omit } from "lodash-es";
+import React, { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
+import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
@@ -28,22 +30,37 @@ export default function WidgetAreaComponent({
   area,
   align,
   widgets,
-  sceneProperty,
   pluginProperty,
-  pluginBaseUrl,
-  isEditable,
-  isBuilt,
   layoutConstraint,
   wrapContent,
+  ...props
 }: Props) {
   const theme = useTheme();
-  const widgetLayout = useMemo(
+  const layout = useMemo(
     () => ({
       location: { zone, section, area },
       align,
     }),
     [align, area, section, zone],
   );
+
+  const [overriddenExtended, overrideExtend] = useState<{ [id in string]?: boolean }>({});
+  const handleExtend = useCallback((id: string, extended: boolean | undefined) => {
+    overrideExtend(oe =>
+      oe[id] === extended
+        ? oe
+        : {
+            ...omit(oe, id),
+            ...(typeof extended === "undefined" ? {} : { [id]: extended }),
+          },
+    );
+  }, []);
+  const widgetIds = widgets?.map(w => w.id) ?? [];
+  useDeepCompareEffect(() => {
+    overrideExtend(oe =>
+      Object.fromEntries(Object.entries(oe).filter(e => widgetIds.includes(e[0]))),
+    );
+  }, [widgetIds]);
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea
@@ -71,28 +88,28 @@ export default function WidgetAreaComponent({
         const extendable =
           (section === "center" && constraint?.extendable?.horizontally) ||
           (area === "middle" && constraint?.extendable?.vertically);
+        const extended = extendable ? overriddenExtended[widget.id] : undefined;
         return (
           <GridItem
             key={widget.id}
             id={widget.id}
             index={i}
-            extended={widget.extended}
+            extended={extended ?? widget.extended}
             extendable={extendable}
             style={{ pointerEvents: "auto" }}>
             {({ editing }) => (
               <W
                 widget={widget}
-                sceneProperty={sceneProperty}
                 pluginProperty={
                   widget.pluginId && widget.extensionId
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
                     : undefined
                 }
-                isEditable={isEditable}
-                isBuilt={isBuilt}
-                pluginBaseUrl={pluginBaseUrl}
-                widgetLayout={widgetLayout}
-                widgetAlignSystemState={{ editing }}
+                layout={layout}
+                extended={extended}
+                editing={editing}
+                onExtend={handleExtend}
+                {...props}
               />
             )}
           </GridItem>

@@ -186,10 +186,12 @@ export type UI = {
     options?: {
       /** If true, display a iframe. Otherwise, hide the iframe and plugin works like headless mdoe. Default value is true. */
       visible?: boolean;
-      /** Initial iframe width. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. */
+      /** Initial iframe width of the widget. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. This option is only available for widgets that are not horizontally extended. */
       width?: number | string;
-      /** Initial iframe height. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. */
+      /** Initial iframe height of the widget. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. This option is only available for widgets that are not vertically extended. */
       height?: number | string;
+      /** Override whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
+      extended?: boolean;
     },
   ) => void;
   /**
@@ -202,8 +204,12 @@ export type UI = {
    * If plugins try to resize the iframe by specifying size in the iframe's internal HTML, for example, in the body style, or by updating the CSS, iframe will not actually be resized. In that case, plugins need to call this method explicitly to resize the iframe.
    */
   readonly resize: (
+    /** Width of the iframe of the widget. This field is only available for widgets that are not horizontally extended. */
     width: string | number | undefined,
+    /** Height of the iframe of the widget. This field is only available for widgets that are not vertically extended. */
     height: string | number | undefined,
+    /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
+    extended?: boolean | undefined,
   ) => void;
 };
 

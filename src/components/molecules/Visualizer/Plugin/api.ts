@@ -27,7 +27,15 @@ export function exposed({
   block,
   widget,
 }: {
-  render: (html: string, options?: { visible?: boolean }) => void;
+  render: (
+    html: string,
+    options?: {
+      visible?: boolean;
+      width?: string | number;
+      height?: string | number;
+      extended?: boolean;
+    },
+  ) => void;
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
   events: Events<ReearthEventType>;
