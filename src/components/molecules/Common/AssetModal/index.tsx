@@ -106,7 +106,7 @@ const AssetModal: React.FC<Props> = ({
     return assetsData?.assets.filter(
       a =>
         !fileType ||
-        a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp)$/ : /\.(mp4|webm)$/),
+        a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp|svg)$/ : /\.(mp4|webm)$/),
     );
   }, [assetsData?.assets, fileType]);
 

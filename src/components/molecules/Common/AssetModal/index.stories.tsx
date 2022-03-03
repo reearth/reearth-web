@@ -15,7 +15,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 4300,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -23,7 +23,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 1010,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -31,7 +31,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 100,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -39,7 +39,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 2400,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -47,7 +47,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 1300,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -55,7 +55,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 100,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: "www.filelocation.com/maps.kml",
@@ -63,7 +63,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 100,
-    contentType: "asset-file",
+    contentType: "file",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -71,7 +71,7 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 4300,
-    contentType: "asset-image",
+    contentType: "image",
   },
   {
     url: `${process.env.PUBLIC_URL}/sample.svg`,
@@ -79,19 +79,15 @@ const assets: Asset[] = [
     id: "hoge",
     teamId: "hoge",
     size: 1010,
-    contentType: "asset-image",
+    contentType: "image",
   },
 ];
 
-export const Default: Story<Props> = args => {
+export const Image: Story<Props> = args => {
   const [isOpen, open] = useState(true);
   return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
 };
 export const Selected: Story<Props> = args => {
-  const [isOpen, open] = useState(true);
-  return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
-};
-export const File: Story<Props> = args => {
   const [isOpen, open] = useState(true);
   return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
 };
@@ -100,11 +96,12 @@ export const Video: Story<Props> = args => {
   return <Component {...args} isOpen={isOpen} onClose={() => open(!isOpen)} />;
 };
 
-Default.args = {
+Image.args = {
   assetsData: {
     assets,
   },
   fileType: "image",
+  smallCardOnly: true,
 };
 
 Selected.args = {
@@ -113,12 +110,7 @@ Selected.args = {
   },
   value: `${process.env.PUBLIC_URL}/sample.svg`,
   fileType: "image",
-};
-
-File.args = {
-  assetsData: {
-    assets,
-  },
+  smallCardOnly: true,
 };
 
 Video.args = {
@@ -126,4 +118,5 @@ Video.args = {
     assets,
   },
   fileType: "video",
+  smallCardOnly: true,
 };
