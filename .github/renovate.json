@@ -31,7 +31,7 @@
       "groupName": "all dependencies",
       "groupSlug": "all",
       "extends": [
-        "schedule:earlyMondays"
+        "schedule:0 0 4 * *"
       ]
     }
   ]
