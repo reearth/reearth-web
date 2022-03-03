@@ -63,16 +63,16 @@ export default () => {
   }
 
   const onSignup = useCallback(
-    
+
     async (email: string, username: string, password: string) => {
       if (isAuthenticated) return;
       try {
-      const res = await axios.post(
-        (window.REEARTH_CONFIG?.api || "/api")+"/signup",
+        const res = await axios.post(
+          (window.REEARTH_CONFIG?.api || "/api") + "/signup",
           {
-              "email": email,
-              "username": username,
-              "password": password
+            "email": email,
+            "username": username,
+            "password": password
           },
           {
             headers: {
@@ -80,7 +80,7 @@ export default () => {
               'Content-Type': 'application/json',
             },
           },
-      );
+        );
         return res
       } catch (error) {
         return error;

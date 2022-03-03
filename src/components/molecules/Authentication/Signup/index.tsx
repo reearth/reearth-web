@@ -2,12 +2,13 @@ import { Link } from "@reach/router";
 import React, { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
+import Loading from "@reearth/components/atoms/Loading";
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
-
+import { useNotification } from "@reearth/state";
 import AuthPage from "..";
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 
@@ -27,6 +28,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   const [password, setPassword] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleUsernameInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -42,7 +44,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
     },
     [],
   );
-
+  const [, setNotification] = useNotification();
   const handlePasswordInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const password = e.currentTarget.value;
@@ -90,15 +92,32 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
     [password], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-   const handleSignup = useCallback(async () => {
-     const a: any = await onSignup(email, username, password);
-     console.log(a);
-     if (a.status === 200) {
-       setSent(true);
-     } else {
-       console.log("sad");
-     }
-   }, [email, username, password, onSignup]);
+  const handleSignup = useCallback(async () => {
+    setLoading(true);
+
+    const res: any = await onSignup(email, username, password);
+    if (res) {
+      setLoading(false);
+      setNotification({
+        type: "success",
+        text: "a verification email has been sent",
+      });
+    }
+    if (res.status === 200) {
+      setSent(true);
+    } else {
+      var errMsg = "";
+      if (res.response) {
+        errMsg = res.response.data.error;
+      } else {
+        errMsg = "somthing went wrong";
+      }
+      setNotification({
+        type: "error",
+        text: errMsg,
+      });
+    }
+  }, [email, username, password, onSignup]);
 
   useEffect(() => {
     if (
@@ -149,6 +168,8 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
         </SentFormWrapper>
       ) : (
         <>
+          {loading && <Loading overlay />}
+
           <Icon className="form-item" icon="logoColorful" size={60} />
           <Text className="form-item" size="l" customColor>
             {intl.formatMessage({ defaultMessage: "Create your Account" })}
@@ -189,7 +210,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               {password ? regexMessage : undefined}
             </PasswordMessage>
             <PasswordPolicyDiv>
-              <Text size="s"  color="black">
+              <Text size="s" color="black">
                 {intl.formatMessage({ defaultMessage: "your password must contain:" })}
               </Text>
               <Text size="s" customColor>
