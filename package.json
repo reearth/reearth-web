@@ -30,7 +30,7 @@
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {
-        "node": ">=v16.14.0"
+        "node": ">=16"
     },
     "jest": {
         "preset": "ts-jest",
