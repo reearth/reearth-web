@@ -3,7 +3,7 @@
 /*!
    * URI.js - Mutating URLs
    *
-   * Version: 1.19.7
+   * Version: 1.19.8
    *
    * Author: Rodney Rehm
    * Web: http://medialize.github.io/URI.js/
@@ -17,7 +17,7 @@
    * URI.js - Mutating URLs
    * IPv6 Support
    *
-   * Version: 1.19.7
+   * Version: 1.19.8
    *
    * Author: Rodney Rehm
    * Web: http://medialize.github.io/URI.js/
@@ -31,7 +31,7 @@
    * URI.js - Mutating URLs
    * Second Level Domain (SLD) Support
    *
-   * Version: 1.19.7
+   * Version: 1.19.8
    *
    * Author: Rodney Rehm
    * Web: http://medialize.github.io/URI.js/
@@ -48,7 +48,7 @@
    * see: https://github.com/dcodeIO/protobuf.js for details
    */
 
-/*! @license DOMPurify 2.3.5 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.5/LICENSE */
+/*! @license DOMPurify 2.3.6 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.6/LICENSE */
 
 /**
    * @license

@@ -16,7 +16,7 @@ interface DictionaryLike {
  * and [WebGL 2.0]{@link https://www.khronos.org/registry/webgl/specs/latest/2.0/}
  * specifications.
  */
-export const enum WebGLConstants {
+export enum WebGLConstants {
     DEPTH_BUFFER_BIT = 256,
     STENCIL_BUFFER_BIT = 1024,
     COLOR_BUFFER_BIT = 16384,
@@ -708,7 +708,7 @@ export class ArcGISTiledElevationTerrainProvider {
 /**
  * ArcType defines the path that should be taken connecting vertices.
  */
-export const enum ArcType {
+export enum ArcType {
     /**
      * Straight line that does not conform to the surface of the ellipsoid.
      */
@@ -790,6 +790,17 @@ export class AxisAlignedBoundingBox {
      * The center point of the bounding box.
      */
     center: Cartesian3;
+    /**
+     * Creates an instance of an AxisAlignedBoundingBox from its corners.
+     * @example
+     * // Compute an axis aligned bounding box from the two corners.
+     * const box = Cesium.AxisAlignedBoundingBox.fromCorners(new Cesium.Cartesian3(-1, -1, -1), new Cesium.Cartesian3(1, 1, 1));
+     * @param minimum - The minimum point along the x, y, and z axes.
+     * @param maximum - The maximum point along the x, y, and z axes.
+     * @param [result] - The object onto which to store the result.
+     * @returns The modified result parameter or a new AxisAlignedBoundingBox instance if one was not provided.
+     */
+    static fromCorners(minimum: Cartesian3, maximum: Cartesian3, result?: AxisAlignedBoundingBox): AxisAlignedBoundingBox;
     /**
      * Computes an instance of an AxisAlignedBoundingBox. The box is determined by
      * finding the points spaced the farthest apart on the x, y, and z axes.
@@ -1125,6 +1136,13 @@ export class BoundingSphere {
      * @returns The modified result parameter or a new BoundingSphere instance if none was provided.
      */
     static fromOrientedBoundingBox(orientedBoundingBox: OrientedBoundingBox, result?: BoundingSphere): BoundingSphere;
+    /**
+     * Computes a tight-fitting bounding sphere enclosing the provided affine transformation.
+     * @param transformation - The affine transformation.
+     * @param [result] - The object onto which to store the result.
+     * @returns The modified result parameter or a new BoundingSphere instance if none was provided.
+     */
+    static fromTransformation(transformation: Matrix4, result?: BoundingSphere): BoundingSphere;
     /**
      * Duplicates a BoundingSphere instance.
      * @param sphere - The bounding sphere to duplicate.
@@ -1525,14 +1543,14 @@ export class Cartesian2 {
      */
     static unpack(array: number[], startingIndex?: number, result?: Cartesian2): Cartesian2;
     /**
-     * Flattens an array of Cartesian2s into and array of components.
+     * Flattens an array of Cartesian2s into an array of components.
      * @param array - The array of cartesians to pack.
      * @param [result] - The array onto which to store the result. If this is a typed array, it must have array.length * 2 components, else a {@link DeveloperError} will be thrown. If it is a regular array, it will be resized to have (array.length * 2) elements.
      * @returns The packed array.
      */
     static packArray(array: Cartesian2[], result?: number[]): number[];
     /**
-     * Unpacks an array of cartesian components into and array of Cartesian2s.
+     * Unpacks an array of cartesian components into an array of Cartesian2s.
      * @param array - The array of components to unpack.
      * @param [result] - The array onto which to store the result.
      * @returns The unpacked array.
@@ -2275,14 +2293,14 @@ export class Cartesian4 {
      */
     static unpack(array: number[], startingIndex?: number, result?: Cartesian4): Cartesian4;
     /**
-     * Flattens an array of Cartesian4s into and array of components.
+     * Flattens an array of Cartesian4s into an array of components.
      * @param array - The array of cartesians to pack.
      * @param [result] - The array onto which to store the result. If this is a typed array, it must have array.length * 4 components, else a {@link DeveloperError} will be thrown. If it is a regular array, it will be resized to have (array.length * 4) elements.
      * @returns The packed array.
      */
     static packArray(array: Cartesian4[], result?: number[]): number[];
     /**
-     * Unpacks an array of cartesian components into and array of Cartesian4s.
+     * Unpacks an array of cartesian components into an array of Cartesian4s.
      * @param array - The array of components to unpack.
      * @param [result] - The array onto which to store the result.
      * @returns The unpacked array.
@@ -3102,7 +3120,7 @@ export class Clock {
  * Constants used by {@link Clock#tick} to determine behavior
  * when {@link Clock#startTime} or {@link Clock#stopTime} is reached.
  */
-export const enum ClockRange {
+export enum ClockRange {
     /**
      * {@link Clock#tick} will always advances the clock in its current direction.
      */
@@ -3125,7 +3143,7 @@ export const enum ClockRange {
  * Constants to determine how much time advances with each call
  * to {@link Clock#tick}.
  */
-export const enum ClockStep {
+export enum ClockStep {
     /**
      * {@link Clock#tick} advances the current time by a fixed step,
      * which is the number of seconds specified by {@link Clock#multiplier}.
@@ -4284,7 +4302,7 @@ export class ColorGeometryInstanceAttribute {
  * WebGL component datatypes.  Components are intrinsics,
  * which form attributes, which form vertices.
  */
-export const enum ComponentDatatype {
+export enum ComponentDatatype {
     /**
      * 8-bit signed byte corresponding to <code>gl.BYTE</code> and the type
      * of an element in <code>Int8Array</code>.
@@ -4508,7 +4526,7 @@ export class CoplanarPolygonOutlineGeometry {
 /**
  * Style options for corners.
  */
-export const enum CornerType {
+export enum CornerType {
     /**
      * <img src="Images/CornerTypeRounded.png" style="vertical-align: middle;" width="186" height="189" />
      *
@@ -4673,7 +4691,7 @@ export class Credit {
     /**
      * Whether the credit should be displayed on screen or in a lightbox
      */
-    readonly showOnScreen: boolean;
+    showOnScreen: boolean;
     /**
      * Gets the credit element
      */
@@ -6228,7 +6246,7 @@ export const ExperimentalFeatures: any;
  * Constants to determine how an interpolated value is extrapolated
  * when querying outside the bounds of available data.
  */
-export const enum ExtrapolationType {
+export enum ExtrapolationType {
     /**
      * No extrapolation occurs.
      */
@@ -6432,7 +6450,7 @@ export namespace Fullscreen {
 /**
  * The type of geocoding to be performed by a {@link GeocoderService}.
  */
-export const enum GeocodeType {
+export enum GeocodeType {
     /**
      * Perform a search where the input is considered complete.
      */
@@ -7665,7 +7683,7 @@ export class HeadingPitchRoll {
 /**
  * The encoding that is used for a heightmap
  */
-export const enum HeightmapEncoding {
+export enum HeightmapEncoding {
     /**
      * No encoding
      */
@@ -8052,7 +8070,7 @@ export namespace HilbertOrder { }
  * Constants for WebGL index datatypes.  These corresponds to the
  * <code>type</code> parameter of {@link http://www.khronos.org/opengles/sdk/docs/man/xhtml/glDrawElements.xml|drawElements}.
  */
-export const enum IndexDatatype {
+export enum IndexDatatype {
     /**
      * 8-bit unsigned byte corresponding to <code>UNSIGNED_BYTE</code> and the type
      * of an element in <code>Uint8Array</code>.
@@ -8124,7 +8142,7 @@ export interface InterpolationAlgorithm {
  * partially inside the frustum and partially outside (INTERSECTING), or somewhere entirely
  * outside of the frustum's 6 planes (OUTSIDE).
  */
-export const enum Intersect {
+export enum Intersect {
     /**
      * Represents that an object is not contained within the frustum.
      */
@@ -8706,7 +8724,7 @@ export class JulianDate {
  * This enumerated type is for representing keyboard modifiers. These are keys
  * that are held down in addition to other event types.
  */
-export const enum KeyboardEventModifier {
+export enum KeyboardEventModifier {
     /**
      * Represents the shift key being held down.
      */
@@ -9418,6 +9436,21 @@ export class Matrix2 implements ArrayLike<number> {
      */
     static unpack(array: number[], startingIndex?: number, result?: Matrix2): Matrix2;
     /**
+     * Flattens an array of Matrix2s into an array of components. The components
+     * are stored in column-major order.
+     * @param array - The array of matrices to pack.
+     * @param [result] - The array onto which to store the result. If this is a typed array, it must have array.length * 4 components, else a {@link DeveloperError} will be thrown. If it is a regular array, it will be resized to have (array.length * 4) elements.
+     * @returns The packed array.
+     */
+    static packArray(array: Matrix2[], result?: number[]): number[];
+    /**
+     * Unpacks an array of column-major matrix components into an array of Matrix2s.
+     * @param array - The array of components to unpack.
+     * @param [result] - The array onto which to store the result.
+     * @returns The unpacked array.
+     */
+    static unpackArray(array: number[], result?: Matrix2[]): Matrix2[];
+    /**
      * Duplicates a Matrix2 instance.
      * @param matrix - The matrix to duplicate.
      * @param [result] - The object onto which to store the result.
@@ -9437,12 +9470,8 @@ export class Matrix2 implements ArrayLike<number> {
      * // Create same Matrix2 with using an offset into an array
      * const v2 = [0.0, 0.0, 1.0, 1.0, 2.0, 2.0];
      * const m2 = Cesium.Matrix2.fromArray(v2, 2);
-     * @param array - The array whose 4 consecutive elements correspond to the positions of the matrix.  Assumes column-major order.
-     * @param [startingIndex = 0] - The offset into the array of the first element, which corresponds to first column first row position in the matrix.
-     * @param [result] - The object onto which to store the result.
-     * @returns The modified result parameter or a new Matrix2 instance if one was not provided.
      */
-    static fromArray(array: number[], startingIndex?: number, result?: Matrix2): Matrix2;
+    static fromArray: any;
     /**
      * Creates a Matrix2 instance from a column-major order array.
      * @param values - The column-major order array.
@@ -9549,6 +9578,24 @@ export class Matrix2 implements ArrayLike<number> {
      */
     static setRow(matrix: Matrix2, index: number, cartesian: Cartesian2, result: Matrix2): Matrix2;
     /**
+     * Computes a new matrix that replaces the scale with the provided scale.
+     * This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param scale - The scale that replaces the scale of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setScale(matrix: Matrix2, scale: Cartesian2, result: Matrix2): Matrix2;
+    /**
+     * Computes a new matrix that replaces the scale with the provided uniform scale.
+     * This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param scale - The uniform scale that replaces the scale of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setUniformScale(matrix: Matrix2, scale: number, result: Matrix2): Matrix2;
+    /**
      * Extracts the non-uniform scale assuming the matrix is an affine transformation.
      * @param matrix - The matrix.
      * @param result - The object onto which to store the result.
@@ -9562,6 +9609,20 @@ export class Matrix2 implements ArrayLike<number> {
      * @returns The maximum scale.
      */
     static getMaximumScale(matrix: Matrix2): number;
+    /**
+     * Sets the rotation assuming the matrix is an affine transformation.
+     * @param matrix - The matrix.
+     * @param rotation - The rotation matrix.
+     * @returns The modified result parameter.
+     */
+    static setRotation(matrix: Matrix2, rotation: Matrix2): Matrix2;
+    /**
+     * Extracts the rotation matrix assuming the matrix is an affine transformation.
+     * @param matrix - The matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static getRotation(matrix: Matrix2, result: Matrix2): Matrix2;
     /**
      * Computes the product of two matrices.
      * @param left - The first matrix.
@@ -9612,7 +9673,18 @@ export class Matrix2 implements ArrayLike<number> {
      * @param result - The object onto which to store the result.
      * @returns The modified result parameter.
      */
-    static multiplyByScale(matrix: Matrix2, scale: Cartesian2, result: Matrix2): Matrix2;
+    static multiplyByScale(matrix: Matrix2, scale: number, result: Matrix2): Matrix2;
+    /**
+     * Computes the product of a matrix times a uniform scale, as if the scale were a scale matrix.
+     * @example
+     * // Instead of Cesium.Matrix2.multiply(m, Cesium.Matrix2.fromUniformScale(scale), m);
+     * Cesium.Matrix2.multiplyByUniformScale(m, scale, m);
+     * @param matrix - The matrix on the left-hand side.
+     * @param scale - The uniform scale on the right-hand side.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static multiplyByUniformScale(matrix: Matrix2, scale: number, result: Matrix2): Matrix2;
     /**
      * Creates a negated copy of the provided matrix.
      * @param matrix - The matrix to negate.
@@ -9761,6 +9833,21 @@ export class Matrix3 implements ArrayLike<number> {
      */
     static unpack(array: number[], startingIndex?: number, result?: Matrix3): Matrix3;
     /**
+     * Flattens an array of Matrix3s into an array of components. The components
+     * are stored in column-major order.
+     * @param array - The array of matrices to pack.
+     * @param [result] - The array onto which to store the result. If this is a typed array, it must have array.length * 9 components, else a {@link DeveloperError} will be thrown. If it is a regular array, it will be resized to have (array.length * 9) elements.
+     * @returns The packed array.
+     */
+    static packArray(array: Matrix3[], result?: number[]): number[];
+    /**
+     * Unpacks an array of column-major matrix components into an array of Matrix3s.
+     * @param array - The array of components to unpack.
+     * @param [result] - The array onto which to store the result.
+     * @returns The unpacked array.
+     */
+    static unpackArray(array: number[], result?: Matrix3[]): Matrix3[];
+    /**
      * Duplicates a Matrix3 instance.
      * @param matrix - The matrix to duplicate.
      * @param [result] - The object onto which to store the result.
@@ -9781,12 +9868,8 @@ export class Matrix3 implements ArrayLike<number> {
      * // Create same Matrix3 with using an offset into an array
      * const v2 = [0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0];
      * const m2 = Cesium.Matrix3.fromArray(v2, 2);
-     * @param array - The array whose 9 consecutive elements correspond to the positions of the matrix.  Assumes column-major order.
-     * @param [startingIndex = 0] - The offset into the array of the first element, which corresponds to first column first row position in the matrix.
-     * @param [result] - The object onto which to store the result.
-     * @returns The modified result parameter or a new Matrix3 instance if one was not provided.
      */
-    static fromArray(array: number[], startingIndex?: number, result?: Matrix3): Matrix3;
+    static fromArray: any;
     /**
      * Creates a Matrix3 instance from a column-major order array.
      * @param values - The column-major order array.
@@ -9946,6 +10029,24 @@ export class Matrix3 implements ArrayLike<number> {
      */
     static setRow(matrix: Matrix3, index: number, cartesian: Cartesian3, result: Matrix3): Matrix3;
     /**
+     * Computes a new matrix that replaces the scale with the provided scale.
+     * This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param scale - The scale that replaces the scale of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setScale(matrix: Matrix3, scale: Cartesian3, result: Matrix3): Matrix3;
+    /**
+     * Computes a new matrix that replaces the scale with the provided uniform scale.
+     * This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param scale - The uniform scale that replaces the scale of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setUniformScale(matrix: Matrix3, scale: number, result: Matrix3): Matrix3;
+    /**
      * Extracts the non-uniform scale assuming the matrix is an affine transformation.
      * @param matrix - The matrix.
      * @param result - The object onto which to store the result.
@@ -9959,6 +10060,20 @@ export class Matrix3 implements ArrayLike<number> {
      * @returns The maximum scale.
      */
     static getMaximumScale(matrix: Matrix3): number;
+    /**
+     * Sets the rotation assuming the matrix is an affine transformation.
+     * @param matrix - The matrix.
+     * @param rotation - The rotation matrix.
+     * @returns The modified result parameter.
+     */
+    static setRotation(matrix: Matrix3, rotation: Matrix3): Matrix3;
+    /**
+     * Extracts the rotation matrix assuming the matrix is an affine transformation.
+     * @param matrix - The matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static getRotation(matrix: Matrix3, result: Matrix3): Matrix3;
     /**
      * Computes the product of two matrices.
      * @param left - The first matrix.
@@ -10009,7 +10124,18 @@ export class Matrix3 implements ArrayLike<number> {
      * @param result - The object onto which to store the result.
      * @returns The modified result parameter.
      */
-    static multiplyByScale(matrix: Matrix3, scale: Cartesian3, result: Matrix3): Matrix3;
+    static multiplyByScale(matrix: Matrix3, scale: number, result: Matrix3): Matrix3;
+    /**
+     * Computes the product of a matrix times a uniform scale, as if the scale were a scale matrix.
+     * @example
+     * // Instead of Cesium.Matrix3.multiply(m, Cesium.Matrix3.fromUniformScale(scale), m);
+     * Cesium.Matrix3.multiplyByUniformScale(m, scale, m);
+     * @param matrix - The matrix on the left-hand side.
+     * @param scale - The uniform scale on the right-hand side.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static multiplyByUniformScale(matrix: Matrix3, scale: number, result: Matrix3): Matrix3;
     /**
      * Creates a negated copy of the provided matrix.
      * @param matrix - The matrix to negate.
@@ -10024,13 +10150,6 @@ export class Matrix3 implements ArrayLike<number> {
      * @returns The modified result parameter.
      */
     static transpose(matrix: Matrix3, result: Matrix3): Matrix3;
-    /**
-     * Extracts the rotation assuming the matrix is an affine transformation.
-     * @param matrix - The matrix.
-     * @param result - The object onto which to store the result.
-     * @returns The modified result parameter
-     */
-    static getRotation(matrix: Matrix3, result: Matrix3): Matrix3;
     /**
      * Computes the eigenvectors and eigenvalues of a symmetric matrix.
      * <p>
@@ -10230,6 +10349,21 @@ export class Matrix4 implements ArrayLike<number> {
      */
     static unpack(array: number[], startingIndex?: number, result?: Matrix4): Matrix4;
     /**
+     * Flattens an array of Matrix4s into an array of components. The components
+     * are stored in column-major order.
+     * @param array - The array of matrices to pack.
+     * @param [result] - The array onto which to store the result. If this is a typed array, it must have array.length * 16 components, else a {@link DeveloperError} will be thrown. If it is a regular array, it will be resized to have (array.length * 16) elements.
+     * @returns The packed array.
+     */
+    static packArray(array: Matrix4[], result?: number[]): number[];
+    /**
+     * Unpacks an array of column-major matrix components into an array of Matrix4s.
+     * @param array - The array of components to unpack.
+     * @param [result] - The array onto which to store the result.
+     * @returns The unpacked array.
+     */
+    static unpackArray(array: number[], result?: Matrix4[]): Matrix4[];
+    /**
      * Duplicates a Matrix4 instance.
      * @param matrix - The matrix to duplicate.
      * @param [result] - The object onto which to store the result.
@@ -10339,6 +10473,13 @@ export class Matrix4 implements ArrayLike<number> {
      * @returns The modified result parameter, or a new Matrix4 instance if one was not provided.
      */
     static fromUniformScale(scale: number, result?: Matrix4): Matrix4;
+    /**
+     * Creates a rotation matrix.
+     * @param rotation - The rotation matrix.
+     * @param [result] - The object in which the result will be stored, if undefined a new instance will be created.
+     * @returns The modified result parameter, or a new Matrix4 instance if one was not provided.
+     */
+    static fromRotation(rotation: Matrix3, result?: Matrix4): Matrix4;
     /**
      * Computes a Matrix4 instance from a Camera.
      * @param camera - The camera to use.
@@ -10495,24 +10636,6 @@ export class Matrix4 implements ArrayLike<number> {
      */
     static setColumn(matrix: Matrix4, index: number, cartesian: Cartesian4, result: Matrix4): Matrix4;
     /**
-     * Computes a new matrix that replaces the translation in the rightmost column of the provided
-     * matrix with the provided translation. This assumes the matrix is an affine transformation.
-     * @param matrix - The matrix to use.
-     * @param translation - The translation that replaces the translation of the provided matrix.
-     * @param result - The object onto which to store the result.
-     * @returns The modified result parameter.
-     */
-    static setTranslation(matrix: Matrix4, translation: Cartesian3, result: Matrix4): Matrix4;
-    /**
-     * Computes a new matrix that replaces the scale with the provided scale.
-     * This assumes the matrix is an affine transformation.
-     * @param matrix - The matrix to use.
-     * @param scale - The scale that replaces the scale of the provided matrix.
-     * @param result - The object onto which to store the result.
-     * @returns The modified result parameter.
-     */
-    static setScale(matrix: Matrix4, scale: Cartesian3, result: Matrix4): Matrix4;
-    /**
      * Retrieves a copy of the matrix row at the provided index as a Cartesian4 instance.
      * @example
      * //returns a Cartesian4 instance with values from the specified column
@@ -10559,6 +10682,33 @@ export class Matrix4 implements ArrayLike<number> {
      */
     static setRow(matrix: Matrix4, index: number, cartesian: Cartesian4, result: Matrix4): Matrix4;
     /**
+     * Computes a new matrix that replaces the translation in the rightmost column of the provided
+     * matrix with the provided translation. This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param translation - The translation that replaces the translation of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setTranslation(matrix: Matrix4, translation: Cartesian3, result: Matrix4): Matrix4;
+    /**
+     * Computes a new matrix that replaces the scale with the provided scale.
+     * This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param scale - The scale that replaces the scale of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setScale(matrix: Matrix4, scale: Cartesian3, result: Matrix4): Matrix4;
+    /**
+     * Computes a new matrix that replaces the scale with the provided uniform scale.
+     * This assumes the matrix is an affine transformation.
+     * @param matrix - The matrix to use.
+     * @param scale - The uniform scale that replaces the scale of the provided matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static setUniformScale(matrix: Matrix4, scale: number, result: Matrix4): Matrix4;
+    /**
      * Extracts the non-uniform scale assuming the matrix is an affine transformation.
      * @param matrix - The matrix.
      * @param result - The object onto which to store the result.
@@ -10573,6 +10723,20 @@ export class Matrix4 implements ArrayLike<number> {
      * @returns The maximum scale.
      */
     static getMaximumScale(matrix: Matrix4): number;
+    /**
+     * Sets the rotation assuming the matrix is an affine transformation.
+     * @param matrix - The matrix.
+     * @param rotation - The rotation matrix.
+     * @returns The modified result parameter.
+     */
+    static setRotation(matrix: Matrix4, rotation: Matrix4): Matrix4;
+    /**
+     * Extracts the rotation matrix assuming the matrix is an affine transformation.
+     * @param matrix - The matrix.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static getRotation(matrix: Matrix4, result: Matrix4): Matrix4;
     /**
      * Computes the product of two matrices.
      * @param left - The first matrix.
@@ -10643,21 +10807,6 @@ export class Matrix4 implements ArrayLike<number> {
     static multiplyByTranslation(matrix: Matrix4, translation: Cartesian3, result: Matrix4): Matrix4;
     /**
      * Multiplies an affine transformation matrix (with a bottom row of <code>[0.0, 0.0, 0.0, 1.0]</code>)
-     * by an implicit uniform scale matrix.  This is an optimization
-     * for <code>Matrix4.multiply(m, Matrix4.fromUniformScale(scale), m);</code>, where
-     * <code>m</code> must be an affine matrix.
-     * This function performs fewer allocations and arithmetic operations.
-     * @example
-     * // Instead of Cesium.Matrix4.multiply(m, Cesium.Matrix4.fromUniformScale(scale), m);
-     * Cesium.Matrix4.multiplyByUniformScale(m, scale, m);
-     * @param matrix - The affine matrix on the left-hand side.
-     * @param scale - The uniform scale on the right-hand side.
-     * @param result - The object onto which to store the result.
-     * @returns The modified result parameter.
-     */
-    static multiplyByUniformScale(matrix: Matrix4, scale: number, result: Matrix4): Matrix4;
-    /**
-     * Multiplies an affine transformation matrix (with a bottom row of <code>[0.0, 0.0, 0.0, 1.0]</code>)
      * by an implicit non-uniform scale matrix. This is an optimization
      * for <code>Matrix4.multiply(m, Matrix4.fromUniformScale(scale), m);</code>, where
      * <code>m</code> must be an affine matrix.
@@ -10671,6 +10820,17 @@ export class Matrix4 implements ArrayLike<number> {
      * @returns The modified result parameter.
      */
     static multiplyByScale(matrix: Matrix4, scale: Cartesian3, result: Matrix4): Matrix4;
+    /**
+     * Computes the product of a matrix times a uniform scale, as if the scale were a scale matrix.
+     * @example
+     * // Instead of Cesium.Matrix4.multiply(m, Cesium.Matrix4.fromUniformScale(scale), m);
+     * Cesium.Matrix4.multiplyByUniformScale(m, scale, m);
+     * @param matrix - The matrix on the left-hand side.
+     * @param scale - The uniform scale on the right-hand side.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter.
+     */
+    static multiplyByUniformScale(matrix: Matrix4, scale: number, result: Matrix4): Matrix4;
     /**
      * Computes the product of a matrix and a column vector.
      * @param matrix - The matrix.
@@ -11289,6 +11449,13 @@ export class OrientedBoundingBox {
      */
     static fromRectangle(rectangle: Rectangle, minimumHeight?: number, maximumHeight?: number, ellipsoid?: Ellipsoid, result?: OrientedBoundingBox): OrientedBoundingBox;
     /**
+     * Computes an OrientedBoundingBox that bounds an affine transformation.
+     * @param transformation - The affine transformation.
+     * @param [result] - The object onto which to store the result.
+     * @returns The modified result parameter or a new OrientedBoundingBox instance if none was provided.
+     */
+    static fromTransformation(transformation: Matrix4, result?: OrientedBoundingBox): OrientedBoundingBox;
+    /**
      * Duplicates a OrientedBoundingBox instance.
      * @param box - The bounding box to duplicate.
      * @param [result] - The object onto which to store the result.
@@ -11330,6 +11497,20 @@ export class OrientedBoundingBox {
      */
     static computePlaneDistances(box: OrientedBoundingBox, position: Cartesian3, direction: Cartesian3, result?: Interval): Interval;
     /**
+     * Computes the eight corners of an oriented bounding box. The corners are ordered by (-X, -Y, -Z), (-X, -Y, +Z), (-X, +Y, -Z), (-X, +Y, +Z), (+X, -Y, -Z), (+X, -Y, +Z), (+X, +Y, -Z), (+X, +Y, +Z).
+     * @param box - The oriented bounding box.
+     * @param [result] - An array of eight {@link Cartesian3} instances onto which to store the corners.
+     * @returns The modified result parameter or a new array if none was provided.
+     */
+    static computeCorners(box: OrientedBoundingBox, result?: Cartesian3[]): Cartesian3[];
+    /**
+     * Computes a transformation matrix from an oriented bounding box.
+     * @param box - The oriented bounding box.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter or a new {@link Matrix4} instance if none was provided.
+     */
+    static computeTransformation(box: OrientedBoundingBox, result: Matrix4): Matrix4;
+    /**
      * Determines whether or not a bounding box is hidden from view by the occluder.
      * @param box - The bounding box surrounding the occludee object.
      * @param occluder - The occluder.
@@ -11367,6 +11548,18 @@ export class OrientedBoundingBox {
      * @returns The nearest and farthest distances on the bounding box from position in direction.
      */
     computePlaneDistances(position: Cartesian3, direction: Cartesian3, result?: Interval): Interval;
+    /**
+     * Computes the eight corners of an oriented bounding box. The corners are ordered by (-X, -Y, -Z), (-X, -Y, +Z), (-X, +Y, -Z), (-X, +Y, +Z), (+X, -Y, -Z), (+X, -Y, +Z), (+X, +Y, -Z), (+X, +Y, +Z).
+     * @param [result] - An array of eight {@link Cartesian3} instances onto which to store the corners.
+     * @returns The modified result parameter or a new array if none was provided.
+     */
+    computeCorners(result?: Cartesian3[]): Cartesian3[];
+    /**
+     * Computes a transformation matrix from an oriented bounding box.
+     * @param result - The object onto which to store the result.
+     * @returns The modified result parameter or a new {@link Matrix4} instance if none was provided.
+     */
+    computeTransformation(result: Matrix4): Matrix4;
     /**
      * Determines whether or not a bounding box is hidden from view by the occluder.
      * @param occluder - The occluder.
@@ -12028,7 +12221,7 @@ export class PinBuilder {
 /**
  * The format of a pixel, i.e., the number of components it has and what they represent.
  */
-export const enum PixelFormat {
+export enum PixelFormat {
     /**
      * A pixel format containing a depth value.
      */
@@ -12829,7 +13022,7 @@ export class PolylineVolumeOutlineGeometry {
 /**
  * The type of a geometric primitive, i.e., points, lines, and triangles.
  */
-export const enum PrimitiveType {
+export enum PrimitiveType {
     /**
      * Points primitive where each vertex (or index) is a separate point.
      */
@@ -13796,6 +13989,17 @@ export class Rectangle {
      */
     static subsample(rectangle: Rectangle, ellipsoid?: Ellipsoid, surfaceHeight?: number, result?: Cartesian3[]): Cartesian3[];
     /**
+     * Computes a subsection of a rectangle from normalized coordinates in the range [0.0, 1.0].
+     * @param rectangle - The rectangle to subsection.
+     * @param westLerp - The west interpolation factor in the range [0.0, 1.0]. Must be less than or equal to eastLerp.
+     * @param southLerp - The south interpolation factor in the range [0.0, 1.0]. Must be less than or equal to northLerp.
+     * @param eastLerp - The east interpolation factor in the range [0.0, 1.0]. Must be greater than or equal to westLerp.
+     * @param northLerp - The north interpolation factor in the range [0.0, 1.0]. Must be greater than or equal to southLerp.
+     * @param [result] - The object onto which to store the result.
+     * @returns The modified result parameter or a new Rectangle instance if none was provided.
+     */
+    static subsection(rectangle: Rectangle, westLerp: number, southLerp: number, eastLerp: number, northLerp: number, result?: Rectangle): Rectangle;
+    /**
      * The largest possible rectangle.
      */
     static readonly MAX_VALUE: Rectangle;
@@ -13942,7 +14146,7 @@ export class RectangleOutlineGeometry {
 /**
  * Constants for identifying well-known reference frames.
  */
-export const enum ReferenceFrame {
+export enum ReferenceFrame {
     /**
      * The fixed frame.
      */
@@ -14107,7 +14311,7 @@ export namespace RequestScheduler {
 /**
  * State of the request.
  */
-export const enum RequestState {
+export enum RequestState {
     /**
      * Initial unissued state.
      */
@@ -14137,7 +14341,7 @@ export const enum RequestState {
 /**
  * An enum identifying the type of request. Used for finer grained logging and priority sorting.
  */
-export const enum RequestType {
+export enum RequestType {
     /**
      * Terrain request.
      */
@@ -15103,7 +15307,7 @@ export class ScreenSpaceEventHandler {
 /**
  * This enumerated type is for classifying mouse events: down, up, click, double click, move and move while a button is held down.
  */
-export const enum ScreenSpaceEventType {
+export enum ScreenSpaceEventType {
     /**
      * Represents a mouse left button down event.
      */
@@ -16401,7 +16605,7 @@ export class TimeIntervalCollection {
 /**
  * Provides the type of time standards which JulianDate can take as input.
  */
-export const enum TimeStandard {
+export enum TimeStandard {
     /**
      * Represents the coordinated Universal Time (UTC) time standard.
      *
@@ -17047,7 +17251,7 @@ export class VideoSynchronizer {
  * it has no visibility, may partially block an occludee from view, or may not block it at all,
  * leading to full visibility.
  */
-export const enum Visibility {
+export enum Visibility {
     /**
      * Represents that no part of an object is visible.
      */
@@ -17469,7 +17673,7 @@ export class WeightSpline {
 /**
  * Winding order defines the order of vertices for a triangle to be considered front-facing.
  */
-export const enum WindingOrder {
+export enum WindingOrder {
     /**
      * Vertices are in clockwise order.
      */
@@ -17721,7 +17925,7 @@ export function getFilenameFromUri(uri: string): string;
  * @param height - The height of the image. If not defined, then image.height is assigned.
  * @returns The pixels of the image.
  */
-export function getImagePixels(image: HTMLImageElement, width: number, height: number): ImageData;
+export function getImagePixels(image: HTMLImageElement | ImageBitmap, width: number, height: number): ImageData;
 
 /**
  * Gets a timestamp that can be used in measuring the time between events.  Timestamps
@@ -20890,6 +21094,112 @@ export class GeometryVisualizer {
 }
 
 /**
+ * A {@link DataSource} which processes the GPS Exchange Format (GPX).
+ * @example
+ * const viewer = new Cesium.Viewer('cesiumContainer');
+ * viewer.dataSources.add(Cesium.GpxDataSource.load('../../SampleData/track.gpx'));
+ */
+export class GpxDataSource {
+    constructor();
+    /**
+     * Creates a Promise to a new instance loaded with the provided GPX data.
+     * @param data - A url, parsed GPX document, or Blob containing binary GPX data.
+     * @param [options] - An object with the following properties:
+     * @param [options.clampToGround] - True if the symbols should be rendered at the same height as the terrain
+     * @param [options.waypointImage] - Image to use for waypoint billboards.
+     * @param [options.trackImage] - Image to use for track billboards.
+     * @param [options.trackColor] - Color to use for track lines.
+     * @param [options.routeColor] - Color to use for route lines.
+     * @returns A promise that will resolve to a new GpxDataSource instance once the gpx is loaded.
+     */
+    static load(data: string | Document | Blob, options?: {
+        clampToGround?: boolean;
+        waypointImage?: string;
+        trackImage?: string;
+        trackColor?: string;
+        routeColor?: string;
+    }): Promise<GpxDataSource>;
+    /**
+     * Gets a human-readable name for this instance.
+     * This will be automatically be set to the GPX document name on load.
+     */
+    name: string;
+    /**
+     * Gets the version of the GPX Schema in use.
+     */
+    version: string;
+    /**
+     * Gets the creator of the GPX document.
+     */
+    creator: string;
+    /**
+     * Gets an object containing metadata about the GPX file.
+     */
+    metadata: any;
+    /**
+     * Gets the clock settings defined by the loaded GPX. This represents the total
+     * availability interval for all time-dynamic data. If the GPX does not contain
+     * time-dynamic data, this value is undefined.
+     */
+    clock: DataSourceClock;
+    /**
+     * Gets the collection of {@link Entity} instances.
+     */
+    entities: EntityCollection;
+    /**
+     * Gets a value indicating if the data source is currently loading data.
+     */
+    isLoading: boolean;
+    /**
+     * Gets an event that will be raised when the underlying data changes.
+     */
+    changedEvent: Event;
+    /**
+     * Gets an event that will be raised if an error is encountered during processing.
+     */
+    errorEvent: Event;
+    /**
+     * Gets an event that will be raised when the data source either starts or stops loading.
+     */
+    loadingEvent: Event;
+    /**
+     * Gets whether or not this data source should be displayed.
+     */
+    show: boolean;
+    /**
+     * Gets or sets the clustering options for this data source. This object can be shared between multiple data sources.
+     */
+    clustering: EntityCluster;
+    /**
+     * Updates the data source to the provided time.  This function is optional and
+     * is not required to be implemented.  It is provided for data sources which
+     * retrieve data based on the current animation time or scene state.
+     * If implemented, update will be called by {@link DataSourceDisplay} once a frame.
+     * @param time - The simulation time.
+     * @returns True if this data source is ready to be displayed at the provided time, false otherwise.
+     */
+    update(time: JulianDate): boolean;
+    /**
+     * Asynchronously loads the provided GPX data, replacing any existing data.
+     * @param data - A url, parsed GPX document, or Blob containing binary GPX data or a parsed GPX document.
+     * @param [options] - An object with the following properties:
+     * @param [options.clampToGround] - True if the symbols should be rendered at the same height as the terrain
+     * @param [options.waypointImage] - Image to use for waypoint billboards.
+     * @param [options.trackImage] - Image to use for track billboards.
+     * @param [options.trackColor] - Color to use for track lines.
+     * @param [options.routeColor] - Color to use for route lines.
+     * @returns A promise that will resolve to this instances once the GPX is loaded.
+     */
+    load(data: string | Document | Blob, options?: {
+        clampToGround?: boolean;
+        waypointImage?: string;
+        trackImage?: string;
+        trackColor?: string;
+        routeColor?: string;
+    }): Promise<GpxDataSource>;
+}
+
+/**
  * A {@link MaterialProperty} that maps to grid {@link Material} uniforms.
  * @param [options] - Object with the following properties:
  * @param [options.color = Color.WHITE] - A Property specifying the grid {@link Color}.
@@ -24015,7 +24325,7 @@ export class StripeMaterialProperty {
 /**
  * Defined the orientation of stripes in {@link StripeMaterialProperty}.
  */
-export const enum StripeOrientation {
+export enum StripeOrientation {
     /**
      * Horizontal orientation.
      */
@@ -24474,7 +24784,7 @@ export type exportKmlModelCallback = (model: ModelGraphics, time: JulianDate, ex
 /**
  * The data type of a pixel.
  */
-export const enum PixelDatatype {
+export enum PixelDatatype {
     UNSIGNED_BYTE = WebGLConstants.UNSIGNED_BYTE,
     UNSIGNED_SHORT = WebGLConstants.UNSIGNED_SHORT,
     UNSIGNED_INT = WebGLConstants.UNSIGNED_INT,
@@ -24489,7 +24799,7 @@ export const enum PixelDatatype {
 /**
  * Enumerates all possible filters used when magnifying WebGL textures.
  */
-export const enum TextureMagnificationFilter {
+export enum TextureMagnificationFilter {
     /**
      * Samples the texture by returning the closest pixel.
      */
@@ -24503,7 +24813,7 @@ export const enum TextureMagnificationFilter {
 /**
  * Enumerates all possible filters used when minifying WebGL textures.
  */
-export const enum TextureMinificationFilter {
+export enum TextureMinificationFilter {
     /**
      * Samples the texture by returning the closest pixel.
      */
@@ -24862,7 +25172,7 @@ export class ArcGisMapServerImageryProvider {
 /**
  * An enum describing the x, y, and z axes and helper conversion functions.
  */
-export const enum Axis {
+export enum Axis {
     /**
      * Denotes the x-axis.
      */
@@ -25634,7 +25944,7 @@ export class BingMapsImageryProvider {
 /**
  * The types of imagery provided by Bing Maps.
  */
-export const enum BingMapsStyle {
+export enum BingMapsStyle {
     /**
      * Aerial imagery.
      */
@@ -25680,7 +25990,7 @@ export const enum BingMapsStyle {
 /**
  * Determines how two pixels' values are combined.
  */
-export const enum BlendEquation {
+export enum BlendEquation {
     /**
      * Pixel values are added componentwise.  This is used in additive blending for translucency.
      */
@@ -25710,7 +26020,7 @@ export const enum BlendEquation {
 /**
  * Determines how blending factors are computed.
  */
-export const enum BlendFunction {
+export enum BlendFunction {
     /**
      * The blend factor is zero.
      */
@@ -25776,7 +26086,7 @@ export const enum BlendFunction {
 /**
  * Determines how opaque and translucent parts of billboards, points, and labels are blended with the scene.
  */
-export const enum BlendOption {
+export enum BlendOption {
     /**
      * The billboards, points, or labels in the collection are completely opaque.
      */
@@ -26291,9 +26601,9 @@ export class Camera {
      * in world coordinates.
      * @param windowPosition - The x and y coordinates of a pixel.
      * @param [result] - The object onto which to store the result.
-     * @returns Returns the {@link Cartesian3} position and direction of the ray.
+     * @returns Returns the {@link Cartesian3} position and direction of the ray, or undefined if the pick ray cannot be determined.
      */
-    getPickRay(windowPosition: Cartesian2, result?: Ray): Ray;
+    getPickRay(windowPosition: Cartesian2, result?: Ray): Ray | undefined;
     /**
      * Return the distance from the camera to the front of the bounding sphere.
      * @param boundingSphere - The bounding sphere in world coordinates.
@@ -26555,7 +26865,7 @@ export class CameraEventAggregator {
 /**
  * Enumerates the available input for interacting with the camera.
  */
-export const enum CameraEventType {
+export enum CameraEventType {
     /**
      * A left mouse button press followed by moving the mouse and releasing the button.
      */
@@ -26665,7 +26975,7 @@ export class Cesium3DTile {
  * }
  * </code></pre>
  */
-export const enum Cesium3DTileColorBlendMode {
+export enum Cesium3DTileColorBlendMode {
     /**
      * Multiplies the source color by the feature color.
      */
@@ -27908,6 +28218,7 @@ export class Cesium3DTileStyle {
  * @param [options.vectorKeepDecodedPositions = false] - Whether vector tiles should keep decoded positions in memory. This is used with {@link Cesium3DTileFeature.getPolylinePositions}.
  * @param [options.featureIdIndex = 0] - The index into the list of primitive feature IDs used for picking and styling. For EXT_feature_metadata, feature ID attributes are listed before feature ID textures. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
  * @param [options.instanceFeatureIdIndex = 0] - The index into the list of instance feature IDs used for picking and styling. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this tileset on screen.
  * @param [options.debugHeatmapTilePropertyName] - The tile variable to colorize as a heatmap. All rendered tiles will be colorized relative to each other's specified variable value.
  * @param [options.debugFreezeFrame = false] - For debugging only. Determines if only the tiles from last frame should be used for rendering.
  * @param [options.debugColorizeTiles = false] - For debugging only. When true, assigns a random color to each tile.
@@ -27965,6 +28276,7 @@ export class Cesium3DTileset {
         vectorKeepDecodedPositions?: boolean;
         featureIdIndex?: number;
         instanceFeatureIdIndex?: number;
+        showCreditsOnScreen?: boolean;
         debugHeatmapTilePropertyName?: string;
         debugFreezeFrame?: boolean;
         debugColorizeTiles?: boolean;
@@ -28646,6 +28958,10 @@ export class Cesium3DTileset {
      */
     vectorKeepDecodedPositions: boolean;
     /**
+     * Determines whether the credits of the tileset will be displayed on the screen
+     */
+    showCreditsOnScreen: boolean;
+    /**
      * Provides a hook to override the method used to request the tileset json
      * useful when fetching tilesets from remote servers
      * @param tilesetUrl - The url of the json file to be fetched
@@ -28896,7 +29212,7 @@ export class ClassificationPrimitive {
 /**
  * Whether a classification affects terrain, 3D Tiles or both.
  */
-export const enum ClassificationType {
+export enum ClassificationType {
     /**
      * Only terrain will be classified.
      */
@@ -29285,7 +29601,7 @@ export class CloudCollection {
 /**
  * Specifies the type of the cloud that is added to a {@link CloudCollection} in {@link CloudCollection#add}.
  */
-export const enum CloudType {
+export enum CloudType {
     /**
      * Cumulus cloud.
      */
@@ -29299,7 +29615,7 @@ export const enum CloudType {
  * REPLACE replaces the source color with the target color
  * MIX blends the source color and target color together
  */
-export const enum ColorBlendMode {
+export enum ColorBlendMode {
     HIGHLIGHT = 0,
     REPLACE = 1,
     MIX = 2
@@ -29432,7 +29748,7 @@ export class CreditDisplay {
 /**
  * Determines which triangles, if any, are culled.
  */
-export const enum CullFace {
+export enum CullFace {
     /**
      * Front-facing triangles are culled.
      */
@@ -29807,7 +30123,7 @@ export class DebugModelMatrixPrimitive {
 /**
  * Determines the function used to compare two depths for the depth test.
  */
-export const enum DepthFunction {
+export enum DepthFunction {
     /**
      * The depth test never passes.
      */
@@ -31673,7 +31989,7 @@ export class GroundPrimitive {
 /**
  * Represents the position relative to the terrain.
  */
-export const enum HeightReference {
+export enum HeightReference {
     /**
      * The position is absolute.
      */
@@ -31698,7 +32014,7 @@ export const enum HeightReference {
  * <img src='Images/Billboard.setHorizontalOrigin.png' width='648' height='196' /><br />
  * </div>
  */
-export const enum HorizontalOrigin {
+export enum HorizontalOrigin {
     /**
      * The origin is at the horizontal center of the object.
      */
@@ -32369,7 +32685,7 @@ export class ImageryProvider {
 /**
  * The direction to display an ImageryLayer relative to the {@link Scene#imagerySplitPosition}.
  */
-export const enum ImagerySplitDirection {
+export enum ImagerySplitDirection {
     /**
      * Display the ImageryLayer to the left of the {@link Scene#imagerySplitPosition}.
      */
@@ -32566,7 +32882,7 @@ export class IonImageryProvider {
 /**
  * The types of imagery provided by {@link createWorldImagery}.
  */
-export const enum IonWorldImageryStyle {
+export enum IonWorldImageryStyle {
     /**
      * Aerial imagery.
      */
@@ -33036,7 +33352,7 @@ export class LabelCollection {
 /**
  * Describes how to draw a label.
  */
-export const enum LabelStyle {
+export enum LabelStyle {
     /**
      * Fill the text of the label, but do not outline.
      */
@@ -33069,7 +33385,7 @@ export class Light {
 /**
  * Describes how the map will operate in 2D.
  */
-export const enum MapMode2D {
+export enum MapMode2D {
     /**
      * The 2D map can be rotated about the z axis.
      */
@@ -34105,6 +34421,7 @@ export namespace MaterialAppearance {
  * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting.
  * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
  * @param [options.credit] - A credit for the data source, which is displayed on the canvas.
+ * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
  * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if {@link Model#color} is translucent or {@link Model#silhouetteSize} is greater than 0.0.
  * @param [options.showOutline = true] - Whether to display the outline for models using the {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension. When true, outlines are displayed. When false, outlines are not displayed.
  */
@@ -34141,6 +34458,7 @@ export class Model {
         sphericalHarmonicCoefficients?: Cartesian3[];
         specularEnvironmentMaps?: string;
         credit?: Credit | string;
+        showCreditsOnScreen?: boolean;
         backFaceCulling?: boolean;
         showOutline?: boolean;
     });
@@ -34355,6 +34673,10 @@ export class Model {
      */
     credit: Credit;
     /**
+     * Gets or sets whether the credits of the model will be displayed on the screen
+     */
+    showCreditsOnScreen: boolean;
+    /**
      * Determines if silhouettes are supported.
      * @param scene - The scene.
      * @returns <code>true</code> if silhouettes are supported; otherwise, returns <code>false</code>
@@ -34454,6 +34776,7 @@ export class Model {
      * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
      * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models.
      * @param [options.credit] - A credit for the model, which is displayed on the canvas.
+     * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
      * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if {@link Model#color} is translucent or {@link Model#silhouetteSize} is greater than 0.0.
      * @param [options.showOutline = true] - Whether to display the outline for models using the {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension. When true, outlines are displayed. When false, outlines are not displayed.
      * @returns The newly created model.
@@ -34485,6 +34808,7 @@ export class Model {
         clippingPlanes?: ClippingPlaneCollection;
         dequantizeInShader?: boolean;
         credit?: Credit | string;
+        showCreditsOnScreen?: boolean;
         backFaceCulling?: boolean;
         showOutline?: boolean;
     }): Model;
@@ -34818,7 +35142,7 @@ export class ModelAnimationCollection {
 /**
  * Determines if and how a glTF animation is looped.
  */
-export const enum ModelAnimationLoop {
+export enum ModelAnimationLoop {
     /**
      * Play the animation once; do not loop it.
      */
@@ -34863,6 +35187,9 @@ export type UniformSpecifier = {
  * </ul>
  * <p>
  * To enable the use of {@link ModelExperimental} in {@link Cesium3DTileset}, set {@link ExperimentalFeatures.enableModelExperimental} to <code>true</code> or tileset.enableModelExperimental to <code>true</code>.
+ * </p>
+ * <p>
+ * See the {@link https://github.com/CesiumGS/cesium/tree/main/Documentation/CustomShaderGuide|Custom Shader Guide} for more detailed documentation.
  * </p>
  * @example
  * const customShader = new CustomShader({
@@ -34971,7 +35298,7 @@ export const isTranslucent: boolean;
  * An enum describing how the {@link CustomShader} will be added to the
  * fragment shader. This determines how the shader interacts with the material.
  */
-export const enum CustomShaderMode {
+export enum CustomShaderMode {
     /**
      * The custom shader will be used to modify the results of the material stage
      * before lighting is applied.
@@ -34987,7 +35314,7 @@ export const enum CustomShaderMode {
 /**
  * The lighting model to use for lighting a {@link ModelExperimental}.
  */
-export const enum LightingModel {
+export enum LightingModel {
     /**
      * Use unlit shading, i.e. skip lighting calculations. The model's
      * diffuse color (assumed to be linear RGB, not sRGB) is used directly
@@ -35025,6 +35352,9 @@ export const enum LightingModel {
  * @param [options.featureIdIndex = 0] - The index into the list of primitive feature IDs used for picking and styling. For EXT_feature_metadata, feature ID attributes are listed before feature ID textures. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
  * @param [options.instanceFeatureIdIndex = 0] - The index into the list of instance feature IDs used for picking and styling. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
  * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation based on geometric error and lighting.
+ * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if the model's color is translucent.
+ * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
+ * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
  */
 export class ModelExperimental {
     constructor(options: {
@@ -35043,6 +35373,9 @@ export class ModelExperimental {
         featureIdIndex?: number;
         instanceFeatureIdIndex?: number;
         pointCloudShading?: any;
+        backFaceCulling?: boolean;
+        shadows?: ShadowMode;
+        showCreditsOnScreen?: boolean;
     });
     /**
      * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
@@ -35110,6 +35443,10 @@ export class ModelExperimental {
      */
     instanceFeatureIdIndex: number;
     /**
+     * Gets or sets whether the credits of the model will be displayed on the screen
+     */
+    showCreditsOnScreen: boolean;
+    /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
      * get the draw commands needed to render this primitive.
      * <p>
@@ -35165,6 +35502,9 @@ export class ModelExperimental {
      * @param [options.featureIdIndex = 0] - The index into the list of primitive feature IDs used for picking and styling. For EXT_feature_metadata, feature ID attributes are listed before feature ID textures. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
      * @param [options.instanceFeatureIdIndex = 0] - The index into the list of instance feature IDs used for picking and styling. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
      * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation and lighting.
+     * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if the model's color is translucent.
+     * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
+     * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
      * @returns The newly created model.
      */
     static fromGltf(options: {
@@ -35188,6 +35528,9 @@ export class ModelExperimental {
         featureIdIndex?: number;
         instanceFeatureIdIndex?: number;
         pointCloudShading?: any;
+        backFaceCulling?: boolean;
+        shadows?: ShadowMode;
+        showCreditsOnScreen?: boolean;
     }): ModelExperimental;
 }
 
@@ -35206,6 +35549,19 @@ export var modelMatrix: Matrix4;
  * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
  */
 export var style: Cesium3DTileStyle;
+
+/**
+ * Whether to cull back-facing geometry. When true, back face culling is
+ * determined by the material's doubleSided property; when false, back face
+ * culling is disabled. Back faces are not culled if the model's color is
+ * translucent.
+ */
+export var backFaceCulling: boolean;
+
+/**
+ * Determines whether the model casts or receives shadows from light sources.
+ */
+export var shadows: ShadowMode;
 
 /**
  * The indices of the children of this node in the scene graph.
@@ -35361,7 +35717,7 @@ export class TextureUniform {
  * An enum of the basic GLSL uniform types. These can be used with
  * {@link CustomShader} to declare user-defined uniforms.
  */
-export const enum UniformType {
+export enum UniformType {
     /**
      * A single floating point value.
      */
@@ -35433,7 +35789,7 @@ export const enum UniformType {
  * An enum for the GLSL varying types. These can be used for declaring varyings
  * in {@link CustomShader}
  */
-export const enum VaryingType {
+export enum VaryingType {
     /**
      * A single floating point value.
      */
@@ -37517,7 +37873,7 @@ export namespace PostProcessStageLibrary {
 /**
  * Determines how input texture to a {@link PostProcessStage} is sampled.
  */
-export const enum PostProcessStageSampleMode {
+export enum PostProcessStageSampleMode {
     /**
      * Samples the texture by returning the closest texel.
      */
@@ -37993,6 +38349,8 @@ export class PrimitiveCollection {
  * @param [options.mapMode2D = MapMode2D.INFINITE_SCROLL] - Determines if the 2D map is rotatable or can be scrolled infinitely in the horizontal direction.
  * @param [options.requestRenderMode = false] - If true, rendering a frame will only occur when needed as determined by changes within the scene. Enabling improves performance of the application, but requires using {@link Scene#requestRender} to render a new frame explicitly in this mode. This will be necessary in many cases after making changes to the scene in other parts of the API. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
  * @param [options.maximumRenderTimeChange = 0.0] - If requestRenderMode is true, this value defines the maximum change in simulation time allowed before a render is requested. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
+ * @param [depthPlaneEllipsoidOffset = 0.0] - Adjust the DepthPlane to address rendering artefacts below ellipsoid zero elevation.
+ * @param [options.msaaSamples = 1] - If provided, this value controls the rate of multisample antialiasing. Typical multisampling rates are 2, 4, and sometimes 8 samples per pixel. Higher sampling rates of MSAA may impact performance in exchange for improved visual quality. This value only applies to WebGL2 contexts that support multisample render targets.
  */
 export class Scene {
     constructor(options: {
@@ -38007,7 +38365,8 @@ export class Scene {
         mapMode2D?: MapMode2D;
         requestRenderMode?: boolean;
         maximumRenderTimeChange?: number;
-    });
+        msaaSamples?: number;
+    }, depthPlaneEllipsoidOffset?: number);
     /**
      * Exceptions occurring in <code>render</code> are always caught in order to raise the
      * <code>renderError</code> event.  If this property is true, the error is rethrown
@@ -38411,6 +38770,14 @@ export class Scene {
      */
     readonly cameraUnderground: boolean;
     /**
+     * The sample rate of multisample antialiasing (values greater than 1 enable MSAA).
+     */
+    readonly msaaSamples: number;
+    /**
+     * Returns <code>true</code> if the Scene's context supports MSAA.
+     */
+    readonly msaaSupported: boolean;
+    /**
      * Determines if a compressed texture format is supported.
      * @param format - The texture format. May be the name of the format or the WebGL extension name, e.g. s3tc or WEBGL_compressed_texture_s3tc.
      * @returns Whether or not the format is supported.
@@ -38618,7 +38985,7 @@ export class Scene {
 /**
  * Indicates if the scene is viewed in 3D, 2D, or 2.5D Columbus view.
  */
-export const enum SceneMode {
+export enum SceneMode {
     /**
      * Morphing between mode, e.g., 3D to 2D.
      */
@@ -38909,7 +39276,7 @@ export class ShadowMap {
  * Specifies whether the object casts or receives shadows from light sources when
  * shadows are enabled.
  */
-export const enum ShadowMode {
+export enum ShadowMode {
     /**
      * The object does not cast or receive shadows.
      */
@@ -39251,7 +39618,7 @@ export class SphereEmitter {
 /**
  * Determines the function used to compare stencil values for the stencil test.
  */
-export const enum StencilFunction {
+export enum StencilFunction {
     /**
      * The stencil test never passes.
      */
@@ -39289,7 +39656,7 @@ export const enum StencilFunction {
 /**
  * Determines the action taken based on the result of the stencil test.
  */
-export const enum StencilOperation {
+export enum StencilOperation {
     /**
      * Sets the stencil buffer value to zero.
      */
@@ -40260,7 +40627,7 @@ export class UrlTemplateImageryProvider {
  * <img src='Images/Billboard.setVerticalOrigin.png' width='695' height='175' /><br />
  * </div>
  */
-export const enum VerticalOrigin {
+export enum VerticalOrigin {
     /**
      * The origin is at the vertical center between <code>BASELINE</code> and <code>TOP</code>.
      */
@@ -42027,6 +42394,7 @@ export class CesiumInspectorViewModel {
  * @param [options.mapMode2D = MapMode2D.INFINITE_SCROLL] - Determines if the 2D map is rotatable or can be scrolled infinitely in the horizontal direction.
  * @param [options.requestRenderMode = false] - If true, rendering a frame will only occur when needed as determined by changes within the scene. Enabling improves performance of the application, but requires using {@link Scene#requestRender} to render a new frame explicitly in this mode. This will be necessary in many cases after making changes to the scene in other parts of the API. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
  * @param [options.maximumRenderTimeChange = 0.0] - If requestRenderMode is true, this value defines the maximum change in simulation time allowed before a render is requested. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
+ * @param [options.msaaSamples = 1] - If provided, this value controls the rate of multisample antialiasing. Typical multisampling rates are 2, 4, and sometimes 8 samples per pixel. Higher sampling rates of MSAA may impact performance in exchange for improved visual quality. This value only applies to WebGL2 contexts that support multisample render targets.
  */
 export class CesiumWidget {
     constructor(container: Element | string, options?: {
@@ -42052,6 +42420,7 @@ export class CesiumWidget {
         mapMode2D?: MapMode2D;
         requestRenderMode?: boolean;
         maximumRenderTimeChange?: number;
+        msaaSamples?: number;
     });
     /**
      * Gets the parent container.
@@ -43210,6 +43579,8 @@ export namespace Viewer {
      * @property [projectionPicker = false] - If set to true, the ProjectionPicker widget will be created.
      * @property [requestRenderMode = false] - If true, rendering a frame will only occur when needed as determined by changes within the scene. Enabling reduces the CPU/GPU usage of your application and uses less battery on mobile, but requires using {@link Scene#requestRender} to render a new frame explicitly in this mode. This will be necessary in many cases after making changes to the scene in other parts of the API. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [maximumRenderTimeChange = 0.0] - If requestRenderMode is true, this value defines the maximum change in simulation time allowed before a render is requested. See {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
+     * @property [depthPlaneEllipsoidOffset = 0.0] - Adjust the DepthPlane to address rendering artefacts below ellipsoid zero elevation.
+     * @property [msaaSamples = 1] - If provided, this value controls the rate of multisample antialiasing. Typical multisampling rates are 2, 4, and sometimes 8 samples per pixel. Higher sampling rates of MSAA may impact performance in exchange for improved visual quality. This value only applies to WebGL2 contexts that support multisample render targets.
      */
     type ConstructorOptions = {
         animation?: boolean;
@@ -43255,6 +43626,8 @@ export namespace Viewer {
         projectionPicker?: boolean;
         requestRenderMode?: boolean;
         maximumRenderTimeChange?: number;
+        depthPlaneEllipsoidOffset?: number;
+        msaaSamples?: number;
     };
     /**
      * A function that augments a Viewer instance with additional functionality.
@@ -43881,6 +44254,7 @@ declare module "cesium/Source/DataSources/EntityView" { import { EntityView } fr
 declare module "cesium/Source/DataSources/GeoJsonDataSource" { import { GeoJsonDataSource } from 'cesium'; export default GeoJsonDataSource; }
 declare module "cesium/Source/DataSources/GeometryUpdater" { import { GeometryUpdater } from 'cesium'; export default GeometryUpdater; }
 declare module "cesium/Source/DataSources/GeometryVisualizer" { import { GeometryVisualizer } from 'cesium'; export default GeometryVisualizer; }
+declare module "cesium/Source/DataSources/GpxDataSource" { import { GpxDataSource } from 'cesium'; export default GpxDataSource; }
 declare module "cesium/Source/DataSources/GridMaterialProperty" { import { GridMaterialProperty } from 'cesium'; export default GridMaterialProperty; }
 declare module "cesium/Source/DataSources/GroundGeometryUpdater" { import { GroundGeometryUpdater } from 'cesium'; export default GroundGeometryUpdater; }
 declare module "cesium/Source/DataSources/ImageMaterialProperty" { import { ImageMaterialProperty } from 'cesium'; export default ImageMaterialProperty; }
