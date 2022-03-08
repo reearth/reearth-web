@@ -211,6 +211,7 @@ export default function Visualizer({
             onBlockSelect={selectBlock}
             renderInsertionPopUp={renderInfoboxInsertionPopUp}
             pluginBaseUrl={pluginBaseUrl}
+            onMaskClick={() => selectLayer(undefined)}
           />
         )}
         {children}
