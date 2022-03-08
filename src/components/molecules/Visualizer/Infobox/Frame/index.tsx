@@ -179,7 +179,6 @@ const Mask = styled.div<{ activate?: boolean }>`
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.6);
   overflow-x: hidden;
-  // pointer-events: none;
 `;
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
