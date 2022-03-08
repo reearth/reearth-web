@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import {
@@ -25,43 +25,50 @@ export default (teamId?: string) => {
   const [searchTerm, setSearchTerm] = useState<string>();
   const assetsPerPage = 20;
 
-  const pagination = useMemo(() => {
-    const reverseOrder =
-      (!sort?.type && !sort?.reverse) ||
-      (sort?.type === "DATE" && !sort?.reverse) ||
-      (sort?.type && sort?.reverse);
-    return {
-      last: reverseOrder ? assetsPerPage : undefined,
-      first: !reverseOrder ? assetsPerPage : undefined,
-    };
-  }, [sort]);
+  const pagination = useCallback(
+    (endCursor?: string | null) => {
+      const reverseOrder =
+        (!sort?.type && !sort?.reverse) ||
+        (sort?.type === "DATE" && !sort?.reverse) ||
+        (sort?.type !== "DATE" && sort?.reverse);
+
+      return {
+        after: !reverseOrder ? endCursor : undefined,
+        before: reverseOrder ? endCursor : undefined,
+        first: !reverseOrder ? assetsPerPage : undefined,
+        last: reverseOrder ? assetsPerPage : undefined,
+      };
+    },
+    [sort],
+  );
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
-      pagination,
+      pagination: pagination(),
       sort: sort?.type,
     },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
   });
-  const hasMoreAssets = data?.assets.pageInfo.hasNextPage || data?.assets.pageInfo.hasPreviousPage;
+
+  const hasMoreAssets =
+    data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
   const isRefetching = networkStatus === 3;
-  const assets = data?.assets.edges.map(e => e.node) as AssetNodes;
+  const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
 
   const getMoreAssets = useCallback(() => {
     if (hasMoreAssets) {
       fetchMore({
         variables: {
-          pagination: {
-            first: assetsPerPage,
-            after: data?.assets.pageInfo.endCursor,
-          },
+          teamId: teamId ?? "",
+          pagination: pagination(data?.assets.pageInfo.endCursor),
           delay: true,
+          notifyOnNetworkStatusChange: true,
         },
       });
     }
-  }, [data?.assets.pageInfo, fetchMore, hasMoreAssets]);
+  }, [data?.assets.pageInfo, teamId, pagination, fetchMore, hasMoreAssets]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -129,30 +136,24 @@ export default (teamId?: string) => {
       if (!type && reverse === undefined) return;
       setSort({
         type: (type as AssetSortType) ?? sort?.type,
-        reverse: reverse ?? (type === "DATE" || type !== sort?.type ? false : sort?.reverse),
+        reverse: !!reverse,
       });
     },
     [sort],
   );
 
+  const handleSearchTerm = useCallback((term?: string) => {
+    setSearchTerm(term);
+  }, []);
+
   useEffect(() => {
-    if (sort) {
+    if (sort || searchTerm) {
       refetch({
+        sort: sort?.type,
         keyword: searchTerm,
       });
     }
   }, [sort, searchTerm, refetch]);
-
-  const handleSearchTerm = useCallback(
-    (term?: string) => {
-      setSearchTerm(term);
-      refetch({
-        sort: sort?.type,
-        keyword: term,
-      });
-    },
-    [refetch, sort],
-  );
 
   return {
     assetsData: {

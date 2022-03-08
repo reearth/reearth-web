@@ -99,7 +99,10 @@ const AssetContainer: React.FC<Props> = ({
     { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
     onLoadMore?: () => void,
   ) => {
-    if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
+    if (
+      currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight &&
+      !isLoading
+    ) {
       onLoadMore?.();
     }
   };
