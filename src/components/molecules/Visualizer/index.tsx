@@ -212,7 +212,7 @@ export default function Visualizer({
             onBlockSelect={selectBlock}
             renderInsertionPopUp={renderInfoboxInsertionPopUp}
             pluginBaseUrl={pluginBaseUrl}
-            onMaskClick={onInfoboxMaskClick}
+            onMaskClick={handleInfoboxMaskClick}
           />
         )}
         {children}
