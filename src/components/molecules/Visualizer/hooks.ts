@@ -161,10 +161,10 @@ export default ({
     engineRef.current?.requestRender();
   });
 
-  const onInfoboxMaskClick = useCallback(() => {
+  const handleInfoboxMaskClick = useCallback(() => {
     selectLayer(undefined);
   }, [selectLayer]);
-
+  
   return {
     engineRef,
     wrapperRef,
