@@ -30,7 +30,17 @@ export default ({
   mode: Mode;
   locale: string;
 }) => {
-  const { assetsData } = assetHooks(teamId);
+  const {
+    assets,
+    isLoading: isAssetsLoading,
+    hasMoreAssets,
+    sort: assetSort,
+    searchTerm: assetSearchTerm,
+    getMoreAssets,
+    createAssets,
+    handleSortChange: handleAssetSortChange,
+    handleSearchTerm: handleAssetSearch,
+  } = assetHooks(teamId);
 
   const {
     loading: layerLoading,
@@ -206,7 +216,15 @@ export default ({
     isInfoboxCreatable,
     datasetSchemas,
     layers,
-    assetsData,
     selectedWidget,
+    assets,
+    isAssetsLoading,
+    hasMoreAssets,
+    assetSort,
+    assetSearchTerm,
+    getMoreAssets,
+    createAssets,
+    handleAssetSortChange,
+    handleAssetSearch,
   };
 };

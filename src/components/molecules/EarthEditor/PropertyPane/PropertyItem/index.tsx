@@ -117,7 +117,15 @@ export type Props = {
   | "isLinkable"
   | "onDatasetPickerOpen"
   | "layers"
-  | "assetsData"
+  | "assets"
+  | "isAssetsLoading"
+  | "hasMoreAssets"
+  | "assetSort"
+  | "assetSearchTerm"
+  | "onGetMoreAssets"
+  | "onCreateAssets"
+  | "onAssetSort"
+  | "onAssetSearch"
 > &
   ExtendedFuncProps2<
     Pick<FieldProps, "onChange" | "onRemove" | "onLink" | "onUploadFile" | "onRemoveFile">,

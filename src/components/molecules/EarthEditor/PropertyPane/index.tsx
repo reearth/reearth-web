@@ -60,17 +60,15 @@ export type Props = {
   isInfoboxCreatable?: boolean;
   onCreateInfobox?: () => void;
   onRemovePane?: () => void;
-  assetsData: {
-    assets?: AssetType[];
-    isLoading?: boolean;
-    getMoreAssets?: () => void;
-    createAssets?: (files: FileList) => Promise<void>;
-    hasMoreAssets?: boolean | undefined;
-    sort?: { type?: AssetSortType | null; reverse?: boolean };
-    handleSortChange?: (type?: string, reverse?: boolean) => void;
-    searchTerm?: string;
-    handleSearchTerm?: (term?: string) => void;
-  };
+  assets: AssetType[];
+  isAssetsLoading: boolean;
+  hasMoreAssets: boolean | undefined;
+  assetSort?: { type?: AssetSortType | null; reverse?: boolean };
+  assetSearchTerm?: string;
+  onGetMoreAssets: () => void;
+  onCreateAssets: (files: FileList) => Promise<void>;
+  onAssetSort: (type?: string, reverse?: boolean) => void;
+  onAssetSearch: (term?: string) => void;
   selectedWidget?: Widget;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   widgetAlignEditorActivated?: boolean;

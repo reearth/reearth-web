@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 
@@ -17,17 +18,15 @@ export type AssetSortType = SortType;
 
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";
-  assetsData: {
-    assets?: AssetType[];
-    isLoading?: boolean;
-    getMoreAssets?: () => void;
-    createAssets?: (files: FileList) => Promise<void>;
-    hasMoreAssets?: boolean | undefined;
-    sort?: { type?: AssetSortType | null; reverse?: boolean };
-    handleSortChange?: (type?: string, reverse?: boolean) => void;
-    searchTerm?: string;
-    handleSearchTerm?: (term?: string) => void;
-  };
+  assets: AssetType[];
+  isAssetsLoading?: boolean;
+  hasMoreAssets?: boolean;
+  assetSort?: { type?: AssetSortType | null; reverse?: boolean };
+  assetSearchTerm?: string;
+  onGetMoreAssets?: () => void;
+  onCreateAssets?: (files: FileList) => Promise<void>;
+  onAssetSort?: (type?: string, reverse?: boolean) => void;
+  onAssetSearch?: (term?: string) => void;
   onRemoveFile?: () => void;
 };
 
@@ -37,13 +36,25 @@ const URLField: React.FC<Props> = ({
   linked,
   overridden,
   fileType,
-  assetsData,
+  assets,
+  isAssetsLoading,
+  hasMoreAssets,
+  assetSort,
+  assetSearchTerm,
+  onGetMoreAssets,
+  onCreateAssets,
+  onAssetSort,
+  onAssetSearch,
   onChange,
 }) => {
   const intl = useIntl();
+  const gqlCache = useApolloClient().cache;
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
   const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
-  const closeAssetModal = useCallback(() => setAssetModalOpen(false), []);
+  const closeAssetModal = useCallback(() => {
+    setAssetModalOpen(false);
+    gqlCache.evict({ fieldName: "assets" });
+  }, [gqlCache]);
   const deleteValue = useCallback(() => onChange?.(null), [onChange]);
 
   return (
@@ -70,13 +81,21 @@ const URLField: React.FC<Props> = ({
         )}
       </InputWrapper>
       <AssetModal
+        assets={assets}
         isOpen={isAssetModalOpen}
-        onClose={closeAssetModal}
         fileType={fileType}
         smallCardOnly
-        assetsData={assetsData}
-        onSelect={onChange}
         value={value}
+        isLoading={isAssetsLoading}
+        hasMoreAssets={hasMoreAssets}
+        sort={assetSort}
+        searchTerm={assetSearchTerm}
+        onSelect={onChange}
+        onClose={closeAssetModal}
+        onGetMoreAssets={onGetMoreAssets}
+        onCreateAssets={onCreateAssets}
+        onSortChange={onAssetSort}
+        onSearch={onAssetSearch}
       />
     </Wrapper>
   );

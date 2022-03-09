@@ -96,17 +96,15 @@ export type Props<T extends ValueType = ValueType> = {
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
-  assetsData: {
-    assets?: AssetType[];
-    isLoading?: boolean;
-    getMoreAssets?: () => void;
-    createAssets?: (files: FileList) => Promise<void>;
-    hasMoreAssets?: boolean | undefined;
-    sort?: { type?: AssetSortType | null; reverse?: boolean };
-    handleSortChange?: (type?: string, reverse?: boolean) => void;
-    searchTerm?: string;
-    handleSearchTerm?: (term?: string) => void;
-  };
+  assets: AssetType[];
+  isAssetsLoading: boolean;
+  hasMoreAssets: boolean | undefined;
+  assetSort?: { type?: AssetSortType | null; reverse?: boolean };
+  assetSearchTerm?: string;
+  onGetMoreAssets: () => void;
+  onCreateAssets: (files: FileList) => Promise<void>;
+  onAssetSort: (type?: string, reverse?: boolean) => void;
+  onAssetSearch: (term?: string) => void;
   onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
@@ -136,7 +134,15 @@ const PropertyField: React.FC<Props> = ({
   linkedDatasetSchemaId,
   linkedDatasetId,
   layers,
-  assetsData,
+  assets,
+  isAssetsLoading,
+  hasMoreAssets,
+  assetSort,
+  assetSearchTerm,
+  onGetMoreAssets,
+  onCreateAssets,
+  onAssetSort,
+  onAssetSearch,
 }) => {
   const rawEvents = useMemo(
     () => ({
@@ -227,7 +233,15 @@ const PropertyField: React.FC<Props> = ({
           <URLField
             {...commonProps}
             fileType={schema.ui === "image" || schema.ui === "video" ? schema.ui : undefined}
-            assetsData={assetsData}
+            assets={assets}
+            isAssetsLoading={isAssetsLoading}
+            hasMoreAssets={hasMoreAssets}
+            assetSort={assetSort}
+            assetSearchTerm={assetSearchTerm}
+            onGetMoreAssets={onGetMoreAssets}
+            onCreateAssets={onCreateAssets}
+            onAssetSort={onAssetSort}
+            onAssetSearch={onAssetSearch}
           />
         ) : type === "typography" ? (
           <TypographyField {...commonProps} />

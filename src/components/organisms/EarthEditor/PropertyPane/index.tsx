@@ -22,7 +22,15 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     datasetSchemas,
     loading,
     layers,
-    assetsData,
+    assets,
+    isAssetsLoading,
+    hasMoreAssets,
+    assetSort,
+    assetSearchTerm,
+    getMoreAssets,
+    createAssets,
+    handleAssetSortChange,
+    handleAssetSearch,
     selectedWidget,
     widgetAlignEditorActivated,
     changeValue,
@@ -59,7 +67,15 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
           layers={layers}
-          assetsData={assetsData}
+          assets={assets}
+          assetSort={assetSort}
+          assetSearchTerm={assetSearchTerm}
+          hasMoreAssets={hasMoreAssets}
+          isAssetsLoading={isAssetsLoading}
+          onCreateAssets={createAssets}
+          onAssetSort={handleAssetSortChange}
+          onAssetSearch={handleAssetSearch}
+          onGetMoreAssets={getMoreAssets}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
           onCreateInfobox={createInfobox}
