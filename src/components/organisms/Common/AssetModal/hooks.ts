@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 
@@ -7,15 +8,26 @@ import {
   useCreateAssetMutation,
   useRemoveAssetMutation,
   Maybe,
+  AssetSortType,
 } from "@reearth/gql";
 import { useNotification } from "@reearth/state";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
-export enum AssetSortType {
-  Date = "DATE",
-  Name = "NAME",
-  Size = "SIZE",
+const assetsPerPage = 20;
+
+function pagination(
+  sort?: { type?: Maybe<AssetSortType>; reverse?: boolean },
+  endCursor?: string | null,
+) {
+  const reverseOrder = !sort?.type || sort?.type === "DATE" ? !sort?.reverse : !!sort?.reverse;
+
+  return {
+    after: !reverseOrder ? endCursor : undefined,
+    before: reverseOrder ? endCursor : undefined,
+    first: !reverseOrder ? assetsPerPage : undefined,
+    last: reverseOrder ? assetsPerPage : undefined,
+  };
 }
 
 export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
@@ -23,29 +35,12 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: Maybe<AssetSortType>; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
-  const assetsPerPage = 20;
-
-  const pagination = useCallback(
-    (endCursor?: string | null) => {
-      const reverseOrder =
-        (!sort?.type && !sort?.reverse) ||
-        (sort?.type === "DATE" && !sort?.reverse) ||
-        (sort?.type !== "DATE" && sort?.reverse);
-
-      return {
-        after: !reverseOrder ? endCursor : undefined,
-        before: reverseOrder ? endCursor : undefined,
-        first: !reverseOrder ? assetsPerPage : undefined,
-        last: reverseOrder ? assetsPerPage : undefined,
-      };
-    },
-    [sort],
-  );
+  const gqlCache = useApolloClient().cache;
 
   const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
     variables: {
       teamId: teamId ?? "",
-      pagination: pagination(),
+      pagination: pagination(sort),
       sort: sort?.type,
     },
     notifyOnNetworkStatusChange: true,
@@ -62,13 +57,13 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
       fetchMore({
         variables: {
           teamId: teamId ?? "",
-          pagination: pagination(data?.assets.pageInfo.endCursor),
+          pagination: pagination(sort, data?.assets.pageInfo.endCursor),
           delay: true,
           notifyOnNetworkStatusChange: true,
         },
       });
     }
-  }, [data?.assets.pageInfo, teamId, pagination, fetchMore, hasMoreAssets]);
+  }, [data?.assets.pageInfo, teamId, sort, fetchMore, hasMoreAssets]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -148,7 +143,8 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
 
   const handleModalClose = useCallback(() => {
     setOpenAssets?.(false);
-  }, [setOpenAssets]);
+    gqlCache.evict({ fieldName: "assets" });
+  }, [setOpenAssets, gqlCache]);
 
   useEffect(() => {
     if (sort || searchTerm) {
