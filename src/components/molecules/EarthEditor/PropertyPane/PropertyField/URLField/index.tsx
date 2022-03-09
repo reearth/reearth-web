@@ -53,8 +53,12 @@ const URLField: React.FC<Props> = ({
   const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
   const closeAssetModal = useCallback(() => {
     setAssetModalOpen(false);
-    gqlCache.evict({ fieldName: "assets" });
-  }, [gqlCache]);
+    setTimeout(() => {
+      onAssetSort?.(undefined);
+      onAssetSearch?.(undefined);
+      gqlCache.evict({ fieldName: "assets" });
+    }, 200);
+  }, [gqlCache, onAssetSearch, onAssetSort]);
   const deleteValue = useCallback(() => onChange?.(null), [onChange]);
 
   return (

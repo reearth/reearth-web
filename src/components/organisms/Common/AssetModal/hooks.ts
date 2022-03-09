@@ -42,6 +42,7 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
       teamId: teamId ?? "",
       pagination: pagination(sort),
       sort: sort?.type,
+      keyword: searchTerm,
     },
     notifyOnNetworkStatusChange: true,
     skip: !teamId,
@@ -56,14 +57,12 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
     if (hasMoreAssets) {
       fetchMore({
         variables: {
-          teamId: teamId ?? "",
           pagination: pagination(sort, data?.assets.pageInfo.endCursor),
           delay: true,
-          notifyOnNetworkStatusChange: true,
         },
       });
     }
-  }, [data?.assets.pageInfo, teamId, sort, fetchMore, hasMoreAssets]);
+  }, [data?.assets.pageInfo, sort, fetchMore, hasMoreAssets]);
 
   const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
@@ -143,7 +142,11 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
 
   const handleModalClose = useCallback(() => {
     setOpenAssets?.(false);
-    gqlCache.evict({ fieldName: "assets" });
+    setTimeout(() => {
+      setSort(undefined);
+      setSearchTerm(undefined);
+      gqlCache.evict({ fieldName: "assets" });
+    }, 200);
   }, [setOpenAssets, gqlCache]);
 
   useEffect(() => {

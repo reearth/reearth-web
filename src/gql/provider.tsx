@@ -59,7 +59,7 @@ const Provider: React.FC = ({ children }) => {
       Query: {
         fields: {
           assets: {
-            keyArgs: ["sort", "pagination", ["first", "last"]],
+            keyArgs: ["teamId", "keyword", "sort", "pagination", ["first", "last"]],
 
             merge(existing, incoming, { readField }) {
               const merged = existing ? existing.edges.slice(0) : [];
