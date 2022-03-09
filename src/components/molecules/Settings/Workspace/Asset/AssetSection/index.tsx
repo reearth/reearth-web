@@ -22,7 +22,7 @@ type Props = {
   hasMoreAssets: boolean | undefined;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
   searchTerm?: string;
-  getMoreAssets: () => void;
+  onGetMoreAssets: () => void;
   onCreateAssets: (files: FileList) => Promise<void>;
   onRemoveAssets: (assetIds: string[]) => Promise<void>;
   onSortChange: (type?: string, reverse?: boolean) => void;
@@ -35,7 +35,7 @@ const AssetSection: React.FC<Props> = ({
   hasMoreAssets,
   sort,
   searchTerm,
-  getMoreAssets,
+  onGetMoreAssets,
   onCreateAssets,
   onSortChange,
   onSearch,
@@ -58,7 +58,7 @@ const AssetSection: React.FC<Props> = ({
       onSortChange={onSortChange}
       onSearch={onSearch}
       selectAsset={selectAsset}
-      onGetMore={getMoreAssets}
+      onGetMore={onGetMoreAssets}
     />
   );
 };
