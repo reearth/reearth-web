@@ -13,16 +13,34 @@ export interface Props {
 }
 
 const AssetModal: React.FC<Props> = ({ teamId, openAssets, setOpenAssets, onSelect }) => {
-  const { assetsData } = useHooks(teamId);
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    getMoreAssets,
+    createAssets,
+    handleSortChange,
+    handleSearchTerm,
+  } = useHooks(teamId);
 
   return (
     <MoleculeAssetModal
       isOpen={openAssets}
-      onClose={() => setOpenAssets?.(false)}
-      assetsData={assetsData}
+      assets={assets}
+      isLoading={isLoading}
+      hasMoreAssets={hasMoreAssets}
+      sort={sort}
+      searchTerm={searchTerm}
       fileType="image"
       smallCardOnly
+      onClose={() => setOpenAssets?.(false)}
       onSelect={onSelect}
+      onGetMoreAssets={getMoreAssets}
+      onCreateAssets={createAssets}
+      onSortChange={handleSortChange}
+      onSearch={handleSearchTerm}
     />
   );
 };

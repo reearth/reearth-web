@@ -17,25 +17,25 @@ export type Asset = {
 export default ({
   isMultipleSelectable,
   accept,
+  selectedAssets,
+  sort,
+  smallCardOnly,
   onCreateAsset,
   selectAsset,
-  selectedAssets,
   onRemove,
-  sort,
-  handleSortChange,
-  handleSearchTerm,
-  smallCardOnly,
+  onSortChange,
+  onSearch,
 }: {
   isMultipleSelectable?: boolean;
   accept?: string;
+  selectedAssets?: Asset[];
+  sort?: { type?: SortType | null; reverse?: boolean };
+  smallCardOnly?: boolean;
   onCreateAsset?: (files: FileList) => void;
   selectAsset?: (assets: Asset[]) => void;
-  selectedAssets?: Asset[];
   onRemove?: (assetIds: string[]) => void;
-  sort?: { type?: SortType | null; reverse?: boolean };
-  handleSortChange?: (type?: string, reverse?: boolean) => void;
-  handleSearchTerm?: (term?: string | undefined) => void;
-  smallCardOnly?: boolean;
+  onSortChange?: (type?: string, reverse?: boolean) => void;
+  onSearch?: (term?: string | undefined) => void;
 }) => {
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -71,8 +71,8 @@ export default ({
   }, [handleFileSelect]);
 
   const handleReverse = useCallback(() => {
-    handleSortChange?.(undefined, !sort?.reverse);
-  }, [handleSortChange, sort?.reverse]);
+    onSortChange?.(undefined, !sort?.reverse);
+  }, [onSortChange, sort?.reverse]);
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
@@ -85,23 +85,23 @@ export default ({
   const handleSearch = useCallback(
     (term?: string) => {
       if (!term || term.length < 1) {
-        handleSearchTerm?.(undefined);
+        onSearch?.(undefined);
       } else {
-        handleSearchTerm?.(term);
+        onSearch?.(term);
       }
     },
-    [handleSearchTerm],
+    [onSearch],
   );
 
   return {
     layoutType,
-    setLayoutType,
     iconChoice,
+    deleteModalVisible,
+    setLayoutType,
     handleAssetsSelect,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    deleteModalVisible,
     setDeleteModalVisible,
     handleRemove,
   };

@@ -27,66 +27,66 @@ export type Props = {
   assets?: Asset[];
   isMultipleSelectable?: boolean;
   accept?: string;
-  onCreateAsset?: (files: FileList) => void;
-  onRemove?: (assetIds: string[]) => void;
-  onGetMore?: () => void;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
-  selectAsset?: (assets: Asset[]) => void;
   fileType?: "image" | "video" | "file";
   height?: number;
   hasMoreAssets?: boolean;
   isLoading?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
-  handleSortChange?: (type?: string, reverse?: boolean) => void;
   searchTerm?: string;
-  handleSearchTerm?: (term?: string) => void;
   smallCardOnly?: boolean;
+  onCreateAsset?: (files: FileList) => void;
+  onRemove?: (assetIds: string[]) => void;
+  onGetMore?: () => void;
+  selectAsset?: (assets: Asset[]) => void;
+  onSortChange?: (type?: string, reverse?: boolean) => void;
+  onSearch?: (term?: string) => void;
 };
 
 const AssetContainer: React.FC<Props> = ({
   assets,
   isMultipleSelectable = false,
   accept,
-  onCreateAsset,
-  onRemove,
-  onGetMore,
   initialAsset,
   selectedAssets,
-  selectAsset,
   fileType,
   height,
   hasMoreAssets,
   isLoading,
   sort,
-  handleSortChange,
   searchTerm,
-  handleSearchTerm,
   smallCardOnly,
+  onCreateAsset,
+  onRemove,
+  onGetMore,
+  selectAsset,
+  onSortChange,
+  onSearch,
 }) => {
   const intl = useIntl();
   const {
     layoutType,
-    setLayoutType,
     iconChoice,
+    deleteModalVisible,
+    setLayoutType,
     handleAssetsSelect,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    deleteModalVisible,
     setDeleteModalVisible,
     handleRemove,
   } = useHooks({
     sort,
-    handleSortChange,
     isMultipleSelectable,
     accept,
+    selectedAssets,
+    smallCardOnly,
+    onSortChange,
     onCreateAsset,
     selectAsset,
-    selectedAssets,
     onRemove,
-    handleSearchTerm,
-    smallCardOnly,
+    onSearch,
   });
 
   const sortOptions: { key: AssetSortType; label: string }[] = [
@@ -140,7 +140,7 @@ const AssetContainer: React.FC<Props> = ({
           <AssetSelect<AssetSortType>
             value={sort?.type ?? "DATE"}
             items={sortOptions}
-            onChange={handleSortChange}
+            onChange={onSortChange}
           />
           <StyledIcon icon={iconChoice} onClick={handleReverse} />
         </SelectWrapper>

@@ -18,49 +18,54 @@ export type AssetSortType = SortType;
 
 export type Props = {
   className?: string;
-  assetsData: {
-    assets?: AssetType[];
-    isLoading?: boolean;
-    getMoreAssets?: () => void;
-    createAssets?: (files: FileList) => Promise<void>;
-    hasMoreAssets?: boolean | undefined;
-    sort?: { type?: AssetSortType | null; reverse?: boolean };
-    handleSortChange?: (type?: string, reverse?: boolean) => void;
-    searchTerm?: string;
-    handleSearchTerm?: (term?: string) => void;
-  };
+  assets?: AssetType[];
+  isLoading?: boolean;
+  hasMoreAssets?: boolean | undefined;
+  sort?: { type?: AssetSortType | null; reverse?: boolean };
+  searchTerm?: string;
   isMultipleSelectable?: boolean;
   isOpen?: boolean;
-  onClose?: () => void;
-  onSelect?: (value: string | null) => void;
   value?: string;
   smallCardOnly?: boolean;
   fileType?: "image" | "video";
+  onGetMoreAssets?: () => void;
+  onCreateAssets?: (files: FileList) => Promise<void>;
+  onSortChange?: (type?: string, reverse?: boolean) => void;
+  onSearch?: (term?: string) => void;
+  onClose?: () => void;
+  onSelect?: (value: string | null) => void;
 };
 
 type Tabs = "assets" | "url";
 
 const AssetModal: React.FC<Props> = ({
-  assetsData,
+  assets,
+  isLoading,
+  hasMoreAssets,
+  sort,
+  searchTerm,
   isMultipleSelectable = false,
   isOpen,
-  onClose,
-  onSelect,
   value,
   smallCardOnly,
   fileType,
+  onGetMoreAssets,
+  onCreateAssets,
+  onSortChange,
+  onSearch,
+  onClose,
+  onSelect,
 }) => {
   const intl = useIntl();
   const labels: { [t in Tabs]: string } = {
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL =
-    fileType === "video" || (value && !assetsData?.assets?.some(e => e.url === value));
+  const showURL = fileType === "video" || (value && !assets?.some(e => e.url === value));
 
   const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
 
-  const initialAsset = assetsData?.assets?.find(a => a.url === value);
+  const initialAsset = assets?.find(a => a.url === value);
 
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
   const [textUrl, setTextUrl] = useState(showURL ? value : undefined);
@@ -102,13 +107,13 @@ const AssetModal: React.FC<Props> = ({
   }, [initialAsset, showURL, value]);
 
   const filteredAssets = useMemo(() => {
-    if (!assetsData?.assets) return;
-    return assetsData?.assets.filter(
+    if (!assets) return;
+    return assets.filter(
       a =>
         !fileType ||
         a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp|svg)$/ : /\.(mp4|webm)$/),
     );
-  }, [assetsData?.assets, fileType]);
+  }, [assets, fileType]);
 
   return fileType === "video" ? (
     <Modal
@@ -171,19 +176,20 @@ const AssetModal: React.FC<Props> = ({
           assets={filteredAssets}
           initialAsset={initialAsset}
           selectedAssets={selectedAssets}
-          selectAsset={selectAsset}
-          onGetMore={assetsData?.getMoreAssets}
-          onCreateAsset={assetsData?.createAssets}
-          hasMoreAssets={assetsData?.hasMoreAssets}
-          sort={assetsData?.sort}
-          handleSortChange={assetsData?.handleSortChange}
-          searchTerm={assetsData?.searchTerm}
-          handleSearchTerm={assetsData?.handleSearchTerm}
+          hasMoreAssets={hasMoreAssets}
+          sort={sort}
+          searchTerm={searchTerm}
           isMultipleSelectable={isMultipleSelectable}
           accept={accept}
           fileType={fileType}
           smallCardOnly={smallCardOnly}
+          isLoading={isLoading}
           height={425}
+          selectAsset={selectAsset}
+          onGetMore={onGetMoreAssets}
+          onCreateAsset={onCreateAssets}
+          onSortChange={onSortChange}
+          onSearch={onSearch}
         />
       )}
       {selectedTab === "url" && (

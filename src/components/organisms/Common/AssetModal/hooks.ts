@@ -99,7 +99,7 @@ export default (teamId?: string) => {
   );
 
   const [removeAssetMutation] = useRemoveAssetMutation();
-  const removeAsset = useCallback(
+  const removeAssets = useCallback(
     (assetIds: string[]) =>
       (async () => {
         if (!teamId) return;
@@ -156,17 +156,15 @@ export default (teamId?: string) => {
   }, [sort, searchTerm, refetch]);
 
   return {
-    assetsData: {
-      assets,
-      isLoading: loading ?? isRefetching,
-      getMoreAssets,
-      createAssets,
-      removeAsset,
-      hasMoreAssets,
-      sort,
-      handleSortChange,
-      searchTerm,
-      handleSearchTerm,
-    },
+    assets,
+    isLoading: loading ?? isRefetching,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    getMoreAssets,
+    createAssets,
+    removeAssets,
+    handleSortChange,
+    handleSearchTerm,
   };
 };
