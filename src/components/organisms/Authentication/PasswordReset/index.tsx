@@ -3,7 +3,7 @@ import React from "react";
 import PasswordResetMolecule from "@reearth/components/molecules/Authentication/PasswordReset";
 
 export type Props = {
-  onPasswordResetRequest: (email: string) => void;
+  onPasswordResetRequest: (email?: string) => any;
 };
 
 const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {

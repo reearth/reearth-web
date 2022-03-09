@@ -65,8 +65,8 @@ export default () => {
   }
 
   const onSignup = useCallback(
-    async (email: string, username: string, password: string) => {
-      if (isAuthenticated) return;
+    async (email?: string, username?: string, password?: string) => {
+      if (isAuthenticated || !email || !username || !password) return;
       const res = await axios.post(
         (window.REEARTH_CONFIG?.api || "/api") + "/signup",
         {
@@ -101,8 +101,8 @@ export default () => {
   );
 
   const onPasswordResetRequest = useCallback(
-    async (email: string) => {
-      if (isAuthenticated) return;
+    async (email?: string) => {
+      if (isAuthenticated || !email) return;
       const res = await axios.post(
         (window.REEARTH_CONFIG?.api || "/api") + "/password-reset",
         {
@@ -120,6 +120,7 @@ export default () => {
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again." }),
         });
+        return res;
       } else {
         setNotification({
           type: "success",
@@ -127,6 +128,7 @@ export default () => {
             defaultMessage: "Successfully sent verification email! Please check your inbox.",
           }),
         });
+        return res;
       }
     },
     [isAuthenticated, setNotification, intl],

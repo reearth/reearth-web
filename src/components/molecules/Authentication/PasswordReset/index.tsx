@@ -5,6 +5,7 @@ import { useIntl } from "react-intl";
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
@@ -14,7 +15,7 @@ import { PasswordPolicy as PasswordPolicyType } from "../common";
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onPasswordResetRequest: (email: string) => void;
+  onPasswordResetRequest: (email?: string) => any;
 };
 
 const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
@@ -23,11 +24,14 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setDisabled(email.length < 1);
-    console.log(email);
-    console.log(email.length > 0);
+    if (!email) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
   }, [email]);
 
   const handleUsernameInput = useCallback(
@@ -38,9 +42,13 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
     [],
   );
 
-  const handlePasswordResetRequest = useCallback(() => {
-    onPasswordResetRequest(email);
-    setSent(true);
+  const handlePasswordResetRequest = useCallback(async () => {
+    setLoading(true);
+    const res = await onPasswordResetRequest(email);
+    if (res.status === 200) {
+      setSent(true);
+    }
+    setLoading(false);
   }, [email, onPasswordResetRequest]);
 
   return (
@@ -80,6 +88,7 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
         </SentFormWrapper>
       ) : (
         <>
+          {loading && <Loading overlay />}
           <Icon className="form-item" icon="logoColorful" size={60} />
           <Text className="form-item" size="l" customColor>
             {intl.formatMessage({ defaultMessage: "Forgot Your Password?" })}

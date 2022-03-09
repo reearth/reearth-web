@@ -15,7 +15,7 @@ import { PasswordPolicy as PasswordPolicyType } from "../common";
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onSignup: (email: string, username: string, password: string) => any;
+  onSignup: (email?: string, username?: string, password?: string) => any;
   passwordPolicy?: PasswordPolicy;
 };
 
@@ -23,12 +23,27 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   const intl = useIntl();
   const theme = useTheme();
   const [regexMessage, setRegexMessage] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
   const [disabled, setDisabled] = useState(true);
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (
+      !email ||
+      !username ||
+      !password ||
+      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(password)) ||
+      passwordPolicy?.tooShort?.test(password) ||
+      passwordPolicy?.tooLong?.test(password)
+    ) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [email, username, password, passwordPolicy]);
 
   const handleUsernameInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -100,18 +115,6 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
     setLoading(false);
   }, [email, username, password, onSignup]);
 
-  useEffect(() => {
-    if (
-      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(password)) ||
-      passwordPolicy?.tooShort?.test(password) ||
-      passwordPolicy?.tooLong?.test(password)
-    ) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
-  }, [password, passwordPolicy]);
-
   return (
     <AuthPage>
       {!loading && sent ? (
@@ -180,10 +183,12 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               value={password}
               onChange={handlePasswordInput}
               color={
-                passwordPolicy?.tooLong?.test(password)
-                  ? theme.main.danger
-                  : passwordPolicy?.highSecurity?.test(password)
-                  ? theme.main.accent
+                password
+                  ? passwordPolicy?.tooLong?.test(password)
+                    ? theme.main.danger
+                    : passwordPolicy?.highSecurity?.test(password)
+                    ? theme.main.accent
+                    : theme.main.weak
                   : theme.main.weak
               }
             />

@@ -1,5 +1,5 @@
 import { Link } from "@reach/router";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -13,8 +13,17 @@ import AuthPage from "..";
 const Login: React.FC = () => {
   const intl = useIntl();
   const theme = useTheme();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    if (!username || !password) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [username, password]);
 
   const handleUsernameInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -84,6 +93,9 @@ const Login: React.FC = () => {
           className="form-item"
           large
           type="submit"
+          disabled={disabled}
+          color={disabled ? theme.main.text : theme.other.white}
+          background={disabled ? theme.main.weak : theme.main.link}
           text={intl.formatMessage({ defaultMessage: "Continue" })}
         />
       </StyledForm>
@@ -115,12 +127,17 @@ const StyledForm = styled.form`
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
   width: 100%;
-  background: ${({ theme }) => theme.main.link};
-  border: none;
+  background: ${({ background }) => background};
+  border: ${({ border, theme }) => (border ? `1px solid ${theme.main.borderStrong}` : "none")};
   border-radius: 2px;
-  color: ${({ theme }) => theme.other.white};
+  color: ${({ color }) => color};
+
+  :hover {
+    color: ${({ color }) => color};
+    background: ${({ background }) => background};
+  }
 `;
 
 const StyledInput = styled.input`
