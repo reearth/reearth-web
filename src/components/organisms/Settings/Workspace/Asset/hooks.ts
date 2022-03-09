@@ -1,14 +1,9 @@
+import { useApolloClient } from "@apollo/client";
 import { useNavigate } from "@reach/router";
 import { useEffect } from "react";
 
 import assetHooks from "@reearth/components/organisms/Common/AssetModal/hooks";
 import { useTeam, useProject } from "@reearth/state";
-
-export enum AssetSortType {
-  Date = "DATE",
-  Name = "NAME",
-  Size = "SIZE",
-}
 
 export type Params = {
   teamId: string;
@@ -16,10 +11,23 @@ export type Params = {
 
 export default (params: Params) => {
   const navigate = useNavigate();
+  const gqlCache = useApolloClient().cache;
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
 
-  const { assetsData } = assetHooks(currentTeam?.id);
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    getMoreAssets,
+    createAssets,
+    handleSortChange,
+    handleSearchTerm,
+    handleModalClose,
+    removeAssets,
+  } = assetHooks(currentTeam?.id);
 
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
@@ -27,9 +35,25 @@ export default (params: Params) => {
     }
   }, [params, currentTeam, navigate]);
 
+  useEffect(() => {
+    return () => {
+      gqlCache.evict({ fieldName: "assets" });
+    };
+  }, [gqlCache]);
+
   return {
     currentProject,
     currentTeam,
-    assetsData,
+    assets,
+    isLoading,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    getMoreAssets,
+    createAssets,
+    handleSortChange,
+    handleSearchTerm,
+    handleModalClose,
+    removeAssets,
   };
 };

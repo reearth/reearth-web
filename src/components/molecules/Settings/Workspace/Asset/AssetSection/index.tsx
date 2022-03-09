@@ -17,39 +17,48 @@ type Asset = {
 };
 
 type Props = {
-  assetsData: {
-    assets: AssetType[];
-    isLoading: boolean;
-    getMoreAssets: () => void;
-    createAssets: (files: FileList) => Promise<void>;
-    hasMoreAssets: boolean | undefined;
-    removeAsset: (assetIds: string[]) => Promise<void>;
-    sort?: { type?: AssetSortType | null; reverse?: boolean };
-    handleSortChange: (type?: string, reverse?: boolean) => void;
-    searchTerm?: string;
-    handleSearchTerm: (term?: string) => void;
-  };
+  assets: AssetType[];
+  isLoading: boolean;
+  hasMoreAssets: boolean | undefined;
+  sort?: { type?: AssetSortType | null; reverse?: boolean };
+  searchTerm?: string;
+  getMoreAssets: () => void;
+  onCreateAssets: (files: FileList) => Promise<void>;
+  onRemoveAssets: (assetIds: string[]) => Promise<void>;
+  onSortChange: (type?: string, reverse?: boolean) => void;
+  onSearch: (term?: string) => void;
 };
 
-const AssetSection: React.FC<Props> = ({ assetsData }) => {
+const AssetSection: React.FC<Props> = ({
+  assets,
+  isLoading,
+  hasMoreAssets,
+  sort,
+  searchTerm,
+  getMoreAssets,
+  onCreateAssets,
+  onSortChange,
+  onSearch,
+  onRemoveAssets,
+}) => {
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
 
   return (
     <AssetContainer
-      assets={assetsData?.assets}
-      onCreateAsset={assetsData?.createAssets}
-      onRemove={assetsData?.removeAsset}
-      sort={assetsData?.sort}
-      handleSortChange={assetsData?.handleSortChange}
-      searchTerm={assetsData?.searchTerm}
-      handleSearchTerm={assetsData?.handleSearchTerm}
+      assets={assets}
+      sort={sort}
+      searchTerm={searchTerm}
       selectedAssets={selectedAssets}
       isMultipleSelectable
-      selectAsset={selectAsset}
       height={700}
-      hasMoreAssets={assetsData?.hasMoreAssets}
-      isLoading={assetsData?.isLoading}
-      onGetMore={assetsData?.getMoreAssets}
+      hasMoreAssets={hasMoreAssets}
+      isLoading={isLoading}
+      onCreateAsset={onCreateAssets}
+      onRemove={onRemoveAssets}
+      onSortChange={onSortChange}
+      onSearch={onSearch}
+      selectAsset={selectAsset}
+      onGetMore={getMoreAssets}
     />
   );
 };
