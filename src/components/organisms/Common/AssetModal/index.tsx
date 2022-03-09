@@ -23,7 +23,8 @@ const AssetModal: React.FC<Props> = ({ teamId, openAssets, setOpenAssets, onSele
     createAssets,
     handleSortChange,
     handleSearchTerm,
-  } = useHooks(teamId);
+    handleModalClose,
+  } = useHooks(teamId, setOpenAssets);
 
   return (
     <MoleculeAssetModal
@@ -35,7 +36,7 @@ const AssetModal: React.FC<Props> = ({ teamId, openAssets, setOpenAssets, onSele
       searchTerm={searchTerm}
       fileType="image"
       smallCardOnly
-      onClose={() => setOpenAssets?.(false)}
+      onClose={handleModalClose}
       onSelect={onSelect}
       onGetMoreAssets={getMoreAssets}
       onCreateAssets={createAssets}

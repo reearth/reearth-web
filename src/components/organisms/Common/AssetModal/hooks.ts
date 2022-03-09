@@ -18,7 +18,7 @@ export enum AssetSortType {
   Size = "SIZE",
 }
 
-export default (teamId?: string) => {
+export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: Maybe<AssetSortType>; reverse?: boolean }>();
@@ -146,6 +146,10 @@ export default (teamId?: string) => {
     setSearchTerm(term);
   }, []);
 
+  const handleModalClose = useCallback(() => {
+    setOpenAssets?.(false);
+  }, [setOpenAssets]);
+
   useEffect(() => {
     if (sort || searchTerm) {
       refetch({
@@ -166,5 +170,6 @@ export default (teamId?: string) => {
     removeAssets,
     handleSortChange,
     handleSearchTerm,
+    handleModalClose,
   };
 };
