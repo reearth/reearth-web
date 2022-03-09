@@ -112,7 +112,7 @@ export default function Visualizer({
     handleLayerDrag,
     handleLayerDrop,
     isLayerDragging,
-    onInfoboxMaskClick,
+    handleInfoboxMaskClick,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
