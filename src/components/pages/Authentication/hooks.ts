@@ -1,12 +1,14 @@
 import { useNavigate } from "@reach/router";
+import axios from "axios";
 import { useCallback, useEffect } from "react";
+import { useIntl } from "react-intl";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useTeamsQuery } from "@reearth/gql";
 import { useTeam, useNotification } from "@reearth/state";
 
-const axios = require("axios");
 export default () => {
+  const intl = useIntl();
   const { isAuthenticated, isLoading, error: authError, logout } = useAuth();
   const error = useCleanUrl();
   const navigate = useNavigate();
@@ -63,54 +65,71 @@ export default () => {
   }
 
   const onSignup = useCallback(
-
     async (email: string, username: string, password: string) => {
       if (isAuthenticated) return;
-      try {
-        const res = await axios.post(
-          (window.REEARTH_CONFIG?.api || "/api") + "/signup",
-          {
-            "email": email,
-            "username": username,
-            "password": password
+      const res = await axios.post(
+        (window.REEARTH_CONFIG?.api || "/api") + "/signup",
+        {
+          email,
+          username,
+          password,
+        },
+        {
+          headers: {
+            Accept: "application/vnd.github.v3.html+json",
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              Accept: "application/vnd.github.v3.html+json",
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        return res
-      } catch (error) {
-        return error;
+        },
+      );
+      if (res.status !== 200) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again." }),
+        });
+        return res;
+      } else {
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({
+            defaultMessage: "Successfully sent verification email! Please check your inbox.",
+          }),
+        });
+        return res;
       }
     },
-    [isAuthenticated],
+    [isAuthenticated, setNotification, intl],
   );
 
   const onPasswordResetRequest = useCallback(
     async (email: string) => {
       if (isAuthenticated) return;
-      try {
-        const res = await axios.post(
-          (window.REEARTH_CONFIG?.api || "/api") + "/password-reset",
-          {
-            "email": email,
+      const res = await axios.post(
+        (window.REEARTH_CONFIG?.api || "/api") + "/password-reset",
+        {
+          email,
+        },
+        {
+          headers: {
+            Accept: "application/vnd.github.v3.html+json",
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              Accept: "application/vnd.github.v3.html+json",
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        console.log(res.status)
-      } catch (error) {
-        console.error(error);
+        },
+      );
+      if (res.status !== 200) {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({ defaultMessage: "Something went wrong. Please try again." }),
+        });
+      } else {
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({
+            defaultMessage: "Successfully sent verification email! Please check your inbox.",
+          }),
+        });
       }
     },
-    [isAuthenticated],
+    [isAuthenticated, setNotification, intl],
   );
 
   const onNewPasswordSubmit = useCallback(

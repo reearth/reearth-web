@@ -44,11 +44,7 @@ const Login: React.FC = () => {
       <StyledForm
         id="login-form"
         action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}
-        method="post"
-        onSubmit={() => {
-          console.log(username, "un");
-          console.log(password, "pw");
-        }}>
+        method="post">
         <input
           type="hidden"
           name="id"

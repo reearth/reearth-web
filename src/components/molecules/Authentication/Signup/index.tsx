@@ -2,13 +2,13 @@ import { Link } from "@reach/router";
 import React, { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
-import Loading from "@reearth/components/atoms/Loading";
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
-import { useNotification } from "@reearth/state";
+
 import AuthPage from "..";
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 
@@ -44,7 +44,6 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
     },
     [],
   );
-  const [, setNotification] = useNotification();
   const handlePasswordInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const password = e.currentTarget.value;
@@ -94,29 +93,11 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
 
   const handleSignup = useCallback(async () => {
     setLoading(true);
-
-    const res: any = await onSignup(email, username, password);
-    if (res) {
-      setLoading(false);
-      setNotification({
-        type: "success",
-        text: "a verification email has been sent",
-      });
-    }
+    const res = await onSignup(email, username, password);
     if (res.status === 200) {
       setSent(true);
-    } else {
-      var errMsg = "";
-      if (res.response) {
-        errMsg = res.response.data.error;
-      } else {
-        errMsg = "somthing went wrong";
-      }
-      setNotification({
-        type: "error",
-        text: errMsg,
-      });
     }
+    setLoading(false);
   }, [email, username, password, onSignup]);
 
   useEffect(() => {
@@ -133,7 +114,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
 
   return (
     <AuthPage>
-      {sent ? (
+      {!loading && sent ? (
         <SentFormWrapper direction="column" align="center" justify="center">
           <SentForm direction="column" align="center" justify="space-between">
             <Icon icon="mailCircle" color={theme.colors.brand.blue.strongest} />
@@ -209,23 +190,6 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
             <PasswordMessage size="xs" customColor>
               {password ? regexMessage : undefined}
             </PasswordMessage>
-            <PasswordPolicyDiv>
-              <Text size="s" color="black">
-                {intl.formatMessage({ defaultMessage: "your password must contain:" })}
-              </Text>
-              <Text size="s" customColor>
-                {intl.formatMessage({ defaultMessage: "at least 8 charchters" })}
-              </Text>
-              <Text size="s" customColor>
-                {intl.formatMessage({ defaultMessage: "Lower case letters (a-z)" })}
-              </Text>
-              <Text size="s" customColor>
-                {intl.formatMessage({ defaultMessage: "Upper case letters (A-Z)" })}
-              </Text>
-              <Text size="s" customColor>
-                {intl.formatMessage({ defaultMessage: "Numbers (0-9)" })}
-              </Text>
-            </PasswordPolicyDiv>
           </PasswordWrapper>
           <StyledButton
             className="form-item"
@@ -300,15 +264,6 @@ const PasswordMessage = styled(Text)`
   margin-left: ${metricsSizes.m}px;
   margin-top: ${metricsSizes["2xs"]}px;
   font-style: italic;
-`;
-const PasswordPolicyDiv = styled.div`
-  border: 1px solid #ccc;
-  padding: 14px;
-  padding-bottom: 0px;
-  margin-top: 20px;
-  p {
-    padding-bottom: 14px;
-  }
 `;
 
 const SentFormWrapper = styled(Flex)`
