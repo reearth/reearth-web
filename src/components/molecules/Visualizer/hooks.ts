@@ -184,7 +184,7 @@ export default ({
     isLayerDragging,
     handleLayerDrag,
     handleLayerDrop,
-    onInfoboxMaskClick,
+    handleInfoboxMaskClick,
   };
 };
 
