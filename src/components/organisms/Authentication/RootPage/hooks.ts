@@ -23,7 +23,7 @@ export default () => {
   const verifySignup = useCallback(
     async (token: string) => {
       const res = await axios.post(
-        (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify:" + token,
+        (window.REEARTH_CONFIG?.api || "/api") + "/signup/verify/" + token,
       );
       if (res.status === 200) {
         setNotification({
