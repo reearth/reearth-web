@@ -52,15 +52,19 @@ export type Plugin = {
 export type Layers = {
   readonly layers: Layer[];
   readonly selected?: Layer;
+  readonly tags?: Tag[];
   readonly selectionReason?: string;
   readonly overriddenInfobox?: OverriddenInfobox;
   readonly overriddenProperties?: { [id: string]: any };
   /** Selects the layer with the specified ID; if the ID is undefined, the currently selected later will be deselected. */
+  readonly layersInViewport: Layer[];
   readonly select: (id?: string, options?: SelectLayerOptions) => void;
   readonly show: (...id: string[]) => void;
   readonly hide: (...id: string[]) => void;
   readonly findById: (id: string) => Layer | undefined;
   readonly findByIds: (...id: string[]) => (Layer | undefined)[];
+  readonly findByTags: (...tagIds: string[]) => Layer[];
+  readonly findByTagLabels: (...tagLabels: string[]) => Layer[];
   readonly find: (
     fn: (layer: Layer, index: number, parents: Layer[]) => boolean,
   ) => Layer | undefined;
@@ -93,7 +97,14 @@ export type Layer<P = any, IBP = any> = {
   infobox?: Infobox<IBP>;
   isVisible?: boolean;
   propertyId?: string;
+  tags?: Tag[];
   readonly children?: Layer<P, IBP>[];
+};
+
+export type Tag = {
+  id: string;
+  label: string;
+  tags?: Tag[];
 };
 
 export type Infobox<BP = any> = {
@@ -103,10 +114,21 @@ export type Infobox<BP = any> = {
 
 export type InfoboxProperty = {
   default?: {
+    showTitle?: boolean;
     title?: string;
-    size?: "small" | "large";
+    height?: number;
+    heightType?: "auto" | "manual";
+    infoboxPaddingTop?: number;
+    infoboxPaddingBottom?: number;
+    infoboxPaddingLeft?: number;
+    infoboxPaddingRight?: number;
+    size?: "small" | "medium" | "large";
+    position?: "right" | "middle" | "left";
     typography?: Typography;
     bgcolor?: string;
+    outlineColor?: string;
+    outlineWidth?: number;
+    useMask?: boolean;
   };
 };
 
@@ -159,11 +181,36 @@ export type UI = {
    *
    * When `show` has been called again druing the iframe has been already shown, the iframe will be destroyed and then a new iframe will be recreated with the new html and options.
    */
-  readonly show: (html: string, options?: { visible?: boolean }) => void;
+  readonly show: (
+    html: string,
+    options?: {
+      /** If true, display a iframe. Otherwise, hide the iframe and plugin works like headless mdoe. Default value is true. */
+      visible?: boolean;
+      /** Initial iframe width of the widget. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. This option is only available for widgets that are not horizontally extended. */
+      width?: number | string;
+      /** Initial iframe height of the widget. If not specified, the iframe will be automatically resized. If a number is specified, it will be treated as pixels. This option is only available for widgets that are not vertically extended. */
+      height?: number | string;
+      /** Override whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
+      extended?: boolean;
+    },
+  ) => void;
   /**
    * Sends a message to the iframe's window shown by the show method. Sent data will be automatically encoded as JSON and restored in the iframe's window. So any object that cannot be serialized to JSON will be ignored.
    */
   readonly postMessage: (message: any) => void;
+  /**
+   * Resize the iframe by the plugin. If width or height is undefined, it will be auto-resized. If a number is specified, it will be treated as pixels.
+   *
+   * If plugins try to resize the iframe by specifying size in the iframe's internal HTML, for example, in the body style, or by updating the CSS, iframe will not actually be resized. In that case, plugins need to call this method explicitly to resize the iframe.
+   */
+  readonly resize: (
+    /** Width of the iframe of the widget. This field is only available for widgets that are not horizontally extended. */
+    width: string | number | undefined,
+    /** Height of the iframe of the widget. This field is only available for widgets that are not vertically extended. */
+    height: string | number | undefined,
+    /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
+    extended?: boolean | undefined,
+  ) => void;
 };
 
 /** The API for the visualizer. This works regardless of the visualization engine you are using, which ensures the versatility of the plugin. It is recommended that you use this API whenever possible, and call the visualization engine's own low-layer API only when there is something you cannot do. */
@@ -175,9 +222,17 @@ export type Visualizer = {
   readonly property?: any;
 };
 
+type Rect = {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+};
+
 export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
+  readonly viewport: Rect | undefined;
   readonly zoomIn: (amount: number) => void;
   readonly zoomOut: (amount: number) => void;
   /** Moves the camera position to the specified destination. */

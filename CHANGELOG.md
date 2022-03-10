@@ -1,6 +1,83 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.0 - 2022-02-22
+
+### 🚀 Features
+
+- Allowing widget and block plugins to resize when they are expandable ([#170](https://github.com/reearth/reearth-web/pull/170)) [`4fdf5f`](https://github.com/reearth/reearth-web/commit/4fdf5f)
+- Plugin APIs to get camera viewport and layers in the viewport ([#165](https://github.com/reearth/reearth-web/pull/165)) [`f1f95a`](https://github.com/reearth/reearth-web/commit/f1f95a)
+- Improving the Infobox style  ([#176](https://github.com/reearth/reearth-web/pull/176)) [`f1ddda`](https://github.com/reearth/reearth-web/commit/f1ddda)
+
+### 🔧 Bug Fixes
+
+- Plugin blocks cannot be deleted ([#164](https://github.com/reearth/reearth-web/pull/164)) [`a4f17f`](https://github.com/reearth/reearth-web/commit/a4f17f)
+- Support tree-structured layers and tags in published pages ([#168](https://github.com/reearth/reearth-web/pull/168)) [`17d968`](https://github.com/reearth/reearth-web/commit/17d968)
+- Workspace settings does not refresh ([#167](https://github.com/reearth/reearth-web/pull/167)) [`0f3654`](https://github.com/reearth/reearth-web/commit/0f3654)
+- Plugin layersInViewport API returns errors for layers that have no location fields [`e52b44`](https://github.com/reearth/reearth-web/commit/e52b44)
+
+### ✨ Refactor
+
+- Format codes [`219ac6`](https://github.com/reearth/reearth-web/commit/219ac6)
+- Format codes [`4e5b61`](https://github.com/reearth/reearth-web/commit/4e5b61)
+
+### Miscellaneous Tasks
+
+- Upgrade dependencies ([#175](https://github.com/reearth/reearth-web/pull/175)) [`dba959`](https://github.com/reearth/reearth-web/commit/dba959)
+
+## 0.4.0 - 2022-01-27
+
+### 🚀 Features
+
+- Add "clamp to filed" option to file primitive ([#155](https://github.com/reearth/reearth-web/pull/155)) [`2e83ba`](https://github.com/reearth/reearth-web/commit/2e83ba)
+- Infobox padding ([#158](https://github.com/reearth/reearth-web/pull/158)) [`90084f`](https://github.com/reearth/reearth-web/commit/90084f)
+- Support tags in plugin API ([#153](https://github.com/reearth/reearth-web/pull/153)) [`1031c5`](https://github.com/reearth/reearth-web/commit/1031c5)
+
+### 🔧 Bug Fixes
+
+- Enable to select blocks of plugins ([#162](https://github.com/reearth/reearth-web/pull/162)) [`458402`](https://github.com/reearth/reearth-web/commit/458402)
+- Cesium Ion acces token is not set expectedly ([#160](https://github.com/reearth/reearth-web/pull/160)) [`e8e183`](https://github.com/reearth/reearth-web/commit/e8e183)
+- Cluster styling issue ([#161](https://github.com/reearth/reearth-web/pull/161)) [`c78872`](https://github.com/reearth/reearth-web/commit/c78872)
+- Clusters and layers are not displayed correctly [`4fc124`](https://github.com/reearth/reearth-web/commit/4fc124)
+- Type error [`b01bc7`](https://github.com/reearth/reearth-web/commit/b01bc7)
+- The style of infobox block dropdown list is broken ([#163](https://github.com/reearth/reearth-web/pull/163)) [`6e02a9`](https://github.com/reearth/reearth-web/commit/6e02a9)
+- Plugin blocks protrude from the infobox [`6cf0d3`](https://github.com/reearth/reearth-web/commit/6cf0d3)
+
+### ✨ Refactor
+
+- Layer clustering feature ([#157](https://github.com/reearth/reearth-web/pull/157)) [`db6e6c`](https://github.com/reearth/reearth-web/commit/db6e6c)
+- Camera limiter ([#149](https://github.com/reearth/reearth-web/pull/149)) [`105428`](https://github.com/reearth/reearth-web/commit/105428)
+- Layer clustering feature (GraphQL) ([#159](https://github.com/reearth/reearth-web/pull/159)) [`4365b8`](https://github.com/reearth/reearth-web/commit/4365b8)
+
+## 0.3.0 - 2022-01-11
+
+### 🚀 Features
+
+- Enhance terrain feature (type selection, exaggeration) ([#138](https://github.com/reearth/reearth-web/pull/138)) [`dae137`](https://github.com/reearth/reearth-web/commit/dae137)
+- Clustering layers ([#143](https://github.com/reearth/reearth-web/pull/143)) [`3439cc`](https://github.com/reearth/reearth-web/commit/3439cc)
+- Camera limiter ([#142](https://github.com/reearth/reearth-web/pull/142)) [`dec1dd`](https://github.com/reearth/reearth-web/commit/dec1dd)
+- Tagging of layers ([#144](https://github.com/reearth/reearth-web/pull/144)) [`4d0a40`](https://github.com/reearth/reearth-web/commit/4d0a40)
+
+### 🔧 Bug Fixes
+
+- Indicator is not displayed on selecting of clustered layer ([#146](https://github.com/reearth/reearth-web/pull/146)) [`e41f67`](https://github.com/reearth/reearth-web/commit/e41f67)
+- Use data URL for marker images [`576ea4`](https://github.com/reearth/reearth-web/commit/576ea4)
+- Layer clusters do not updated correctly [`ec74f6`](https://github.com/reearth/reearth-web/commit/ec74f6)
+- Position label in front of billboard ([#147](https://github.com/reearth/reearth-web/pull/147)) [`81c533`](https://github.com/reearth/reearth-web/commit/81c533)
+- Public pages do not work due to clustering feature [`48d8b3`](https://github.com/reearth/reearth-web/commit/48d8b3)
+- Photooverlay transition does not work in Android ([#154](https://github.com/reearth/reearth-web/pull/154)) [`decbfe`](https://github.com/reearth/reearth-web/commit/decbfe)
+
+### 🎨 Styling
+
+- Fix the height of the header [`9d6acc`](https://github.com/reearth/reearth-web/commit/9d6acc)
+
+### Miscellaneous Tasks
+
+- Upgrade dependencies ([#134](https://github.com/reearth/reearth-web/pull/134)) [`740821`](https://github.com/reearth/reearth-web/commit/740821)
+- Update dependency cesium to ^1.88.0 ([#139](https://github.com/reearth/reearth-web/pull/139)) [`7afdfb`](https://github.com/reearth/reearth-web/commit/7afdfb)
+- Fix webpack dev server config [`8d06fa`](https://github.com/reearth/reearth-web/commit/8d06fa)
+- Update dependency cesium to ^1.89.0 ([#156](https://github.com/reearth/reearth-web/pull/156)) [`d436ce`](https://github.com/reearth/reearth-web/commit/d436ce)
+
 ## 0.2.0 - 2021-11-18
 
 ### 🚀 Features

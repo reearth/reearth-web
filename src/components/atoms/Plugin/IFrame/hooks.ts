@@ -12,10 +12,15 @@ import {
 
 export type RefType = {
   postMessage: (message: any) => void;
+  resize: (width: string | number | undefined, height: string | number | undefined) => void;
 };
+
+export type AutoResize = "both" | "width-only" | "height-only";
 
 export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
+  width,
+  height,
   html,
   ref,
   autoResize,
@@ -23,15 +28,19 @@ export default function useHook({
   iFrameProps,
   onLoad,
   onMessage,
+  onClick,
 }: {
+  width?: number | string;
+  height?: number | string;
   autoResizeMessageKey?: string;
   html?: string;
   ref?: Ref<RefType>;
-  autoResize?: boolean;
+  autoResize?: AutoResize;
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
+  onClick?: () => void;
 } = {}): {
   ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
@@ -39,18 +48,23 @@ export default function useHook({
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameSize, setIFrameSize] = useState<[string, string]>();
+  const [iFrameSize, setIFrameSize] = useState<[string | undefined, string | undefined]>();
   const pendingMesages = useRef<any[]>([]);
 
   useImperativeHandle(
     ref,
-    () => ({
-      postMessage: (message: any) => {
+    (): RefType => ({
+      postMessage: message => {
         if (!loaded.current || !iFrameRef.current?.contentWindow) {
           pendingMesages.current.push(message);
           return;
         }
         iFrameRef.current.contentWindow.postMessage(message, "*");
+      },
+      resize: (width, height) => {
+        const width2 = typeof width === "number" ? width + "px" : width ?? undefined;
+        const height2 = typeof height === "number" ? height + "px" : height ?? undefined;
+        setIFrameSize(width2 || height2 ? [width2, height2] : undefined);
       },
     }),
     [],
@@ -86,16 +100,16 @@ export default function useHook({
       resize.textContent = `
         if ("ResizeObserver" in window) {
           new window.ResizeObserver(entries => {
-            const el = document.body.parentElement;
-            const st = document.defaultView.getComputedStyle(el, "");
-            horizontalMargin = parseInt(st.getPropertyValue("margin-left")) + parseInt(st.getPropertyValue("margin-right"));
-            verticalMargin = parseInt(st.getPropertyValue("margin-top")) + parseInt(st.getPropertyValue("margin-bottom"));
-            const resize = {
-              width: el.offsetWidth + horizontalMargin,
-              height: el.offsetHeight + verticalMargin,
-            };
+            const win = document.defaultView;
+            const html = document.body.parentElement;
+            const st = win.getComputedStyle(html, "");
+            horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
+            verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
+            const scrollbarW = win.innerWidth - html.offsetWidth;
+            const width = html.offsetWidth + horizontalMargin + scrollbarW;
+            const height = html.offsetHeight + verticalMargin;
             parent.postMessage({
-              [${JSON.stringify(autoResizeMessageKey)}]: resize
+              [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
             })
           }).observe(document.body.parentElement);
         }
@@ -135,15 +149,40 @@ export default function useHook({
     () => ({
       style: {
         display: visible ? undefined : "none",
-        width: visible ? (autoResize ? iFrameSize?.[0] : "100%") : "0px",
-        height: visible ? (autoResize ? iFrameSize?.[1] : "100%") : "0px",
-        minWidth: "100%",
+        width: visible
+          ? !autoResize || autoResize == "height-only"
+            ? "100%"
+            : iFrameSize?.[0]
+          : "0px",
+        height: visible
+          ? !autoResize || autoResize == "width-only"
+            ? "100%"
+            : iFrameSize?.[1]
+          : "0px",
         ...iFrameProps?.style,
       },
       ...iFrameProps,
     }),
     [autoResize, iFrameProps, iFrameSize, visible],
   );
+
+  useEffect(() => {
+    const handleBlur = () => {
+      if (iFrameRef.current && iFrameRef.current === document.activeElement) {
+        onClick?.();
+      }
+    };
+    window.addEventListener("blur", handleBlur);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, [onClick]);
+
+  useEffect(() => {
+    const w = typeof width === "number" ? width + "px" : width;
+    const h = typeof height === "number" ? height + "px" : height;
+    setIFrameSize(w && h ? [w, h] : undefined);
+  }, [width, height]);
 
   return {
     ref: iFrameRef,

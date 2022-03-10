@@ -10,6 +10,7 @@ import React, {
 } from "react";
 
 import events from "@reearth/util/event";
+import { Rect } from "@reearth/util/value";
 
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
@@ -23,6 +24,7 @@ import type {
   ReearthEventType,
   FlyToDestination,
   LookAtDestination,
+  Tag,
 } from "./types";
 
 export type EngineContext = {
@@ -35,6 +37,7 @@ export type Props = {
   engine: EngineContext;
   engineName: string;
   sceneProperty?: any;
+  tags?: Tag[];
   camera?: CameraPosition;
   layers: LayerStore;
   selectedLayer?: Layer;
@@ -49,6 +52,8 @@ export type Props = {
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  layersInViewport: () => Layer[];
+  viewport: () => Rect | undefined;
 };
 
 export type Context = {
@@ -69,6 +74,7 @@ export function Provider({
   engine: { api, isMarshalable, builtinPrimitives },
   engineName,
   sceneProperty,
+  tags,
   camera,
   layers,
   selectedLayer,
@@ -79,10 +85,12 @@ export function Provider({
   hideLayer,
   selectLayer,
   overrideLayerProperty,
+  layersInViewport,
   flyTo,
   lookAt,
   zoomIn,
   zoomOut,
+  viewport,
   children,
 }: PropsWithChildren<Props>): JSX.Element {
   const [ev, emit] = useMemo(
@@ -93,6 +101,7 @@ export function Provider({
 
   const getLayers = useGet(layers);
   const getSceneProperty = useGet(sceneProperty);
+  const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
@@ -111,6 +120,7 @@ export function Provider({
         events: ev,
         layers: getLayers,
         sceneProperty: getSceneProperty,
+        tags: getTags,
         camera: getCamera,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
@@ -120,10 +130,12 @@ export function Provider({
         hideLayer,
         selectLayer,
         overrideLayerProperty,
+        layersInViewport,
         flyTo,
         lookAt,
         zoomIn,
         zoomOut,
+        viewport,
       }),
     }),
     [
@@ -134,6 +146,7 @@ export function Provider({
       ev,
       getLayers,
       getSceneProperty,
+      getTags,
       getCamera,
       getSelectedLayer,
       getLayerSelectionReason,
@@ -143,10 +156,12 @@ export function Provider({
       hideLayer,
       selectLayer,
       overrideLayerProperty,
+      layersInViewport,
       flyTo,
       lookAt,
       zoomIn,
       zoomOut,
+      viewport,
     ],
   );
 

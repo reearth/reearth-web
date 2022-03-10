@@ -11,16 +11,8 @@ export type Props = {
 };
 
 export default function Published({ className, alias }: Props) {
-  const {
-    sceneProperty,
-    pluginProperty,
-    layers,
-    widgets,
-    ready,
-    error,
-    clusterProperty,
-    clusterLayers,
-  } = useHooks(alias);
+  const { sceneProperty, pluginProperty, layers, widgets, tags, ready, error, clusterProperty } =
+    useHooks(alias);
 
   return error ? (
     <Error />
@@ -30,10 +22,10 @@ export default function Published({ className, alias }: Props) {
       engine="cesium"
       layers={layers}
       widgets={widgets}
+      tags={tags}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       clusterProperty={clusterProperty}
-      clusterLayers={clusterLayers}
       ready={ready}
       isBuilt
       isPublished

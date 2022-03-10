@@ -23,6 +23,7 @@ export type Props = {
   pluginId?: string;
   extensionId?: string;
   extensionType?: string;
+  autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
   iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
@@ -31,6 +32,21 @@ export type Props = {
   layer?: Layer;
   widget?: Widget;
   block?: Block;
+  onClick?: () => void;
+  onRender?: (
+    options:
+      | {
+          width?: string | number;
+          height?: string | number;
+          extended?: boolean;
+        }
+      | undefined,
+  ) => void;
+  onResize?: (
+    width: string | number | undefined,
+    height: string | number | undefined,
+    extended: boolean | undefined,
+  ) => void;
 };
 
 export default function Plugin({
@@ -39,6 +55,7 @@ export default function Plugin({
   pluginId,
   extensionId,
   extensionType,
+  autoResize,
   iFrameProps,
   visible,
   pluginBaseUrl = "/plugins",
@@ -46,6 +63,9 @@ export default function Plugin({
   widget,
   block,
   pluginProperty,
+  onClick,
+  onRender,
+  onResize,
 }: Props): JSX.Element | null {
   const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError, onMessage } = useHooks({
     pluginId,
@@ -56,6 +76,8 @@ export default function Plugin({
     widget,
     block,
     pluginProperty,
+    onRender,
+    onResize,
   });
 
   return !skip && (src || sourceCode) ? (
@@ -63,7 +85,7 @@ export default function Plugin({
       className={className}
       src={src}
       sourceCode={sourceCode}
-      filled={!!widget?.extended?.horizontally || !!widget?.extended?.vertically}
+      autoResize={autoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
@@ -72,6 +94,7 @@ export default function Plugin({
       onMessage={onMessage}
       onPreInit={onPreInit}
       onDispose={onDispose}
+      onClick={onClick}
     />
   ) : null;
 }

@@ -6,11 +6,12 @@ import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
-import Engine, { Props as EngineProps, SceneProperty } from "./Engine";
+import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import Layers, { LayerStore } from "./Layers";
 import { Provider } from "./Plugin";
+import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
 import WidgetAlignSystem, {
@@ -18,9 +19,10 @@ import WidgetAlignSystem, {
   WidgetAlignSystem as WidgetAlignSystemType,
 } from "./WidgetAlignSystem";
 
-export type { SceneProperty } from "./Engine";
+export type { SceneProperty, ClusterProperty } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Layer } from "./Layers";
+export type { Tag } from "./Plugin/types";
 export type {
   Widget,
   Alignment,
@@ -44,9 +46,9 @@ export type Props = PropsWithChildren<
       layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
     };
     sceneProperty?: SceneProperty;
+    tags?: Tag[];
     pluginProperty?: { [key: string]: any };
-    clusterProperty?: { [key: string]: any };
-    clusterLayers?: string[];
+    clusterProperty?: ClusterProperty[];
     selectedLayerId?: string;
     selectedBlockId?: string;
     pluginBaseUrl?: string;
@@ -70,10 +72,10 @@ export default function Visualizer({
   layers,
   widgets,
   sceneProperty,
+  tags,
   children,
   pluginProperty,
   clusterProperty,
-  clusterLayers,
   pluginBaseUrl,
   isPublished,
   selectedLayerId: outerSelectedLayerId,
@@ -110,6 +112,7 @@ export default function Visualizer({
     handleLayerDrag,
     handleLayerDrop,
     isLayerDragging,
+    handleInfoboxMaskClick,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -121,11 +124,13 @@ export default function Visualizer({
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
     sceneProperty,
+    tags,
     onLayerSelect,
     onBlockSelect,
     onCameraChange: props.onCameraChange,
     onLayerDrop,
   });
+
   return (
     <Provider {...providerProps}>
       <Filled ref={wrapperRef}>
@@ -163,12 +168,13 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
             clusterProperty={clusterProperty}
-            clusterLayers={clusterLayers}
+            sceneProperty={sceneProperty}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}
             isLayerHidden={isLayerHidden}
             overriddenProperties={layerOverriddenProperties}
+            clusterComponent={engineRef.current?.clusterComponent}
           />
           {ready &&
             widgets?.floatingWidgets?.map(widget => (
@@ -206,6 +212,7 @@ export default function Visualizer({
             onBlockSelect={selectBlock}
             renderInsertionPopUp={renderInfoboxInsertionPopUp}
             pluginBaseUrl={pluginBaseUrl}
+            onMaskClick={handleInfoboxMaskClick}
           />
         )}
         {children}

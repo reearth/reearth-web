@@ -1,45 +1,12 @@
-import { Color, Cartesian3, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
+import { Cartesian3, Color, EntityCluster, HorizontalOrigin, VerticalOrigin } from "cesium";
 import React, { useEffect, useMemo } from "react";
 import { CustomDataSource } from "resium";
 
-import { toCSSFont, Typography } from "@reearth/util/value";
+import { toCSSFont } from "@reearth/util/value";
 
-import { LayerStore } from "../..";
-import P from "../../Primitive";
+import { ClusterProps } from "../ref";
 
-export type Props = {
-  property: {
-    default: {
-      clusterPixelRange: number;
-      clusterMinSize: number;
-      clusterLabelTypography?: Typography;
-      clusterImage?: string;
-      clusterImageHeight?: number;
-      clusterImageWidth?: number;
-    };
-    layers: { layer?: string }[];
-  };
-  pluginProperty?: { [key: string]: any };
-  isEditable?: boolean;
-  isBuilt?: boolean;
-  pluginBaseUrl?: string;
-  layers?: LayerStore;
-  selectedLayerId?: string;
-  overriddenProperties?: { [id in string]: any };
-  isLayerHidden?: (id: string) => boolean;
-};
-
-const Cluster: React.FC<Props> = ({
-  property,
-  pluginProperty,
-  isEditable,
-  isBuilt,
-  pluginBaseUrl,
-  layers,
-  selectedLayerId,
-  overriddenProperties,
-  isLayerHidden,
-}) => {
+const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
   const {
     clusterPixelRange = 15,
     clusterMinSize = 3,
@@ -61,70 +28,61 @@ const Cluster: React.FC<Props> = ({
   const cluster = useMemo(() => {
     return new EntityCluster({
       enabled: true,
-      pixelRange: clusterPixelRange,
-      minimumClusterSize: clusterMinSize,
+      pixelRange: 15,
+      minimumClusterSize: 2,
       clusterBillboards: true,
       clusterLabels: true,
       clusterPoints: true,
     });
-  }, [clusterMinSize, clusterPixelRange]);
+  }, []);
 
   useEffect(() => {
-    return cluster?.clusterEvent.addEventListener((_clusteredEntities, clusterParam) => {
-      clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
-      clusterParam.label.horizontalOrigin =
-        clusterLabelTypography.textAlign === "right"
-          ? HorizontalOrigin.LEFT
-          : clusterLabelTypography.textAlign === "left"
-          ? HorizontalOrigin.RIGHT
-          : HorizontalOrigin.CENTER;
-      clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
-      clusterParam.label.fillColor = Color.fromCssColorString(
-        clusterLabelTypography.color ?? "#FFF",
-      );
-      clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
-      clusterParam.billboard.show = true;
-      clusterParam.billboard.image = clusterImage;
-      clusterParam.billboard.height = clusterImageWidth;
-      clusterParam.billboard.width = clusterImageHeight;
-    });
+    const isClusterHidden = React.Children.count(children) < clusterMinSize;
+    const removeListener = cluster?.clusterEvent.addEventListener(
+      (_clusteredEntities, clusterParam) => {
+        clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
+        clusterParam.label.horizontalOrigin =
+          clusterLabelTypography.textAlign === "right"
+            ? HorizontalOrigin.LEFT
+            : clusterLabelTypography.textAlign === "left"
+            ? HorizontalOrigin.RIGHT
+            : HorizontalOrigin.CENTER;
+        clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
+        clusterParam.label.fillColor = Color.fromCssColorString(
+          clusterLabelTypography.color ?? "#FFF",
+        );
+        clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
+        clusterParam.billboard.show = true;
+        clusterParam.billboard.image = clusterImage;
+        clusterParam.billboard.height = clusterImageHeight;
+        clusterParam.billboard.width = clusterImageWidth;
+        // Workaround if minimumClusterSize is larger than number of layers event listner breaks
+        cluster.minimumClusterSize = isClusterHidden
+          ? React.Children.count(children)
+          : clusterMinSize;
+      },
+    );
+    cluster.enabled = !isClusterHidden;
+    // Workaround to re-style components
+    cluster.pixelRange = 0;
+    cluster.pixelRange = clusterPixelRange;
+    return () => {
+      removeListener();
+    };
   }, [
     clusterMinSize,
     clusterPixelRange,
-    cluster,
     clusterLabelTypography,
     clusterImage,
     clusterImageHeight,
     clusterImageWidth,
+    children,
+    cluster,
   ]);
 
   return cluster ? (
     <CustomDataSource show clustering={cluster}>
-      {layers?.flattenLayersRaw
-        ?.filter(
-          layer =>
-            property?.layers &&
-            property?.layers.some(clusterLayer => clusterLayer.layer === layer.id),
-        )
-        .map(layer =>
-          !layer.isVisible || !!layer.children ? null : (
-            <P
-              key={layer.id}
-              layer={layer}
-              pluginProperty={
-                layer.pluginId && layer.extensionId
-                  ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-                  : undefined
-              }
-              isHidden={isLayerHidden?.(layer.id)}
-              isEditable={isEditable}
-              isBuilt={isBuilt}
-              isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-              pluginBaseUrl={pluginBaseUrl}
-              overriddenProperties={overriddenProperties}
-            />
-          ),
-        )}
+      {children}
     </CustomDataSource>
   ) : null;
 };

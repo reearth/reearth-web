@@ -20,9 +20,9 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     sceneProperty,
     pluginProperty,
     clusterProperty,
-    clusterLayers,
     layers,
     widgets,
+    tags,
     selectedLayerId,
     blocks,
     isCapturing,
@@ -62,9 +62,9 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       selectedBlockId={selectedBlockId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}
+      tags={tags}
       pluginProperty={pluginProperty}
       clusterProperty={clusterProperty}
-      clusterLayers={clusterLayers}
       camera={camera}
       ready={isBuilt || (!!layers && !!widgets)}
       onLayerSelect={selectLayer}
