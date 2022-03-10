@@ -18,7 +18,7 @@ export type AssetSortType = SortType;
 
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";
-  assets: AssetType[];
+  assets?: AssetType[];
   isAssetsLoading?: boolean;
   hasMoreAssets?: boolean;
   assetSort?: { type?: AssetSortType | null; reverse?: boolean };

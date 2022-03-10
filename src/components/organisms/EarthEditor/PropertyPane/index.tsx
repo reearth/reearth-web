@@ -27,7 +27,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     hasMoreAssets,
     assetSort,
     assetSearchTerm,
-    onGetMoreAssets,
+    getMoreAssets,
     createAssets,
     handleAssetSortChange,
     handleAssetSearch,
@@ -75,7 +75,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           onCreateAssets={createAssets}
           onAssetSort={handleAssetSortChange}
           onAssetSearch={handleAssetSearch}
-          onGetMoreAssets={onGetMoreAssets}
+          onGetMoreAssets={getMoreAssets}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
           onCreateInfobox={createInfobox}

@@ -21,7 +21,7 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
     hasMoreAssets,
     sort,
     searchTerm,
-    onGetMoreAssets,
+    getMoreAssets,
     createAssets,
     handleSortChange,
     handleSearchTerm,
@@ -40,7 +40,7 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
         hasMoreAssets={hasMoreAssets}
         sort={sort}
         searchTerm={searchTerm}
-        onGetMoreAssets={onGetMoreAssets}
+        onGetMoreAssets={getMoreAssets}
         onCreateAssets={createAssets}
         onSortChange={handleSortChange}
         onSearch={handleSearchTerm}
