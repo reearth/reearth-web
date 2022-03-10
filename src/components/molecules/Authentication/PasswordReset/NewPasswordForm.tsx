@@ -111,7 +111,7 @@ const NewPasswordForm: React.FC<Props> = ({
       </Text>
       <StyledForm
         id="login-form"
-        action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}
+        action={`${window.REEARTH_CONFIG?.api || "/api"}/password-reset`}
         method="post"
         onSubmit={() => {
           handlePasswordSubmit();
