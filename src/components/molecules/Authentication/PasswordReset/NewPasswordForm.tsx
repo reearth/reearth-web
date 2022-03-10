@@ -3,31 +3,43 @@ import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
-import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { metricsSizes, styled, useTheme } from "@reearth/theme";
 
-import AuthPage from "..";
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onNewPasswordSubmit: (password: string) => void;
+  onNewPasswordSubmit?: (newPassword?: string, email?: string, token?: string) => Promise<void>;
   passwordPolicy?: PasswordPolicy;
+  newPasswordToken?: string;
 };
 
-const NewPassword: React.FC<Props> = ({ onNewPasswordSubmit, passwordPolicy }) => {
+const NewPasswordForm: React.FC<Props> = ({
+  onNewPasswordSubmit,
+  passwordPolicy,
+  newPasswordToken,
+}) => {
   const intl = useIntl();
   const theme = useTheme();
-  const [password, setPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>();
   const [disabled, setDisabled] = useState(true);
   const [regexMessage, setRegexMessage] = useState("");
+
+  const handleEmailInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = e.currentTarget.value;
+      setEmail(newValue);
+    },
+    [],
+  );
 
   const handlePasswordInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const password = e.currentTarget.value;
-      setPassword(password);
+      setNewPassword(password);
       switch (true) {
         case passwordPolicy?.whitespace?.test(password):
           setRegexMessage(
@@ -68,28 +80,27 @@ const NewPassword: React.FC<Props> = ({ onNewPasswordSubmit, passwordPolicy }) =
           break;
       }
     },
-    [password], // eslint-disable-line react-hooks/exhaustive-deps
+    [newPassword], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handlePasswordSubmit = useCallback(() => {
-    onNewPasswordSubmit(password);
-  }, [password, onNewPasswordSubmit]);
+    onNewPasswordSubmit?.(newPassword, email, newPasswordToken);
+  }, [newPassword, email, newPasswordToken, onNewPasswordSubmit]);
 
   useEffect(() => {
     if (
-      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(password)) ||
-      passwordPolicy?.tooShort?.test(password) ||
-      passwordPolicy?.tooLong?.test(password)
+      (passwordPolicy?.highSecurity && !passwordPolicy.highSecurity.test(newPassword)) ||
+      passwordPolicy?.tooShort?.test(newPassword) ||
+      passwordPolicy?.tooLong?.test(newPassword)
     ) {
       setDisabled(true);
     } else {
       setDisabled(false);
     }
-  }, [password, passwordPolicy]);
+  }, [newPassword, passwordPolicy]);
 
   return (
-    <AuthPage>
-      <Icon className="form-item" icon="logoColorful" size={60} />
+    <>
       <Text className="form-item" size="l" customColor>
         {intl.formatMessage({ defaultMessage: "Change Your Password" })}
       </Text>
@@ -103,65 +114,43 @@ const NewPassword: React.FC<Props> = ({ onNewPasswordSubmit, passwordPolicy }) =
         action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}
         method="post"
         onSubmit={() => {
-          console.log(password, "pw");
+          handlePasswordSubmit();
         }}>
-        <input
-          type="hidden"
-          name="id"
-          value={new URLSearchParams(window.location.search).get("id") ?? undefined}
-        />
+        <input type="hidden" name="token" value={newPasswordToken ?? undefined} />
         <StyledInput
           className="form-item"
-          name="password"
-          placeholder={intl.formatMessage({ defaultMessage: "New password" })}
-          type="password"
-          autoComplete="new-password"
+          placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
           color={theme.main.weak}
-          value={password}
-          onChange={handlePasswordInput}
+          value={email}
+          autoFocus
+          onChange={handleEmailInput}
         />
         <PasswordWrapper direction="column">
           <StyledInput
             className="form-item"
-            placeholder={intl.formatMessage({ defaultMessage: "Password" })}
+            name="password"
+            placeholder={intl.formatMessage({ defaultMessage: "New password" })}
             type="password"
             autoComplete="new-password"
-            value={password}
+            color={theme.main.weak}
+            value={newPassword}
             onChange={handlePasswordInput}
-            color={
-              passwordPolicy?.tooLong?.test(password)
-                ? theme.main.danger
-                : passwordPolicy?.highSecurity?.test(password)
-                ? theme.main.accent
-                : theme.main.weak
-            }
           />
           <PasswordMessage size="xs" customColor>
-            {password ? regexMessage : undefined}
+            {newPassword ? regexMessage : undefined}
           </PasswordMessage>
         </PasswordWrapper>
-        <StyledInput
-          className="form-item"
-          name="password"
-          placeholder={intl.formatMessage({ defaultMessage: "Re-enter new password" })}
-          type="password"
-          autoComplete="new-password"
-          color={theme.main.weak}
-          value={password}
-          onChange={handlePasswordInput}
-        />
         <StyledButton
           className="form-item"
           large
           type="submit"
           disabled={disabled}
-          onClick={handlePasswordSubmit}
           color={disabled ? theme.main.text : theme.other.white}
           background={disabled ? theme.main.weak : theme.main.link}
           text={intl.formatMessage({ defaultMessage: "Reset password" })}
         />
       </StyledForm>
-    </AuthPage>
+    </>
   );
 };
 
@@ -216,4 +205,4 @@ const PasswordMessage = styled(Text)`
   font-style: italic;
 `;
 
-export default NewPassword;
+export default NewPasswordForm;

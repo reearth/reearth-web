@@ -12,19 +12,28 @@ import { metricsSizes, styled, useTheme } from "@reearth/theme";
 import AuthPage from "..";
 import { PasswordPolicy as PasswordPolicyType } from "../common";
 
+import NewPasswordForm from "./NewPasswordForm";
+
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onPasswordResetRequest: (email?: string) => any;
+  onPasswordResetRequest?: (email?: string) => any;
+  onNewPasswordSubmit?: (newPassword?: string, email?: string, token?: string) => Promise<void>;
+  passwordPolicy?: PasswordPolicy;
 };
 
-const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
+const PasswordReset: React.FC<Props> = ({
+  onPasswordResetRequest,
+  onNewPasswordSubmit,
+  passwordPolicy,
+}) => {
   const intl = useIntl();
   const theme = useTheme();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+  const newPasswordToken = new URLSearchParams(window.location.search).toString().split("=")[1];
 
   useEffect(() => {
     if (!email) {
@@ -34,7 +43,7 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
     }
   }, [email]);
 
-  const handleUsernameInput = useCallback(
+  const handleEmailInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
       setEmail(newValue);
@@ -44,7 +53,7 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
 
   const handlePasswordResetRequest = useCallback(async () => {
     setLoading(true);
-    const res = await onPasswordResetRequest(email);
+    const res = await onPasswordResetRequest?.(email);
     if (res.status === 200) {
       setSent(true);
     }
@@ -53,7 +62,13 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
 
   return (
     <AuthPage>
-      {sent ? (
+      {newPasswordToken ? (
+        <NewPasswordForm
+          onNewPasswordSubmit={onNewPasswordSubmit}
+          passwordPolicy={passwordPolicy}
+          newPasswordToken={newPasswordToken}
+        />
+      ) : sent ? (
         <SentFormWrapper direction="column" align="center" justify="center">
           <SentForm direction="column" align="center" justify="space-between">
             <Icon icon="mailCircle" color={theme.colors.brand.blue.strongest} />
@@ -105,7 +120,7 @@ const PasswordReset: React.FC<Props> = ({ onPasswordResetRequest }) => {
             color={theme.main.weak}
             value={email}
             autoFocus
-            onChange={handleUsernameInput}
+            onChange={handleEmailInput}
           />
           <StyledButton
             className="form-item"

@@ -64,23 +64,14 @@ export default () => {
     });
   }
 
-  const onSignup = useCallback(
+  const handleSignup = useCallback(
     async (email?: string, username?: string, password?: string) => {
       if (isAuthenticated || !email || !username || !password) return;
-      const res = await axios.post(
-        (window.REEARTH_CONFIG?.api || "/api") + "/signup",
-        {
-          email,
-          username,
-          password,
-        },
-        {
-          headers: {
-            Accept: "application/vnd.github.v3.html+json",
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const res = await axios.post((window.REEARTH_CONFIG?.api || "/api") + "/signup", {
+        email,
+        username,
+        password,
+      });
       if (res.status !== 200) {
         setNotification({
           type: "error",
@@ -100,21 +91,12 @@ export default () => {
     [isAuthenticated, setNotification, intl],
   );
 
-  const onPasswordResetRequest = useCallback(
+  const handlePasswordResetRequest = useCallback(
     async (email?: string) => {
       if (isAuthenticated || !email) return;
-      const res = await axios.post(
-        (window.REEARTH_CONFIG?.api || "/api") + "/password-reset",
-        {
-          email,
-        },
-        {
-          headers: {
-            Accept: "application/vnd.github.v3.html+json",
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const res = await axios.post((window.REEARTH_CONFIG?.api || "/api") + "/password-reset", {
+        email,
+      });
       if (res.status !== 200) {
         setNotification({
           type: "error",
@@ -134,20 +116,41 @@ export default () => {
     [isAuthenticated, setNotification, intl],
   );
 
-  const onNewPasswordSubmit = useCallback(
-    async (password: string) => {
-      if (isAuthenticated) return;
-      console.log("NEEDS TOKEN" + password, "up");
+  const handleNewPasswordSubmit = useCallback(
+    async (newPassword?: string, email?: string, token?: string) => {
+      if (isAuthenticated || !newPassword || !email || !token) return;
+      const res = await axios.post((window.REEARTH_CONFIG?.api || "/api") + "/password-reset", {
+        email,
+        password: newPassword,
+        token,
+      });
+      if (res.status === 200) {
+        setNotification({
+          type: "success",
+          text: intl.formatMessage({
+            defaultMessage:
+              "Successfully changed password! Please use your new password next time you login.",
+          }),
+        });
+        navigate("/login");
+      } else {
+        setNotification({
+          type: "error",
+          text: intl.formatMessage({
+            defaultMessage: "Something went wrong. Please try again.",
+          }),
+        });
+      }
     },
-    [isAuthenticated],
+    [isAuthenticated, intl, setNotification, navigate],
   );
 
   return {
     isLoading,
     isAuthenticated,
     passwordPolicy,
-    onSignup,
-    onPasswordResetRequest,
-    onNewPasswordSubmit,
+    handleSignup,
+    handlePasswordResetRequest,
+    handleNewPasswordSubmit,
   };
 };
