@@ -4,12 +4,7 @@ import { useIntl } from "react-intl";
 
 import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
-
-export enum Theme {
-  Default = "DEFAULT",
-  Light = "LIGHT",
-  Dark = "DARK",
-}
+import { toGQLEnum } from "@reearth/util/value";
 
 export default () => {
   const intl = useIntl();
@@ -74,7 +69,7 @@ export default () => {
 
   const updateTheme = useCallback(
     async (theme: string) => {
-      const newTheme = await updateMeMutation({ variables: { theme: theme as Theme } });
+      const newTheme = await updateMeMutation({ variables: { theme: toGQLEnum(theme) } });
       if (newTheme.errors) {
         setNotification({
           type: "error",
