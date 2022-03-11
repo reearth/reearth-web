@@ -97,26 +97,20 @@ export const Video: Story<Props> = args => {
 };
 
 Image.args = {
-  assetsData: {
-    assets,
-  },
+  assets,
   fileType: "image",
   smallCardOnly: true,
 };
 
 Selected.args = {
-  assetsData: {
-    assets,
-  },
+  assets,
   value: `${process.env.PUBLIC_URL}/sample.svg`,
   fileType: "image",
   smallCardOnly: true,
 };
 
 Video.args = {
-  assetsData: {
-    assets,
-  },
+  assets,
   fileType: "video",
   smallCardOnly: true,
 };
