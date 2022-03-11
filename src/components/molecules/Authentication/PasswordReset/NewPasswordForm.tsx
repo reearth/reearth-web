@@ -109,60 +109,41 @@ const NewPasswordForm: React.FC<Props> = ({
           defaultMessage: "Enter a new password below to change your password.",
         })}
       </Text>
-      <StyledForm
-        id="login-form"
-        action={`${window.REEARTH_CONFIG?.api || "/api"}/password-reset`}
-        method="post"
-        onSubmit={() => {
-          handlePasswordSubmit();
-        }}>
-        <input type="hidden" name="token" value={newPasswordToken ?? undefined} />
+      <StyledInput
+        className="form-item"
+        placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
+        color={theme.main.weak}
+        value={email}
+        autoFocus
+        onChange={handleEmailInput}
+      />
+      <PasswordWrapper direction="column">
         <StyledInput
           className="form-item"
-          placeholder={intl.formatMessage({ defaultMessage: "Email address" })}
+          name="password"
+          placeholder={intl.formatMessage({ defaultMessage: "New password" })}
+          type="password"
+          autoComplete="new-password"
           color={theme.main.weak}
-          value={email}
-          autoFocus
-          onChange={handleEmailInput}
+          value={newPassword}
+          onChange={handlePasswordInput}
         />
-        <PasswordWrapper direction="column">
-          <StyledInput
-            className="form-item"
-            name="password"
-            placeholder={intl.formatMessage({ defaultMessage: "New password" })}
-            type="password"
-            autoComplete="new-password"
-            color={theme.main.weak}
-            value={newPassword}
-            onChange={handlePasswordInput}
-          />
-          <PasswordMessage size="xs" customColor>
-            {newPassword ? regexMessage : undefined}
-          </PasswordMessage>
-        </PasswordWrapper>
-        <StyledButton
-          className="form-item"
-          large
-          type="submit"
-          disabled={disabled}
-          color={disabled ? theme.main.text : theme.other.white}
-          background={disabled ? theme.main.weak : theme.main.link}
-          text={intl.formatMessage({ defaultMessage: "Reset password" })}
-        />
-      </StyledForm>
+        <PasswordMessage size="xs" customColor>
+          {newPassword ? regexMessage : undefined}
+        </PasswordMessage>
+      </PasswordWrapper>
+      <StyledButton
+        className="form-item"
+        large
+        onClick={handlePasswordSubmit}
+        disabled={disabled}
+        color={disabled ? theme.main.text : theme.other.white}
+        background={disabled ? theme.main.weak : theme.main.link}
+        text={intl.formatMessage({ defaultMessage: "Reset password" })}
+      />
     </>
   );
 };
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-  > .form-item {
-    margin-bottom: 24px;
-  }
-`;
 
 const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
   width: 100%;
