@@ -1,6 +1,6 @@
 import { Color } from "cesium";
 
-import { ValueType as GQLValueType } from "@reearth/gql";
+import { ValueType as GQLValueType, Theme, AssetSortType } from "@reearth/gql";
 import { css } from "@reearth/theme";
 
 export type LatLng = {
@@ -79,6 +79,20 @@ const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
 };
 
 export type ValueType = keyof ValueTypes;
+
+const enumTypeMapper: Partial<Record<any, string>> = {
+  [Theme.Default]: "default",
+  [Theme.Dark]: "dark",
+  [Theme.Light]: "light",
+  [AssetSortType.Date]: "date",
+  [AssetSortType.Name]: "name",
+  [AssetSortType.Size]: "size",
+};
+
+export const toGQLEnum = (val?: any) => {
+  if (!val) return;
+  return (Object.keys(enumTypeMapper) as any[]).find(k => enumTypeMapper[k] === val);
+};
 
 export const valueFromGQL = (val: any, type: GQLValueType) => {
   const t = valueTypeFromGQL(type);

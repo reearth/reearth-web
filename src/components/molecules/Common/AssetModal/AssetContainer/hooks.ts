@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import useFileInput from "use-file-input";
 
-export type SortType = "DATE" | "NAME" | "SIZE";
+export type SortType = "date" | "name" | "size";
 
 export type LayoutTypes = "medium" | "small" | "list";
 
@@ -41,11 +41,11 @@ export default ({
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const iconChoice =
-    sort?.type === "NAME"
+    sort?.type === "name"
       ? sort?.reverse
         ? "filterNameReverse"
         : "filterName"
-      : sort?.type === "SIZE"
+      : sort?.type === "size"
       ? sort?.reverse
         ? "filterSizeReverse"
         : "filterSize"

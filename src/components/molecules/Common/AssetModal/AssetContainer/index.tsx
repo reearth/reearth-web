@@ -90,9 +90,9 @@ const AssetContainer: React.FC<Props> = ({
   });
 
   const sortOptions: { key: AssetSortType; label: string }[] = [
-    { key: "DATE", label: intl.formatMessage({ defaultMessage: "Date" }) },
-    { key: "SIZE", label: intl.formatMessage({ defaultMessage: "File size" }) },
-    { key: "NAME", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+    { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
+    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
+    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
   ];
 
   const handleScroll = (
@@ -138,7 +138,7 @@ const AssetContainer: React.FC<Props> = ({
       <NavBar align="center" justify="space-between">
         <SelectWrapper direction="row" justify="space-between" align="center">
           <AssetSelect<AssetSortType>
-            value={sort?.type ?? "DATE"}
+            value={sort?.type ?? "date"}
             items={sortOptions}
             onChange={onSortChange}
           />

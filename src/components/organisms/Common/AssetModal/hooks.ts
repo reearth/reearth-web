@@ -8,9 +8,11 @@ import {
   useCreateAssetMutation,
   useRemoveAssetMutation,
   Maybe,
-  AssetSortType,
 } from "@reearth/gql";
 import { useNotification } from "@reearth/state";
+import { toGQLEnum } from "@reearth/util/value";
+
+export type AssetSortType = "date" | "name" | "size";
 
 export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
@@ -20,7 +22,7 @@ function pagination(
   sort?: { type?: Maybe<AssetSortType>; reverse?: boolean },
   endCursor?: string | null,
 ) {
-  const reverseOrder = !sort?.type || sort?.type === "DATE" ? !sort?.reverse : !!sort?.reverse;
+  const reverseOrder = !sort?.type || sort?.type === "date" ? !sort?.reverse : !!sort?.reverse;
 
   return {
     after: !reverseOrder ? endCursor : undefined,
@@ -41,7 +43,7 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
     variables: {
       teamId: teamId ?? "",
       pagination: pagination(sort),
-      sort: sort?.type,
+      sort: toGQLEnum(sort?.type ?? "date"),
       keyword: searchTerm,
     },
     notifyOnNetworkStatusChange: true,
@@ -152,7 +154,7 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
   useEffect(() => {
     if (sort || searchTerm) {
       refetch({
-        sort: sort?.type,
+        sort: toGQLEnum(sort?.type),
         keyword: searchTerm,
       });
     }
