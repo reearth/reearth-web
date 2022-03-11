@@ -18,11 +18,7 @@ const Login: React.FC = () => {
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    if (!username || !password) {
-      setDisabled(true);
-    } else {
-      setDisabled(false);
-    }
+    setDisabled(!username || !password);
   }, [username, password]);
 
   const handleUsernameInput = useCallback(
