@@ -2,9 +2,21 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { useUpdateMeMutation, useProfileQuery } from "@reearth/gql";
+import { useUpdateMeMutation, useProfileQuery, Theme as GQLTheme } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
-import { toGQLEnum } from "@reearth/util/value";
+
+const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
+  [GQLTheme.Default]: "default",
+  [GQLTheme.Dark]: "dark",
+  [GQLTheme.Light]: "light",
+};
+
+export type Theme = "dark" | "light";
+
+function toGQLEnum(val?: Theme) {
+  if (!val) return;
+  return (Object.keys(enumTypeMapper) as GQLTheme[]).find(k => enumTypeMapper[k] === val);
+}
 
 export default () => {
   const intl = useIntl();
@@ -68,7 +80,7 @@ export default () => {
   );
 
   const updateTheme = useCallback(
-    async (theme: string) => {
+    async (theme: Theme) => {
       const newTheme = await updateMeMutation({ variables: { theme: toGQLEnum(theme) } });
       if (newTheme.errors) {
         setNotification({

@@ -8,13 +8,24 @@ import {
   useCreateAssetMutation,
   useRemoveAssetMutation,
   Maybe,
+  AssetSortType as GQLSortType,
 } from "@reearth/gql";
 import { useNotification } from "@reearth/state";
-import { toGQLEnum } from "@reearth/util/value";
+
+export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
 
 export type AssetSortType = "date" | "name" | "size";
 
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
+const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
+  [GQLSortType.Date]: "date",
+  [GQLSortType.Name]: "name",
+  [GQLSortType.Size]: "size",
+};
+
+function toGQLEnum(val?: AssetSortType) {
+  if (!val) return;
+  return (Object.keys(enumTypeMapper) as GQLSortType[]).find(k => enumTypeMapper[k] === val);
+}
 
 const assetsPerPage = 20;
 
@@ -35,7 +46,7 @@ function pagination(
 export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
-  const [sort, setSort] = useState<{ type?: Maybe<AssetSortType>; reverse?: boolean }>();
+  const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const gqlCache = useApolloClient().cache;
 

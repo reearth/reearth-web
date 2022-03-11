@@ -21,7 +21,7 @@ export type Props = {
   passwordPolicy?: PasswordPolicy;
   updatePassword?: (password: string, passwordConfirmation: string) => void;
   updateLanguage?: (lang: string) => void;
-  updateTheme?: (theme: string) => void;
+  updateTheme?: (theme: Theme) => void;
 };
 
 const ProfileSection: React.FC<Props> = ({
@@ -74,6 +74,14 @@ const ProfileSection: React.FC<Props> = ({
     [updatePassword],
   );
 
+  const handleThemeUpdate = useCallback(
+    (theme?: string) => {
+      if (!theme) return;
+      updateTheme?.(theme as Theme);
+    },
+    [updateTheme],
+  );
+
   return (
     <Wrapper>
       <Section title={intl.formatMessage({ defaultMessage: "Account" })}>
@@ -97,7 +105,7 @@ const ProfileSection: React.FC<Props> = ({
           dropdownItems={themeItems}
           currentItem={appTheme}
           body={currentThemeLabel}
-          onSubmit={updateTheme}
+          onSubmit={handleThemeUpdate}
         />
       </Section>
       <PasswordModal
