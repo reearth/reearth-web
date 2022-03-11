@@ -43,7 +43,7 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
     variables: {
       teamId: teamId ?? "",
       pagination: pagination(sort),
-      sort: toGQLEnum(sort?.type ?? "date"),
+      sort: toGQLEnum(sort?.type),
       keyword: searchTerm,
     },
     notifyOnNetworkStatusChange: true,
