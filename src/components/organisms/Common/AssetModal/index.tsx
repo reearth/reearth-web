@@ -2,6 +2,7 @@ import React from "react";
 
 import MoleculeAssetModal from "@reearth/components/molecules/Common/AssetModal";
 
+import AssetContainer from "./AssetContainer";
 import useHooks from "./hooks";
 
 export interface Props {
@@ -42,6 +43,7 @@ const AssetModal: React.FC<Props> = ({ teamId, openAssets, setOpenAssets, onSele
       onCreateAssets={createAssets}
       onSortChange={handleSortChange}
       onSearch={handleSearchTerm}
+      assetContainer={AssetContainer}
     />
   );
 };

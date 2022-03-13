@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useEffect, useMemo, ComponentType } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -10,7 +10,11 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import AssetContainer, { Asset as AssetType, AssetSortType as SortType } from "./AssetContainer";
+import {
+  Asset as AssetType,
+  AssetSortType as SortType,
+  Props as AssetContainerProps,
+} from "./AssetContainer";
 
 export type Mode = "asset" | "url";
 export type Asset = AssetType;
@@ -34,6 +38,7 @@ export type Props = {
   onSearch?: (term?: string) => void;
   onClose?: () => void;
   onSelect?: (value: string | null) => void;
+  assetContainer?: ComponentType<{ value?: string } & AssetContainerProps>;
 };
 
 type Tabs = "assets" | "url";
@@ -55,6 +60,7 @@ const AssetModal: React.FC<Props> = ({
   onSearch,
   onClose,
   onSelect,
+  assetContainer: AssetContainer,
 }) => {
   const intl = useIntl();
   const labels: { [t in Tabs]: string } = {
@@ -171,7 +177,7 @@ const AssetModal: React.FC<Props> = ({
           onClick={handleModalClose}
         />
       }>
-      {selectedTab === "assets" && (
+      {selectedTab === "assets" && AssetContainer && (
         <AssetContainer
           assets={filteredAssets}
           initialAsset={initialAsset}

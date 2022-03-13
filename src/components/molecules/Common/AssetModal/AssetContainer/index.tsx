@@ -25,6 +25,7 @@ export type AssetSortType = SortType;
 export type Props = {
   className?: string;
   assets?: Asset[];
+  value?: string;
   isMultipleSelectable?: boolean;
   accept?: string;
   initialAsset?: Asset;
