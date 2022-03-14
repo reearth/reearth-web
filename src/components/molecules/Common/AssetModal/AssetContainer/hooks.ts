@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
 export type SortType = "date" | "name" | "size";
@@ -16,6 +17,7 @@ export type Asset = {
 
 export default ({
   isMultipleSelectable,
+  isLoading,
   accept,
   selectedAssets,
   sort,
@@ -27,6 +29,7 @@ export default ({
   onSearch,
 }: {
   isMultipleSelectable?: boolean;
+  isLoading?: boolean;
   accept?: string;
   selectedAssets?: Asset[];
   sort?: { type?: SortType | null; reverse?: boolean };
@@ -37,8 +40,15 @@ export default ({
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string | undefined) => void;
 }) => {
+  const intl = useIntl();
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
+  const sortOptions: { key: SortType; label: string }[] = [
+    { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
+    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
+    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+  ];
 
   const iconChoice =
     sort?.type === "name"
@@ -62,10 +72,6 @@ export default ({
     handleFileSelect();
   }, [handleFileSelect]);
 
-  const handleReverse = useCallback(() => {
-    onSortChange?.(undefined, !sort?.reverse);
-  }, [onSortChange, sort?.reverse]);
-
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
       onRemove?.(selectedAssets.map(a => a.id));
@@ -73,6 +79,10 @@ export default ({
       setDeleteModalVisible(false);
     }
   }, [onRemove, selectAssetUrl, selectedAssets]);
+
+  const handleReverse = useCallback(() => {
+    onSortChange?.(undefined, !sort?.reverse);
+  }, [onSortChange, sort?.reverse]);
 
   const handleSearch = useCallback(
     (term?: string) => {
@@ -85,10 +95,24 @@ export default ({
     [onSearch],
   );
 
+  const handleScroll = (
+    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+    onLoadMore?: () => void,
+  ) => {
+    if (
+      currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight &&
+      !isLoading
+    ) {
+      onLoadMore?.();
+    }
+  };
+
   return {
     layoutType,
     iconChoice,
     deleteModalVisible,
+    sortOptions,
+    handleScroll,
     setLayoutType,
     handleUploadToAsset,
     handleReverse,

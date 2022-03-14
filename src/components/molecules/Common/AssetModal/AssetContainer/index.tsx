@@ -78,6 +78,8 @@ const AssetContainer: React.FC<Props> = ({
     layoutType,
     iconChoice,
     deleteModalVisible,
+    sortOptions,
+    handleScroll,
     setLayoutType,
     handleUploadToAsset,
     handleReverse,
@@ -87,6 +89,7 @@ const AssetContainer: React.FC<Props> = ({
   } = useHooks({
     sort,
     isMultipleSelectable,
+    isLoading,
     accept,
     selectedAssets,
     smallCardOnly,
@@ -96,24 +99,6 @@ const AssetContainer: React.FC<Props> = ({
     onRemove,
     onSearch,
   });
-
-  const sortOptions: { key: AssetSortType; label: string }[] = [
-    { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
-    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
-    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
-  ];
-
-  const handleScroll = (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-    onLoadMore?: () => void,
-  ) => {
-    if (
-      currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight &&
-      !isLoading
-    ) {
-      onLoadMore?.();
-    }
-  };
 
   return (
     <Wrapper>
