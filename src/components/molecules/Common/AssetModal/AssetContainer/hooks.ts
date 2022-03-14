@@ -15,9 +15,17 @@ export type Asset = {
   contentType: string;
 };
 
+function handleScroll(
+  { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+  onLoadMore?: () => void,
+) {
+  if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
+    onLoadMore?.();
+  }
+}
+
 export default ({
   isMultipleSelectable,
-  isLoading,
   accept,
   selectedAssets,
   sort,
@@ -29,7 +37,6 @@ export default ({
   onSearch,
 }: {
   isMultipleSelectable?: boolean;
-  isLoading?: boolean;
   accept?: string;
   selectedAssets?: Asset[];
   sort?: { type?: SortType | null; reverse?: boolean };
@@ -97,18 +104,6 @@ export default ({
     },
     [onSearch],
   );
-
-  const handleScroll = (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-    onLoadMore?: () => void,
-  ) => {
-    if (
-      currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight &&
-      !isLoading
-    ) {
-      onLoadMore?.();
-    }
-  };
 
   return {
     layoutType,

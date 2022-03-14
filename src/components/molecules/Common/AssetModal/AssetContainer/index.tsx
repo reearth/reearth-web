@@ -89,7 +89,6 @@ const AssetContainer: React.FC<Props> = ({
   } = useHooks({
     sort,
     isMultipleSelectable,
-    isLoading,
     accept,
     selectedAssets,
     smallCardOnly,
