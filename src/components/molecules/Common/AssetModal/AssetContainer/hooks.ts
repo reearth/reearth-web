@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
 
@@ -44,11 +44,14 @@ export default ({
   const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  const sortOptions: { key: SortType; label: string }[] = [
-    { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
-    { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
-    { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
-  ];
+  const sortOptions: { key: SortType; label: string }[] = useMemo(
+    () => [
+      { key: "date", label: intl.formatMessage({ defaultMessage: "Date" }) },
+      { key: "size", label: intl.formatMessage({ defaultMessage: "File size" }) },
+      { key: "name", label: intl.formatMessage({ defaultMessage: "Alphabetical" }) },
+    ],
+    [intl],
+  );
 
   const iconChoice =
     sort?.type === "name"
