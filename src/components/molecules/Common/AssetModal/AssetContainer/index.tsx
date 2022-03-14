@@ -26,7 +26,6 @@ export type OtherProps = {
   teamId?: string;
   initialAssetUrl?: string | null;
   allowDeletion?: boolean;
-  onUnmount?: () => void;
 };
 
 export type Props = {
@@ -48,7 +47,6 @@ export type Props = {
   onGetMore?: () => void;
   selectAssetUrl?: (asset?: string) => void;
   onSelect?: (asset?: Asset | undefined) => void;
-  // selectAsset?: (assets: Asset[]) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string) => void;
   handleShowURL?: (assets?: Asset[]) => void;

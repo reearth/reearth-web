@@ -62,7 +62,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
             teamId={teamId}
             openAssets={assetModalOpened}
             onSelect={onAssetSelect}
-            setOpenAssets={toggleAssetModal}
+            toggleAssetModal={toggleAssetModal}
           />
         }
       />

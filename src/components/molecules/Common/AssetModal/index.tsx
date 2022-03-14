@@ -27,7 +27,7 @@ export type Props = {
   fileType?: "image" | "video";
   isOpen?: boolean;
   onSelect?: (value: string | null) => void;
-  onOpenModal?: (b: boolean) => void;
+  toggleAssetModal?: (b: boolean) => void;
   assetContainer?: ComponentType<AssetContainerProps>;
 };
 
@@ -39,7 +39,7 @@ const AssetModal: React.FC<Props> = ({
   fileType,
   isOpen,
   onSelect,
-  onOpenModal,
+  toggleAssetModal,
   assetContainer: AssetContainer,
 }) => {
   const intl = useIntl();
@@ -71,8 +71,8 @@ const AssetModal: React.FC<Props> = ({
     onSelect?.(
       (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssetUrl) || null,
     );
-    onOpenModal?.(false);
-  }, [onOpenModal, selectedAssetUrl, selectedTab, onSelect, fileType, textUrl]);
+    toggleAssetModal?.(false);
+  }, [toggleAssetModal, selectedAssetUrl, selectedTab, onSelect, fileType, textUrl]);
 
   const resetValues = useCallback(() => {
     setTextUrl(showURL && initialAssetUrl ? initialAssetUrl : undefined);
@@ -82,8 +82,8 @@ const AssetModal: React.FC<Props> = ({
 
   const handleModalClose = useCallback(() => {
     resetValues();
-    onOpenModal?.(false);
-  }, [onOpenModal, resetValues]);
+    toggleAssetModal?.(false);
+  }, [toggleAssetModal, resetValues]);
 
   useEffect(() => {
     resetValues();
@@ -151,7 +151,6 @@ const AssetModal: React.FC<Props> = ({
           teamId={teamId}
           initialAssetUrl={initialAssetUrl}
           selectAssetUrl={selectAssetUrl}
-          onUnmount={() => onOpenModal?.(false)}
           fileType={fileType}
           smallCardOnly
           height={425}

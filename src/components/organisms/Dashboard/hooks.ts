@@ -170,9 +170,16 @@ export default (teamId?: string) => {
   const [assetModalOpened, setOpenAssets] = useState(false);
   const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
-  const toggleAssetModal = useCallback(() => {
-    setOpenAssets(!assetModalOpened);
-  }, [assetModalOpened, setOpenAssets]);
+  const toggleAssetModal = useCallback(
+    (b?: boolean) => {
+      if (!b) {
+        setOpenAssets(!assetModalOpened);
+      } else {
+        setOpenAssets(b);
+      }
+    },
+    [assetModalOpened, setOpenAssets],
+  );
 
   const onAssetSelect = useCallback((asset: string | null) => {
     if (!asset) return;

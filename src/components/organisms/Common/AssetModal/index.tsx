@@ -8,7 +8,7 @@ export interface Props {
   teamId?: string;
   initialAssetUrl?: string | null;
   openAssets?: boolean;
-  setOpenAssets?: (b: boolean) => void;
+  toggleAssetModal?: (b: boolean) => void;
   onSelect?: (asset: string | null) => void;
   fileType?: "image" | "video";
 }
@@ -17,7 +17,7 @@ const AssetModal: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
   openAssets,
-  setOpenAssets,
+  toggleAssetModal,
   onSelect,
   fileType = "image",
 }) => {
@@ -25,9 +25,9 @@ const AssetModal: React.FC<Props> = ({
     <MoleculeAssetModal
       teamId={teamId}
       initialAssetUrl={initialAssetUrl}
-      isOpen={openAssets}
       fileType={fileType}
-      onOpenModal={setOpenAssets}
+      isOpen={openAssets}
+      toggleAssetModal={toggleAssetModal}
       onSelect={onSelect}
       assetContainer={AssetContainer}
     />

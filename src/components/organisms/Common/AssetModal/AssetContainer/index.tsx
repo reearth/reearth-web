@@ -15,7 +15,7 @@ const AssetContainer: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
   selectAssetUrl,
-  onUnmount,
+  //   onUnmount,
   fileType,
   smallCardOnly,
   allowDeletion,
@@ -34,7 +34,7 @@ const AssetContainer: React.FC<Props> = ({
     handleSortChange,
     handleSearchTerm,
     removeAssets,
-  } = useHooks(teamId, onUnmount, allowDeletion);
+  } = useHooks(teamId, allowDeletion);
 
   const initialAsset = assets?.find(a => a.url === initialAssetUrl);
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
