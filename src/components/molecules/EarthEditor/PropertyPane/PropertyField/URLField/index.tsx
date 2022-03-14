@@ -8,7 +8,10 @@ import { styled } from "@reearth/theme";
 import TextField from "../TextField";
 import { FieldProps } from "../types";
 
-export type AssetModalProps = AssetModalPropsType;
+export type AssetModalProps = Pick<
+  AssetModalPropsType,
+  "isOpen" | "fileType" | "initialAssetUrl" | "onSelect" | "toggleAssetModal"
+>;
 
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";

@@ -22,13 +22,10 @@ export type Asset = AssetType;
 
 export type AssetSortType = SortType;
 
-export type OtherProps = {
+export type Props = {
   teamId?: string;
   initialAssetUrl?: string | null;
   allowDeletion?: boolean;
-};
-
-export type Props = {
   className?: string;
   assets?: Asset[];
   initialAsset?: Asset;
@@ -49,8 +46,8 @@ export type Props = {
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string) => void;
-  handleShowURL?: (assets?: Asset[]) => void;
-} & OtherProps;
+  onURLShow?: (assets?: Asset[]) => void;
+};
 
 const AssetContainer: React.FC<Props> = ({
   assets,

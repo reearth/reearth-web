@@ -20,7 +20,7 @@ const AssetContainer: React.FC<Props> = ({
   allowDeletion,
   height,
   isMultipleSelectable,
-  handleShowURL,
+  onURLShow,
 }) => {
   const {
     assets,
@@ -39,8 +39,8 @@ const AssetContainer: React.FC<Props> = ({
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
 
   useEffect(() => {
-    handleShowURL?.(assets);
-  }, [assets, handleShowURL]);
+    onURLShow?.(assets);
+  }, [assets, onURLShow]);
 
   useEffect(() => {
     if (initialAsset) {

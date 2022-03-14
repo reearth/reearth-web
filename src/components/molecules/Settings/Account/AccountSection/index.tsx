@@ -11,7 +11,7 @@ import Section from "@reearth/components/molecules/Settings/Section";
 import { localesWithLabel } from "@reearth/locale";
 import { styled } from "@reearth/theme";
 
-export type Theme = "dark" | "light";
+export type Theme = "dark" | "light" | "default";
 
 export type Props = {
   email?: string;
