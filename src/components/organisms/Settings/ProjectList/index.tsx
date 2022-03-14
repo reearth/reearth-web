@@ -49,9 +49,9 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         assetModal={
           <AssetModal
             teamId={teamId}
-            openAssets={assetModalOpened}
+            isOpen={assetModalOpened}
             onSelect={onAssetSelect}
-            setOpenAssets={toggleAssetModal}
+            toggleAssetModal={toggleAssetModal}
           />
         }
       />

@@ -154,7 +154,7 @@ export default (teamId: string) => {
     [assetModalOpened, setOpenAssets],
   );
 
-  const onAssetSelect = useCallback((asset: string | null) => {
+  const onAssetSelect = useCallback((asset?: string) => {
     if (!asset) return;
     selectAsset(asset);
   }, []);
