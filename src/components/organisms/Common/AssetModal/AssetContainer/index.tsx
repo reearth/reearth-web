@@ -15,7 +15,6 @@ const AssetContainer: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
   selectAssetUrl,
-  //   onUnmount,
   fileType,
   smallCardOnly,
   allowDeletion,
@@ -42,6 +41,12 @@ const AssetContainer: React.FC<Props> = ({
   useEffect(() => {
     handleShowURL?.(assets);
   }, [assets, handleShowURL]);
+
+  useEffect(() => {
+    if (initialAsset) {
+      selectAsset([initialAsset]);
+    }
+  }, [initialAsset]);
 
   const filteredAssets = useMemo(() => {
     if (!assets) return;
