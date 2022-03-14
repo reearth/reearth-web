@@ -14,7 +14,7 @@ export type Props = AssetContainerProps;
 const AssetContainer: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
-  selectAssetUrl,
+  onAssetUrlSelect,
   fileType,
   smallCardOnly,
   allowDeletion,
@@ -75,10 +75,10 @@ const AssetContainer: React.FC<Props> = ({
         selectAsset(assets => [...assets, asset]);
       } else {
         selectAsset([asset]);
-        selectAssetUrl?.(asset.url);
+        onAssetUrlSelect?.(asset.url);
       }
     },
-    [isMultipleSelectable, selectedAssets, selectAsset, selectAssetUrl],
+    [isMultipleSelectable, selectedAssets, selectAsset, onAssetUrlSelect],
   );
 
   return (

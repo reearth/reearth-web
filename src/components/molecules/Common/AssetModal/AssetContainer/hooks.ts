@@ -23,7 +23,7 @@ export default ({
   sort,
   smallCardOnly,
   onCreateAssets,
-  selectAssetUrl,
+  onAssetUrlSelect,
   onRemove,
   onSortChange,
   onSearch,
@@ -35,7 +35,7 @@ export default ({
   sort?: { type?: SortType | null; reverse?: boolean };
   smallCardOnly?: boolean;
   onCreateAssets?: (files: FileList) => void;
-  selectAssetUrl?: (asset?: string) => void;
+  onAssetUrlSelect?: (asset?: string) => void;
   onRemove?: (assetIds: string[]) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string | undefined) => void;
@@ -75,10 +75,10 @@ export default ({
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
       onRemove?.(selectedAssets.map(a => a.id));
-      selectAssetUrl?.();
+      onAssetUrlSelect?.();
       setDeleteModalVisible(false);
     }
-  }, [onRemove, selectAssetUrl, selectedAssets]);
+  }, [onRemove, onAssetUrlSelect, selectedAssets]);
 
   const handleReverse = useCallback(() => {
     onSortChange?.(undefined, !sort?.reverse);

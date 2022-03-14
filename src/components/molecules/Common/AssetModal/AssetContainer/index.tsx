@@ -45,7 +45,7 @@ export type Props = {
   onCreateAssets?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
   onGetMore?: () => void;
-  selectAssetUrl?: (asset?: string) => void;
+  onAssetUrlSelect?: (asset?: string) => void;
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string) => void;
@@ -68,7 +68,7 @@ const AssetContainer: React.FC<Props> = ({
   onCreateAssets,
   onRemove,
   onGetMore,
-  selectAssetUrl,
+  onAssetUrlSelect,
   onSelect,
   onSortChange,
   onSearch,
@@ -95,7 +95,7 @@ const AssetContainer: React.FC<Props> = ({
     smallCardOnly,
     onSortChange,
     onCreateAssets,
-    selectAssetUrl,
+    onAssetUrlSelect,
     onRemove,
     onSearch,
   });
