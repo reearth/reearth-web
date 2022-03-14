@@ -1,4 +1,3 @@
-import { useApolloClient } from "@apollo/client";
 import { useNavigate } from "@reach/router";
 import { useEffect } from "react";
 
@@ -11,7 +10,6 @@ export type Params = {
 
 export default (params: Params) => {
   const navigate = useNavigate();
-  const gqlCache = useApolloClient().cache;
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
 
@@ -33,12 +31,6 @@ export default (params: Params) => {
       navigate(`/settings/workspace/${currentTeam?.id}/asset`);
     }
   }, [params, currentTeam, navigate]);
-
-  useEffect(() => {
-    return () => {
-      gqlCache.evict({ fieldName: "assets" });
-    };
-  }, [gqlCache]);
 
   return {
     currentProject,

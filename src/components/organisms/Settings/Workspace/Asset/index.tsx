@@ -2,7 +2,7 @@ import React from "react";
 import { useIntl } from "react-intl";
 
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
-import AssetSection from "@reearth/components/molecules/Settings/Workspace/Asset/AssetSection";
+import AssetContainer from "@reearth/components/organisms/Common/AssetContainer";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
 
 import useHooks from "./hooks";
@@ -13,20 +13,7 @@ type Props = {
 
 const Asset: React.FC<Props> = ({ teamId }: Props) => {
   const intl = useIntl();
-  const {
-    currentProject,
-    currentTeam,
-    assets,
-    isLoading,
-    hasMoreAssets,
-    sort,
-    searchTerm,
-    getMoreAssets,
-    createAssets,
-    handleSortChange,
-    handleSearchTerm,
-    removeAssets,
-  } = useHooks({ teamId });
+  const { currentProject, currentTeam } = useHooks({ teamId });
 
   return (
     <SettingPage teamId={teamId} projectId={currentProject?.id}>
@@ -34,18 +21,7 @@ const Asset: React.FC<Props> = ({ teamId }: Props) => {
         title={intl.formatMessage({ defaultMessage: "Assets" })}
         currentWorkspace={currentTeam}
       />
-      <AssetSection
-        assets={assets}
-        isLoading={isLoading}
-        hasMoreAssets={hasMoreAssets}
-        sort={sort}
-        searchTerm={searchTerm}
-        onGetMoreAssets={getMoreAssets}
-        onCreateAssets={createAssets}
-        onSortChange={handleSortChange}
-        onSearch={handleSearchTerm}
-        onRemoveAssets={removeAssets}
-      />
+      <AssetContainer teamId={teamId} isMultipleSelectable height={700} allowDeletion />
     </SettingPage>
   );
 };
