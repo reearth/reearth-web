@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import assetHooks from "@reearth/components/organisms/Common/AssetModal/hooks";
+import assetHooks from "@reearth/components/organisms/Common/AssetContainer/hooks";
 import {
   useGetScenePropertyQuery,
   useGetLayerPropertyQuery,

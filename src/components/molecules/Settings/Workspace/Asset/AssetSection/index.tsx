@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 
 import AssetContainer, {
   Asset as AssetType,
@@ -17,16 +17,16 @@ type Asset = {
 };
 
 type Props = {
-  assets: AssetType[];
-  isLoading: boolean;
-  hasMoreAssets: boolean | undefined;
+  assets?: AssetType[];
+  isLoading?: boolean;
+  hasMoreAssets?: boolean | undefined;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
   searchTerm?: string;
-  onGetMoreAssets: () => void;
-  onCreateAssets: (files: FileList) => Promise<void>;
-  onRemoveAssets: (assetIds: string[]) => Promise<void>;
-  onSortChange: (type?: string, reverse?: boolean) => void;
-  onSearch: (term?: string) => void;
+  onGetMoreAssets?: () => void;
+  onCreateAssets?: (files: FileList) => Promise<void>;
+  onRemoveAssets?: (assetIds: string[]) => Promise<void>;
+  onSortChange?: (type?: string, reverse?: boolean) => void;
+  onSearch?: (term?: string) => void;
 };
 
 const AssetSection: React.FC<Props> = ({
@@ -41,7 +41,11 @@ const AssetSection: React.FC<Props> = ({
   onSearch,
   onRemoveAssets,
 }) => {
-  const [selectedAssets, selectAsset] = useState<Asset[]>([]);
+  const [selectedAssets, selectAsset] = useState<Asset[] | undefined>();
+
+  const handleAssetSelect = useCallback((asset?: Asset) => {
+    selectAsset(asset ? [asset] : undefined);
+  }, []);
 
   return (
     <AssetContainer
@@ -53,11 +57,11 @@ const AssetSection: React.FC<Props> = ({
       height={700}
       hasMoreAssets={hasMoreAssets}
       isLoading={isLoading}
-      onCreateAsset={onCreateAssets}
+      onCreateAssets={onCreateAssets}
       onRemove={onRemoveAssets}
       onSortChange={onSortChange}
       onSearch={onSearch}
-      selectAsset={selectAsset}
+      onSelect={handleAssetSelect}
       onGetMore={onGetMoreAssets}
     />
   );

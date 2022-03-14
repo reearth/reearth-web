@@ -5,7 +5,7 @@ import MoleculeAssetContainer, {
   Props as AssetContainerProps,
 } from "@reearth/components/molecules/Common/AssetModal/AssetContainer";
 
-import useHooks from "../hooks";
+import useHooks from "./hooks";
 
 export type Asset = AssetType;
 

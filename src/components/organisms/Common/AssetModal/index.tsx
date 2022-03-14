@@ -2,7 +2,7 @@ import React from "react";
 
 import MoleculeAssetModal from "@reearth/components/molecules/Common/AssetModal";
 
-import AssetContainer from "./AssetContainer";
+import AssetContainer from "../AssetContainer";
 
 export interface Props {
   teamId?: string;

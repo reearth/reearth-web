@@ -2,7 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { useNavigate } from "@reach/router";
 import { useEffect } from "react";
 
-import assetHooks from "@reearth/components/organisms/Common/AssetModal/hooks";
+import assetHooks from "@reearth/components/organisms/Common/AssetContainer/hooks";
 import { useTeam, useProject } from "@reearth/state";
 
 export type Params = {
@@ -25,7 +25,6 @@ export default (params: Params) => {
     createAssets,
     handleSortChange,
     handleSearchTerm,
-    handleModalClose,
     removeAssets,
   } = assetHooks(currentTeam?.id);
 
@@ -53,7 +52,6 @@ export default (params: Params) => {
     createAssets,
     handleSortChange,
     handleSearchTerm,
-    handleModalClose,
     removeAssets,
   };
 };
