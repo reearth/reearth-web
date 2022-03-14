@@ -1,22 +1,17 @@
 import React from "react";
 
-import MoleculeAssetModal from "@reearth/components/molecules/Common/AssetModal";
+import MoleculeAssetModal, {
+  Props as PropsType,
+} from "@reearth/components/molecules/Common/AssetModal";
 
 import AssetContainer from "../AssetContainer";
 
-export interface Props {
-  teamId?: string;
-  initialAssetUrl?: string | null;
-  openAssets?: boolean;
-  toggleAssetModal?: (b: boolean) => void;
-  onSelect?: (asset?: string) => void;
-  fileType?: "image" | "video";
-}
+export type Props = PropsType;
 
 const AssetModal: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
-  openAssets,
+  isOpen,
   toggleAssetModal,
   onSelect,
   fileType = "image",
@@ -26,7 +21,7 @@ const AssetModal: React.FC<Props> = ({
       teamId={teamId}
       initialAssetUrl={initialAssetUrl}
       fileType={fileType}
-      isOpen={openAssets}
+      isOpen={isOpen}
       toggleAssetModal={toggleAssetModal}
       onSelect={onSelect}
       assetContainer={AssetContainer}

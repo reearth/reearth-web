@@ -61,9 +61,9 @@ const Public: React.FC<Props> = ({ projectId }) => {
             assetModal={
               <AssetModal
                 teamId={currentTeam?.id}
-                openAssets={assetModalOpened}
+                isOpen={assetModalOpened}
                 onSelect={updatePublicImage}
-                setOpenAssets={toggleAssetModal}
+                toggleAssetModal={toggleAssetModal}
               />
             }
           />

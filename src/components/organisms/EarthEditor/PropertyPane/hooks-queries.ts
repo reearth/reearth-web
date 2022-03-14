@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import assetHooks from "@reearth/components/organisms/Common/AssetContainer/hooks";
 import {
   useGetScenePropertyQuery,
   useGetLayerPropertyQuery,
@@ -18,7 +17,6 @@ export default ({
   rootLayerId,
   selected,
   selectedBlock,
-  teamId,
   mode,
   locale,
 }: {
@@ -26,22 +24,9 @@ export default ({
   rootLayerId?: string;
   selected?: Selected;
   selectedBlock?: string;
-  teamId?: string;
   mode: Mode;
   locale: string;
 }) => {
-  const {
-    assets,
-    isLoading: isAssetsLoading,
-    hasMoreAssets,
-    sort: assetSort,
-    searchTerm: assetSearchTerm,
-    getMoreAssets,
-    createAssets,
-    handleSortChange: handleAssetSortChange,
-    handleSearchTerm: handleAssetSearch,
-  } = assetHooks(teamId);
-
   const {
     loading: layerLoading,
     error: layerError,
@@ -217,14 +202,5 @@ export default ({
     datasetSchemas,
     layers,
     selectedWidget,
-    assets,
-    isAssetsLoading,
-    hasMoreAssets,
-    assetSort,
-    assetSearchTerm,
-    getMoreAssets,
-    createAssets,
-    handleAssetSortChange,
-    handleAssetSearch,
   };
 };

@@ -1,33 +1,18 @@
-import { useApolloClient } from "@apollo/client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, ComponentType } from "react";
 import { useIntl } from "react-intl";
 
 import Icon from "@reearth/components/atoms/Icon";
-import AssetModal, {
-  Asset as AssetType,
-  AssetSortType as SortType,
-} from "@reearth/components/molecules/Common/AssetModal";
+import { Props as AssetModalPropsType } from "@reearth/components/molecules/Common/AssetModal";
 import { styled } from "@reearth/theme";
 
 import TextField from "../TextField";
 import { FieldProps } from "../types";
 
-export type Asset = AssetType;
-
-export type AssetSortType = SortType;
+export type AssetModalProps = AssetModalPropsType;
 
 export type Props = FieldProps<string> & {
   fileType?: "image" | "video";
-  assets?: AssetType[];
-  isAssetsLoading?: boolean;
-  hasMoreAssets?: boolean;
-  assetSort?: { type?: AssetSortType | null; reverse?: boolean };
-  assetSearchTerm?: string;
-  onGetMoreAssets?: () => void;
-  onCreateAssets?: (files: FileList) => Promise<void>;
-  onAssetSort?: (type?: string, reverse?: boolean) => void;
-  onAssetSearch?: (term?: string) => void;
-  onRemoveFile?: () => void;
+  assetModal?: ComponentType<AssetModalProps>;
 };
 
 const URLField: React.FC<Props> = ({
@@ -36,71 +21,57 @@ const URLField: React.FC<Props> = ({
   linked,
   overridden,
   fileType,
-  assets,
-  isAssetsLoading,
-  hasMoreAssets,
-  assetSort,
-  assetSearchTerm,
-  onGetMoreAssets,
-  onCreateAssets,
-  onAssetSort,
-  onAssetSearch,
+  assetModal: AssetModal,
   onChange,
 }) => {
   const intl = useIntl();
-  const gqlCache = useApolloClient().cache;
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
-  const openAssetModal = useCallback(() => setAssetModalOpen(true), []);
-  const closeAssetModal = useCallback(() => {
-    setAssetModalOpen(false);
-    setTimeout(() => {
-      onAssetSort?.(undefined);
-      onAssetSearch?.(undefined);
-      gqlCache.evict({ fieldName: "assets" });
-    }, 200);
-  }, [gqlCache, onAssetSearch, onAssetSort]);
   const deleteValue = useCallback(() => onChange?.(null), [onChange]);
+
+  const handleAssetModalOpen = useCallback(() => {
+    setAssetModalOpen(!isAssetModalOpen);
+  }, [isAssetModalOpen]);
+
+  const handleChange = useCallback(
+    (value?: string) => {
+      if (!value) return;
+      onChange?.(value);
+    },
+    [onChange],
+  );
 
   return (
     <Wrapper>
       <InputWrapper>
         <StyledTextField
           name={name}
-          value={value}
+          value={value ? intl.formatMessage({ defaultMessage: "Field set" }) : undefined}
           onChange={onChange}
           placeholder={intl.formatMessage({ defaultMessage: "Not set" })}
           linked={linked}
           overridden={overridden}
           disabled
-          onClick={openAssetModal}
+          onClick={handleAssetModalOpen}
         />
         {value ? (
           <AssetButton icon="bin" size={18} onClick={deleteValue} />
         ) : fileType === "image" ? (
-          <AssetButton icon="image" size={18} active={!linked} onClick={openAssetModal} />
+          <AssetButton icon="image" size={18} active={!linked} onClick={handleAssetModalOpen} />
         ) : fileType === "video" ? (
-          <AssetButton icon="video" size={18} active={!linked} onClick={openAssetModal} />
+          <AssetButton icon="video" size={18} active={!linked} onClick={handleAssetModalOpen} />
         ) : (
-          <AssetButton icon="resource" size={18} active={!linked} onClick={openAssetModal} />
+          <AssetButton icon="resource" size={18} active={!linked} onClick={handleAssetModalOpen} />
         )}
       </InputWrapper>
-      <AssetModal
-        assets={assets}
-        isOpen={isAssetModalOpen}
-        fileType={fileType}
-        smallCardOnly
-        value={value}
-        isLoading={isAssetsLoading}
-        hasMoreAssets={hasMoreAssets}
-        sort={assetSort}
-        searchTerm={assetSearchTerm}
-        onSelect={onChange}
-        onClose={closeAssetModal}
-        onGetMoreAssets={onGetMoreAssets}
-        onCreateAssets={onCreateAssets}
-        onSortChange={onAssetSort}
-        onSearch={onAssetSearch}
-      />
+      {AssetModal && (
+        <AssetModal
+          isOpen={isAssetModalOpen}
+          fileType={fileType}
+          initialAssetUrl={value}
+          onSelect={handleChange}
+          toggleAssetModal={handleAssetModalOpen}
+        />
+      )}
     </Wrapper>
   );
 };

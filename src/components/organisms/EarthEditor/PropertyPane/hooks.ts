@@ -61,22 +61,12 @@ export default (mode: Mode) => {
     datasetSchemas,
     layers,
     selectedWidget,
-    assets,
-    isAssetsLoading,
-    hasMoreAssets,
-    assetSort,
-    assetSearchTerm,
-    getMoreAssets,
-    createAssets,
-    handleAssetSortChange,
-    handleAssetSearch,
   } = useQueries({
     mode,
     sceneId,
     rootLayerId,
     selectedBlock,
     selected,
-    teamId: team?.id,
     locale: intl.locale,
   });
 
@@ -319,6 +309,7 @@ export default (mode: Mode) => {
 
   return {
     pane,
+    teamId: team?.id,
     error,
     loading,
     isLayerGroup,
@@ -346,14 +337,5 @@ export default (mode: Mode) => {
     updatePropertyItems,
     datasetSchemas,
     layers,
-    assets,
-    isAssetsLoading,
-    hasMoreAssets,
-    assetSort,
-    assetSearchTerm,
-    getMoreAssets,
-    createAssets,
-    handleAssetSortChange,
-    handleAssetSearch,
   };
 };

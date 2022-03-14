@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, ComponentType } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
 import PropertyTitle, {
@@ -26,7 +26,7 @@ import SwitchField from "./SwitchField";
 import TextField from "./TextField";
 import { FieldProps } from "./types";
 import TypographyField from "./TypographyField";
-import URLField, { Asset as AssetType, AssetSortType as SortType } from "./URLField";
+import URLField, { AssetModalProps as AssetModalPropsType } from "./URLField";
 
 export type { Dataset, DatasetSchema, DatasetField, Type as DatasetType } from "./PropertyTitle";
 
@@ -35,8 +35,7 @@ export type ValueTypes = ValueTypesType;
 export type LatLng = LatLngType;
 export type Location = LocationType;
 export type Layer = LayerType;
-export type Asset = AssetType;
-export type AssetSortType = SortType;
+export type AssetModalProps = AssetModalPropsType;
 
 export type SchemaField<T extends ValueType = ValueType> = {
   id: string;
@@ -96,15 +95,7 @@ export type Props<T extends ValueType = ValueType> = {
   isCapturing?: boolean;
   camera?: Camera;
   layers?: LayerType[];
-  assets?: AssetType[];
-  isAssetsLoading?: boolean;
-  hasMoreAssets?: boolean | undefined;
-  assetSort?: { type?: AssetSortType | null; reverse?: boolean };
-  assetSearchTerm?: string;
-  onGetMoreAssets?: () => void;
-  onCreateAssets?: (files: FileList) => Promise<void>;
-  onAssetSort?: (type?: string, reverse?: boolean) => void;
-  onAssetSearch?: (term?: string) => void;
+  assetModal?: ComponentType<AssetModalProps>;
   onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
@@ -134,15 +125,7 @@ const PropertyField: React.FC<Props> = ({
   linkedDatasetSchemaId,
   linkedDatasetId,
   layers,
-  assets,
-  isAssetsLoading,
-  hasMoreAssets,
-  assetSort,
-  assetSearchTerm,
-  onGetMoreAssets,
-  onCreateAssets,
-  onAssetSort,
-  onAssetSearch,
+  assetModal,
 }) => {
   const rawEvents = useMemo(
     () => ({
@@ -233,15 +216,7 @@ const PropertyField: React.FC<Props> = ({
           <URLField
             {...commonProps}
             fileType={schema.ui === "image" || schema.ui === "video" ? schema.ui : undefined}
-            assets={assets}
-            isAssetsLoading={isAssetsLoading}
-            hasMoreAssets={hasMoreAssets}
-            assetSort={assetSort}
-            assetSearchTerm={assetSearchTerm}
-            onGetMoreAssets={onGetMoreAssets}
-            onCreateAssets={onCreateAssets}
-            onAssetSort={onAssetSort}
-            onAssetSearch={onAssetSearch}
+            assetModal={assetModal}
           />
         ) : type === "typography" ? (
           <TypographyField {...commonProps} />

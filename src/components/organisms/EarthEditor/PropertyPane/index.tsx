@@ -1,7 +1,10 @@
-import React from "react";
+import React, { ComponentType } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import Wrapper from "@reearth/components/molecules/EarthEditor/PropertyPane";
+import AssetModal, {
+  Props as AssetModalProps,
+} from "@reearth/components/organisms/Common/AssetModal";
 
 import useHooks, { Mode as RawMode } from "./hooks";
 
@@ -13,6 +16,7 @@ export interface Props {
 const PropertyPane: React.FC<Props> = ({ mode }) => {
   const {
     pane,
+    teamId,
     isLayerGroup,
     linkedDatasetSchemaId,
     linkedDatasetId,
@@ -22,15 +26,6 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     datasetSchemas,
     loading,
     layers,
-    assets,
-    isAssetsLoading,
-    hasMoreAssets,
-    assetSort,
-    assetSearchTerm,
-    getMoreAssets,
-    createAssets,
-    handleAssetSortChange,
-    handleAssetSearch,
     selectedWidget,
     widgetAlignEditorActivated,
     changeValue,
@@ -49,6 +44,10 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     onWidgetAlignEditorActivate,
     updatePropertyItems,
   } = useHooks(mode);
+
+  const AssetModalComponent: ComponentType<AssetModalProps> = ({ ...props }) => (
+    <AssetModal teamId={teamId} {...props} />
+  );
   return (
     <>
       {pane && (
@@ -67,15 +66,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           linkedDatasetId={linkedDatasetId}
           datasetSchemas={datasetSchemas}
           layers={layers}
-          assets={assets}
-          assetSort={assetSort}
-          assetSearchTerm={assetSearchTerm}
-          hasMoreAssets={hasMoreAssets}
-          isAssetsLoading={isAssetsLoading}
-          onCreateAssets={createAssets}
-          onAssetSort={handleAssetSortChange}
-          onAssetSearch={handleAssetSearch}
-          onGetMoreAssets={getMoreAssets}
+          assetModal={AssetModalComponent}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
           onCreateInfobox={createInfobox}

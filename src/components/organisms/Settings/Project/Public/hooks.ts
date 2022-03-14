@@ -116,7 +116,7 @@ export default ({ projectId }: Params) => {
     [projectId, updateProject],
   );
   const updatePublicImage = useCallback(
-    (publicImage: string | null) => {
+    (publicImage?: string) => {
       projectId && updateProject({ variables: { projectId, publicImage } });
     },
     [projectId, updateProject],
