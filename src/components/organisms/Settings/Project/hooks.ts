@@ -72,7 +72,7 @@ export default ({ projectId }: Params) => {
   );
 
   const updateProjectImageUrl = useCallback(
-    (imageUrl: string | null) => {
+    (imageUrl?: string) => {
       projectId && updateProjectMutation({ variables: { projectId, imageUrl } });
     },
     [projectId, updateProjectMutation],

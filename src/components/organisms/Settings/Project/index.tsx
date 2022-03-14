@@ -42,7 +42,7 @@ const Project: React.FC<Props> = ({ projectId }) => {
               openAssets={assetModalOpened}
               initialAssetUrl={project?.imageUrl}
               onSelect={updateProjectImageUrl}
-              setOpenAssets={toggleAssetModal}
+              toggleAssetModal={toggleAssetModal}
             />
           }
         />
