@@ -43,15 +43,15 @@ const AssetModal: React.FC<Props> = ({
   assetContainer: AssetContainer,
 }) => {
   const intl = useIntl();
-  const labels: { [t in Tabs]: string } = {
-    assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
-    url: intl.formatMessage({ defaultMessage: "Use URL" }),
-  };
-
   const [showURL, setShowURL] = useState(false);
   const [selectedTab, selectTab] = useState<Tabs>("assets");
   const [textUrl, setTextUrl] = useState(showURL && initialAssetUrl ? initialAssetUrl : undefined);
   const [selectedAssetUrl, selectAssetUrl] = useState(initialAssetUrl ?? undefined);
+
+  const labels: { [t in Tabs]: string } = {
+    assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
+    url: intl.formatMessage({ defaultMessage: "Use URL" }),
+  };
 
   const handleShowURL = useCallback(
     (assets?: AssetType[]) => {
