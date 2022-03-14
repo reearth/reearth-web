@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 import { useMedia } from "react-use";
 
@@ -22,19 +22,26 @@ export interface Props {
   assetModal?: React.ReactNode;
   toggleAssetModal?: () => void;
   selectedAsset?: string;
+  onAssetSelect?: (asset?: string) => void;
 }
 
 const QuickStart: React.FC<Props> = ({
   className,
+  assetModal,
+  selectedAsset,
   onCreateTeam,
   onCreateProject,
-  assetModal,
   toggleAssetModal,
-  selectedAsset,
+  onAssetSelect,
 }) => {
   const intl = useIntl();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
+
+  const handleProjModalClose = useCallback(() => {
+    setProjCreateOpen(false);
+    onAssetSelect?.();
+  }, [onAssetSelect]);
 
   const theme = useTheme();
 
@@ -80,7 +87,7 @@ const QuickStart: React.FC<Props> = ({
       </Content>
       <ProjectCreationModal
         open={projCreateOpen}
-        onClose={() => setProjCreateOpen(false)}
+        onClose={handleProjModalClose}
         onSubmit={onCreateProject}
         toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}

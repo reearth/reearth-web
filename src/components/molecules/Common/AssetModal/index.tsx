@@ -26,7 +26,7 @@ export type Props = {
   initialAssetUrl?: string | null;
   fileType?: "image" | "video";
   isOpen?: boolean;
-  onSelect?: (value: string | null) => void;
+  onSelect?: (value?: string) => void;
   toggleAssetModal?: (b: boolean) => void;
   assetContainer?: ComponentType<AssetContainerProps>;
 };
@@ -69,7 +69,7 @@ const AssetModal: React.FC<Props> = ({
 
   const handleSave = useCallback(() => {
     onSelect?.(
-      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssetUrl) || null,
+      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssetUrl) || undefined,
     );
     toggleAssetModal?.(false);
   }, [toggleAssetModal, selectedAssetUrl, selectedTab, onSelect, fileType, textUrl]);

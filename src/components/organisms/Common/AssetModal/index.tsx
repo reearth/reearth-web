@@ -9,7 +9,7 @@ export interface Props {
   initialAssetUrl?: string | null;
   openAssets?: boolean;
   toggleAssetModal?: (b: boolean) => void;
-  onSelect?: (asset: string | null) => void;
+  onSelect?: (asset?: string) => void;
   fileType?: "image" | "video";
 }
 
