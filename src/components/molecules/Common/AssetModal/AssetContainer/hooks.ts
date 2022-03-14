@@ -20,8 +20,8 @@ export default ({
   selectedAssets,
   sort,
   smallCardOnly,
-  onCreateAsset,
-  selectAsset,
+  onCreateAssets,
+  selectAssetUrl,
   onRemove,
   onSortChange,
   onSearch,
@@ -31,8 +31,8 @@ export default ({
   selectedAssets?: Asset[];
   sort?: { type?: SortType | null; reverse?: boolean };
   smallCardOnly?: boolean;
-  onCreateAsset?: (files: FileList) => void;
-  selectAsset?: (assets: Asset[]) => void;
+  onCreateAssets?: (files: FileList) => void;
+  selectAssetUrl?: (asset?: string) => void;
   onRemove?: (assetIds: string[]) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string | undefined) => void;
@@ -53,15 +53,7 @@ export default ({
       ? "filterTimeReverse"
       : "filterTime";
 
-  const handleAssetsSelect = (asset: Asset) => {
-    selectedAssets?.includes(asset)
-      ? selectAsset?.(selectedAssets?.filter(a => a !== asset))
-      : selectAsset?.(
-          isMultipleSelectable && selectedAssets ? [...selectedAssets, asset] : [asset],
-        );
-  };
-
-  const handleFileSelect = useFileInput(files => onCreateAsset?.(files), {
+  const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
     accept,
     multiple: isMultipleSelectable,
   });
@@ -77,10 +69,10 @@ export default ({
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
       onRemove?.(selectedAssets.map(a => a.id));
-      selectAsset?.([]);
+      selectAssetUrl?.();
       setDeleteModalVisible(false);
     }
-  }, [onRemove, selectAsset, selectedAssets]);
+  }, [onRemove, selectAssetUrl, selectedAssets]);
 
   const handleSearch = useCallback(
     (term?: string) => {
@@ -98,7 +90,6 @@ export default ({
     iconChoice,
     deleteModalVisible,
     setLayoutType,
-    handleAssetsSelect,
     handleUploadToAsset,
     handleReverse,
     handleSearch,

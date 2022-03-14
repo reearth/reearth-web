@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo, ComponentType } from "react";
+import React, { useCallback, useState, useEffect, ComponentType } from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
@@ -22,44 +22,24 @@ export type AssetSortType = SortType;
 
 export type Props = {
   className?: string;
-  assets?: AssetType[];
-  isLoading?: boolean;
-  hasMoreAssets?: boolean | undefined;
-  sort?: { type?: AssetSortType | null; reverse?: boolean };
-  searchTerm?: string;
-  isMultipleSelectable?: boolean;
-  isOpen?: boolean;
-  value?: string;
-  smallCardOnly?: boolean;
+  teamId?: string;
+  initialAssetUrl?: string | null;
   fileType?: "image" | "video";
-  onGetMoreAssets?: () => void;
-  onCreateAssets?: (files: FileList) => Promise<void>;
-  onSortChange?: (type?: string, reverse?: boolean) => void;
-  onSearch?: (term?: string) => void;
-  onClose?: () => void;
+  isOpen?: boolean;
   onSelect?: (value: string | null) => void;
-  assetContainer?: ComponentType<{ value?: string } & AssetContainerProps>;
+  onOpenModal?: (b: boolean) => void;
+  assetContainer?: ComponentType<AssetContainerProps>;
 };
 
 type Tabs = "assets" | "url";
 
 const AssetModal: React.FC<Props> = ({
-  assets,
-  isLoading,
-  hasMoreAssets,
-  sort,
-  searchTerm,
-  isMultipleSelectable = false,
-  isOpen,
-  value,
-  smallCardOnly,
+  teamId,
+  initialAssetUrl,
   fileType,
-  onGetMoreAssets,
-  onCreateAssets,
-  onSortChange,
-  onSearch,
-  onClose,
+  isOpen,
   onSelect,
+  onOpenModal,
   assetContainer: AssetContainer,
 }) => {
   const intl = useIntl();
@@ -67,59 +47,48 @@ const AssetModal: React.FC<Props> = ({
     assets: intl.formatMessage({ defaultMessage: "Assets Library" }),
     url: intl.formatMessage({ defaultMessage: "Use URL" }),
   };
-  const showURL = fileType === "video" || (value && !assets?.some(e => e.url === value));
 
-  const [selectedTab, selectTab] = useState<Tabs>(showURL ? "url" : "assets");
+  const [showURL, setShowURL] = useState(false);
+  const [selectedTab, selectTab] = useState<Tabs>("assets");
+  const [textUrl, setTextUrl] = useState(showURL && initialAssetUrl ? initialAssetUrl : undefined);
+  const [selectedAssetUrl, selectAssetUrl] = useState(initialAssetUrl ?? undefined);
 
-  const initialAsset = assets?.find(a => a.url === value);
-
-  const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
-  const [textUrl, setTextUrl] = useState(showURL ? value : undefined);
-  const accept =
-    fileType === "image"
-      ? "image/*"
-      : fileType === "video"
-      ? "video/*"
-      : fileType
-      ? "*/*"
-      : undefined;
-
-  const handleSetUrl = useCallback(() => {
-    onSelect?.(
-      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssets[0]?.url) || null,
-    );
-    onClose?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onClose, selectedAssets, selectedTab, onSelect, fileType, textUrl]);
+  const handleShowURL = useCallback(
+    (assets?: AssetType[]) => {
+      setShowURL(
+        fileType === "video" ||
+          !!(selectedAssetUrl && !assets?.some(e => e.url === selectedAssetUrl)),
+      );
+    },
+    [fileType, selectedAssetUrl],
+  );
 
   const handleTextUrlChange = useCallback(text => {
     setTextUrl(text);
   }, []);
 
+  const handleSave = useCallback(() => {
+    onSelect?.(
+      (selectedTab === "url" || fileType === "video" ? textUrl : selectedAssetUrl) || null,
+    );
+    onOpenModal?.(false);
+  }, [onOpenModal, selectedAssetUrl, selectedTab, onSelect, fileType, textUrl]);
+
   const resetValues = useCallback(() => {
-    setTextUrl(showURL ? value : undefined);
-    selectTab(showURL ? "url" : "assets");
-    selectAsset(initialAsset ? [initialAsset] : []);
-  }, [value, showURL, initialAsset]);
+    setTextUrl(showURL && initialAssetUrl ? initialAssetUrl : undefined);
+    selectTab("assets");
+    selectAssetUrl(initialAssetUrl ?? undefined);
+  }, [showURL, initialAssetUrl]);
 
   const handleModalClose = useCallback(() => {
     resetValues();
-    onClose?.();
-  }, [onClose, resetValues]);
+    onOpenModal?.(false);
+  }, [onOpenModal, resetValues]);
 
   useEffect(() => {
     resetValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialAsset, showURL, value]);
-
-  const filteredAssets = useMemo(() => {
-    if (!assets) return;
-    return assets.filter(
-      a =>
-        !fileType ||
-        a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp|svg)$/ : /\.(mp4|webm)$/),
-    );
-  }, [assets, fileType]);
+  }, [initialAssetUrl, showURL]);
 
   return fileType === "video" ? (
     <Modal
@@ -132,7 +101,7 @@ const AssetModal: React.FC<Props> = ({
           large
           buttonType="primary"
           text={intl.formatMessage({ defaultMessage: "Save" })}
-          onClick={handleSetUrl}
+          onClick={handleSave}
         />
       }
       button2={
@@ -166,7 +135,7 @@ const AssetModal: React.FC<Props> = ({
           large
           text={intl.formatMessage({ defaultMessage: "Select" })}
           buttonType="primary"
-          onClick={handleSetUrl}
+          onClick={handleSave}
         />
       }
       button2={
@@ -179,23 +148,14 @@ const AssetModal: React.FC<Props> = ({
       }>
       {selectedTab === "assets" && AssetContainer && (
         <AssetContainer
-          assets={filteredAssets}
-          initialAsset={initialAsset}
-          selectedAssets={selectedAssets}
-          hasMoreAssets={hasMoreAssets}
-          sort={sort}
-          searchTerm={searchTerm}
-          isMultipleSelectable={isMultipleSelectable}
-          accept={accept}
+          teamId={teamId}
+          initialAssetUrl={initialAssetUrl}
+          selectAssetUrl={selectAssetUrl}
+          onUnmount={() => onOpenModal?.(false)}
           fileType={fileType}
-          smallCardOnly={smallCardOnly}
-          isLoading={isLoading}
+          smallCardOnly
           height={425}
-          selectAsset={selectAsset}
-          onGetMore={onGetMoreAssets}
-          onCreateAsset={onCreateAssets}
-          onSortChange={onSortChange}
-          onSearch={onSearch}
+          handleShowURL={handleShowURL}
         />
       )}
       {selectedTab === "url" && (

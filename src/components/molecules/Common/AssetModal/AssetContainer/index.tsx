@@ -22,28 +22,37 @@ export type Asset = AssetType;
 
 export type AssetSortType = SortType;
 
+export type OtherProps = {
+  teamId?: string;
+  initialAssetUrl?: string | null;
+  allowDeletion?: boolean;
+  onUnmount?: () => void;
+};
+
 export type Props = {
   className?: string;
   assets?: Asset[];
-  value?: string;
-  isMultipleSelectable?: boolean;
-  accept?: string;
   initialAsset?: Asset;
   selectedAssets?: Asset[];
+  isLoading?: boolean;
+  isMultipleSelectable?: boolean;
+  accept?: string;
   fileType?: "image" | "video" | "file";
   height?: number;
   hasMoreAssets?: boolean;
-  isLoading?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
   searchTerm?: string;
   smallCardOnly?: boolean;
-  onCreateAsset?: (files: FileList) => void;
+  onCreateAssets?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
   onGetMore?: () => void;
-  selectAsset?: (assets: Asset[]) => void;
+  selectAssetUrl?: (asset?: string) => void;
+  onSelect?: (asset?: Asset | undefined) => void;
+  // selectAsset?: (assets: Asset[]) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string) => void;
-};
+  handleShowURL?: (assets?: Asset[]) => void;
+} & OtherProps;
 
 const AssetContainer: React.FC<Props> = ({
   assets,
@@ -58,10 +67,11 @@ const AssetContainer: React.FC<Props> = ({
   sort,
   searchTerm,
   smallCardOnly,
-  onCreateAsset,
+  onCreateAssets,
   onRemove,
   onGetMore,
-  selectAsset,
+  selectAssetUrl,
+  onSelect,
   onSortChange,
   onSearch,
 }) => {
@@ -71,7 +81,6 @@ const AssetContainer: React.FC<Props> = ({
     iconChoice,
     deleteModalVisible,
     setLayoutType,
-    handleAssetsSelect,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
@@ -84,8 +93,8 @@ const AssetContainer: React.FC<Props> = ({
     selectedAssets,
     smallCardOnly,
     onSortChange,
-    onCreateAsset,
-    selectAsset,
+    onCreateAssets,
+    selectAssetUrl,
     onRemove,
     onSearch,
   });
@@ -190,7 +199,7 @@ const AssetContainer: React.FC<Props> = ({
                   <AssetListItem
                     key={a.id}
                     asset={a}
-                    onCheck={() => handleAssetsSelect(a)}
+                    onCheck={() => onSelect?.(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={initialAsset === a}
                   />
@@ -201,7 +210,7 @@ const AssetContainer: React.FC<Props> = ({
                     name={a.name}
                     cardSize={layoutType}
                     url={a.url}
-                    onCheck={() => handleAssetsSelect(a)}
+                    onCheck={() => onSelect?.(a)}
                     selected={selectedAssets?.includes(a)}
                     checked={initialAsset === a}
                   />

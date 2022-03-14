@@ -43,7 +43,7 @@ function pagination(
   };
 }
 
-export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
+export default (teamId?: string, onUnmount?: () => void, allowDeletion?: boolean) => {
   const intl = useIntl();
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
@@ -153,14 +153,14 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
     setSearchTerm(term);
   }, []);
 
-  const handleModalClose = useCallback(() => {
-    setOpenAssets?.(false);
+  const handleUnmount = useCallback(() => {
+    onUnmount?.();
     setTimeout(() => {
       setSort(undefined);
       setSearchTerm(undefined);
       gqlCache.evict({ fieldName: "assets" });
     }, 200);
-  }, [setOpenAssets, gqlCache]);
+  }, [onUnmount, gqlCache]);
 
   useEffect(() => {
     if (sort || searchTerm) {
@@ -171,6 +171,13 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
     }
   }, [sort, searchTerm, refetch]);
 
+  // To do: useEffect with handleUnmount in return (aka on unmount, do handleUnmount)
+  // useEffect(() => {
+  //   return () => {
+  //     handleUnmount();
+  //   };
+  // }, [handleUnmount]);
+
   return {
     assets,
     isLoading: loading ?? isRefetching,
@@ -179,9 +186,9 @@ export default (teamId?: string, setOpenAssets?: (b: boolean) => void) => {
     searchTerm,
     getMoreAssets,
     createAssets,
-    removeAssets,
+    removeAssets: allowDeletion ? removeAssets : undefined,
     handleSortChange,
     handleSearchTerm,
-    handleModalClose,
+    handleUnmount,
   };
 };

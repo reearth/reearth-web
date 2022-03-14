@@ -3,46 +3,32 @@ import React from "react";
 import MoleculeAssetModal from "@reearth/components/molecules/Common/AssetModal";
 
 import AssetContainer from "./AssetContainer";
-import useHooks from "./hooks";
 
 export interface Props {
   teamId?: string;
+  initialAssetUrl?: string | null;
   openAssets?: boolean;
   setOpenAssets?: (b: boolean) => void;
-  createAssets?: (files: FileList) => Promise<void>;
   onSelect?: (asset: string | null) => void;
+  fileType?: "image" | "video";
 }
 
-const AssetModal: React.FC<Props> = ({ teamId, openAssets, setOpenAssets, onSelect }) => {
-  const {
-    assets,
-    isLoading,
-    hasMoreAssets,
-    sort,
-    searchTerm,
-    getMoreAssets,
-    createAssets,
-    handleSortChange,
-    handleSearchTerm,
-    handleModalClose,
-  } = useHooks(teamId, setOpenAssets);
-
+const AssetModal: React.FC<Props> = ({
+  teamId,
+  initialAssetUrl,
+  openAssets,
+  setOpenAssets,
+  onSelect,
+  fileType = "image",
+}) => {
   return (
     <MoleculeAssetModal
+      teamId={teamId}
+      initialAssetUrl={initialAssetUrl}
       isOpen={openAssets}
-      assets={assets}
-      isLoading={isLoading}
-      hasMoreAssets={hasMoreAssets}
-      sort={sort}
-      searchTerm={searchTerm}
-      fileType="image"
-      smallCardOnly
-      onClose={handleModalClose}
+      fileType={fileType}
+      onOpenModal={setOpenAssets}
       onSelect={onSelect}
-      onGetMoreAssets={getMoreAssets}
-      onCreateAssets={createAssets}
-      onSortChange={handleSortChange}
-      onSearch={handleSearchTerm}
       assetContainer={AssetContainer}
     />
   );
