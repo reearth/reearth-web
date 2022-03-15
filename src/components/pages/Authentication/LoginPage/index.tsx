@@ -3,14 +3,14 @@ import React from "react";
 import Loading from "@reearth/components/atoms/Loading";
 import Login from "@reearth/components/organisms/Authentication/Login";
 
-import useHooks from "../hooks";
+import { useUserTokenRequired } from "./hook";
 
 export type Props = {
   path?: string;
 };
 
 const LoginPage: React.FC<Props> = () => {
-  const { isLoading, isAuthenticated } = useHooks();
+  const [isAuthenticated, isLoading] = useUserTokenRequired();
 
   return isLoading ? <Loading /> : !isAuthenticated ? <Login /> : null;
 };
