@@ -150,11 +150,11 @@ const AssetModal: React.FC<Props> = ({
         <AssetContainer
           teamId={teamId}
           initialAssetUrl={initialAssetUrl}
-          selectAssetUrl={selectAssetUrl}
+          onAssetUrlSelect={selectAssetUrl}
           fileType={fileType}
           smallCardOnly
           height={425}
-          handleShowURL={handleShowURL}
+          onURLShow={handleShowURL}
         />
       )}
       {selectedTab === "url" && (

@@ -11,7 +11,7 @@ const enumTypeMapper: Partial<Record<GQLTheme, string>> = {
   [GQLTheme.Light]: "light",
 };
 
-export type Theme = "dark" | "light";
+export type Theme = "dark" | "light" | "default";
 
 function toGQLEnum(val?: Theme) {
   if (!val) return;
