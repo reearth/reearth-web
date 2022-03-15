@@ -19,14 +19,15 @@ export default () => {
   const teamId = currentTeam?.id || data?.me?.myTeam.id;
 
   useEffect(() => {
-    console.log(location.pathname);
     if (location.pathname === "/login" && !new URLSearchParams(window.location.search).has("id"))
       login();
-    if (!isAuthenticated || currentTeam || !data || !teamId) return;
+  }, [login, location.pathname]);
 
+  useEffect(() => {
+    if (!isAuthenticated || currentTeam || !data || !teamId) return;
     setTeam(data.me?.myTeam);
     navigate(`/dashboard/${teamId}`);
-  }, [isAuthenticated, navigate, currentTeam, setTeam, data, teamId, login, location.pathname]);
+  }, [isAuthenticated, navigate, currentTeam, setTeam, data, teamId]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {
