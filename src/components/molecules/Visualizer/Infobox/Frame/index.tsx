@@ -37,6 +37,7 @@ export type Props = {
   useMask?: boolean;
   styles?: InfoboxStyles;
   showTitle?: boolean;
+  onMaskClick?: () => void;
   onClick?: () => void;
   onClickAway?: () => void;
   onEnter?: () => void;
@@ -62,6 +63,7 @@ const InfoBox: React.FC<Props> = ({
   styles,
   showTitle,
   children,
+  onMaskClick,
   onClick,
   onClickAway,
   onEnter,
@@ -74,6 +76,7 @@ const InfoBox: React.FC<Props> = ({
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
+  const [showMask, setShowMask] = useState<boolean | undefined>(false);
   useClickAway(ref, () => onClickAway?.());
 
   const handleOpen = useCallback(() => {
@@ -95,6 +98,9 @@ const InfoBox: React.FC<Props> = ({
     if (!visible) {
       setOpen(true);
     }
+    setTimeout(() => {
+      setShowMask(visible);
+    }, 0);
   }, [visible]);
 
   const wrapperStyles = useMemo(
@@ -107,7 +113,7 @@ const InfoBox: React.FC<Props> = ({
 
   return (
     <>
-      <Mask activate={open && useMask} />
+      <Mask activate={showMask && useMask} onClick={onMaskClick} />
       <StyledFloatedPanel
         className={className}
         visible={visible}
@@ -167,7 +173,7 @@ const InfoBox: React.FC<Props> = ({
 };
 
 const Mask = styled.div<{ activate?: boolean }>`
-  display: ${({ activate }) => (activate ? "flex" : "none")};
+  display: ${({ activate }) => (activate ? "block" : "none")};
   height: 100%;
   width: 100%;
   position: absolute;
@@ -177,7 +183,6 @@ const Mask = styled.div<{ activate?: boolean }>`
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.6);
   overflow-x: hidden;
-  pointer-events: none;
 `;
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
