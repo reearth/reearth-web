@@ -12,8 +12,8 @@ export type Props = {
     description: string;
     imageUrl?: string | null;
   };
-  updateProjectName?: (name: string) => void;
-  updateProjectDescription?: (description: string) => void;
+  updateProjectName?: (name?: string) => void;
+  updateProjectDescription?: (description?: string) => void;
   updateProjectImageUrl?: (imageUrl?: string) => void;
   assetModal?: React.ReactNode;
   toggleAssetModal?: (open?: boolean) => void;

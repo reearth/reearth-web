@@ -12,8 +12,8 @@ export type Props = {
     publicDescription: string;
     publicImage?: string;
   };
-  updatePublicTitle?: (title: string) => void;
-  updatePublicDescription?: (description: string) => void;
+  updatePublicTitle?: (title?: string) => void;
+  updatePublicDescription?: (description?: string) => void;
   updatePublicImage?: (imageUrl?: string) => void;
   assetModal?: React.ReactNode;
   toggleAssetModal?: (open?: boolean) => void;

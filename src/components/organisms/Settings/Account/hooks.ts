@@ -34,7 +34,8 @@ export default () => {
   const [updateMeMutation] = useUpdateMeMutation();
 
   const updateName = useCallback(
-    async (name: string) => {
+    async (name?: string) => {
+      if (!name) return;
       const username = await updateMeMutation({ variables: { name } });
       if (username.errors) {
         setNotification({
@@ -65,7 +66,8 @@ export default () => {
   );
 
   const updateLanguage = useCallback(
-    async (lang: string) => {
+    async (lang?: string) => {
+      if (!lang) return;
       const language = await updateMeMutation({ variables: { lang } });
       if (language.errors) {
         setNotification({

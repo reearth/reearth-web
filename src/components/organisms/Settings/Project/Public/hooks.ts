@@ -104,14 +104,16 @@ export default ({ projectId }: Params) => {
 
   // Public
   const updatePublicTitle = useCallback(
-    (publicTitle: string) => {
-      projectId && updateProject({ variables: { projectId, publicTitle } });
+    (publicTitle?: string) => {
+      if (!projectId || !publicTitle) return;
+      updateProject({ variables: { projectId, publicTitle } });
     },
     [projectId, updateProject],
   );
   const updatePublicDescription = useCallback(
-    (publicDescription: string) => {
-      projectId && updateProject({ variables: { projectId, publicDescription } });
+    (publicDescription?: string) => {
+      if (!projectId || !publicDescription) return;
+      updateProject({ variables: { projectId, publicDescription } });
     },
     [projectId, updateProject],
   );

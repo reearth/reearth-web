@@ -58,22 +58,25 @@ export default ({ projectId }: Params) => {
   });
 
   const updateProjectName = useCallback(
-    (name: string) => {
-      projectId && updateProjectMutation({ variables: { projectId, name } });
+    (name?: string) => {
+      if (!projectId || !name) return;
+      updateProjectMutation({ variables: { projectId, name } });
     },
     [projectId, updateProjectMutation],
   );
 
   const updateProjectDescription = useCallback(
-    (description: string) => {
-      projectId && updateProjectMutation({ variables: { projectId, description } });
+    (description?: string) => {
+      if (!projectId || !description) return;
+      updateProjectMutation({ variables: { projectId, description } });
     },
     [projectId, updateProjectMutation],
   );
 
   const updateProjectImageUrl = useCallback(
     (imageUrl?: string) => {
-      projectId && updateProjectMutation({ variables: { projectId, imageUrl } });
+      if (!projectId || !imageUrl) return;
+      updateProjectMutation({ variables: { projectId, imageUrl } });
     },
     [projectId, updateProjectMutation],
   );
