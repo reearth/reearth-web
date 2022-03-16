@@ -77,7 +77,7 @@ export default (mode: Mode) => {
       schemaGroupId: string,
       itemId: string | undefined,
       fieldId: string,
-      v: ValueTypes[ValueType] | null,
+      v: ValueTypes[ValueType] | undefined,
       vt: ValueType,
     ) => {
       const gvt = valueTypeToGQL(vt);

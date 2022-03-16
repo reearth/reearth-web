@@ -96,7 +96,7 @@ export type Props<T extends ValueType = ValueType> = {
   camera?: Camera;
   layers?: LayerType[];
   assetModal?: ComponentType<AssetModalProps>;
-  onChange?: (id: string, value: ValueTypes[T] | null, type: ValueType) => void;
+  onChange?: (id: string, value: ValueTypes[T] | undefined, type: ValueType) => void;
   onRemove?: (id: string) => void;
   onLink?: (id: string, schema: string, dataset: string | undefined, field: string) => void;
   onUploadFile?: (id: string, file: File) => void;
@@ -145,7 +145,7 @@ const PropertyField: React.FC<Props> = ({
     overridden: !!field?.overridden,
     value: field?.mergedValue ?? field?.value ?? schema?.defaultValue,
     onChange: useCallback(
-      (value: ValueTypes[keyof ValueTypes] | null) => {
+      (value: ValueTypes[keyof ValueTypes] | undefined) => {
         if (!onChange || !schema) return;
         onChange(schema.id, value, schema.type);
       },

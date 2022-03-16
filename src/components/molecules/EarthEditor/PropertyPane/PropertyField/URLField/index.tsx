@@ -29,7 +29,7 @@ const URLField: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
-  const deleteValue = useCallback(() => onChange?.(null), [onChange]);
+  const deleteValue = useCallback(() => onChange?.(undefined), [onChange]);
 
   const handleAssetModalOpen = useCallback(() => {
     setAssetModalOpen(!isAssetModalOpen);
