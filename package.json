@@ -179,6 +179,7 @@
         "leaflet": "^1.7.1",
         "lodash-es": "^4.17.20",
         "mini-svg-data-uri": "^1.4.3",
+        "monaco-editor": "^0.33.0",
         "parse-domain": "^7.0.0",
         "quickjs-emscripten": "^0.15.0",
         "quickjs-emscripten-sync": "^1.2.0",

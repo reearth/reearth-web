@@ -2,18 +2,14 @@ import { useState } from "react";
 
 import type {
   Widget,
-  //   WidgetZone,
-  //   WidgetSection,
-  //   WidgetArea,
-  //   Alignment,
+  WidgetAlignSystem,
+  WidgetZone,
+  WidgetSection,
 } from "@reearth/components/molecules/Visualizer";
 
-export type Props = {
-  widgets?: Widget[];
-};
+export type Position = { section: string; area: string };
 
-export default ({ widgets }: Props) => {
-  console.log(widgets, "widgets");
+export default () => {
   const [sourceCode, setSourceCode] = useState<{ fileName?: string; body: string }>({
     fileName: "untitled",
     body: `
@@ -39,23 +35,81 @@ export default ({ widgets }: Props) => {
     `.trim(),
   });
   const [mode, setMode] = useState("widget");
-  const [showAlignSystem, setShowAlignSystem] = useState(false);
   const [showInfobox, setShowInfobox] = useState(false);
   const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
+  const [showAlignSystem, setShowAlignSystem] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState<Position>({
+    section: "left",
+    area: "top",
+  });
+  const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>();
 
-  //   const buildAlignSystem = useMemo(() => {
-  //   }, []);
+  const positions: { [key: string]: Position }[] = [
+    {
+      LeftTop: { section: "left", area: "top" },
+      LeftMiddle: { section: "left", area: "middle" },
+      LeftBottom: { section: "left", area: "bottom" },
+    },
+    {
+      CenterTop: { section: "center", area: "top" },
+      CenterBottom: { section: "center", area: "bottom" },
+    },
+    {
+      RightTop: { section: "right", area: "top" },
+      RightMiddle: { section: "right", area: "middle" },
+      RightBottom: { section: "right", area: "bottom" },
+    },
+  ];
+
+  const handleAlignSystemUpdate = (widget: Widget, newLoc: Position) => {
+    setAlignSystem(() => {
+      const alignment =
+        newLoc.section === "center" || newLoc.area === "middle" ? "centered" : "start";
+      const newSection: WidgetSection = {
+        top: {
+          widgets: newLoc.area === "top" ? [widget] : undefined,
+          align: alignment,
+        },
+        middle: {
+          widgets: newLoc.area === "middle" ? [widget] : undefined,
+          align: alignment,
+        },
+        bottom: {
+          widgets: newLoc.area === "bottom" ? [widget] : undefined,
+          align: alignment,
+        },
+      };
+
+      const newZone: WidgetZone = {
+        left: {
+          ...(newLoc.section === "left" ? newSection : undefined),
+        },
+        center: {
+          ...(newLoc.section === "center" ? newSection : undefined),
+        },
+        right: {
+          ...(newLoc.section === "right" ? newSection : undefined),
+        },
+      };
+      setCurrentPosition(newLoc);
+      return { outer: newZone };
+    });
+  };
 
   return {
     sourceCode,
-    setSourceCode,
     mode,
-    setMode,
     showAlignSystem,
-    setShowAlignSystem,
     showInfobox,
-    setShowInfobox,
     infoboxSize,
+    alignSystem,
+    positions,
+    currentPosition,
+    handleAlignSystemUpdate,
+    setSourceCode,
+    setMode,
+    setShowAlignSystem,
+    setShowInfobox,
     setInfoboxSize,
   };
 };

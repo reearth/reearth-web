@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/react";
-import React, { useMemo, useState, ChangeEvent } from "react";
+import React, { useMemo, ChangeEvent, useEffect } from "react";
 import MonacoEditor from "react-monaco-editor";
 
 import Component, { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
-import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+// import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import { styled } from "@reearth/theme";
 
 import useHooks from "./hooks";
@@ -41,107 +41,20 @@ Default.args = {
 export const Plugin: Story<Props> = args => {
   const {
     sourceCode,
-    setSourceCode,
     mode,
-    setMode,
     showAlignSystem,
-    setShowAlignSystem,
     showInfobox,
-    setShowInfobox,
     infoboxSize,
+    alignSystem,
+    positions,
+    currentPosition,
+    handleAlignSystemUpdate,
+    setSourceCode,
+    setMode,
+    setShowAlignSystem,
+    setShowInfobox,
     setInfoboxSize,
-  } = useHooks({});
-
-  const [alignSystem] = useState<WidgetAlignSystem | undefined>({
-    inner: {
-      left: {
-        top: {
-          align: "start",
-          widgets: [],
-        },
-        middle: {
-          widgets: [],
-          align: "start",
-        },
-        bottom: {
-          widgets: [],
-          align: "start",
-        },
-      },
-      center: {
-        top: {
-          widgets: [],
-          align: "start",
-        },
-        middle: {
-          widgets: [],
-          align: "start",
-        },
-        bottom: {
-          widgets: [],
-          align: "start",
-        },
-      },
-      right: {
-        top: {
-          widgets: [],
-          align: "start",
-        },
-        middle: {
-          widgets: [],
-          align: "start",
-        },
-        bottom: {
-          widgets: [],
-          align: "start",
-        },
-      },
-    },
-    outer: {
-      left: {
-        top: {
-          widgets: [],
-          align: "start",
-        },
-        middle: {
-          widgets: [],
-          align: "start",
-        },
-        bottom: {
-          widgets: [],
-          align: "start",
-        },
-      },
-      center: {
-        top: {
-          widgets: [],
-          align: "start",
-        },
-        middle: {
-          widgets: [],
-          align: "start",
-        },
-        bottom: {
-          widgets: [],
-          align: "start",
-        },
-      },
-      right: {
-        top: {
-          widgets: [],
-          align: "start",
-        },
-        middle: {
-          widgets: [],
-          align: "start",
-        },
-        bottom: {
-          widgets: [],
-          align: "start",
-        },
-      },
-    },
-  });
+  } = useHooks();
 
   const handleAlignSystemToggle = () => {
     setShowAlignSystem(!showAlignSystem);
@@ -164,30 +77,21 @@ export const Plugin: Story<Props> = args => {
     reader.readAsText(file);
   };
 
+  const widget = useMemo(() => {
+    return {
+      id: "xxx",
+      // extended: true,
+      __REEARTH_SOURCECODE: sourceCode.body,
+    };
+  }, [sourceCode.body]);
+
   const args2 = useMemo<Props>(() => {
     return {
       ...args,
       widgets: {
         ...(mode === "widget"
           ? {
-              alignSystem: {
-                ...alignSystem,
-                outer: {
-                  ...alignSystem?.outer,
-                  left: {
-                    top: {
-                      align: "start",
-                      widgets: [
-                        {
-                          id: "xxx",
-                          // extended: true,
-                          __REEARTH_SOURCECODE: sourceCode.body,
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
+              alignSystem: alignSystem,
             }
           : {}),
       },
@@ -252,15 +156,13 @@ export const Plugin: Story<Props> = args => {
     };
   }, [args, mode, alignSystem, sourceCode, showInfobox, infoboxSize]);
 
-  console.log(args2.widgets?.alignSystem, "args2");
+  useEffect(() => {
+    handleAlignSystemUpdate(widget, currentPosition);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
-      <Component
-        {...args2}
-        widgetAlignEditorActivated={showAlignSystem}
-        style={{ ...args2.style, width: "100%" }}
-      />
+      <Component {...args2} style={{ ...args2.style, width: "100%" }} />
       <div
         style={{
           display: "flex",
@@ -278,29 +180,95 @@ export const Plugin: Story<Props> = args => {
             <h3>Plugin editor navigation</h3>
             <p>Upload your plugin</p>
             <input type="file" onChange={openFile}></input>
+            <div
+              id="save"
+              style={{
+                display: "flex",
+                // justifyContent: "center",
+                width: "100%",
+                margin: "20px 0",
+              }}>
+              <SaveButton
+                href={`data:application/javascript;charset=utf-8,${sourceCode.body}`}
+                download={sourceCode.fileName}>
+                Save {sourceCode.fileName}
+              </SaveButton>
+            </div>
           </div>
           <div id="options" style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
             <p>Options</p>
             <Button selected={showAlignSystem} onClick={handleAlignSystemToggle}>
-              Toggle Widget Align System
+              Widget Align System Positions
             </Button>
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div
+              style={{
+                display: "flex",
+                maxHeight: `${showAlignSystem ? "100px" : "0"}`,
+                marginBottom: `${showAlignSystem ? "2px" : "0"}`,
+                overflow: "hidden",
+                transition: "all 1s",
+                borderBottom: `${showAlignSystem ? "1px solid white" : "none"}`,
+              }}>
+              {positions.map((p, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}>
+                  {Object.keys(p).map(k => (
+                    <Button
+                      key={k}
+                      selected={
+                        currentPosition.section === p[k].section &&
+                        currentPosition.area === p[k].area
+                      }
+                      onClick={() =>
+                        handleAlignSystemUpdate(widget, {
+                          section: p[k].section,
+                          area: p[k].area,
+                        })
+                      }>
+                      {k}
+                    </Button>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
               <Button selected={showInfobox} onClick={handleInfoboxToggle}>
                 Toggle Infobox
               </Button>
-              <p style={{ textAlign: "center" }}>|</p>
-              <Button selected={infoboxSize === "small"} onClick={() => setInfoboxSize("small")}>
-                Small
-              </Button>
-              <Button selected={infoboxSize === "medium"} onClick={() => setInfoboxSize("medium")}>
-                Medium
-              </Button>
-              <Button selected={infoboxSize === "large"} onClick={() => setInfoboxSize("large")}>
-                Large
-              </Button>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: `${showInfobox ? "100px" : "0"}`,
+                  marginBottom: `${showInfobox ? "2px" : "0"}`,
+                  overflow: "hidden",
+                  transition: "all 1s",
+                  borderBottom: `${showInfobox ? "1px solid white" : "none"}`,
+                }}>
+                <Button selected={infoboxSize === "small"} onClick={() => setInfoboxSize("small")}>
+                  Small
+                </Button>
+                <Button
+                  selected={infoboxSize === "medium"}
+                  onClick={() => setInfoboxSize("medium")}>
+                  Medium
+                </Button>
+                <Button selected={infoboxSize === "large"} onClick={() => setInfoboxSize("large")}>
+                  Large
+                </Button>
+              </div>
             </div>
-            <div id="">
-              <p>Change extension type</p>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}>
+              <p>Extension type</p>
               <select
                 value={mode}
                 onChange={e => setMode(e.currentTarget.value as "block" | "widget" | "primitive")}>
@@ -308,20 +276,6 @@ export const Plugin: Story<Props> = args => {
                 <option value="widget">Widget</option>
                 {/* <option value="primitive">Primitive</option> */}
               </select>
-            </div>
-            <p>-------------------------------------</p>
-            <div
-              id="save"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%",
-              }}>
-              <SaveButton
-                href={`data:application/javascript;charset=utf-8,${sourceCode.body}`}
-                download={sourceCode.fileName}>
-                Save {sourceCode.fileName}
-              </SaveButton>
             </div>
           </div>
         </div>
@@ -365,7 +319,7 @@ const Button = styled.button<{ selected?: boolean }>`
 const SaveButton = styled.a`
   background: white;
   border-radius: 3px;
-  margin: 2px auto;
+  // margin: 2px auto;
   padding: 4px 6px;
   text-decoration: none;
   color: black;
