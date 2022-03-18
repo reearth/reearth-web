@@ -190,7 +190,7 @@ export const Simple: Story<Props> = args => {
         </div>
         <MonacoEditor
           height="100%"
-          language="typescript"
+          language="javascript"
           value={sourceCode.body}
           onChange={value => {
             setSourceCode(sc => ({ ...sc, body: value }));
