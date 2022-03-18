@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo, ChangeEvent, useEffect } from "react";
 
+import { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
 import type {
   Widget,
   WidgetAlignSystem,
@@ -9,7 +10,16 @@ import type {
 
 export type Position = { section: string; area: string };
 
-export default () => {
+export default (args: Props) => {
+  const [mode, setMode] = useState("widget");
+  const [showInfobox, setShowInfobox] = useState(false);
+  const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
+  const [showAlignSystem, setShowAlignSystem] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState<Position>({
+    section: "left",
+    area: "top",
+  });
+  const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>();
   const [sourceCode, setSourceCode] = useState<{ fileName?: string; body: string }>({
     fileName: "untitled",
     body: `
@@ -34,15 +44,6 @@ export default () => {
     , { visible: true });
     `.trim(),
   });
-  const [mode, setMode] = useState("widget");
-  const [showInfobox, setShowInfobox] = useState(false);
-  const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
-  const [showAlignSystem, setShowAlignSystem] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState<Position>({
-    section: "left",
-    area: "top",
-  });
-  const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>();
 
   const positions: { [key: string]: Position }[] = [
     {
@@ -95,21 +96,130 @@ export default () => {
       return { outer: newZone };
     });
   };
+  const handleAlignSystemToggle = () => {
+    setShowAlignSystem(!showAlignSystem);
+  };
+
+  const handleInfoboxToggle = () => {
+    setShowInfobox(!showInfobox);
+  };
+
+  const openFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+
+    reader.onload = async e2 => {
+      const text = e2?.target?.result;
+      setSourceCode({ fileName: file.name, body: text as string });
+    };
+    reader.readAsText(file);
+  };
+
+  const widget = useMemo(() => {
+    return {
+      id: "xxx",
+      // extended: true,
+      __REEARTH_SOURCECODE: sourceCode.body,
+    };
+  }, [sourceCode.body]);
+
+  const args2 = useMemo<Props>(() => {
+    return {
+      ...args,
+      widgets: {
+        ...(mode === "widget"
+          ? {
+              alignSystem: alignSystem,
+            }
+          : {}),
+      },
+      layers: new LayerStore({
+        id: "",
+        children: [
+          {
+            id: "pluginprimitive",
+            pluginId: "reearth",
+            extensionId: "marker",
+            isVisible: true,
+            property: {
+              default: {
+                location: { lat: 0, lng: 139 },
+                height: 0,
+              },
+            },
+            infobox: showInfobox
+              ? {
+                  property: {
+                    default: {
+                      title: "alskdfjlsadf",
+                      bgcolor: "#56051fff",
+                      size: infoboxSize,
+                    },
+                  },
+                  blocks: [
+                    ...(mode === "block"
+                      ? [
+                          {
+                            id: "xxx",
+                            __REEARTH_SOURCECODE: sourceCode.body,
+                          } as any,
+                        ]
+                      : []),
+                    {
+                      id: "yyy",
+                      pluginId: "plugins",
+                      extensionId: "block",
+                      property: {
+                        location: { lat: 0, lng: 139 },
+                      },
+                    },
+                  ],
+                }
+              : undefined,
+          },
+          ...(mode === "primitive"
+            ? [
+                {
+                  id: "xxx",
+                  __REEARTH_SOURCECODE: sourceCode.body,
+                  isVisible: true,
+                  property: {
+                    location: { lat: 0, lng: 130 },
+                  },
+                } as any,
+              ]
+            : []),
+        ],
+      }),
+    };
+  }, [args, mode, alignSystem, sourceCode, showInfobox, infoboxSize]);
+
+  useEffect(() => {
+    handleAlignSystemUpdate(widget, currentPosition);
+  }, [widget]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    handleAlignSystemUpdate(widget, currentPosition);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     sourceCode,
+    widget,
+    currentPosition,
+    positions,
     mode,
+    args2,
+    infoboxSize,
     showAlignSystem,
     showInfobox,
-    infoboxSize,
-    alignSystem,
-    positions,
-    currentPosition,
+    handleAlignSystemToggle,
+    handleInfoboxToggle,
+    openFile,
     handleAlignSystemUpdate,
     setSourceCode,
     setMode,
-    setShowAlignSystem,
-    setShowInfobox,
     setInfoboxSize,
   };
 };

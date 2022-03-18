@@ -1,8 +1,8 @@
 import { Meta, Story } from "@storybook/react";
-import React, { useMemo, ChangeEvent, useEffect } from "react";
+import React from "react";
 import MonacoEditor from "react-monaco-editor";
 
-import Component, { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
+import Component, { Props } from "@reearth/components/molecules/Visualizer";
 import { styled } from "@reearth/theme";
 
 import Icon from "../atoms/Icon";
@@ -38,131 +38,25 @@ Default.args = {
   small: false,
 };
 
-export const Plugin: Story<Props> = args => {
+export const Simple: Story<Props> = args => {
   const {
     sourceCode,
+    widget,
+    currentPosition,
+    positions,
     mode,
+    args2,
+    infoboxSize,
     showAlignSystem,
     showInfobox,
-    infoboxSize,
-    alignSystem,
-    positions,
-    currentPosition,
+    handleAlignSystemToggle,
+    handleInfoboxToggle,
+    openFile,
     handleAlignSystemUpdate,
     setSourceCode,
     setMode,
-    setShowAlignSystem,
-    setShowInfobox,
     setInfoboxSize,
-  } = useHooks();
-
-  const handleAlignSystemToggle = () => {
-    setShowAlignSystem(!showAlignSystem);
-  };
-
-  const handleInfoboxToggle = () => {
-    setShowInfobox(!showInfobox);
-  };
-
-  const openFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-
-    reader.onload = async e2 => {
-      const text = e2?.target?.result;
-      setSourceCode({ fileName: file.name, body: text as string });
-    };
-    reader.readAsText(file);
-  };
-
-  const widget = useMemo(() => {
-    return {
-      id: "xxx",
-      // extended: true,
-      __REEARTH_SOURCECODE: sourceCode.body,
-    };
-  }, [sourceCode.body]);
-
-  useEffect(() => {
-    handleAlignSystemUpdate(widget, currentPosition);
-  }, [widget]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const args2 = useMemo<Props>(() => {
-    return {
-      ...args,
-      widgets: {
-        ...(mode === "widget"
-          ? {
-              alignSystem: alignSystem,
-            }
-          : {}),
-      },
-      layers: new LayerStore({
-        id: "",
-        children: [
-          {
-            id: "pluginprimitive",
-            pluginId: "reearth",
-            extensionId: "marker",
-            isVisible: true,
-            property: {
-              default: {
-                location: { lat: 0, lng: 139 },
-                height: 0,
-              },
-            },
-            infobox: showInfobox
-              ? {
-                  property: {
-                    default: {
-                      title: "alskdfjlsadf",
-                      bgcolor: "#56051fff",
-                      size: infoboxSize,
-                    },
-                  },
-                  blocks: [
-                    ...(mode === "block"
-                      ? [
-                          {
-                            id: "xxx",
-                            __REEARTH_SOURCECODE: sourceCode.body,
-                          } as any,
-                        ]
-                      : []),
-                    {
-                      id: "yyy",
-                      pluginId: "plugins",
-                      extensionId: "block",
-                      property: {
-                        location: { lat: 0, lng: 139 },
-                      },
-                    },
-                  ],
-                }
-              : undefined,
-          },
-          ...(mode === "primitive"
-            ? [
-                {
-                  id: "xxx",
-                  __REEARTH_SOURCECODE: sourceCode.body,
-                  isVisible: true,
-                  property: {
-                    location: { lat: 0, lng: 130 },
-                  },
-                } as any,
-              ]
-            : []),
-        ],
-      }),
-    };
-  }, [args, mode, alignSystem, sourceCode, showInfobox, infoboxSize]);
-
-  useEffect(() => {
-    handleAlignSystemUpdate(widget, currentPosition);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  } = useHooks(args);
 
   return (
     <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
@@ -303,6 +197,9 @@ export const Plugin: Story<Props> = args => {
           }}
           theme={"vs-dark"}
           options={{
+            bracketPairColorization: {
+              enabled: true,
+            },
             automaticLayout: true,
             minimap: {
               enabled: false,
@@ -314,7 +211,7 @@ export const Plugin: Story<Props> = args => {
   );
 };
 
-Plugin.args = {
+Simple.args = {
   ...Default.args,
   selectedLayerId: "pluginprimitive",
   pluginBaseUrl: process.env.PUBLIC_URL,
@@ -335,7 +232,6 @@ const Button = styled.button<{ selected?: boolean }>`
 const SaveButton = styled.a`
   background: white;
   border-radius: 3px;
-  // margin: 2px auto;
   padding: 4px 6px;
   text-decoration: none;
   color: black;
