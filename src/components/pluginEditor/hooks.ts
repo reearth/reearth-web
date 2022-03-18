@@ -45,11 +45,11 @@ export default (args: Props) => {
   const [currentPosition, setCurrentPosition] = useState<Position>(defaultPosition);
   const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>();
   const [sourceCode, setSourceCode] = useState<{ fileName?: string; body: string }>({
-    fileName: "untitled",
+    fileName: "untitled.js",
     body: originalSourceCode,
   });
   const [hardSourceCode, setHardSourceCode] = useState<{ fileName?: string; body: string }>({
-    fileName: "untitled",
+    fileName: "untitled.js",
     body: originalSourceCode,
   });
 
