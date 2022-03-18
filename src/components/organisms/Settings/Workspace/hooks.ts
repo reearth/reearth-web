@@ -97,10 +97,10 @@ export default (params: Params) => {
   const [updateTeamMutation] = useUpdateTeamMutation();
 
   const updateName = useCallback(
-    async (name: string) => {
-      if (!teamId) return;
+    async (name?: string) => {
+      if (!teamId || !name) return;
       const results = await updateTeamMutation({ variables: { teamId, name } });
-      if (results.errors || !results.data?.__typename) {
+      if (results.errors) {
         setNotification({
           type: "error",
           text: intl.formatMessage({ defaultMessage: "Failed to update workspace name." }),
