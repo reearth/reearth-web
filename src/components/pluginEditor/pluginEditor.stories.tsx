@@ -3,8 +3,9 @@ import React, { useMemo, ChangeEvent, useEffect } from "react";
 import MonacoEditor from "react-monaco-editor";
 
 import Component, { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
-// import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import { styled } from "@reearth/theme";
+
+import Icon from "../atoms/Icon";
 
 import useHooks from "./hooks";
 
@@ -26,7 +27,6 @@ const Default = Template.bind({});
 Default.args = {
   engine: "cesium",
   rootLayerId: "root",
-  //   widgets: { alignSystem: AlignSystem },
   sceneProperty: {
     tiles: [{ id: "default", tile_type: "default" }],
   },
@@ -84,6 +84,10 @@ export const Plugin: Story<Props> = args => {
       __REEARTH_SOURCECODE: sourceCode.body,
     };
   }, [sourceCode.body]);
+
+  useEffect(() => {
+    handleAlignSystemUpdate(widget, currentPosition);
+  }, [widget]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const args2 = useMemo<Props>(() => {
     return {
@@ -168,15 +172,16 @@ export const Plugin: Story<Props> = args => {
           display: "flex",
           flexDirection: "column",
           alignItems: "stretch",
-          width: "75%",
+          width: "55%",
         }}>
         <div
           style={{
             display: "flex",
+            justifyContent: "space-between",
             background: "#171618",
             padding: "5px 15px",
           }}>
-          <div id="title">
+          <div id="title" style={{ flex: 1 }}>
             <h3>Plugin editor navigation</h3>
             <p>Upload your plugin</p>
             <input type="file" onChange={openFile}></input>
@@ -184,7 +189,6 @@ export const Plugin: Story<Props> = args => {
               id="save"
               style={{
                 display: "flex",
-                // justifyContent: "center",
                 width: "100%",
                 margin: "20px 0",
               }}>
@@ -195,7 +199,9 @@ export const Plugin: Story<Props> = args => {
               </SaveButton>
             </div>
           </div>
-          <div id="options" style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
+          <div
+            id="options"
+            style={{ display: "flex", flexDirection: "column", flex: 1, margin: "4px 0" }}>
             <p>Options</p>
             <Button selected={showAlignSystem} onClick={handleAlignSystemToggle}>
               Widget Align System Positions
@@ -204,7 +210,7 @@ export const Plugin: Story<Props> = args => {
               style={{
                 display: "flex",
                 maxHeight: `${showAlignSystem ? "100px" : "0"}`,
-                marginBottom: `${showAlignSystem ? "2px" : "0"}`,
+                paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
                 overflow: "hidden",
                 transition: "all 1s",
                 borderBottom: `${showAlignSystem ? "1px solid white" : "none"}`,
@@ -245,7 +251,7 @@ export const Plugin: Story<Props> = args => {
                   display: "flex",
                   flexDirection: "column",
                   maxHeight: `${showInfobox ? "100px" : "0"}`,
-                  marginBottom: `${showInfobox ? "2px" : "0"}`,
+                  paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
                   overflow: "hidden",
                   transition: "all 1s",
                   borderBottom: `${showInfobox ? "1px solid white" : "none"}`,
@@ -278,13 +284,23 @@ export const Plugin: Story<Props> = args => {
               </select>
             </div>
           </div>
+          <div
+            style={{
+              flex: 2,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <Icon icon="logo" />
+          </div>
         </div>
         <MonacoEditor
-          width="100%"
           height="100%"
           language="typescript"
           value={sourceCode.body}
-          onChange={value => setSourceCode(sc => ({ ...sc, body: value }))}
+          onChange={value => {
+            setSourceCode(sc => ({ ...sc, body: value }));
+          }}
           theme={"vs-dark"}
           options={{
             automaticLayout: true,
