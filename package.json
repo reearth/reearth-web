@@ -195,6 +195,7 @@
         "react-intl": "^5.24.6",
         "react-leaflet": "^3.2.5",
         "react-markdown": "^8.0.0",
+        "react-monaco-editor": "^0.47.0",
         "react-nl2br": "^1.0.2",
         "react-player": "^2.8.2",
         "react-popper": "^2.2.4",

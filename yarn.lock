@@ -17135,6 +17135,13 @@ react-markdown@^8.0.0:
     unist-util-visit "^4.0.0"
     vfile "^5.0.0"
 
+react-monaco-editor@^0.47.0:
+  version "0.47.0"
+  resolved "https://registry.yarnpkg.com/react-monaco-editor/-/react-monaco-editor-0.47.0.tgz#6933f6c507297d2de283af9e4f74407f827cfc0f"
+  integrity sha512-uXZMzYJReIHSA41Qjka2LZckEEawPQC0smpeUgkUvyaMiT8y9qFodIcQtLmSUj3g7gd/6W15a73jBs1d6sr+Mw==
+  dependencies:
+    prop-types "^15.8.1"
+
 react-nl2br@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-nl2br/-/react-nl2br-1.0.2.tgz#ebe2431245caa631242cb10a739ac9bb5b2b6da3"

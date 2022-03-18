@@ -17,13 +17,31 @@ export default ({ widgets }: Props) => {
   const [sourceCode, setSourceCode] = useState<{ fileName?: string; body: string }>({
     fileName: "untitled",
     body: `
-    console.log("hello", reearth.block);
-    reearth.ui.show("<style>body { margin: 0; background: #fff; }</style><h1>Hello2 World</h1>", { visible: true });
+    reearth.ui.show(
+      \`<style>
+          body { 
+            margin: 0;
+          }
+          #wrapper {
+            background: #232226;
+            height: 100%;
+            color: white;
+            border: 3px dotted red;
+            border-radius: 5px;
+            padding: 20px 0;
+          }
+      </style>
+      <div id="wrapper">
+        <h2 style="text-align: center; margin: 0;">Hello2 World</h2>
+      </div>
+      \`
+    , { visible: true });
     `.trim(),
   });
   const [mode, setMode] = useState("widget");
   const [showAlignSystem, setShowAlignSystem] = useState(false);
   const [showInfobox, setShowInfobox] = useState(false);
+  const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
 
   //   const buildAlignSystem = useMemo(() => {
   //   }, []);
@@ -37,5 +55,7 @@ export default ({ widgets }: Props) => {
     setShowAlignSystem,
     showInfobox,
     setShowInfobox,
+    infoboxSize,
+    setInfoboxSize,
   };
 };

@@ -1,8 +1,10 @@
 import { Meta, Story } from "@storybook/react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, ChangeEvent } from "react";
+import MonacoEditor from "react-monaco-editor";
 
 import Component, { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
 import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
+import { styled } from "@reearth/theme";
 
 import useHooks from "./hooks";
 
@@ -46,9 +48,10 @@ export const Plugin: Story<Props> = args => {
     setShowAlignSystem,
     showInfobox,
     setShowInfobox,
+    infoboxSize,
+    setInfoboxSize,
   } = useHooks({});
 
-  // const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>({
   const [alignSystem] = useState<WidgetAlignSystem | undefined>({
     inner: {
       left: {
@@ -148,17 +151,17 @@ export const Plugin: Story<Props> = args => {
     setShowInfobox(!showInfobox);
   };
 
-  const openFile = async e => {
+  const openFile = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const [file] = e.target.files;
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
     const reader = new FileReader();
 
     reader.onload = async e2 => {
-      console.log(e2, "e");
       const text = e2?.target?.result;
       setSourceCode({ fileName: file.name, body: text as string });
     };
-    reader.readAsText(e.target.files[0]);
+    reader.readAsText(file);
   };
 
   const args2 = useMemo<Props>(() => {
@@ -204,6 +207,13 @@ export const Plugin: Story<Props> = args => {
             },
             infobox: showInfobox
               ? {
+                  property: {
+                    default: {
+                      title: "alskdfjlsadf",
+                      bgcolor: "#56051fff",
+                      size: infoboxSize,
+                    },
+                  },
                   blocks: [
                     ...(mode === "block"
                       ? [
@@ -240,65 +250,56 @@ export const Plugin: Story<Props> = args => {
         ],
       }),
     };
-  }, [args, mode, alignSystem, sourceCode, showInfobox]);
-
-  const textarea = document.querySelector("textarea");
+  }, [args, mode, alignSystem, sourceCode, showInfobox, infoboxSize]);
 
   console.log(args2.widgets?.alignSystem, "args2");
-
-  textarea?.addEventListener("keydown", e => {
-    if (e.keyCode === 9) {
-      e.preventDefault();
-      textarea.setRangeText("  ", textarea.selectionStart, textarea.selectionStart, "end");
-    }
-  });
 
   return (
     <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
       <Component
         {...args2}
         widgetAlignEditorActivated={showAlignSystem}
-        style={{ ...args2.style, flex: "1" }}
+        style={{ ...args2.style, width: "100%" }}
       />
       <div
         style={{
-          flex: "1 0",
           display: "flex",
           flexDirection: "column",
           alignItems: "stretch",
-          background: "#fff",
+          width: "75%",
         }}>
         <div
           style={{
-            background: "black",
-            padding: "5px",
+            display: "flex",
+            background: "#171618",
+            padding: "5px 15px",
           }}>
-          <p>Plugin editor navigation</p>
-          <p>-------------------------------------</p>
-          <p>Upload your plugin</p>
-          <input type="file" onChange={openFile}></input>
-          <div style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
-            <button
-              style={{
-                background: "lightgrey",
-                borderRadius: "3px",
-                margin: "2px 0",
-                padding: "2px",
-              }}
-              onClick={handleAlignSystemToggle}>
+          <div id="title">
+            <h3>Plugin editor navigation</h3>
+            <p>Upload your plugin</p>
+            <input type="file" onChange={openFile}></input>
+          </div>
+          <div id="options" style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
+            <p>Options</p>
+            <Button selected={showAlignSystem} onClick={handleAlignSystemToggle}>
               Toggle Widget Align System
-            </button>
-            <button
-              style={{
-                background: "lightgrey",
-                borderRadius: "3px",
-                margin: "2px 0",
-                padding: "2px",
-              }}
-              onClick={handleInfoboxToggle}>
-              Toggle Infobox
-            </button>
-            <div>
+            </Button>
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              <Button selected={showInfobox} onClick={handleInfoboxToggle}>
+                Toggle Infobox
+              </Button>
+              <p style={{ textAlign: "center" }}>|</p>
+              <Button selected={infoboxSize === "small"} onClick={() => setInfoboxSize("small")}>
+                Small
+              </Button>
+              <Button selected={infoboxSize === "medium"} onClick={() => setInfoboxSize("medium")}>
+                Medium
+              </Button>
+              <Button selected={infoboxSize === "large"} onClick={() => setInfoboxSize("large")}>
+                Large
+              </Button>
+            </div>
+            <div id="">
               <p>Change extension type</p>
               <select
                 value={mode}
@@ -309,27 +310,34 @@ export const Plugin: Story<Props> = args => {
               </select>
             </div>
             <p>-------------------------------------</p>
-            <a
+            <div
+              id="save"
               style={{
-                background: "lightgrey",
-                borderRadius: "3px",
-                margin: "2px 0",
-                padding: "2px",
-                textDecoration: "none",
-                color: "black",
-                textAlign: "center",
-              }}
-              href={`data:application/javascript;charset=utf-8,${sourceCode.body}`}
-              download={sourceCode.fileName}>
-              Save {sourceCode.fileName}
-            </a>
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}>
+              <SaveButton
+                href={`data:application/javascript;charset=utf-8,${sourceCode.body}`}
+                download={sourceCode.fileName}>
+                Save {sourceCode.fileName}
+              </SaveButton>
+            </div>
           </div>
         </div>
-        <textarea
-          id="pluginSourceCode"
-          style={{ flex: "auto" }}
+        <MonacoEditor
+          width="100%"
+          height="100%"
+          language="typescript"
           value={sourceCode.body}
-          onChange={e => setSourceCode(s => ({ ...s, body: e.currentTarget.value }))}
+          onChange={value => setSourceCode(sc => ({ ...sc, body: value }))}
+          theme={"vs-dark"}
+          options={{
+            automaticLayout: true,
+            minimap: {
+              enabled: false,
+            },
+          }}
         />
       </div>
     </div>
@@ -341,3 +349,29 @@ Plugin.args = {
   selectedLayerId: "pluginprimitive",
   pluginBaseUrl: process.env.PUBLIC_URL,
 };
+
+const Button = styled.button<{ selected?: boolean }>`
+  background: ${({ selected }) => (selected ? "#3B3CD0" : "white")};
+  color: ${({ selected }) => (selected ? "white" : "black")};
+  border-radius: 3px;
+  margin: 2px;
+  padding: 2px;
+
+  :hover {
+    background: lightgrey;
+  }
+`;
+
+const SaveButton = styled.a`
+  background: white;
+  border-radius: 3px;
+  margin: 2px auto;
+  padding: 4px 6px;
+  text-decoration: none;
+  color: black;
+  text-align: center;
+
+  :hover {
+    background: lightgrey;
+  }
+`;
