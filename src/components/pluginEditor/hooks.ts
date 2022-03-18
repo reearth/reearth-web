@@ -1,4 +1,4 @@
-import { useState, useMemo, ChangeEvent, useEffect } from "react";
+import { useState, useMemo, ChangeEvent, useEffect, useCallback } from "react";
 
 import { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
 import type {
@@ -10,39 +10,47 @@ import type {
 
 export type Position = { section: string; area: string };
 
+const originalSourceCode = `
+reearth.ui.show(
+  \`<style>
+      body { 
+        margin: 0;
+      }
+      #wrapper {
+        background: #232226;
+        height: 100%;
+        color: white;
+        border: 3px dotted red;
+        border-radius: 5px;
+        padding: 20px 0;
+      }
+  </style>
+  <div id="wrapper">
+    <h2 style="text-align: center; margin: 0;">Hello2 World</h2>
+  </div>
+  \`
+, { visible: true });
+`.trim();
+
+const defaultPosition = {
+  section: "left",
+  area: "top",
+};
+
 export default (args: Props) => {
   const [mode, setMode] = useState("widget");
   const [showInfobox, setShowInfobox] = useState(false);
   const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
   const [showAlignSystem, setShowAlignSystem] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState<Position>({
-    section: "left",
-    area: "top",
-  });
+  const [currentPosition, setCurrentPosition] = useState<Position>(defaultPosition);
   const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>();
   const [sourceCode, setSourceCode] = useState<{ fileName?: string; body: string }>({
     fileName: "untitled",
-    body: `
-    reearth.ui.show(
-      \`<style>
-          body { 
-            margin: 0;
-          }
-          #wrapper {
-            background: #232226;
-            height: 100%;
-            color: white;
-            border: 3px dotted red;
-            border-radius: 5px;
-            padding: 20px 0;
-          }
-      </style>
-      <div id="wrapper">
-        <h2 style="text-align: center; margin: 0;">Hello2 World</h2>
-      </div>
-      \`
-    , { visible: true });
-    `.trim(),
+    body: originalSourceCode,
+  });
+  const [hardSourceCode, setHardSourceCode] = useState<{ fileName?: string; body: string }>({
+    fileName: "untitled",
+    body: originalSourceCode,
   });
 
   const positions: { [key: string]: Position }[] = [
@@ -113,6 +121,7 @@ export default (args: Props) => {
     reader.onload = async e2 => {
       const text = e2?.target?.result;
       setSourceCode({ fileName: file.name, body: text as string });
+      setHardSourceCode({ fileName: file.name, body: text as string });
     };
     reader.readAsText(file);
   };
@@ -124,6 +133,13 @@ export default (args: Props) => {
       __REEARTH_SOURCECODE: sourceCode.body,
     };
   }, [sourceCode.body]);
+
+  const reset = useCallback(() => {
+    if (confirm("Are you sure you want to reset?")) {
+      setSourceCode(hardSourceCode);
+      handleAlignSystemUpdate(widget, defaultPosition);
+    }
+  }, [widget, hardSourceCode]);
 
   const args2 = useMemo<Props>(() => {
     return {
@@ -221,5 +237,6 @@ export default (args: Props) => {
     setSourceCode,
     setMode,
     setInfoboxSize,
+    reset,
   };
 };

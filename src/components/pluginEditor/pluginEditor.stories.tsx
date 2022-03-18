@@ -56,6 +56,7 @@ export const Simple: Story<Props> = args => {
     setSourceCode,
     setMode,
     setInfoboxSize,
+    reset,
   } = useHooks(args);
 
   return (
@@ -177,6 +178,11 @@ export const Simple: Story<Props> = args => {
                 {/* <option value="primitive">Primitive</option> */}
               </select>
             </div>
+            <div>
+              <Button onClick={reset} style={{ background: "orange", padding: "3px 6px" }}>
+                Reset
+              </Button>
+            </div>
           </div>
           <div
             style={{
@@ -184,6 +190,7 @@ export const Simple: Story<Props> = args => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              padding: "0 40px",
             }}>
             <Icon icon="logo" />
           </div>
