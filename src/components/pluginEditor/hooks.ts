@@ -169,7 +169,7 @@ export default (args: Props) => {
               ? {
                   property: {
                     default: {
-                      title: "alskdfjlsadf",
+                      title: "Cool info",
                       bgcolor: "#56051fff",
                       size: infoboxSize,
                     },
@@ -215,10 +215,6 @@ export default (args: Props) => {
   useEffect(() => {
     handleAlignSystemUpdate(widget, currentPosition);
   }, [widget]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    handleAlignSystemUpdate(widget, currentPosition);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     sourceCode,
