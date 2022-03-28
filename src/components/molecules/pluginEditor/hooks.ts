@@ -44,7 +44,7 @@ export default (args: Props) => {
   const [showAlignSystem, setShowAlignSystem] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<Position>(defaultPosition);
   const [alignSystem, setAlignSystem] = useState<WidgetAlignSystem | undefined>();
-  const [sourceCode, setSourceCode] = useState<{ fileName?: string; body: string }>({
+  const [sourceCode, setSourceCode] = useState<{ fileName?: string; body?: string }>({
     fileName: "untitled.js",
     body: originalSourceCode,
   });

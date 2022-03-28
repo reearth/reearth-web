@@ -1,11 +1,10 @@
+import MonacoEditor from "@monaco-editor/react";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
-import MonacoEditor from "react-monaco-editor";
 
+import Icon from "@reearth/components/atoms/Icon";
 import Component, { Props } from "@reearth/components/molecules/Visualizer";
 import { styled } from "@reearth/theme";
-
-import Icon from "../atoms/Icon";
 
 import useHooks from "./hooks";
 
@@ -81,7 +80,6 @@ export const Simple: Story<Props> = args => {
             <p>Upload your plugin</p>
             <input type="file" onChange={openFile}></input>
             <div
-              id="save"
               style={{
                 display: "flex",
                 width: "100%",
@@ -92,6 +90,11 @@ export const Simple: Story<Props> = args => {
                 download={sourceCode.fileName}>
                 Save {sourceCode.fileName}
               </SaveButton>
+              <Button
+                onClick={reset}
+                style={{ background: "orange", padding: "3px 6px", marginLeft: "20px" }}>
+                Reset
+              </Button>
             </div>
           </div>
           <div
@@ -177,11 +180,6 @@ export const Simple: Story<Props> = args => {
                 <option value="widget">Widget</option>
                 {/* <option value="primitive">Primitive</option> */}
               </select>
-            </div>
-            <div>
-              <Button onClick={reset} style={{ background: "orange", padding: "3px 6px" }}>
-                Reset
-              </Button>
             </div>
           </div>
           <div
