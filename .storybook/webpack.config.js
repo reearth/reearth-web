@@ -1,7 +1,6 @@
 const path = require("path");
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const webpack = require("webpack");
 
 const pkg = require("../package.json");
@@ -33,7 +32,6 @@ module.exports = ({ config }) => {
       CESIUM_BASE_URL: JSON.stringify("cesium"),
       REEARTH_WEB_VERSION: pkg.version,
     }),
-    new MonacoWebpackPlugin(),
   );
 
   config.resolve.alias = {
