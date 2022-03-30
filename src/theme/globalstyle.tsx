@@ -93,6 +93,27 @@ export const styles = css`
   .Resizer.disabled:hover {
     border-color: transparent;
   }
+  scrollbar-width: auto;
+  /* width */
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: scroll;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 1em;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #383838;
+  }
 `;
 
 const GlobalStyle: React.FC = () => <Global styles={styles} />;
