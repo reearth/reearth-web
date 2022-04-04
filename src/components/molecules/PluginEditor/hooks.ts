@@ -1,6 +1,5 @@
 import { useState, useMemo, ChangeEvent, useEffect, useCallback } from "react";
 
-import { LayerStore, Props } from "@reearth/components/molecules/Visualizer";
 import type {
   Widget,
   WidgetAlignSystem,
@@ -37,7 +36,7 @@ const defaultPosition = {
   area: "top",
 };
 
-export default (args: Props) => {
+export default () => {
   const [mode, setMode] = useState("widget");
   const [showInfobox, setShowInfobox] = useState(false);
   const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
@@ -141,77 +140,6 @@ export default (args: Props) => {
     }
   }, [widget, hardSourceCode]);
 
-  const args2 = useMemo<Props>(() => {
-    return {
-      ...args,
-      widgets: {
-        ...(mode === "widget"
-          ? {
-              alignSystem: alignSystem,
-            }
-          : {}),
-      },
-      layers: new LayerStore({
-        id: "",
-        children: [
-          {
-            id: "pluginprimitive",
-            pluginId: "reearth",
-            extensionId: "marker",
-            isVisible: true,
-            property: {
-              default: {
-                location: { lat: 0, lng: 139 },
-                height: 0,
-              },
-            },
-            infobox: showInfobox
-              ? {
-                  property: {
-                    default: {
-                      title: "Cool info",
-                      bgcolor: "#56051fff",
-                      size: infoboxSize,
-                    },
-                  },
-                  blocks: [
-                    ...(mode === "block"
-                      ? [
-                          {
-                            id: "xxx",
-                            __REEARTH_SOURCECODE: sourceCode.body,
-                          } as any,
-                        ]
-                      : []),
-                    {
-                      id: "yyy",
-                      pluginId: "plugins",
-                      extensionId: "block",
-                      property: {
-                        location: { lat: 0, lng: 139 },
-                      },
-                    },
-                  ],
-                }
-              : undefined,
-          },
-          ...(mode === "primitive"
-            ? [
-                {
-                  id: "xxx",
-                  __REEARTH_SOURCECODE: sourceCode.body,
-                  isVisible: true,
-                  property: {
-                    location: { lat: 0, lng: 130 },
-                  },
-                } as any,
-              ]
-            : []),
-        ],
-      }),
-    };
-  }, [args, mode, alignSystem, sourceCode, showInfobox, infoboxSize]);
-
   useEffect(() => {
     handleAlignSystemUpdate(widget, currentPosition);
   }, [widget]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -222,7 +150,7 @@ export default (args: Props) => {
     currentPosition,
     positions,
     mode,
-    args2,
+    alignSystem,
     infoboxSize,
     showAlignSystem,
     showInfobox,

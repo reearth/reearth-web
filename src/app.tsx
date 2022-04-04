@@ -20,6 +20,7 @@ import { Provider as IntlProvider } from "@reearth/locale";
 
 import { Provider as Auth0Provider } from "./auth";
 import RootPage from "./components/pages/Authentication/RootPage";
+import PluginEditor from "./components/pages/PluginEditor";
 import Preview from "./components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as ThemeProvider, styled } from "./theme";
@@ -64,6 +65,7 @@ const App: React.FC = () => {
                 <PublicSettings path="/settings/project/:projectId/public" />
                 <DatasetSettings path="/settings/project/:projectId/dataset" />
                 <PluginSettings path="/settings/project/:projectId/plugins" />
+                <PluginEditor path="/plugin-editor" />
                 {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
                 <NotFound default />
               </StyledRouter>
