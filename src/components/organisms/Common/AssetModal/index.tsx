@@ -12,7 +12,6 @@ const AssetModal: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
   isOpen,
-  videoOnly,
   toggleAssetModal,
   onSelect,
 }) => {
@@ -21,7 +20,6 @@ const AssetModal: React.FC<Props> = ({
       teamId={teamId}
       initialAssetUrl={initialAssetUrl}
       isOpen={isOpen}
-      videoOnly={videoOnly}
       toggleAssetModal={toggleAssetModal}
       onSelect={onSelect}
       assetContainer={AssetContainer}
