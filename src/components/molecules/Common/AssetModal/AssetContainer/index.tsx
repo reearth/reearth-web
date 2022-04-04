@@ -16,7 +16,13 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset as AssetType, LayoutTypes, SortType, fileFormats } from "./hooks";
+import useHooks, {
+  Asset as AssetType,
+  LayoutTypes,
+  SortType,
+  fileFormats,
+  imageFormats,
+} from "./hooks";
 
 export type Asset = AssetType;
 
@@ -171,6 +177,7 @@ const AssetContainer: React.FC<Props> = ({
                     <AssetListItem
                       key={a.id}
                       asset={a}
+                      isImage={checkIfFileType(a.url, imageFormats)}
                       onCheck={() => onSelect?.(a)}
                       selected={selectedAssets?.includes(a)}
                       checked={initialAsset === a}
