@@ -14,13 +14,11 @@ const AssetModal: React.FC<Props> = ({
   isOpen,
   toggleAssetModal,
   onSelect,
-  fileType = "image",
 }) => {
   return (
     <MoleculeAssetModal
       teamId={teamId}
       initialAssetUrl={initialAssetUrl}
-      fileType={fileType}
       isOpen={isOpen}
       toggleAssetModal={toggleAssetModal}
       onSelect={onSelect}
