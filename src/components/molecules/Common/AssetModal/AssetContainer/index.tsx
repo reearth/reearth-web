@@ -16,7 +16,7 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset as AssetType, LayoutTypes, SortType, fileFormats } from "./hooks";
+import useHooks, { Asset as AssetType, LayoutTypes, SortType } from "./hooks";
 
 export type Asset = AssetType;
 
@@ -32,7 +32,8 @@ export type Props = {
   selectedAssets?: Asset[];
   isLoading?: boolean;
   isMultipleSelectable?: boolean;
-  videoOnly?: boolean;
+  accept?: string;
+  fileType?: "image" | "video" | "file";
   height?: number;
   hasMoreAssets?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
@@ -51,8 +52,10 @@ export type Props = {
 const AssetContainer: React.FC<Props> = ({
   assets,
   isMultipleSelectable = false,
+  accept,
   initialAsset,
   selectedAssets,
+  fileType,
   height,
   hasMoreAssets,
   isLoading,
@@ -83,6 +86,7 @@ const AssetContainer: React.FC<Props> = ({
   } = useHooks({
     sort,
     isMultipleSelectable,
+    accept,
     selectedAssets,
     smallCardOnly,
     onSortChange,
@@ -97,7 +101,11 @@ const AssetContainer: React.FC<Props> = ({
       <Flex justify={onRemove ? "flex-end" : "center"}>
         <Button
           large
-          text={intl.formatMessage({ defaultMessage: "Upload file" })}
+          text={
+            fileType === "image"
+              ? intl.formatMessage({ defaultMessage: "Upload image" })
+              : intl.formatMessage({ defaultMessage: "Upload file" })
+          }
           icon="upload"
           type="button"
           buttonType={onRemove ? "secondary" : "primary"}
@@ -156,9 +164,14 @@ const AssetContainer: React.FC<Props> = ({
                 ? intl.formatMessage({
                     defaultMessage: "No assets match your search.",
                   })
+                : fileType === "image"
+                ? intl.formatMessage({
+                    defaultMessage:
+                      "You haven't uploaded any image assets yet. Click the upload button above and select an image from your computer.",
+                  })
                 : intl.formatMessage({
                     defaultMessage:
-                      "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
+                      "You haven't uploaded any file assets yet. Click the upload button above and select a compatible file from your computer.",
                   })}
             </TemplateText>
           </Template>
@@ -181,7 +194,6 @@ const AssetContainer: React.FC<Props> = ({
                       key={a.id}
                       name={a.name}
                       cardSize={layoutType}
-                      icon={checkIfFileType(a.url, fileFormats) ? "file" : undefined}
                       url={a.url}
                       onCheck={() => onSelect?.(a)}
                       selected={selectedAssets?.includes(a)}
@@ -288,21 +300,3 @@ const TemplateText = styled(Text)`
 `;
 
 export default AssetContainer;
-
-function checkIfFileType(url: string, fileTypes: string) {
-  const formats = fileTypes.split(/,.|\./).splice(1);
-  let regexString = "\\.(";
-
-  for (let i = 0; i < formats.length; i++) {
-    if (i === formats.length - 1) {
-      regexString += formats[i];
-    } else {
-      regexString += formats[i] + "|";
-    }
-  }
-  regexString += ")$";
-
-  const regex = new RegExp(regexString);
-
-  return regex.test(url);
-}

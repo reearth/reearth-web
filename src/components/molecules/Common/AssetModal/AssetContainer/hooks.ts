@@ -6,10 +6,6 @@ export type SortType = "date" | "name" | "size";
 
 export type LayoutTypes = "medium" | "small" | "list";
 
-export const fileFormats = ".kml,.czml,.json,.gltf,.glb";
-
-export const imageFormats = ".jpg,.png,.gif,.svg,.tiff";
-
 export type Asset = {
   id: string;
   teamId: string;
@@ -30,6 +26,7 @@ function handleScroll(
 
 export default ({
   isMultipleSelectable,
+  accept,
   selectedAssets,
   sort,
   smallCardOnly,
@@ -40,6 +37,7 @@ export default ({
   onSearch,
 }: {
   isMultipleSelectable?: boolean;
+  accept?: string;
   selectedAssets?: Asset[];
   sort?: { type?: SortType | null; reverse?: boolean };
   smallCardOnly?: boolean;
@@ -76,7 +74,7 @@ export default ({
       : "filterTime";
 
   const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
-    accept: imageFormats + "," + fileFormats,
+    accept,
     multiple: isMultipleSelectable,
   });
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 
 import MoleculeAssetContainer, {
   Asset as AssetType,
@@ -15,7 +15,7 @@ const AssetContainer: React.FC<Props> = ({
   teamId,
   initialAssetUrl,
   onAssetUrlSelect,
-  videoOnly,
+  fileType,
   smallCardOnly,
   allowDeletion,
   height,
@@ -48,6 +48,24 @@ const AssetContainer: React.FC<Props> = ({
     }
   }, [selectAsset, initialAsset]);
 
+  const filteredAssets = useMemo(() => {
+    if (!assets) return;
+    return assets.filter(
+      a =>
+        !fileType ||
+        a.url.match(fileType === "image" ? /\.(jpg|jpeg|png|gif|webp|svg)$/ : /\.(mp4|webm)$/),
+    );
+  }, [assets, fileType]);
+
+  const accept =
+    fileType === "image"
+      ? "image/*"
+      : fileType === "video"
+      ? "video/*"
+      : fileType
+      ? "*/*"
+      : undefined;
+
   const handleSelect = useCallback(
     (asset?: Asset) => {
       if (!asset) return;
@@ -65,12 +83,13 @@ const AssetContainer: React.FC<Props> = ({
 
   return (
     <MoleculeAssetContainer
-      assets={assets}
+      assets={filteredAssets}
       initialAsset={initialAsset}
       selectedAssets={selectedAssets}
       isLoading={isLoading}
       isMultipleSelectable={isMultipleSelectable}
-      videoOnly={videoOnly}
+      accept={accept}
+      fileType={fileType}
       height={height}
       hasMoreAssets={hasMoreAssets}
       sort={sort}
