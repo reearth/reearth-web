@@ -46,7 +46,7 @@ const PluginEditor: React.FC = () => {
           widgets={{
             ...(mode === "widget"
               ? {
-                  alignSystem: alignSystem,
+                  alignSystem,
                 }
               : {}),
           }}

@@ -113,14 +113,15 @@ export default () => {
 
   const openFile = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const file = (e.target as HTMLInputElement).files?.[0];
+    const file = e.currentTarget.files?.[0];
     if (!file) return;
     const reader = new FileReader();
 
     reader.onload = async e2 => {
-      const text = e2?.target?.result;
-      setSourceCode({ fileName: file.name, body: text as string });
-      setHardSourceCode({ fileName: file.name, body: text as string });
+      const body = e2?.target?.result;
+      if (typeof body != "string") return;
+      setSourceCode({ fileName: file.name, body });
+      setHardSourceCode({ fileName: file.name, body });
     };
     reader.readAsText(file);
   };
