@@ -20,7 +20,6 @@ import { Provider as IntlProvider } from "@reearth/locale";
 
 import { Provider as Auth0Provider } from "./auth";
 import RootPage from "./components/pages/Authentication/RootPage";
-import PluginEditor from "./components/pages/PluginEditor";
 import Preview from "./components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as ThemeProvider, styled } from "./theme";
@@ -28,6 +27,7 @@ import { Provider as ThemeProvider, styled } from "./theme";
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
 const GraphQLPlayground = React.lazy(() => import("@reearth/components/pages/GraphQLPlayground"));
+const PluginEditor = React.lazy(() => import("./components/pages/PluginEditor"));
 
 const enableWhyDidYouRender = false;
 
