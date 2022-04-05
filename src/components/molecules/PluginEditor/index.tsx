@@ -235,7 +235,6 @@ const PluginEditor: React.FC = () => {
                   }>
                   <option value="block">Block</option>
                   <option value="widget">Widget</option>
-                  {/* <option value="primitive">Primitive</option> */}
                 </select>
               </div>
             </div>
