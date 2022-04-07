@@ -16,7 +16,13 @@ import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
 import AssetSelect from "../AssetSelect";
 
-import useHooks, { Asset as AssetType, LayoutTypes, SortType } from "./hooks";
+import useHooks, {
+  Asset as AssetType,
+  LayoutTypes,
+  SortType,
+  fileFormats,
+  imageFormats,
+} from "./hooks";
 
 export type Asset = AssetType;
 
@@ -32,8 +38,7 @@ export type Props = {
   selectedAssets?: Asset[];
   isLoading?: boolean;
   isMultipleSelectable?: boolean;
-  accept?: string;
-  fileType?: "image" | "video" | "file";
+  videoOnly?: boolean;
   height?: number;
   hasMoreAssets?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
@@ -52,10 +57,8 @@ export type Props = {
 const AssetContainer: React.FC<Props> = ({
   assets,
   isMultipleSelectable = false,
-  accept,
   initialAsset,
   selectedAssets,
-  fileType,
   height,
   hasMoreAssets,
   isLoading,
@@ -86,7 +89,6 @@ const AssetContainer: React.FC<Props> = ({
   } = useHooks({
     sort,
     isMultipleSelectable,
-    accept,
     selectedAssets,
     smallCardOnly,
     onSortChange,
@@ -101,11 +103,7 @@ const AssetContainer: React.FC<Props> = ({
       <Flex justify={onRemove ? "flex-end" : "center"}>
         <Button
           large
-          text={
-            fileType === "image"
-              ? intl.formatMessage({ defaultMessage: "Upload image" })
-              : intl.formatMessage({ defaultMessage: "Upload file" })
-          }
+          text={intl.formatMessage({ defaultMessage: "Upload file" })}
           icon="upload"
           type="button"
           buttonType={onRemove ? "secondary" : "primary"}
@@ -159,46 +157,54 @@ const AssetContainer: React.FC<Props> = ({
       <AssetWrapper height={height}>
         {!isLoading && (!assets || assets.length < 1) ? (
           <Template align="center" justify="center">
-            <TemplateText size="m">
-              {fileType === "image"
+            <TemplateText size="m" otherProperties={{ textAlign: "center" }}>
+              {searchTerm
                 ? intl.formatMessage({
-                    defaultMessage:
-                      "You haven't uploaded any image assets yet. Click the upload button above and select an image from your computer.",
+                    defaultMessage: "No assets match your search.",
                   })
                 : intl.formatMessage({
                     defaultMessage:
-                      "You haven't uploaded any file assets yet. Click the upload button above and select a compatible file from your computer.",
+                      "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
                   })}
             </TemplateText>
           </Template>
         ) : (
-          <AssetList layoutType={layoutType} onScroll={e => handleScroll(e, onGetMore)}>
-            {layoutType === "list"
-              ? assets?.map(a => (
-                  <AssetListItem
-                    key={a.id}
-                    asset={a}
-                    onCheck={() => onSelect?.(a)}
-                    selected={selectedAssets?.includes(a)}
-                    checked={initialAsset === a}
-                  />
-                ))
-              : assets?.map(a => (
-                  <AssetCard
-                    key={a.id}
-                    name={a.name}
-                    cardSize={layoutType}
-                    url={a.url}
-                    onCheck={() => onSelect?.(a)}
-                    selected={selectedAssets?.includes(a)}
-                    checked={initialAsset === a}
-                  />
-                ))}
-          </AssetList>
+          <AssetListWrapper
+            onScroll={e => !isLoading && hasMoreAssets && handleScroll(e, onGetMore)}>
+            <AssetList layoutType={layoutType}>
+              {layoutType === "list"
+                ? assets?.map(a => (
+                    <AssetListItem
+                      key={a.id}
+                      asset={a}
+                      isImage={checkIfFileType(a.url, imageFormats)}
+                      onCheck={() => onSelect?.(a)}
+                      selected={selectedAssets?.includes(a)}
+                      checked={initialAsset === a}
+                    />
+                  ))
+                : assets?.map(a => (
+                    <AssetCard
+                      key={a.id}
+                      name={a.name}
+                      cardSize={layoutType}
+                      icon={checkIfFileType(a.url, fileFormats) ? "file" : undefined}
+                      url={a.url}
+                      onCheck={() => onSelect?.(a)}
+                      selected={selectedAssets?.includes(a)}
+                      checked={initialAsset === a}
+                    />
+                  ))}
+            </AssetList>
+            {isLoading && <StyledLoading relative />}
+          </AssetListWrapper>
         )}
-        {isLoading && <StyledLoading relative />}
-        {!hasMoreAssets && <Divider margin="2px" />}
-        <Divider margin="0" />
+        {assets && assets.length > 0 && (
+          <>
+            {!hasMoreAssets && !isLoading && <Divider margin="2px" />}
+            <Divider margin="0" />
+          </>
+        )}
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}
@@ -220,10 +226,18 @@ const AssetWrapper = styled.div<{ height?: number }>`
   justify-content: space-between;
 `;
 
-const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
-  padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;
+const AssetListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   overflow-y: scroll;
   scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
+  padding: ${metricsSizes["l"]}px ${metricsSizes["m"]}px;
   display: grid;
   grid-template-columns: ${({ layoutType }) =>
     (layoutType === "list" && "100%") ||
@@ -238,9 +252,6 @@ const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
     (layoutType === "medium" && "24px") ||
     (layoutType === "small" && "16px")};
   justify-content: space-between;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 const NavBar = styled(Flex)`
@@ -284,3 +295,21 @@ const TemplateText = styled(Text)`
 `;
 
 export default AssetContainer;
+
+function checkIfFileType(url: string, fileTypes: string) {
+  const formats = fileTypes.split(/,.|\./).splice(1);
+  let regexString = "\\.(";
+
+  for (let i = 0; i < formats.length; i++) {
+    if (i === formats.length - 1) {
+      regexString += formats[i];
+    } else {
+      regexString += formats[i] + "|";
+    }
+  }
+  regexString += ")$";
+
+  const regex = new RegExp(regexString);
+
+  return regex.test(url);
+}
