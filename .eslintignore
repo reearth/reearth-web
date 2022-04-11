@@ -5,3 +5,4 @@
 /.storybook/public
 !/src/gql/fragments
 /src/gql/graphql-client-api.tsx
+/src/test.js

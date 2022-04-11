@@ -40,6 +40,7 @@ if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
 }
 
 const App: React.FC = () => {
+  const Ext = window.REEARTH_CONFIG?.ext;
   return (
     <Auth0Provider>
       <GqlProvider>
@@ -47,6 +48,7 @@ const App: React.FC = () => {
           <IntlProvider>
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
+              {Ext && <Ext />}
               <StyledRouter>
                 <RootPage path="/" />
                 <LoginPage path="/login" />

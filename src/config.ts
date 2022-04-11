@@ -1,6 +1,7 @@
 export type Config = {
   version?: string;
   api: string;
+  ext?: React.ComponentType;
   plugins: string;
   published: string;
   auth0ClientId?: string;
@@ -19,6 +20,7 @@ export type Config = {
     highSecurity?: RegExp;
   };
 };
+
 declare global {
   interface Window {
     REEARTH_CONFIG?: Config;
@@ -55,9 +57,22 @@ export function convertPasswordPolicy(passwordPolicy?: {
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
+
+  let ext: any;
+  try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ext = (await import(/* webpackIgnore: true */ "/test.js")).default;
+  } catch (e) {
+    // ignore
+  }
+
+  console.log(ext);
+
   window.REEARTH_CONFIG = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
+    ext,
   };
 
   if (!window.REEARTH_CONFIG?.passwordPolicy) return;

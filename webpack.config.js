@@ -161,11 +161,16 @@ module.exports = (env, args = {}) => {
             from: `node_modules/cesium/Build/Cesium`,
             to: "cesium",
           },
+          {
+            from: "src/test.js",
+            to: ".",
+          },
         ],
       }),
       new HtmlWebpackPlugin({
         excludeChunks: ["published"],
         template: "src/index.html",
+        scriptLoading: "module",
       }),
       new HtmlWebpackPlugin({
         excludeChunks: ["app"],
