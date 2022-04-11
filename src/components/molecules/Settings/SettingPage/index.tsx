@@ -1,6 +1,5 @@
-import { Link, navigate } from "@reach/router";
-import React, { useCallback, useState } from "react";
-import { useKeyPressEvent } from "react-use";
+import { Link } from "@reach/router";
+import React, { useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Header, { Props } from "@reearth/components/molecules/Common/Header";
@@ -19,10 +18,7 @@ const SettingPage: React.FC<Props> = ({
   const handleClick = () => {
     setIsOpen(o => !o);
   };
-  const handleKeyDown = useCallback(() => {
-    navigate(`/dashboard/${currentTeam?.id}`);
-  }, []);
-  useKeyPressEvent("Escape", handleKeyDown);
+
   return (
     <Wrapper>
       <StyledHeader
