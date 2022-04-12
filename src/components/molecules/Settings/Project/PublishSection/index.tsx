@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
+import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
@@ -14,6 +15,7 @@ import useHooks from "./hooks";
 
 interface Props {
   className?: string;
+  projectId: string;
   loading?: boolean;
   projectAlias?: string;
   publicationStatus?: Status;
@@ -21,9 +23,12 @@ interface Props {
   onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
   onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
+  currentLanguage?: string;
+  currentTheme?: string;
 }
 
 const PublishSection: React.FC<Props> = ({
+  projectId,
   loading,
   projectAlias,
   publicationStatus,
@@ -31,8 +36,11 @@ const PublishSection: React.FC<Props> = ({
   validAlias,
   onAliasValidate,
   validatingAlias,
+  currentLanguage,
+  currentTheme,
 }) => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
+  const extensions = window.REEARTH_CONFIG?.extensions?.publishing;
 
   const [showDModal, setDModal] = useState(false);
   const intl = useIntl();
@@ -94,6 +102,21 @@ const PublishSection: React.FC<Props> = ({
             />
           )}
         </Section>
+        {extensions ? (
+          <>
+            <Divider margin="0" />
+            {extensions.map(ext => (
+              <ext.component
+                key={ext.id}
+                projectId={projectId}
+                projectAlias={projectAlias}
+                onAliasChange={onAliasChange}
+                lang={currentLanguage as "en" | "ja"}
+                theme={currentTheme as "dark" | "light"}
+              />
+            ))}
+          </>
+        ) : null}
       </Wrapper>
       <ChangeSiteNameModal
         show={showDModal}

@@ -35,6 +35,8 @@ const Public: React.FC<Props> = ({ projectId }) => {
     updatePublicImage,
     assetModalOpened,
     toggleAssetModal,
+    currentLanguage,
+    currentTheme,
   } = useHooks({ projectId });
 
   return (
@@ -68,6 +70,7 @@ const Public: React.FC<Props> = ({ projectId }) => {
             }
           />
           <PublishSection
+            projectId={projectId}
             loading={loading}
             projectAlias={projectAlias}
             publicationStatus={projectStatus}
@@ -75,6 +78,8 @@ const Public: React.FC<Props> = ({ projectId }) => {
             validAlias={validAlias}
             onAliasValidate={checkProjectAlias}
             validatingAlias={validatingAlias}
+            currentLanguage={currentLanguage}
+            currentTheme={currentTheme}
           />
         </>
       ) : (

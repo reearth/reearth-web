@@ -8,6 +8,7 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
+  useProfileQuery,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
 
@@ -25,6 +26,8 @@ export default ({ projectId }: Params) => {
   const [validAlias, setValidAlias] = useState(false);
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
   const teamId = currentTeam?.id;
+
+  const { data: profileData } = useProfileQuery();
 
   const { data } = useProjectQuery({
     variables: { teamId: teamId ?? "", first: 100 },
@@ -171,6 +174,8 @@ export default ({ projectId }: Params) => {
     updatePublicImage,
     assetModalOpened,
     toggleAssetModal,
+    currentLanguage: profileData?.me?.lang,
+    currentTheme: profileData?.me?.theme,
   };
 };
 

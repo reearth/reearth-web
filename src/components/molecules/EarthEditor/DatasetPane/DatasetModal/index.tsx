@@ -36,6 +36,8 @@ const DatasetModal: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
+  const extensions = window.REEARTH_CONFIG?.extensions?.datasetImport;
+
   const {
     csv,
     dataType,
@@ -46,6 +48,8 @@ const DatasetModal: React.FC<Props> = ({
     handleImport,
     handleClick,
     handleClose,
+    url,
+    onUrlChange,
   } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
 
   const primaryButtonText = useMemo(() => {
@@ -105,6 +109,21 @@ const DatasetModal: React.FC<Props> = ({
                 onClick={handleClick}
               />
             )}
+            {extensions
+              ? extensions.map(ext => (
+                  <Card
+                    key={ext.id}
+                    id={ext.id}
+                    icon={ext.image}
+                    iconSize="80px"
+                    text={ext.title}
+                    margin={56}
+                    border="dashed"
+                    borderColor={theme.main.border}
+                    onClick={handleClick}
+                  />
+                ))
+              : null}
           </Content>
         </ConnectSection>
       ) : (
@@ -136,6 +155,16 @@ const DatasetModal: React.FC<Props> = ({
               </Content>
             </>
           )}
+          {extensions
+            ? extensions.map(ext => (
+                <ext.component
+                  key={ext.id}
+                  onReturn={onReturn}
+                  url={url}
+                  onUrlChange={onUrlChange}
+                />
+              ))
+            : null}
           {!dataType && (
             <>
               <Button onClick={onReturn}>
