@@ -1,3 +1,40 @@
+export type ExtensionType = "dataset-import" | "publication";
+
+export type DatasetImportExtensionProps = {
+  onReturn?: () => void;
+  onUrlChange?: (url: string) => void;
+  url?: string;
+  theme?: "dark" | "light";
+  lang?: "en" | "ja";
+};
+
+export type ProjectPublicationExtensionProps = {
+  projectId: string;
+  projectAlias?: string;
+  publishDisabled?: boolean;
+  onAliasChange?: (value?: string) => void;
+  theme?: "dark" | "light";
+  lang?: "en" | "ja";
+};
+
+export type ExtensionProps = {
+  "dataset-import": DatasetImportExtensionProps;
+  publication: ProjectPublicationExtensionProps;
+};
+
+export type Extension<T extends ExtensionType = ExtensionType> = {
+  type: T;
+  id: string;
+  component: React.ComponentType<ExtensionProps[T]>;
+  title?: string;
+  image?: string;
+};
+
+export type Extensions = {
+  publishing?: Extension<"publication">[];
+  datasetImport?: Extension<"dataset-import">[];
+};
+
 export type Config = {
   version?: string;
   api: string;
@@ -18,6 +55,8 @@ export type Config = {
     medSecurity?: RegExp;
     highSecurity?: RegExp;
   };
+  extensionURLs?: string[];
+  extensions?: Extensions;
 };
 declare global {
   interface Window {
@@ -32,6 +71,7 @@ export const defaultConfig: Config = {
   auth0Audience: "http://localhost:8080",
   auth0Domain: "http://localhost:8080",
   auth0ClientId: "reearth-authsrv-client-default",
+  extensionURLs: ["http://localhost:8887/reearth-cloud.es.js"],
 };
 
 export function convertPasswordPolicy(passwordPolicy?: {
@@ -52,6 +92,50 @@ export function convertPasswordPolicy(passwordPolicy?: {
   );
 }
 
+export function getExtensionsFrom(urls?: string[]): Extensions | undefined {
+  if (!urls) return undefined;
+  const publishing: Extension<"publication">[] = [];
+  const datasetImport: Extension<"dataset-import">[] = [];
+  (async () => {
+    for (let i = 0; i < urls.length; i++) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const newExtensions: Extension[] = (await import(/* webpackIgnore: true */ urls[i]))
+          .default;
+        newExtensions.forEach(ext =>
+          ext.type === "dataset-import"
+            ? datasetImport.push(ext as Extension<"dataset-import">)
+            : ext.type === "publication"
+            ? publishing.push(ext as Extension<"publication">)
+            : undefined,
+        );
+      } catch (e) {
+        // ignore
+      }
+    }
+  })();
+  return {
+    publishing,
+    datasetImport,
+  };
+}
+
+export function importExternal(url: string) {
+  return new Promise((res, rej) => {
+    const script = document.createElement("script");
+    script.src = url;
+    script.async = true;
+    script.onload = () => {
+      if (!window.REEARTH_CONFIG) return;
+      res(window.REEARTH_CONFIG.extensions);
+    };
+    script.onerror = rej;
+
+    document.body.appendChild(script);
+  });
+}
+
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
@@ -60,9 +144,15 @@ export default async function loadConfig() {
     ...(await (await fetch("/reearth_config.json")).json()),
   };
 
-  if (!window.REEARTH_CONFIG?.passwordPolicy) return;
+  if (window.REEARTH_CONFIG?.passwordPolicy) {
+    window.REEARTH_CONFIG.passwordPolicy = convertPasswordPolicy(
+      window.REEARTH_CONFIG.passwordPolicy as { [key: string]: string },
+    );
+  }
 
-  window.REEARTH_CONFIG.passwordPolicy = convertPasswordPolicy(
-    window.REEARTH_CONFIG.passwordPolicy as { [key: string]: string },
-  );
+  if (window.REEARTH_CONFIG?.extensionURLs) {
+    const urls = window.REEARTH_CONFIG.extensionURLs;
+    const extensions = getExtensionsFrom(urls);
+    window.REEARTH_CONFIG.extensions = extensions;
+  }
 }
