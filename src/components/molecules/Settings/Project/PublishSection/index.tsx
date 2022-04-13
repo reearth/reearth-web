@@ -1,6 +1,7 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
+import { useAuth } from "@reearth/auth";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
 import { Status } from "@reearth/components/atoms/PublicationStatus";
@@ -43,12 +44,20 @@ const PublishSection: React.FC<Props> = ({
   onAliasValidate,
   onNotificationChange,
 }) => {
-  const url = window.REEARTH_CONFIG?.published?.split("{}");
-  const extensions = window.REEARTH_CONFIG?.extensions?.publishing;
-
-  const [showDModal, setDModal] = useState(false);
   const intl = useIntl();
   const theme = useTheme();
+  const { getAccessToken } = useAuth();
+  const url = window.REEARTH_CONFIG?.published?.split("{}");
+  const extensions = window.REEARTH_CONFIG?.extensions?.publication;
+
+  const [showDModal, setDModal] = useState(false);
+  const [accessToken, setAccessToken] = useState<string>();
+
+  useEffect(() => {
+    getAccessToken().then(token => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
 
   const { alias, onAliasChange, validation, handleCopyToClipBoard } = useHooks(
     projectAlias,
@@ -106,7 +115,7 @@ const PublishSection: React.FC<Props> = ({
             />
           )}
         </Section>
-        {extensions ? (
+        {extensions && accessToken ? (
           <>
             <Divider margin="0" />
             {extensions.map(ext => (
@@ -116,7 +125,7 @@ const PublishSection: React.FC<Props> = ({
                 projectAlias={projectAlias}
                 lang={currentLanguage as "en" | "ja"}
                 theme={currentTheme as "dark" | "light"}
-                onAliasChange={onAliasChange}
+                accessToken={accessToken}
                 onNotificationChange={onNotificationChange}
               />
             ))}

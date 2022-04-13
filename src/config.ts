@@ -3,6 +3,7 @@ export type ExtensionType = "dataset-import" | "publication";
 export type SharedExtensionProps = {
   theme?: "dark" | "light";
   lang?: "en" | "ja";
+  accessToken?: string;
   onNotificationChange?: (
     type: "error" | "warning" | "info" | "success",
     text: string,
@@ -20,7 +21,6 @@ export type ProjectPublicationExtensionProps = {
   projectId: string;
   projectAlias?: string;
   publishDisabled?: boolean;
-  onAliasChange?: (value?: string) => void;
 } & SharedExtensionProps;
 
 export type ExtensionProps = {
@@ -37,7 +37,7 @@ export type Extension<T extends ExtensionType = ExtensionType> = {
 };
 
 export type Extensions = {
-  publishing?: Extension<"publication">[];
+  publication?: Extension<"publication">[];
   datasetImport?: Extension<"dataset-import">[];
 };
 
@@ -61,6 +61,7 @@ export type Config = {
     medSecurity?: RegExp;
     highSecurity?: RegExp;
   };
+  ip?: string;
   extensionURLs?: string[];
   extensions?: Extensions;
 };
@@ -100,20 +101,20 @@ export function convertPasswordPolicy(passwordPolicy?: {
 
 export function getExtensionsFrom(urls?: string[]): Extensions | undefined {
   if (!urls) return undefined;
-  const publishing: Extension<"publication">[] = [];
+  // Entry point for publication extensions is @reearth/components/molecules/Settings/Project/PublishSection
+  const publication: Extension<"publication">[] = [];
+  // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal
   const datasetImport: Extension<"dataset-import">[] = [];
   (async () => {
     for (let i = 0; i < urls.length; i++) {
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         const newExtensions: Extension[] = (await import(/* webpackIgnore: true */ urls[i]))
           .default;
         newExtensions.forEach(ext =>
           ext.type === "dataset-import"
             ? datasetImport.push(ext as Extension<"dataset-import">)
             : ext.type === "publication"
-            ? publishing.push(ext as Extension<"publication">)
+            ? publication.push(ext as Extension<"publication">)
             : undefined,
         );
       } catch (e) {
@@ -122,7 +123,7 @@ export function getExtensionsFrom(urls?: string[]): Extensions | undefined {
     }
   })();
   return {
-    publishing,
+    publication,
     datasetImport,
   };
 }

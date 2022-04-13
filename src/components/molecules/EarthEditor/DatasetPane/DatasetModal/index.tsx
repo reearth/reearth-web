@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 
+import { useAuth } from "@reearth/auth";
 import Button from "@reearth/components/atoms/Button";
 import Card from "@reearth/components/atoms/Card";
 import Divider from "@reearth/components/atoms/Divider";
@@ -39,8 +40,28 @@ const DatasetModal: React.FC<Props> = ({
   onNotificationChange,
 }) => {
   const intl = useIntl();
+  const { getAccessToken } = useAuth();
+
   const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
   const extensions = window.REEARTH_CONFIG?.extensions?.datasetImport;
+
+  const extensionTypes = useMemo(() => {
+    if (!extensions) return;
+    const types: string[] = [];
+    for (let i = 0; i < extensions.length; i++) {
+      if (types.includes(extensions[i].id)) continue;
+      types.push(extensions[i].id);
+    }
+    return types;
+  }, [extensions]);
+
+  const [accessToken, setAccessToken] = useState<string>();
+
+  useEffect(() => {
+    getAccessToken().then(token => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
 
   const {
     csv,
@@ -50,11 +71,11 @@ const DatasetModal: React.FC<Props> = ({
     onReturn,
     onSheetSelect,
     handleImport,
-    handleClick,
+    handleSetDataType,
     handleClose,
     url,
     onUrlChange,
-  } = useHooks(handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
+  } = useHooks(extensionTypes, handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
 
   const primaryButtonText = useMemo(() => {
     if (syncLoading) {
@@ -110,7 +131,7 @@ const DatasetModal: React.FC<Props> = ({
                 margin={56}
                 border="dashed"
                 borderColor={theme.main.border}
-                onClick={handleClick}
+                onClick={handleSetDataType}
               />
             )}
             {extensions
@@ -124,7 +145,7 @@ const DatasetModal: React.FC<Props> = ({
                     margin={56}
                     border="dashed"
                     borderColor={theme.main.border}
-                    onClick={handleClick}
+                    onClick={handleSetDataType}
                   />
                 ))
               : null}
@@ -163,8 +184,9 @@ const DatasetModal: React.FC<Props> = ({
             ? extensions.map(ext => (
                 <ext.component
                   key={ext.id}
-                  onReturn={onReturn}
                   url={url}
+                  accessToken={accessToken}
+                  onReturn={onReturn}
                   onUrlChange={onUrlChange}
                   onNotificationChange={onNotificationChange}
                 />

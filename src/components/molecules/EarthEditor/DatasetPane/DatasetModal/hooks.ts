@@ -1,11 +1,10 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useMemo } from "react";
 import useFileInput from "use-file-input";
 
 import { SheetParameter } from "./Gdrive";
 
-export type DatasetType = "csv" | "gcms" | "box" | "drop" | "gdrive";
-
 export default (
+  extensionTypes?: string[],
   handleDatasetAdd?: (url: string | File, schemeId: string | null) => Promise<void>,
   handleGoogleSheetDatasetAdd?: (
     accessToken: string,
@@ -18,8 +17,24 @@ export default (
   const [url, onUrlChange] = useState<string>();
   const [csv, changeCsv] = useState<File>();
   const [sheet, changeSheet] = useState<SheetParameter>();
-  const [dataType, setDataType] = useState<DatasetType>();
   const [disabled, setDisabled] = useState(true);
+  const [dataType, setDataType] = useState<string>();
+
+  const AllDatasetTypes = useMemo(() => {
+    const ReEarthDatasetTypes = ["csv", "gcms", "box", "drop", "gdrive"];
+    return extensionTypes ? [...extensionTypes, ...ReEarthDatasetTypes] : ReEarthDatasetTypes;
+  }, [extensionTypes]);
+
+  const handleSetDataType = useCallback(
+    (type?: string) => {
+      if (type && AllDatasetTypes.includes(type)) {
+        setDataType(type);
+      } else {
+        setDataType(undefined);
+      }
+    },
+    [AllDatasetTypes],
+  );
 
   const handleImport = useCallback(async () => {
     if (dataType === "gdrive") {
@@ -36,22 +51,18 @@ export default (
       const file = files[0];
       if (!file) return;
       changeCsv(file);
-      setDataType("csv");
+      handleSetDataType("csv");
     },
     { accept: ".csv,text/csv", multiple: false },
   );
-
-  const handleClick = useCallback(type => {
-    setDataType(type);
-  }, []);
 
   const handleClose = useCallback(() => {
     changeCsv(undefined);
     changeSheet(undefined);
     onUrlChange(undefined);
-    setDataType(undefined);
+    handleSetDataType(undefined);
     onClose?.();
-  }, [onClose]);
+  }, [onClose, handleSetDataType]);
 
   const onSheetSelect = useCallback(sheet => {
     changeSheet(sheet);
@@ -60,9 +71,9 @@ export default (
   const onReturn = useCallback(() => {
     onUrlChange(undefined);
     changeCsv(undefined);
-    setDataType(undefined);
+    handleSetDataType(undefined);
     changeSheet(undefined);
-  }, []);
+  }, [handleSetDataType]);
 
   useEffect(() => {
     setDisabled(!(csv || url || sheet));
@@ -75,7 +86,7 @@ export default (
     dataType,
     disabled,
     onSelectCsvFile,
-    handleClick,
+    handleSetDataType,
     onReturn,
     onSheetSelect,
     handleImport,
