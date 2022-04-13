@@ -22,7 +22,7 @@ const Modal: React.FC<Props> = ({ size, isVisible, onClose, children }) => {
   });
 
   const handleClose = useCallback(() => {
-    isVisible && onClose?.();
+    if (isVisible) onClose?.();
   }, [onClose, isVisible]);
 
   useKeyPressEvent("Escape", handleClose);
