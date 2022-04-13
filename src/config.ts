@@ -1,21 +1,27 @@
 export type ExtensionType = "dataset-import" | "publication";
 
+export type SharedExtensionProps = {
+  theme?: "dark" | "light";
+  lang?: "en" | "ja";
+  onNotificationChange?: (
+    type: "error" | "warning" | "info" | "success",
+    text: string,
+    heading?: string,
+  ) => void;
+};
+
 export type DatasetImportExtensionProps = {
   onReturn?: () => void;
   onUrlChange?: (url: string) => void;
   url?: string;
-  theme?: "dark" | "light";
-  lang?: "en" | "ja";
-};
+} & SharedExtensionProps;
 
 export type ProjectPublicationExtensionProps = {
   projectId: string;
   projectAlias?: string;
   publishDisabled?: boolean;
   onAliasChange?: (value?: string) => void;
-  theme?: "dark" | "light";
-  lang?: "en" | "ja";
-};
+} & SharedExtensionProps;
 
 export type ExtensionProps = {
   "dataset-import": DatasetImportExtensionProps;

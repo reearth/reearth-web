@@ -173,12 +173,12 @@ export default () => {
 
   return {
     datasetSchemas,
+    loading,
+    selectedDatasetSchemaId: selectedDatasetSchemaId,
     handleDatasetSync,
     handleDatasetImport,
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
-    loading,
     selectDatasetSchema,
-    selectedDatasetSchemaId: selectedDatasetSchemaId,
   };
 };

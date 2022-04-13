@@ -24,6 +24,8 @@ export type DatasetSchema = {
 export type Props = {
   className?: string;
   datasetSchemas?: DatasetSchema[];
+  loading?: boolean;
+  selectedDatasetSchemaId?: string;
   onDatasetSync?: (url: string) => void | Promise<void>;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
   onGoogleSheetDatasetImport?: (
@@ -33,21 +35,19 @@ export type Props = {
     datasetSchemaId: string | null,
   ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
-  loading?: boolean;
-  selectedDatasetSchemaId?: string;
   selectDatasetSchema?: (datasetSchemaId: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({
   className,
   datasetSchemas,
+  loading,
+  selectedDatasetSchemaId,
   onDatasetSync,
   onDatasetImport,
   onGoogleSheetDatasetImport,
   onRemoveDataset,
-  loading,
   selectDatasetSchema,
-  selectedDatasetSchemaId,
 }) => {
   const intl = useIntl();
   const {

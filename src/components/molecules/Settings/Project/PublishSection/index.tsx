@@ -13,6 +13,8 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 import useHooks from "./hooks";
 
+export type NotificationType = "error" | "warning" | "info" | "success";
+
 interface Props {
   className?: string;
   projectId: string;
@@ -20,11 +22,12 @@ interface Props {
   projectAlias?: string;
   publicationStatus?: Status;
   validAlias?: boolean;
-  onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
-  onAliasValidate?: (alias: string) => void;
   validatingAlias?: boolean;
   currentLanguage?: string;
   currentTheme?: string;
+  onPublish?: (alias: string | undefined, publicationStatus: Status) => void | Promise<void>;
+  onAliasValidate?: (alias: string) => void;
+  onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 }
 
 const PublishSection: React.FC<Props> = ({
@@ -32,12 +35,13 @@ const PublishSection: React.FC<Props> = ({
   loading,
   projectAlias,
   publicationStatus,
-  onPublish,
   validAlias,
-  onAliasValidate,
   validatingAlias,
   currentLanguage,
   currentTheme,
+  onPublish,
+  onAliasValidate,
+  onNotificationChange,
 }) => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
   const extensions = window.REEARTH_CONFIG?.extensions?.publishing;
@@ -110,9 +114,10 @@ const PublishSection: React.FC<Props> = ({
                 key={ext.id}
                 projectId={projectId}
                 projectAlias={projectAlias}
-                onAliasChange={onAliasChange}
                 lang={currentLanguage as "en" | "ja"}
                 theme={currentTheme as "dark" | "light"}
+                onAliasChange={onAliasChange}
+                onNotificationChange={onNotificationChange}
               />
             ))}
           </>
