@@ -8,7 +8,7 @@ import { styled, useTheme } from "@reearth/theme";
 import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
 
 import DatasetHeader from "./DatasetHeader";
-import DatasetModal from "./DatasetModal";
+import DatasetModal, { NotificationType } from "./DatasetModal";
 import DatasetSchemaCell from "./DatasetSchemaCell";
 import useHooks from "./hooks";
 
@@ -36,6 +36,7 @@ export type Props = {
   ) => void | Promise<void>;
   onRemoveDataset?: (schemaId: string) => void | Promise<void>;
   selectDatasetSchema?: (datasetSchemaId: string) => void;
+  onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 };
 
 const DatasetPane: React.FC<Props> = ({
@@ -48,6 +49,7 @@ const DatasetPane: React.FC<Props> = ({
   onGoogleSheetDatasetImport,
   onRemoveDataset,
   selectDatasetSchema,
+  onNotificationChange,
 }) => {
   const intl = useIntl();
   const {
@@ -140,6 +142,7 @@ const DatasetPane: React.FC<Props> = ({
         onClose={closeDatasetModal}
         handleGoogleSheetDatasetAdd={handleGoogleSheetDatasetAdd}
         handleDatasetAdd={handleDatasetAdd}
+        onNotificationChange={onNotificationChange}
       />
     </Wrapper>
   );

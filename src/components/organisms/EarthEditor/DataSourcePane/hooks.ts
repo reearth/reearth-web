@@ -10,7 +10,13 @@ import {
   useImportGoogleSheetDatasetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
-import { useSceneId, useNotification, useSelected, useProject } from "@reearth/state";
+import {
+  useSceneId,
+  useNotification,
+  useSelected,
+  useProject,
+  NotificationType,
+} from "@reearth/state";
 
 export default () => {
   const intl = useIntl();
@@ -171,6 +177,13 @@ export default () => {
   const selectedDatasetSchemaId =
     selected?.type === "dataset" ? selected.datasetSchemaId : undefined;
 
+  const handleNotificationChange = useCallback(
+    (type: NotificationType, text: string, heading?: string) => {
+      setNotification({ type, text, heading });
+    },
+    [setNotification],
+  );
+
   return {
     datasetSchemas,
     loading,
@@ -180,5 +193,6 @@ export default () => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     selectDatasetSchema,
+    handleNotificationChange,
   };
 };

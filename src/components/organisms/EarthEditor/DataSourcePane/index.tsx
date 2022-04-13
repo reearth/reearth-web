@@ -18,6 +18,7 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
     handleGoogleSheetDatasetImport,
     handleRemoveDataset,
     selectDatasetSchema,
+    handleNotificationChange,
   } = useHooks();
 
   return (
@@ -31,6 +32,7 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
       onDatasetImport={handleDatasetImport}
       onRemoveDataset={handleRemoveDataset}
       selectDatasetSchema={selectDatasetSchema}
+      onNotificationChange={handleNotificationChange}
     />
   );
 };

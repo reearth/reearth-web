@@ -13,6 +13,8 @@ import { styled, useTheme } from "@reearth/theme";
 import Gdrive from "./Gdrive";
 import useHooks from "./hooks";
 
+export type NotificationType = "error" | "warning" | "info" | "success";
+
 interface Props {
   className?: string;
   isVisible: boolean;
@@ -25,6 +27,7 @@ interface Props {
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>;
+  onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 }
 
 const DatasetModal: React.FC<Props> = ({
@@ -33,6 +36,7 @@ const DatasetModal: React.FC<Props> = ({
   onClose,
   handleDatasetAdd,
   handleGoogleSheetDatasetAdd,
+  onNotificationChange,
 }) => {
   const intl = useIntl();
   const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
@@ -162,6 +166,7 @@ const DatasetModal: React.FC<Props> = ({
                   onReturn={onReturn}
                   url={url}
                   onUrlChange={onUrlChange}
+                  onNotificationChange={onNotificationChange}
                 />
               ))
             : null}
