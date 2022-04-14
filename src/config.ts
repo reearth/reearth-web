@@ -100,9 +100,9 @@ export function convertPasswordPolicy(passwordPolicy?: {
 
 export function getExtensionsFrom(urls?: string[]): Extensions | undefined {
   if (!urls) return undefined;
-  // Entry point for publication extensions is @reearth/components/molecules/Settings/Project/PublishSection
+  // Entry point for publication extensions is @reearth/components/molecules/Settings/Project/PublishSection/hooks.ts
   const publication: Extension<"publication">[] = [];
-  // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal
+  // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal/hooks.ts
   const datasetImport: Extension<"dataset-import">[] = [];
   (async () => {
     for (let i = 0; i < urls.length; i++) {
