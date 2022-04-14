@@ -188,7 +188,13 @@ const AssetContainer: React.FC<Props> = ({
                       key={a.id}
                       name={a.name}
                       cardSize={layoutType}
-                      icon={checkIfFileType(a.url, fileFormats) ? "file" : undefined}
+                      icon={
+                        checkIfFileType(a.url, fileFormats)
+                          ? "file"
+                          : checkIfFileType(a.url, imageFormats)
+                          ? undefined
+                          : "assetNoSupport"
+                      }
                       url={a.url}
                       onCheck={() => onSelect?.(a)}
                       selected={selectedAssets?.includes(a)}
