@@ -78,7 +78,6 @@ export const defaultConfig: Config = {
   auth0Audience: "http://localhost:8080",
   auth0Domain: "http://localhost:8080",
   auth0ClientId: "reearth-authsrv-client-default",
-  extensionURLs: ["http://localhost:8887/reearth-cloud.es.js"],
 };
 
 export function convertPasswordPolicy(passwordPolicy?: {
