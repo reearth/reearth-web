@@ -1,10 +1,8 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
-import { useAuth } from "@reearth/auth";
 import Divider from "@reearth/components/atoms/Divider";
 import Icon from "@reearth/components/atoms/Icon";
-import { Status } from "@reearth/components/atoms/PublicationStatus";
 import Text from "@reearth/components/atoms/Text";
 import Field from "@reearth/components/molecules/Settings/Field";
 import ChangeSiteNameModal from "@reearth/components/molecules/Settings/Project/ChangeSiteNameModal";
@@ -12,7 +10,7 @@ import Section from "@reearth/components/molecules/Settings/Section";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import useHooks from "./hooks";
+import useHooks, { Status } from "./hooks";
 
 export type NotificationType = "error" | "warning" | "info" | "success";
 
@@ -44,49 +42,31 @@ const PublishSection: React.FC<Props> = ({
   onAliasValidate,
   onNotificationChange,
 }) => {
-  const intl = useIntl();
   const theme = useTheme();
-  const { getAccessToken } = useAuth();
-  const url = window.REEARTH_CONFIG?.published?.split("{}");
-  const extensions = window.REEARTH_CONFIG?.extensions?.publication;
+  const intl = useIntl();
 
-  const [showDModal, setDModal] = useState(false);
-  const [accessToken, setAccessToken] = useState<string>();
-
-  useEffect(() => {
-    getAccessToken().then(token => {
-      setAccessToken(token);
-    });
-  }, [getAccessToken]);
-
-  const { alias, onAliasChange, validation, handleCopyToClipBoard } = useHooks(
+  const {
+    alias,
+    extensions,
+    accessToken,
+    url,
+    purl,
+    showDModal,
+    publishDisabled,
+    handlePublish,
+    handleDomainModalClose,
+    setDModal,
+    handleAliasChange,
+    handleCopyToClipBoard,
+  } = useHooks(
     projectAlias,
+    loading,
+    publicationStatus,
+    validAlias,
+    validatingAlias,
     onAliasValidate,
+    onPublish,
   );
-
-  const purl = useMemo(() => {
-    return (url?.[0] ?? "") + (projectAlias?.replace("/", "") ?? "") + (url?.[1] ?? "");
-  }, [url, projectAlias]);
-
-  const onDModalClose = useCallback(() => {
-    onAliasChange(projectAlias);
-    setDModal(false);
-  }, [projectAlias, onAliasChange]);
-
-  const handlePublish = useCallback(async () => {
-    if (!publicationStatus) {
-      setDModal(false);
-      return;
-    }
-    await onPublish?.(alias, publicationStatus);
-    setDModal(false);
-  }, [alias, onPublish, publicationStatus]);
-
-  const publishDisabled =
-    loading ||
-    publicationStatus === "unpublished" ||
-    (publicationStatus === "published" &&
-      (!alias || !!validation || validatingAlias || !validAlias));
 
   return (
     <>
@@ -134,10 +114,10 @@ const PublishSection: React.FC<Props> = ({
       </Wrapper>
       <ChangeSiteNameModal
         show={showDModal}
-        onClose={onDModalClose}
+        onClose={handleDomainModalClose}
         url={url}
         alias={alias}
-        onAliasChange={onAliasChange}
+        onAliasChange={handleAliasChange}
         handlePublish={handlePublish}
         disabled={publishDisabled}
       />
