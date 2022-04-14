@@ -1,3 +1,4 @@
+import fileDownload from "js-file-download";
 import { useState, useMemo, ChangeEvent, useEffect, useCallback } from "react";
 
 import type {
@@ -68,6 +69,11 @@ export default () => {
       RightBottom: { section: "right", area: "bottom" },
     },
   ];
+
+  const handleFileDownload = (body?: string, filename?: string) => {
+    if (!body) return;
+    fileDownload(body, filename ?? "undefined.js");
+  };
 
   const handleAlignSystemUpdate = (widget: Widget, newLoc: Position) => {
     setAlignSystem(() => {
@@ -155,6 +161,7 @@ export default () => {
     infoboxSize,
     showAlignSystem,
     showInfobox,
+    handleFileDownload,
     handleAlignSystemToggle,
     handleInfoboxToggle,
     openFile,

@@ -19,6 +19,7 @@ const PluginEditor: React.FC = () => {
     infoboxSize,
     showAlignSystem,
     showInfobox,
+    handleFileDownload,
     handleAlignSystemToggle,
     handleInfoboxToggle,
     openFile,
@@ -137,8 +138,7 @@ const PluginEditor: React.FC = () => {
                   margin: "20px 0",
                 }}>
                 <SaveButton
-                  href={`data:application/javascript;charset=utf-8,${sourceCode.body}`}
-                  download={sourceCode.fileName}>
+                  onClick={() => handleFileDownload(sourceCode.body, sourceCode.fileName)}>
                   Save {sourceCode.fileName}
                 </SaveButton>
                 <Button
@@ -287,15 +287,6 @@ const Button = styled.button<{ selected?: boolean }>`
   }
 `;
 
-const SaveButton = styled.a`
-  background: white;
-  border-radius: 3px;
-  padding: 4px 6px;
-  text-decoration: none;
-  color: black;
-  text-align: center;
-
-  :hover {
-    background: lightgrey;
-  }
+const SaveButton = styled(Button)`
+  padding: 6px 8px;
 `;
