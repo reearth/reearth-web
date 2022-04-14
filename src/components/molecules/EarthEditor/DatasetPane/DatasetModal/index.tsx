@@ -1,7 +1,6 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
-import { useAuth } from "@reearth/auth";
 import Button from "@reearth/components/atoms/Button";
 import Card from "@reearth/components/atoms/Card";
 import Divider from "@reearth/components/atoms/Divider";
@@ -39,52 +38,26 @@ const DatasetModal: React.FC<Props> = ({
   handleGoogleSheetDatasetAdd,
   onNotificationChange,
 }) => {
+  const theme = useTheme();
   const intl = useIntl();
-  const { getAccessToken } = useAuth();
-
-  const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
-  const extensions = window.REEARTH_CONFIG?.extensions?.datasetImport;
-
-  const extensionTypes = useMemo(() => {
-    if (!extensions) return;
-    const types: string[] = [];
-    for (let i = 0; i < extensions.length; i++) {
-      if (types.includes(extensions[i].id)) continue;
-      types.push(extensions[i].id);
-    }
-    return types;
-  }, [extensions]);
-
-  const [accessToken, setAccessToken] = useState<string>();
-
-  useEffect(() => {
-    getAccessToken().then(token => {
-      setAccessToken(token);
-    });
-  }, [getAccessToken]);
 
   const {
+    url,
     csv,
     dataType,
     disabled,
-    onSelectCsvFile,
-    onReturn,
-    onSheetSelect,
-    handleImport,
+    accessToken,
+    primaryButtonText,
+    googleApiKey,
+    extensions,
+    setUrl,
+    handleSelectCsvFile,
     handleSetDataType,
+    handleReturn,
+    handleSheetSelect,
+    handleImport,
     handleClose,
-    url,
-    onUrlChange,
-  } = useHooks(extensionTypes, handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
-
-  const primaryButtonText = useMemo(() => {
-    if (syncLoading) {
-      return intl.formatMessage({ defaultMessage: "sending..." });
-    } else {
-      return intl.formatMessage({ defaultMessage: "Add Dataset" });
-    }
-  }, [syncLoading, intl]);
-  const theme = useTheme();
+  } = useHooks(syncLoading, handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
 
   return (
     <Modal
@@ -120,7 +93,7 @@ const DatasetModal: React.FC<Props> = ({
               margin={56}
               border="dashed"
               borderColor={theme.main.border}
-              onClick={onSelectCsvFile}
+              onClick={handleSelectCsvFile}
             />
             {googleApiKey && (
               <Card
@@ -154,14 +127,18 @@ const DatasetModal: React.FC<Props> = ({
       ) : (
         <InputSection>
           {dataType === "gdrive" && (
-            <Gdrive onReturn={onReturn} onSheetSelect={onSheetSelect} syncLoading={syncLoading} />
+            <Gdrive
+              onReturn={handleReturn}
+              onSheetSelect={handleSheetSelect}
+              syncLoading={syncLoading}
+            />
           )}
           {dataType === "csv" && (
             <>
               <StyledIcon
                 icon={"arrowLongLeft"}
                 size={24}
-                onClick={onReturn}
+                onClick={handleReturn}
                 color={theme.main.text}
               />
               <Subtitle
@@ -186,15 +163,15 @@ const DatasetModal: React.FC<Props> = ({
                   key={ext.id}
                   url={url}
                   accessToken={accessToken}
-                  onReturn={onReturn}
-                  onUrlChange={onUrlChange}
+                  onReturn={handleReturn}
+                  onUrlChange={setUrl}
                   onNotificationChange={onNotificationChange}
                 />
               ))
             : null}
           {!dataType && (
             <>
-              <Button onClick={onReturn}>
+              <Button onClick={handleReturn}>
                 <Icon icon={"arrowLongLeft"} size={24} color={theme.main.text} />
               </Button>
 
@@ -216,7 +193,6 @@ const ConnectSection = styled.div`
   width: 100%;
   min-height: 200px;
   & > div > div {
-    // margin-right: 40px;
     &:hover {
       cursor: pointer;
       background: ${props => props.theme.main.paleBg};

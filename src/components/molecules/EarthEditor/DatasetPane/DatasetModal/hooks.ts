@@ -1,10 +1,13 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
+import { useIntl } from "react-intl";
 import useFileInput from "use-file-input";
+
+import { useAuth } from "@reearth/auth";
 
 import { SheetParameter } from "./Gdrive";
 
 export default (
-  extensionTypes?: string[],
+  syncLoading: boolean,
   handleDatasetAdd?: (url: string | File, schemeId: string | null) => Promise<void>,
   handleGoogleSheetDatasetAdd?: (
     accessToken: string,
@@ -14,11 +17,35 @@ export default (
   ) => Promise<void>,
   onClose?: () => void,
 ) => {
-  const [url, onUrlChange] = useState<string>();
-  const [csv, changeCsv] = useState<File>();
-  const [sheet, changeSheet] = useState<SheetParameter>();
+  const { getAccessToken } = useAuth();
+  const intl = useIntl();
+
+  const googleApiKey = window.REEARTH_CONFIG?.googleApiKey;
+  const extensions = window.REEARTH_CONFIG?.extensions?.datasetImport;
+  const [url, setUrl] = useState<string>();
+  const [csv, setCsv] = useState<File>();
+  const [sheet, setSheet] = useState<SheetParameter>();
   const [disabled, setDisabled] = useState(true);
   const [dataType, setDataType] = useState<string>();
+  const [accessToken, setAccessToken] = useState<string>();
+
+  const primaryButtonText = useMemo(() => {
+    if (syncLoading) {
+      return intl.formatMessage({ defaultMessage: "sending..." });
+    } else {
+      return intl.formatMessage({ defaultMessage: "Add Dataset" });
+    }
+  }, [syncLoading, intl]);
+
+  const extensionTypes = useMemo(() => {
+    if (!extensions) return;
+    const types: string[] = [];
+    for (let i = 0; i < extensions.length; i++) {
+      if (types.includes(extensions[i].id)) continue;
+      types.push(extensions[i].id);
+    }
+    return types;
+  }, [extensions]);
 
   const AllDatasetTypes = useMemo(() => {
     const ReEarthDatasetTypes = ["csv", "gcms", "box", "drop", "gdrive"];
@@ -46,34 +73,40 @@ export default (
     await handleDatasetAdd(data, null);
   }, [dataType, url, csv, sheet, handleDatasetAdd, handleGoogleSheetDatasetAdd]);
 
-  const onSelectCsvFile = useFileInput(
+  const handleSelectCsvFile = useFileInput(
     (files: FileList) => {
       const file = files[0];
       if (!file) return;
-      changeCsv(file);
+      setCsv(file);
       handleSetDataType("csv");
     },
     { accept: ".csv,text/csv", multiple: false },
   );
 
   const handleClose = useCallback(() => {
-    changeCsv(undefined);
-    changeSheet(undefined);
-    onUrlChange(undefined);
+    setCsv(undefined);
+    setSheet(undefined);
+    setUrl(undefined);
     handleSetDataType(undefined);
     onClose?.();
   }, [onClose, handleSetDataType]);
 
-  const onSheetSelect = useCallback(sheet => {
-    changeSheet(sheet);
+  const handleSheetSelect = useCallback(sheet => {
+    setSheet(sheet);
   }, []);
 
-  const onReturn = useCallback(() => {
-    onUrlChange(undefined);
-    changeCsv(undefined);
+  const handleReturn = useCallback(() => {
+    setUrl(undefined);
+    setCsv(undefined);
     handleSetDataType(undefined);
-    changeSheet(undefined);
+    setSheet(undefined);
   }, [handleSetDataType]);
+
+  useEffect(() => {
+    getAccessToken().then(token => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
 
   useEffect(() => {
     setDisabled(!(csv || url || sheet));
@@ -81,14 +114,18 @@ export default (
 
   return {
     url,
-    onUrlChange,
     csv,
     dataType,
     disabled,
-    onSelectCsvFile,
+    accessToken,
+    primaryButtonText,
+    googleApiKey,
+    extensions,
+    setUrl,
+    handleSelectCsvFile,
     handleSetDataType,
-    onReturn,
-    onSheetSelect,
+    handleReturn,
+    handleSheetSelect,
     handleImport,
     handleClose,
   };

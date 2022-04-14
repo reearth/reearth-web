@@ -1,25 +1,16 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
+import Flex from "@reearth/components/atoms/Flex";
 import Loading from "@reearth/components/atoms/Loading";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
-import { parseHost, DataSource as RawDataSource } from "@reearth/util/path";
 
 import DatasetHeader from "./DatasetHeader";
 import DatasetModal, { NotificationType } from "./DatasetModal";
 import DatasetSchemaCell from "./DatasetSchemaCell";
-import useHooks from "./hooks";
-
-export type DataSource = RawDataSource;
-
-export type DatasetSchema = {
-  id: string;
-  name: string;
-  source: DataSource;
-  totalCount?: number;
-};
+import useHooks, { DatasetSchema } from "./hooks";
 
 export type Props = {
   className?: string;
@@ -52,62 +43,27 @@ const DatasetPane: React.FC<Props> = ({
   onNotificationChange,
 }) => {
   const intl = useIntl();
+  const theme = useTheme();
   const {
     datasetSyncOpen,
     datasetSyncLoading,
-    setDatasetSyncOpen,
-    setDatasetSyncLoading,
+    byHost,
+    handleGoogleSheetDatasetAdd,
+    handleDatasetAdd,
     openDatasetModal,
     closeDatasetModal,
-  } = useHooks();
-
-  const handleGoogleSheetDatasetAdd = useCallback(
-    async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
-      setDatasetSyncLoading(true);
-      try {
-        await onGoogleSheetDatasetImport?.(accessToken, fileId, sheetName, schemeId);
-      } finally {
-        setDatasetSyncLoading(false);
-      }
-      setDatasetSyncOpen(false);
-    },
-    [onGoogleSheetDatasetImport, setDatasetSyncLoading, setDatasetSyncOpen],
-  );
-
-  const handleDatasetAdd = useCallback(
-    async (data: string | File, schemeId: string | null) => {
-      setDatasetSyncLoading(true);
-      try {
-        typeof data === "string"
-          ? await onDatasetSync?.(data)
-          : await onDatasetImport?.(data, schemeId);
-      } finally {
-        setDatasetSyncLoading(false);
-      }
-      setDatasetSyncOpen(false);
-    },
-    [onDatasetImport, onDatasetSync, setDatasetSyncLoading, setDatasetSyncOpen],
-  );
-
-  const byHost = (datasetSchemas || []).reduce((acc, ac) => {
-    const host = parseHost(ac.source);
-    const identifier = host || intl.formatMessage({ defaultMessage: "Other Source" });
-
-    acc[identifier] = [...(acc[identifier] || []), ac];
-    return acc;
-  }, {} as { [host: string]: DatasetSchema[] });
-  const theme = useTheme();
+  } = useHooks(datasetSchemas, onDatasetImport, onDatasetSync, onGoogleSheetDatasetImport);
 
   return (
-    <Wrapper className={className}>
-      <TitleWrapper>
+    <Wrapper className={className} align="stretch">
+      <Flex justify="space-between" align="center">
         <Button
           buttonType="primary"
           icon="datasetAdd"
           text={intl.formatMessage({ defaultMessage: "Add Dataset" })}
           onClick={openDatasetModal}
         />
-      </TitleWrapper>
+      </Flex>
       <Wrapper2>
         {Object.keys(byHost).length ? (
           Object.entries(byHost).map(([host, schemas]) => (
@@ -127,7 +83,7 @@ const DatasetPane: React.FC<Props> = ({
             </div>
           ))
         ) : (
-          <NoDataset>
+          <NoDataset wrap="wrap" justify="center" align="center">
             {/* TODO 画像入れたい */}
             <Text size="2xs" color={theme.main.text} otherProperties={{ textAlign: "center" }}>
               {intl.formatMessage({ defaultMessage: "No Dataset is here" })}
@@ -148,20 +104,12 @@ const DatasetPane: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled(Flex)`
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
   flex-flow: column;
-  align-items: stretch;
   overflow-y: auto;
-`;
-
-const TitleWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const Wrapper2 = styled.div`
@@ -169,11 +117,7 @@ const Wrapper2 = styled.div`
   flex: auto;
 `;
 
-const NoDataset = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+const NoDataset = styled(Flex)`
   align-content: center;
 `;
 
