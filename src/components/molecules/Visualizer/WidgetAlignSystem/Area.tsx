@@ -57,6 +57,7 @@ export default function Area({
       align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
       style={{ flexWrap: wrapContent ? "wrap" : undefined }}
       editorStyle={{
+        flexWrap: wrapContent ? "wrap" : undefined,
         background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
         border:
           area === "middle"
