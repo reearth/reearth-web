@@ -2,7 +2,10 @@ import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback } from "react";
 import { useIntl } from "react-intl";
 
-import { DatasetSchema, DataSource } from "@reearth/components/molecules/EarthEditor/DatasetPane";
+import {
+  DatasetSchema,
+  DataSource,
+} from "@reearth/components/molecules/EarthEditor/DatasetPane/hooks";
 import {
   useDatasetSchemasQuery,
   useSyncDatasetMutation,
