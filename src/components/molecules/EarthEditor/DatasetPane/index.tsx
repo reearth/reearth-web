@@ -47,7 +47,7 @@ const DatasetPane: React.FC<Props> = ({
   const {
     datasetSyncOpen,
     datasetSyncLoading,
-    byHost,
+    handleDatasetSortByHost,
     handleGoogleSheetDatasetAdd,
     handleDatasetAdd,
     openDatasetModal,
@@ -65,8 +65,8 @@ const DatasetPane: React.FC<Props> = ({
         />
       </Flex>
       <Wrapper2>
-        {Object.keys(byHost).length ? (
-          Object.entries(byHost).map(([host, schemas]) => (
+        {Object.keys(handleDatasetSortByHost).length ? (
+          Object.entries(handleDatasetSortByHost).map(([host, schemas]) => (
             <div key={host}>
               <DatasetHeader host={host} />
               {schemas.map(ds => (

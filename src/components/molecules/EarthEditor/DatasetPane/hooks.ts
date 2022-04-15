@@ -58,18 +58,21 @@ export default (
     [onDatasetImport, onDatasetSync, setDatasetSyncLoading, setDatasetSyncOpen],
   );
 
-  const byHost = (datasetSchemas || []).reduce((acc, ac) => {
-    const host = parseHost(ac.source);
-    const identifier = host || intl.formatMessage({ defaultMessage: "Other Source" });
+  const handleDatasetSortByHost = (datasetSchemas || []).reduce<Record<string, DatasetSchema[]>>(
+    (acc, ac) => {
+      const host = parseHost(ac.source);
+      const identifier = host || intl.formatMessage({ defaultMessage: "Other Source" });
 
-    acc[identifier] = [...(acc[identifier] || []), ac];
-    return acc;
-  }, {} as { [host: string]: DatasetSchema[] });
+      acc[identifier] = [...(acc[identifier] || []), ac];
+      return acc;
+    },
+    {},
+  );
 
   return {
     datasetSyncOpen,
     datasetSyncLoading,
-    byHost,
+    handleDatasetSortByHost,
     handleGoogleSheetDatasetAdd,
     handleDatasetAdd,
     openDatasetModal,
