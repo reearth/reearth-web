@@ -11,6 +11,8 @@ import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types"
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
+import Avatar from "../Settings/Avatar";
+
 export interface Props {
   className?: string;
   team?: TeamType;
@@ -20,6 +22,7 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
   const intl = useIntl();
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
+  const teamLength = team?.members?.length ?? 0;
 
   return (
     <StyledDashboardBlock className={className} grow={5}>
@@ -30,11 +33,20 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
         </Text>
         <Flex>
           <TeamWrapper flex={4}>
-            {team?.members?.map((member, i) => (
-              <Text key={i} size="m" color={theme.main.text}>
-                {member?.user.name}
-              </Text>
+            {team?.members?.slice(0, 5).map((member, i) => (
+              <StyledAvatar key={i} size={32} color={theme.main.avatarbg} radius={50}>
+                <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
+                  {member?.user.name?.charAt(0).toUpperCase()}
+                </Text>
+              </StyledAvatar>
             ))}
+            {teamLength > 5 && (
+              <StyledAvatar size={32} color={theme.main.avatarbg} radius={50}>
+                <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
+                  +{teamLength - 5}
+                </Text>
+              </StyledAvatar>
+            )}
           </TeamWrapper>
           <StyledLink to={`/settings/workspace/${team?.id}`}>
             <Icon icon="settings" />
@@ -81,8 +93,12 @@ const StyledLink = styled(Link)`
 
 const TeamWrapper = styled(Flex)`
   * {
-    margin-right: ${metricsSizes.xl}px;
+    margin-right: ${metricsSizes.xs}px;
   }
+  row-gap: -5px;
+`;
+const StyledAvatar = styled(Avatar)`
+  margin: 0 ${metricsSizes["l"]}px;
 `;
 
 export default Workspace;

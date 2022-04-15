@@ -1,16 +1,21 @@
 import React, { useState, useCallback, PropsWithChildren } from "react";
+import { useMedia } from "react-use";
 
 import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
 import TextBox from "@reearth/components/atoms/TextBox";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 import Field from "@reearth/components/molecules/Settings/Field";
 import SelectField from "@reearth/components/molecules/Settings/SelectField";
-import { styled } from "@reearth/theme";
+import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+
+import Avatar from "../../Avatar";
 
 export type Props<T extends string = string> = {
   className?: string;
   title?: React.ReactNode;
+  subTitle?: React.ReactNode;
   body?: T;
   dropdown?: boolean;
   isImage?: boolean;
@@ -24,6 +29,8 @@ export type Props<T extends string = string> = {
   currentItem?: T;
   imageSrc?: string;
   icon?: string;
+  isAvatar?: boolean;
+  avatar?: string;
   iHeight?: string;
   multilineTextBox?: boolean;
   disabled?: boolean;
@@ -35,6 +42,7 @@ export type Props<T extends string = string> = {
 export default function EditableItem<T extends string = string>({
   className,
   title,
+  subTitle,
   body,
   dropdown,
   isImage,
@@ -45,13 +53,16 @@ export default function EditableItem<T extends string = string>({
   icon,
   iHeight,
   disabled,
+  isAvatar,
+  avatar,
   onSubmit,
   onEditStart,
   onEditCancel,
 }: PropsWithChildren<Props<T>>): JSX.Element | null {
   const [isEditting, setIsEditting] = useState(false);
   const [inputState, setInputState] = useState(currentItem || body);
-
+  const theme = useTheme();
+  const isSmallWindow = useMedia("(max-width: 1024px)");
   const startEdit = useCallback(() => {
     if (onEditStart) {
       onEditStart();
@@ -78,6 +89,7 @@ export default function EditableItem<T extends string = string>({
       <Field
         className={className}
         header={title}
+        subHeader={subTitle}
         action={
           <ButtonWrapper>
             <StyledIcon icon="cancel" size={20} onClick={cancelEdit} />
@@ -92,6 +104,7 @@ export default function EditableItem<T extends string = string>({
       <Field
         className={className}
         header={title}
+        subHeader={subTitle}
         action={
           <ButtonWrapper>
             <StyledIcon icon="cancel" size={20} onClick={cancelEdit} />
@@ -111,6 +124,7 @@ export default function EditableItem<T extends string = string>({
     <Field
       className={className}
       header={title}
+      subHeader={subTitle}
       body={body}
       action={
         !disabled && (
@@ -124,6 +138,12 @@ export default function EditableItem<T extends string = string>({
         <div>
           <Image src={imageSrc || defaultProjectImage} height={iHeight} />
         </div>
+      ) : isAvatar ? (
+        <StyledAvatar size={16} color={theme.main.bg} radius={50}>
+          <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
+            {avatar?.charAt(0).toUpperCase()}
+          </Text>
+        </StyledAvatar>
       ) : (
         icon && (
           <div>
@@ -157,4 +177,17 @@ const Image = styled.img`
   max-height: 800px;
   max-width: 480px;
   width: 75%;
+`;
+const StyledAvatar = styled(Avatar)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  width: 64px;
+  height: 64px;
+  left: 150px;
+  top: 0px;
+  bottom: 2px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `;

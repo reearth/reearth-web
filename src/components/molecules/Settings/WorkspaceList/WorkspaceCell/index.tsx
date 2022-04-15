@@ -1,12 +1,13 @@
 import React from "react";
 import { useIntl } from "react-intl";
+import { useMedia } from "react-use";
 
-// Components
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
+import Avatar from "../../Avatar";
 import { Team as TeamType } from "../WorkspaceList";
 
 export type Team = TeamType;
@@ -22,6 +23,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
   const intl = useIntl();
   const teamMembers = team.members;
   const theme = useTheme();
+  const isSmallWindow = useMedia("(max-width: 1024px)");
 
   return (
     <Wrapper
@@ -40,7 +42,7 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
           })}
         </Text>
       ) : (
-        <Flex>
+        <Flex align="center" justify="flex-start">
           <Text
             size="m"
             color={theme.main.text}
@@ -49,9 +51,9 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
           </Text>
           <Flex wrap="wrap">
             {teamMembers.map(member => (
-              <StyledItem key={member.userId}>
-                <Text size="m" color={theme.main.text}>
-                  {member?.user?.name}
+              <StyledItem key={member.userId} size={32} color={theme.main.avatarbg} radius={50}>
+                <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
+                  {member.user?.name.charAt(0).toUpperCase()}
                 </Text>
               </StyledItem>
             ))}
@@ -75,7 +77,7 @@ const Wrapper = styled(Flex)`
   }
 `;
 
-const StyledItem = styled.div`
+const StyledItem = styled(Avatar)`
   margin: ${metricsSizes["s"]}px;
 `;
 
