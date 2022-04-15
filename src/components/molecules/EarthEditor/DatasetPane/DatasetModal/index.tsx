@@ -107,21 +107,19 @@ const DatasetModal: React.FC<Props> = ({
                 onClick={handleSetDataType}
               />
             )}
-            {extensions
-              ? extensions.map(ext => (
-                  <Card
-                    key={ext.id}
-                    id={ext.id}
-                    icon={ext.image}
-                    iconSize="80px"
-                    text={ext.title}
-                    margin={56}
-                    border="dashed"
-                    borderColor={theme.main.border}
-                    onClick={handleSetDataType}
-                  />
-                ))
-              : null}
+            {extensions?.map(ext => (
+              <Card
+                key={ext.id}
+                id={ext.id}
+                icon={ext.image}
+                iconSize="80px"
+                text={ext.title}
+                margin={56}
+                border="dashed"
+                borderColor={theme.main.border}
+                onClick={handleSetDataType}
+              />
+            ))}
           </Content>
         </ConnectSection>
       ) : (
@@ -157,18 +155,16 @@ const DatasetModal: React.FC<Props> = ({
               </Content>
             </>
           )}
-          {extensions
-            ? extensions.map(ext => (
-                <ext.component
-                  key={ext.id}
-                  url={url}
-                  accessToken={accessToken}
-                  onReturn={handleReturn}
-                  onUrlChange={setUrl}
-                  onNotificationChange={onNotificationChange}
-                />
-              ))
-            : null}
+          {extensions?.map(ext => (
+            <ext.component
+              key={ext.id}
+              url={url}
+              accessToken={accessToken}
+              onReturn={handleReturn}
+              onUrlChange={setUrl}
+              onNotificationChange={onNotificationChange}
+            />
+          ))}
           {!dataType && (
             <>
               <Button onClick={handleReturn}>

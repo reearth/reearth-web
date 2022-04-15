@@ -64,7 +64,7 @@ export default () => {
     [data],
   );
 
-  const selectDatasetSchema = useCallback(
+  const handleDatasetSchemaSelect = useCallback(
     (datasetSchemaId: string) => {
       select({ type: "dataset", datasetSchemaId: datasetSchemaId });
     },
@@ -150,7 +150,7 @@ export default () => {
   );
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
-  const handleRemoveDataset = useCallback(
+  const handleDatasetRemove = useCallback(
     async (schemaId: string) => {
       const result = await removeDatasetSchema({
         variables: {
@@ -190,12 +190,12 @@ export default () => {
   return {
     datasetSchemas,
     loading,
-    selectedDatasetSchemaId: selectedDatasetSchemaId,
+    selectedDatasetSchemaId,
     handleDatasetSync,
     handleDatasetImport,
     handleGoogleSheetDatasetImport,
-    handleRemoveDataset,
-    selectDatasetSchema,
+    handleDatasetRemove,
+    handleDatasetSchemaSelect,
     handleNotificationChange,
   };
 };

@@ -25,8 +25,8 @@ export type Props = {
     sheetName: string,
     datasetSchemaId: string | null,
   ) => void | Promise<void>;
-  onRemoveDataset?: (schemaId: string) => void | Promise<void>;
-  selectDatasetSchema?: (datasetSchemaId: string) => void;
+  onDatasetRemove?: (schemaId: string) => void | Promise<void>;
+  onDatasetSchemaSelect?: (datasetSchemaId: string) => void;
   onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 };
 
@@ -38,8 +38,8 @@ const DatasetPane: React.FC<Props> = ({
   onDatasetSync,
   onDatasetImport,
   onGoogleSheetDatasetImport,
-  onRemoveDataset,
-  selectDatasetSchema,
+  onDatasetRemove,
+  onDatasetSchemaSelect,
   onNotificationChange,
 }) => {
   const intl = useIntl();
@@ -76,8 +76,8 @@ const DatasetPane: React.FC<Props> = ({
                   name={ds.name}
                   totalCount={ds.totalCount}
                   selected={selectedDatasetSchemaId === ds.id}
-                  selectDatasetSchema={selectDatasetSchema}
-                  onRemove={onRemoveDataset}
+                  onDatasetSchemaSelect={onDatasetSchemaSelect}
+                  onRemove={onDatasetRemove}
                 />
               ))}
             </div>

@@ -14,7 +14,7 @@ export type DatasetSchemaProps = {
   totalCount?: number;
   onRemove?: (schemaId: string) => void;
   selected?: boolean;
-  selectDatasetSchema?: (datasetSchemaId: string) => void;
+  onDatasetSchemaSelect?: (datasetSchemaId: string) => void;
 };
 
 const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
@@ -24,14 +24,14 @@ const DatasetSchemaCell: React.FC<DatasetSchemaProps> = ({
   name,
   totalCount,
   selected,
-  selectDatasetSchema,
+  onDatasetSchemaSelect,
 }) => {
   const [showDeleteModal, setDeleteModal] = useState(false);
 
   const handleSelect = useCallback(() => {
     if (!id) return;
-    selectDatasetSchema?.(id);
-  }, [id, selectDatasetSchema]);
+    onDatasetSchemaSelect?.(id);
+  }, [id, onDatasetSchemaSelect]);
 
   const handleToggleDeleteModal = useCallback(() => {
     setDeleteModal(!showDeleteModal);
