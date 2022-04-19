@@ -101,3 +101,55 @@ export const REMOVE_MEMBER_FROM_TEAM = gql`
     }
   }
 `;
+
+export const CREATE_TEAM = gql`
+  mutation createTeam($name: String!) {
+    createTeam(input: { name: $name }) {
+      team {
+        id
+        name
+        members {
+          user {
+            id
+            name
+            email
+          }
+          userId
+          role
+        }
+        personal
+      }
+    }
+  }
+`;
+export const TEAMS = gql`
+  fragment Team on Team {
+    id
+    name
+    members {
+      user {
+        id
+        name
+        email
+      }
+      userId
+      role
+    }
+    personal
+  }
+
+  query teams {
+    me {
+      id
+      name
+      myTeam {
+        id
+        ...Team
+      }
+      teams {
+        id
+        ...Team
+      }
+    }
+  }
+`;

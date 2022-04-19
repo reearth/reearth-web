@@ -56,39 +56,79 @@ export const ME = gql`
   }
 `;
 
-export const CREATE_PROJECT = gql`
-  mutation CreateProject(
-    $teamId: ID!
-    $visualizer: Visualizer!
-    $name: String!
-    $description: String!
-    $imageUrl: URL
+export const UPDATE_ME = gql`
+  mutation updateMe(
+    $name: String
+    $email: String
+    $lang: Lang
+    $theme: Theme
+    $password: String
+    $passwordConfirmation: String
   ) {
-    createProject(
+    updateMe(
       input: {
-        teamId: $teamId
-        visualizer: $visualizer
         name: $name
-        description: $description
-        imageUrl: $imageUrl
+        email: $email
+        lang: $lang
+        theme: $theme
+        password: $password
+        passwordConfirmation: $passwordConfirmation
       }
     ) {
-      project {
+      user {
         id
         name
-        description
-        imageUrl
+        email
+        lang
+        theme
+        myTeam {
+          id
+          name
+        }
       }
     }
   }
 `;
 
-export const CREATE_SCENE = gql`
-  mutation CreateScene($projectId: ID!) {
-    createScene(input: { projectId: $projectId }) {
-      scene {
+export const DELETE_ME = gql`
+  mutation deleteMe($userId: ID!) {
+    deleteMe(input: { userId: $userId }) {
+      userId
+    }
+  }
+`;
+
+export const PROFILE = gql`
+  query Profile {
+    me {
+      id
+      name
+      email
+      lang
+      theme
+      myTeam {
         id
+        name
       }
+      auths
+    }
+  }
+`;
+
+export const LANGUAGE = gql`
+  query Language {
+    me {
+      id
+      lang
+    }
+  }
+`;
+
+export const THEME = gql`
+  query Theme {
+    me {
+      id
+      theme
     }
   }
 `;
