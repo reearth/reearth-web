@@ -2,6 +2,53 @@ import { gql } from "@apollo/client";
 
 import { propertyFragment, layerFragment } from "@reearth/gql/fragments";
 
+export const GET_LAYER_PROPERTY = gql`
+  query GetLayerProperty($layerId: ID!, $lang: String) {
+    layer(id: $layerId) {
+      id
+      ...Layer1Fragment
+    }
+  }
+
+  ${propertyFragment}
+`;
+
+export const GET_SCENE_PROPERTY = gql`
+  query GetSceneProperty($sceneId: ID!, $lang: String) {
+    node(id: $sceneId, type: SCENE) {
+      id
+      ... on Scene {
+        property {
+          id
+          ...PropertyFragment
+        }
+        widgets {
+          id
+          pluginId
+          extensionId
+          enabled
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+        clusters {
+          id
+          name
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+      }
+    }
+  }
+
+  ${propertyFragment}
+`;
+
 export const CHANGE_PROPERTY_VALUE = gql`
   mutation ChangePropertyValue(
     $value: Any
@@ -206,51 +253,4 @@ export const UPDATE_PROPERTY_ITEMS = gql`
   }
 
   ${layerFragment}
-`;
-
-export const GET_LAYER_PROPERTY = gql`
-  query GetLayerProperty($layerId: ID!, $lang: String) {
-    layer(id: $layerId) {
-      id
-      ...Layer1Fragment
-    }
-  }
-
-  ${propertyFragment}
-`;
-
-export const GET_SCENE_PROPERTY = gql`
-  query GetSceneProperty($sceneId: ID!, $lang: String) {
-    node(id: $sceneId, type: SCENE) {
-      id
-      ... on Scene {
-        property {
-          id
-          ...PropertyFragment
-        }
-        widgets {
-          id
-          pluginId
-          extensionId
-          enabled
-          propertyId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        clusters {
-          id
-          name
-          propertyId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-      }
-    }
-  }
-
-  ${propertyFragment}
 `;

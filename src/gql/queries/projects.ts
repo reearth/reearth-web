@@ -29,26 +29,6 @@ export const GET_TEAM_PROJECTS = gql`
   }
 `;
 
-export const CHECK_PROJECT_ALIAS = gql`
-  query CheckProjectAlias($alias: String!) {
-    checkProjectAlias(alias: $alias) {
-      alias
-      available
-    }
-  }
-`;
-export const PUBLISH_PROJECT = gql`
-  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
-    publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
-      project {
-        id
-        alias
-        publishmentStatus
-      }
-    }
-  }
-`;
-
 export const PROJECT = gql`
   query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
     projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
@@ -69,6 +49,26 @@ export const PROJECT = gql`
         scene {
           id
         }
+      }
+    }
+  }
+`;
+
+export const CHECK_PROJECT_ALIAS = gql`
+  query CheckProjectAlias($alias: String!) {
+    checkProjectAlias(alias: $alias) {
+      alias
+      available
+    }
+  }
+`;
+export const PUBLISH_PROJECT = gql`
+  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
+    publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
+      project {
+        id
+        alias
+        publishmentStatus
       }
     }
   }

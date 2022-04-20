@@ -48,6 +48,86 @@ export const GET_WIDGETS = gql`
   }
 `;
 
+export const GET_EARTH_WIDGETS = gql`
+  query GetEarthWidgets($sceneId: ID!, $lang: String) {
+    node(id: $sceneId, type: SCENE) {
+      id
+      ... on Scene {
+        project {
+          id
+          publicTitle
+        }
+        property {
+          id
+          ...PropertyFragment
+        }
+        clusters {
+          id
+          name
+          propertyId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+        tags {
+          id
+          label
+          ... on TagGroup {
+            tags {
+              id
+              label
+            }
+          }
+        }
+        plugins {
+          property {
+            id
+            ...PropertyFragment
+          }
+          pluginId
+          plugin {
+            id
+            extensions {
+              extensionId
+              type
+              widgetLayout {
+                floating
+                extendable {
+                  vertically
+                  horizontally
+                }
+                extended
+                defaultLocation {
+                  zone
+                  section
+                  area
+                }
+              }
+            }
+          }
+        }
+        widgets {
+          id
+          enabled
+          extended
+          pluginId
+          extensionId
+          property {
+            id
+            ...PropertyFragment
+          }
+        }
+        widgetAlignSystem {
+          ...WidgetAlignSystemFragment
+        }
+      }
+    }
+  }
+
+  ${widgetAlignSysFragment}
+`;
+
 export const ADD_WIDGET = gql`
   mutation addWidget(
     $sceneId: ID!
@@ -125,86 +205,6 @@ export const UPDATE_WIDGET = gql`
           pluginId
           extensionId
           propertyId
-        }
-      }
-    }
-  }
-
-  ${widgetAlignSysFragment}
-`;
-
-export const GET_EARTH_WIDGETS = gql`
-  query GetEarthWidgets($sceneId: ID!, $lang: String) {
-    node(id: $sceneId, type: SCENE) {
-      id
-      ... on Scene {
-        project {
-          id
-          publicTitle
-        }
-        property {
-          id
-          ...PropertyFragment
-        }
-        clusters {
-          id
-          name
-          propertyId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        tags {
-          id
-          label
-          ... on TagGroup {
-            tags {
-              id
-              label
-            }
-          }
-        }
-        plugins {
-          property {
-            id
-            ...PropertyFragment
-          }
-          pluginId
-          plugin {
-            id
-            extensions {
-              extensionId
-              type
-              widgetLayout {
-                floating
-                extendable {
-                  vertically
-                  horizontally
-                }
-                extended
-                defaultLocation {
-                  zone
-                  section
-                  area
-                }
-              }
-            }
-          }
-        }
-        widgets {
-          id
-          enabled
-          extended
-          pluginId
-          extensionId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        widgetAlignSystem {
-          ...WidgetAlignSystemFragment
         }
       }
     }
