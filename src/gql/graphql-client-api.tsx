@@ -2725,6 +2725,17 @@ export type GetTeamProjectsQueryVariables = Exact<{
 
 export type GetTeamProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string } | null> } };
 
+export type ProjectQueryVariables = Exact<{
+  teamId: Scalars['ID'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+}>;
+
+
+export type ProjectQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null> } };
+
 export type CheckProjectAliasQueryVariables = Exact<{
   alias: Scalars['String'];
 }>;
@@ -2740,17 +2751,6 @@ export type PublishProjectMutationVariables = Exact<{
 
 
 export type PublishProjectMutation = { __typename?: 'Mutation', publishProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
-
-export type ProjectQueryVariables = Exact<{
-  teamId: Scalars['ID'];
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-}>;
-
-
-export type ProjectQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null> } };
 
 export type UpdateProjectBasicAuthMutationVariables = Exact<{
   projectId: Scalars['ID'];
@@ -2810,6 +2810,22 @@ export type UpdateProjectAliasMutationVariables = Exact<{
 
 
 export type UpdateProjectAliasMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, alias: string } } | null };
+
+export type GetLayerPropertyQueryVariables = Exact<{
+  layerId: Scalars['ID'];
+  lang?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetLayerPropertyQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, linkedDatasetSchemaId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, layers: Array<{ __typename?: 'LayerGroup', id: string, linkedDatasetSchemaId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | { __typename?: 'LayerItem', id: string, linkedDatasetId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, merged?: { __typename?: 'MergedLayer', parentId?: string | null, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, infobox?: { __typename?: 'MergedInfobox', property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, fields: Array<{ __typename?: 'MergedInfoboxField', originalId: string, pluginId: string, extensionId: string, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null }> } | null } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | null>, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | { __typename?: 'LayerItem', id: string, linkedDatasetId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, merged?: { __typename?: 'MergedLayer', parentId?: string | null, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, infobox?: { __typename?: 'MergedInfobox', property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, fields: Array<{ __typename?: 'MergedInfoboxField', originalId: string, pluginId: string, extensionId: string, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null }> } | null } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | null };
+
+export type GetScenePropertyQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+  lang?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetScenePropertyQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, widgets: Array<{ __typename?: 'SceneWidget', id: string, pluginId: string, extensionId: string, enabled: boolean, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }>, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type ChangePropertyValueMutationVariables = Exact<{
   value?: InputMaybe<Scalars['Any']>;
@@ -2890,22 +2906,6 @@ export type UpdatePropertyItemsMutationVariables = Exact<{
 
 export type UpdatePropertyItemsMutation = { __typename?: 'Mutation', updatePropertyItems?: { __typename?: 'PropertyItemPayload', property: { __typename?: 'Property', id: string, layer?: { __typename?: 'LayerGroup', id: string, linkedDatasetSchemaId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, layers: Array<{ __typename?: 'LayerGroup', id: string, linkedDatasetSchemaId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | { __typename?: 'LayerItem', id: string, linkedDatasetId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, merged?: { __typename?: 'MergedLayer', parentId?: string | null, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, infobox?: { __typename?: 'MergedInfobox', property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, fields: Array<{ __typename?: 'MergedInfoboxField', originalId: string, pluginId: string, extensionId: string, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null }> } | null } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | null>, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | { __typename?: 'LayerItem', id: string, linkedDatasetId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, merged?: { __typename?: 'MergedLayer', parentId?: string | null, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, infobox?: { __typename?: 'MergedInfobox', property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, fields: Array<{ __typename?: 'MergedInfoboxField', originalId: string, pluginId: string, extensionId: string, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null }> } | null } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | null, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } } | null };
 
-export type GetLayerPropertyQueryVariables = Exact<{
-  layerId: Scalars['ID'];
-  lang?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetLayerPropertyQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, linkedDatasetSchemaId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, layers: Array<{ __typename?: 'LayerGroup', id: string, linkedDatasetSchemaId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | { __typename?: 'LayerItem', id: string, linkedDatasetId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, merged?: { __typename?: 'MergedLayer', parentId?: string | null, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, infobox?: { __typename?: 'MergedInfobox', property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, fields: Array<{ __typename?: 'MergedInfoboxField', originalId: string, pluginId: string, extensionId: string, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null }> } | null } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | null>, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | { __typename?: 'LayerItem', id: string, linkedDatasetId?: string | null, name: string, isVisible: boolean, pluginId?: string | null, extensionId?: string | null, merged?: { __typename?: 'MergedLayer', parentId?: string | null, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, infobox?: { __typename?: 'MergedInfobox', property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null, fields: Array<{ __typename?: 'MergedInfoboxField', originalId: string, pluginId: string, extensionId: string, property?: { __typename?: 'MergedProperty', originalId?: string | null, parentId?: string | null, linkedDatasetId?: string | null, schema?: { __typename?: 'PropertySchema', id: string } | null, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, groups: Array<{ __typename?: 'MergedPropertyGroup', schemaGroupId: string, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }>, fields: Array<{ __typename?: 'MergedPropertyField', fieldId: string, type: ValueType, actualValue?: any | null, overridden: boolean, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> } | null }> } | null } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, infobox?: { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | null } | null };
-
-export type GetScenePropertyQueryVariables = Exact<{
-  sceneId: Scalars['ID'];
-  lang?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetScenePropertyQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, widgets: Array<{ __typename?: 'SceneWidget', id: string, pluginId: string, extensionId: string, enabled: boolean, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }>, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
-
 export type SceneQueryVariables = Exact<{
   projectId: Scalars['ID'];
 }>;
@@ -2933,6 +2933,13 @@ export type GetSceneTagsQueryVariables = Exact<{
 
 
 export type GetSceneTagsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, tags: Array<{ __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | { __typename?: 'TagItem', parentId?: string | null, id: string, label: string, parent?: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | null }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+
+export type GetLayerTagsQueryVariables = Exact<{
+  layerId: Scalars['ID'];
+}>;
+
+
+export type GetLayerTagsQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | null };
 
 export type CreateTagGroupMutationVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -3002,17 +3009,32 @@ export type UpdateTagMutationVariables = Exact<{
 
 export type UpdateTagMutation = { __typename?: 'Mutation', updateTag?: { __typename?: 'UpdateTagPayload', tag: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } } | null };
 
-export type GetLayerTagsQueryVariables = Exact<{
-  layerId: Scalars['ID'];
+export type SearchUserQueryVariables = Exact<{
+  nameOrEmail: Scalars['String'];
 }>;
 
 
-export type GetLayerTagsQuery = { __typename?: 'Query', layer?: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | null };
+export type SearchUserQuery = { __typename?: 'Query', searchUser?: { __typename?: 'SearchedUser', userId: string, userName: string, userEmail: string } | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }, teams: Array<{ __typename?: 'Team', id: string, name: string, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }> } | null };
+
+export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string } } | null };
+
+export type LanguageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LanguageQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, lang: string } | null };
+
+export type ThemeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ThemeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, theme: Theme } | null };
 
 export type UpdateMeMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -3033,21 +3055,6 @@ export type DeleteMeMutationVariables = Exact<{
 
 export type DeleteMeMutation = { __typename?: 'Mutation', deleteMe?: { __typename?: 'DeleteMePayload', userId: string } | null };
 
-export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string } } | null };
-
-export type LanguageQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LanguageQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, lang: string } | null };
-
-export type ThemeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ThemeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, theme: Theme } | null };
-
 export type GetWidgetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
   lang?: InputMaybe<Scalars['String']>;
@@ -3055,6 +3062,14 @@ export type GetWidgetsQueryVariables = Exact<{
 
 
 export type GetWidgetsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, description: string, name: string, translatedDescription: string, translatedName: string, icon: string, singleOnly?: boolean | null, type: PluginExtensionType, widgetLayout?: { __typename?: 'WidgetLayout', extended: boolean, floating: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: { __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType } | null } | null }> } | null }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+
+export type GetEarthWidgetsQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+  lang?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetEarthWidgetsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, project?: { __typename?: 'Project', id: string, publicTitle: string } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }>, tags: Array<{ __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | { __typename?: 'TagItem', id: string, label: string }>, plugins: Array<{ __typename?: 'ScenePlugin', pluginId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, plugin?: { __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, widgetLayout?: { __typename?: 'WidgetLayout', floating: boolean, extended: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: { __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType } | null } | null }> } | null }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }>, widgetAlignSystem?: { __typename?: 'WidgetAlignSystem', outer?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null, inner?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null } | null } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type AddWidgetMutationVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -3086,14 +3101,6 @@ export type UpdateWidgetMutationVariables = Exact<{
 
 export type UpdateWidgetMutation = { __typename?: 'Mutation', updateWidget?: { __typename?: 'UpdateWidgetPayload', scene: { __typename?: 'Scene', id: string, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, propertyId: string }> } } | null };
 
-export type GetEarthWidgetsQueryVariables = Exact<{
-  sceneId: Scalars['ID'];
-  lang?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetEarthWidgetsQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string, project?: { __typename?: 'Project', id: string, publicTitle: string } | null, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, clusters: Array<{ __typename?: 'Cluster', id: string, name: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }>, tags: Array<{ __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | { __typename?: 'TagItem', id: string, label: string }>, plugins: Array<{ __typename?: 'ScenePlugin', pluginId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, plugin?: { __typename?: 'Plugin', id: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, widgetLayout?: { __typename?: 'WidgetLayout', floating: boolean, extended: boolean, extendable: { __typename?: 'WidgetExtendable', vertically: boolean, horizontally: boolean }, defaultLocation?: { __typename?: 'WidgetLocation', zone: WidgetZoneType, section: WidgetSectionType, area: WidgetAreaType } | null } | null }> } | null }>, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, extended: boolean, pluginId: string, extensionId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }>, widgetAlignSystem?: { __typename?: 'WidgetAlignSystem', outer?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null, inner?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null } | null } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
-
 export type UpdateWidgetAlignSystemMutationVariables = Exact<{
   sceneId: Scalars['ID'];
   location: WidgetLocationInput;
@@ -3102,6 +3109,13 @@ export type UpdateWidgetAlignSystemMutationVariables = Exact<{
 
 
 export type UpdateWidgetAlignSystemMutation = { __typename?: 'Mutation', updateWidgetAlignSystem?: { __typename?: 'UpdateWidgetAlignSystemPayload', scene: { __typename?: 'Scene', id: string, widgets: Array<{ __typename?: 'SceneWidget', id: string, enabled: boolean, pluginId: string, extensionId: string, propertyId: string }>, widgetAlignSystem?: { __typename?: 'WidgetAlignSystem', outer?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null, inner?: { __typename?: 'WidgetZone', left?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, center?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null, right?: { __typename?: 'WidgetSection', top?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, middle?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null, bottom?: { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign } | null } | null } | null } | null } } | null };
+
+export type TeamFragment = { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> };
+
+export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TeamsQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, myTeam: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> }, teams: Array<{ __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> }> } | null };
 
 export type UpdateTeamMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3117,13 +3131,6 @@ export type DeleteTeamMutationVariables = Exact<{
 
 
 export type DeleteTeamMutation = { __typename?: 'Mutation', deleteTeam?: { __typename?: 'DeleteTeamPayload', teamId: string } | null };
-
-export type SearchUserQueryVariables = Exact<{
-  nameOrEmail: Scalars['String'];
-}>;
-
-
-export type SearchUserQuery = { __typename?: 'Query', searchUser?: { __typename?: 'SearchedUser', userId: string, userName: string, userEmail: string } | null };
 
 export type AddMemberToTeamMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3157,13 +3164,6 @@ export type CreateTeamMutationVariables = Exact<{
 
 
 export type CreateTeamMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> } } | null };
-
-export type TeamFragment = { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> };
-
-export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type TeamsQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, myTeam: { __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> }, teams: Array<{ __typename?: 'Team', id: string, name: string, personal: boolean, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }> }> } | null };
 
 export const WidgetAreaFragmentFragmentDoc = gql`
     fragment WidgetAreaFragment on WidgetArea {
@@ -5610,6 +5610,68 @@ export function useGetTeamProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetTeamProjectsQueryHookResult = ReturnType<typeof useGetTeamProjectsQuery>;
 export type GetTeamProjectsLazyQueryHookResult = ReturnType<typeof useGetTeamProjectsLazyQuery>;
 export type GetTeamProjectsQueryResult = Apollo.QueryResult<GetTeamProjectsQuery, GetTeamProjectsQueryVariables>;
+export const ProjectDocument = gql`
+    query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+  projects(
+    teamId: $teamId
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+  ) {
+    nodes {
+      id
+      name
+      description
+      imageUrl
+      isArchived
+      isBasicAuthActive
+      basicAuthUsername
+      basicAuthPassword
+      publicTitle
+      publicDescription
+      publicImage
+      alias
+      publishmentStatus
+      scene {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useProjectQuery__
+ *
+ * To run a query within a React component, call `useProjectQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectQuery({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useProjectQuery(baseOptions: Apollo.QueryHookOptions<ProjectQuery, ProjectQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProjectQuery, ProjectQueryVariables>(ProjectDocument, options);
+      }
+export function useProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectQuery, ProjectQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProjectQuery, ProjectQueryVariables>(ProjectDocument, options);
+        }
+export type ProjectQueryHookResult = ReturnType<typeof useProjectQuery>;
+export type ProjectLazyQueryHookResult = ReturnType<typeof useProjectLazyQuery>;
+export type ProjectQueryResult = Apollo.QueryResult<ProjectQuery, ProjectQueryVariables>;
 export const CheckProjectAliasDocument = gql`
     query CheckProjectAlias($alias: String!) {
   checkProjectAlias(alias: $alias) {
@@ -5685,68 +5747,6 @@ export function usePublishProjectMutation(baseOptions?: Apollo.MutationHookOptio
 export type PublishProjectMutationHookResult = ReturnType<typeof usePublishProjectMutation>;
 export type PublishProjectMutationResult = Apollo.MutationResult<PublishProjectMutation>;
 export type PublishProjectMutationOptions = Apollo.BaseMutationOptions<PublishProjectMutation, PublishProjectMutationVariables>;
-export const ProjectDocument = gql`
-    query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
-  projects(
-    teamId: $teamId
-    first: $first
-    last: $last
-    after: $after
-    before: $before
-  ) {
-    nodes {
-      id
-      name
-      description
-      imageUrl
-      isArchived
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-      publicTitle
-      publicDescription
-      publicImage
-      alias
-      publishmentStatus
-      scene {
-        id
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useProjectQuery__
- *
- * To run a query within a React component, call `useProjectQuery` and pass it any options that fit your needs.
- * When your component renders, `useProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProjectQuery({
- *   variables: {
- *      teamId: // value for 'teamId'
- *      first: // value for 'first'
- *      last: // value for 'last'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *   },
- * });
- */
-export function useProjectQuery(baseOptions: Apollo.QueryHookOptions<ProjectQuery, ProjectQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProjectQuery, ProjectQueryVariables>(ProjectDocument, options);
-      }
-export function useProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectQuery, ProjectQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProjectQuery, ProjectQueryVariables>(ProjectDocument, options);
-        }
-export type ProjectQueryHookResult = ReturnType<typeof useProjectQuery>;
-export type ProjectLazyQueryHookResult = ReturnType<typeof useProjectLazyQuery>;
-export type ProjectQueryResult = Apollo.QueryResult<ProjectQuery, ProjectQueryVariables>;
 export const UpdateProjectBasicAuthDocument = gql`
     mutation updateProjectBasicAuth($projectId: ID!, $isBasicAuthActive: Boolean, $basicAuthUsername: String, $basicAuthPassword: String) {
   updateProject(
@@ -6011,6 +6011,105 @@ export function useUpdateProjectAliasMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateProjectAliasMutationHookResult = ReturnType<typeof useUpdateProjectAliasMutation>;
 export type UpdateProjectAliasMutationResult = Apollo.MutationResult<UpdateProjectAliasMutation>;
 export type UpdateProjectAliasMutationOptions = Apollo.BaseMutationOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
+export const GetLayerPropertyDocument = gql`
+    query GetLayerProperty($layerId: ID!, $lang: String) {
+  layer(id: $layerId) {
+    id
+    ...Layer1Fragment
+  }
+}
+    ${Layer1FragmentFragmentDoc}`;
+
+/**
+ * __useGetLayerPropertyQuery__
+ *
+ * To run a query within a React component, call `useGetLayerPropertyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLayerPropertyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLayerPropertyQuery({
+ *   variables: {
+ *      layerId: // value for 'layerId'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useGetLayerPropertyQuery(baseOptions: Apollo.QueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, options);
+      }
+export function useGetLayerPropertyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, options);
+        }
+export type GetLayerPropertyQueryHookResult = ReturnType<typeof useGetLayerPropertyQuery>;
+export type GetLayerPropertyLazyQueryHookResult = ReturnType<typeof useGetLayerPropertyLazyQuery>;
+export type GetLayerPropertyQueryResult = Apollo.QueryResult<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>;
+export const GetScenePropertyDocument = gql`
+    query GetSceneProperty($sceneId: ID!, $lang: String) {
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      property {
+        id
+        ...PropertyFragment
+      }
+      widgets {
+        id
+        pluginId
+        extensionId
+        enabled
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+      clusters {
+        id
+        name
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+    }
+  }
+}
+    ${PropertyFragmentFragmentDoc}`;
+
+/**
+ * __useGetScenePropertyQuery__
+ *
+ * To run a query within a React component, call `useGetScenePropertyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetScenePropertyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetScenePropertyQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useGetScenePropertyQuery(baseOptions: Apollo.QueryHookOptions<GetScenePropertyQuery, GetScenePropertyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetScenePropertyQuery, GetScenePropertyQueryVariables>(GetScenePropertyDocument, options);
+      }
+export function useGetScenePropertyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetScenePropertyQuery, GetScenePropertyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetScenePropertyQuery, GetScenePropertyQueryVariables>(GetScenePropertyDocument, options);
+        }
+export type GetScenePropertyQueryHookResult = ReturnType<typeof useGetScenePropertyQuery>;
+export type GetScenePropertyLazyQueryHookResult = ReturnType<typeof useGetScenePropertyLazyQuery>;
+export type GetScenePropertyQueryResult = Apollo.QueryResult<GetScenePropertyQuery, GetScenePropertyQueryVariables>;
 export const ChangePropertyValueDocument = gql`
     mutation ChangePropertyValue($value: Any, $propertyId: ID!, $schemaGroupId: PropertySchemaGroupID, $itemId: ID, $fieldId: PropertySchemaFieldID!, $type: ValueType!, $lang: String) {
   updatePropertyValue(
@@ -6342,105 +6441,6 @@ export function useUpdatePropertyItemsMutation(baseOptions?: Apollo.MutationHook
 export type UpdatePropertyItemsMutationHookResult = ReturnType<typeof useUpdatePropertyItemsMutation>;
 export type UpdatePropertyItemsMutationResult = Apollo.MutationResult<UpdatePropertyItemsMutation>;
 export type UpdatePropertyItemsMutationOptions = Apollo.BaseMutationOptions<UpdatePropertyItemsMutation, UpdatePropertyItemsMutationVariables>;
-export const GetLayerPropertyDocument = gql`
-    query GetLayerProperty($layerId: ID!, $lang: String) {
-  layer(id: $layerId) {
-    id
-    ...Layer1Fragment
-  }
-}
-    ${Layer1FragmentFragmentDoc}`;
-
-/**
- * __useGetLayerPropertyQuery__
- *
- * To run a query within a React component, call `useGetLayerPropertyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLayerPropertyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLayerPropertyQuery({
- *   variables: {
- *      layerId: // value for 'layerId'
- *      lang: // value for 'lang'
- *   },
- * });
- */
-export function useGetLayerPropertyQuery(baseOptions: Apollo.QueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, options);
-      }
-export function useGetLayerPropertyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>(GetLayerPropertyDocument, options);
-        }
-export type GetLayerPropertyQueryHookResult = ReturnType<typeof useGetLayerPropertyQuery>;
-export type GetLayerPropertyLazyQueryHookResult = ReturnType<typeof useGetLayerPropertyLazyQuery>;
-export type GetLayerPropertyQueryResult = Apollo.QueryResult<GetLayerPropertyQuery, GetLayerPropertyQueryVariables>;
-export const GetScenePropertyDocument = gql`
-    query GetSceneProperty($sceneId: ID!, $lang: String) {
-  node(id: $sceneId, type: SCENE) {
-    id
-    ... on Scene {
-      property {
-        id
-        ...PropertyFragment
-      }
-      widgets {
-        id
-        pluginId
-        extensionId
-        enabled
-        propertyId
-        property {
-          id
-          ...PropertyFragment
-        }
-      }
-      clusters {
-        id
-        name
-        propertyId
-        property {
-          id
-          ...PropertyFragment
-        }
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}`;
-
-/**
- * __useGetScenePropertyQuery__
- *
- * To run a query within a React component, call `useGetScenePropertyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetScenePropertyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetScenePropertyQuery({
- *   variables: {
- *      sceneId: // value for 'sceneId'
- *      lang: // value for 'lang'
- *   },
- * });
- */
-export function useGetScenePropertyQuery(baseOptions: Apollo.QueryHookOptions<GetScenePropertyQuery, GetScenePropertyQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetScenePropertyQuery, GetScenePropertyQueryVariables>(GetScenePropertyDocument, options);
-      }
-export function useGetScenePropertyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetScenePropertyQuery, GetScenePropertyQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetScenePropertyQuery, GetScenePropertyQueryVariables>(GetScenePropertyDocument, options);
-        }
-export type GetScenePropertyQueryHookResult = ReturnType<typeof useGetScenePropertyQuery>;
-export type GetScenePropertyLazyQueryHookResult = ReturnType<typeof useGetScenePropertyLazyQuery>;
-export type GetScenePropertyQueryResult = Apollo.QueryResult<GetScenePropertyQuery, GetScenePropertyQueryVariables>;
 export const SceneDocument = gql`
     query Scene($projectId: ID!) {
   scene(projectId: $projectId) {
@@ -6609,6 +6609,56 @@ export function useGetSceneTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetSceneTagsQueryHookResult = ReturnType<typeof useGetSceneTagsQuery>;
 export type GetSceneTagsLazyQueryHookResult = ReturnType<typeof useGetSceneTagsLazyQuery>;
 export type GetSceneTagsQueryResult = Apollo.QueryResult<GetSceneTagsQuery, GetSceneTagsQueryVariables>;
+export const GetLayerTagsDocument = gql`
+    query getLayerTags($layerId: ID!) {
+  layer(id: $layerId) {
+    id
+    tags {
+      tagId
+      tag {
+        id
+        label
+      }
+      ... on LayerTagGroup {
+        children {
+          tag {
+            id
+            label
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLayerTagsQuery__
+ *
+ * To run a query within a React component, call `useGetLayerTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLayerTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLayerTagsQuery({
+ *   variables: {
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useGetLayerTagsQuery(baseOptions: Apollo.QueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+      }
+export function useGetLayerTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+        }
+export type GetLayerTagsQueryHookResult = ReturnType<typeof useGetLayerTagsQuery>;
+export type GetLayerTagsLazyQueryHookResult = ReturnType<typeof useGetLayerTagsLazyQuery>;
+export type GetLayerTagsQueryResult = Apollo.QueryResult<GetLayerTagsQuery, GetLayerTagsQueryVariables>;
 export const CreateTagGroupDocument = gql`
     mutation createTagGroup($sceneId: ID!, $label: String!) {
   createTagGroup(input: {sceneId: $sceneId, label: $label}) {
@@ -6975,56 +7025,43 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
-export const GetLayerTagsDocument = gql`
-    query getLayerTags($layerId: ID!) {
-  layer(id: $layerId) {
-    id
-    tags {
-      tagId
-      tag {
-        id
-        label
-      }
-      ... on LayerTagGroup {
-        children {
-          tag {
-            id
-            label
-          }
-        }
-      }
-    }
+export const SearchUserDocument = gql`
+    query searchUser($nameOrEmail: String!) {
+  searchUser(nameOrEmail: $nameOrEmail) {
+    userId
+    userName
+    userEmail
   }
 }
     `;
 
 /**
- * __useGetLayerTagsQuery__
+ * __useSearchUserQuery__
  *
- * To run a query within a React component, call `useGetLayerTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLayerTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetLayerTagsQuery({
+ * const { data, loading, error } = useSearchUserQuery({
  *   variables: {
- *      layerId: // value for 'layerId'
+ *      nameOrEmail: // value for 'nameOrEmail'
  *   },
  * });
  */
-export function useGetLayerTagsQuery(baseOptions: Apollo.QueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+export function useSearchUserQuery(baseOptions: Apollo.QueryHookOptions<SearchUserQuery, SearchUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+        return Apollo.useQuery<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, options);
       }
-export function useGetLayerTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLayerTagsQuery, GetLayerTagsQueryVariables>) {
+export function useSearchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchUserQuery, SearchUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLayerTagsQuery, GetLayerTagsQueryVariables>(GetLayerTagsDocument, options);
+          return Apollo.useLazyQuery<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, options);
         }
-export type GetLayerTagsQueryHookResult = ReturnType<typeof useGetLayerTagsQuery>;
-export type GetLayerTagsLazyQueryHookResult = ReturnType<typeof useGetLayerTagsLazyQuery>;
-export type GetLayerTagsQueryResult = Apollo.QueryResult<GetLayerTagsQuery, GetLayerTagsQueryVariables>;
+export type SearchUserQueryHookResult = ReturnType<typeof useSearchUserQuery>;
+export type SearchUserLazyQueryHookResult = ReturnType<typeof useSearchUserLazyQuery>;
+export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUserQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -7107,89 +7144,6 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const UpdateMeDocument = gql`
-    mutation updateMe($name: String, $email: String, $lang: Lang, $theme: Theme, $password: String, $passwordConfirmation: String) {
-  updateMe(
-    input: {name: $name, email: $email, lang: $lang, theme: $theme, password: $password, passwordConfirmation: $passwordConfirmation}
-  ) {
-    user {
-      id
-      name
-      email
-      lang
-      theme
-      myTeam {
-        id
-        name
-      }
-    }
-  }
-}
-    `;
-export type UpdateMeMutationFn = Apollo.MutationFunction<UpdateMeMutation, UpdateMeMutationVariables>;
-
-/**
- * __useUpdateMeMutation__
- *
- * To run a mutation, you first call `useUpdateMeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateMeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateMeMutation, { data, loading, error }] = useUpdateMeMutation({
- *   variables: {
- *      name: // value for 'name'
- *      email: // value for 'email'
- *      lang: // value for 'lang'
- *      theme: // value for 'theme'
- *      password: // value for 'password'
- *      passwordConfirmation: // value for 'passwordConfirmation'
- *   },
- * });
- */
-export function useUpdateMeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMeMutation, UpdateMeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateMeMutation, UpdateMeMutationVariables>(UpdateMeDocument, options);
-      }
-export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
-export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
-export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<UpdateMeMutation, UpdateMeMutationVariables>;
-export const DeleteMeDocument = gql`
-    mutation deleteMe($userId: ID!) {
-  deleteMe(input: {userId: $userId}) {
-    userId
-  }
-}
-    `;
-export type DeleteMeMutationFn = Apollo.MutationFunction<DeleteMeMutation, DeleteMeMutationVariables>;
-
-/**
- * __useDeleteMeMutation__
- *
- * To run a mutation, you first call `useDeleteMeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteMeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteMeMutation, { data, loading, error }] = useDeleteMeMutation({
- *   variables: {
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useDeleteMeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMeMutation, DeleteMeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteMeMutation, DeleteMeMutationVariables>(DeleteMeDocument, options);
-      }
-export type DeleteMeMutationHookResult = ReturnType<typeof useDeleteMeMutation>;
-export type DeleteMeMutationResult = Apollo.MutationResult<DeleteMeMutation>;
-export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<DeleteMeMutation, DeleteMeMutationVariables>;
 export const ProfileDocument = gql`
     query Profile {
   me {
@@ -7303,6 +7257,89 @@ export function useThemeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Them
 export type ThemeQueryHookResult = ReturnType<typeof useThemeQuery>;
 export type ThemeLazyQueryHookResult = ReturnType<typeof useThemeLazyQuery>;
 export type ThemeQueryResult = Apollo.QueryResult<ThemeQuery, ThemeQueryVariables>;
+export const UpdateMeDocument = gql`
+    mutation updateMe($name: String, $email: String, $lang: Lang, $theme: Theme, $password: String, $passwordConfirmation: String) {
+  updateMe(
+    input: {name: $name, email: $email, lang: $lang, theme: $theme, password: $password, passwordConfirmation: $passwordConfirmation}
+  ) {
+    user {
+      id
+      name
+      email
+      lang
+      theme
+      myTeam {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export type UpdateMeMutationFn = Apollo.MutationFunction<UpdateMeMutation, UpdateMeMutationVariables>;
+
+/**
+ * __useUpdateMeMutation__
+ *
+ * To run a mutation, you first call `useUpdateMeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMeMutation, { data, loading, error }] = useUpdateMeMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      email: // value for 'email'
+ *      lang: // value for 'lang'
+ *      theme: // value for 'theme'
+ *      password: // value for 'password'
+ *      passwordConfirmation: // value for 'passwordConfirmation'
+ *   },
+ * });
+ */
+export function useUpdateMeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMeMutation, UpdateMeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateMeMutation, UpdateMeMutationVariables>(UpdateMeDocument, options);
+      }
+export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
+export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
+export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<UpdateMeMutation, UpdateMeMutationVariables>;
+export const DeleteMeDocument = gql`
+    mutation deleteMe($userId: ID!) {
+  deleteMe(input: {userId: $userId}) {
+    userId
+  }
+}
+    `;
+export type DeleteMeMutationFn = Apollo.MutationFunction<DeleteMeMutation, DeleteMeMutationVariables>;
+
+/**
+ * __useDeleteMeMutation__
+ *
+ * To run a mutation, you first call `useDeleteMeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMeMutation, { data, loading, error }] = useDeleteMeMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useDeleteMeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMeMutation, DeleteMeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteMeMutation, DeleteMeMutationVariables>(DeleteMeDocument, options);
+      }
+export type DeleteMeMutationHookResult = ReturnType<typeof useDeleteMeMutation>;
+export type DeleteMeMutationResult = Apollo.MutationResult<DeleteMeMutation>;
+export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<DeleteMeMutation, DeleteMeMutationVariables>;
 export const GetWidgetsDocument = gql`
     query GetWidgets($sceneId: ID!, $lang: String) {
   node(id: $sceneId, type: SCENE) {
@@ -7377,6 +7414,113 @@ export function useGetWidgetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetWidgetsQueryHookResult = ReturnType<typeof useGetWidgetsQuery>;
 export type GetWidgetsLazyQueryHookResult = ReturnType<typeof useGetWidgetsLazyQuery>;
 export type GetWidgetsQueryResult = Apollo.QueryResult<GetWidgetsQuery, GetWidgetsQueryVariables>;
+export const GetEarthWidgetsDocument = gql`
+    query GetEarthWidgets($sceneId: ID!, $lang: String) {
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      project {
+        id
+        publicTitle
+      }
+      property {
+        id
+        ...PropertyFragment
+      }
+      clusters {
+        id
+        name
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+      tags {
+        id
+        label
+        ... on TagGroup {
+          tags {
+            id
+            label
+          }
+        }
+      }
+      plugins {
+        property {
+          id
+          ...PropertyFragment
+        }
+        pluginId
+        plugin {
+          id
+          extensions {
+            extensionId
+            type
+            widgetLayout {
+              floating
+              extendable {
+                vertically
+                horizontally
+              }
+              extended
+              defaultLocation {
+                zone
+                section
+                area
+              }
+            }
+          }
+        }
+      }
+      widgets {
+        id
+        enabled
+        extended
+        pluginId
+        extensionId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
+      widgetAlignSystem {
+        ...WidgetAlignSystemFragment
+      }
+    }
+  }
+}
+    ${PropertyFragmentFragmentDoc}
+${WidgetAlignSystemFragmentFragmentDoc}`;
+
+/**
+ * __useGetEarthWidgetsQuery__
+ *
+ * To run a query within a React component, call `useGetEarthWidgetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEarthWidgetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEarthWidgetsQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *      lang: // value for 'lang'
+ *   },
+ * });
+ */
+export function useGetEarthWidgetsQuery(baseOptions: Apollo.QueryHookOptions<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>(GetEarthWidgetsDocument, options);
+      }
+export function useGetEarthWidgetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>(GetEarthWidgetsDocument, options);
+        }
+export type GetEarthWidgetsQueryHookResult = ReturnType<typeof useGetEarthWidgetsQuery>;
+export type GetEarthWidgetsLazyQueryHookResult = ReturnType<typeof useGetEarthWidgetsLazyQuery>;
+export type GetEarthWidgetsQueryResult = Apollo.QueryResult<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>;
 export const AddWidgetDocument = gql`
     mutation addWidget($sceneId: ID!, $pluginId: PluginID!, $extensionId: PluginExtensionID!, $lang: String) {
   addWidget(
@@ -7527,113 +7671,6 @@ export function useUpdateWidgetMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateWidgetMutationHookResult = ReturnType<typeof useUpdateWidgetMutation>;
 export type UpdateWidgetMutationResult = Apollo.MutationResult<UpdateWidgetMutation>;
 export type UpdateWidgetMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetMutation, UpdateWidgetMutationVariables>;
-export const GetEarthWidgetsDocument = gql`
-    query GetEarthWidgets($sceneId: ID!, $lang: String) {
-  node(id: $sceneId, type: SCENE) {
-    id
-    ... on Scene {
-      project {
-        id
-        publicTitle
-      }
-      property {
-        id
-        ...PropertyFragment
-      }
-      clusters {
-        id
-        name
-        propertyId
-        property {
-          id
-          ...PropertyFragment
-        }
-      }
-      tags {
-        id
-        label
-        ... on TagGroup {
-          tags {
-            id
-            label
-          }
-        }
-      }
-      plugins {
-        property {
-          id
-          ...PropertyFragment
-        }
-        pluginId
-        plugin {
-          id
-          extensions {
-            extensionId
-            type
-            widgetLayout {
-              floating
-              extendable {
-                vertically
-                horizontally
-              }
-              extended
-              defaultLocation {
-                zone
-                section
-                area
-              }
-            }
-          }
-        }
-      }
-      widgets {
-        id
-        enabled
-        extended
-        pluginId
-        extensionId
-        property {
-          id
-          ...PropertyFragment
-        }
-      }
-      widgetAlignSystem {
-        ...WidgetAlignSystemFragment
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}
-${WidgetAlignSystemFragmentFragmentDoc}`;
-
-/**
- * __useGetEarthWidgetsQuery__
- *
- * To run a query within a React component, call `useGetEarthWidgetsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEarthWidgetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEarthWidgetsQuery({
- *   variables: {
- *      sceneId: // value for 'sceneId'
- *      lang: // value for 'lang'
- *   },
- * });
- */
-export function useGetEarthWidgetsQuery(baseOptions: Apollo.QueryHookOptions<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>(GetEarthWidgetsDocument, options);
-      }
-export function useGetEarthWidgetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>(GetEarthWidgetsDocument, options);
-        }
-export type GetEarthWidgetsQueryHookResult = ReturnType<typeof useGetEarthWidgetsQuery>;
-export type GetEarthWidgetsLazyQueryHookResult = ReturnType<typeof useGetEarthWidgetsLazyQuery>;
-export type GetEarthWidgetsQueryResult = Apollo.QueryResult<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>;
 export const UpdateWidgetAlignSystemDocument = gql`
     mutation updateWidgetAlignSystem($sceneId: ID!, $location: WidgetLocationInput!, $align: WidgetAreaAlign) {
   updateWidgetAlignSystem(
@@ -7683,6 +7720,49 @@ export function useUpdateWidgetAlignSystemMutation(baseOptions?: Apollo.Mutation
 export type UpdateWidgetAlignSystemMutationHookResult = ReturnType<typeof useUpdateWidgetAlignSystemMutation>;
 export type UpdateWidgetAlignSystemMutationResult = Apollo.MutationResult<UpdateWidgetAlignSystemMutation>;
 export type UpdateWidgetAlignSystemMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetAlignSystemMutation, UpdateWidgetAlignSystemMutationVariables>;
+export const TeamsDocument = gql`
+    query teams {
+  me {
+    id
+    name
+    myTeam {
+      id
+      ...Team
+    }
+    teams {
+      id
+      ...Team
+    }
+  }
+}
+    ${TeamFragmentDoc}`;
+
+/**
+ * __useTeamsQuery__
+ *
+ * To run a query within a React component, call `useTeamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTeamsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTeamsQuery(baseOptions?: Apollo.QueryHookOptions<TeamsQuery, TeamsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options);
+      }
+export function useTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TeamsQuery, TeamsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options);
+        }
+export type TeamsQueryHookResult = ReturnType<typeof useTeamsQuery>;
+export type TeamsLazyQueryHookResult = ReturnType<typeof useTeamsLazyQuery>;
+export type TeamsQueryResult = Apollo.QueryResult<TeamsQuery, TeamsQueryVariables>;
 export const UpdateTeamDocument = gql`
     mutation updateTeam($teamId: ID!, $name: String!) {
   updateTeam(input: {teamId: $teamId, name: $name}) {
@@ -7763,43 +7843,6 @@ export function useDeleteTeamMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteTeamMutationHookResult = ReturnType<typeof useDeleteTeamMutation>;
 export type DeleteTeamMutationResult = Apollo.MutationResult<DeleteTeamMutation>;
 export type DeleteTeamMutationOptions = Apollo.BaseMutationOptions<DeleteTeamMutation, DeleteTeamMutationVariables>;
-export const SearchUserDocument = gql`
-    query searchUser($nameOrEmail: String!) {
-  searchUser(nameOrEmail: $nameOrEmail) {
-    userId
-    userName
-    userEmail
-  }
-}
-    `;
-
-/**
- * __useSearchUserQuery__
- *
- * To run a query within a React component, call `useSearchUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchUserQuery({
- *   variables: {
- *      nameOrEmail: // value for 'nameOrEmail'
- *   },
- * });
- */
-export function useSearchUserQuery(baseOptions: Apollo.QueryHookOptions<SearchUserQuery, SearchUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, options);
-      }
-export function useSearchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchUserQuery, SearchUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, options);
-        }
-export type SearchUserQueryHookResult = ReturnType<typeof useSearchUserQuery>;
-export type SearchUserLazyQueryHookResult = ReturnType<typeof useSearchUserLazyQuery>;
-export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUserQueryVariables>;
 export const AddMemberToTeamDocument = gql`
     mutation addMemberToTeam($teamId: ID!, $userId: ID!, $role: Role!) {
   addMemberToTeam(input: {teamId: $teamId, userId: $userId, role: $role}) {
@@ -7989,46 +8032,3 @@ export function useCreateTeamMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateTeamMutationHookResult = ReturnType<typeof useCreateTeamMutation>;
 export type CreateTeamMutationResult = Apollo.MutationResult<CreateTeamMutation>;
 export type CreateTeamMutationOptions = Apollo.BaseMutationOptions<CreateTeamMutation, CreateTeamMutationVariables>;
-export const TeamsDocument = gql`
-    query teams {
-  me {
-    id
-    name
-    myTeam {
-      id
-      ...Team
-    }
-    teams {
-      id
-      ...Team
-    }
-  }
-}
-    ${TeamFragmentDoc}`;
-
-/**
- * __useTeamsQuery__
- *
- * To run a query within a React component, call `useTeamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTeamsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useTeamsQuery(baseOptions?: Apollo.QueryHookOptions<TeamsQuery, TeamsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options);
-      }
-export function useTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TeamsQuery, TeamsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options);
-        }
-export type TeamsQueryHookResult = ReturnType<typeof useTeamsQuery>;
-export type TeamsLazyQueryHookResult = ReturnType<typeof useTeamsLazyQuery>;
-export type TeamsQueryResult = Apollo.QueryResult<TeamsQuery, TeamsQueryVariables>;
