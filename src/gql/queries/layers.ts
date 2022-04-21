@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { EarthLayerFragments, LayerSystemFragments } from "../fragments";
+import { EarthLayerFragments, LayerSystemFragments, layerFragment } from "../fragments";
 
 export const GET_LAYERS_FROM_ID = gql`
   query GetLayersFromLayerId($layerId: ID!) {
