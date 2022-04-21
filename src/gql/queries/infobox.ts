@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { layerFragment, infoboxFragment } from "@reearth/gql/fragments";
 
 export const GET_BLOCKS = gql`
-  query getBlocks($sceneId: ID!, $lang: String) {
+  query getBlocks($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -27,7 +27,7 @@ export const GET_BLOCKS = gql`
 `;
 
 export const CREATE_INFOBOX = gql`
-  mutation createInfobox($layerId: ID!, $lang: String) {
+  mutation createInfobox($layerId: ID!, $lang: Lang) {
     createInfobox(input: { layerId: $layerId }) {
       layer {
         id
@@ -49,7 +49,7 @@ export const CREATE_INFOBOX = gql`
 `;
 
 export const REMOVE_INFOBOX = gql`
-  mutation removeInfobox($layerId: ID!, $lang: String) {
+  mutation removeInfobox($layerId: ID!, $lang: Lang) {
     removeInfobox(input: { layerId: $layerId }) {
       layer {
         id
@@ -73,10 +73,10 @@ export const REMOVE_INFOBOX = gql`
 export const ADD_INFOBOX_FIELD = gql`
   mutation addInfoboxField(
     $layerId: ID!
-    $pluginId: PluginID!
-    $extensionId: PluginExtensionID!
+    $pluginId: ID!
+    $extensionId: ID!
     $index: Int
-    $lang: String
+    $lang: Lang
   ) {
     addInfoboxField(
       input: { layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index }
@@ -92,7 +92,7 @@ export const ADD_INFOBOX_FIELD = gql`
 `;
 
 export const MOVE_INFOBOX_FIELD = gql`
-  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: String) {
+  mutation moveInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $index: Int!, $lang: Lang) {
     moveInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId, index: $index }) {
       layer {
         id
@@ -105,7 +105,7 @@ export const MOVE_INFOBOX_FIELD = gql`
 `;
 
 export const REMOVE_INFOBOX_FIELD = gql`
-  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: String) {
+  mutation removeInfoboxField($layerId: ID!, $infoboxFieldId: ID!, $lang: Lang) {
     removeInfoboxField(input: { layerId: $layerId, infoboxFieldId: $infoboxFieldId }) {
       layer {
         id

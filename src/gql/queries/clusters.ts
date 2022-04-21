@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { propertyFragment } from "@reearth/gql/fragments";
 
 export const GET_CLUSTERS = gql`
-  query GetClusters($sceneId: ID!, $lang: String) {
+  query GetClusters($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -22,7 +22,7 @@ export const GET_CLUSTERS = gql`
 `;
 
 export const ADD_CLUSTER = gql`
-  mutation AddCluster($sceneId: ID!, $name: String!, $lang: String) {
+  mutation AddCluster($sceneId: ID!, $name: String!, $lang: Lang) {
     addCluster(input: { sceneId: $sceneId, name: $name }) {
       cluster {
         id

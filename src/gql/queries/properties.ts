@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { propertyFragment, layerFragment } from "@reearth/gql/fragments";
 
 export const GET_LAYER_PROPERTY = gql`
-  query GetLayerProperty($layerId: ID!, $lang: String) {
+  query GetLayerProperty($layerId: ID!, $lang: Lang) {
     layer(id: $layerId) {
       id
       ...Layer1Fragment
@@ -14,7 +14,7 @@ export const GET_LAYER_PROPERTY = gql`
 `;
 
 export const GET_SCENE_PROPERTY = gql`
-  query GetSceneProperty($sceneId: ID!, $lang: String) {
+  query GetSceneProperty($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -45,19 +45,17 @@ export const GET_SCENE_PROPERTY = gql`
       }
     }
   }
-
-  ${propertyFragment}
 `;
 
 export const CHANGE_PROPERTY_VALUE = gql`
   mutation ChangePropertyValue(
-    $value: Any
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
+    $fieldId: ID!
+    $value: Any
     $type: ValueType!
-    $lang: String
+    $lang: Lang
   ) {
     updatePropertyValue(
       input: {
@@ -86,11 +84,11 @@ export const CHANGE_PROPERTY_VALUE = gql`
 export const UPLOAD_FILE_TO_PROPERTY = gql`
   mutation UploadFileToProperty(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
+    $fieldId: ID!
     $file: Upload!
-    $lang: String
+    $lang: Lang
   ) {
     uploadFileToProperty(
       input: {
@@ -118,10 +116,10 @@ export const UPLOAD_FILE_TO_PROPERTY = gql`
 export const REMOVE_FIELD = gql`
   mutation RemovePropertyField(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
-    $lang: String
+    $fieldId: ID!
+    $lang: Lang
   ) {
     removePropertyField(
       input: {
@@ -148,11 +146,11 @@ export const REMOVE_FIELD = gql`
 export const ADD_PROPERTY_ITEM = gql`
   mutation addPropertyItem(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
+    $schemaGroupId: ID!
     $index: Int
     $nameFieldValue: Any
     $nameFieldType: ValueType
-    $lang: String
+    $lang: Lang
   ) {
     addPropertyItem(
       input: {
@@ -180,10 +178,10 @@ export const ADD_PROPERTY_ITEM = gql`
 export const MOVE_PROPERTY_ITEM = gql`
   mutation movePropertyItem(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
+    $schemaGroupId: ID!
     $itemId: ID!
     $index: Int!
-    $lang: String
+    $lang: Lang
   ) {
     movePropertyItem(
       input: {
@@ -208,12 +206,7 @@ export const MOVE_PROPERTY_ITEM = gql`
 `;
 
 export const REMOVE_PROPERTY_ITEM = gql`
-  mutation removePropertyItem(
-    $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
-    $itemId: ID!
-    $lang: String
-  ) {
+  mutation removePropertyItem($propertyId: ID!, $schemaGroupId: ID!, $itemId: ID!, $lang: Lang) {
     removePropertyItem(
       input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId }
     ) {
@@ -234,9 +227,9 @@ export const REMOVE_PROPERTY_ITEM = gql`
 export const UPDATE_PROPERTY_ITEMS = gql`
   mutation updatePropertyItems(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID!
+    $schemaGroupId: ID!
     $operations: [UpdatePropertyItemOperationInput!]!
-    $lang: String
+    $lang: Lang
   ) {
     updatePropertyItems(
       input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, operations: $operations }

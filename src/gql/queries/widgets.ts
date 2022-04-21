@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 import { widgetAlignSysFragment } from "@reearth/gql/fragments";
 
 export const GET_WIDGETS = gql`
-  query GetWidgets($sceneId: ID!, $lang: String) {
+  query GetWidgets($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -49,7 +49,7 @@ export const GET_WIDGETS = gql`
 `;
 
 export const GET_EARTH_WIDGETS = gql`
-  query GetEarthWidgets($sceneId: ID!, $lang: String) {
+  query GetEarthWidgets($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -129,12 +129,7 @@ export const GET_EARTH_WIDGETS = gql`
 `;
 
 export const ADD_WIDGET = gql`
-  mutation addWidget(
-    $sceneId: ID!
-    $pluginId: PluginID!
-    $extensionId: PluginExtensionID!
-    $lang: String
-  ) {
+  mutation addWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
     addWidget(input: { sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId }) {
       scene {
         id

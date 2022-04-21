@@ -30,7 +30,7 @@ export const INSTALLABLE_PLUGINS = gql`
 `;
 
 export const INSTALLED_PLUGINS = gql`
-  query InstalledPlugins($projectId: ID!, $lang: String) {
+  query InstalledPlugins($projectId: ID!, $lang: Lang) {
     scene(projectId: $projectId) {
       id
       plugins {
@@ -68,7 +68,7 @@ export const UPLOAD_PLUGIN = gql`
 `;
 
 export const UNINSTALL_PLUGIN = gql`
-  mutation uninstallPlugin($sceneId: ID!, $pluginId: PluginID!) {
+  mutation uninstallPlugin($sceneId: ID!, $pluginId: ID!) {
     uninstallPlugin(input: { sceneId: $sceneId, pluginId: $pluginId }) {
       pluginId
     }

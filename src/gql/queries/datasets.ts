@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { layerFragment } from "@reearth/gql/fragments";
+import { layerFragment, propertyFragment } from "@reearth/gql/fragments";
 
 export const GET_DATASETS = gql`
   query GetDatasetsForDatasetInfoPane(
@@ -88,12 +88,12 @@ export const LINK_DATASET = gql`
   mutation LinkDataset(
     $propertyId: ID!
     $itemId: ID
-    $schemaGroupId: PropertySchemaGroupID
-    $fieldId: PropertySchemaFieldID!
+    $schemaGroupId: ID
+    $fieldId: ID!
     $datasetSchemaIds: [ID!]!
     $datasetIds: [ID!]
     $datasetFieldIds: [ID!]!
-    $lang: String
+    $lang: Lang
   ) {
     linkDatasetToPropertyValue(
       input: {
@@ -112,15 +112,17 @@ export const LINK_DATASET = gql`
       }
     }
   }
+
+  ${propertyFragment}
 `;
 
 export const UNLINK_DATASET = gql`
   mutation UnlinkDataset(
     $propertyId: ID!
-    $schemaGroupId: PropertySchemaGroupID
+    $schemaGroupId: ID
     $itemId: ID
-    $fieldId: PropertySchemaFieldID!
-    $lang: String
+    $fieldId: ID!
+    $lang: Lang
   ) {
     unlinkPropertyValue(
       input: {
@@ -141,35 +143,6 @@ export const UNLINK_DATASET = gql`
     }
   }
 
-  ${layerFragment}
-`;
-
-export const ADD_LAYER_GROUP_FROM_DATASET_SCHEMA = gql`
-  mutation addLayerGroupFromDatasetSchema(
-    $parentLayerId: ID!
-    $pluginId: PluginID
-    $extensionId: PluginExtensionID
-    $datasetSchemaId: ID
-    $lang: String
-  ) {
-    addLayerGroup(
-      input: {
-        parentLayerId: $parentLayerId
-        pluginId: $pluginId
-        extensionId: $extensionId
-        linkedDatasetSchemaID: $datasetSchemaId
-      }
-    ) {
-      layer {
-        id
-        ...Layer1Fragment
-      }
-      parentLayer {
-        id
-        ...Layer0Fragment
-      }
-    }
-  }
   ${layerFragment}
 `;
 

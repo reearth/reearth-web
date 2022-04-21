@@ -3,9 +3,9 @@ import { gql } from "@apollo/client";
 export const SEARCH_USER = gql`
   query searchUser($nameOrEmail: String!) {
     searchUser(nameOrEmail: $nameOrEmail) {
-      userId
-      userName
-      userEmail
+      id
+      name
+      email
     }
   }
 `;
@@ -120,7 +120,7 @@ export const UPDATE_ME = gql`
         passwordConfirmation: $passwordConfirmation
       }
     ) {
-      user {
+      me {
         id
         name
         email

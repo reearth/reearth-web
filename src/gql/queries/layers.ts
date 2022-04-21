@@ -14,7 +14,7 @@ export const GET_LAYERS_FROM_ID = gql`
 `;
 
 export const GET_LAYERS_FROM_SCENE_ID = gql`
-  query GetLayers($sceneId: ID!, $lang: String) {
+  query GetLayers($sceneId: ID!, $lang: Lang) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -102,4 +102,33 @@ export const ADD_LAYER_GROUP = gql`
   }
 
   ${LayerSystemFragments}
+`;
+
+export const ADD_LAYER_GROUP_FROM_DATASET_SCHEMA = gql`
+  mutation addLayerGroupFromDatasetSchema(
+    $parentLayerId: ID!
+    $pluginId: ID
+    $extensionId: ID
+    $datasetSchemaId: ID
+    $lang: Lang
+  ) {
+    addLayerGroup(
+      input: {
+        parentLayerId: $parentLayerId
+        pluginId: $pluginId
+        extensionId: $extensionId
+        linkedDatasetSchemaID: $datasetSchemaId
+      }
+    ) {
+      layer {
+        id
+        ...Layer1Fragment
+      }
+      parentLayer {
+        id
+        ...Layer0Fragment
+      }
+    }
+  }
+  ${layerFragment}
 `;
