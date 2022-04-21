@@ -49,7 +49,7 @@ const StyledAvatar = styled.div<{
   min-height: ${({ size }) => size}px;
   border-radius: 50%;
   background: ${({ avatar, color }) => (avatar ? `url(${avatar});` : color)};
-  margin: 0 ${metricsSizes["xs"]}px;
+  margin: ${metricsSizes["2xs"]}px;
 `;
 
 export default Avatar;

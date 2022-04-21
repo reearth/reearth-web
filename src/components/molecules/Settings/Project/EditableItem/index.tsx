@@ -121,7 +121,8 @@ export default function EditableItem<T extends string = string>({
       subHeader={subtitle}
       body={body}
       action={
-        !disabled && (
+        !disabled &&
+        !avatar && (
           <ButtonWrapper>
             {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.(undefined)} />}
             <StyledIcon icon="edit" size={20} onClick={startEdit} />
