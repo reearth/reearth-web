@@ -1,8 +1,8 @@
 overwrite: true
 schema: http://localhost:8080/api/graphql
 documents:
-  - src/**/queries.ts
   - src/gql/fragments/*.ts
+  - src/gql/queries/*.ts
   - src/**/*.graphql
 generates:
   ./src/gql/graphql-client-api.tsx:
@@ -19,13 +19,7 @@ generates:
         Cursor: string
         URL: string
         Lang: string
-        TranslatedString: '{ [lang in string]?: string } | null'
-        PluginID: string
-        PluginExtensionID: string
-        PropertySchemaID: string
-        PropertySchemaGroupID: string
-        PropertySchemaFieldID: string
-        DatasetSchemaFieldID: string
+        TranslatedString: "{ [lang in string]?: string } | null"
   ./src/gql/graphql.schema.json:
     plugins:
       - introspection
