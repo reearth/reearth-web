@@ -25,7 +25,7 @@ const lightheme: Theme = {
     link: colors.light.functional.link,
     brandBlue: colors.brand.bg[1],
     brandRed: colors.brand.bg[2],
-    avatarbg: colors.light.bg[6],
+    avatarBg: colors.light.bg[6],
   },
   dashboard: {
     bg: colors.light.bg[2],

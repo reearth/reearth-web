@@ -1,8 +1,9 @@
 import { Link } from "@reach/router";
-import React from "react";
+import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 import { useMedia } from "react-use";
 
+import Avatar from "@reearth/components/atoms/Avatar";
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
@@ -11,7 +12,7 @@ import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types"
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import Avatar from "../Settings/Avatar";
+import { Member } from ".";
 
 export interface Props {
   className?: string;
@@ -23,6 +24,11 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
   const teamLength = team?.members?.length ?? 0;
+  const excessMembers = teamLength - 5 ?? 0;
+  const shownMembers: Member[] | undefined = useMemo(
+    () => team?.members?.slice(0, 5),
+    [team?.members],
+  );
 
   return (
     <StyledDashboardBlock className={className} grow={5}>
@@ -32,22 +38,23 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
           {intl.formatMessage({ defaultMessage: "'s workspace" })}
         </Text>
         <Flex>
-          <TeamWrapper flex={4}>
-            {team?.members?.slice(0, 5).map((member, i) => (
-              <StyledAvatar key={i} size={32} color={theme.main.avatarbg} radius={50}>
-                <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
-                  {member?.user.name?.charAt(0).toUpperCase()}
-                </Text>
-              </StyledAvatar>
+          <Flex flex={4}>
+            {shownMembers?.map((member: Member) => (
+              <Avatar
+                key={member?.user.id}
+                size={32}
+                color={theme.main.avatarBg}
+                userName={member?.user.name}
+              />
             ))}
-            {teamLength > 5 && (
-              <StyledAvatar size={32} color={theme.main.avatarbg} radius={50}>
-                <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
-                  +{teamLength - 5}
-                </Text>
-              </StyledAvatar>
+            {excessMembers > 0 && (
+              <Avatar
+                size={32}
+                color={theme.main.avatarBg}
+                innerText={`+${excessMembers.toString()}`}
+              />
             )}
-          </TeamWrapper>
+          </Flex>
           <StyledLink to={`/settings/workspace/${team?.id}`}>
             <Icon icon="settings" />
           </StyledLink>
@@ -89,16 +96,6 @@ const StyledLink = styled(Link)`
     text-decoration: none;
     background: ${({ theme }) => theme.main.bg};
   }
-`;
-
-const TeamWrapper = styled(Flex)`
-  * {
-    margin-right: ${metricsSizes.xs}px;
-  }
-  row-gap: -5px;
-`;
-const StyledAvatar = styled(Avatar)`
-  margin: 0 ${metricsSizes["l"]}px;
 `;
 
 export default Workspace;
