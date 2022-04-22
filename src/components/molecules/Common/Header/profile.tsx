@@ -31,7 +31,7 @@ const Label: React.FC<Pick<LoginProps, "user" | "currentTeam">> = ({ user, curre
   return (
     <LabelWrapper>
       <LabelLeft>
-        <Avatar size={28} color={theme.main.avatarBg} userName={user.name} />
+        <Avatar color={theme.main.avatarBg} innerText={user.name} />
       </LabelLeft>
       <LabelRight>
         <LabelUserName size="m" weight="bold" color={theme.main.strongText}>

@@ -12,7 +12,7 @@ import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types"
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
-import { Member } from ".";
+import { Member } from "./types";
 
 export interface Props {
   className?: string;
@@ -23,8 +23,10 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
   const intl = useIntl();
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
+
   const teamLength = team?.members?.length ?? 0;
   const excessMembers = teamLength - 5 ?? 0;
+
   const shownMembers: Member[] | undefined = useMemo(
     () => team?.members?.slice(0, 5),
     [team?.members],
@@ -40,20 +42,9 @@ const Workspace: React.FC<Props> = ({ className, team }) => {
         <Flex>
           <Flex flex={4}>
             {shownMembers?.map((member: Member) => (
-              <Avatar
-                key={member?.user.id}
-                size={32}
-                color={theme.main.avatarBg}
-                userName={member?.user.name}
-              />
+              <StyledAvatar key={member?.user.id} innerText={member?.user.name} />
             ))}
-            {excessMembers > 0 && (
-              <Avatar
-                size={32}
-                color={theme.main.avatarBg}
-                innerText={`+${excessMembers.toString()}`}
-              />
-            )}
+            {excessMembers > 0 && <Avatar innerText={excessMembers} />}
           </Flex>
           <StyledLink to={`/settings/workspace/${team?.id}`}>
             <Icon icon="settings" />
@@ -96,6 +87,10 @@ const StyledLink = styled(Link)`
     text-decoration: none;
     background: ${({ theme }) => theme.main.bg};
   }
+`;
+
+const StyledAvatar = styled(Avatar)`
+  margin-right: ${metricsSizes["s"]}px;
 `;
 
 export default Workspace;

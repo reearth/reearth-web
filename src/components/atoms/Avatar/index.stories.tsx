@@ -8,4 +8,5 @@ export default {
   component: Avatar,
 } as Meta;
 
-export const Default = () => <Avatar size={24} />;
+export const Default = () => <Avatar innerText="ReEarth" />;
+export const Large = () => <Avatar size="large" innerText="ReEarth" />;

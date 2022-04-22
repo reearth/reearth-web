@@ -1,55 +1,48 @@
 import React from "react";
-import { useMedia } from "react-use";
 
-import { metricsSizes, styled, useTheme } from "@reearth/theme";
+import Flex from "@reearth/components/atoms/Flex";
+import Text from "@reearth/components/atoms/Text";
+import { styled, useTheme } from "@reearth/theme";
 
-import Text from "../Text";
+export type Size = "small" | "large";
 
 export type Props = {
-  size?: number;
-  avatar?: string;
+  className?: string;
+  size?: Size;
   color?: string;
-  userName?: string;
-  innerText?: string;
+  avatar?: string;
+  innerText?: string | number;
 };
 
-const Avatar: React.FC<Props> = ({ size = 24, avatar, color, userName, innerText }) => {
+const Avatar: React.FC<Props> = ({ className, size = "small", color, avatar, innerText }) => {
   const theme = useTheme();
-  const isSmallWindow = useMedia("(max-width: 1024px)");
+
   return (
-    <div>
-      <StyledAvatar size={size} avatar={avatar} color={color}>
-        {userName && (
-          <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
-            {userName?.charAt(0).toUpperCase()}
-          </Text>
-        )}
-        {innerText && (
-          <Text size={isSmallWindow ? "m" : "l"} color={theme.text.pale}>
-            {innerText}
-          </Text>
-        )}
-      </StyledAvatar>
-    </div>
+    <StyledAvatar
+      className={className}
+      align="center"
+      justify="center"
+      size={size}
+      avatar={avatar}
+      color={color ?? theme.main.avatarBg}>
+      {innerText && (
+        <Text size={"l"} color={theme.text.pale}>
+          {typeof innerText === "number" ? `+${innerText.toString()}` : innerText.charAt(0)}
+        </Text>
+      )}
+    </StyledAvatar>
   );
 };
-const StyledAvatar = styled.div<{
-  size?: number;
+const StyledAvatar = styled(Flex)<{
+  size?: Size;
   avatar?: string;
   color?: string;
 }>`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: center;
-  padding: 0px;
-  position: relative;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  min-width: ${({ size }) => size}px;
-  min-height: ${({ size }) => size}px;
+  width: ${({ size }) => (size === "large" ? "64px" : "32px")};
+  height: ${({ size }) => (size === "large" ? "64px" : "32px")};
   border-radius: 50%;
   background: ${({ avatar, color }) => (avatar ? `url(${avatar});` : color)};
-  margin: ${metricsSizes["2xs"]}px;
 `;
 
 export default Avatar;

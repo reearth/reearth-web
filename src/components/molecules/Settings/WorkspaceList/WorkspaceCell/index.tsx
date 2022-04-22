@@ -41,20 +41,9 @@ const WorkspaceCell: React.FC<Props> = ({ className, team, personal, onSelect })
         </Text>
       ) : (
         <Flex align="center" justify="flex-start">
-          <Text
-            size="m"
-            color={theme.main.text}
-            otherProperties={{ margin: `${metricsSizes["s"]}px 0` }}>
-            {intl.formatMessage({ defaultMessage: "Members:" })}
-          </Text>
           <Flex wrap="wrap">
             {teamMembers.map(member => (
-              <Avatar
-                key={member.userId}
-                size={32}
-                color={theme.main.avatarBg}
-                userName={member.user?.name}
-              />
+              <StyleAvatar key={member.userId} innerText={member.user?.name} />
             ))}
           </Flex>
         </Flex>
@@ -74,6 +63,10 @@ const Wrapper = styled(Flex)`
   &:hover {
     background: ${({ theme }) => theme.main.paleBg};
   }
+`;
+
+const StyleAvatar = styled(Avatar)`
+  margin-right: ${metricsSizes["s"]}px;
 `;
 
 export default WorkspaceCell;

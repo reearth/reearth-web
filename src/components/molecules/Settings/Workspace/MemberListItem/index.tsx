@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 import Avatar from "@reearth/components/atoms/Avatar";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import { metricsSizes, styled, useTheme } from "@reearth/theme";
+import { metricsSizes, styled } from "@reearth/theme";
 
 import EditableItem from "../../Project/EditableItem";
 
@@ -27,7 +27,6 @@ export type Props = {
 
 const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRemove }) => {
   const intl = useIntl();
-  const theme = useTheme();
   const saveEdit = useCallback(
     (role?: string) => {
       if (!role) return;
@@ -44,7 +43,7 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
 
   return (
     <Wrapper align="flex-start" justify="space-between">
-      <Avatar size={32} color={theme.main.avatarBg} userName={user.name} />
+      <Avatar innerText={user.name} />
 
       <StyledEditableItem
         title={user.name}

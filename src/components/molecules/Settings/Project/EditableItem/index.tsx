@@ -6,7 +6,7 @@ import TextBox from "@reearth/components/atoms/TextBox";
 import defaultProjectImage from "@reearth/components/molecules/Dashboard/defaultProjectImage.jpg";
 import Field from "@reearth/components/molecules/Settings/Field";
 import SelectField from "@reearth/components/molecules/Settings/SelectField";
-import { styled, useTheme } from "@reearth/theme";
+import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
 export type Props<T extends string = string> = {
@@ -56,7 +56,7 @@ export default function EditableItem<T extends string = string>({
 }: PropsWithChildren<Props<T>>): JSX.Element | null {
   const [isEditting, setIsEditting] = useState(false);
   const [inputState, setInputState] = useState(currentItem || body);
-  const theme = useTheme();
+
   const startEdit = useCallback(() => {
     if (onEditStart) {
       onEditStart();
@@ -134,7 +134,7 @@ export default function EditableItem<T extends string = string>({
           <Image src={imageSrc || defaultProjectImage} height={iHeight} />
         </div>
       ) : avatar ? (
-        <Avatar size={64} color={theme.main.avatarBg} userName={avatar} />
+        <Avatar size="large" innerText={avatar} />
       ) : (
         icon && (
           <div>
