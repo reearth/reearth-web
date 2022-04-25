@@ -54,14 +54,13 @@ row before the </tbody></table> line.
 
 - [Introduction](#intro)
 - [Guidelines](#guidelines)
-  - [Primary](#primary)
-    - [React](#react)
-    - [Functions](#functions)
-    - [Variables](#variables)
-    - [Commenting](#commenting)
-    - [Atomic Design](#atomic)
-    - [How to write paths](#paths)
-  - [Secondary](#secondary)
+  - [React](#react)
+  - [GraphQL](#graphql)
+  - [Functions](#functions)
+  - [Variables](#variables)
+  - [Commenting](#commenting)
+  - [Atomic Design](#atomic)
+  - [How to write paths](#paths)
 
 ## Introduction
 ---
@@ -73,34 +72,188 @@ For any development on Re:Earth's front-end, please follow the guidelines that f
 ## Guidelines
 ---
 
-### Primary
+### React
 
-#### React-specific
+#### Use of hooks
 
-##### Hooks
+**useMemo**
 
-- useMemo
-- useCallback
+Use to avoid unnecessary re-rendering of processed objects or variables.
+
+<table>
+<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<tbody>
+<tr><td>
+
+```TypeScript
+const publishDisabled = useMemo(
+    () =>
+      publicationStatus === "unpublished" ||
+      (publicationStatus === "published" &&
+        (!alias || !!validation)),
+    [alias, validation, publicationStatus],
+  );
+```
+
+</td><td>
+
+```TypeScript
+const dark = useMemo(
+() => (backgroundColor ? isDark(backgroundColor) : false),
+[backgroundColor],
+);
+```
+
+</td></tr>
+</tbody></table>
+
+**useCallback**
+
+Use for MOST functions within a React component to better handle renders based on dependencies. Even if no dependencies, a useCallback will make sure React knows the function will always be the same, so don’t need to re-render
+
+#### GraphQL
+
+Query and mutation exports should live inside the `src/gql/queries` directory only.  *Contents* of each file should be queries, followed by mutations. 
+
+Naming of queries and mutations should be in PascalCase.
+
+The exports should be named in uppercase, with underscores. 
+
+<table>
+<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<tbody>
+<tr><td>
+
+```TypeScript
+export const Import_Dataset = gql`
+  mutation importAllDataset($file: Upload!, $sceneId: ID!, $datasetSchemaId: ID) {
+    importDataset(input: { file: $file, sceneId: $sceneId, datasetSchemaId: $datasetSchemaId }) {
+      datasetSchema {
+        id
+        name
+      }
+    }
+  }
+`;
+```
+
+</td><td>
+
+```TypeScript
+export const IMPORT_DATASET = gql`
+  mutation ImportDataset($file: Upload!, $sceneId: ID!, $datasetSchemaId: ID) {
+    importDataset(input: { file: $file, sceneId: $sceneId, datasetSchemaId: $datasetSchemaId }) {
+      datasetSchema {
+        id
+        name
+      }
+    }
+  }
+`;
+```
+
+</td></tr>
+</tbody></table>
 
 #### Functions
 
-##### Naming
+**Naming**
 
-- onXXXX vs handleXXXX
-- Word order
+We have two styles when naming functions: `onXXXX` and `handleXXXX`. Note both are camelCase. We use `onXXXX` for functional props, and we use `handleXXXX` when we are locally declaring the function.
+
+**Word order**
+
+Should be `nounVerb`. Combining this with deliberate prop or export order keeps things very easy to read.
+
+<table>
+<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<tbody>
+<tr><td>
+
+```TypeScript
+onRemoveAsset
+onHandleAddDataset
+OnUpdatetheme
+handleSyncDataset
+updateProject
+fetchuser
+```
+
+</td><td>
+
+```TypeScript
+onAssetAdd
+onAssetRemove
+onAssetUpdate
+handleProjectAdd
+handleProjectRemove
+handleProjectUpdate
+```
+
+</td></tr>
+</tbody></table>
+
 
 #### Variables
 
-##### Naming
+**Naming**
+
+Descriptive over short. Context matters, of course, so generic code can and should have `name` instead of `teamName`. But typically `teamName` is preferable over `name`.
 
 #### Commenting
 
+Follow Clean Code unless absolutely necessary. Which, in a nutshell, is "If you need a comment, either your function or variable isn't named appropriately, or your function is doing too much and should be broken down into simpler functions".
+
 #### Atomic design
+
+Re:Earth is broken up into 4 component categories: `Pages`, `Organisms`, `Molecules` and `Atoms`. See the component directory's [README](https://github.com/reearth/reearth-web/blob/main/src/components/README.md) for details specific to Re:Earth.
 
 #### How to write paths
 
-### Secondary
+Unless heavily nested and used only in its own or its parent directory, start from the `@reearth/` alias for the src directory.
+
+<table>
+<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<tbody>
+<tr><td>
+
+```TypeScript
+import CoolComponent from "../../../../CoolComponent;
+```
+
+</td><td>
+
+```TypeScript
+import CoolComponent from "@reearth/components/atoms/CoolComponent;
+```
+
+</td></tr>
+</tbody></table>
 
 #### Destructuring
 
+When possible, use destructuring.
+
+<table>
+<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<tbody>
+<tr><td>
+
+```TypeScript
+const title = article[0]; 
+const body = article[1]
+const footer = article[2]
+```
+
+</td><td>
+
+```TypeScript
+const [title, body, footer] = getArticle()
+```
+
+</td></tr>
+</tbody></table>
+
 #### Spread and Rest syntax
+
+When possible use spread and rest syntax. If props, write `...props`, not `...rest` or another word.
