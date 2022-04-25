@@ -43,7 +43,7 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
 
   return (
     <Wrapper align="flex-start" justify="space-between">
-      <Avatar innerText={user.name} />
+      <StyleAvatar innerText={user.name} />
 
       <StyledEditableItem
         title={user.name}
@@ -74,6 +74,9 @@ const StyledIcon = styled(Icon)`
   padding: 0;
   margin: 0 ${metricsSizes["l"]}px;
   cursor: pointer;
+`;
+const StyleAvatar = styled(Avatar)`
+  margin-right: ${metricsSizes["m"]}px;
 `;
 
 export default MemberListItem;
