@@ -8,7 +8,7 @@ import {
 import React, { ReactElement } from "react";
 
 import { Provider as I18nProvider } from "../src/i18n";
-import { Provider as LegacyIntlProvider } from "../src/locale_legacy";
+import { Provider as LegacyIntlProvider } from "../src/i18n/legacy";
 import { Provider as ThemeProvider } from "../src/theme";
 import { Provider as DndProvider } from "../src/util/use-dnd";
 

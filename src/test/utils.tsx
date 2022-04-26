@@ -3,7 +3,7 @@ import { render as rtlRender } from "@testing-library/react";
 import React from "react";
 
 import { Provider as I18nProvider } from "../i18n";
-import { Provider as LegacyIntlProvider } from "../locale_legacy";
+import { Provider as LegacyIntlProvider } from "../i18n/legacy";
 import { Provider as ThemeProvider } from "../theme";
 
 const render = (

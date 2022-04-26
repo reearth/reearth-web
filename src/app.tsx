@@ -17,7 +17,7 @@ import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
 import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
 import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
 import { Provider as I18nProvider } from "@reearth/i18n";
-import { Provider as LegacyIntlProvider } from "@reearth/locale_legacy";
+import { Provider as LegacyIntlProvider } from "@reearth/i18n/legacy";
 
 import { Provider as Auth0Provider } from "./auth";
 import RootPage from "./components/pages/Authentication/RootPage";
