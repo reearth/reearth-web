@@ -2,7 +2,8 @@ import React from "react";
 
 import PublishedPage from "@reearth/components/pages/Published";
 
-import { PublishedProvider as IntlProvider } from "./locale";
+import { Provider as I18nProvider } from "./i18n";
+import { PublishedProvider as LegacyIntlProvider } from "./locale_legacy";
 import { PublishedAppProvider as ThemeProvider } from "./theme";
 import { Provider as DndProvider } from "./util/use-dnd";
 
@@ -10,9 +11,11 @@ export default function App() {
   return (
     <ThemeProvider>
       <DndProvider>
-        <IntlProvider>
-          <PublishedPage />
-        </IntlProvider>
+        <I18nProvider>
+          <LegacyIntlProvider>
+            <PublishedPage />
+          </LegacyIntlProvider>
+        </I18nProvider>
       </DndProvider>
     </ThemeProvider>
   );

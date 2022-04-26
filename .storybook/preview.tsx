@@ -7,7 +7,8 @@ import {
 } from "@apollo/client";
 import React, { ReactElement } from "react";
 
-import { Provider as IntlProvider } from "../src/locale";
+import { Provider as I18nProvider } from "../src/i18n";
+import { Provider as LegacyIntlProvider } from "../src/locale_legacy";
 import { Provider as ThemeProvider } from "../src/theme";
 import { Provider as DndProvider } from "../src/util/use-dnd";
 
@@ -31,9 +32,11 @@ export const decorators = [
   (storyFn: () => ReactElement) => (
     <ApolloProvider client={mockClient}>
       <ThemeProvider>
-        <IntlProvider>
-          <DndProvider>{storyFn()}</DndProvider>
-        </IntlProvider>
+        <I18nProvider>
+          <LegacyIntlProvider>
+            <DndProvider>{storyFn()}</DndProvider>
+          </LegacyIntlProvider>
+        </I18nProvider>
       </ThemeProvider>
     </ApolloProvider>
   ),

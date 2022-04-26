@@ -1,7 +1,7 @@
 import { createIntl, createIntlCache } from "react-intl";
 
-import en from "../../translations/en.yml";
-import ja from "../../translations/ja.yml";
+import en from "./en.yml";
+import ja from "./ja.yml";
 
 export const locales = ["en", "ja"] as const;
 

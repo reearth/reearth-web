@@ -16,7 +16,8 @@ import SettingsProjectList from "@reearth/components/pages/Settings/ProjectList"
 import WorkspaceSettings from "@reearth/components/pages/Settings/Workspace";
 import AssetSettings from "@reearth/components/pages/Settings/Workspace/Asset";
 import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
-import { Provider as IntlProvider } from "@reearth/locale";
+import { Provider as I18nProvider } from "@reearth/i18n";
+import { Provider as LegacyIntlProvider } from "@reearth/locale_legacy";
 
 import { Provider as Auth0Provider } from "./auth";
 import RootPage from "./components/pages/Authentication/RootPage";
@@ -44,33 +45,35 @@ const App: React.FC = () => {
     <Auth0Provider>
       <GqlProvider>
         <ThemeProvider>
-          <IntlProvider>
-            <Suspense fallback={<Loading />}>
-              <NotificationBanner />
-              <StyledRouter>
-                <RootPage path="/" />
-                <LoginPage path="/login" />
-                <SignupPage path="/signup" />
-                <PasswordResetPage path="/password-reset" />
-                <Dashboard path="/dashboard/:teamId" />
-                <EarthEditor path="/edit/:sceneId" />
-                <Preview path="/edit/:sceneId/preview" />
-                <Redirect from="/settings" to="/settings/account" />
-                <AccountSettings path="/settings/account" />
-                <WorkspaceList path="/settings/workspaces" />
-                <WorkspaceSettings path="/settings/workspace/:teamId" />
-                <SettingsProjectList path="/settings/workspace/:teamId/projects" />
-                <AssetSettings path="/settings/workspace/:teamId/asset" />
-                <ProjectSettings path="/settings/project/:projectId" />
-                <PublicSettings path="/settings/project/:projectId/public" />
-                <DatasetSettings path="/settings/project/:projectId/dataset" />
-                <PluginSettings path="/settings/project/:projectId/plugins" />
-                <PluginEditor path="/plugin-editor" />
-                {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
-                <NotFound default />
-              </StyledRouter>
-            </Suspense>
-          </IntlProvider>
+          <I18nProvider>
+            <LegacyIntlProvider>
+              <Suspense fallback={<Loading />}>
+                <NotificationBanner />
+                <StyledRouter>
+                  <RootPage path="/" />
+                  <LoginPage path="/login" />
+                  <SignupPage path="/signup" />
+                  <PasswordResetPage path="/password-reset" />
+                  <Dashboard path="/dashboard/:teamId" />
+                  <EarthEditor path="/edit/:sceneId" />
+                  <Preview path="/edit/:sceneId/preview" />
+                  <Redirect from="/settings" to="/settings/account" />
+                  <AccountSettings path="/settings/account" />
+                  <WorkspaceList path="/settings/workspaces" />
+                  <WorkspaceSettings path="/settings/workspace/:teamId" />
+                  <SettingsProjectList path="/settings/workspace/:teamId/projects" />
+                  <AssetSettings path="/settings/workspace/:teamId/asset" />
+                  <ProjectSettings path="/settings/project/:projectId" />
+                  <PublicSettings path="/settings/project/:projectId/public" />
+                  <DatasetSettings path="/settings/project/:projectId/dataset" />
+                  <PluginSettings path="/settings/project/:projectId/plugins" />
+                  <PluginEditor path="/plugin-editor" />
+                  {process.env.NODE_ENV !== "production" && <GraphQLPlayground path="/graphql" />}
+                  <NotFound default />
+                </StyledRouter>
+              </Suspense>
+            </LegacyIntlProvider>
+          </I18nProvider>
         </ThemeProvider>
       </GqlProvider>
     </Auth0Provider>
