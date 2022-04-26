@@ -52,15 +52,18 @@ row before the </tbody></table> line.
 
 ## Table of Contents
 
-- [Introduction](#intro)
+- [Introduction](#introduction)
 - [Guidelines](#guidelines)
   - [React](#react)
   - [GraphQL](#graphql)
   - [Functions](#functions)
   - [Variables](#variables)
   - [Commenting](#commenting)
-  - [Atomic Design](#atomic)
-  - [How to write paths](#paths)
+  - [Atomic Design](#atomic-design)
+  - [How to write paths](#how-to-write-paths)
+  - [Spacing and order](#spacing-and-order)
+  - [Destructuring](#destructuring)
+  - [Spread and Rest syntax](#spread-and-rest-syntax)
 
 ## Introduction
 ---
@@ -78,7 +81,7 @@ For any development on Re:Earth's front-end, please follow the guidelines that f
 
 **useMemo**
 
-Use to avoid unnecessary re-rendering of processed objects or variables.
+Use to avoid unnecessary re-rendering of processed objects or variables, but only use it when computational cost is high (think **more than** `O(n)` in cost).
 
 <table>
 <thead><tr><th>Bad</th><th>Good</th></tr></thead>
@@ -86,22 +89,15 @@ Use to avoid unnecessary re-rendering of processed objects or variables.
 <tr><td>
 
 ```TypeScript
-const publishDisabled = useMemo(
-    () =>
-      publicationStatus === "unpublished" ||
-      (publicationStatus === "published" &&
-        (!alias || !!validation)),
-    [alias, validation, publicationStatus],
-  );
+const item = data?.find(d => d.id === id);
 ```
 
 </td><td>
 
 ```TypeScript
-const dark = useMemo(
-() => (backgroundColor ? isDark(backgroundColor) : false),
-[backgroundColor],
-);
+const item = useMemo(() => {
+  return data?.find(d => d.id === id);
+}, [data, id]);
 ```
 
 </td></tr>
@@ -185,6 +181,7 @@ fetchuser
 onAssetAdd
 onAssetRemove
 onAssetUpdate
+
 handleProjectAdd
 handleProjectRemove
 handleProjectUpdate
@@ -229,6 +226,18 @@ import CoolComponent from "@reearth/components/atoms/CoolComponent;
 
 </td></tr>
 </tbody></table>
+
+#### Spacing and order
+
+**NOTE: Often ESlint will catch spacing issues on save, but not always. Because of this, be mindful of your spacing as it affects the file's readability immensely. ESlint will only fix import order.**
+
+<!-- Keep a space between the component declaration and whatever is before it.
+
+If there is anything inside the component before the return put a space between the return and the final item.
+
+Inside the component, group and order everything up until the return as follows:
+- group the initial use of any imported libraries together
+- group  -->
 
 #### Destructuring
 
