@@ -3,7 +3,6 @@ import { render as rtlRender } from "@testing-library/react";
 import React from "react";
 
 import { Provider as I18nProvider } from "../i18n";
-import { Provider as LegacyIntlProvider } from "../i18n/legacy";
 import { Provider as ThemeProvider } from "../theme";
 
 const render = (
@@ -15,9 +14,7 @@ const render = (
     return (
       <MockedGqlProvider mocks={queryMocks} addTypename={false}>
         <ThemeProvider>
-          <I18nProvider>
-            <LegacyIntlProvider>{children}</LegacyIntlProvider>
-          </I18nProvider>
+          <I18nProvider>{children}</I18nProvider>
         </ThemeProvider>
       </MockedGqlProvider>
     );

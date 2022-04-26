@@ -5,6 +5,7 @@ import { useAuth } from "@reearth/auth";
 import { useLanguageQuery } from "@reearth/gql";
 
 import i18n from "./i18n";
+import { Provider as LegacyProvider } from "./legacy";
 
 export default function Provider({ children }: { children?: ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -14,5 +15,9 @@ export default function Provider({ children }: { children?: ReactNode }) {
     i18n.changeLanguage(locale);
   }, [locale]);
 
-  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
+  return (
+    <I18nextProvider i18n={i18n}>
+      <LegacyProvider>{children}</LegacyProvider>
+    </I18nextProvider>
+  );
 }
