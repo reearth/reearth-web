@@ -102,10 +102,11 @@ module.exports = (env, args = {}) => {
         },
         {
           test: /\.ya?ml$/,
+          // Delete yaml-flat-loader and use a regular yaml loader when migration to i18next is complete
           use: [{ loader: "json-loader" }, { loader: "yaml-flat-loader" }],
         },
         {
-          exclude: [/\.(jsx?|m?js|html?|json|tsx?|css|ya?ml)$/],
+          exclude: [/\.(jsx?|m?js|html?|json|tsx?|css)$/],
           loader: "file-loader",
           options: {
             name: "assets/[name].[contenthash:8].[ext]",
