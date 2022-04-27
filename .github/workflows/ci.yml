@@ -33,9 +33,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
-      # Activate when migration to i18next is complete.
-      # - name: Check translations
-      #   run: yarn run i18n --fail-on-update
+      - name: Check translations
+        run: yarn run i18n --fail-on-update
   slack-notification:
     if: always()
     name: Slack Notification
