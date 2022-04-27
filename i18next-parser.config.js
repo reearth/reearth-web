@@ -1,5 +1,5 @@
 module.exports = {
   locales: ["en", "ja"],
-  output: "src/translations/$LOCALE.yml",
+  output: "src/i18n/translations/$LOCALE.yml",
   input: ["src/**/*.{ts,tsx}"],
 };
