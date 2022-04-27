@@ -11,8 +11,9 @@ export default function Provider({ children }: { children?: ReactNode }) {
   const { isAuthenticated } = useAuth();
   const { data } = useLanguageQuery({ skip: !isAuthenticated });
   const locale = data?.me?.lang;
+
   useEffect(() => {
-    i18n.changeLanguage(locale);
+    i18n.changeLanguage(locale === "und" ? undefined : locale);
   }, [locale]);
 
   return (
