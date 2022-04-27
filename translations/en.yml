@@ -231,12 +231,12 @@ src:
               '4211710217': Capture
             ColorField:
               '1115770113': Save
-              '1533357798': Not set
               '1847234945': Red
               '1936615876': Alpha
               '2090560987': Green
               '3528672691': Cancel
               '3801160378': Blue
+              '3991511329': '#RRGGBBAA'
             LocationField:
               '2222144661': Latitude
               '3067266584': Altitude
@@ -493,7 +493,6 @@ src:
         WorkspaceList:
           WorkspaceCell:
             '808766300': No Title Workspace
-            '3230245813': 'Members:'
             '4106929473': >-
               This is your personal workspace. Your projects and resources will
               be managed in this workspace.
