@@ -106,7 +106,7 @@ module.exports = (env, args = {}) => {
           use: [{ loader: "json-loader" }, { loader: "yaml-flat-loader" }],
         },
         {
-          exclude: [/\.(jsx?|m?js|html?|json|tsx?|css)$/],
+          exclude: [/\.(jsx?|m?js|html?|json|tsx?|css|ya?ml)$/],
           loader: "file-loader",
           options: {
             name: "assets/[name].[contenthash:8].[ext]",
