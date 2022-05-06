@@ -2940,6 +2940,22 @@ export type CreateTagItemMutationVariables = Exact<{
 
 export type CreateTagItemMutation = { __typename?: 'Mutation', createTagItem?: { __typename?: 'CreateTagItemPayload', tag: { __typename?: 'TagItem', id: string, label: string, parentId?: string | null }, parent?: { __typename?: 'TagGroup', id: string, label: string, tags: Array<{ __typename?: 'TagItem', id: string, label: string }> } | null } | null };
 
+export type RemoveTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+}>;
+
+
+export type RemoveTagMutation = { __typename?: 'Mutation', removeTag?: { __typename?: 'RemoveTagPayload', tagId: string, updatedLayers: Array<{ __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> }> } | null };
+
+export type UpdateTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  sceneId: Scalars['ID'];
+  label?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateTagMutation = { __typename?: 'Mutation', updateTag?: { __typename?: 'UpdateTagPayload', tag: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } } | null };
+
 export type AttachTagItemToGroupMutationVariables = Exact<{
   itemId: Scalars['ID'];
   groupId: Scalars['ID'];
@@ -2971,22 +2987,6 @@ export type DetachTagFromLayerMutationVariables = Exact<{
 
 
 export type DetachTagFromLayerMutation = { __typename?: 'Mutation', detachTagFromLayer?: { __typename?: 'DetachTagFromLayerPayload', layer: { __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } } | null };
-
-export type RemoveTagMutationVariables = Exact<{
-  tagId: Scalars['ID'];
-}>;
-
-
-export type RemoveTagMutation = { __typename?: 'Mutation', removeTag?: { __typename?: 'RemoveTagPayload', tagId: string, updatedLayers: Array<{ __typename?: 'LayerGroup', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> } | { __typename?: 'LayerItem', id: string, tags: Array<{ __typename?: 'LayerTagGroup', tagId: string, children: Array<{ __typename?: 'LayerTagItem', tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }>, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null } | { __typename?: 'LayerTagItem', tagId: string, tag?: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } | null }> }> } | null };
-
-export type UpdateTagMutationVariables = Exact<{
-  tagId: Scalars['ID'];
-  sceneId: Scalars['ID'];
-  label?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UpdateTagMutation = { __typename?: 'Mutation', updateTag?: { __typename?: 'UpdateTagPayload', tag: { __typename?: 'TagGroup', id: string, label: string } | { __typename?: 'TagItem', id: string, label: string } } | null };
 
 export type SearchUserQueryVariables = Exact<{
   nameOrEmail: Scalars['String'];
@@ -6531,7 +6531,7 @@ export type AddLayerItemFromPrimitiveMutationHookResult = ReturnType<typeof useA
 export type AddLayerItemFromPrimitiveMutationResult = Apollo.MutationResult<AddLayerItemFromPrimitiveMutation>;
 export type AddLayerItemFromPrimitiveMutationOptions = Apollo.BaseMutationOptions<AddLayerItemFromPrimitiveMutation, AddLayerItemFromPrimitiveMutationVariables>;
 export const GetSceneTagsDocument = gql`
-    query getSceneTags($sceneId: ID!) {
+    query GetSceneTags($sceneId: ID!) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
@@ -6589,7 +6589,7 @@ export type GetSceneTagsQueryHookResult = ReturnType<typeof useGetSceneTagsQuery
 export type GetSceneTagsLazyQueryHookResult = ReturnType<typeof useGetSceneTagsLazyQuery>;
 export type GetSceneTagsQueryResult = Apollo.QueryResult<GetSceneTagsQuery, GetSceneTagsQueryVariables>;
 export const GetLayerTagsDocument = gql`
-    query getLayerTags($layerId: ID!) {
+    query GetLayerTags($layerId: ID!) {
   layer(id: $layerId) {
     id
     tags {
@@ -6639,7 +6639,7 @@ export type GetLayerTagsQueryHookResult = ReturnType<typeof useGetLayerTagsQuery
 export type GetLayerTagsLazyQueryHookResult = ReturnType<typeof useGetLayerTagsLazyQuery>;
 export type GetLayerTagsQueryResult = Apollo.QueryResult<GetLayerTagsQuery, GetLayerTagsQueryVariables>;
 export const CreateTagGroupDocument = gql`
-    mutation createTagGroup($sceneId: ID!, $label: String!) {
+    mutation CreateTagGroup($sceneId: ID!, $label: String!) {
   createTagGroup(input: {sceneId: $sceneId, label: $label}) {
     tag {
       id
@@ -6680,7 +6680,7 @@ export type CreateTagGroupMutationHookResult = ReturnType<typeof useCreateTagGro
 export type CreateTagGroupMutationResult = Apollo.MutationResult<CreateTagGroupMutation>;
 export type CreateTagGroupMutationOptions = Apollo.BaseMutationOptions<CreateTagGroupMutation, CreateTagGroupMutationVariables>;
 export const CreateTagItemDocument = gql`
-    mutation createTagItem($sceneId: ID!, $label: String!, $parent: ID, $linkedDatasetSchemaId: ID, $linkedDatasetID: ID, $linkedDatasetField: ID) {
+    mutation CreateTagItem($sceneId: ID!, $label: String!, $parent: ID, $linkedDatasetSchemaId: ID, $linkedDatasetID: ID, $linkedDatasetField: ID) {
   createTagItem(
     input: {sceneId: $sceneId, label: $label, parent: $parent, linkedDatasetSchemaID: $linkedDatasetSchemaId, linkedDatasetID: $linkedDatasetID, linkedDatasetField: $linkedDatasetField}
   ) {
@@ -6731,192 +6731,8 @@ export function useCreateTagItemMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateTagItemMutationHookResult = ReturnType<typeof useCreateTagItemMutation>;
 export type CreateTagItemMutationResult = Apollo.MutationResult<CreateTagItemMutation>;
 export type CreateTagItemMutationOptions = Apollo.BaseMutationOptions<CreateTagItemMutation, CreateTagItemMutationVariables>;
-export const AttachTagItemToGroupDocument = gql`
-    mutation attachTagItemToGroup($itemId: ID!, $groupId: ID!) {
-  attachTagItemToGroup(input: {itemID: $itemId, groupID: $groupId}) {
-    tag {
-      id
-      label
-      tags {
-        id
-        label
-      }
-    }
-  }
-}
-    `;
-export type AttachTagItemToGroupMutationFn = Apollo.MutationFunction<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>;
-
-/**
- * __useAttachTagItemToGroupMutation__
- *
- * To run a mutation, you first call `useAttachTagItemToGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAttachTagItemToGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [attachTagItemToGroupMutation, { data, loading, error }] = useAttachTagItemToGroupMutation({
- *   variables: {
- *      itemId: // value for 'itemId'
- *      groupId: // value for 'groupId'
- *   },
- * });
- */
-export function useAttachTagItemToGroupMutation(baseOptions?: Apollo.MutationHookOptions<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>(AttachTagItemToGroupDocument, options);
-      }
-export type AttachTagItemToGroupMutationHookResult = ReturnType<typeof useAttachTagItemToGroupMutation>;
-export type AttachTagItemToGroupMutationResult = Apollo.MutationResult<AttachTagItemToGroupMutation>;
-export type AttachTagItemToGroupMutationOptions = Apollo.BaseMutationOptions<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>;
-export const DetachTagItemFromGroupDocument = gql`
-    mutation detachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
-  detachTagItemFromGroup(input: {itemID: $itemId, groupID: $groupId}) {
-    tag {
-      id
-      label
-      tags {
-        id
-        label
-      }
-    }
-  }
-}
-    `;
-export type DetachTagItemFromGroupMutationFn = Apollo.MutationFunction<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>;
-
-/**
- * __useDetachTagItemFromGroupMutation__
- *
- * To run a mutation, you first call `useDetachTagItemFromGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDetachTagItemFromGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [detachTagItemFromGroupMutation, { data, loading, error }] = useDetachTagItemFromGroupMutation({
- *   variables: {
- *      itemId: // value for 'itemId'
- *      groupId: // value for 'groupId'
- *   },
- * });
- */
-export function useDetachTagItemFromGroupMutation(baseOptions?: Apollo.MutationHookOptions<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>(DetachTagItemFromGroupDocument, options);
-      }
-export type DetachTagItemFromGroupMutationHookResult = ReturnType<typeof useDetachTagItemFromGroupMutation>;
-export type DetachTagItemFromGroupMutationResult = Apollo.MutationResult<DetachTagItemFromGroupMutation>;
-export type DetachTagItemFromGroupMutationOptions = Apollo.BaseMutationOptions<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>;
-export const AttachTagToLayerDocument = gql`
-    mutation attachTagToLayer($tagId: ID!, $layerId: ID!) {
-  attachTagToLayer(input: {tagID: $tagId, layerID: $layerId}) {
-    layer {
-      id
-      tags {
-        tagId
-        tag {
-          id
-          label
-        }
-        ... on LayerTagGroup {
-          children {
-            tag {
-              id
-              label
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-export type AttachTagToLayerMutationFn = Apollo.MutationFunction<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>;
-
-/**
- * __useAttachTagToLayerMutation__
- *
- * To run a mutation, you first call `useAttachTagToLayerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAttachTagToLayerMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [attachTagToLayerMutation, { data, loading, error }] = useAttachTagToLayerMutation({
- *   variables: {
- *      tagId: // value for 'tagId'
- *      layerId: // value for 'layerId'
- *   },
- * });
- */
-export function useAttachTagToLayerMutation(baseOptions?: Apollo.MutationHookOptions<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>(AttachTagToLayerDocument, options);
-      }
-export type AttachTagToLayerMutationHookResult = ReturnType<typeof useAttachTagToLayerMutation>;
-export type AttachTagToLayerMutationResult = Apollo.MutationResult<AttachTagToLayerMutation>;
-export type AttachTagToLayerMutationOptions = Apollo.BaseMutationOptions<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>;
-export const DetachTagFromLayerDocument = gql`
-    mutation detachTagFromLayer($tagId: ID!, $layerId: ID!) {
-  detachTagFromLayer(input: {tagID: $tagId, layerID: $layerId}) {
-    layer {
-      id
-      tags {
-        tagId
-        tag {
-          id
-          label
-        }
-        ... on LayerTagGroup {
-          children {
-            tag {
-              id
-              label
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-export type DetachTagFromLayerMutationFn = Apollo.MutationFunction<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>;
-
-/**
- * __useDetachTagFromLayerMutation__
- *
- * To run a mutation, you first call `useDetachTagFromLayerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDetachTagFromLayerMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [detachTagFromLayerMutation, { data, loading, error }] = useDetachTagFromLayerMutation({
- *   variables: {
- *      tagId: // value for 'tagId'
- *      layerId: // value for 'layerId'
- *   },
- * });
- */
-export function useDetachTagFromLayerMutation(baseOptions?: Apollo.MutationHookOptions<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>(DetachTagFromLayerDocument, options);
-      }
-export type DetachTagFromLayerMutationHookResult = ReturnType<typeof useDetachTagFromLayerMutation>;
-export type DetachTagFromLayerMutationResult = Apollo.MutationResult<DetachTagFromLayerMutation>;
-export type DetachTagFromLayerMutationOptions = Apollo.BaseMutationOptions<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>;
 export const RemoveTagDocument = gql`
-    mutation removeTag($tagId: ID!) {
+    mutation RemoveTag($tagId: ID!) {
   removeTag(input: {tagID: $tagId}) {
     tagId
     updatedLayers {
@@ -6967,7 +6783,7 @@ export type RemoveTagMutationHookResult = ReturnType<typeof useRemoveTagMutation
 export type RemoveTagMutationResult = Apollo.MutationResult<RemoveTagMutation>;
 export type RemoveTagMutationOptions = Apollo.BaseMutationOptions<RemoveTagMutation, RemoveTagMutationVariables>;
 export const UpdateTagDocument = gql`
-    mutation updateTag($tagId: ID!, $sceneId: ID!, $label: String) {
+    mutation UpdateTag($tagId: ID!, $sceneId: ID!, $label: String) {
   updateTag(input: {tagId: $tagId, sceneId: $sceneId, label: $label}) {
     tag {
       id
@@ -7004,6 +6820,190 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const AttachTagItemToGroupDocument = gql`
+    mutation AttachTagItemToGroup($itemId: ID!, $groupId: ID!) {
+  attachTagItemToGroup(input: {itemID: $itemId, groupID: $groupId}) {
+    tag {
+      id
+      label
+      tags {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+export type AttachTagItemToGroupMutationFn = Apollo.MutationFunction<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>;
+
+/**
+ * __useAttachTagItemToGroupMutation__
+ *
+ * To run a mutation, you first call `useAttachTagItemToGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachTagItemToGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachTagItemToGroupMutation, { data, loading, error }] = useAttachTagItemToGroupMutation({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useAttachTagItemToGroupMutation(baseOptions?: Apollo.MutationHookOptions<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>(AttachTagItemToGroupDocument, options);
+      }
+export type AttachTagItemToGroupMutationHookResult = ReturnType<typeof useAttachTagItemToGroupMutation>;
+export type AttachTagItemToGroupMutationResult = Apollo.MutationResult<AttachTagItemToGroupMutation>;
+export type AttachTagItemToGroupMutationOptions = Apollo.BaseMutationOptions<AttachTagItemToGroupMutation, AttachTagItemToGroupMutationVariables>;
+export const DetachTagItemFromGroupDocument = gql`
+    mutation DetachTagItemFromGroup($itemId: ID!, $groupId: ID!) {
+  detachTagItemFromGroup(input: {itemID: $itemId, groupID: $groupId}) {
+    tag {
+      id
+      label
+      tags {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
+export type DetachTagItemFromGroupMutationFn = Apollo.MutationFunction<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>;
+
+/**
+ * __useDetachTagItemFromGroupMutation__
+ *
+ * To run a mutation, you first call `useDetachTagItemFromGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachTagItemFromGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachTagItemFromGroupMutation, { data, loading, error }] = useDetachTagItemFromGroupMutation({
+ *   variables: {
+ *      itemId: // value for 'itemId'
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useDetachTagItemFromGroupMutation(baseOptions?: Apollo.MutationHookOptions<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>(DetachTagItemFromGroupDocument, options);
+      }
+export type DetachTagItemFromGroupMutationHookResult = ReturnType<typeof useDetachTagItemFromGroupMutation>;
+export type DetachTagItemFromGroupMutationResult = Apollo.MutationResult<DetachTagItemFromGroupMutation>;
+export type DetachTagItemFromGroupMutationOptions = Apollo.BaseMutationOptions<DetachTagItemFromGroupMutation, DetachTagItemFromGroupMutationVariables>;
+export const AttachTagToLayerDocument = gql`
+    mutation AttachTagToLayer($tagId: ID!, $layerId: ID!) {
+  attachTagToLayer(input: {tagID: $tagId, layerID: $layerId}) {
+    layer {
+      id
+      tags {
+        tagId
+        tag {
+          id
+          label
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type AttachTagToLayerMutationFn = Apollo.MutationFunction<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>;
+
+/**
+ * __useAttachTagToLayerMutation__
+ *
+ * To run a mutation, you first call `useAttachTagToLayerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachTagToLayerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachTagToLayerMutation, { data, loading, error }] = useAttachTagToLayerMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useAttachTagToLayerMutation(baseOptions?: Apollo.MutationHookOptions<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>(AttachTagToLayerDocument, options);
+      }
+export type AttachTagToLayerMutationHookResult = ReturnType<typeof useAttachTagToLayerMutation>;
+export type AttachTagToLayerMutationResult = Apollo.MutationResult<AttachTagToLayerMutation>;
+export type AttachTagToLayerMutationOptions = Apollo.BaseMutationOptions<AttachTagToLayerMutation, AttachTagToLayerMutationVariables>;
+export const DetachTagFromLayerDocument = gql`
+    mutation DetachTagFromLayer($tagId: ID!, $layerId: ID!) {
+  detachTagFromLayer(input: {tagID: $tagId, layerID: $layerId}) {
+    layer {
+      id
+      tags {
+        tagId
+        tag {
+          id
+          label
+        }
+        ... on LayerTagGroup {
+          children {
+            tag {
+              id
+              label
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type DetachTagFromLayerMutationFn = Apollo.MutationFunction<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>;
+
+/**
+ * __useDetachTagFromLayerMutation__
+ *
+ * To run a mutation, you first call `useDetachTagFromLayerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachTagFromLayerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachTagFromLayerMutation, { data, loading, error }] = useDetachTagFromLayerMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      layerId: // value for 'layerId'
+ *   },
+ * });
+ */
+export function useDetachTagFromLayerMutation(baseOptions?: Apollo.MutationHookOptions<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>(DetachTagFromLayerDocument, options);
+      }
+export type DetachTagFromLayerMutationHookResult = ReturnType<typeof useDetachTagFromLayerMutation>;
+export type DetachTagFromLayerMutationResult = Apollo.MutationResult<DetachTagFromLayerMutation>;
+export type DetachTagFromLayerMutationOptions = Apollo.BaseMutationOptions<DetachTagFromLayerMutation, DetachTagFromLayerMutationVariables>;
 export const SearchUserDocument = gql`
     query searchUser($nameOrEmail: String!) {
   searchUser(nameOrEmail: $nameOrEmail) {
