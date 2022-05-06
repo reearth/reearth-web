@@ -5,7 +5,7 @@ import { useIntl } from "react-intl";
 import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import {
   useTeamsQuery,
-  useSearchUserLazyQuery,
+  useGetUserBySearchLazyQuery,
   useCreateTeamMutation,
   useUpdateTeamMutation,
   useDeleteTeamMutation,
@@ -58,15 +58,15 @@ export default (params: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const [searchUserQuery, { data: searchUserData }] = useSearchUserLazyQuery();
+  const [useGetUserBySearchQuery, { data: searchUserData }] = useGetUserBySearchLazyQuery();
 
   useEffect(() => {
     changeSearchedUser(searchUserData?.searchUser ?? undefined);
   }, [searchUserData?.searchUser]);
 
   const searchUser = useCallback(
-    (nameOrEmail: string) => nameOrEmail && searchUserQuery({ variables: { nameOrEmail } }),
-    [searchUserQuery],
+    (nameOrEmail: string) => nameOrEmail && useGetUserBySearchQuery({ variables: { nameOrEmail } }),
+    [useGetUserBySearchQuery],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();

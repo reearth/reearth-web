@@ -3,7 +3,7 @@ import { useEffect, useCallback, useState } from "react";
 
 import { User } from "@reearth/components/molecules/Common/Header";
 import {
-  useMeQuery,
+  useGetMeQuery,
   useGetProjectSceneQuery,
   useTeamsQuery,
   useGetProjectsQuery,
@@ -22,7 +22,7 @@ export default (params: Params) => {
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
 
-  const { refetch } = useMeQuery();
+  const { refetch } = useGetMeQuery();
 
   const navigate = useNavigate();
   const [modalShown, setModalShown] = useState(false);
