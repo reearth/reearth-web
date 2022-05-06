@@ -7,7 +7,7 @@ import {
   DataSource,
 } from "@reearth/components/molecules/EarthEditor/DatasetPane/hooks";
 import {
-  useDatasetSchemasQuery,
+  useGetDatasetSchemasQuery,
   useSyncDatasetMutation,
   useImportDatasetMutation,
   useImportGoogleSheetDatasetMutation,
@@ -28,7 +28,7 @@ export default () => {
   const [sceneId] = useSceneId();
   const [project] = useProject();
 
-  const { data, loading } = useDatasetSchemasQuery({
+  const { data, loading } = useGetDatasetSchemasQuery({
     variables: { projectId: project?.id || "", first: 100 },
   });
 
