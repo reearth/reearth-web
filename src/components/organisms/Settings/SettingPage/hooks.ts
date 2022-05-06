@@ -4,7 +4,7 @@ import { useEffect, useCallback, useState } from "react";
 import { User } from "@reearth/components/molecules/Common/Header";
 import {
   useMeQuery,
-  useSceneQuery,
+  useGetProjectSceneQuery,
   useTeamsQuery,
   useGetProjectsQuery,
   useCreateTeamMutation,
@@ -39,7 +39,7 @@ export default (params: Params) => {
     [navigate, refetch, currentTeam?.id],
   );
 
-  const { data: sceneData } = useSceneQuery({
+  const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });
