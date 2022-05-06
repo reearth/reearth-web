@@ -7501,7 +7501,7 @@ export type GetEarthWidgetsQueryHookResult = ReturnType<typeof useGetEarthWidget
 export type GetEarthWidgetsLazyQueryHookResult = ReturnType<typeof useGetEarthWidgetsLazyQuery>;
 export type GetEarthWidgetsQueryResult = Apollo.QueryResult<GetEarthWidgetsQuery, GetEarthWidgetsQueryVariables>;
 export const AddWidgetDocument = gql`
-    mutation addWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
+    mutation AddWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
   addWidget(
     input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
   ) {
@@ -7558,7 +7558,7 @@ export type AddWidgetMutationHookResult = ReturnType<typeof useAddWidgetMutation
 export type AddWidgetMutationResult = Apollo.MutationResult<AddWidgetMutation>;
 export type AddWidgetMutationOptions = Apollo.BaseMutationOptions<AddWidgetMutation, AddWidgetMutationVariables>;
 export const RemoveWidgetDocument = gql`
-    mutation removeWidget($sceneId: ID!, $widgetId: ID!) {
+    mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
   removeWidget(input: {sceneId: $sceneId, widgetId: $widgetId}) {
     scene {
       id
@@ -7601,7 +7601,7 @@ export type RemoveWidgetMutationHookResult = ReturnType<typeof useRemoveWidgetMu
 export type RemoveWidgetMutationResult = Apollo.MutationResult<RemoveWidgetMutation>;
 export type RemoveWidgetMutationOptions = Apollo.BaseMutationOptions<RemoveWidgetMutation, RemoveWidgetMutationVariables>;
 export const UpdateWidgetDocument = gql`
-    mutation updateWidget($sceneId: ID!, $widgetId: ID!, $enabled: Boolean, $location: WidgetLocationInput, $extended: Boolean, $index: Int) {
+    mutation UpdateWidget($sceneId: ID!, $widgetId: ID!, $enabled: Boolean, $location: WidgetLocationInput, $extended: Boolean, $index: Int) {
   updateWidget(
     input: {sceneId: $sceneId, widgetId: $widgetId, enabled: $enabled, location: $location, extended: $extended, index: $index}
   ) {
@@ -7651,7 +7651,7 @@ export type UpdateWidgetMutationHookResult = ReturnType<typeof useUpdateWidgetMu
 export type UpdateWidgetMutationResult = Apollo.MutationResult<UpdateWidgetMutation>;
 export type UpdateWidgetMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetMutation, UpdateWidgetMutationVariables>;
 export const UpdateWidgetAlignSystemDocument = gql`
-    mutation updateWidgetAlignSystem($sceneId: ID!, $location: WidgetLocationInput!, $align: WidgetAreaAlign) {
+    mutation UpdateWidgetAlignSystem($sceneId: ID!, $location: WidgetLocationInput!, $align: WidgetAreaAlign) {
   updateWidgetAlignSystem(
     input: {sceneId: $sceneId, location: $location, align: $align}
   ) {
