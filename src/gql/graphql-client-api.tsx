@@ -2682,7 +2682,7 @@ export type GetTeamProjectsQueryVariables = Exact<{
 
 export type GetTeamProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string } | null> } };
 
-export type ProjectQueryVariables = Exact<{
+export type GetProjectsQueryVariables = Exact<{
   teamId: Scalars['ID'];
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
@@ -2691,7 +2691,7 @@ export type ProjectQueryVariables = Exact<{
 }>;
 
 
-export type ProjectQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null> } };
+export type GetProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null> } };
 
 export type CheckProjectAliasQueryVariables = Exact<{
   alias: Scalars['String'];
@@ -2699,48 +2699,6 @@ export type CheckProjectAliasQueryVariables = Exact<{
 
 
 export type CheckProjectAliasQuery = { __typename?: 'Query', checkProjectAlias: { __typename?: 'ProjectAliasAvailability', alias: string, available: boolean } };
-
-export type PublishProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  alias?: InputMaybe<Scalars['String']>;
-  status: PublishmentStatus;
-}>;
-
-
-export type PublishProjectMutation = { __typename?: 'Mutation', publishProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
-
-export type UpdateProjectBasicAuthMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  isBasicAuthActive?: InputMaybe<Scalars['Boolean']>;
-  basicAuthUsername?: InputMaybe<Scalars['String']>;
-  basicAuthPassword?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UpdateProjectBasicAuthMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string } } | null };
-
-export type UpdateProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  imageUrl?: InputMaybe<Scalars['URL']>;
-  publicTitle?: InputMaybe<Scalars['String']>;
-  publicDescription?: InputMaybe<Scalars['String']>;
-  publicImage?: InputMaybe<Scalars['String']>;
-  deleteImageUrl?: InputMaybe<Scalars['Boolean']>;
-  deletePublicImage?: InputMaybe<Scalars['Boolean']>;
-}>;
-
-
-export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
-
-export type ArchiveProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  archived: Scalars['Boolean'];
-}>;
-
-
-export type ArchiveProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
 
 export type CreateProjectMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -2760,6 +2718,31 @@ export type DeleteProjectMutationVariables = Exact<{
 
 export type DeleteProjectMutation = { __typename?: 'Mutation', deleteProject?: { __typename?: 'DeleteProjectPayload', projectId: string } | null };
 
+export type UpdateProjectMutationVariables = Exact<{
+  projectId: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  imageUrl?: InputMaybe<Scalars['URL']>;
+  publicTitle?: InputMaybe<Scalars['String']>;
+  publicDescription?: InputMaybe<Scalars['String']>;
+  publicImage?: InputMaybe<Scalars['String']>;
+  deleteImageUrl?: InputMaybe<Scalars['Boolean']>;
+  deletePublicImage?: InputMaybe<Scalars['Boolean']>;
+}>;
+
+
+export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
+
+export type UpdateProjectBasicAuthMutationVariables = Exact<{
+  projectId: Scalars['ID'];
+  isBasicAuthActive?: InputMaybe<Scalars['Boolean']>;
+  basicAuthUsername?: InputMaybe<Scalars['String']>;
+  basicAuthPassword?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateProjectBasicAuthMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string } } | null };
+
 export type UpdateProjectAliasMutationVariables = Exact<{
   projectId: Scalars['ID'];
   alias: Scalars['String'];
@@ -2767,6 +2750,23 @@ export type UpdateProjectAliasMutationVariables = Exact<{
 
 
 export type UpdateProjectAliasMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, alias: string } } | null };
+
+export type PublishProjectMutationVariables = Exact<{
+  projectId: Scalars['ID'];
+  alias?: InputMaybe<Scalars['String']>;
+  status: PublishmentStatus;
+}>;
+
+
+export type PublishProjectMutation = { __typename?: 'Mutation', publishProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
+
+export type ArchiveProjectMutationVariables = Exact<{
+  projectId: Scalars['ID'];
+  archived: Scalars['Boolean'];
+}>;
+
+
+export type ArchiveProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
 
 export type GetLayerPropertyQueryVariables = Exact<{
   layerId: Scalars['ID'];
@@ -5489,8 +5489,8 @@ export function useGetTeamProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetTeamProjectsQueryHookResult = ReturnType<typeof useGetTeamProjectsQuery>;
 export type GetTeamProjectsLazyQueryHookResult = ReturnType<typeof useGetTeamProjectsLazyQuery>;
 export type GetTeamProjectsQueryResult = Apollo.QueryResult<GetTeamProjectsQuery, GetTeamProjectsQueryVariables>;
-export const ProjectDocument = gql`
-    query Project($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+export const GetProjectsDocument = gql`
+    query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
   projects(
     teamId: $teamId
     first: $first
@@ -5521,16 +5521,16 @@ export const ProjectDocument = gql`
     `;
 
 /**
- * __useProjectQuery__
+ * __useGetProjectsQuery__
  *
- * To run a query within a React component, call `useProjectQuery` and pass it any options that fit your needs.
- * When your component renders, `useProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useProjectQuery({
+ * const { data, loading, error } = useGetProjectsQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
  *      first: // value for 'first'
@@ -5540,17 +5540,17 @@ export const ProjectDocument = gql`
  *   },
  * });
  */
-export function useProjectQuery(baseOptions: Apollo.QueryHookOptions<ProjectQuery, ProjectQueryVariables>) {
+export function useGetProjectsQuery(baseOptions: Apollo.QueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProjectQuery, ProjectQueryVariables>(ProjectDocument, options);
+        return Apollo.useQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options);
       }
-export function useProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectQuery, ProjectQueryVariables>) {
+export function useGetProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProjectQuery, ProjectQueryVariables>(ProjectDocument, options);
+          return Apollo.useLazyQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options);
         }
-export type ProjectQueryHookResult = ReturnType<typeof useProjectQuery>;
-export type ProjectLazyQueryHookResult = ReturnType<typeof useProjectLazyQuery>;
-export type ProjectQueryResult = Apollo.QueryResult<ProjectQuery, ProjectQueryVariables>;
+export type GetProjectsQueryHookResult = ReturnType<typeof useGetProjectsQuery>;
+export type GetProjectsLazyQueryHookResult = ReturnType<typeof useGetProjectsLazyQuery>;
+export type GetProjectsQueryResult = Apollo.QueryResult<GetProjectsQuery, GetProjectsQueryVariables>;
 export const CheckProjectAliasDocument = gql`
     query CheckProjectAlias($alias: String!) {
   checkProjectAlias(alias: $alias) {
@@ -5587,91 +5587,85 @@ export function useCheckProjectAliasLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type CheckProjectAliasQueryHookResult = ReturnType<typeof useCheckProjectAliasQuery>;
 export type CheckProjectAliasLazyQueryHookResult = ReturnType<typeof useCheckProjectAliasLazyQuery>;
 export type CheckProjectAliasQueryResult = Apollo.QueryResult<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>;
-export const PublishProjectDocument = gql`
-    mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
-  publishProject(input: {projectId: $projectId, alias: $alias, status: $status}) {
-    project {
-      id
-      alias
-      publishmentStatus
-    }
-  }
-}
-    `;
-export type PublishProjectMutationFn = Apollo.MutationFunction<PublishProjectMutation, PublishProjectMutationVariables>;
-
-/**
- * __usePublishProjectMutation__
- *
- * To run a mutation, you first call `usePublishProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePublishProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [publishProjectMutation, { data, loading, error }] = usePublishProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      alias: // value for 'alias'
- *      status: // value for 'status'
- *   },
- * });
- */
-export function usePublishProjectMutation(baseOptions?: Apollo.MutationHookOptions<PublishProjectMutation, PublishProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PublishProjectMutation, PublishProjectMutationVariables>(PublishProjectDocument, options);
-      }
-export type PublishProjectMutationHookResult = ReturnType<typeof usePublishProjectMutation>;
-export type PublishProjectMutationResult = Apollo.MutationResult<PublishProjectMutation>;
-export type PublishProjectMutationOptions = Apollo.BaseMutationOptions<PublishProjectMutation, PublishProjectMutationVariables>;
-export const UpdateProjectBasicAuthDocument = gql`
-    mutation updateProjectBasicAuth($projectId: ID!, $isBasicAuthActive: Boolean, $basicAuthUsername: String, $basicAuthPassword: String) {
-  updateProject(
-    input: {projectId: $projectId, isBasicAuthActive: $isBasicAuthActive, basicAuthUsername: $basicAuthUsername, basicAuthPassword: $basicAuthPassword}
+export const CreateProjectDocument = gql`
+    mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {
+  createProject(
+    input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}
   ) {
     project {
       id
       name
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
+      description
+      imageUrl
     }
   }
 }
     `;
-export type UpdateProjectBasicAuthMutationFn = Apollo.MutationFunction<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
+export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
 
 /**
- * __useUpdateProjectBasicAuthMutation__
+ * __useCreateProjectMutation__
  *
- * To run a mutation, you first call `useUpdateProjectBasicAuthMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectBasicAuthMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateProjectBasicAuthMutation, { data, loading, error }] = useUpdateProjectBasicAuthMutation({
+ * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
  *   variables: {
- *      projectId: // value for 'projectId'
- *      isBasicAuthActive: // value for 'isBasicAuthActive'
- *      basicAuthUsername: // value for 'basicAuthUsername'
- *      basicAuthPassword: // value for 'basicAuthPassword'
+ *      teamId: // value for 'teamId'
+ *      visualizer: // value for 'visualizer'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *      imageUrl: // value for 'imageUrl'
  *   },
  * });
  */
-export function useUpdateProjectBasicAuthMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>) {
+export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>(UpdateProjectBasicAuthDocument, options);
+        return Apollo.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, options);
       }
-export type UpdateProjectBasicAuthMutationHookResult = ReturnType<typeof useUpdateProjectBasicAuthMutation>;
-export type UpdateProjectBasicAuthMutationResult = Apollo.MutationResult<UpdateProjectBasicAuthMutation>;
-export type UpdateProjectBasicAuthMutationOptions = Apollo.BaseMutationOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
+export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
+export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
+export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const DeleteProjectDocument = gql`
+    mutation DeleteProject($projectId: ID!) {
+  deleteProject(input: {projectId: $projectId}) {
+    projectId
+  }
+}
+    `;
+export type DeleteProjectMutationFn = Apollo.MutationFunction<DeleteProjectMutation, DeleteProjectMutationVariables>;
+
+/**
+ * __useDeleteProjectMutation__
+ *
+ * To run a mutation, you first call `useDeleteProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProjectMutation, { data, loading, error }] = useDeleteProjectMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *   },
+ * });
+ */
+export function useDeleteProjectMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProjectMutation, DeleteProjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteProjectMutation, DeleteProjectMutationVariables>(DeleteProjectDocument, options);
+      }
+export type DeleteProjectMutationHookResult = ReturnType<typeof useDeleteProjectMutation>;
+export type DeleteProjectMutationResult = Apollo.MutationResult<DeleteProjectMutation>;
+export type DeleteProjectMutationOptions = Apollo.BaseMutationOptions<DeleteProjectMutation, DeleteProjectMutationVariables>;
 export const UpdateProjectDocument = gql`
-    mutation updateProject($projectId: ID!, $name: String, $description: String, $imageUrl: URL, $publicTitle: String, $publicDescription: String, $publicImage: String, $deleteImageUrl: Boolean, $deletePublicImage: Boolean) {
+    mutation UpdateProject($projectId: ID!, $name: String, $description: String, $imageUrl: URL, $publicTitle: String, $publicDescription: String, $publicImage: String, $deleteImageUrl: Boolean, $deletePublicImage: Boolean) {
   updateProject(
     input: {projectId: $projectId, name: $name, description: $description, imageUrl: $imageUrl, publicTitle: $publicTitle, publicDescription: $publicDescription, publicImage: $publicImage, deleteImageUrl: $deleteImageUrl, deletePublicImage: $deletePublicImage}
   ) {
@@ -5727,8 +5721,129 @@ export function useUpdateProjectMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
 export type UpdateProjectMutationResult = Apollo.MutationResult<UpdateProjectMutation>;
 export type UpdateProjectMutationOptions = Apollo.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;
+export const UpdateProjectBasicAuthDocument = gql`
+    mutation UpdateProjectBasicAuth($projectId: ID!, $isBasicAuthActive: Boolean, $basicAuthUsername: String, $basicAuthPassword: String) {
+  updateProject(
+    input: {projectId: $projectId, isBasicAuthActive: $isBasicAuthActive, basicAuthUsername: $basicAuthUsername, basicAuthPassword: $basicAuthPassword}
+  ) {
+    project {
+      id
+      name
+      isBasicAuthActive
+      basicAuthUsername
+      basicAuthPassword
+    }
+  }
+}
+    `;
+export type UpdateProjectBasicAuthMutationFn = Apollo.MutationFunction<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
+
+/**
+ * __useUpdateProjectBasicAuthMutation__
+ *
+ * To run a mutation, you first call `useUpdateProjectBasicAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProjectBasicAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProjectBasicAuthMutation, { data, loading, error }] = useUpdateProjectBasicAuthMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      isBasicAuthActive: // value for 'isBasicAuthActive'
+ *      basicAuthUsername: // value for 'basicAuthUsername'
+ *      basicAuthPassword: // value for 'basicAuthPassword'
+ *   },
+ * });
+ */
+export function useUpdateProjectBasicAuthMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>(UpdateProjectBasicAuthDocument, options);
+      }
+export type UpdateProjectBasicAuthMutationHookResult = ReturnType<typeof useUpdateProjectBasicAuthMutation>;
+export type UpdateProjectBasicAuthMutationResult = Apollo.MutationResult<UpdateProjectBasicAuthMutation>;
+export type UpdateProjectBasicAuthMutationOptions = Apollo.BaseMutationOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
+export const UpdateProjectAliasDocument = gql`
+    mutation UpdateProjectAlias($projectId: ID!, $alias: String!) {
+  updateProject(input: {projectId: $projectId, alias: $alias}) {
+    project {
+      id
+      name
+      alias
+    }
+  }
+}
+    `;
+export type UpdateProjectAliasMutationFn = Apollo.MutationFunction<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
+
+/**
+ * __useUpdateProjectAliasMutation__
+ *
+ * To run a mutation, you first call `useUpdateProjectAliasMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProjectAliasMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProjectAliasMutation, { data, loading, error }] = useUpdateProjectAliasMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      alias: // value for 'alias'
+ *   },
+ * });
+ */
+export function useUpdateProjectAliasMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>(UpdateProjectAliasDocument, options);
+      }
+export type UpdateProjectAliasMutationHookResult = ReturnType<typeof useUpdateProjectAliasMutation>;
+export type UpdateProjectAliasMutationResult = Apollo.MutationResult<UpdateProjectAliasMutation>;
+export type UpdateProjectAliasMutationOptions = Apollo.BaseMutationOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
+export const PublishProjectDocument = gql`
+    mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
+  publishProject(input: {projectId: $projectId, alias: $alias, status: $status}) {
+    project {
+      id
+      alias
+      publishmentStatus
+    }
+  }
+}
+    `;
+export type PublishProjectMutationFn = Apollo.MutationFunction<PublishProjectMutation, PublishProjectMutationVariables>;
+
+/**
+ * __usePublishProjectMutation__
+ *
+ * To run a mutation, you first call `usePublishProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePublishProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [publishProjectMutation, { data, loading, error }] = usePublishProjectMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      alias: // value for 'alias'
+ *      status: // value for 'status'
+ *   },
+ * });
+ */
+export function usePublishProjectMutation(baseOptions?: Apollo.MutationHookOptions<PublishProjectMutation, PublishProjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PublishProjectMutation, PublishProjectMutationVariables>(PublishProjectDocument, options);
+      }
+export type PublishProjectMutationHookResult = ReturnType<typeof usePublishProjectMutation>;
+export type PublishProjectMutationResult = Apollo.MutationResult<PublishProjectMutation>;
+export type PublishProjectMutationOptions = Apollo.BaseMutationOptions<PublishProjectMutation, PublishProjectMutationVariables>;
 export const ArchiveProjectDocument = gql`
-    mutation archiveProject($projectId: ID!, $archived: Boolean!) {
+    mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {
   updateProject(input: {projectId: $projectId, archived: $archived}) {
     project {
       id
@@ -5775,121 +5890,6 @@ export function useArchiveProjectMutation(baseOptions?: Apollo.MutationHookOptio
 export type ArchiveProjectMutationHookResult = ReturnType<typeof useArchiveProjectMutation>;
 export type ArchiveProjectMutationResult = Apollo.MutationResult<ArchiveProjectMutation>;
 export type ArchiveProjectMutationOptions = Apollo.BaseMutationOptions<ArchiveProjectMutation, ArchiveProjectMutationVariables>;
-export const CreateProjectDocument = gql`
-    mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {
-  createProject(
-    input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}
-  ) {
-    project {
-      id
-      name
-      description
-      imageUrl
-    }
-  }
-}
-    `;
-export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
-
-/**
- * __useCreateProjectMutation__
- *
- * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
- *   variables: {
- *      teamId: // value for 'teamId'
- *      visualizer: // value for 'visualizer'
- *      name: // value for 'name'
- *      description: // value for 'description'
- *      imageUrl: // value for 'imageUrl'
- *   },
- * });
- */
-export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, options);
-      }
-export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
-export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
-export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
-export const DeleteProjectDocument = gql`
-    mutation deleteProject($projectId: ID!) {
-  deleteProject(input: {projectId: $projectId}) {
-    projectId
-  }
-}
-    `;
-export type DeleteProjectMutationFn = Apollo.MutationFunction<DeleteProjectMutation, DeleteProjectMutationVariables>;
-
-/**
- * __useDeleteProjectMutation__
- *
- * To run a mutation, you first call `useDeleteProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteProjectMutation, { data, loading, error }] = useDeleteProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *   },
- * });
- */
-export function useDeleteProjectMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProjectMutation, DeleteProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteProjectMutation, DeleteProjectMutationVariables>(DeleteProjectDocument, options);
-      }
-export type DeleteProjectMutationHookResult = ReturnType<typeof useDeleteProjectMutation>;
-export type DeleteProjectMutationResult = Apollo.MutationResult<DeleteProjectMutation>;
-export type DeleteProjectMutationOptions = Apollo.BaseMutationOptions<DeleteProjectMutation, DeleteProjectMutationVariables>;
-export const UpdateProjectAliasDocument = gql`
-    mutation updateProjectAlias($projectId: ID!, $alias: String!) {
-  updateProject(input: {projectId: $projectId, alias: $alias}) {
-    project {
-      id
-      name
-      alias
-    }
-  }
-}
-    `;
-export type UpdateProjectAliasMutationFn = Apollo.MutationFunction<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
-
-/**
- * __useUpdateProjectAliasMutation__
- *
- * To run a mutation, you first call `useUpdateProjectAliasMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectAliasMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectAliasMutation, { data, loading, error }] = useUpdateProjectAliasMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      alias: // value for 'alias'
- *   },
- * });
- */
-export function useUpdateProjectAliasMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>(UpdateProjectAliasDocument, options);
-      }
-export type UpdateProjectAliasMutationHookResult = ReturnType<typeof useUpdateProjectAliasMutation>;
-export type UpdateProjectAliasMutationResult = Apollo.MutationResult<UpdateProjectAliasMutation>;
-export type UpdateProjectAliasMutationOptions = Apollo.BaseMutationOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
 export const GetLayerPropertyDocument = gql`
     query GetLayerProperty($layerId: ID!, $lang: Lang) {
   layer(id: $layerId) {
