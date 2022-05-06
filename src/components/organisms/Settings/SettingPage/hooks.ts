@@ -5,7 +5,7 @@ import { User } from "@reearth/components/molecules/Common/Header";
 import {
   useGetMeQuery,
   useGetProjectSceneQuery,
-  useTeamsQuery,
+  useGetTeamsQuery,
   useGetProjectsQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
@@ -46,7 +46,7 @@ export default (params: Params) => {
   const sceneId = sceneData?.scene?.id;
   const teamId = params.teamId ?? sceneData?.scene?.teamId;
 
-  const { data: teamsData } = useTeamsQuery();
+  const { data: teamsData } = useGetTeamsQuery();
   const user: User = {
     name: teamsData?.me?.name ?? "",
   };
