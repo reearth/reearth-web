@@ -2635,18 +2635,18 @@ export type GetScenePluginsForDatasetInfoPaneQueryVariables = Exact<{
 
 export type GetScenePluginsForDatasetInfoPaneQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', pluginId: string, plugin?: { __typename?: 'Plugin', id: string, name: string, extensions: Array<{ __typename?: 'PluginExtension', extensionId: string, type: PluginExtensionType, name: string, description: string, icon: string, translatedName: string }> } | null }> } | null };
 
-export type InstallablePluginsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetInstallablePluginsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InstallablePluginsQuery = { __typename?: 'Query', installablePlugins: Array<{ __typename?: 'PluginMetadata', name: string, description: string, thumbnailUrl: string, author: string, createdAt: Date }> };
+export type GetInstallablePluginsQuery = { __typename?: 'Query', installablePlugins: Array<{ __typename?: 'PluginMetadata', name: string, description: string, thumbnailUrl: string, author: string, createdAt: Date }> };
 
-export type InstalledPluginsQueryVariables = Exact<{
+export type GetInstalledPluginsQueryVariables = Exact<{
   projectId: Scalars['ID'];
   lang?: InputMaybe<Scalars['Lang']>;
 }>;
 
 
-export type InstalledPluginsQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, version: string, name: string, description: string, translatedName: string, translatedDescription: string, author: string, repositoryUrl: string } | null }> } | null };
+export type GetInstalledPluginsQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, version: string, name: string, description: string, translatedName: string, translatedDescription: string, author: string, repositoryUrl: string } | null }> } | null };
 
 export type UploadPluginMutationVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -5233,8 +5233,8 @@ export function useGetScenePluginsForDatasetInfoPaneLazyQuery(baseOptions?: Apol
 export type GetScenePluginsForDatasetInfoPaneQueryHookResult = ReturnType<typeof useGetScenePluginsForDatasetInfoPaneQuery>;
 export type GetScenePluginsForDatasetInfoPaneLazyQueryHookResult = ReturnType<typeof useGetScenePluginsForDatasetInfoPaneLazyQuery>;
 export type GetScenePluginsForDatasetInfoPaneQueryResult = Apollo.QueryResult<GetScenePluginsForDatasetInfoPaneQuery, GetScenePluginsForDatasetInfoPaneQueryVariables>;
-export const InstallablePluginsDocument = gql`
-    query InstallablePlugins {
+export const GetInstallablePluginsDocument = gql`
+    query GetInstallablePlugins {
   installablePlugins {
     name
     description
@@ -5246,33 +5246,33 @@ export const InstallablePluginsDocument = gql`
     `;
 
 /**
- * __useInstallablePluginsQuery__
+ * __useGetInstallablePluginsQuery__
  *
- * To run a query within a React component, call `useInstallablePluginsQuery` and pass it any options that fit your needs.
- * When your component renders, `useInstallablePluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetInstallablePluginsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInstallablePluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useInstallablePluginsQuery({
+ * const { data, loading, error } = useGetInstallablePluginsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useInstallablePluginsQuery(baseOptions?: Apollo.QueryHookOptions<InstallablePluginsQuery, InstallablePluginsQueryVariables>) {
+export function useGetInstallablePluginsQuery(baseOptions?: Apollo.QueryHookOptions<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<InstallablePluginsQuery, InstallablePluginsQueryVariables>(InstallablePluginsDocument, options);
+        return Apollo.useQuery<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>(GetInstallablePluginsDocument, options);
       }
-export function useInstallablePluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstallablePluginsQuery, InstallablePluginsQueryVariables>) {
+export function useGetInstallablePluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<InstallablePluginsQuery, InstallablePluginsQueryVariables>(InstallablePluginsDocument, options);
+          return Apollo.useLazyQuery<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>(GetInstallablePluginsDocument, options);
         }
-export type InstallablePluginsQueryHookResult = ReturnType<typeof useInstallablePluginsQuery>;
-export type InstallablePluginsLazyQueryHookResult = ReturnType<typeof useInstallablePluginsLazyQuery>;
-export type InstallablePluginsQueryResult = Apollo.QueryResult<InstallablePluginsQuery, InstallablePluginsQueryVariables>;
-export const InstalledPluginsDocument = gql`
-    query InstalledPlugins($projectId: ID!, $lang: Lang) {
+export type GetInstallablePluginsQueryHookResult = ReturnType<typeof useGetInstallablePluginsQuery>;
+export type GetInstallablePluginsLazyQueryHookResult = ReturnType<typeof useGetInstallablePluginsLazyQuery>;
+export type GetInstallablePluginsQueryResult = Apollo.QueryResult<GetInstallablePluginsQuery, GetInstallablePluginsQueryVariables>;
+export const GetInstalledPluginsDocument = gql`
+    query GetInstalledPlugins($projectId: ID!, $lang: Lang) {
   scene(projectId: $projectId) {
     id
     plugins {
@@ -5292,33 +5292,33 @@ export const InstalledPluginsDocument = gql`
     `;
 
 /**
- * __useInstalledPluginsQuery__
+ * __useGetInstalledPluginsQuery__
  *
- * To run a query within a React component, call `useInstalledPluginsQuery` and pass it any options that fit your needs.
- * When your component renders, `useInstalledPluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetInstalledPluginsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInstalledPluginsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useInstalledPluginsQuery({
+ * const { data, loading, error } = useGetInstalledPluginsQuery({
  *   variables: {
  *      projectId: // value for 'projectId'
  *      lang: // value for 'lang'
  *   },
  * });
  */
-export function useInstalledPluginsQuery(baseOptions: Apollo.QueryHookOptions<InstalledPluginsQuery, InstalledPluginsQueryVariables>) {
+export function useGetInstalledPluginsQuery(baseOptions: Apollo.QueryHookOptions<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<InstalledPluginsQuery, InstalledPluginsQueryVariables>(InstalledPluginsDocument, options);
+        return Apollo.useQuery<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>(GetInstalledPluginsDocument, options);
       }
-export function useInstalledPluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstalledPluginsQuery, InstalledPluginsQueryVariables>) {
+export function useGetInstalledPluginsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<InstalledPluginsQuery, InstalledPluginsQueryVariables>(InstalledPluginsDocument, options);
+          return Apollo.useLazyQuery<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>(GetInstalledPluginsDocument, options);
         }
-export type InstalledPluginsQueryHookResult = ReturnType<typeof useInstalledPluginsQuery>;
-export type InstalledPluginsLazyQueryHookResult = ReturnType<typeof useInstalledPluginsLazyQuery>;
-export type InstalledPluginsQueryResult = Apollo.QueryResult<InstalledPluginsQuery, InstalledPluginsQueryVariables>;
+export type GetInstalledPluginsQueryHookResult = ReturnType<typeof useGetInstalledPluginsQuery>;
+export type GetInstalledPluginsLazyQueryHookResult = ReturnType<typeof useGetInstalledPluginsLazyQuery>;
+export type GetInstalledPluginsQueryResult = Apollo.QueryResult<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>;
 export const UploadPluginDocument = gql`
     mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
   uploadPlugin(input: {sceneId: $sceneId, file: $file, url: $url}) {
@@ -5365,7 +5365,7 @@ export type UploadPluginMutationHookResult = ReturnType<typeof useUploadPluginMu
 export type UploadPluginMutationResult = Apollo.MutationResult<UploadPluginMutation>;
 export type UploadPluginMutationOptions = Apollo.BaseMutationOptions<UploadPluginMutation, UploadPluginMutationVariables>;
 export const UninstallPluginDocument = gql`
-    mutation uninstallPlugin($sceneId: ID!, $pluginId: ID!) {
+    mutation UninstallPlugin($sceneId: ID!, $pluginId: ID!) {
   uninstallPlugin(input: {sceneId: $sceneId, pluginId: $pluginId}) {
     pluginId
   }
