@@ -37,7 +37,7 @@ const SliderField: React.FC<Props> = ({
     [max ? max / 2 : 0.5]: max ? max / 2 : 0.5,
     [max ?? 1]: max ?? 1,
   };
-  console.log(opacityMarkers, "op");
+
   useEffect(() => {
     isDirty.current = false;
     setInputValue(value);
