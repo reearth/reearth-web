@@ -2454,13 +2454,6 @@ export type RemoveDatasetMutationVariables = Exact<{
 
 export type RemoveDatasetMutation = { __typename?: 'Mutation', removeDatasetSchema?: { __typename?: 'RemoveDatasetSchemaPayload', schemaId: string } | null };
 
-export type RemoveDatasetSchemaMutationVariables = Exact<{
-  schemaId: Scalars['ID'];
-}>;
-
-
-export type RemoveDatasetSchemaMutation = { __typename?: 'Mutation', removeDatasetSchema?: { __typename?: 'RemoveDatasetSchemaPayload', schemaId: string } | null };
-
 export type LinkDatasetMutationVariables = Exact<{
   propertyId: Scalars['ID'];
   itemId?: InputMaybe<Scalars['ID']>;
@@ -4558,9 +4551,9 @@ export function useImportDatasetFromGoogleSheetMutation(baseOptions?: Apollo.Mut
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useMutation<ImportDatasetFromGoogleSheetMutation, ImportDatasetFromGoogleSheetMutationVariables>(ImportDatasetFromGoogleSheetDocument, options);
       }
-export type ImportGoogleSheetDatasetMutationHookResult = ReturnType<typeof useImportGoogleSheetDatasetMutation>;
-export type ImportGoogleSheetDatasetMutationResult = Apollo.MutationResult<ImportGoogleSheetDatasetMutation>;
-export type ImportGoogleSheetDatasetMutationOptions = Apollo.BaseMutationOptions<ImportGoogleSheetDatasetMutation, ImportGoogleSheetDatasetMutationVariables>;
+export type ImportDatasetFromGoogleSheetMutationHookResult = ReturnType<typeof useImportDatasetFromGoogleSheetMutation>;
+export type ImportDatasetFromGoogleSheetMutationResult = Apollo.MutationResult<ImportDatasetFromGoogleSheetMutation>;
+export type ImportDatasetFromGoogleSheetMutationOptions = Apollo.BaseMutationOptions<ImportDatasetFromGoogleSheetMutation, ImportDatasetFromGoogleSheetMutationVariables>;
 export const GetBlocksDocument = gql`
     query GetBlocks($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {
