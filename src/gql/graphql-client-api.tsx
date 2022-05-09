@@ -2350,7 +2350,7 @@ export type MergedPropertyFragmentFragment = { __typename?: 'MergedProperty', or
 
 export type PropertyFieldLinkFragment = { __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null };
 
-export type AssetsQueryVariables = Exact<{
+export type GetAssetsQueryVariables = Exact<{
   teamId: Scalars['ID'];
   sort?: InputMaybe<AssetSortType>;
   keyword?: InputMaybe<Scalars['String']>;
@@ -2358,7 +2358,7 @@ export type AssetsQueryVariables = Exact<{
 }>;
 
 
-export type AssetsQuery = { __typename?: 'Query', assets: { __typename?: 'AssetConnection', totalCount: number, edges: Array<{ __typename?: 'AssetEdge', cursor: string, node?: { __typename?: 'Asset', id: string, teamId: string, name: string, size: number, url: string, contentType: string } | null }>, nodes: Array<{ __typename?: 'Asset', id: string, teamId: string, name: string, size: number, url: string, contentType: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
+export type GetAssetsQuery = { __typename?: 'Query', assets: { __typename?: 'AssetConnection', totalCount: number, edges: Array<{ __typename?: 'AssetEdge', cursor: string, node?: { __typename?: 'Asset', id: string, teamId: string, name: string, size: number, url: string, contentType: string } | null }>, nodes: Array<{ __typename?: 'Asset', id: string, teamId: string, name: string, size: number, url: string, contentType: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type CreateAssetMutationVariables = Exact<{
   teamId: Scalars['ID'];
@@ -3838,8 +3838,8 @@ export const TeamFragmentDoc = gql`
   personal
 }
     `;
-export const AssetsDocument = gql`
-    query Assets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
+export const GetAssetsDocument = gql`
+    query GetAssets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
   assets(teamId: $teamId, keyword: $keyword, sort: $sort, pagination: $pagination) {
     edges {
       cursor
@@ -3872,16 +3872,16 @@ export const AssetsDocument = gql`
     `;
 
 /**
- * __useAssetsQuery__
+ * __useGetAssetsQuery__
  *
- * To run a query within a React component, call `useAssetsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAssetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAssetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAssetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAssetsQuery({
+ * const { data, loading, error } = useGetAssetsQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
  *      sort: // value for 'sort'
@@ -3890,17 +3890,17 @@ export const AssetsDocument = gql`
  *   },
  * });
  */
-export function useAssetsQuery(baseOptions: Apollo.QueryHookOptions<AssetsQuery, AssetsQueryVariables>) {
+export function useGetAssetsQuery(baseOptions: Apollo.QueryHookOptions<GetAssetsQuery, GetAssetsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AssetsQuery, AssetsQueryVariables>(AssetsDocument, options);
+        return Apollo.useQuery<GetAssetsQuery, GetAssetsQueryVariables>(GetAssetsDocument, options);
       }
-export function useAssetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AssetsQuery, AssetsQueryVariables>) {
+export function useGetAssetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAssetsQuery, GetAssetsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AssetsQuery, AssetsQueryVariables>(AssetsDocument, options);
+          return Apollo.useLazyQuery<GetAssetsQuery, GetAssetsQueryVariables>(GetAssetsDocument, options);
         }
-export type AssetsQueryHookResult = ReturnType<typeof useAssetsQuery>;
-export type AssetsLazyQueryHookResult = ReturnType<typeof useAssetsLazyQuery>;
-export type AssetsQueryResult = Apollo.QueryResult<AssetsQuery, AssetsQueryVariables>;
+export type GetAssetsQueryHookResult = ReturnType<typeof useGetAssetsQuery>;
+export type GetAssetsLazyQueryHookResult = ReturnType<typeof useGetAssetsLazyQuery>;
+export type GetAssetsQueryResult = Apollo.QueryResult<GetAssetsQuery, GetAssetsQueryVariables>;
 export const CreateAssetDocument = gql`
     mutation CreateAsset($teamId: ID!, $file: Upload!) {
   createAsset(input: {teamId: $teamId, file: $file}) {
