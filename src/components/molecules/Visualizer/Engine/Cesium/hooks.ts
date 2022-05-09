@@ -51,24 +51,42 @@ export default ({
 
   // imagery layers
   const [imageryLayers, setImageryLayers] =
-    useState<[string, ImageryProvider, number | undefined, number | undefined][]>();
+    useState<
+      [string, ImageryProvider, number | undefined, number | undefined, number | undefined][]
+    >();
 
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)
       ?.map(
         t =>
-          [t.id, t.tile_type || "default", t.tile_url, t.tile_minLevel, t.tile_maxLevel] as const,
+          [
+            t.id,
+            t.tile_type || "default",
+            t.tile_url,
+            t.tile_minLevel,
+            t.tile_maxLevel,
+            t.tile_opacity,
+          ] as const,
       )
-      .map<[string, ImageryProvider | null, number | undefined, number | undefined]>(
-        ([id, type, url, min, max]) => [
-          id,
-          type ? (url ? imagery[type](url) : imagery[type]()) : null,
-          min,
-          max,
-        ],
-      )
+      .map<
+        [string, ImageryProvider | null, number | undefined, number | undefined, number | undefined]
+      >(([id, type, url, min, max, opacity]) => [
+        id,
+        type ? (url ? imagery[type](url) : imagery[type]()) : null,
+        min,
+        max,
+        opacity,
+      ])
       .filter(
-        (t): t is [string, ImageryProvider, number | undefined, number | undefined] => !!t[1],
+        (
+          t,
+        ): t is [
+          string,
+          ImageryProvider,
+          number | undefined,
+          number | undefined,
+          number | undefined,
+        ] => !!t[1],
       );
     setImageryLayers(newTiles);
   }, [property?.tiles ?? [], cesiumIonAccessToken]);

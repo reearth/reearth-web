@@ -152,12 +152,13 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           terrainExaggerationRelativeHeight={terrainProperty.terrainExaggerationRelativeHeight}
           terrainExaggeration={terrainProperty.terrainExaggeration}
         />
-        {imageryLayers?.map(([id, im, min, max]) => (
+        {imageryLayers?.map(([id, im, min, max, opacity]) => (
           <ImageryLayer
             key={id}
             imageryProvider={im}
             minimumTerrainLevel={min}
             maximumTerrainLevel={max}
+            alpha={opacity}
           />
         ))}
         {ready ? children : null}
