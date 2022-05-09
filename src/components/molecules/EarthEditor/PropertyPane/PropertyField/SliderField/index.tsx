@@ -10,12 +10,7 @@ import { FieldProps } from "../types";
 export type Props = FieldProps<number> & {
   min?: number;
   max?: number;
-};
-
-const opacityMarkers = {
-  0: 0,
-  0.5: 0.5,
-  1: 1,
+  step?: number;
 };
 
 const inputRegex = new RegExp(/^\d+\.\d{2,}$/);
@@ -28,19 +23,28 @@ const SliderField: React.FC<Props> = ({
   onChange,
   min,
   max,
+  step,
 }) => {
   const [inputValue, setInputValue] = useState(value);
   const [sliderValue, setSliderValue] = useState(value);
   const isEditing = useRef(false);
   const isDirty = useRef(false);
 
+  const calculatedStep = step ? step : max ? max / 10 : 0.1;
+
+  const opacityMarkers = {
+    [min ?? 0]: min ?? 0,
+    [max ? max / 2 : 0.5]: max ? max / 2 : 0.5,
+    [max ?? 1]: max ?? 1,
+  };
+  console.log(opacityMarkers, "op");
   useEffect(() => {
     isDirty.current = false;
     setInputValue(value);
     setSliderValue(value);
   }, [value]);
 
-  const callChange = useCallback(
+  const handleChange = useCallback(
     (newValue: string) => {
       if (!onChange || !isEditing.current || !isDirty.current) return;
       if (newValue === "") {
@@ -82,10 +86,10 @@ const SliderField: React.FC<Props> = ({
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        callChange(e.currentTarget.value);
+        handleChange(e.currentTarget.value);
       }
     },
-    [callChange],
+    [handleChange],
   );
 
   const handleFocus = useCallback(() => {
@@ -94,10 +98,10 @@ const SliderField: React.FC<Props> = ({
 
   const handleBlur = useCallback(
     (e: React.SyntheticEvent<HTMLInputElement>) => {
-      callChange(e.currentTarget.value);
+      handleChange(e.currentTarget.value);
       isEditing.current = false;
     },
-    [callChange],
+    [handleChange],
   );
 
   return (
@@ -113,7 +117,7 @@ const SliderField: React.FC<Props> = ({
           onBlur={handleBlur}
           min={min}
           max={max}
-          step=".1"
+          step={calculatedStep}
           linked={linked}
           overridden={overridden}
           inactive={!!disabled}
@@ -125,7 +129,7 @@ const SliderField: React.FC<Props> = ({
             value={sliderValue}
             min={min}
             max={max}
-            step={0.1}
+            step={calculatedStep}
             marks={opacityMarkers}
             onAfterChange={onChange}
             onChange={handleSliderChange}
