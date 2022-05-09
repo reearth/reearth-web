@@ -109,14 +109,6 @@ export const REMOVE_DATASET = gql`
   }
 `;
 
-export const REMOVE_DATASET_SCHEMA = gql`
-  mutation RemoveDatasetSchema($schemaId: ID!) {
-    removeDatasetSchema(input: { schemaId: $schemaId }) {
-      schemaId
-    }
-  }
-`;
-
 export const LINK_DATASET = gql`
   mutation LinkDataset(
     $propertyId: ID!
