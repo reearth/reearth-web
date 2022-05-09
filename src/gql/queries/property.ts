@@ -77,8 +77,8 @@ export const REMOVE_PROPERTY_FIELD = gql`
   ${layerFragment}
 `;
 
-export const CHANGE_PROPERTY_VALUE = gql`
-  mutation ChangePropertyValue(
+export const UPDATE_PROPERTY_VALUE = gql`
+  mutation UpdatePropertyValue(
     $propertyId: ID!
     $schemaGroupId: ID
     $itemId: ID
