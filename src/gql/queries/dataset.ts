@@ -109,14 +109,6 @@ export const REMOVE_DATASET = gql`
   }
 `;
 
-export const REMOVE_DATASET_SCHEMA = gql`
-  mutation RemoveDatasetSchema($schemaId: ID!) {
-    removeDatasetSchema(input: { schemaId: $schemaId }) {
-      schemaId
-    }
-  }
-`;
-
 export const LINK_DATASET = gql`
   mutation LinkDataset(
     $propertyId: ID!
@@ -199,8 +191,8 @@ export const SYNC_DATASET = gql`
   }
 `;
 
-export const IMPORT_GOOGLE_SHEET_DATASET = gql`
-  mutation ImportGoogleSheetDataset(
+export const IMPORT_DATASET_FROM_GOOGLE_SHEET = gql`
+  mutation ImportDatasetFromGoogleSheet(
     $accessToken: String!
     $fileId: String!
     $sheetName: String!

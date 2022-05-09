@@ -2494,7 +2494,7 @@ export type SyncDatasetMutationVariables = Exact<{
 
 export type SyncDatasetMutation = { __typename?: 'Mutation', syncDataset?: { __typename?: 'SyncDatasetPayload', sceneId: string, url: string, datasetSchema: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string }>, dataset: Array<{ __typename?: 'Dataset', id: string, source: string, schemaId: string, name?: string | null }> } | null };
 
-export type ImportGoogleSheetDatasetMutationVariables = Exact<{
+export type ImportDatasetFromGoogleSheetMutationVariables = Exact<{
   accessToken: Scalars['String'];
   fileId: Scalars['String'];
   sheetName: Scalars['String'];
@@ -2503,7 +2503,7 @@ export type ImportGoogleSheetDatasetMutationVariables = Exact<{
 }>;
 
 
-export type ImportGoogleSheetDatasetMutation = { __typename?: 'Mutation', importDatasetFromGoogleSheet?: { __typename?: 'ImportDatasetPayload', datasetSchema: { __typename?: 'DatasetSchema', id: string, name: string } } | null };
+export type ImportDatasetFromGoogleSheetMutation = { __typename?: 'Mutation', importDatasetFromGoogleSheet?: { __typename?: 'ImportDatasetPayload', datasetSchema: { __typename?: 'DatasetSchema', id: string, name: string } } | null };
 
 export type GetBlocksQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -4381,39 +4381,6 @@ export function useRemoveDatasetMutation(baseOptions?: Apollo.MutationHookOption
 export type RemoveDatasetMutationHookResult = ReturnType<typeof useRemoveDatasetMutation>;
 export type RemoveDatasetMutationResult = Apollo.MutationResult<RemoveDatasetMutation>;
 export type RemoveDatasetMutationOptions = Apollo.BaseMutationOptions<RemoveDatasetMutation, RemoveDatasetMutationVariables>;
-export const RemoveDatasetSchemaDocument = gql`
-    mutation RemoveDatasetSchema($schemaId: ID!) {
-  removeDatasetSchema(input: {schemaId: $schemaId}) {
-    schemaId
-  }
-}
-    `;
-export type RemoveDatasetSchemaMutationFn = Apollo.MutationFunction<RemoveDatasetSchemaMutation, RemoveDatasetSchemaMutationVariables>;
-
-/**
- * __useRemoveDatasetSchemaMutation__
- *
- * To run a mutation, you first call `useRemoveDatasetSchemaMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveDatasetSchemaMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeDatasetSchemaMutation, { data, loading, error }] = useRemoveDatasetSchemaMutation({
- *   variables: {
- *      schemaId: // value for 'schemaId'
- *   },
- * });
- */
-export function useRemoveDatasetSchemaMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDatasetSchemaMutation, RemoveDatasetSchemaMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveDatasetSchemaMutation, RemoveDatasetSchemaMutationVariables>(RemoveDatasetSchemaDocument, options);
-      }
-export type RemoveDatasetSchemaMutationHookResult = ReturnType<typeof useRemoveDatasetSchemaMutation>;
-export type RemoveDatasetSchemaMutationResult = Apollo.MutationResult<RemoveDatasetSchemaMutation>;
-export type RemoveDatasetSchemaMutationOptions = Apollo.BaseMutationOptions<RemoveDatasetSchemaMutation, RemoveDatasetSchemaMutationVariables>;
 export const LinkDatasetDocument = gql`
     mutation LinkDataset($propertyId: ID!, $itemId: ID, $schemaGroupId: ID, $fieldId: ID!, $datasetSchemaIds: [ID!]!, $datasetIds: [ID!], $datasetFieldIds: [ID!]!, $lang: Lang) {
   linkDatasetToPropertyValue(
@@ -4552,8 +4519,8 @@ export function useSyncDatasetMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SyncDatasetMutationHookResult = ReturnType<typeof useSyncDatasetMutation>;
 export type SyncDatasetMutationResult = Apollo.MutationResult<SyncDatasetMutation>;
 export type SyncDatasetMutationOptions = Apollo.BaseMutationOptions<SyncDatasetMutation, SyncDatasetMutationVariables>;
-export const ImportGoogleSheetDatasetDocument = gql`
-    mutation ImportGoogleSheetDataset($accessToken: String!, $fileId: String!, $sheetName: String!, $sceneId: ID!, $datasetSchemaId: ID) {
+export const ImportDatasetFromGoogleSheetDocument = gql`
+    mutation ImportDatasetFromGoogleSheet($accessToken: String!, $fileId: String!, $sheetName: String!, $sceneId: ID!, $datasetSchemaId: ID) {
   importDatasetFromGoogleSheet(
     input: {accessToken: $accessToken, fileId: $fileId, sheetName: $sheetName, sceneId: $sceneId, datasetSchemaId: $datasetSchemaId}
   ) {
@@ -4564,20 +4531,20 @@ export const ImportGoogleSheetDatasetDocument = gql`
   }
 }
     `;
-export type ImportGoogleSheetDatasetMutationFn = Apollo.MutationFunction<ImportGoogleSheetDatasetMutation, ImportGoogleSheetDatasetMutationVariables>;
+export type ImportDatasetFromGoogleSheetMutationFn = Apollo.MutationFunction<ImportDatasetFromGoogleSheetMutation, ImportDatasetFromGoogleSheetMutationVariables>;
 
 /**
- * __useImportGoogleSheetDatasetMutation__
+ * __useImportDatasetFromGoogleSheetMutation__
  *
- * To run a mutation, you first call `useImportGoogleSheetDatasetMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useImportGoogleSheetDatasetMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useImportDatasetFromGoogleSheetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useImportDatasetFromGoogleSheetMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [importGoogleSheetDatasetMutation, { data, loading, error }] = useImportGoogleSheetDatasetMutation({
+ * const [importDatasetFromGoogleSheetMutation, { data, loading, error }] = useImportDatasetFromGoogleSheetMutation({
  *   variables: {
  *      accessToken: // value for 'accessToken'
  *      fileId: // value for 'fileId'
@@ -4587,9 +4554,9 @@ export type ImportGoogleSheetDatasetMutationFn = Apollo.MutationFunction<ImportG
  *   },
  * });
  */
-export function useImportGoogleSheetDatasetMutation(baseOptions?: Apollo.MutationHookOptions<ImportGoogleSheetDatasetMutation, ImportGoogleSheetDatasetMutationVariables>) {
+export function useImportDatasetFromGoogleSheetMutation(baseOptions?: Apollo.MutationHookOptions<ImportDatasetFromGoogleSheetMutation, ImportDatasetFromGoogleSheetMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ImportGoogleSheetDatasetMutation, ImportGoogleSheetDatasetMutationVariables>(ImportGoogleSheetDatasetDocument, options);
+        return Apollo.useMutation<ImportDatasetFromGoogleSheetMutation, ImportDatasetFromGoogleSheetMutationVariables>(ImportDatasetFromGoogleSheetDocument, options);
       }
 export type ImportGoogleSheetDatasetMutationHookResult = ReturnType<typeof useImportGoogleSheetDatasetMutation>;
 export type ImportGoogleSheetDatasetMutationResult = Apollo.MutationResult<ImportGoogleSheetDatasetMutation>;

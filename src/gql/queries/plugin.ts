@@ -1,7 +1,5 @@
 import { gql } from "@apollo/client";
 
-// import { layerFragment } from "@reearth/gql/fragments";
-
 export const GET_SCENE_PLUGINS_FOR_DATASET_INFO_PANE = gql`
   query GetScenePluginsForDatasetInfoPane($projectId: ID!) {
     scene(projectId: $projectId) {
