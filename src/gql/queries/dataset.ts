@@ -191,8 +191,8 @@ export const SYNC_DATASET = gql`
   }
 `;
 
-export const IMPORT_GOOGLE_SHEET_DATASET = gql`
-  mutation ImportGoogleSheetDataset(
+export const IMPORT_DATASET_FROM_GOOGLE_SHEET = gql`
+  mutation ImportDatasetFromGoogleSheet(
     $accessToken: String!
     $fileId: String!
     $sheetName: String!

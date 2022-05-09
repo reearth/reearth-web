@@ -10,7 +10,7 @@ import {
   useGetDatasetSchemasQuery,
   useSyncDatasetMutation,
   useImportDatasetMutation,
-  useImportGoogleSheetDatasetMutation,
+  useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
 } from "@reearth/gql";
 import {
@@ -117,7 +117,7 @@ export default () => {
     [client, importData, sceneId, datasetMessageSuccess, datasetMessageFailure, setNotification],
   );
 
-  const [importGoogleSheetData] = useImportGoogleSheetDatasetMutation();
+  const [importGoogleSheetData] = useImportDatasetFromGoogleSheetMutation();
 
   const handleGoogleSheetDatasetImport = useCallback(
     async (accessToken: string, fileId: string, sheetName: string, schemeId: string | null) => {
