@@ -1,5 +1,5 @@
 import RCSlider from "rc-slider";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import Flex from "@reearth/components/atoms/Flex";
 import theme, { styled, metrics } from "@reearth/theme";
@@ -13,7 +13,7 @@ export type Props = FieldProps<number> & {
   step?: number;
 };
 
-const inputRegex = new RegExp(/^\d+\.\d{2,}$/);
+const inputRegex = /^\d+\.\d{2,}$/;
 
 const SliderField: React.FC<Props> = ({
   value,
@@ -32,11 +32,14 @@ const SliderField: React.FC<Props> = ({
 
   const calculatedStep = step ? step : max ? max / 10 : 0.1;
 
-  const opacityMarkers = {
-    [min ?? 0]: min ?? 0,
-    [max ? max / 2 : 0.5]: max ? max / 2 : 0.5,
-    [max ?? 1]: max ?? 1,
-  };
+  const opacityMarkers = useMemo(
+    () => ({
+      [min ?? 0]: min ?? 0,
+      [max ? max / 2 : 0.5]: max ? max / 2 : 0.5,
+      [max ?? 1]: max ?? 1,
+    }),
+    [max, min],
+  );
 
   useEffect(() => {
     isDirty.current = false;
@@ -69,11 +72,12 @@ const SliderField: React.FC<Props> = ({
     [onChange, min, max, value],
   );
 
-  const handleInputChange = useCallback((e?: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e?.currentTarget;
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.currentTarget;
 
-    if (target && inputRegex.test(target.value)) return;
-    setInputValue(target?.valueAsNumber ?? undefined);
+    if (inputRegex.test(target.value)) return;
+
+    setInputValue(target.valueAsNumber);
     isDirty.current = isEditing.current;
   }, []);
 

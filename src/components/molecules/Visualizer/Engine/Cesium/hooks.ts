@@ -18,6 +18,14 @@ import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
+export type ImageryLayerData = {
+  id: string;
+  provider: ImageryProvider;
+  min?: number;
+  max?: number;
+  opacity?: number;
+};
+
 const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
 
 export default ({
@@ -50,10 +58,7 @@ export default ({
   const engineAPI = useEngineRef(ref, cesium);
 
   // imagery layers
-  const [imageryLayers, setImageryLayers] =
-    useState<
-      [string, ImageryProvider, number | undefined, number | undefined, number | undefined][]
-    >();
+  const [imageryLayers, setImageryLayers] = useState<ImageryLayerData[]>();
 
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)
@@ -68,26 +73,17 @@ export default ({
             t.tile_opacity,
           ] as const,
       )
-      .map<
-        [string, ImageryProvider | null, number | undefined, number | undefined, number | undefined]
-      >(([id, type, url, min, max, opacity]) => [
-        id,
-        type ? (url ? imagery[type](url) : imagery[type]()) : null,
-        min,
-        max,
-        opacity,
-      ])
-      .filter(
-        (
-          t,
-        ): t is [
-          string,
-          ImageryProvider,
-          number | undefined,
-          number | undefined,
-          number | undefined,
-        ] => !!t[1],
-      );
+      .map(
+        ([id, type, url, min, max, opacity]) =>
+          <ImageryLayerData>{
+            id,
+            provider: type ? (url ? imagery[type](url) : imagery[type]()) : null,
+            min,
+            max,
+            opacity,
+          },
+      )
+      .filter(t => !!t.provider);
     setImageryLayers(newTiles);
   }, [property?.tiles ?? [], cesiumIonAccessToken]);
 
