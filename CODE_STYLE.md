@@ -79,7 +79,7 @@ For any development on Re:Earth's front-end, please follow the guidelines that f
 
 **useMemo**
 
-- Use to avoid unnecessary re-processing and re-rendering of processed objects or variables, but only use it when computational cost is high (think **more than** `O(n)` in cost).
+- Use to avoid unnecessary re-processing and re-rendering of processed objects or variables, but only use it when computational cost is high (think `O(n)` or greater in cost).
 - Use to avoid unnecessary re-rendering of props and status values wrapped in objects or arrays.
 
 <table>
@@ -89,14 +89,16 @@ For any development on Re:Earth's front-end, please follow the guidelines that f
 
 ```TypeScript
 const item = data?.find(d => d.id === id);
+const object = { id };
 ```
 
 </td><td>
 
 ```TypeScript
 const item = useMemo(() => {
-  return data?.find(d => d.id === id);
+	return data?.find(d => d.id === id);
 }, [data, id]);
+const object = useMemo(() => { id }, [id]);
 ```
 
 </td></tr>
@@ -110,9 +112,9 @@ Use for MOST functions within a React component to better handle renders based o
 
 Query and mutation exports should live inside the `src/gql/queries` directory only.  *Contents* of each file should be queries, followed by mutations. 
 
-Naming of queries and mutations should be in PascalCase.
+Naming of variables in TypeScript codes should be in upper SNAKE_CASE. Naming of queries and mutations should be in PascalCase.
 
-The exports should be named in uppercase, with underscores. 
+Query names should be in the `GetXxxx` format. Mutation names and variables should generally mirror the backend, but in PascalCase and SNAKE_CASE, respectively.
 
 <table>
 <thead><tr><th>Bad</th><th>Good</th></tr></thead>
@@ -231,30 +233,6 @@ import CoolComponent from "@reearth/components/atoms/CoolComponent;
 *NOTE: Often ESlint will catch spacing issues on save, but not always. Because of this, be mindful of your spacing as it affects the file's readability immensely. For order, ESlint will only fix import order.*
 
 Since file content varies in size, complexity, whether it is a component or utility, hooks, etc., it is hard to set specific rules for spacing and order. We only ask that you be deliberate (and take time refactoring before opening a PR) and be open to suggestions on spacing or order during PR review to keep code as readable and accessible to new eyes as possible.
-
-### Destructuring
-
-When possible, use destructuring.
-
-<table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
-<tbody>
-<tr><td>
-
-```TypeScript
-const title = article[0]; 
-const body = article[1]
-const footer = article[2]
-```
-
-</td><td>
-
-```TypeScript
-const [title, body, footer] = getArticle()
-```
-
-</td></tr>
-</tbody></table>
 
 ### Spread and Rest syntax
 
