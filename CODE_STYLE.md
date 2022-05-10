@@ -77,8 +77,6 @@ For any development on Re:Earth's front-end, please follow the guidelines that f
 
 ### React
 
-#### Use of hooks
-
 **useMemo**
 
 Use to avoid unnecessary re-rendering of processed objects or variables, but only use it when computational cost is high (think **more than** `O(n)` in cost).
@@ -107,7 +105,7 @@ const item = useMemo(() => {
 
 Use for MOST functions within a React component to better handle renders based on dependencies. Even if no dependencies, a useCallback will make sure React knows the function will always be the same, so don’t need to re-render
 
-#### GraphQL
+### GraphQL
 
 Query and mutation exports should live inside the `src/gql/queries` directory only.  *Contents* of each file should be queries, followed by mutations. 
 
@@ -151,7 +149,7 @@ export const IMPORT_DATASET = gql`
 </td></tr>
 </tbody></table>
 
-#### Functions
+### Functions
 
 **Naming**
 
@@ -191,21 +189,21 @@ handleProjectUpdate
 </tbody></table>
 
 
-#### Variables
+### Variables
 
 **Naming**
 
 Descriptive over short. Context matters, of course, so generic code can and should have `name` instead of `teamName`. But typically `teamName` is preferable over `name`.
 
-#### Commenting
+### Commenting
 
 Follow Clean Code unless absolutely necessary. Which, in a nutshell, is "If you need a comment, either your function or variable isn't named appropriately, or your function is doing too much and should be broken down into simpler functions".
 
-#### Atomic design
+### Atomic design
 
 Re:Earth is broken up into 4 component categories: `Pages`, `Organisms`, `Molecules` and `Atoms`. See the component directory's [README](https://github.com/reearth/reearth-web/blob/main/src/components/README.md) for details specific to Re:Earth.
 
-#### How to write paths
+### How to write paths
 
 Unless heavily nested and used only in its own or its parent directory, start from the `@reearth/` alias for the src directory.
 
@@ -227,19 +225,13 @@ import CoolComponent from "@reearth/components/atoms/CoolComponent;
 </td></tr>
 </tbody></table>
 
-#### Spacing and order
+### Spacing and order
 
-**NOTE: Often ESlint will catch spacing issues on save, but not always. Because of this, be mindful of your spacing as it affects the file's readability immensely. ESlint will only fix import order.**
+*NOTE: Often ESlint will catch spacing issues on save, but not always. Because of this, be mindful of your spacing as it affects the file's readability immensely. For order, ESlint will only fix import order.*
 
-<!-- Keep a space between the component declaration and whatever is before it.
+Since file content varies in size, complexity, whether it is a component or utility, hooks, etc., it is hard to set specific rules for spacing and order. We only ask that you be deliberate (and take time refactoring before opening a PR) and be open to suggestions on spacing or order during PR review to keep code as readable and accessible to new eyes as possible.
 
-If there is anything inside the component before the return put a space between the return and the final item.
-
-Inside the component, group and order everything up until the return as follows:
-- group the initial use of any imported libraries together
-- group  -->
-
-#### Destructuring
+### Destructuring
 
 When possible, use destructuring.
 
@@ -263,6 +255,6 @@ const [title, body, footer] = getArticle()
 </td></tr>
 </tbody></table>
 
-#### Spread and Rest syntax
+### Spread and Rest syntax
 
 When possible use spread and rest syntax. If props, write `...props`, not `...rest` or another word.
