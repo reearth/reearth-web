@@ -4,11 +4,11 @@ import { useIntl } from "react-intl";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import {
-  useMeQuery,
+  useGetMeQuery,
   PublishmentStatus,
   useCreateProjectMutation,
   useCreateSceneMutation,
-  useProjectQuery,
+  useGetProjectsQuery,
   Visualizer,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
@@ -30,7 +30,7 @@ export default (teamId: string) => {
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
 
-  const { data, loading, refetch } = useMeQuery();
+  const { data, loading, refetch } = useGetMeQuery();
   const [createNewProject] = useCreateProjectMutation({
     refetchQueries: ["Project"],
   });
@@ -41,7 +41,7 @@ export default (teamId: string) => {
   }
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
-  const { data: projectData } = useProjectQuery({
+  const { data: projectData } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });

@@ -1,15 +1,18 @@
 import { Link } from "@reach/router";
-import React from "react";
-import { useIntl } from "react-intl";
+import React, { useMemo } from "react";
 import { useMedia } from "react-use";
 
+import Avatar from "@reearth/components/atoms/Avatar";
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types";
+import { useTranslation } from "@reearth/i18n";
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+
+import { Member } from "./types";
 
 export interface Props {
   className?: string;
@@ -17,25 +20,32 @@ export interface Props {
 }
 
 const Workspace: React.FC<Props> = ({ className, team }) => {
-  const intl = useIntl();
+  const { t } = useTranslation();
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
+
+  const teamLength = team?.members?.length ?? 0;
+  const excessMembers = teamLength - 5 ?? 0;
+
+  const shownMembers: Member[] | undefined = useMemo(
+    () => team?.members?.slice(0, 5),
+    [team?.members],
+  );
 
   return (
     <StyledDashboardBlock className={className} grow={5}>
       <Content direction="column" justify="space-between">
         <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
           {team?.name}
-          {intl.formatMessage({ defaultMessage: "'s workspace" })}
+          {t("'s workspace")}
         </Text>
         <Flex>
-          <TeamWrapper flex={4}>
-            {team?.members?.map((member, i) => (
-              <Text key={i} size="m" color={theme.main.text}>
-                {member?.user.name}
-              </Text>
+          <Flex flex={4}>
+            {shownMembers?.map((member: Member) => (
+              <StyledAvatar key={member?.user.id} innerText={member?.user.name} />
             ))}
-          </TeamWrapper>
+            {excessMembers > 0 && <Avatar innerText={excessMembers} />}
+          </Flex>
           <StyledLink to={`/settings/workspace/${team?.id}`}>
             <Icon icon="settings" />
           </StyledLink>
@@ -79,10 +89,8 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const TeamWrapper = styled(Flex)`
-  * {
-    margin-right: ${metricsSizes.xl}px;
-  }
+const StyledAvatar = styled(Avatar)`
+  margin-right: ${metricsSizes["s"]}px;
 `;
 
 export default Workspace;

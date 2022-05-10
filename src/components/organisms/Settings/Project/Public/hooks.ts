@@ -2,13 +2,13 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { Status } from "@reearth/components/atoms/PublicationStatus";
 import {
-  useProjectQuery,
+  useGetProjectsQuery,
   useCheckProjectAliasLazyQuery,
   useUpdateProjectBasicAuthMutation,
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-  useProfileQuery,
+  useGetProfileQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification, NotificationType } from "@reearth/state";
 
@@ -30,9 +30,9 @@ export default ({ projectId }: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const { data: profileData } = useProfileQuery();
+  const { data: profileData } = useGetProfileQuery();
 
-  const { data } = useProjectQuery({
+  const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });

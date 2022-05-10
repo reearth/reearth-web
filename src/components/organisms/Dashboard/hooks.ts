@@ -5,8 +5,8 @@ import { useIntl } from "react-intl";
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
 import {
-  useMeQuery,
-  useProjectQuery,
+  useGetMeQuery,
+  useGetProjectsQuery,
   useCreateTeamMutation,
   PublishmentStatus,
   useCreateProjectMutation,
@@ -21,7 +21,7 @@ export default (teamId?: string) => {
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
 
-  const { data, refetch } = useMeQuery();
+  const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
   const intl = useIntl();
@@ -99,7 +99,7 @@ export default (teamId?: string) => {
     [refetch],
   );
 
-  const { data: projectData } = useProjectQuery({
+  const { data: projectData } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
