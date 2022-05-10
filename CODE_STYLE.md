@@ -79,7 +79,8 @@ For any development on Re:Earth's front-end, please follow the guidelines that f
 
 **useMemo**
 
-Use to avoid unnecessary re-rendering of processed objects or variables, but only use it when computational cost is high (think **more than** `O(n)` in cost).
+- Use to avoid unnecessary re-processing and re-rendering of processed objects or variables, but only use it when computational cost is high (think **more than** `O(n)` in cost).
+- Use to avoid unnecessary re-rendering of props and status values wrapped in objects or arrays.
 
 <table>
 <thead><tr><th>Bad</th><th>Good</th></tr></thead>
