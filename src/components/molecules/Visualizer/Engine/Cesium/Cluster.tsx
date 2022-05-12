@@ -53,9 +53,15 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
         );
         clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
         clusterParam.billboard.show = true;
-        clusterParam.billboard.image = clusterImage;
-        clusterParam.billboard.height = clusterImageHeight;
-        clusterParam.billboard.width = clusterImageWidth;
+        if (clusterImage) {
+          clusterParam.billboard.image = clusterImage;
+        }
+        if (clusterImageHeight) {
+          clusterParam.billboard.height = clusterImageHeight;
+        }
+        if (clusterImageWidth) {
+          clusterParam.billboard.width = clusterImageWidth;
+        }
         // Workaround if minimumClusterSize is larger than number of layers event listner breaks
         cluster.minimumClusterSize = isClusterHidden
           ? React.Children.count(children)
