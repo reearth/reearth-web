@@ -1,5 +1,5 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
-import { mergeWith } from "lodash";
+import { keyBy, merge, mergeWith, values } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -71,7 +71,14 @@ export default ({
   const mergedSceneProperty = useMemo(() => {
     if (!overriddenSceneProperty || typeof overriddenSceneProperty !== "object")
       return sceneProperty;
-    return mergeProperty(sceneProperty, overriddenSceneProperty);
+    return mergeWith(sceneProperty, overriddenSceneProperty, (obj: any, other: any) => {
+      if (Array.isArray(obj) && Array.isArray(other)) {
+        const merged = merge({}, keyBy(obj, "id"), keyBy(other, "id"));
+        return values(merged);
+      } else {
+        return merge({}, obj, other);
+      }
+    });
   }, [sceneProperty, overriddenSceneProperty]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
