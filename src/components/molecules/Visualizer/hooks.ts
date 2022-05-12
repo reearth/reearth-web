@@ -1,4 +1,5 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
+import { keyBy, merge, mergeWith, values } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -51,6 +52,17 @@ export default ({
   onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
+
+  const [overriddenSceneProperty, overrideSceneProperty] = useState();
+  const mergedSceneProperty = useMemo(() => {
+    if (!overriddenSceneProperty) return sceneProperty;
+    const customizer = (obj: any, other: any) => {
+      const merged = merge({}, keyBy(obj, "id"), keyBy(other, "id"));
+      const newProperty = values(merged);
+      return newProperty;
+    };
+    return mergeWith(sceneProperty, overriddenSceneProperty, customizer);
+  }, [sceneProperty, overriddenSceneProperty]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -141,7 +153,7 @@ export default ({
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
-      sceneProperty,
+      mergedSceneProperty,
       tags,
       camera,
       selectedLayer,
@@ -152,6 +164,7 @@ export default ({
       hideLayer: hideLayers,
       selectLayer,
       overrideLayerProperty,
+      overrideSceneProperty,
     },
     engineRef,
     layers,
@@ -174,14 +187,15 @@ export default ({
     selectedLayer,
     layerSelectionReason,
     layerOverriddenProperties,
+    isLayerDragging,
     selectedBlockId,
     innerCamera,
     infobox,
+    mergedSceneProperty,
     isLayerHidden,
     selectLayer,
     selectBlock,
     updateCamera,
-    isLayerDragging,
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,

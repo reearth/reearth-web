@@ -36,7 +36,7 @@ export type EngineContext = {
 export type Props = {
   engine: EngineContext;
   engineName: string;
-  sceneProperty?: any;
+  mergedSceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
   layers: LayerStore;
@@ -48,6 +48,7 @@ export type Props = {
   hideLayer: (...id: string[]) => void;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
+  overrideSceneProperty: (property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
@@ -73,7 +74,7 @@ declare global {
 export function Provider({
   engine: { api, isMarshalable, builtinPrimitives },
   engineName,
-  sceneProperty,
+  mergedSceneProperty,
   tags,
   camera,
   layers,
@@ -85,6 +86,7 @@ export function Provider({
   hideLayer,
   selectLayer,
   overrideLayerProperty,
+  overrideSceneProperty,
   layersInViewport,
   flyTo,
   lookAt,
@@ -100,7 +102,7 @@ export function Provider({
   );
 
   const getLayers = useGet(layers);
-  const getSceneProperty = useGet(sceneProperty);
+  const getSceneProperty = useGet(mergedSceneProperty);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getSelectedLayer = useGet(selectedLayer);
@@ -130,6 +132,7 @@ export function Provider({
         hideLayer,
         selectLayer,
         overrideLayerProperty,
+        overrideSceneProperty,
         layersInViewport,
         flyTo,
         lookAt,
@@ -156,6 +159,7 @@ export function Provider({
       hideLayer,
       selectLayer,
       overrideLayerProperty,
+      overrideSceneProperty,
       layersInViewport,
       flyTo,
       lookAt,

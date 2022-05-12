@@ -124,6 +124,7 @@ export function commonReearth({
   showLayer,
   hideLayer,
   overrideLayerProperty,
+  overrideSceneProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -145,6 +146,7 @@ export function commonReearth({
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
+  overrideSceneProperty: GlobalThis["reearth"]["visualizer"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
@@ -170,6 +172,9 @@ export function commonReearth({
       },
       get property() {
         return sceneProperty();
+      },
+      get overrideProperty() {
+        return overrideSceneProperty;
       },
     },
     layers: {
