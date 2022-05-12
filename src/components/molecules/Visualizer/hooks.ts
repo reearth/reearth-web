@@ -1,5 +1,5 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
-import { keyBy, merge, mergeWith, values } from "lodash";
+import { mergeWith } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -17,6 +17,15 @@ import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, emptyLayerStore } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
+
+export function mergeProperty(a: any, b: any) {
+  return mergeWith(
+    { ...a },
+    b,
+    (s: any, v: any, _k: string | number | symbol, _obj: any, _src: any, stack: { size: number }) =>
+      stack.size > 0 || Array.isArray(v) ? v ?? s : undefined,
+  );
+}
 
 export default ({
   engineType,
@@ -53,15 +62,16 @@ export default ({
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
-  const [overriddenSceneProperty, overrideSceneProperty] = useState();
+  const [overriddenSceneProperty, overrideSceneProperty] = useState({});
+
+  const handleScenePropertyOverride = useCallback((property: any) => {
+    overrideSceneProperty(p => mergeProperty(p, property));
+  }, []);
+
   const mergedSceneProperty = useMemo(() => {
-    if (!overriddenSceneProperty) return sceneProperty;
-    const customizer = (obj: any, other: any) => {
-      const merged = merge({}, keyBy(obj, "id"), keyBy(other, "id"));
-      const newProperty = values(merged);
-      return newProperty;
-    };
-    return mergeWith(sceneProperty, overriddenSceneProperty, customizer);
+    if (!overriddenSceneProperty || typeof overriddenSceneProperty !== "object")
+      return sceneProperty;
+    return mergeProperty(sceneProperty, overriddenSceneProperty);
   }, [sceneProperty, overriddenSceneProperty]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -164,7 +174,7 @@ export default ({
       hideLayer: hideLayers,
       selectLayer,
       overrideLayerProperty,
-      overrideSceneProperty,
+      overrideSceneProperty: handleScenePropertyOverride,
     },
     engineRef,
     layers,
