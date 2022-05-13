@@ -53,7 +53,7 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
         );
         clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
         clusterParam.billboard.show = true;
-        // Billboard.{image,height,width} should be accept undefined
+        // Billboard.{image,height,width} should accept undefined
         (clusterParam.billboard.image as any) = clusterImage;
         (clusterParam.billboard.height as any) = clusterImageHeight;
         (clusterParam.billboard.width as any) = clusterImageWidth;
