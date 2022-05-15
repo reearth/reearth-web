@@ -3,10 +3,10 @@ import { useEffect, useCallback, useState } from "react";
 
 import { User } from "@reearth/components/molecules/Common/Header";
 import {
-  useMeQuery,
-  useSceneQuery,
-  useTeamsQuery,
-  useProjectQuery,
+  useGetMeQuery,
+  useGetProjectSceneQuery,
+  useGetTeamsQuery,
+  useGetProjectsQuery,
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useTeam, useProject } from "@reearth/state";
@@ -22,7 +22,7 @@ export default (params: Params) => {
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
 
-  const { refetch } = useMeQuery();
+  const { refetch } = useGetMeQuery();
 
   const navigate = useNavigate();
   const [modalShown, setModalShown] = useState(false);
@@ -39,14 +39,14 @@ export default (params: Params) => {
     [navigate, refetch, currentTeam?.id],
   );
 
-  const { data: sceneData } = useSceneQuery({
+  const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });
   const sceneId = sceneData?.scene?.id;
   const teamId = params.teamId ?? sceneData?.scene?.teamId;
 
-  const { data: teamsData } = useTeamsQuery();
+  const { data: teamsData } = useGetTeamsQuery();
   const user: User = {
     name: teamsData?.me?.name ?? "",
   };
@@ -59,7 +59,7 @@ export default (params: Params) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam, setTeam, teams, teamsData?.me]);
 
-  const { data } = useProjectQuery({
+  const { data } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
@@ -93,7 +93,7 @@ export default (params: Params) => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       const team = results.data?.createTeam?.team;
       if (results) {

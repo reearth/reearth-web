@@ -3,16 +3,16 @@ import { useCallback, useState, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import {
-  AssetsQuery,
-  useAssetsQuery,
+  GetAssetsQuery,
   useCreateAssetMutation,
   useRemoveAssetMutation,
   Maybe,
   AssetSortType as GQLSortType,
+  useGetAssetsQuery,
 } from "@reearth/gql";
 import { useNotification } from "@reearth/state";
 
-export type AssetNodes = NonNullable<AssetsQuery["assets"]["nodes"][number]>[];
+export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
 
 export type AssetSortType = "date" | "name" | "size";
 
@@ -59,7 +59,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
   const [searchTerm, setSearchTerm] = useState<string>();
   const gqlCache = useApolloClient().cache;
 
-  const { data, refetch, loading, fetchMore, networkStatus } = useAssetsQuery({
+  const { data, refetch, loading, fetchMore, networkStatus } = useGetAssetsQuery({
     variables: {
       teamId: teamId ?? "",
       pagination: pagination(sort),
@@ -83,7 +83,6 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
       fetchMore({
         variables: {
           pagination: pagination(sort, data?.assets.pageInfo.endCursor),
-          delay: true,
         },
       });
     }

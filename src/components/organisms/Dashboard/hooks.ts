@@ -5,18 +5,18 @@ import { useIntl } from "react-intl";
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
 import {
-  useMeQuery,
-  useProjectQuery,
+  useGetMeQuery,
+  useGetProjectsQuery,
   useCreateTeamMutation,
   PublishmentStatus,
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
-  ProjectQuery,
+  GetProjectsQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
-export type ProjectNodes = NonNullable<ProjectQuery["projects"]["nodes"][number]>[];
+export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
@@ -24,7 +24,7 @@ export default (teamId?: string) => {
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
 
-  const { data, refetch } = useMeQuery();
+  const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
   const intl = useIntl();
@@ -70,7 +70,7 @@ export default (teamId?: string) => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
         setNotification({
@@ -108,7 +108,7 @@ export default (teamId?: string) => {
     loading,
     fetchMore,
     networkStatus,
-  } = useProjectQuery({
+  } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: initprojectPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
@@ -154,7 +154,7 @@ export default (teamId?: string) => {
     }
   }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
   const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["Project"],
+    refetchQueries: ["GetProjects"],
   });
   const [createScene] = useCreateSceneMutation();
   const createProject = useCallback(

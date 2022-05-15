@@ -7,7 +7,7 @@ import { Status } from "@reearth/components/atoms/PublicationStatus";
 import { User } from "@reearth/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/components/molecules/EarthEditor/Header/index";
 import {
-  useTeamsQuery,
+  useGetTeamsQuery,
   useGetProjectQuery,
   PublishmentStatus,
   usePublishProjectMutation,
@@ -39,7 +39,7 @@ export default () => {
 
   const [projectAlias, setProjectAlias] = useState<string | undefined>();
 
-  const { data: teamsData } = useTeamsQuery();
+  const { data: teamsData } = useGetTeamsQuery();
   const teams = teamsData?.me?.teams;
 
   const { data } = useGetProjectQuery({
@@ -170,7 +170,7 @@ export default () => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       if (results.data?.createTeam) {
         setTeam(results.data.createTeam.team);

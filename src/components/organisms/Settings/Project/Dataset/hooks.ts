@@ -3,15 +3,15 @@ import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import {
-  DatasetsQuery,
-  useSceneQuery,
+  DatasetsListQuery,
+  useGetProjectSceneQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
-  useDatasetsQuery,
+  useDatasetsListQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
-type Nodes = NonNullable<DatasetsQuery["datasetSchemas"]["nodes"]>;
+type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
 
@@ -21,7 +21,7 @@ export default (projectId: string) => {
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
-  const { data: sceneData } = useSceneQuery({
+  const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
   });
@@ -29,7 +29,7 @@ export default (projectId: string) => {
   const sceneId = sceneData?.scene?.id;
   const dataSetPerPage = 20;
 
-  const { data, fetchMore, loading, networkStatus } = useDatasetsQuery({
+  const { data, fetchMore, loading, networkStatus } = useDatasetsListQuery({
     variables: { sceneId: sceneId ?? "", first: dataSetPerPage },
     skip: !projectId,
     notifyOnNetworkStatusChange: true,
@@ -46,7 +46,6 @@ export default (projectId: string) => {
 
   const getMoreDataSets = useCallback(() => {
     if (hasMoreDataSets) {
-      console.log(data?.datasetSchemas?.pageInfo.endCursor);
       fetchMore({
         variables: {
           after: data?.datasetSchemas?.pageInfo.endCursor,

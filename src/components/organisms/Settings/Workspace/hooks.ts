@@ -4,8 +4,8 @@ import { useIntl } from "react-intl";
 
 import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import {
-  useTeamsQuery,
-  useSearchUserLazyQuery,
+  useGetTeamsQuery,
+  useGetUserBySearchLazyQuery,
   useCreateTeamMutation,
   useUpdateTeamMutation,
   useDeleteTeamMutation,
@@ -36,7 +36,7 @@ export default (params: Params) => {
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
 
-  const { data, loading, refetch } = useTeamsQuery();
+  const { data, loading, refetch } = useGetTeamsQuery();
   const me = { id: data?.me?.id, myTeam: data?.me?.myTeam.id };
   const teams = data?.me?.teams as Team[];
 
@@ -58,15 +58,15 @@ export default (params: Params) => {
 
   const teamId = currentTeam?.id;
 
-  const [searchUserQuery, { data: searchUserData }] = useSearchUserLazyQuery();
+  const [useGetUserBySearchQuery, { data: searchUserData }] = useGetUserBySearchLazyQuery();
 
   useEffect(() => {
     changeSearchedUser(searchUserData?.searchUser ?? undefined);
   }, [searchUserData?.searchUser]);
 
   const searchUser = useCallback(
-    (nameOrEmail: string) => nameOrEmail && searchUserQuery({ variables: { nameOrEmail } }),
-    [searchUserQuery],
+    (nameOrEmail: string) => nameOrEmail && useGetUserBySearchQuery({ variables: { nameOrEmail } }),
+    [useGetUserBySearchQuery],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -74,7 +74,7 @@ export default (params: Params) => {
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       const team = results.data?.createTeam?.team;
       if (results.errors || !results.data?.createTeam) {
@@ -117,7 +117,7 @@ export default (params: Params) => {
   );
 
   const [deleteTeamMutation] = useDeleteTeamMutation({
-    refetchQueries: ["teams"],
+    refetchQueries: ["GetTeams"],
   });
   const deleteTeam = useCallback(async () => {
     if (!teamId) return;
@@ -145,7 +145,7 @@ export default (params: Params) => {
           if (!teamId) return;
           const result = await addMemberToTeamMutation({
             variables: { userId, teamId, role: Role.Reader },
-            refetchQueries: ["teams"],
+            refetchQueries: ["GetTeams"],
           });
           const team = result.data?.addMemberToTeam?.team;
           if (result.errors || !team) {
@@ -202,7 +202,7 @@ export default (params: Params) => {
       if (!teamId) return;
       const result = await removeMemberFromTeamMutation({
         variables: { teamId, userId },
-        refetchQueries: ["teams"],
+        refetchQueries: ["GetTeams"],
       });
       const team = result.data?.removeMemberFromTeam?.team;
       if (result.errors || !team) {

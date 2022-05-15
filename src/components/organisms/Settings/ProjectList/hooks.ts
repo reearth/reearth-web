@@ -4,13 +4,13 @@ import { useIntl } from "react-intl";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import {
-  useMeQuery,
+  useGetMeQuery,
   PublishmentStatus,
   useCreateProjectMutation,
   useCreateSceneMutation,
-  useProjectQuery,
+  useGetProjectsQuery,
   Visualizer,
-  ProjectQuery,
+  GetProjectsQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
@@ -20,7 +20,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : s === PublishmentStatus.Limited
     ? "limited"
     : "unpublished";
-export type ProjectNodes = NonNullable<ProjectQuery["projects"]["nodes"][number]>[];
+export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 export default (teamId: string) => {
   const [, setNotification] = useNotification();
@@ -32,9 +32,9 @@ export default (teamId: string) => {
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
 
-  const { data, loading, refetch } = useMeQuery();
+  const { data, loading, refetch } = useGetMeQuery();
   const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["Project"],
+    refetchQueries: ["GetProjects"],
   });
   const [createScene] = useCreateSceneMutation();
 
@@ -50,7 +50,7 @@ export default (teamId: string) => {
     loading: queryProject,
     fetchMore,
     networkStatus,
-  } = useProjectQuery({
+  } = useGetProjectsQuery({
     variables: { teamId: teamId ?? "", first: initProjectPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
