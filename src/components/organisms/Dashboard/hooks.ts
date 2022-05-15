@@ -12,8 +12,11 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
+  ProjectQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
+
+export type ProjectNodes = NonNullable<ProjectQuery["projects"]["nodes"][number]>[];
 
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
@@ -98,14 +101,23 @@ export default (teamId?: string) => {
     },
     [refetch],
   );
-
-  const { data: projectData } = useProjectQuery({
-    variables: { teamId: teamId ?? "", first: 100 },
+  const initprojectPerPage = 9;
+  const projectPerPage = 6;
+  const {
+    data: projectData,
+    loading,
+    fetchMore,
+    networkStatus,
+  } = useProjectQuery({
+    variables: { teamId: teamId ?? "", first: initprojectPerPage },
     skip: !teamId,
+    notifyOnNetworkStatusChange: true,
   });
 
+  const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
+
   const projects = useMemo(() => {
-    return (projectData?.projects.nodes ?? [])
+    return (projectNodes ?? [])
       .map<Project | undefined>(project =>
         project
           ? {
@@ -120,8 +132,27 @@ export default (teamId?: string) => {
           : undefined,
       )
       .filter((project): project is Project => !!project);
-  }, [projectData?.projects.nodes]);
+  }, [projectNodes]);
 
+  const hasMoreProjects =
+    projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;
+
+  const isRefetchingProjects = networkStatus === 3;
+
+  const getMoreProjects = useCallback(() => {
+    if (hasMoreProjects) {
+      fetchMore({
+        variables: {
+          after: projectData?.projects.pageInfo?.endCursor,
+          first: projectPerPage,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+  }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
   const [createNewProject] = useCreateProjectMutation({
     refetchQueries: ["Project"],
   });
@@ -188,6 +219,8 @@ export default (teamId?: string) => {
   return {
     user,
     projects,
+    projectLoading: loading ?? isRefetchingProjects,
+    hasMoreProjects,
     createProject,
     teams,
     currentTeam: team as Team,
@@ -200,5 +233,6 @@ export default (teamId?: string) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
+    getMoreProjects,
   };
 };

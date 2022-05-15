@@ -80,6 +80,49 @@ const Provider: React.FC = ({ children }) => {
               };
             },
           },
+          projects: {
+            keyArgs: ["teamId", "first", "after"],
+
+            merge(existing, incoming, { readField }) {
+              if (existing && incoming && isEqual(existing, incoming)) return incoming;
+
+              const merged = existing ? existing.edges.slice(0) : [];
+
+              let offset = offsetFromCursor(merged, existing?.pageInfo.endCursor, readField);
+              if (offset < 0) offset = merged.length;
+
+              for (let i = 0; i < incoming?.edges?.length; ++i) {
+                merged[offset + i] = incoming.edges[i];
+              }
+
+              return {
+                ...incoming,
+                edges: merged,
+              };
+            },
+          },
+
+          datasetSchemas: {
+            keyArgs: ["sceneId", "first", "after"],
+
+            merge(existing, incoming, { readField }) {
+              if (existing && incoming && isEqual(existing, incoming)) return incoming;
+
+              const merged = existing ? existing.edges.slice(0) : [];
+
+              let offset = offsetFromCursor(merged, existing?.pageInfo.endCursor, readField);
+              if (offset < 0) offset = merged.length;
+
+              for (let i = 0; i < incoming?.edges?.length; ++i) {
+                merged[offset + i] = incoming.edges[i];
+              }
+
+              return {
+                ...incoming,
+                edges: merged,
+              };
+            },
+          },
         },
       },
     },

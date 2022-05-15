@@ -14,11 +14,24 @@ type Props = {
 
 const Dataset: React.FC<Props> = ({ projectId }) => {
   const intl = useIntl();
-  const { currentTeam, currentProject, datasetSchemas, handleRemoveDataset, handleDatasetImport } =
-    useHooks(projectId);
+  const {
+    currentTeam,
+    currentProject,
+    datasetSchemas,
+    dataSetLoading,
+    hasMoreDataSets,
+    handleRemoveDataset,
+    handleDatasetImport,
+    getMoreDataSets,
+  } = useHooks(projectId);
 
   return (
-    <SettingPage teamId={currentTeam?.id} projectId={projectId}>
+    <SettingPage
+      teamId={currentTeam?.id}
+      projectId={projectId}
+      loading={dataSetLoading}
+      hasMoreItems={hasMoreDataSets}
+      handleScrolling={getMoreDataSets}>
       <SettingsHeader
         title={intl.formatMessage({ defaultMessage: "Dataset" })}
         currentProject={currentProject?.name}

@@ -3,15 +3,15 @@ import { useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import {
-  DatasetSchemasQuery,
+  DatasetsQuery,
   useSceneQuery,
-  useDatasetSchemasQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
+  useDatasetsQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
-type Nodes = NonNullable<DatasetSchemasQuery["scene"]>["datasetSchemas"]["nodes"];
+type Nodes = NonNullable<DatasetsQuery["datasetSchemas"]["nodes"]>;
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
 
@@ -27,15 +27,37 @@ export default (projectId: string) => {
   });
 
   const sceneId = sceneData?.scene?.id;
+  const dataSetPerPage = 20;
 
-  const { data } = useDatasetSchemasQuery({
-    variables: { projectId: projectId ?? "", first: 100 },
+  const { data, fetchMore, loading, networkStatus } = useDatasetsQuery({
+    variables: { sceneId: sceneId ?? "", first: dataSetPerPage },
     skip: !projectId,
+    notifyOnNetworkStatusChange: true,
   });
 
-  const nodes = data?.scene?.datasetSchemas.nodes ?? [];
+  const nodes = data?.datasetSchemas.edges.map(e => e.node) ?? [];
 
   const datasetSchemas = nodes.filter(Boolean) as DatasetSchemas;
+
+  const hasMoreDataSets =
+    data?.datasetSchemas?.pageInfo.hasNextPage || data?.datasetSchemas?.pageInfo.hasPreviousPage;
+
+  const isRefetchingDataSets = networkStatus === 3;
+
+  const getMoreDataSets = useCallback(() => {
+    if (hasMoreDataSets) {
+      console.log(data?.datasetSchemas?.pageInfo.endCursor);
+      fetchMore({
+        variables: {
+          after: data?.datasetSchemas?.pageInfo.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+  }, [data?.datasetSchemas?.pageInfo, fetchMore, hasMoreDataSets]);
   const client = useApolloClient();
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
@@ -87,7 +109,10 @@ export default (projectId: string) => {
     currentTeam,
     currentProject,
     datasetSchemas,
+    dataSetLoading: loading ?? isRefetchingDataSets,
+    hasMoreDataSets,
     handleDatasetImport,
     handleRemoveDataset,
+    getMoreDataSets,
   };
 };

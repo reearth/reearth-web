@@ -10,6 +10,7 @@ import {
   useCreateSceneMutation,
   useProjectQuery,
   Visualizer,
+  ProjectQuery,
 } from "@reearth/gql";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
@@ -19,6 +20,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : s === PublishmentStatus.Limited
     ? "limited"
     : "unpublished";
+export type ProjectNodes = NonNullable<ProjectQuery["projects"]["nodes"][number]>[];
 
 export default (teamId: string) => {
   const [, setNotification] = useNotification();
@@ -41,9 +43,17 @@ export default (teamId: string) => {
   }
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
-  const { data: projectData } = useProjectQuery({
-    variables: { teamId: teamId ?? "", first: 100 },
+  const initProjectPerPage = 5;
+  const projectPerPage = 3;
+  const {
+    data: projectData,
+    loading: queryProject,
+    fetchMore,
+    networkStatus,
+  } = useProjectQuery({
+    variables: { teamId: teamId ?? "", first: initProjectPerPage },
     skip: !teamId,
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -52,7 +62,9 @@ export default (teamId: string) => {
     }
   }, [currentTeam, team, setTeam]);
 
-  const currentProjects = (projectData?.projects.nodes ?? [])
+  const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
+
+  const currentProjects = (projectNodes ?? [])
     .map<Project | undefined>(project =>
       project
         ? {
@@ -68,7 +80,7 @@ export default (teamId: string) => {
     )
     .filter((project): project is Project => !!project && project?.isArchived === false);
 
-  const archivedProjects = (projectData?.projects.nodes ?? [])
+  const archivedProjects = (projectNodes ?? [])
     .map<Project | undefined>(project =>
       project
         ? {
@@ -83,7 +95,24 @@ export default (teamId: string) => {
         : undefined,
     )
     .filter((project): project is Project => !!project && project?.isArchived === true);
+  const hasMoreProjects =
+    projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;
 
+  const isRefetchingProjects = networkStatus === 3;
+  const getMoreProjects = useCallback(() => {
+    if (hasMoreProjects) {
+      fetchMore({
+        variables: {
+          after: projectData?.projects.pageInfo?.endCursor,
+          first: projectPerPage,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+  }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
   const handleModalClose = useCallback(
     (r?: boolean) => {
       setModalShown(false);
@@ -162,6 +191,8 @@ export default (teamId: string) => {
   return {
     currentProjects,
     archivedProjects,
+    projectLoading: queryProject ?? isRefetchingProjects,
+    hasMoreProjects,
     teamId,
     loading,
     modalShown,
@@ -173,5 +204,6 @@ export default (teamId: string) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
+    getMoreProjects,
   };
 };

@@ -16,6 +16,8 @@ export interface Props {
   currentTeam?: Team;
   currentProject?: Project;
   sceneId?: string;
+  loading?: boolean;
+  hasMoreItem?: boolean;
   teams: Team[];
   icon?: React.ReactNode;
   center?: React.ReactNode;
@@ -28,6 +30,7 @@ export interface Props {
   modalShown?: boolean;
   openModal?: () => void;
   handleModalClose?: (r?: boolean | undefined) => void;
+  handleScrolling?: () => void;
   dashboard?: boolean;
 }
 

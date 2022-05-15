@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 
-import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
 import Loading from "@reearth/components/atoms/Loading";
@@ -19,8 +18,8 @@ export type Props = {
   archived?: boolean;
   projects?: Project[];
   loading?: boolean;
+  withToggle?: boolean;
   onProjectSelect?: (project: Project) => void;
-  onCreationButtonClick?: () => void;
 };
 
 const ProjectList: React.FC<Props> = ({
@@ -28,22 +27,22 @@ const ProjectList: React.FC<Props> = ({
   projects,
   title,
   archived,
+  withToggle = true,
+
   onProjectSelect,
-  onCreationButtonClick,
 }) => {
   const intl = useIntl();
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    if (archived) {
-      setOpen(false);
-    }
-  }, [archived]);
+    archived && withToggle && setOpen(false);
+    !withToggle && setOpen(true);
+  }, [archived, withToggle]);
   const theme = useTheme();
 
   return (
     <>
-      {archived && (
+      {withToggle && archived && (
         <StyledFlex align="center" onClick={() => setOpen(!open)}>
           <StyledIcon icon="arrowToggle" size={15} color={theme.main.text} />
           <Text
@@ -57,7 +56,7 @@ const ProjectList: React.FC<Props> = ({
           </Text>
         </StyledFlex>
       )}
-      {!archived && (
+      {withToggle && !archived && (
         <StyledFlex justify="space-between" align="center">
           <Text size="m" weight="normal" color={theme.main.text}>
             {title ||
@@ -65,12 +64,6 @@ const ProjectList: React.FC<Props> = ({
                 projects?.length || 0
               })`}
           </Text>
-          <Button
-            large
-            buttonType="secondary"
-            text={intl.formatMessage({ defaultMessage: "New Project" })}
-            onClick={onCreationButtonClick}
-          />
         </StyledFlex>
       )}
       {loading ? (
@@ -97,6 +90,9 @@ const StyledIcon = styled(Icon)`
 `;
 
 const ProjectListContainner = styled.div`
+  > * {
+    margin-top: ${metricsSizes["4xl"]}px;
+  }
   > * {
     margin-bottom: ${metricsSizes["4xl"]}px;
   }

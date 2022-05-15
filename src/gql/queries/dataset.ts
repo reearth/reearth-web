@@ -37,6 +37,13 @@ export const DATASET_SCHEMAS = gql`
     scene(projectId: $projectId) {
       id
       datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
+        edges {
+          node {
+            id
+            source
+            name
+          }
+        }
         nodes {
           id
           source
@@ -50,6 +57,31 @@ export const DATASET_SCHEMAS = gql`
         }
         totalCount
       }
+    }
+  }
+`;
+export const DATASETS = gql`
+  query datasets($sceneId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+    datasetSchemas(sceneId: $sceneId, first: $first, last: $last, after: $after, before: $before) {
+      edges {
+        node {
+          id
+          source
+          name
+        }
+      }
+      nodes {
+        id
+        source
+        name
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      totalCount
     }
   }
 `;

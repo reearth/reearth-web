@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useIntl } from "react-intl";
 
+import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
+import TabMenu from "@reearth/components/atoms/TabMenu";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
@@ -20,6 +22,8 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     loading,
     currentProjects,
     archivedProjects,
+    projectLoading,
+    hasMoreProjects,
     modalShown,
     openModal,
     handleModalClose,
@@ -29,17 +33,73 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
+    getMoreProjects,
   } = useHooks(teamId);
 
+  const projectLength = useMemo(
+    () => ({
+      currentProjectsLength: currentProjects.length || 0,
+      archivedProjectsLength: archivedProjects.length || 0,
+    }),
+    [currentProjects, archivedProjects],
+  );
+
+  const headers = {
+    current:
+      intl.formatMessage({
+        defaultMessage: "Current Projects ",
+      }) +
+      "(" +
+      projectLength.currentProjectsLength +
+      ")",
+    archived:
+      intl.formatMessage({
+        defaultMessage: "Archived Projects ",
+      }) +
+      "(" +
+      projectLength.archivedProjectsLength +
+      ")",
+  };
+
   return (
-    <SettingPage teamId={teamId}>
+    <SettingPage
+      teamId={teamId}
+      loading={projectLoading}
+      hasMoreItems={hasMoreProjects}
+      handleScrolling={getMoreProjects}>
       <SettingsHeader title={intl.formatMessage({ defaultMessage: "Project List" })} />
-      <MoleculeProjectList
-        projects={currentProjects}
-        onProjectSelect={selectProject}
-        onCreationButtonClick={openModal}
-      />
-      <MoleculeProjectList projects={archivedProjects} archived onProjectSelect={selectProject} />
+      <TabMenu<"current" | "archived">
+        menuAlignment="top"
+        initialSelected="current"
+        selected="current"
+        expandedMenuIcon={false}
+        headers={headers}
+        headerAction={
+          <Button
+            large
+            buttonType="secondary"
+            text={intl.formatMessage({ defaultMessage: "New Project" })}
+            onClick={openModal}
+          />
+        }>
+        {{
+          current: (
+            <MoleculeProjectList
+              projects={currentProjects}
+              onProjectSelect={selectProject}
+              withToggle={false}
+            />
+          ),
+          archived: (
+            <MoleculeProjectList
+              projects={archivedProjects}
+              archived
+              onProjectSelect={selectProject}
+              withToggle={false}
+            />
+          ),
+        }}
+      </TabMenu>
       <ProjectCreationModal
         open={modalShown}
         onClose={handleModalClose}

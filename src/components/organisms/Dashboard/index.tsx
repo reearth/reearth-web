@@ -21,6 +21,8 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
   const {
     user,
     projects,
+    projectLoading,
+    hasMoreProjects,
     createProject,
     teams = [],
     currentTeam,
@@ -33,6 +35,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
+    getMoreProjects,
   } = useHooks(teamId);
 
   return (
@@ -50,7 +53,10 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
           handleModalClose={handleModalClose}
           dashboard
         />
-      }>
+      }
+      onGetMoreProjects={getMoreProjects}
+      isLoading={projectLoading}
+      hasMoreProjects={hasMoreProjects}>
       <Workspace team={currentTeam} />
       <QuickStart
         onCreateTeam={createTeam}

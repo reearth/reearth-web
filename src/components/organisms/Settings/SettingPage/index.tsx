@@ -9,10 +9,20 @@ type Props = {
   className?: string;
   teamId?: string;
   projectId?: string;
+  loading?: boolean;
+  hasMoreItems?: boolean;
   onBack?: () => void;
+  handleScrolling?: () => void;
 };
 
-const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
+const SettingPage: React.FC<Props> = ({
+  teamId,
+  projectId,
+  children,
+  loading,
+  hasMoreItems,
+  handleScrolling,
+}) => {
   const { logout } = useAuth();
 
   const {
@@ -39,13 +49,16 @@ const SettingPage: React.FC<Props> = ({ teamId, projectId, children }) => {
       currentTeam={currentTeam}
       currentProject={currentProject}
       sceneId={sceneId}
+      loading={loading}
+      hasMoreItem={hasMoreItems}
       onSignOut={logout}
       onBack={back}
       onCreateTeam={createTeam}
       onChangeTeam={changeTeam}
       modalShown={modalShown}
       openModal={openModal}
-      handleModalClose={handleModalClose}>
+      handleModalClose={handleModalClose}
+      handleScrolling={handleScrolling}>
       {children}
     </MoleculesSettingPage>
   );

@@ -2,10 +2,20 @@ import { Link } from "@reach/router";
 import React, { useState } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
+import Loading from "@reearth/components/atoms/Loading";
 import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
+
+function handleScroll(
+  { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+  onLoadMore?: () => void,
+) {
+  if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
+    onLoadMore?.();
+  }
+}
 
 const SettingPage: React.FC<Props> = ({
   children,
@@ -35,7 +45,10 @@ const SettingPage: React.FC<Props> = ({
           currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
         }
       />
-      <BodyWrapper>
+      <BodyWrapper
+        onScroll={e => {
+          !props.loading && props.hasMoreItem && handleScroll(e, props.handleScrolling);
+        }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>
@@ -56,6 +69,7 @@ const SettingPage: React.FC<Props> = ({
             {children}
           </ContentWrapper>
         </RightWrapper>
+        {props.loading && props.hasMoreItem && <StyledLoading relative />}
       </BodyWrapper>
     </Wrapper>
   );
@@ -77,7 +91,7 @@ const Wrapper = styled.div`
 const BodyWrapper = styled.div`
   height: 100%;
   padding-top: 48px;
-  overflow: auto;
+  overflow-y: scroll;
 `;
 
 const LeftWrapper = styled.div`
@@ -157,4 +171,7 @@ const MenuIcon = styled(Icon)`
   }
 `;
 
+const StyledLoading = styled(Loading)`
+  margin: 52px auto;
+`;
 export default SettingPage;
