@@ -67,9 +67,9 @@ const SettingPage: React.FC<Props> = ({
               )}
             </DeviceMenu>
             {children}
+            {props.hasMoreItem && <StyledLoading relative />}
           </ContentWrapper>
         </RightWrapper>
-        {props.loading && props.hasMoreItem && <StyledLoading relative />}
       </BodyWrapper>
     </Wrapper>
   );
