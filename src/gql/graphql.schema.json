@@ -11540,12 +11540,6 @@
             "deprecationReason": null
           },
           {
-            "name": "SLIDER",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "VIDEO",
             "description": null,
             "isDeprecated": false,
