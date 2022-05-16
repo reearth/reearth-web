@@ -76,6 +76,7 @@ export type SceneProperty = {
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
+    sceneMode?: "scene3d" | "scene2d" | "columbus"; // default: scene3d
   };
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;

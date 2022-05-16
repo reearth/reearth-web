@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, SceneMode } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -25,6 +25,13 @@ export type ImageryLayerData = {
   max?: number;
   opacity?: number;
 };
+
+export enum SceneModeKey {
+  morphing = "MORPHING",
+  columbus = "COLUMBUS_VIEW",
+  scene2d = "SCENE2D",
+  scene3d = "SCENE3D",
+}
 
 const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
 
@@ -128,6 +135,14 @@ export default ({
     () =>
       property?.default?.bgcolor ? Color.fromCssColorString(property.default.bgcolor) : undefined,
     [property?.default?.bgcolor],
+  );
+
+  const sceneMode = useMemo(
+    () =>
+      property?.default?.sceneMode
+        ? SceneMode[SceneModeKey[property.default.sceneMode]]
+        : undefined,
+    [property?.default?.sceneMode],
   );
 
   // move to initial position at startup
@@ -294,6 +309,7 @@ export default ({
     terrainProvider,
     terrainProperty,
     backgroundColor,
+    sceneMode,
     imageryLayers,
     cesium,
     limiterDimensions,
