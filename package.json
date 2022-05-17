@@ -149,6 +149,10 @@
         "webpack-dev-server": "^4.9.0",
         "yaml-flat-loader": "^1.0.1"
     },
+    "resolutions": {
+    "@types/react": "17.0.14",
+    "@types/react-dom": "17.0.14"
+  },
     "dependencies": {
         "@apollo/client": "^3.5.8",
         "@auth0/auth0-react": "^1.10.1",
