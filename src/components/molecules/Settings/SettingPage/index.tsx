@@ -174,4 +174,5 @@ const MenuIcon = styled(Icon)`
 const StyledLoading = styled(Loading)`
   margin: 52px auto;
 `;
+
 export default SettingPage;
