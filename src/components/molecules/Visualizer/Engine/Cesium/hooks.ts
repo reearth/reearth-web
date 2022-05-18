@@ -26,13 +26,6 @@ export type ImageryLayerData = {
   opacity?: number;
 };
 
-export enum SceneModeKey {
-  morphing = "MORPHING",
-  columbus = "COLUMBUS_VIEW",
-  scene2d = "SCENE2D",
-  scene3d = "SCENE3D",
-}
-
 const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
 
 export default ({
@@ -139,9 +132,14 @@ export default ({
 
   const sceneMode = useMemo(
     () =>
-      property?.default?.sceneMode
-        ? SceneMode[SceneModeKey[property.default.sceneMode]]
-        : undefined,
+      ((
+        {
+          morphing: SceneMode.MORPHING,
+          scene2d: SceneMode.SCENE2D,
+          columbus: SceneMode.COLUMBUS_VIEW,
+          scene3d: SceneMode.SCENE3D,
+        } as { [key in string]?: SceneMode }
+      )[property?.default?.sceneMode || ""]),
     [property?.default?.sceneMode],
   );
 
@@ -169,6 +167,7 @@ export default ({
       engineAPI,
       onCameraChange,
       property?.default?.camera,
+      property?.default?.sceneMode,
       property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
