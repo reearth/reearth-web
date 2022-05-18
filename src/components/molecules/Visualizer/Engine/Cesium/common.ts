@@ -11,6 +11,7 @@ import {
   Cartesian3,
   CesiumWidget,
   PerspectiveFrustum,
+  OrthographicOffCenterFrustum,
   Viewer,
   HeightReference,
   ShadowMode,
@@ -303,16 +304,23 @@ export const animateFOV = ({
 export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | undefined => {
   if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene) return undefined;
   const { camera } = viewer;
-  if (!(camera.frustum instanceof PerspectiveFrustum)) return;
-
-  const ellipsoid = viewer.scene.globe.ellipsoid;
-  const { latitude, longitude, height } = ellipsoid.cartesianToCartographic(camera.position);
-  const lat = CesiumMath.toDegrees(latitude);
-  const lng = CesiumMath.toDegrees(longitude);
-  const { heading, pitch, roll } = camera;
-  const { fov } = camera.frustum;
-
-  return { lng, lat, height, heading, pitch, roll, fov };
+  if (camera.frustum instanceof PerspectiveFrustum) {
+    const ellipsoid = viewer.scene.globe.ellipsoid;
+    const { latitude, longitude, height } = ellipsoid.cartesianToCartographic(camera.position);
+    const lat = CesiumMath.toDegrees(latitude);
+    const lng = CesiumMath.toDegrees(longitude);
+    const { heading, pitch, roll } = camera;
+    const { fov } = camera.frustum;
+    return { lng, lat, height, heading, pitch, roll, fov };
+  } else if (camera.frustum instanceof OrthographicOffCenterFrustum) {
+    // for SceneMode 2D
+    const { latitude, longitude, height } = camera.positionCartographic;
+    const lat = CesiumMath.toDegrees(latitude);
+    const lng = CesiumMath.toDegrees(longitude);
+    const { heading, pitch, roll } = camera;
+    const fov = 0;
+    return { lng, lat, height, heading, pitch, roll, fov };
+  } else return;
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
