@@ -74,7 +74,7 @@ const Wrapper = styled.div<{ isHover?: boolean }>`
   height: 100%;
   background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
   border: 1px solid
-    ${props => (props.isHover ? props.theme.main.select : props.theme.projectCell.shadow)};
+    ${props => (props.isHover ? props.theme.main.select : props.theme.main.lightTransparentBg)};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
