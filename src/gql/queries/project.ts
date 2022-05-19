@@ -52,24 +52,6 @@ export const GET_PROJECTS = gql`
           }
         }
       }
-      nodes {
-        id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
-        scene {
-          id
-        }
-      }
       pageInfo {
         endCursor
         hasNextPage

@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
@@ -9,6 +8,7 @@ import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectL
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const ProjectList: React.FC<Props> = ({ teamId }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     loading,
     currentProjects,
@@ -45,20 +45,8 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
   );
 
   const headers = {
-    current:
-      intl.formatMessage({
-        defaultMessage: "Current Projects ",
-      }) +
-      "(" +
-      projectLength.currentProjectsLength +
-      ")",
-    archived:
-      intl.formatMessage({
-        defaultMessage: "Archived Projects ",
-      }) +
-      "(" +
-      projectLength.archivedProjectsLength +
-      ")",
+    current: t("Current Projects") + "(" + projectLength.currentProjectsLength + ")",
+    archived: t("Archived Projects") + "(" + projectLength.archivedProjectsLength + ")",
   };
 
   return (
@@ -67,7 +55,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
       loading={projectLoading}
       hasMoreItems={hasMoreProjects}
       onScroll={handleGetMoreProjects}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Project List" })} />
+      <SettingsHeader title={t("Project List")} />
       <TabSection<"current" | "archived">
         menuAlignment="top"
         initialSelected="current"
@@ -75,12 +63,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         expandedMenuIcon={false}
         headers={headers}
         headerAction={
-          <Button
-            large
-            buttonType="secondary"
-            text={intl.formatMessage({ defaultMessage: "New Project" })}
-            onClick={openModal}
-          />
+          <Button large buttonType="secondary" text={t("New Project")} onClick={openModal} />
         }>
         {{
           current: (

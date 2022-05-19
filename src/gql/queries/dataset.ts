@@ -76,11 +76,6 @@ export const GET_DATASETS_LIST = gql`
           name
         }
       }
-      nodes {
-        id
-        source
-        name
-      }
       pageInfo {
         endCursor
         hasNextPage
