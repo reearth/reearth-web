@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
-import TabMenu from "@reearth/components/atoms/TabMenu";
+import TabSection from "@reearth/components/atoms/TabSection";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
@@ -33,13 +33,13 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
-    getMoreProjects,
+    handleGetMoreProjects,
   } = useHooks(teamId);
 
   const projectLength = useMemo(
     () => ({
-      currentProjectsLength: currentProjects.length || 0,
-      archivedProjectsLength: archivedProjects.length || 0,
+      currentProjectsLength: currentProjects.length,
+      archivedProjectsLength: archivedProjects.length,
     }),
     [currentProjects, archivedProjects],
   );
@@ -66,9 +66,9 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
       teamId={teamId}
       loading={projectLoading}
       hasMoreItems={hasMoreProjects}
-      handleScrolling={getMoreProjects}>
+      onScroll={handleGetMoreProjects}>
       <SettingsHeader title={intl.formatMessage({ defaultMessage: "Project List" })} />
-      <TabMenu<"current" | "archived">
+      <TabSection<"current" | "archived">
         menuAlignment="top"
         initialSelected="current"
         selected="current"
@@ -84,22 +84,17 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
         }>
         {{
           current: (
-            <MoleculeProjectList
-              projects={currentProjects}
-              onProjectSelect={selectProject}
-              withToggle={false}
-            />
+            <MoleculeProjectList projects={currentProjects} onProjectSelect={selectProject} />
           ),
           archived: (
             <MoleculeProjectList
               projects={archivedProjects}
               archived
               onProjectSelect={selectProject}
-              withToggle={false}
             />
           ),
         }}
-      </TabMenu>
+      </TabSection>
       <ProjectCreationModal
         open={modalShown}
         onClose={handleModalClose}

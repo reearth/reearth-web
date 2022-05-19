@@ -22,6 +22,8 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : "unpublished";
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
+const projectPerPage = 5;
+
 export default (teamId: string) => {
   const [, setNotification] = useNotification();
   const [currentTeam, setTeam] = useTeam();
@@ -43,15 +45,13 @@ export default (teamId: string) => {
   }
   const team = teamId ? data?.me?.teams.find(team => team.id === teamId) : data?.me?.myTeam;
 
-  const initProjectPerPage = 5;
-  const projectPerPage = 3;
   const {
     data: projectData,
     loading: queryProject,
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: initProjectPerPage },
+    variables: { teamId: teamId ?? "", first: projectPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
   });
@@ -95,16 +95,16 @@ export default (teamId: string) => {
         : undefined,
     )
     .filter((project): project is Project => !!project && project?.isArchived === true);
+
   const hasMoreProjects =
     projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;
 
   const isRefetchingProjects = networkStatus === 3;
-  const getMoreProjects = useCallback(() => {
+  const handleGetMoreProjects = useCallback(() => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
           after: projectData?.projects.pageInfo?.endCursor,
-          first: projectPerPage,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -113,6 +113,7 @@ export default (teamId: string) => {
       });
     }
   }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
+
   const handleModalClose = useCallback(
     (r?: boolean) => {
       setModalShown(false);
@@ -204,6 +205,6 @@ export default (teamId: string) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
-    getMoreProjects,
+    handleGetMoreProjects,
   };
 };

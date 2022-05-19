@@ -7,17 +7,15 @@ import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
+import { handleScroll } from "@reearth/util/handleScroll";
 
-function handleScroll(
-  { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-  onLoadMore?: () => void,
-) {
-  if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
-    onLoadMore?.();
-  }
+interface SettingPageProps extends Props {
+  loading?: boolean;
+  hasMoreItems?: boolean;
+  handleScrolling?: () => void;
 }
 
-const SettingPage: React.FC<Props> = ({
+const SettingPage: React.FC<SettingPageProps> = ({
   children,
   currentTeam,
   currentProject,
@@ -47,7 +45,7 @@ const SettingPage: React.FC<Props> = ({
       />
       <BodyWrapper
         onScroll={e => {
-          !props.loading && props.hasMoreItem && handleScroll(e, props.handleScrolling);
+          !props.loading && props.hasMoreItems && handleScroll(e, props.handleScrolling);
         }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
@@ -67,7 +65,7 @@ const SettingPage: React.FC<Props> = ({
               )}
             </DeviceMenu>
             {children}
-            {props.hasMoreItem && <StyledLoading relative />}
+            {props.hasMoreItems && <StyledLoading relative />}
           </ContentWrapper>
         </RightWrapper>
       </BodyWrapper>

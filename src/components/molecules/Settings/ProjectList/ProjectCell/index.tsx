@@ -36,9 +36,7 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
   return (
     <StyledWrapper project={project}>
       <Wrapper
-        onClick={() => {
-          onSelect?.(project);
-        }}
+        onClick={() => onSelect?.(project)}
         isHover={isHover}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
@@ -75,7 +73,8 @@ const Wrapper = styled.div<{ isHover?: boolean }>`
   cursor: pointer;
   height: 100%;
   background-color: ${props => (props.isHover ? props.theme.main.lightTransparentBg : "")};
-  border: ${props => (props.isHover ? " 2px solid " + props.theme.main.select : " ")};
+  border: 1px solid
+    ${props => (props.isHover ? props.theme.main.select : props.theme.projectCell.shadow)};
   display: flex;
   flex-direction: column;
   justify-content: space-between;

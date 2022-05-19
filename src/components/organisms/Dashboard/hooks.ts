@@ -18,6 +18,8 @@ import { useTeam, useProject, useUnselectProject, useNotification } from "@reear
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
+const projectPerPage = 9;
+
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
   const [currentProject] = useProject();
@@ -101,15 +103,14 @@ export default (teamId?: string) => {
     },
     [refetch],
   );
-  const initprojectPerPage = 9;
-  const projectPerPage = 6;
+
   const {
     data: projectData,
     loading,
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: initprojectPerPage },
+    variables: { teamId: teamId ?? "", first: projectPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
   });
@@ -139,12 +140,11 @@ export default (teamId?: string) => {
 
   const isRefetchingProjects = networkStatus === 3;
 
-  const getMoreProjects = useCallback(() => {
+  const handleGetMoreProjects = useCallback(() => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
           after: projectData?.projects.pageInfo?.endCursor,
-          first: projectPerPage,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -153,6 +153,7 @@ export default (teamId?: string) => {
       });
     }
   }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
+
   const [createNewProject] = useCreateProjectMutation({
     refetchQueries: ["GetProjects"],
   });
@@ -233,6 +234,6 @@ export default (teamId?: string) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
-    getMoreProjects,
+    handleGetMoreProjects,
   };
 };

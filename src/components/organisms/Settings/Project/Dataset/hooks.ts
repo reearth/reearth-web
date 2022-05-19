@@ -15,11 +15,15 @@ type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
 type DatasetSchemas = NonNullable<Nodes[number]>[];
 
+const datasetPerPage = 20;
+
 export default (projectId: string) => {
   const intl = useIntl();
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
+
+  const client = useApolloClient();
 
   const { data: sceneData } = useGetProjectSceneQuery({
     variables: { projectId: projectId ?? "" },
@@ -27,10 +31,9 @@ export default (projectId: string) => {
   });
 
   const sceneId = sceneData?.scene?.id;
-  const dataSetPerPage = 20;
 
   const { data, fetchMore, loading, networkStatus } = useDatasetsListQuery({
-    variables: { sceneId: sceneId ?? "", first: dataSetPerPage },
+    variables: { sceneId: sceneId ?? "", first: datasetPerPage },
     skip: !projectId,
     notifyOnNetworkStatusChange: true,
   });
@@ -44,7 +47,7 @@ export default (projectId: string) => {
 
   const isRefetchingDataSets = networkStatus === 3;
 
-  const getMoreDataSets = useCallback(() => {
+  const handleGetMoreDataSets = useCallback(() => {
     if (hasMoreDataSets) {
       fetchMore({
         variables: {
@@ -57,7 +60,6 @@ export default (projectId: string) => {
       });
     }
   }, [data?.datasetSchemas?.pageInfo, fetchMore, hasMoreDataSets]);
-  const client = useApolloClient();
 
   const [removeDatasetSchema] = useRemoveDatasetMutation();
   const handleRemoveDataset = useCallback(
@@ -108,10 +110,10 @@ export default (projectId: string) => {
     currentTeam,
     currentProject,
     datasetSchemas,
-    dataSetLoading: loading ?? isRefetchingDataSets,
+    datasetLoading: loading ?? isRefetchingDataSets,
     hasMoreDataSets,
     handleDatasetImport,
     handleRemoveDataset,
-    getMoreDataSets,
+    handleGetMoreDataSets,
   };
 };

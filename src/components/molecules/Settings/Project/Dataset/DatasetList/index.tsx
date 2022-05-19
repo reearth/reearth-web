@@ -13,7 +13,7 @@ export type Props = {
   isLoading?: boolean;
   hasMore?: boolean;
   removeDatasetSchema?: (schemaId: string) => void;
-  onGetMoreDataSet?: () => void;
+  onGetMoreDataSets?: () => void;
 };
 
 const DatasetList: React.FC<Props> = ({ items, removeDatasetSchema }) => {

@@ -12,7 +12,7 @@ type Props = {
   loading?: boolean;
   hasMoreItems?: boolean;
   onBack?: () => void;
-  handleScrolling?: () => void;
+  onScroll?: () => void;
 };
 
 const SettingPage: React.FC<Props> = ({
@@ -21,7 +21,7 @@ const SettingPage: React.FC<Props> = ({
   children,
   loading,
   hasMoreItems,
-  handleScrolling,
+  onScroll,
 }) => {
   const { logout } = useAuth();
 
@@ -50,7 +50,7 @@ const SettingPage: React.FC<Props> = ({
       currentProject={currentProject}
       sceneId={sceneId}
       loading={loading}
-      hasMoreItem={hasMoreItems}
+      hasMoreItems={hasMoreItems}
       onSignOut={logout}
       onBack={back}
       onCreateTeam={createTeam}
@@ -58,7 +58,7 @@ const SettingPage: React.FC<Props> = ({
       modalShown={modalShown}
       openModal={openModal}
       handleModalClose={handleModalClose}
-      handleScrolling={handleScrolling}>
+      handleScrolling={onScroll}>
       {children}
     </MoleculesSettingPage>
   );

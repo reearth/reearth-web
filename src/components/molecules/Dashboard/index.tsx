@@ -2,6 +2,7 @@ import React from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
+import { handleScroll } from "@reearth/util/handleScroll";
 
 export * from "./types";
 
@@ -12,14 +13,6 @@ export type Props = {
   hasMoreProjects?: boolean;
   onGetMoreProjects?: () => void;
 };
-function handleScroll(
-  { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-  onLoadMore?: () => void,
-) {
-  if (currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight) {
-    onLoadMore?.();
-  }
-}
 
 const Dashboard: React.FC<Props> = ({
   className,

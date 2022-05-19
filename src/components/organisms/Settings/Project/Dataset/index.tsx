@@ -18,20 +18,20 @@ const Dataset: React.FC<Props> = ({ projectId }) => {
     currentTeam,
     currentProject,
     datasetSchemas,
-    dataSetLoading,
+    datasetLoading,
     hasMoreDataSets,
     handleRemoveDataset,
     handleDatasetImport,
-    getMoreDataSets,
+    handleGetMoreDataSets,
   } = useHooks(projectId);
 
   return (
     <SettingPage
       teamId={currentTeam?.id}
       projectId={projectId}
-      loading={dataSetLoading}
+      loading={datasetLoading}
       hasMoreItems={hasMoreDataSets}
-      handleScrolling={getMoreDataSets}>
+      onScroll={handleGetMoreDataSets}>
       <SettingsHeader
         title={intl.formatMessage({ defaultMessage: "Dataset" })}
         currentProject={currentProject?.name}

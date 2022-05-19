@@ -6,9 +6,9 @@ import {
   GetAssetsQuery,
   useCreateAssetMutation,
   useRemoveAssetMutation,
+  useGetAssetsQuery,
   Maybe,
   AssetSortType as GQLSortType,
-  useGetAssetsQuery,
 } from "@reearth/gql";
 import { useNotification } from "@reearth/state";
 
@@ -72,13 +72,14 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
 
   const hasMoreAssets =
     data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
+
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
 
   const initialAsset = assets?.find(a => a.url === initialAssetUrl);
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
 
-  const getMoreAssets = useCallback(() => {
+  const handleGetMoreAssets = useCallback(() => {
     if (hasMoreAssets) {
       fetchMore({
         variables: {
@@ -192,7 +193,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
     searchTerm,
     selectedAssets,
     selectAsset,
-    getMoreAssets,
+    handleGetMoreAssets,
     createAssets,
     removeAssets: allowDeletion ? removeAssets : undefined,
     handleSortChange,

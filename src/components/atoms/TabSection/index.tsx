@@ -19,7 +19,7 @@ export interface Props<T extends string> {
   onChange?: (m: T) => void;
   headers?: { [m in T]?: string };
 }
-const TabMenu = <T extends string>({
+const TabSection = <T extends string>({
   className,
   children,
   headerAction,
@@ -103,4 +103,4 @@ const TabContent = styled.div<{ scrollable?: boolean }>`
   -webkit-overflow-scrolling: touch;
 `;
 
-export default TabMenu;
+export default TabSection;

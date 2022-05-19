@@ -11,6 +11,7 @@ import Text from "@reearth/components/atoms/Text";
 import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/AssetDeleteModal";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+import { handleScroll } from "@reearth/util/handleScroll";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
@@ -79,7 +80,6 @@ const AssetContainer: React.FC<Props> = ({
     iconChoice,
     deleteModalVisible,
     sortOptions,
-    handleScroll,
     setLayoutType,
     handleUploadToAsset,
     handleReverse,
