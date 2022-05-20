@@ -48,7 +48,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     terrainProvider,
     terrainProperty,
     backgroundColor,
-    sceneMode,
     imageryLayers,
     cesium,
     limiterDimensions,
@@ -134,7 +133,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               arcType={ArcType.RHUMB}></PolylineGraphics>
           </Entity>
         )}
-        <Scene backgroundColor={backgroundColor} mode={sceneMode} />
+        <Scene backgroundColor={backgroundColor} />
         <SkyBox show={property?.default?.skybox ?? true} />
         <Fog
           enabled={property?.atmosphere?.fog ?? true}

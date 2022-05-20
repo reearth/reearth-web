@@ -1,6 +1,6 @@
 import { ComponentType, ReactNode } from "react";
 
-import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
+import { LatLngHeight, Camera, Typography, Rect, SceneMode } from "@reearth/util/value";
 
 import type { Component } from "../Primitive";
 
@@ -14,6 +14,7 @@ export type EngineRef = {
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  morphSceneModeTo: (sceneMode: SceneMode | undefined, duration?: number) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
@@ -76,7 +77,7 @@ export type SceneProperty = {
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
-    sceneMode?: "scene3d" | "scene2d" | "columbus"; // default: scene3d
+    sceneMode?: SceneMode; // default: scene3d
   };
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;

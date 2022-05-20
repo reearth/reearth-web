@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, SceneMode } from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
 import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -130,18 +130,10 @@ export default ({
     [property?.default?.bgcolor],
   );
 
-  const sceneMode = useMemo(
-    () =>
-      ((
-        {
-          morphing: SceneMode.MORPHING,
-          scene2d: SceneMode.SCENE2D,
-          columbus: SceneMode.COLUMBUS_VIEW,
-          scene3d: SceneMode.SCENE3D,
-        } as { [key in string]?: SceneMode }
-      )[property?.default?.sceneMode || ""]),
-    [property?.default?.sceneMode],
-  );
+  // scene mode
+  useEffect(() => {
+    engineAPI.morphSceneModeTo(property?.default?.sceneMode, 0);
+  }, [property?.default?.sceneMode, engineAPI]);
 
   // move to initial position at startup
   const initialCameraFlight = useRef(false);
@@ -308,7 +300,6 @@ export default ({
     terrainProvider,
     terrainProperty,
     backgroundColor,
-    sceneMode,
     imageryLayers,
     cesium,
     limiterDimensions,
