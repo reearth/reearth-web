@@ -21,7 +21,7 @@ export type Camera = {
   heading: number;
   pitch: number;
   roll: number;
-  fov: number;
+  fov?: number;
 };
 
 export type Typography = {
