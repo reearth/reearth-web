@@ -256,7 +256,7 @@ export type CameraPosition = {
   /** radians */
   roll: number;
   /** Field of view expressed in radians */
-  fov: number;
+  fov?: number;
 };
 
 export type Typography = {
