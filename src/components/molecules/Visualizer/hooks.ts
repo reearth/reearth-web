@@ -4,7 +4,6 @@ import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "re
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
-import { mergeProperty } from "@reearth/util/mergeProperty";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng } from "@reearth/util/value";
 
@@ -18,6 +17,7 @@ import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, emptyLayerStore } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
+import { mergeProperty } from "./utils";
 
 export default ({
   engineType,

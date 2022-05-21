@@ -1,9 +1,8 @@
 import React, { ComponentType, useMemo } from "react";
 
-import { mergeProperty } from "@reearth/util/mergeProperty";
-
 import { useContext } from "../Plugin";
 import type { Layer } from "../Plugin";
+import { mergeProperty } from "../utils";
 
 export type { Layer } from "../Plugin";
 

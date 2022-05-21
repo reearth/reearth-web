@@ -1,4 +1,4 @@
-import { mergeProperty } from "./mergeProperty";
+import { mergeProperty } from "./utils";
 
 test("mergeProperty", () => {
   const a = { a: { b: { lat: 0, lng: 1 } }, c: [{ d: 1 }, { d: 2 }], d: 1 };
