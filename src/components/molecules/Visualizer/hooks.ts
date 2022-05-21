@@ -1,5 +1,5 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
-import { keyBy, merge, mergeWith, values } from "lodash";
+import { mergeWith, omit } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
@@ -62,23 +62,21 @@ export default ({
 }) => {
   const engineRef = useRef<EngineRef>(null);
 
-  const [overriddenSceneProperty, overrideSceneProperty] = useState({});
+  const [overriddenSceneProperty, overrideSceneProperty] = useState<{ [pluginId: string]: any }>(
+    {},
+  );
 
-  const handleScenePropertyOverride = useCallback((property: any) => {
-    overrideSceneProperty(p => mergeProperty(p, property));
+  const handleScenePropertyOverride = useCallback((pluginId: string, property: any) => {
+    overrideSceneProperty(p =>
+      pluginId && property ? { ...p, [pluginId]: property } : omit(p, pluginId),
+    );
   }, []);
 
   const mergedSceneProperty = useMemo(() => {
-    if (!overriddenSceneProperty || typeof overriddenSceneProperty !== "object")
-      return sceneProperty;
-    return mergeWith(sceneProperty, overriddenSceneProperty, (obj: any, other: any) => {
-      if (Array.isArray(obj) && Array.isArray(other)) {
-        const merged = merge({}, keyBy(obj, "id"), keyBy(other, "id"));
-        return values(merged);
-      } else {
-        return merge({}, obj, other);
-      }
-    });
+    return Object.values(overriddenSceneProperty).reduce(
+      (p, v) => mergeProperty(p, v),
+      sceneProperty,
+    );
   }, [sceneProperty, overriddenSceneProperty]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -181,7 +179,6 @@ export default ({
       hideLayer: hideLayers,
       selectLayer,
       overrideLayerProperty,
-      overrideSceneProperty: handleScenePropertyOverride,
     },
     engineRef,
     layers,
@@ -216,6 +213,7 @@ export default ({
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
+    overrideSceneProperty: handleScenePropertyOverride,
   };
 };
 
