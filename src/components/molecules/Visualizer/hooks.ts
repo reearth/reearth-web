@@ -1,9 +1,10 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
-import { mergeWith, omit } from "lodash";
+import { omit } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
+import { mergeProperty } from "@reearth/util/mergeProperty";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng } from "@reearth/util/value";
 
@@ -17,15 +18,6 @@ import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, emptyLayerStore } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
-
-export function mergeProperty(a: any, b: any) {
-  return mergeWith(
-    { ...a },
-    b,
-    (s: any, v: any, _k: string | number | symbol, _obj: any, _src: any, stack: { size: number }) =>
-      stack.size > 0 || Array.isArray(v) ? v ?? s : undefined,
-  );
-}
 
 export default ({
   engineType,
