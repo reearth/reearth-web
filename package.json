@@ -150,7 +150,7 @@
         "yaml-flat-loader": "^1.0.1"
     },
     "dependencies": {
-        "@apollo/client": "^3.5.8",
+        "@apollo/client": "^3.6.5",
         "@auth0/auth0-react": "^1.10.1",
         "@babel/plugin-syntax-dynamic-import": "^7.8.3",
         "@emotion/react": "^11.9.0",
@@ -176,8 +176,8 @@
         "detect-browser": "^5.3.0",
         "formik": "^2.2.6",
         "github-markdown-css": "^5.1.0",
-        "graphiql": "^1.8.10",
-        "graphql": "^16.3.0",
+        "graphiql": "^1.9.3",
+        "graphql": "^16.5.0",
         "i18next": "^21.8.4",
         "i18next-browser-languagedetector": "^6.1.4",
         "jotai": "^1.6.7",
@@ -207,7 +207,7 @@
         "react-popper": "^2.3.0",
         "react-spinners": "^0.11.0",
         "react-svg": "^14.1.18",
-        "react-use": "^17.3.2",
+        "react-use": "^17.4.0",
         "regenerator-runtime": "^0.13.7",
         "remark-gfm": "^3.0.1",
         "resium": "^1.14.3",
