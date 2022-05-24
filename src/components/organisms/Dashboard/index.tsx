@@ -50,7 +50,7 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
           onChangeTeam={changeTeam}
           modalShown={modalShown}
           openModal={openModal}
-          handleModalClose={handleModalClose}
+          onModalClose={handleModalClose}
           dashboard
         />
       }

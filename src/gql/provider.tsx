@@ -97,7 +97,7 @@ const Provider: React.FC = ({ children }) => {
             merge: paginationMerge,
           },
           projects: {
-            keyArgs: ["teamId", "first", "after"],
+            keyArgs: ["teamId", "includeArchived", "last", "before"],
             merge: paginationMerge,
           },
 

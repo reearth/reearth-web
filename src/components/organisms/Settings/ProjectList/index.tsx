@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useState } from "react";
 
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
@@ -22,8 +22,12 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     loading,
     currentProjects,
     archivedProjects,
-    projectLoading,
+    totalCurrent,
+    totalArchived,
+    loadingProjects,
+    loadingArchProjects,
     hasMoreProjects,
+    hasMoreArchProjects,
     modalShown,
     openModal,
     handleModalClose,
@@ -34,34 +38,36 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
+    handleGetMoreArchProjects,
   } = useHooks(teamId);
 
-  const projectLength = useMemo(
-    () => ({
-      currentProjectsLength: currentProjects.length,
-      archivedProjectsLength: archivedProjects.length,
-    }),
-    [currentProjects, archivedProjects],
-  );
+  type Tab = "current" | "archived";
+  const [selectedTab, setSelectedTab] = useState<Tab>("current");
 
   const headers = {
-    current: t("Current Projects") + "(" + projectLength.currentProjectsLength + ")",
-    archived: t("Archived Projects") + "(" + projectLength.archivedProjectsLength + ")",
+    current: t("Current Projects") + "(" + totalCurrent + ")",
+    archived: t("Archived Projects") + "(" + totalArchived + ")",
   };
-
+  const handleChangeTab = useCallback(
+    (t: Tab) => {
+      setSelectedTab(t);
+    },
+    [setSelectedTab],
+  );
   return (
     <SettingPage
       teamId={teamId}
-      loading={projectLoading}
-      hasMoreItems={hasMoreProjects}
-      onScroll={handleGetMoreProjects}>
+      loading={selectedTab === "current" ? loadingProjects : loadingArchProjects}
+      hasMoreItems={selectedTab === "current" ? hasMoreProjects : hasMoreArchProjects}
+      onScroll={selectedTab === "current" ? handleGetMoreProjects : handleGetMoreArchProjects}>
       <SettingsHeader title={t("Project List")} />
-      <TabSection<"current" | "archived">
+      <TabSection<Tab>
         menuAlignment="top"
-        initialSelected="current"
+        initialSelected={selectedTab}
         selected="current"
         expandedMenuIcon={false}
         headers={headers}
+        onChange={handleChangeTab}
         headerAction={
           <Button large buttonType="secondary" text={t("New Project")} onClick={openModal} />
         }>
@@ -70,11 +76,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
             <MoleculeProjectList projects={currentProjects} onProjectSelect={selectProject} />
           ),
           archived: (
-            <MoleculeProjectList
-              projects={archivedProjects}
-              archived
-              onProjectSelect={selectProject}
-            />
+            <MoleculeProjectList projects={archivedProjects} onProjectSelect={selectProject} />
           ),
         }}
       </TabSection>

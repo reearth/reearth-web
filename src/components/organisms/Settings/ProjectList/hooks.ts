@@ -8,7 +8,7 @@ import {
   PublishmentStatus,
   useCreateProjectMutation,
   useCreateSceneMutation,
-  useGetProjectsQuery,
+  useGetTeamProjectsQuery,
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/gql";
@@ -20,6 +20,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : s === PublishmentStatus.Limited
     ? "limited"
     : "unpublished";
+
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 const projectPerPage = 5;
@@ -36,7 +37,7 @@ export default (teamId: string) => {
 
   const { data, loading, refetch } = useGetMeQuery();
   const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["GetProjects"],
+    refetchQueries: ["GetTeamProjects"],
   });
   const [createScene] = useCreateSceneMutation();
 
@@ -50,8 +51,23 @@ export default (teamId: string) => {
     loading: queryProject,
     fetchMore,
     networkStatus,
-  } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: projectPerPage },
+  } = useGetTeamProjectsQuery({
+    variables: { teamId: teamId ?? "", includeArchived: false, last: projectPerPage },
+    skip: !teamId,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const {
+    data: archProjectData,
+    loading: archQueryProject,
+    fetchMore: archFetchMore,
+    networkStatus: archNetworkStatus,
+  } = useGetTeamProjectsQuery({
+    variables: {
+      teamId: teamId ?? "",
+      includeArchived: true,
+      last: projectPerPage,
+    },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
   });
@@ -63,6 +79,7 @@ export default (teamId: string) => {
   }, [currentTeam, team, setTeam]);
 
   const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
+  const archProjectNodes = archProjectData?.projects.edges.map(e => e.node) as ProjectNodes;
 
   const currentProjects = (projectNodes ?? [])
     .map<Project | undefined>(project =>
@@ -78,9 +95,9 @@ export default (teamId: string) => {
           }
         : undefined,
     )
-    .filter((project): project is Project => !!project && project?.isArchived === false);
+    .filter((project): project is Project => !!project);
 
-  const archivedProjects = (projectNodes ?? [])
+  const archivedProjects = (archProjectNodes ?? [])
     .map<Project | undefined>(project =>
       project
         ? {
@@ -96,15 +113,24 @@ export default (teamId: string) => {
     )
     .filter((project): project is Project => !!project && project?.isArchived === true);
 
+  const totalArchived = archivedProjects.length;
+  const totalCurrent = currentProjects.length;
+
   const hasMoreProjects =
     projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;
 
+  const hasMoreArchProjects =
+    archProjectData?.projects.pageInfo?.hasNextPage ||
+    archProjectData?.projects.pageInfo?.hasPreviousPage;
+
   const isRefetchingProjects = networkStatus === 3;
+  const isRefetchingArchProjects = archNetworkStatus === 3;
+
   const handleGetMoreProjects = useCallback(() => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
-          after: projectData?.projects.pageInfo?.endCursor,
+          before: projectData?.projects.pageInfo?.endCursor,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -113,6 +139,20 @@ export default (teamId: string) => {
       });
     }
   }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
+
+  const handleGetMoreArchProjects = useCallback(() => {
+    if (hasMoreArchProjects) {
+      archFetchMore({
+        variables: {
+          before: archProjectData?.projects.pageInfo?.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+  }, [archProjectData?.projects.pageInfo, archFetchMore, hasMoreArchProjects]);
 
   const handleModalClose = useCallback(
     (r?: boolean) => {
@@ -192,8 +232,12 @@ export default (teamId: string) => {
   return {
     currentProjects,
     archivedProjects,
-    projectLoading: queryProject ?? isRefetchingProjects,
+    totalCurrent,
+    totalArchived,
+    loadingProjects: queryProject ?? isRefetchingProjects,
+    loadingArchProjects: archQueryProject ?? isRefetchingArchProjects,
     hasMoreProjects,
+    hasMoreArchProjects,
     teamId,
     loading,
     modalShown,
@@ -206,5 +250,6 @@ export default (teamId: string) => {
     toggleAssetModal,
     onAssetSelect,
     handleGetMoreProjects,
+    handleGetMoreArchProjects,
   };
 };

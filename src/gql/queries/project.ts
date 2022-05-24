@@ -19,12 +19,50 @@ export const GET_PROJECT = gql`
 `;
 
 export const GET_TEAM_PROJECTS = gql`
-  query GetTeamProjects($teamId: ID!, $includeArchived: Boolean, $first: Int, $last: Int) {
-    projects(teamId: $teamId, includeArchived: $includeArchived, first: $first, last: $last) {
-      nodes {
-        id
-        name
+  query GetTeamProjects(
+    $teamId: ID!
+    $includeArchived: Boolean
+    $first: Int
+    $last: Int
+    $after: Cursor
+    $before: Cursor
+  ) {
+    projects(
+      teamId: $teamId
+      includeArchived: $includeArchived
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+    ) {
+      edges {
+        node {
+          id
+          name
+          description
+          imageUrl
+          isArchived
+          isBasicAuthActive
+          basicAuthUsername
+          basicAuthPassword
+          publicTitle
+          publicDescription
+          publicImage
+          alias
+          publishmentStatus
+          scene {
+            id
+          }
+        }
       }
+
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      totalCount
     }
   }
 `;

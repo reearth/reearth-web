@@ -2682,10 +2682,12 @@ export type GetTeamProjectsQueryVariables = Exact<{
   includeArchived?: InputMaybe<Scalars['Boolean']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
 }>;
 
 
-export type GetTeamProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, name: string } | null> } };
+export type GetTeamProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', totalCount: number, edges: Array<{ __typename?: 'ProjectEdge', node?: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, scene?: { __typename?: 'Scene', id: string } | null } | null }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type GetProjectsQueryVariables = Exact<{
   teamId: Scalars['ID'];
@@ -5481,17 +5483,42 @@ export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>;
 export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>;
 export type GetProjectQueryResult = Apollo.QueryResult<GetProjectQuery, GetProjectQueryVariables>;
 export const GetTeamProjectsDocument = gql`
-    query GetTeamProjects($teamId: ID!, $includeArchived: Boolean, $first: Int, $last: Int) {
+    query GetTeamProjects($teamId: ID!, $includeArchived: Boolean, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
   projects(
     teamId: $teamId
     includeArchived: $includeArchived
     first: $first
     last: $last
+    after: $after
+    before: $before
   ) {
-    nodes {
-      id
-      name
+    edges {
+      node {
+        id
+        name
+        description
+        imageUrl
+        isArchived
+        isBasicAuthActive
+        basicAuthUsername
+        basicAuthPassword
+        publicTitle
+        publicDescription
+        publicImage
+        alias
+        publishmentStatus
+        scene {
+          id
+        }
+      }
     }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    totalCount
   }
 }
     `;
@@ -5512,6 +5539,8 @@ export const GetTeamProjectsDocument = gql`
  *      includeArchived: // value for 'includeArchived'
  *      first: // value for 'first'
  *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
  *   },
  * });
  */

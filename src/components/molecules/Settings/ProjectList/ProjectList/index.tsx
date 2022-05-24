@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import ProjectCell, {
@@ -11,19 +11,12 @@ export type Project = ProjectType;
 
 export type Props = {
   title?: string;
-  archived?: boolean;
   projects?: Project[];
   loading?: boolean;
   onProjectSelect?: (project: Project) => void;
 };
 
-const ProjectList: React.FC<Props> = ({ loading, projects, archived, onProjectSelect }) => {
-  const [open, setOpen] = useState(true);
-
-  useEffect(() => {
-    archived && setOpen(false);
-  }, [archived]);
-
+const ProjectList: React.FC<Props> = ({ loading, projects, onProjectSelect }) => {
   return (
     <>
       {loading ? (
@@ -32,13 +25,11 @@ const ProjectList: React.FC<Props> = ({ loading, projects, archived, onProjectSe
         </div>
       ) : (
         <>
-          {open && (
-            <ProjectListContainner>
-              {projects?.map(project => (
-                <ProjectCell project={project} key={project.id} onSelect={onProjectSelect} />
-              ))}
-            </ProjectListContainner>
-          )}
+          <ProjectListContainner>
+            {projects?.map(project => (
+              <ProjectCell project={project} key={project.id} onSelect={onProjectSelect} />
+            ))}
+          </ProjectListContainner>
         </>
       )}
     </>

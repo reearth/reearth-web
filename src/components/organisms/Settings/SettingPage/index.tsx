@@ -57,8 +57,8 @@ const SettingPage: React.FC<Props> = ({
       onChangeTeam={changeTeam}
       modalShown={modalShown}
       openModal={openModal}
-      handleModalClose={handleModalClose}
-      handleScrolling={onScroll}>
+      onModalClose={handleModalClose}
+      onScroll={onScroll}>
       {children}
     </MoleculesSettingPage>
   );
