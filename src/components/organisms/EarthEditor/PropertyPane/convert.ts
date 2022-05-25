@@ -274,7 +274,7 @@ type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> 
 export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Layer[] {
   const layers = data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
 
-  function mapper(layer: Maybe<GQLLayer> | undefined): Layer | undefined {
+  function mapper(layer: Maybe<GQLLayer> | undefined | any): Layer | undefined | any {
     if (!layer) return undefined;
     return {
       id: layer.id,
@@ -286,7 +286,7 @@ export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Laye
             group: true,
             children: layer.layers
               ?.map(mapper)
-              .filter((l): l is Layer => !!l)
+              .filter((l: any): l is Layer => !!l)
               .reverse(),
           }
         : {

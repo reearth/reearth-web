@@ -270,7 +270,7 @@ export default () => {
   const addLayerGroup = useCallback(() => {
     if (!rootLayerId) return;
 
-    const layers: (Maybe<GQLLayer> | undefined)[] =
+    const layers: (Maybe<GQLLayer> | undefined | any)[] =
       data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
     const children = (l: Maybe<GQLLayer> | undefined) =>
       l?.__typename == "LayerGroup" ? l.layers : undefined;
@@ -461,7 +461,7 @@ type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> 
   layers?: (GQLLayer | null | undefined)[];
 };
 
-const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
+const convertLayer = (layer: Maybe<GQLLayer> | any): Layer | any =>
   !layer
     ? undefined
     : layer.__typename === "LayerGroup"
@@ -473,7 +473,7 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
         linked: !!layer.linkedDatasetSchemaId,
         children: layer.layers
           ?.map(convertLayer)
-          .filter((l): l is Layer => !!l)
+          .filter((l: any): l is Layer => !!l)
           .reverse(),
       }
     : layer.__typename === "LayerItem"

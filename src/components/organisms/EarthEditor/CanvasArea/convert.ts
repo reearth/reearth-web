@@ -134,7 +134,7 @@ const processMergedInfobox = (
   };
 };
 
-const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined => {
+const processLayer = (layer: EarthLayer5Fragment | undefined | any): Layer | undefined | any => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -152,7 +152,9 @@ const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
+        ? layer.layers
+            ?.map((l: any) => processLayer(l ?? undefined))
+            .filter((l: any): l is Layer => !!l)
         : undefined,
   };
 };
