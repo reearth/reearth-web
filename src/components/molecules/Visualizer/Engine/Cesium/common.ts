@@ -288,19 +288,15 @@ export const animateFOV = ({
     typeof camera.frustum.fov === "number" &&
     camera.frustum.fov !== fov
   ) {
-    if (duration === 0) {
-      camera.frustum.fov = fov;
-    } else {
-      const fromFov = camera.frustum.fov;
-      return tweenInterval(
-        t => {
-          if (!(camera.frustum instanceof PerspectiveFrustum)) return;
-          camera.frustum.fov = (fov - fromFov) * t + fromFov;
-        },
-        easing || "inOutCubic",
-        (duration ?? 0) * 1000,
-      );
-    }
+    const fromFov = camera.frustum.fov;
+    return tweenInterval(
+      t => {
+        if (!(camera.frustum instanceof PerspectiveFrustum)) return;
+        camera.frustum.fov = (fov - fromFov) * t + fromFov;
+      },
+      easing || "inOutCubic",
+      (duration ?? 0) * 1000,
+    );
   }
   return undefined;
 };
