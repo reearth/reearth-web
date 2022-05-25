@@ -130,7 +130,6 @@ export default ({
     [property?.default?.bgcolor],
   );
 
-  // scene mode
   useEffect(() => {
     engineAPI.morphSceneModeTo(property?.default?.sceneMode, 0);
   }, [property?.default?.sceneMode, engineAPI]);
