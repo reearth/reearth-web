@@ -1,6 +1,6 @@
 import { ComponentType, ReactNode } from "react";
 
-import { LatLngHeight, Camera, Typography, Rect, SceneMode } from "@reearth/util/value";
+import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
 import type { Component } from "../Primitive";
 
@@ -20,6 +20,8 @@ export type EngineRef = {
   pluginApi?: any;
   clusterComponent?: ComponentType<ClusterProps>;
 };
+
+export type SceneMode = "scene3d" | "scene2d" | "columbus";
 
 export type FlyToDestination = {
   /** Degrees */

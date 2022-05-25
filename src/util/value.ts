@@ -24,8 +24,6 @@ export type Camera = {
   fov: number;
 };
 
-export type SceneMode = "scene3d" | "scene2d" | "columbus";
-
 export type Typography = {
   fontFamily?: string;
   fontSize?: number;
