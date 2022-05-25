@@ -96,6 +96,7 @@ export type Props<T extends ValueType = ValueType> = {
   isTemplate?: boolean;
   isCapturing?: boolean;
   camera?: Camera;
+  onlyPosition?: boolean;
   layers?: LayerType[];
   assetModal?: ComponentType<AssetModalProps>;
   onChange?: (id: string, value: ValueTypes[T] | undefined, type: ValueType) => void;
@@ -119,6 +120,7 @@ const PropertyField: React.FC<Props> = ({
   onIsCapturingChange,
   camera,
   onCameraChange,
+  onlyPosition,
   onLink,
   datasetSchemas,
   isLinkable,
@@ -234,6 +236,8 @@ const PropertyField: React.FC<Props> = ({
             onCameraChange={onCameraChange}
             onDelete={events.onClear}
             onlyPose={schema.ui === "cameraPose"}
+            onlyPosition={onlyPosition}
+            disabled={schema.ui === "cameraPose" && onlyPosition}
           />
         ) : type === "ref" && schema.ui === "layer" ? (
           <LayerField {...commonProps} layers={layers} />

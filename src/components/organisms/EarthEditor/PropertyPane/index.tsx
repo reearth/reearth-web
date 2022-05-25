@@ -23,6 +23,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     isInfoboxCreatable,
     isCapturing,
     camera,
+    onlyPosition,
     datasetSchemas,
     loading,
     layers,
@@ -61,6 +62,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           isInfoboxCreatable={isInfoboxCreatable}
           isCapturing={isCapturing}
           camera={camera}
+          onlyPosition={onlyPosition}
           isLinkable={isLayerGroup && !!linkedDatasetSchemaId}
           linkedDatasetSchemaId={linkedDatasetSchemaId}
           linkedDatasetId={linkedDatasetId}

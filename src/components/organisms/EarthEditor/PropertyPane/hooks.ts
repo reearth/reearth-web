@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
 import { ValueTypes, ValueType } from "@reearth/components/molecules/EarthEditor/PropertyPane";
@@ -22,6 +22,7 @@ import {
   useRootLayerId,
   useIsCapturing,
   useCamera,
+  useOnlyPosition,
   useTeam,
   useSceneId,
   useSelectedBlock,
@@ -45,6 +46,7 @@ export default (mode: Mode) => {
   const [rootLayerId] = useRootLayerId();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, setCamera] = useCamera();
+  const [onlyPosition, setOnlyPosition] = useOnlyPosition();
   const [team] = useTeam();
   const [sceneId] = useSceneId();
   const [widgetAlignEditorActivated, setWidgetAlignEditorActivated] =
@@ -61,6 +63,7 @@ export default (mode: Mode) => {
     datasetSchemas,
     layers,
     selectedWidget,
+    sceneMode,
   } = useQueries({
     mode,
     sceneId,
@@ -207,6 +210,8 @@ export default (mode: Mode) => {
     [camera, setCamera],
   );
 
+  useEffect(() => setOnlyPosition(sceneMode === "scene2d"), [sceneMode, setOnlyPosition]);
+
   const [addPropertyItemMutation] = useAddPropertyItemMutation();
   const addPropertyItem = useCallback(
     async (
@@ -328,6 +333,7 @@ export default (mode: Mode) => {
     onIsCapturingChange,
     camera,
     onCameraChange,
+    onlyPosition,
     addPropertyItem,
     movePropertyItem,
     removePropertyItem,

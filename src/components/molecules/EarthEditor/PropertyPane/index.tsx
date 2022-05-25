@@ -71,6 +71,7 @@ export type Props = {
   | "onIsCapturingChange"
   | "camera"
   | "onCameraChange"
+  | "onlyPosition"
   | "isLinkable"
   | "onDatasetPickerOpen"
   | "defaultItemName"
