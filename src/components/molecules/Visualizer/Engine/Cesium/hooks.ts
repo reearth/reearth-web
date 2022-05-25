@@ -159,7 +159,6 @@ export default ({
       engineAPI,
       onCameraChange,
       property?.default?.camera,
-      property?.default?.sceneMode,
       property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
