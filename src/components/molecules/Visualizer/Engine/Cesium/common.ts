@@ -319,13 +319,8 @@ export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | u
   const lat = CesiumMath.toDegrees(latitude);
   const lng = CesiumMath.toDegrees(longitude);
   const { heading, pitch, roll } = camera;
-
-  if (camera.frustum instanceof PerspectiveFrustum) {
-    const { fov } = camera.frustum;
-    return { lng, lat, height, heading, pitch, roll, fov };
-  } else {
-    return { lng, lat, height, heading, pitch, roll };
-  }
+  const fov = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.fov : 1;
+  return { lng, lat, height, heading, pitch, roll, fov };
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
