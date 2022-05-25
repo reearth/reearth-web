@@ -46,6 +46,12 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
                 text={intl.formatMessage({ defaultMessage: "Datasets" })}
               />
             </MenuListItem>
+            <MenuListItem>
+              <MenuListItemLabel
+                linkTo={`/settings/project/${currentProject.id}/plugins`}
+                text={intl.formatMessage({ defaultMessage: "Plugins" })}
+              />
+            </MenuListItem>
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
