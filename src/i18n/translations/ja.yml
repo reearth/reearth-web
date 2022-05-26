@@ -1,5 +1,10 @@
 Continue: キャンセル
 Cancel: 続ける
+Project settings: プロジェクト設定
+Datasets: データセット
+Plugins: プラグイン
+Manage projects: プロジェクト管理
+Documentation: ヘルプ
 '''s workspace': ' のワークスペース'
 Successfully created workspace!: ''
 Failed to create project: ''

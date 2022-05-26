@@ -107,11 +107,6 @@ src:
           '3374163063': Description
           '3528672691': Cancel
           '4120989039': Create
-        ProjectMenu:
-          '1235925265': Documentation
-          '2661706411': Datasets
-          '3029638665': Project settings
-          '3873048483': Manage projects
         TeamMenu:
           '2611517824': Workspaces
           '3828443189': New Workspace
