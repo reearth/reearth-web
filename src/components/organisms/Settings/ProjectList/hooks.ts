@@ -1,6 +1,6 @@
+import { useApolloClient } from "@apollo/client";
 import { useNavigate } from "@reach/router";
 import { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import {
@@ -12,6 +12,7 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
@@ -29,7 +30,8 @@ export default (teamId: string) => {
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
   const navigate = useNavigate();
-  const intl = useIntl();
+  const t = useT();
+  const gqlCache = useApolloClient().cache;
 
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
@@ -51,7 +53,7 @@ export default (teamId: string) => {
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: projectPerPage },
+    variables: { teamId: teamId ?? "", last: projectPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
   });
@@ -78,33 +80,18 @@ export default (teamId: string) => {
           }
         : undefined,
     )
-    .filter((project): project is Project => !!project && project?.isArchived === false);
+    .filter((project): project is Project => !!project);
 
-  const archivedProjects = (projectNodes ?? [])
-    .map<Project | undefined>(project =>
-      project
-        ? {
-            id: project.id,
-            description: project.description,
-            name: project.name,
-            imageUrl: project.imageUrl,
-            isArchived: project.isArchived,
-            status: toPublishmentStatus(project.publishmentStatus),
-            sceneId: project.scene?.id,
-          }
-        : undefined,
-    )
-    .filter((project): project is Project => !!project && project?.isArchived === true);
-
+  const totalProjects = projectData?.projects.totalCount;
   const hasMoreProjects =
     projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;
-
   const isRefetchingProjects = networkStatus === 3;
+
   const handleGetMoreProjects = useCallback(() => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
-          after: projectData?.projects.pageInfo?.endCursor,
+          before: projectData?.projects.pageInfo?.endCursor,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -140,7 +127,7 @@ export default (teamId: string) => {
       if (project.errors || !project.data?.createProject) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
@@ -151,19 +138,19 @@ export default (teamId: string) => {
       if (scene.errors || !scene.data?.createScene) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
       }
       setNotification({
         type: "success",
-        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+        text: t("Successfully created project!"),
       });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, intl, refetch, setNotification, teamId],
+    [createNewProject, createScene, t, refetch, setNotification, teamId],
   );
 
   const selectProject = useCallback(
@@ -188,11 +175,16 @@ export default (teamId: string) => {
     if (!asset) return;
     selectAsset(asset);
   }, []);
+  useEffect(() => {
+    return () => {
+      gqlCache.evict({ fieldName: "projects" });
+    };
+  }, [gqlCache]);
 
   return {
     currentProjects,
-    archivedProjects,
-    projectLoading: queryProject ?? isRefetchingProjects,
+    totalProjects,
+    loadingProjects: queryProject ?? isRefetchingProjects,
     hasMoreProjects,
     teamId,
     loading,

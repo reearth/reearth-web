@@ -12,7 +12,7 @@ import { handleScroll } from "@reearth/util/handleScroll";
 interface SettingPageProps extends Props {
   loading?: boolean;
   hasMoreItems?: boolean;
-  handleScrolling?: () => void;
+  onScroll?: () => void;
 }
 
 const SettingPage: React.FC<SettingPageProps> = ({
@@ -45,7 +45,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
       />
       <BodyWrapper
         onScroll={e => {
-          !props.loading && props.hasMoreItems && handleScroll(e, props.handleScrolling);
+          !props.loading && props.hasMoreItems && handleScroll(e, props.onScroll);
         }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
@@ -65,7 +65,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
               )}
             </DeviceMenu>
             {children}
-            {props.hasMoreItems && <StyledLoading relative />}
+            {props.hasMoreItems && props.loading && <StyledLoading relative />}
           </ContentWrapper>
         </RightWrapper>
       </BodyWrapper>

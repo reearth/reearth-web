@@ -1,7 +1,9 @@
 Continue: キャンセル
 Cancel: 続ける
 '''s workspace': ' のワークスペース'
-Current Projects: ''
-Archived Projects: ''
+Successfully created workspace!: ''
+Failed to create project: ''
+Successfully created project!: ''
+Working Projects: ''
 Project List: ''
 New Project: ''

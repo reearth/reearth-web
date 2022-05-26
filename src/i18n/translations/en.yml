@@ -1,7 +1,9 @@
 Continue: Continue
 Cancel: Cancel
 '''s workspace': '''s workspace'
-Current Projects: Current Projects
-Archived Projects: Archived Projects
-Project List:  Project List
+Successfully created workspace!: Successfully created workspace!
+Failed to create project: Failed to create project
+Successfully created project!: Successfully created project!
+Working Projects: Working Projects
+Project List: Project List
 New Project: New Project

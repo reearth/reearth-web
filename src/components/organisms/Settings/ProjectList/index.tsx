@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
@@ -21,8 +21,8 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
   const {
     loading,
     currentProjects,
-    archivedProjects,
-    projectLoading,
+    totalProjects,
+    loadingProjects,
     hasMoreProjects,
     modalShown,
     openModal,
@@ -36,45 +36,30 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     handleGetMoreProjects,
   } = useHooks(teamId);
 
-  const projectLength = useMemo(
-    () => ({
-      currentProjectsLength: currentProjects.length,
-      archivedProjectsLength: archivedProjects.length,
-    }),
-    [currentProjects, archivedProjects],
-  );
-
+  type Tab = "Working";
   const headers = {
-    current: t("Current Projects") + "(" + projectLength.currentProjectsLength + ")",
-    archived: t("Archived Projects") + "(" + projectLength.archivedProjectsLength + ")",
+    Working: t("Working Projects") + "(" + (totalProjects ?? 0) + ")",
   };
 
   return (
     <SettingPage
       teamId={teamId}
-      loading={projectLoading}
+      loading={loadingProjects}
       hasMoreItems={hasMoreProjects}
       onScroll={handleGetMoreProjects}>
       <SettingsHeader title={t("Project List")} />
-      <TabSection<"current" | "archived">
+      <TabSection<Tab>
         menuAlignment="top"
-        initialSelected="current"
-        selected="current"
+        initialSelected={"Working"}
+        selected="Working"
         expandedMenuIcon={false}
         headers={headers}
         headerAction={
           <Button large buttonType="secondary" text={t("New Project")} onClick={openModal} />
         }>
         {{
-          current: (
+          Working: (
             <MoleculeProjectList projects={currentProjects} onProjectSelect={selectProject} />
-          ),
-          archived: (
-            <MoleculeProjectList
-              projects={archivedProjects}
-              archived
-              onProjectSelect={selectProject}
-            />
           ),
         }}
       </TabSection>

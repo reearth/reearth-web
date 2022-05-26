@@ -1,6 +1,6 @@
+import { useApolloClient } from "@apollo/client";
 import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useIntl } from "react-intl";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
@@ -14,6 +14,7 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
@@ -29,7 +30,7 @@ export default (teamId?: string) => {
   const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
-  const intl = useIntl();
+  const t = useT();
   const navigate = useNavigate();
 
   const toPublishmentStatus = (s: PublishmentStatus) =>
@@ -46,6 +47,7 @@ export default (teamId?: string) => {
   const teams = data?.me?.teams;
   const team = teams?.find(team => team.id === teamId);
   const personal = teamId === data?.me?.myTeam.id;
+  const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
     if (team?.id && team.id !== currentTeam?.id) {
@@ -77,14 +79,14 @@ export default (teamId?: string) => {
       if (results.data?.createTeam) {
         setNotification({
           type: "success",
-          text: intl.formatMessage({ defaultMessage: "Successfully created workspace!" }),
+          text: t("Successfully created workspace!"),
         });
         setCurrentTeam(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setCurrentTeam, refetch, navigate, intl, setNotification],
+    [createTeamMutation, setCurrentTeam, refetch, navigate, t, setNotification],
   );
 
   useEffect(() => {
@@ -110,7 +112,7 @@ export default (teamId?: string) => {
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: projectPerPage },
+    variables: { teamId: teamId ?? "", last: projectPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
   });
@@ -144,7 +146,7 @@ export default (teamId?: string) => {
     if (hasMoreProjects) {
       fetchMore({
         variables: {
-          after: projectData?.projects.pageInfo?.endCursor,
+          before: projectData?.projects.pageInfo?.endCursor,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -173,7 +175,7 @@ export default (teamId?: string) => {
       if (project.errors || !project.data?.createProject) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
@@ -184,19 +186,19 @@ export default (teamId?: string) => {
       if (scene.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
       }
       setNotification({
         type: "success",
-        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+        text: t("Successfully created project!"),
       });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, teamId, refetch, intl, setNotification],
+    [createNewProject, createScene, teamId, refetch, t, setNotification],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);
@@ -216,7 +218,9 @@ export default (teamId?: string) => {
   const onAssetSelect = useCallback((asset?: string) => {
     selectAsset(asset);
   }, []);
-
+  useEffect(() => {
+    gqlCache.evict({ fieldName: "projects" });
+  }, [gqlCache]);
   return {
     user,
     projects,

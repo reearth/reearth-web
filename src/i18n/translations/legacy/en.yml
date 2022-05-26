@@ -2,9 +2,6 @@ e5c8f: Some error has occurred. Please wait a moment and try again.
 src:
   components:
     atoms:
-      ConfirmationModal:
-        '3528672691': Cancel
-        '3640052215': Continue
       DropHolder:
         '2563828564': Drop here
       NotFound:
@@ -129,7 +126,6 @@ src:
           You have no projects in your workspace. Click the button above in the
           Quick Start to create a project now!
         '1068381306': User guide
-        '2148917173': '''s workspace'
         '3428478975': New workspace
         '3662865152': New project
         '4173541988': Quick Start
@@ -231,12 +227,12 @@ src:
               '4211710217': Capture
             ColorField:
               '1115770113': Save
-              '1533357798': Not set
               '1847234945': Red
               '1936615876': Alpha
               '2090560987': Green
               '3528672691': Cancel
               '3801160378': Blue
+              '3991511329': '#RRGGBBAA'
             LocationField:
               '2222144661': Latitude
               '3067266584': Altitude
@@ -456,10 +452,6 @@ src:
           ProjectCell:
             '3038786653': No Title Project
             '4204406466': No Description...
-          ProjectList:
-            '899189507': Current Projects
-            '1355637676': Archived Projects
-            '4146466746': New Project
         SettingsHeader:
           '893550186': (Your personal workspace)
         Workspace:
@@ -493,7 +485,6 @@ src:
         WorkspaceList:
           WorkspaceCell:
             '808766300': No Title Workspace
-            '3230245813': 'Members:'
             '4106929473': >-
               This is your personal workspace. Your projects and resources will
               be managed in this workspace.
@@ -517,10 +508,6 @@ src:
           '2700226140': Successfully added one or more assets.
           '3402808678': Failed to delete one or more assets.
           '4222118896': One or more assets were successfully deleted.
-      Dashboard:
-        '118901803': Successfully created project!
-        '1043376506': Failed to create project.
-        '1573629237': Successfully created workspace!
       EarthEditor:
         DataSourcePane:
           '8458775': Successfully deleted the dataset!
@@ -586,10 +573,6 @@ src:
             '2057458630': Plugins
           Public:
             '3135366329': Public
-        ProjectList:
-          '118901803': Successfully created project!
-          '1043376506': Failed to create project.
-          '3336263640': Project List
         Workspace:
           '905470392': Failed to delete member from the workspace.
           '1979109196': Failed to create workspace.
