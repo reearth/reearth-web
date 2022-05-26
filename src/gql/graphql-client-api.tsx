@@ -2440,7 +2440,7 @@ export type DatasetsListQueryVariables = Exact<{
 }>;
 
 
-export type DatasetsListQuery = { __typename?: 'Query', datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, edges: Array<{ __typename?: 'DatasetSchemaEdge', node?: { __typename?: 'DatasetSchema', id: string, source: string, name: string } | null }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
+export type DatasetsListQuery = { __typename?: 'Query', datasetSchemas: { __typename?: 'DatasetSchemaConnection', totalCount: number, edges: Array<{ __typename?: 'DatasetSchemaEdge', node?: { __typename?: 'DatasetSchema', id: string, source: string, name: string } | null }>, nodes: Array<{ __typename?: 'DatasetSchema', id: string, source: string, name: string } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type GetLinkableDatasetsQueryVariables = Exact<{
   sceneId: Scalars['ID'];
@@ -4279,6 +4279,11 @@ export const DatasetsListDocument = gql`
         source
         name
       }
+    }
+    nodes {
+      id
+      source
+      name
     }
     pageInfo {
       endCursor
