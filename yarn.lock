@@ -21972,11 +21972,6 @@ use-custom-compare@^1.2.0:
   resolved "https://registry.yarnpkg.com/use-custom-compare/-/use-custom-compare-1.2.0.tgz#1d091361a3dbbc6092d16f8b123f0ea255040b6a"
   integrity sha512-eqWhT9cPz3Y1R7CW/SHVpVudwAqmQD3mAOO/dk+mVp9NhVpgVigDl1w6WEeHOMa3JbhwQYOrCI9fLAdbtAOSXQ==
 
-use-debounce@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-7.0.1.tgz#380e6191cc13ad29f8e2149a12b5c37cc2891190"
-  integrity sha512-fOrzIw2wstbAJuv8PC9Vg4XgwyTLEOdq4y/Z3IhVl8DAE4svRcgyEUvrEXu+BMNgMoc3YND6qLT61kkgEKXh7Q==
-
 use-file-input@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/use-file-input/-/use-file-input-1.0.0.tgz#eb452ec71088e89f6711686fc87268c110b8bf47"
