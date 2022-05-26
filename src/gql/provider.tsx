@@ -1,9 +1,8 @@
-import { ApolloProvider, ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider, ApolloClient, ApolloLink, InMemoryCache, HttpLink } from "@apollo/client";
 import type { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { SentryLink } from "apollo-link-sentry";
-import { createUploadLink } from "apollo-upload-client";
 import { isEqual } from "lodash-es";
 import React from "react";
 
@@ -32,7 +31,7 @@ const Provider: React.FC = ({ children }) => {
     };
   });
 
-  const uploadLink = createUploadLink({
+  const uploadLink = new HttpLink({
     uri: endpoint,
   });
 
