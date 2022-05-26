@@ -186,7 +186,7 @@
         "parse-domain": "^7.0.0",
         "quickjs-emscripten": "^0.15.0",
         "quickjs-emscripten-sync": "^1.2.0",
-        "rc-slider": "9.7.5",
+        "rc-slider": "10.0.0",
         "react": "^17.0.2",
         "react-accessible-accordion": "^4.0.0",
         "react-align": "^2.0.4",
