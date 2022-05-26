@@ -21,7 +21,7 @@ export type EngineRef = {
   clusterComponent?: ComponentType<ClusterProps>;
 };
 
-export type SceneMode = "scene3d" | "scene2d" | "columbus";
+export type SceneMode = "3d" | "2d" | "columbus";
 
 export type FlyToDestination = {
   /** Degrees */
