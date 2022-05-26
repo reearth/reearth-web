@@ -131,7 +131,7 @@ export default ({
   );
 
   useEffect(() => {
-    engineAPI.morphSceneModeTo(property?.default?.sceneMode, 0);
+    engineAPI.changeSceneMode(property?.default?.sceneMode, 0);
   }, [property?.default?.sceneMode, engineAPI]);
 
   // move to initial position at startup

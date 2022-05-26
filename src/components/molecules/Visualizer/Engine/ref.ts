@@ -14,7 +14,7 @@ export type EngineRef = {
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
-  morphSceneModeTo: (sceneMode: SceneMode | undefined, duration?: number) => void;
+  changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
