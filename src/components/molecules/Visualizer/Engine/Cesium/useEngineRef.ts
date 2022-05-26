@@ -84,7 +84,7 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         viewer?.scene?.camera.zoomOut(amount);
       },
-      morphSceneModeTo: (sceneMode, duration = 2) => {
+      changeSceneMode: (sceneMode, duration = 2) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed() || !viewer.scene) return;
         switch (sceneMode) {
