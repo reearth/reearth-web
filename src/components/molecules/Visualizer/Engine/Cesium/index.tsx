@@ -74,8 +74,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       <Viewer
         ref={cesium}
         className={className}
-        animation={false}
-        timeline={false}
+        animation
+        timeline
         fullscreenButton={false}
         homeButton={false}
         geocoder={false}
