@@ -61,6 +61,7 @@ const CameraField: React.FC<Props> = ({
     onCameraChange,
     disabled,
     onlyPose,
+    onlyPosition,
   });
 
   const lat = typeof camera?.lat === "number" ? Math.round(camera?.lat * 1000) / 1000 : "";
