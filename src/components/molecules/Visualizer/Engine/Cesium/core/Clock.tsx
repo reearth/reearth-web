@@ -9,10 +9,10 @@ export type Props = {
 };
 
 export default function ReearthClock({ property }: Props): JSX.Element | null {
-  const { animation, visible, start, end, current, stepType, rangeType, multiplier, step } =
+  const { animation, visible, start, stop, current, stepType, rangeType, multiplier, step } =
     property?.timeline ?? {};
   const startTime = useMemo(() => (start ? JulianDate.fromIso8601(start) : undefined), [start]);
-  const stopTime = useMemo(() => (end ? JulianDate.fromIso8601(end) : undefined), [end]);
+  const stopTime = useMemo(() => (stop ? JulianDate.fromIso8601(stop) : undefined), [stop]);
   const currentTime = useMemo(
     () => (current ? JulianDate.fromIso8601(current) : undefined),
     [current],

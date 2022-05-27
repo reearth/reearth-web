@@ -117,14 +117,12 @@ export type SceneProperty = {
   };
   timeline?: {
     animation?: boolean;
+    visible?: boolean;
     current?: string;
     start?: string;
-    end?: string;
-    visible?: boolean;
+    stop?: string;
     stepType?: "rate" | "fixed";
-    // The rate at which the clock advances as a multiple of the system time. Enabled only when the clock type is rate.
     multiplier?: number;
-    // The rate at which the clock advances in milliseconds. Enabled only when the clock type is fixed.
     step?: number;
     rangeType?: "unbounded" | "clamped" | "bounced";
   };
