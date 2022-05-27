@@ -210,7 +210,11 @@ export default (mode: Mode) => {
     [camera, setCamera],
   );
 
-  useEffect(() => setOnlyPosition(sceneMode === "scene2d"), [sceneMode, setOnlyPosition]);
+  useEffect(() => {
+    if (sceneMode) {
+      setOnlyPosition(sceneMode === "2d");
+    }
+  }, [sceneMode, setOnlyPosition]);
 
   const [addPropertyItemMutation] = useAddPropertyItemMutation();
   const addPropertyItem = useCallback(
