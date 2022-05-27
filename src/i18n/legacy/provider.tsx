@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { IntlProvider } from "react-intl";
 
 import { useAuth } from "@reearth/auth";

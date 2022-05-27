@@ -1,6 +1,6 @@
-import { useNavigate } from "@reach/router";
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";

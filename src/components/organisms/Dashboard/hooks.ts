@@ -1,6 +1,6 @@
-import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
@@ -103,6 +103,10 @@ export default (teamId?: string) => {
     variables: { teamId: teamId ?? "", first: 100 },
     skip: !teamId,
   });
+
+  useEffect(() => {
+    console.log(projectData, "alsdfkj");
+  }, [projectData]);
 
   const projects = useMemo(() => {
     return (projectData?.projects.nodes ?? [])

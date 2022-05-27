@@ -1,5 +1,5 @@
-import { Link } from "@reach/router";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
 import Avatar from "@reearth/components/atoms/Avatar";

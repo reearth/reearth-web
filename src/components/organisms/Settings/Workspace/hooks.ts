@@ -1,6 +1,6 @@
-import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 import { Role as RoleUnion } from "@reearth/components/molecules/Settings/Workspace/MemberListItem";
 import {

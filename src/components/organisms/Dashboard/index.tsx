@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useAuth } from "@reearth/auth";
 import MoleculeHeader from "@reearth/components/molecules/Common/Header";
 import MoleculeDashboard from "@reearth/components/molecules/Dashboard";
@@ -34,6 +32,8 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     toggleAssetModal,
     onAssetSelect,
   } = useHooks(teamId);
+
+  console.log(projects, "p");
 
   return (
     <MoleculeDashboard

@@ -1,6 +1,6 @@
-import { useNavigate } from "@reach/router";
 import { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import {

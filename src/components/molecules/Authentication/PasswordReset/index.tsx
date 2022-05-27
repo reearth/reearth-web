@@ -1,6 +1,6 @@
-import { Link } from "@reach/router";
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
+import { Link } from "react-router-dom";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";

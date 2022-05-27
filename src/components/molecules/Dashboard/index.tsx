@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 import { styled } from "@reearth/theme";
 
@@ -6,6 +6,7 @@ export * from "./types";
 
 export type Props = {
   className?: string;
+  children?: ReactNode;
   header?: React.ReactNode;
 };
 

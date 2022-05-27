@@ -4,7 +4,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { SentryLink } from "apollo-link-sentry";
 import { isEqual } from "lodash-es";
-import React from "react";
+import { ReactNode } from "react";
 
 import { useAuth } from "@reearth/auth";
 import { reportError } from "@reearth/sentry";
@@ -12,7 +12,7 @@ import { useError } from "@reearth/state";
 
 import fragmentMatcher from "./fragmentMatcher.json";
 
-const Provider: React.FC = ({ children }) => {
+const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
     ? `${window.REEARTH_CONFIG.api}/graphql`
     : "/api/graphql";
