@@ -84,17 +84,17 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         viewer?.scene?.camera.zoomOut(amount);
       },
-      morphSceneModeTo: (sceneMode, duration = 2) => {
+      changeSceneMode: (sceneMode, duration = 2) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed() || !viewer.scene) return;
         switch (sceneMode) {
-          case "scene2d":
+          case "2d":
             viewer?.scene?.morphTo2D(duration);
             break;
           case "columbus":
             viewer?.scene?.morphToColumbusView(duration);
             break;
-          case "scene3d":
+          case "3d":
           default:
             viewer?.scene?.morphTo3D(duration);
             break;
