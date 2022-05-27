@@ -26,6 +26,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     selectedLayerId,
     blocks,
     isCapturing,
+    isPerspectiveCamera,
     camera,
     widgetAlignEditorActivated,
     selectLayer,
@@ -81,7 +82,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onLayerDrop={handleDropLayer}
       pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>
       <FovSlider
-        visible={isCapturing && sceneProperty?.default?.sceneMode !== "scene2d"}
+        visible={isCapturing && isPerspectiveCamera}
         onIsCapturingChange={onIsCapturingChange}
         camera={camera}
         onFovChange={onFovChange}

@@ -160,6 +160,11 @@ export default (isBuilt?: boolean) => {
     [camera, onCameraChange],
   );
 
+  const isPerspectiveCamera = useMemo(
+    () => !(sceneProperty?.default?.sceneMode === "2d"),
+    [sceneProperty],
+  );
+
   // block selector
   const [addInfoboxField] = useAddInfoboxFieldMutation();
   const { data: blockData } = useGetBlocksQuery({
@@ -273,6 +278,7 @@ export default (isBuilt?: boolean) => {
     selectedLayer,
     blocks,
     isCapturing,
+    isPerspectiveCamera,
     camera,
     widgetAlignEditorActivated,
     selectLayer,
