@@ -24,12 +24,12 @@ export default function ReearthClock({ property }: Props): JSX.Element | null {
   const { viewer } = useCesium();
   useEffect(() => {
     if (!viewer) return;
-    if (viewer.animation) {
+    if (viewer.animation?.container) {
       (viewer.animation.container as HTMLDivElement).style.visibility = visible
         ? "visible"
         : "hidden";
     }
-    if (viewer.timeline) {
+    if (viewer.timeline?.container) {
       (viewer.timeline.container as HTMLDivElement).style.visibility = visible
         ? "visible"
         : "hidden";

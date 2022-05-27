@@ -120,12 +120,12 @@ export type SceneProperty = {
     current?: string;
     start?: string;
     end?: string;
-    stepType?: "system" | "fixed";
-    // The rate at which the clock advances as a multiple of the system time. Enabled only when the clock type is system.
+    visible?: boolean;
+    stepType?: "rate" | "fixed";
+    // The rate at which the clock advances as a multiple of the system time. Enabled only when the clock type is rate.
     multiplier?: number;
     // The rate at which the clock advances in milliseconds. Enabled only when the clock type is fixed.
     step?: number;
-    visible?: boolean;
     rangeType?: "unbounded" | "clamped" | "bounced";
   };
   googleAnalytics?: {
