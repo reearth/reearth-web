@@ -34,7 +34,8 @@ export const useIsCapturing = () => useAtom(isCapturing);
 const camera = atom<Camera | undefined>(undefined);
 export const useCamera = () => useAtom(camera);
 
-const sceneMode = atom<"3d" | "2d" | "columbus" | undefined>("3d");
+export type SceneMode = "3d" | "2d" | "columbus";
+const sceneMode = atom<SceneMode | undefined>("3d");
 export const useSceneMode = () => useAtom(sceneMode);
 
 export type Team = {
