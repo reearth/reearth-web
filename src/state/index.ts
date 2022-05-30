@@ -35,7 +35,7 @@ const camera = atom<Camera | undefined>(undefined);
 export const useCamera = () => useAtom(camera);
 
 export type SceneMode = "3d" | "2d" | "columbus";
-const sceneMode = atom<SceneMode | undefined>("3d");
+const sceneMode = atom<SceneMode>("3d");
 export const useSceneMode = () => useAtom(sceneMode);
 
 export type Team = {

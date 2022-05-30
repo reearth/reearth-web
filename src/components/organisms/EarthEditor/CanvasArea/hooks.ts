@@ -163,7 +163,7 @@ export default (isBuilt?: boolean) => {
   );
 
   useEffect(() => {
-    setSceneMode(sceneProperty?.default?.sceneMode);
+    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
   }, [sceneProperty, setSceneMode]);
 
   // block selector
