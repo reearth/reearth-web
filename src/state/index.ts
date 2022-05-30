@@ -76,6 +76,6 @@ const unselectProject = atom(null, (_get, set) => {
   set(selectedBlock, undefined);
   set(camera, undefined);
   set(isCapturing, false);
-  set(sceneMode, undefined);
+  set(sceneMode, "3d");
 });
 export const useUnselectProject = () => useAtom(unselectProject)[1];
