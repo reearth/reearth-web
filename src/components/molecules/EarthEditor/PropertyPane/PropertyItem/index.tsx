@@ -112,7 +112,7 @@ export type Props = {
   | "onIsCapturingChange"
   | "camera"
   | "onCameraChange"
-  | "onlyPosition"
+  | "sceneMode"
   | "isLinkable"
   | "onDatasetPickerOpen"
   | "layers"

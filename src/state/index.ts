@@ -34,8 +34,8 @@ export const useIsCapturing = () => useAtom(isCapturing);
 const camera = atom<Camera | undefined>(undefined);
 export const useCamera = () => useAtom(camera);
 
-const onlyPosition = atom<boolean>(false);
-export const useOnlyPosition = () => useAtom(onlyPosition);
+const sceneMode = atom<"3d" | "2d" | "columbus" | undefined>("3d");
+export const useSceneMode = () => useAtom(sceneMode);
 
 export type Team = {
   id: string;
@@ -75,6 +75,6 @@ const unselectProject = atom(null, (_get, set) => {
   set(selectedBlock, undefined);
   set(camera, undefined);
   set(isCapturing, false);
-  set(onlyPosition, false);
+  set(sceneMode, undefined);
 });
 export const useUnselectProject = () => useAtom(unselectProject)[1];

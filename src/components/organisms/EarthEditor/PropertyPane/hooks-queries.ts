@@ -191,12 +191,6 @@ export default ({
 
   const layers = useMemo(() => convertLayers(layerData), [layerData]);
 
-  const sceneMode = useMemo(() => {
-    const defaultPropery = sceneProperty?.items.find(item => item.schemaGroupId === "default");
-    if (!defaultPropery || !("fields" in defaultPropery)) return;
-    return defaultPropery.fields.find(field => field.fieldId === "sceneMode")?.value;
-  }, [sceneProperty]);
-
   return {
     loading,
     error,
@@ -208,6 +202,5 @@ export default ({
     datasetSchemas,
     layers,
     selectedWidget,
-    sceneMode,
   };
 };
