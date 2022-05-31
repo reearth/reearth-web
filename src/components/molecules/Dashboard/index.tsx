@@ -7,7 +7,7 @@ export * from "./types";
 export type Props = {
   className?: string;
   children?: ReactNode;
-  header?: React.ReactNode;
+  header?: ReactNode;
 };
 
 const Dashboard: React.FC<Props> = ({ className, header, children }) => {
