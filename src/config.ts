@@ -159,7 +159,7 @@ export default async function loadConfig() {
   if (window.REEARTH_CONFIG?.extensionUrls) {
     let urls = window.REEARTH_CONFIG.extensionUrls;
     if (!Array.isArray(urls)) {
-      urls = [urls];
+      urls = urls.split(",");
     }
     const extensions = getExtensionsFrom(urls);
     window.REEARTH_CONFIG.extensions = extensions;
