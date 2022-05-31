@@ -55,7 +55,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, teamId }) => {
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
-                linkTo={`/settings/workspace/${teamId}/projects`}
+                linkTo={`/settings/workspaces/${teamId}/projects`}
                 text={t("Manage projects")}
               />
             </MenuListItem>
