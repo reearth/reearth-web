@@ -140,7 +140,7 @@ export default (teamId: string) => {
     (project: Project) => {
       if (project.id) {
         setProject(project);
-        navigate(`/settings/project/${project.id}`);
+        navigate(`/settings/projects/${project.id}`);
       }
     },
     [navigate, setProject],

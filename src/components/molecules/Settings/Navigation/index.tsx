@@ -63,21 +63,21 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
           {project && !project.isArchived && (
             <NavigationItem
               level={2}
-              to={`/settings/project/${project.id}`}
+              to={`/settings/projects/${project.id}`}
               name={project.name as string}>
               <NavigationItem
                 level={3}
-                to={`/settings/project/${project.id}/public`}
+                to={`/settings/projects/${project.id}/public`}
                 name={intl.formatMessage({ defaultMessage: "Public" })}
               />
               <NavigationItem
                 level={3}
-                to={`/settings/project/${project.id}/dataset`}
+                to={`/settings/projects/${project.id}/dataset`}
                 name={intl.formatMessage({ defaultMessage: "Dataset" })}
               />
               <NavigationItem
                 level={3}
-                to={`/settings/project/${project.id}/plugins`}
+                to={`/settings/projects/${project.id}/plugins`}
                 name={intl.formatMessage({ defaultMessage: "Plugins" })}
               />
             </NavigationItem>
