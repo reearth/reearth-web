@@ -27,7 +27,7 @@ export interface Props {
   onChangeTeam?: (teamId: string) => void;
   modalShown?: boolean;
   openModal?: () => void;
-  onModalClose?: (r?: boolean | undefined) => void;
+  onModalClose?: (r?: boolean) => void;
   dashboard?: boolean;
 }
 
