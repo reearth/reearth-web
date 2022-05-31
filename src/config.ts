@@ -62,7 +62,7 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
-  extensionUrls?: string[] | string;
+  extensionUrls?: string[];
   extensions?: Extensions;
 };
 declare global {
