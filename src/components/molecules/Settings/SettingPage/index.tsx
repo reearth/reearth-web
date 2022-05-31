@@ -9,11 +9,11 @@ import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
 import { handleScroll } from "@reearth/util/handleScroll";
 
-interface SettingPageProps extends Props {
+export type SettingPageProps = {
   loading?: boolean;
   hasMoreItems?: boolean;
   onScroll?: () => void;
-}
+} & Props;
 
 const SettingPage: React.FC<SettingPageProps> = ({
   children,
