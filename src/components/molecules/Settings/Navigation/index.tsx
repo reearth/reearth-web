@@ -40,17 +40,17 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
         />
         <Divider margin="0" />
         <NavigationItem
-          to={`/settings/workspaces`}
+          to={"/settings/workspaces"}
           name={intl.formatMessage({ defaultMessage: "Workspace List" })}>
           {team && (
             <NavigationItem
               level={2}
-              to={`/settings/workspace/${team.id}`}
+              to={`/settings/workspaces/${team.id}`}
               key={team.id}
               name={team.name as string}>
               <NavigationItem
                 level={3}
-                to={`/settings/workspace/${team.id}/asset`}
+                to={`/settings/workspaces/${team.id}/asset`}
                 name={intl.formatMessage({ defaultMessage: "Assets" })}
               />
             </NavigationItem>
@@ -58,7 +58,7 @@ const Navigation: React.FC<Props> = ({ team, project }) => {
         </NavigationItem>
         <Divider margin="0" />
         <NavigationItem
-          to={`/settings/workspace/${team?.id}/projects`}
+          to={`/settings/workspaces/${team?.id}/projects`}
           name={intl.formatMessage({ defaultMessage: "Project List" })}>
           {project && !project.isArchived && (
             <NavigationItem

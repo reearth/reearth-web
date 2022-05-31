@@ -34,7 +34,7 @@ export default (params: Params) => {
       if (r) {
         refetch();
       }
-      navigate(`/settings/workspace/${currentTeam?.id}`);
+      navigate(`/settings/workspaces/${currentTeam?.id}`);
     },
     [navigate, refetch, currentTeam?.id],
   );

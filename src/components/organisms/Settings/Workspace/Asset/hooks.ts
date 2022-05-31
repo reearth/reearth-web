@@ -28,7 +28,7 @@ export default (params: Params) => {
 
   useEffect(() => {
     if (params.teamId && currentTeam?.id && params.teamId !== currentTeam.id) {
-      navigate(`/settings/workspace/${currentTeam?.id}/asset`);
+      navigate(`/settings/workspaces/${currentTeam?.id}/asset`);
     }
   }, [params, currentTeam, navigate]);
 

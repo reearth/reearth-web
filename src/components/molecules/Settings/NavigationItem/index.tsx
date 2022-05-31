@@ -19,14 +19,15 @@ const NavigationItem: React.FC<Props> = ({ name, to, level, children }) => {
     <>
       <LinkItem
         to={to}
-        style={({ isActive }) => ({
-          ...(isActive
+        end
+        style={({ isActive }) =>
+          isActive
             ? {
                 background: theme.main.select,
                 color: theme.main.strongText,
               }
-            : null),
-        })}>
+            : {}
+        }>
         <StyledText size="m" customColor level={level}>
           {name}
         </StyledText>

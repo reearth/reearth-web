@@ -162,7 +162,6 @@
         "@types/gapi.client": "^1.0.4",
         "@types/gapi.client.sheets": "^4.0.20201029",
         "@types/google.picker": "^0.0.39",
-        "@types/react-router-dom": "^5.3.3",
         "@types/tinycolor2": "^1.4.2",
         "apollo-link-sentry": "^3.1.1",
         "array-move": "^4.0.0",

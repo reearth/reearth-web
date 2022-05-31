@@ -46,7 +46,7 @@ const DangerModal: React.FC<Props> = ({
     if (actionType === "delete") deleteProject?.();
     if (actionType === "archive") archiveProject?.(true);
     if (actionType === "unarchive") archiveProject?.(false);
-    navigate(`/settings/workspace/${teamId}/projects`);
+    navigate(`/settings/workspaces/${teamId}/projects`);
   }, [navigate, archiveProject, deleteProject, actionType, teamId, project, disabled]);
 
   useEffect(() => {

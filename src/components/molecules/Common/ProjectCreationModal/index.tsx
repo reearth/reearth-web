@@ -40,12 +40,10 @@ const ProjectCreationModal: React.FC<Props> = ({
   assetModal,
   toggleAssetModal,
 }) => {
-  console.log(onSubmit, "lets make a projects1232");
   const intl = useIntl();
   const formik = useFormik({
     initialValues,
     onSubmit: async (data: FormValues, { setStatus, resetForm }) => {
-      console.log("lets make a projects1232");
       await onSubmit?.(data);
       onClose?.();
       resetForm({});

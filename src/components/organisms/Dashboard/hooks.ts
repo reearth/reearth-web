@@ -104,10 +104,6 @@ export default (teamId?: string) => {
     skip: !teamId,
   });
 
-  useEffect(() => {
-    console.log(projectData, "alsdfkj");
-  }, [projectData]);
-
   const projects = useMemo(() => {
     return (projectData?.projects.nodes ?? [])
       .map<Project | undefined>(project =>

@@ -33,11 +33,6 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     onAssetSelect,
   } = useHooks(teamId);
 
-  console.log(projects, "p");
-  console.log(teamId, "teamid");
-  console.log(currentTeam, "team");
-  console.log(user, "user");
-
   return (
     <MoleculeDashboard
       header={
