@@ -19,7 +19,7 @@ import { useTeam, useProject, useUnselectProject, useNotification } from "@reear
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
-const projectPerPage = 9;
+const projectsPerPage = 9;
 
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
