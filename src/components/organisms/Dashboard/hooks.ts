@@ -218,9 +218,11 @@ export default (teamId?: string) => {
   const onAssetSelect = useCallback((asset?: string) => {
     selectAsset(asset);
   }, []);
+
   useEffect(() => {
     gqlCache.evict({ fieldName: "projects" });
   }, [gqlCache]);
+  
   return {
     user,
     projects,
