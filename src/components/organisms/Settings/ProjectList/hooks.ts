@@ -21,6 +21,7 @@ const toPublishmentStatus = (s: PublishmentStatus) =>
     : s === PublishmentStatus.Limited
     ? "limited"
     : "unpublished";
+
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 const projectPerPage = 5;
