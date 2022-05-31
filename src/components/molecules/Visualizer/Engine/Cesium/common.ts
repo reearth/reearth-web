@@ -106,7 +106,7 @@ export const useIcon = ({
 }): [string, HTMLImageElement | undefined] => {
   const img = useImage(image);
   const draw = useCallback(
-    can =>
+    (can: HTMLCanvasElement) =>
       drawIcon(
         can,
         img,
