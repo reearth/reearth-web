@@ -18,25 +18,19 @@ export type Props = {
 
 const ProjectList: React.FC<Props> = ({ loading, projects, onProjectSelect }) => {
   return (
-    <>
+    <ProjectListContainer>
       {loading ? (
-        <div>
-          <Loading />
-        </div>
+        <Loading />
       ) : (
-        <>
-          <ProjectListContainner>
-            {projects?.map(project => (
-              <ProjectCell project={project} key={project.id} onSelect={onProjectSelect} />
-            ))}
-          </ProjectListContainner>
-        </>
+        projects?.map(project => (
+          <ProjectCell project={project} key={project.id} onSelect={onProjectSelect} />
+        ))
       )}
-    </>
+    </ProjectListContainer>
   );
 };
 
-const ProjectListContainner = styled.div`
+const ProjectListContainer = styled.div`
   > * {
     margin-top: ${metricsSizes["4xl"]}px;
     margin-bottom: ${metricsSizes["4xl"]}px;
