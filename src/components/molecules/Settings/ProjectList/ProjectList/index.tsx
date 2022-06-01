@@ -39,8 +39,6 @@ const ProjectList: React.FC<Props> = ({ loading, projects, onProjectSelect }) =>
 const ProjectListContainner = styled.div`
   > * {
     margin-top: ${metricsSizes["4xl"]}px;
-  }
-  > * {
     margin-bottom: ${metricsSizes["4xl"]}px;
   }
 `;

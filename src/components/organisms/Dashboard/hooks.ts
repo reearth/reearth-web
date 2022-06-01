@@ -112,7 +112,7 @@ export default (teamId?: string) => {
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", last: projectPerPage },
+    variables: { teamId: teamId ?? "", last: projectsPerPage },
     skip: !teamId,
     notifyOnNetworkStatusChange: true,
   });
@@ -222,7 +222,7 @@ export default (teamId?: string) => {
   useEffect(() => {
     gqlCache.evict({ fieldName: "projects" });
   }, [gqlCache]);
-  
+
   return {
     user,
     projects,

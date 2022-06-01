@@ -20,6 +20,9 @@ const SettingPage: React.FC<SettingPageProps> = ({
   currentTeam,
   currentProject,
   sceneId,
+  loading,
+  hasMoreItems,
+  onScroll,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +48,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
       />
       <BodyWrapper
         onScroll={e => {
-          !props.loading && props.hasMoreItems && handleScroll(e, props.onScroll);
+          !loading && hasMoreItems && handleScroll(e, onScroll);
         }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
@@ -65,7 +68,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
               )}
             </DeviceMenu>
             {children}
-            {props.hasMoreItems && props.loading && <StyledLoading relative />}
+            {hasMoreItems && loading && <StyledLoading relative />}
           </ContentWrapper>
         </RightWrapper>
       </BodyWrapper>

@@ -79,14 +79,8 @@ src:
           '3528672691': Cancel
           '4070151372': Select
           AssetContainer:
-            '710251853': >-
-              You haven't uploaded any assets yet. Click the upload button above
-              and select a compatible file from your computer.
-            '1896833639': No assets match your search.
             '1982191895': File size
             '2906553848': Alphabetical
-            '3645414921': Delete
-            '3863945965': Upload file
             '4205493358': Date
           AssetDeleteModal:
             '2868137144': >-
