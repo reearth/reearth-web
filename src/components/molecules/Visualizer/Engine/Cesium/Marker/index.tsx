@@ -131,9 +131,19 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
   );
 
   const pixelOffset = useMemo(() => {
-    const padding = 15;
-    const x = (img?.width && style == "image" ? img.width : pointSize) / 2 + padding;
-    const y = (img?.height && style == "image" ? img.height : pointSize) / 2 + padding;
+    const padding = imageSize ? 15 : 40;
+    const x =
+      (img?.width && imageSize && (!style || style === "image")
+        ? img?.width * imageSize
+        : pointSize) /
+        2 +
+      padding;
+    const y =
+      (img?.height && imageSize && (!style || style === "image")
+        ? img.height * imageSize
+        : pointSize) /
+        2 +
+      padding;
     return new Cartesian2(
       labelPos.includes("left") || labelPos.includes("right")
         ? x * (labelPos.includes("left") ? -1 : 1)
@@ -142,7 +152,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
         ? y * (labelPos.includes("top") ? -1 : 1)
         : 0,
     );
-  }, [img?.width, img?.height, style, pointSize, labelPos]);
+  }, [img?.width, img?.height, style, imageSize, pointSize, labelPos]);
 
   const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
   useEffect(() => {
