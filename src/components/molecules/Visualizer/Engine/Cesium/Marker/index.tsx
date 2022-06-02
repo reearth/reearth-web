@@ -134,7 +134,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     const padding = imageSize ? 15 : 40;
     const x =
       (img?.width && imageSize && (!style || style === "image")
-        ? img?.width * imageSize
+        ? img.width * imageSize
         : pointSize) /
         2 +
       padding;
