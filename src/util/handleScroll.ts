@@ -3,8 +3,8 @@ export function handleScroll(
   onLoadMore?: () => void,
 ) {
   if (
-    Math.floor(currentTarget.scrollTop) + Math.floor(currentTarget.clientHeight) >=
-    Math.floor(currentTarget.scrollHeight)
+    Math.floor(currentTarget.scrollTop) + currentTarget.clientHeight >=
+    currentTarget.scrollHeight
   ) {
     onLoadMore?.();
   }
