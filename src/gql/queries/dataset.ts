@@ -60,6 +60,35 @@ export const GET_DATASET_SCHEMAS = gql`
   }
 `;
 
+export const GET_DATASET_SCHEMAS_WITH_COUNT = gql`
+  query GetDatasetSchemasWithCount(
+    $projectId: ID!
+    $first: Int
+    $last: Int
+    $after: Cursor
+    $before: Cursor
+  ) {
+    scene(projectId: $projectId) {
+      id
+      datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
+        nodes {
+          id
+          source
+          name
+          totalCount
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+          hasPreviousPage
+          startCursor
+        }
+        totalCount
+      }
+    }
+  }
+`;
+
 export const GET_LINKABLE_DATASETS = gql`
   query GetLinkableDatasets($sceneId: ID!) {
     datasetSchemas(sceneId: $sceneId, first: 100) {
