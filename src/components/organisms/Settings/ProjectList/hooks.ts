@@ -50,7 +50,7 @@ export default (teamId: string) => {
 
   const {
     data: projectData,
-    loading: queryProject,
+    loading: loadingProjects,
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
@@ -185,7 +185,7 @@ export default (teamId: string) => {
   return {
     currentProjects,
     totalProjects,
-    loadingProjects: queryProject ?? isRefetchingProjects,
+    loadingProjects: loadingProjects ?? isRefetchingProjects,
     hasMoreProjects,
     teamId,
     loading,
