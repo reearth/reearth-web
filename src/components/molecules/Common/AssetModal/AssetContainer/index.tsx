@@ -161,7 +161,7 @@ const AssetContainer: React.FC<Props> = ({
               {searchTerm
                 ? t("No assets match your search.")
                 : t(
-                    "You haven't uploaded any assets yet Click the upload button above and select a compatible file from your computer.",
+                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
                   )}
             </TemplateText>
           </Template>
