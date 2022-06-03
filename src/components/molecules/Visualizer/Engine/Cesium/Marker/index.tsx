@@ -143,7 +143,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
         ? y * (labelPos.includes("top") ? -1 : 1)
         : 0,
     );
-  }, [style, imgw, pointSize, imgh, labelPos]);
+  }, [isStyleImage, imgw, pointSize, imgh, labelPos]);
 
   const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
   useEffect(() => {
