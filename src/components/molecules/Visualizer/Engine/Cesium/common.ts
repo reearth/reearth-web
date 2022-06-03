@@ -11,6 +11,7 @@ import {
   Cartesian3,
   CesiumWidget,
   PerspectiveFrustum,
+  OrthographicOffCenterFrustum,
   Viewer,
   HeightReference,
   ShadowMode,
@@ -30,7 +31,8 @@ const defaultImageSize = 50;
 export const drawIcon = (
   c: HTMLCanvasElement,
   image: HTMLImageElement | undefined,
-  imageSize: number | undefined,
+  w: number,
+  h: number,
   crop: "circle" | "rounded" | "none" = "none",
   shadow = false,
   shadowColor = "rgba(0, 0, 0, 0.7)",
@@ -43,14 +45,6 @@ export const drawIcon = (
 
   ctx.save();
 
-  const w =
-    typeof imageSize === "number"
-      ? Math.floor(image.width * imageSize)
-      : Math.min(defaultImageSize, image.width);
-  const h =
-    typeof imageSize === "number"
-      ? Math.floor(image.height * imageSize)
-      : Math.floor((w / image.width) * image.height);
   c.width = w + shadowBlur;
   c.height = h + shadowBlur;
   ctx.shadowBlur = shadowBlur;
@@ -102,25 +96,27 @@ export const useIcon = ({
   shadowBlur?: number;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
-}): [string, HTMLImageElement | undefined] => {
+}): [string, number, number] => {
   const img = useImage(image);
+
+  const w = !img
+    ? 0
+    : typeof imageSize === "number"
+    ? Math.floor(img.width * imageSize)
+    : Math.min(defaultImageSize, img.width);
+  const h = !img
+    ? 0
+    : typeof imageSize === "number"
+    ? Math.floor(img.height * imageSize)
+    : Math.floor((w / img.width) * img.height);
+
   const draw = useCallback(
     can =>
-      drawIcon(
-        can,
-        img,
-        imageSize,
-        crop,
-        shadow,
-        shadowColor,
-        shadowBlur,
-        shadowOffsetX,
-        shadowOffsetY,
-      ),
-    [crop, imageSize, img, shadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY],
+      drawIcon(can, img, w, h, crop, shadow, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY),
+    [crop, h, img, shadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY, w],
   );
   const canvas = useCanvas(draw);
-  return [canvas, img];
+  return [canvas, w, h];
 };
 
 export const ho = (o: "left" | "center" | "right" | undefined): HorizontalOrigin | undefined =>
@@ -303,15 +299,18 @@ export const animateFOV = ({
 export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | undefined => {
   if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene) return undefined;
   const { camera } = viewer;
-  if (!(camera.frustum instanceof PerspectiveFrustum)) return;
-
-  const ellipsoid = viewer.scene.globe.ellipsoid;
-  const { latitude, longitude, height } = ellipsoid.cartesianToCartographic(camera.position);
+  if (
+    !(
+      camera.frustum instanceof PerspectiveFrustum ||
+      camera.frustum instanceof OrthographicOffCenterFrustum
+    )
+  )
+    return;
+  const { latitude, longitude, height } = camera.positionCartographic;
   const lat = CesiumMath.toDegrees(latitude);
   const lng = CesiumMath.toDegrees(longitude);
   const { heading, pitch, roll } = camera;
-  const { fov } = camera.frustum;
-
+  const fov = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.fov : 1;
   return { lng, lat, height, heading, pitch, roll, fov };
 };
 
