@@ -114,8 +114,9 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
       : undefined;
   }, [extrude, location, height]);
 
-  const [icon, img] = useIcon({
-    image,
+  const isStyleImage = !style || style === "image";
+  const [icon, imgw, imgh] = useIcon({
+    image: isStyleImage ? image : undefined,
     imageSize,
     crop,
     shadow,
@@ -131,19 +132,9 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
   );
 
   const pixelOffset = useMemo(() => {
-    const padding = imageSize ? 15 : 40;
-    const x =
-      (img?.width && imageSize && (!style || style === "image")
-        ? img.width * imageSize
-        : pointSize) /
-        2 +
-      padding;
-    const y =
-      (img?.height && imageSize && (!style || style === "image")
-        ? img.height * imageSize
-        : pointSize) /
-        2 +
-      padding;
+    const padding = 15;
+    const x = (isStyleImage ? imgw : pointSize) / 2 + padding;
+    const y = (isStyleImage ? imgh : pointSize) / 2 + padding;
     return new Cartesian2(
       labelPos.includes("left") || labelPos.includes("right")
         ? x * (labelPos.includes("left") ? -1 : 1)
@@ -152,7 +143,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
         ? y * (labelPos.includes("top") ? -1 : 1)
         : 0,
     );
-  }, [img?.width, img?.height, style, imageSize, pointSize, labelPos]);
+  }, [style, imgw, pointSize, imgh, labelPos]);
 
   const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
   useEffect(() => {
