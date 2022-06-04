@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useIntl } from "react-intl";
 
 import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
@@ -9,6 +8,7 @@ import Text from "@reearth/components/atoms/Text";
 import ProjectCell, {
   Project as ProjectType,
 } from "@reearth/components/molecules/Settings/ProjectList/ProjectCell";
+import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
 
@@ -31,7 +31,7 @@ const ProjectList: React.FC<Props> = ({
   onProjectSelect,
   onCreationButtonClick,
 }) => {
-  const intl = useIntl();
+  const t = useT();
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
@@ -51,24 +51,19 @@ const ProjectList: React.FC<Props> = ({
             weight="normal"
             color={theme.main.text}
             otherProperties={{ margin: "12px 0" }}>
-            {`${intl.formatMessage({ defaultMessage: "Archived Projects" })} (${
-              projects?.length || 0
-            })`}
+            {`${t("Archived Projects")} (${projects?.length || 0})`}
           </Text>
         </StyledFlex>
       )}
       {!archived && (
         <StyledFlex justify="space-between" align="center">
           <Text size="m" weight="normal" color={theme.main.text}>
-            {title ||
-              `${intl.formatMessage({ defaultMessage: "Current Projects" })} (${
-                projects?.length || 0
-              })`}
+            {title || `${t("Current Projects")} (${projects?.length || 0})`}
           </Text>
           <Button
             large
             buttonType="secondary"
-            text={intl.formatMessage({ defaultMessage: "New Project" })}
+            text={t("New Project")}
             onClick={onCreationButtonClick}
           />
         </StyledFlex>

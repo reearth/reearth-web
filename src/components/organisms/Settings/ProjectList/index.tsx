@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 
 import Loading from "@reearth/components/atoms/Loading";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
@@ -7,6 +6,7 @@ import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectL
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
 import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import SettingPage from "@reearth/components/organisms/Settings/SettingPage";
+import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const ProjectList: React.FC<Props> = ({ teamId }) => {
-  const intl = useIntl();
+  const t = useT();
   const {
     loading,
     currentProjects,
@@ -33,7 +33,7 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
 
   return (
     <SettingPage teamId={teamId}>
-      <SettingsHeader title={intl.formatMessage({ defaultMessage: "Project List" })} />
+      <SettingsHeader title={t("Project List")} />
       <MoleculeProjectList
         projects={currentProjects}
         onProjectSelect={selectProject}

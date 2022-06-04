@@ -1,6 +1,5 @@
 import { useNavigate } from "@reach/router";
 import { useState, useCallback, useEffect } from "react";
-import { useIntl } from "react-intl";
 
 import { Project } from "@reearth/components/molecules/Dashboard/types";
 import {
@@ -11,6 +10,7 @@ import {
   useGetProjectsQuery,
   Visualizer,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
@@ -25,7 +25,7 @@ export default (teamId: string) => {
   const [currentTeam, setTeam] = useTeam();
   const [, setProject] = useProject();
   const navigate = useNavigate();
-  const intl = useIntl();
+  const t = useT();
 
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
@@ -110,7 +110,7 @@ export default (teamId: string) => {
       if (project.errors || !project.data?.createProject) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
@@ -121,19 +121,19 @@ export default (teamId: string) => {
       if (scene.errors || !scene.data?.createScene) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
       }
       setNotification({
         type: "success",
-        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+        text: t("Successfully created project!"),
       });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, intl, refetch, setNotification, teamId],
+    [createNewProject, createScene, t, refetch, setNotification, teamId],
   );
 
   const selectProject = useCallback(

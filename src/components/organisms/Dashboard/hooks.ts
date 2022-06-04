@@ -1,6 +1,5 @@
 import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useIntl } from "react-intl";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
 import type { Project, Team } from "@reearth/components/molecules/Dashboard";
@@ -13,6 +12,7 @@ import {
   useCreateSceneMutation,
   Visualizer,
 } from "@reearth/gql";
+import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
 export default (teamId?: string) => {
@@ -24,7 +24,7 @@ export default (teamId?: string) => {
   const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
   const openModal = useCallback(() => setModalShown(true), []);
-  const intl = useIntl();
+  const t = useT();
   const navigate = useNavigate();
 
   const toPublishmentStatus = (s: PublishmentStatus) =>
@@ -72,14 +72,14 @@ export default (teamId?: string) => {
       if (results.data?.createTeam) {
         setNotification({
           type: "success",
-          text: intl.formatMessage({ defaultMessage: "Successfully created workspace!" }),
+          text: t("Successfully created workspace!"),
         });
         setCurrentTeam(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setCurrentTeam, refetch, navigate, intl, setNotification],
+    [createTeamMutation, setCurrentTeam, refetch, navigate, t, setNotification],
   );
 
   useEffect(() => {
@@ -141,7 +141,7 @@ export default (teamId?: string) => {
       if (project.errors || !project.data?.createProject) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
@@ -152,19 +152,19 @@ export default (teamId?: string) => {
       if (scene.errors) {
         setNotification({
           type: "error",
-          text: intl.formatMessage({ defaultMessage: "Failed to create project." }),
+          text: t("Failed to create project."),
         });
         setModalShown(false);
         return;
       }
       setNotification({
         type: "success",
-        text: intl.formatMessage({ defaultMessage: "Successfully created project!" }),
+        text: t("Successfully created project!"),
       });
       setModalShown(false);
       refetch();
     },
-    [createNewProject, createScene, teamId, refetch, intl, setNotification],
+    [createNewProject, createScene, teamId, refetch, t, setNotification],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);
