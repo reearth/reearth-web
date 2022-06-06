@@ -11,8 +11,9 @@ export type Props = {
 
 export default function Indicator({ className }: Props): JSX.Element | null {
   const { viewer } = useCesium();
+  const [isVisible, setIsVisible] = useState(true);
   const [pos, setPos] = useState<Cartesian2>();
-  const transiton = useTransition(!!pos, 1000, {
+  const transiton = useTransition(!!pos && isVisible, 500, {
     mountOnEnter: true,
     unmountOnExit: true,
   });
@@ -28,7 +29,7 @@ export default function Indicator({ className }: Props): JSX.Element | null {
         !selected.isAvailable(viewer.clock.currentTime) ||
         !selected.position
       ) {
-        setPos(undefined);
+        setIsVisible(false);
         return;
       }
 
@@ -50,8 +51,9 @@ export default function Indicator({ className }: Props): JSX.Element | null {
       if (position) {
         const pos = SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, position);
         setPos(pos);
+        setIsVisible(true);
       } else {
-        setPos(undefined);
+        setIsVisible(false);
       }
     };
 
@@ -78,6 +80,6 @@ const I = styled.div<{ transiton: TransitionStatus }>`
   background-color: red;
   transform: translate(-50%, -50%);
   transition: ${({ transiton }) =>
-    transiton === "entering" || transiton === "exiting" ? "all 1s ease" : ""};
+    transiton === "entering" || transiton === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transiton }) => (transiton === "entering" || transiton === "entered" ? 1 : 0)};
 `;
