@@ -20,6 +20,7 @@ import {
 import type { EngineProps, Ref as EngineRef } from "..";
 
 import Clock from "./core/Clock";
+import Indicator from "./core/Indicator";
 import Event from "./Event";
 import useHooks from "./hooks";
 
@@ -85,6 +86,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         navigationHelpButton={false}
         projectionPicker={false}
         sceneModePicker={false}
+        selectionIndicator={false}
         creditContainer={creditContainer}
         style={{
           width: small ? "300px" : "auto",
@@ -101,6 +103,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         onClick={handleClick}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock property={property} />
+        <Indicator />
         <ScreenSpaceEventHandler useDefault>
           {/* remove default click event */}
           <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
