@@ -18,14 +18,17 @@ jobs:
           PR_TITLE_IGNORE_LABEL: meta
         with:
           script: |
-            const prefixes = process.env.PR_TITLE_PREFIX.split(" ");
-            const groups = process.env.PR_TITLE_GROUP.split(" ");
-            const ignoreLabels = process.env.PR_TITLE_IGNORE_LABEL.split(" ");
+            const prefixes = process.env.PR_TITLE_PREFIX?.split(" ");
+            if (!prefixes?.length) return;
+
+            const ignoreLabels = process.env.PR_TITLE_IGNORE_LABEL?.split(" ");
+
             const title = context.payload.pull_request.title;
             const labels = context.payload.pull_request.labels;
-            if (!labels?.length || labels.every(l => !ignoreLabels.includes(l.name))) {
-              const reg = new RegExp(`^(?:${prefixes.join("|")})${groups?.length ? `(?:\\((?:${groups.join("|")})\\))?` : ""}: `, "i");
-              if (!title.test(reg)) {
-                throw new Error("The pull request title does not follow the conventions.");
-              }
+            if (ignoreLabels?.length && labels?.some(l => !ignoreLabels?.includes(l.name))) return;
+
+            const groups = process.env.PR_TITLE_GROUP?.split(" ");
+            const reg = new RegExp(`^(?:${prefixes.join("|")})${groups?.length ? `(?:\\((?:${groups.join("|")})\\))?` : ""}: `, "i");
+            if (!title.test(reg)) {
+              throw new Error("The pull request title does not follow the conventions.");
             }
