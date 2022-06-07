@@ -11,6 +11,6 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: thehanimo/pr-title-checker@v1
+      - uses: thehanimo/pr-title-checker@v1.3.4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
