@@ -30,5 +30,6 @@ jobs:
             const groups = process.env.PR_TITLE_GROUP?.split(" ");
             const reg = new RegExp(`^(?:${prefixes.join("|")})${groups?.length ? `(?:\\((?:${groups.join("|")})\\))?` : ""}: `, "i");
             if (!reg.test(title)) {
-              throw new Error("The pull request title does not follow the conventions.");
+              console.error("The pull request title does not follow the conventions.");
+              process.exit(1);
             }
