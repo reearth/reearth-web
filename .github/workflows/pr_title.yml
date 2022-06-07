@@ -23,6 +23,7 @@ jobs:
 
             const ignoreLabels = process.env.PR_TITLE_IGNORE_LABEL?.split(" ");
 
+            console.log(context.payload);
             const title = context.payload.pull_request.title;
             const labels = context.payload.pull_request.labels;
             if (ignoreLabels?.length && labels?.some(l => !ignoreLabels?.includes(l.name))) return;
