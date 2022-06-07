@@ -1,4 +1,4 @@
-import { userDisplayName, teamId } from "../common";
+import { teamId } from "../common";
 
 beforeEach(() => {
   cy.init();
@@ -7,6 +7,6 @@ beforeEach(() => {
 context("Dashboard", () => {
   it("should display page", () => {
     cy.loginAndVisit(`/dashboard/${teamId}`);
-    cy.findByText(`${userDisplayName}'s workspace`).should("exist");
+    cy.findByText(`'s workspace`).should("exist");
   });
 });
