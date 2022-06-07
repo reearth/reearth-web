@@ -5,4 +5,5 @@ module.exports = {
   // allow keys to be phrases having `:`, `.`
   namespaceSeparator: false,
   keySeparator: false,
+  createOldCatalogs: false,
 };

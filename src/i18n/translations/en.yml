@@ -285,7 +285,6 @@ No Title Project: No Title Project
 No Description...: No Description...
 Archived Projects: Archived Projects
 Current Projects: Current Projects
-New Project: New Project
 (Your personal workspace): (Your personal workspace)
 Add a team member: Add a team member
 Input an email address or a user name: Input an email address or a user name
@@ -369,3 +368,9 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Working Projects: Working Projects
+'''s workspace': '''s workspace'
+Successfully created workspace!: Successfully created workspace!
+Failed to create project.: Failed to create project.
+Successfully created project!: Successfully created project!
+Project List: Project List

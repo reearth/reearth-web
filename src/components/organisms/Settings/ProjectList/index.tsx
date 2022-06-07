@@ -1,6 +1,8 @@
 import React from "react";
 
+import Button from "@reearth/components/atoms/Button";
 import Loading from "@reearth/components/atoms/Loading";
+import TabSection from "@reearth/components/atoms/TabSection";
 import ProjectCreationModal from "@reearth/components/molecules/Common/ProjectCreationModal";
 import MoleculeProjectList from "@reearth/components/molecules/Settings/ProjectList/ProjectList";
 import SettingsHeader from "@reearth/components/molecules/Settings/SettingsHeader";
@@ -19,7 +21,9 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
   const {
     loading,
     currentProjects,
-    archivedProjects,
+    totalProjects,
+    loadingProjects,
+    hasMoreProjects,
     modalShown,
     openModal,
     handleModalClose,
@@ -29,17 +33,36 @@ const ProjectList: React.FC<Props> = ({ teamId }) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
+    handleGetMoreProjects,
   } = useHooks(teamId);
 
+  type Tab = "Working";
+  const headers = {
+    Working: t("Working Projects") + "(" + (totalProjects ?? 0) + ")",
+  };
+
   return (
-    <SettingPage teamId={teamId}>
+    <SettingPage
+      teamId={teamId}
+      loading={loadingProjects}
+      hasMoreItems={hasMoreProjects}
+      onScroll={handleGetMoreProjects}>
       <SettingsHeader title={t("Project List")} />
-      <MoleculeProjectList
-        projects={currentProjects}
-        onProjectSelect={selectProject}
-        onCreationButtonClick={openModal}
-      />
-      <MoleculeProjectList projects={archivedProjects} archived onProjectSelect={selectProject} />
+      <TabSection<Tab>
+        menuAlignment="top"
+        initialSelected={"Working"}
+        selected="Working"
+        expandedMenuIcon={false}
+        headers={headers}
+        headerAction={
+          <Button large buttonType="secondary" text={t("New Project")} onClick={openModal} />
+        }>
+        {{
+          Working: (
+            <MoleculeProjectList projects={currentProjects} onProjectSelect={selectProject} />
+          ),
+        }}
+      </TabSection>
       <ProjectCreationModal
         open={modalShown}
         onClose={handleModalClose}

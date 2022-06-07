@@ -3,9 +3,9 @@ import { useCallback, useState, useEffect } from "react";
 
 import {
   GetAssetsQuery,
-  useGetAssetsQuery,
   useCreateAssetMutation,
   useRemoveAssetMutation,
+  useGetAssetsQuery,
   Maybe,
   AssetSortType as GQLSortType,
 } from "@reearth/gql";
@@ -72,18 +72,18 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
 
   const hasMoreAssets =
     data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
+
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
 
   const initialAsset = assets?.find(a => a.url === initialAssetUrl);
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
 
-  const getMoreAssets = useCallback(() => {
+  const handleGetMoreAssets = useCallback(() => {
     if (hasMoreAssets) {
       fetchMore({
         variables: {
           pagination: pagination(sort, data?.assets.pageInfo.endCursor),
-          delay: true,
         },
       });
     }
@@ -189,7 +189,7 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
     searchTerm,
     selectedAssets,
     selectAsset,
-    getMoreAssets,
+    handleGetMoreAssets,
     createAssets,
     removeAssets: allowDeletion ? removeAssets : undefined,
     handleSortChange,

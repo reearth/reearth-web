@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useNavigate } from "@reach/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -11,9 +12,14 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
+  GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
+
+export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
+
+const projectsPerPage = 9;
 
 export default (teamId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
@@ -41,6 +47,7 @@ export default (teamId?: string) => {
   const teams = data?.me?.teams;
   const team = teams?.find(team => team.id === teamId);
   const personal = teamId === data?.me?.myTeam.id;
+  const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
     if (team?.id && team.id !== currentTeam?.id) {
@@ -99,13 +106,21 @@ export default (teamId?: string) => {
     [refetch],
   );
 
-  const { data: projectData } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", first: 100 },
+  const {
+    data: projectData,
+    loading,
+    fetchMore,
+    networkStatus,
+  } = useGetProjectsQuery({
+    variables: { teamId: teamId ?? "", last: projectsPerPage },
     skip: !teamId,
+    notifyOnNetworkStatusChange: true,
   });
 
+  const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
+
   const projects = useMemo(() => {
-    return (projectData?.projects.nodes ?? [])
+    return (projectNodes ?? [])
       .map<Project | undefined>(project =>
         project
           ? {
@@ -120,7 +135,26 @@ export default (teamId?: string) => {
           : undefined,
       )
       .filter((project): project is Project => !!project);
-  }, [projectData?.projects.nodes]);
+  }, [projectNodes]);
+
+  const hasMoreProjects =
+    projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;
+
+  const isRefetchingProjects = networkStatus === 3;
+
+  const handleGetMoreProjects = useCallback(() => {
+    if (hasMoreProjects) {
+      fetchMore({
+        variables: {
+          before: projectData?.projects.pageInfo?.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        },
+      });
+    }
+  }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
 
   const [createNewProject] = useCreateProjectMutation({
     refetchQueries: ["GetProjects"],
@@ -185,9 +219,15 @@ export default (teamId?: string) => {
     selectAsset(asset);
   }, []);
 
+  useEffect(() => {
+    gqlCache.evict({ fieldName: "projects" });
+  }, [gqlCache]);
+
   return {
     user,
     projects,
+    projectLoading: loading ?? isRefetchingProjects,
+    hasMoreProjects,
     createProject,
     teams,
     currentTeam: team as Team,
@@ -200,5 +240,6 @@ export default (teamId?: string) => {
     assetModalOpened,
     toggleAssetModal,
     onAssetSelect,
+    handleGetMoreProjects,
   };
 };
