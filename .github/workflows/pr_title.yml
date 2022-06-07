@@ -23,13 +23,12 @@ jobs:
 
             const ignoreLabels = process.env.PR_TITLE_IGNORE_LABEL?.split(" ");
 
-            console.log(context.payload);
             const title = context.payload.pull_request.title;
             const labels = context.payload.pull_request.labels;
             if (ignoreLabels?.length && labels?.some(l => !ignoreLabels?.includes(l.name))) return;
 
             const groups = process.env.PR_TITLE_GROUP?.split(" ");
             const reg = new RegExp(`^(?:${prefixes.join("|")})${groups?.length ? `(?:\\((?:${groups.join("|")})\\))?` : ""}: `, "i");
-            if (!title.test(reg)) {
+            if (!reg.test(title)) {
               throw new Error("The pull request title does not follow the conventions.");
             }
