@@ -134,6 +134,7 @@ Jump: ジャンプ
 Edit Pose: 編集
 Edit Position: 編集
 Capture: キャプチャ
+'#RRGGBBAA': '#RRGGBBAA'
 Red: 赤
 Green: 緑
 Blue: 青
@@ -249,9 +250,6 @@ This project is published with search engine indexing disabled.: このプロジ
 This project is not published.: このプロジェクトは、非公開です。
 No Title Project: プロジェクト名未設定
 No Description...: プロジェクト概要未設定
-Archived Projects: 非編集化済みプロジェクト
-Current Projects: 現在のプロジェクト
-New Project: 新規プロジェクト
 (Your personal workspace): (パーソナルワークスペース)
 Add a team member: メンバーを追加
 Input an email address or a user name: メールアドレスもしくはユーザー名を入力
@@ -320,6 +318,8 @@ Failed to install plugin.: プラグインのインストールに失敗しま�
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully removed plugin.: プラグインが削除されました。
+Working Projects: 作業中のプロジェクト
+New Project: 新規プロジェクト
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Sucessfully created a workspace!: 新しいワークスペースの作成に成功しました！
 Failed to update workspace name.: ワークスペース名の変更に失敗しました。
@@ -331,4 +331,3 @@ Successfully added member(s) to the workspace!: このワークスペースに�
 Failed to delete member from the workspace.: メンバーの削除に失敗しました。
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
-Working Projects: '作業中のプロジェクト'

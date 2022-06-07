@@ -283,8 +283,6 @@ This project is published with search engine indexing disabled.: This project is
 This project is not published.: This project is not published.
 No Title Project: No Title Project
 No Description...: No Description...
-Archived Projects: Archived Projects
-Current Projects: Current Projects
 (Your personal workspace): (Your personal workspace)
 Add a team member: Add a team member
 Input an email address or a user name: Input an email address or a user name
@@ -357,6 +355,8 @@ Failed to install plugin.: Failed to install plugin.
 Successfully installed plugin!: Successfully installed plugin!
 Failed to uninstall plugin.: Failed to uninstall plugin.
 Successfully removed plugin.: Successfully removed plugin.
+Working Projects: Working Projects
+New Project: New Project
 Failed to create workspace.: Failed to create workspace.
 Sucessfully created a workspace!: Sucessfully created a workspace!
 Failed to update workspace name.: Failed to update workspace name.
@@ -368,9 +368,3 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
-Working Projects: Working Projects
-'''s workspace': '''s workspace'
-Successfully created workspace!: Successfully created workspace!
-Failed to create project.: Failed to create project.
-Successfully created project!: Successfully created project!
-Project List: Project List
