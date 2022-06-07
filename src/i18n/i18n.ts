@@ -2,15 +2,12 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
+import en from "./translations/en.yml";
 import ja from "./translations/ja.yml";
 
 const resources = {
   en: {
-    /**
-     * Use key as translation in English.
-     * i18next fallback to display key when specified key is empty.
-     */
-    translation: {},
+    translation: en,
   },
   ja: {
     translation: ja,
