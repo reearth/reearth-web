@@ -318,7 +318,7 @@ Failed to install plugin.: プラグインのインストールに失敗しま�
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully removed plugin.: プラグインが削除されました。
-Working Projects: 作業中のプロジェクト
+Total Projects: 全てのプロジェクト
 New Project: 新規プロジェクト
 Failed to create workspace.: ワークスペースの作成に失敗しました。
 Sucessfully created a workspace!: 新しいワークスペースの作成に成功しました！
