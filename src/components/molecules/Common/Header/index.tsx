@@ -28,7 +28,7 @@ export interface Props {
   onChangeTeam?: (teamId: string) => void;
   modalShown?: boolean;
   openModal?: () => void;
-  handleModalClose?: (r?: boolean | undefined) => void;
+  onModalClose?: (r?: boolean) => void;
   dashboard?: boolean;
 }
 
@@ -46,7 +46,7 @@ const Header: React.FC<Props> = ({
   onChangeTeam,
   modalShown,
   openModal,
-  handleModalClose,
+  onModalClose,
   dashboard,
 }) => {
   return (
@@ -70,7 +70,7 @@ const Header: React.FC<Props> = ({
               />
               <WorkspaceCreationModal
                 open={modalShown}
-                onClose={handleModalClose}
+                onClose={onModalClose}
                 onSubmit={onCreateTeam}
               />
             </>

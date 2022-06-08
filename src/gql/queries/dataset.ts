@@ -43,10 +43,71 @@ export const GET_DATASET_SCHEMAS = gql`
     scene(projectId: $projectId) {
       id
       datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
+        edges {
+          node {
+            id
+            source
+            name
+          }
+        }
         nodes {
           id
           source
           name
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+          hasPreviousPage
+          startCursor
+        }
+        totalCount
+      }
+    }
+  }
+`;
+export const GET_DATASETS_LIST = gql`
+  query datasetsList($sceneId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
+    datasetSchemas(sceneId: $sceneId, first: $first, last: $last, after: $after, before: $before) {
+      edges {
+        node {
+          id
+          source
+          name
+        }
+      }
+      nodes {
+        id
+        source
+        name
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_DATASET_SCHEMAS_WITH_COUNT = gql`
+  query GetDatasetSchemasWithCount(
+    $projectId: ID!
+    $first: Int
+    $last: Int
+    $after: Cursor
+    $before: Cursor
+  ) {
+    scene(projectId: $projectId) {
+      id
+      datasetSchemas(first: $first, last: $last, after: $after, before: $before) {
+        nodes {
+          id
+          source
+          name
+          totalCount
         }
         pageInfo {
           endCursor
