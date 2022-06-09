@@ -4,7 +4,7 @@ on:
     inputs:
       version:
         required: false
-        description: 'Next version. Default: minor'
+        description: 'Next version (NOTE: Switch the branch to "release"!)'
         type: choice
         default: minor
         options:

@@ -64,7 +64,7 @@ jobs:
     needs:
       - info
       - build
-    if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag}}
+    if: ${{ needs.info.outputs.branch == 'main' && !needs.info.outputs.new_tag }}
     env:
       ARTIFACT: reearth-web.tar.gz
       ARTIFACT_NEW: reearth-web_nightly.tar.gz
