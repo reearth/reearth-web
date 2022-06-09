@@ -1,5 +1,6 @@
 name: Release
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -27,11 +28,13 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
       - id: changelog
+        name: Generate CHANGELOG
         uses: reearth/changelog-action@468aaa76a4cb025261f843c731f8f81efb837c96
         with:
           version: ${{ github.event.inputs.version }}
           repo: ${{ env.GITHUB_REPOSITORY }}
           latest: true
+      - run: echo $GITHUB_REPOSITORY
       - name: Update package.json version
         env:
           VERSION: ${{ steps.changelog.outputs.version }}
