@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
       - id: changelog
-        uses: reearth/changelog-action@76cfb33abcd954f4619ce3dd64141d0f3aae74bd
+        uses: reearth/changelog-action@468aaa76a4cb025261f843c731f8f81efb837c96
         with:
           version: ${{ github.event.inputs.version }}
           repo: ${{ env.GITHUB_REPOSITORY }}
