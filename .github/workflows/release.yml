@@ -27,10 +27,10 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
       - id: changelog
-        uses: reearth/changelog-action@c9644d321e842321b7ef873becc2746c442a6344
+        uses: reearth/changelog-action@76cfb33abcd954f4619ce3dd64141d0f3aae74bd
         with:
           version: ${{ github.event.inputs.version }}
-          url: ${{ env.GITHUB_REPOSITORY }}
+          repo: ${{ env.GITHUB_REPOSITORY }}
           latest: true
       - name: Update package.json version
         env:
