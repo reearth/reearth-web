@@ -1,0 +1,17 @@
+{
+  "prefix": {
+    "feat": { "title": "🚀 Features" },
+    "fix": { "title": "🔧 Bug Fixes" },
+    "docs": { "title": "📖 Documentation" },
+    "doc": { "title": "📖 Documentation" },
+    "perf": { "title": "⚡️ Performance" },
+    "refactor": { "title": "✨ Refactor" },
+    "style": { "title": "🎨 Styling" },
+    "test": { "title": "🧪 Testing" },
+    "chore": { "title": "Miscellaneous Tasks" },
+    "build": { "title": "Miscellaneous Tasks" },
+    "deps": { "title": "Miscellaneous Tasks" },
+    "ci": false,
+    "revert": false
+  }
+}
