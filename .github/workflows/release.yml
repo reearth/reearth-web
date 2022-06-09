@@ -1,6 +1,5 @@
 name: Release
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -16,43 +15,41 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    # if: github.ref == 'refs/heads/release'
+    if: github.ref == 'refs/heads/release'
     steps:
       - name: Set up git config
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           token: ${{ secrets.GPT }}
       - id: changelog
         name: Generate CHANGELOG
-        uses: reearth/changelog-action@468aaa76a4cb025261f843c731f8f81efb837c96
+        uses: reearth/changelog-action@main
         with:
           version: ${{ github.event.inputs.version }}
+          repo: ${{ github.repository }}
           latest: true
-          repo: reearth/reearth-web
       - name: Update package.json version
         env:
           VERSION: ${{ steps.changelog.outputs.version }}
         run: |
           yarn version --no-git-tag-version --new-version ${VERSION/v}
-      # - name: Upload latest CHANGELOG
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: changelog-${{ steps.changelog.outputs.version }}
-      #     path: CHANGELOG_latest.md
-      - name: Print diff # debug
-        run: git diff
-      # - name: Commit & push
-      #   env:
-      #     TAG: ${{ steps.changelog.outputs.version }}
-      #   run: |
-      #     rm CHANGELOG_latest.md
-      #     git add CHANGELOG.md
-      #     git commit -am "$TAG"
-      #     git tag $TAG
-      #     git push
-      #     git push --tags
+      - name: Upload latest CHANGELOG
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog-${{ steps.changelog.outputs.version }}
+          path: CHANGELOG_latest.md
+      - name: Commit & push
+        env:
+          TAG: ${{ steps.changelog.outputs.version }}
+        run: |
+          rm CHANGELOG_latest.md
+          git add CHANGELOG.md
+          git commit -am "$TAG"
+          git tag $TAG
+          git push
+          git push --tags
