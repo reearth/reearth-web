@@ -1,19 +1,18 @@
 import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback } from "react";
-import { useIntl } from "react-intl";
 
 import {
   DatasetSchema,
   DataSource,
 } from "@reearth/components/molecules/EarthEditor/DatasetPane/hooks";
 import {
-  useGetDatasetSchemasQuery,
   useSyncDatasetMutation,
   useImportDatasetMutation,
   useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
+  useGetDatasetSchemasWithCountQuery,
 } from "@reearth/gql";
-import { useLang } from "@reearth/i18n";
+import { useT, useLang } from "@reearth/i18n";
 import {
   useSceneId,
   useNotification,
@@ -24,28 +23,20 @@ import {
 } from "@reearth/state";
 
 export default () => {
-  const intl = useIntl();
+  const t = useT();
   const [, setNotification] = useNotification();
   const [selected, select] = useSelected();
   const [sceneId] = useSceneId();
   const [project] = useProject();
 
-  const { data, loading } = useGetDatasetSchemasQuery({
+  const { data, loading } = useGetDatasetSchemasWithCountQuery({
     variables: { projectId: project?.id || "", first: 100 },
   });
 
-  const datasetMessageSuccess = intl.formatMessage({
-    defaultMessage: "Successfully added the dataset!",
-  });
-  const datasetMessageFailure = intl.formatMessage({
-    defaultMessage: "Failed to add the dataset.",
-  });
-  const datasetDeleteMessageSuccess = intl.formatMessage({
-    defaultMessage: "Successfully deleted the dataset!",
-  });
-  const datasetDeleteMessageFailure = intl.formatMessage({
-    defaultMessage: "Failed to delete the dataset.",
-  });
+  const datasetMessageSuccess = t("Successfully added the dataset!");
+  const datasetMessageFailure = t("Failed to add the dataset.");
+  const datasetDeleteMessageSuccess = t("Successfully deleted the dataset!");
+  const datasetDeleteMessageFailure = t("Failed to delete the dataset.");
 
   const datasetSchemas = useMemo(
     () =>
@@ -57,7 +48,7 @@ export default () => {
                     id: n.id,
                     name: n.name,
                     source: n.source as DataSource,
-                    totalCount: data.scene?.datasetSchemas.totalCount,
+                    totalCount: n.totalCount,
                   }
                 : undefined,
             )
