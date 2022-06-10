@@ -10,6 +10,7 @@ import { useCustomCompareCallback } from "use-custom-compare";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
+import { indicatorTypes } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
@@ -59,6 +60,11 @@ export default ({
 
   // imagery layers
   const [imageryLayers, setImageryLayers] = useState<ImageryLayerData[]>();
+
+  //indicator
+  const selectionIndicator = useMemo(() => {
+    return property?.indicator?.indicator_type === indicatorTypes.default;
+  }, [property?.indicator?.indicator_type]);
 
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)
@@ -303,6 +309,7 @@ export default ({
     limiterDimensions,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
+    selectionIndicator,
     handleMount,
     handleUnmount,
     handleClick,

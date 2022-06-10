@@ -3,13 +3,18 @@ import { BoundingSphere, Cartesian2, Cartesian3, SceneTransforms } from "cesium"
 import React, { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
+import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
+
+import { SceneProperty, indicatorTypes } from "../../ref";
+// import { useIcon } from "../common";
 
 export type Props = {
   className?: string;
+  property: SceneProperty | undefined;
 };
 
-export default function Indicator({ className }: Props): JSX.Element | null {
+export default function Indicator({ className, property }: Props): JSX.Element | null {
   const { viewer } = useCesium();
   const [isVisible, setIsVisible] = useState(true);
   const [pos, setPos] = useState<Cartesian2>();
@@ -17,7 +22,11 @@ export default function Indicator({ className }: Props): JSX.Element | null {
     mountOnEnter: true,
     unmountOnExit: true,
   });
-
+  const { indicator_type, indicator_image, img_scale } = property?.indicator ?? {};
+  // const [img, w, h] = useIcon({ image: indicator_image, imageSize: img_scale });
+  // console.log(img);
+  // console.log(w);
+  // console.log(h);
   useEffect(() => {
     if (!viewer) return;
     const handleTick = () => {
@@ -63,23 +72,63 @@ export default function Indicator({ className }: Props): JSX.Element | null {
       viewer.clock.onTick.removeEventListener(handleTick);
     };
   }, [viewer]);
-
+  // console.log( indicator_type );
   return transiton !== "unmounted" && pos ? (
-    <I
-      className={className}
-      transiton={transiton}
-      style={{ left: pos.x + "px", top: pos.y + "px" }}
-    />
+    indicator_type === indicatorTypes.crosshair ? (
+      <StyledIcon
+        icon="crosshair"
+        className={className}
+        transition={transiton}
+        style={{ left: pos.x + "px", top: pos.y + "px" }}
+      />
+    ) : indicator_type === indicatorTypes.default ? (
+      <I
+        className={className}
+        transition={transiton}
+        style={{ left: pos.x + "px", top: pos.y + "px" }}
+      />
+    ) : (
+      <Image
+        src={indicator_image}
+        width={img_scale}
+        height={img_scale}
+        transition={transiton}
+        style={{ left: pos.x + "px", top: pos.y + "px" }}
+      />
+    )
   ) : null;
 }
 
-const I = styled.div<{ transiton: TransitionStatus }>`
+const I = styled.div<{ transition: TransitionStatus }>`
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: red;
   transform: translate(-50%, -50%);
-  transition: ${({ transiton }) =>
-    transiton === "entering" || transiton === "exiting" ? "all 0.5s ease" : ""};
-  opacity: ${({ transiton }) => (transiton === "entering" || transiton === "entered" ? 1 : 0)};
+  transition: ${({ transition }) =>
+    transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
+  opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
+`;
+const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  transition: ${({ transition }) =>
+    transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
+  opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
+`;
+const Image = styled.img<{ transition: TransitionStatus }>`
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: ${({ transition }) =>
+    transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
+  opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
 `;
