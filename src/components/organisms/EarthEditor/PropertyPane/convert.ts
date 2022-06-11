@@ -298,7 +298,7 @@ export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Laye
   }
 
   return layers
-    .map(mapper)
+    .map(l => mapper(l as GQLLayer))
     .filter((l): l is Layer => !!l)
     .reverse();
 }

@@ -124,7 +124,7 @@ export default () => {
   const layers = useMemo(
     () =>
       (data?.layer?.__typename === "LayerGroup" ? data.layer.layers : undefined)
-        ?.map(convertLayer)
+        ?.map(l => convertLayer(l as GQLLayer))
         .filter((l): l is Layer => !!l)
         .reverse() ?? [],
     [data?.layer],
@@ -271,7 +271,7 @@ export default () => {
     if (!rootLayerId) return;
 
     const layers: (Maybe<GQLLayer> | undefined)[] =
-      data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
+      data?.layer?.__typename === "LayerGroup" ? (data.layer.layers as GQLLayer[]) : [];
     const children = (l: Maybe<GQLLayer> | undefined) =>
       l?.__typename == "LayerGroup" ? l.layers : undefined;
 
