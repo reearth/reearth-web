@@ -17,11 +17,11 @@
         "clean": "del build coverage storybook-static node_modules/.cache",
         "check": "run-p type lint test",
         "type": "tsc",
-        "lint": "eslint --ext '.js,.jsx,.ts,.tsx,.graphql' .",
-        "format": "eslint --fix --ext '.js,.jsx,.ts,.tsx,.graphql' .",
+        "lint": "eslint .",
+        "format": "eslint --fix .",
         "storybook": "yarn && start-storybook -p 9001",
         "storybook:build": "build-storybook --quiet -o build/storybook",
-        "storybook:screenshot": "storycap --serverCmd 'npx http-server ./storybook-static -p 6006' --serverTimeout 100000 http://localhost:6006 --max-old-space-size=2048",
+        "storybook:screenshot": "storycap --serverCmd 'npx http-server build/storybook -p 6006' --serverTimeout 100000 http://localhost:6006 --max-old-space-size=2048",
         "cypress:open": "cypress open",
         "cypress:run": "cypress run",
         "gql": "graphql-codegen --config codegen.yml",
@@ -31,6 +31,9 @@
     },
     "engines": {
         "node": ">=12"
+    },
+    "lint-staged": {
+        "**/*.{js,mjs,jsx,ts,mts,tsx}": "eslint --fix"
     },
     "jest": {
         "preset": "ts-jest",
