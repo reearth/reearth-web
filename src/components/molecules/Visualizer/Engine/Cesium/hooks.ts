@@ -179,7 +179,7 @@ export default ({
 
   // call onCameraChange event after moving camera
   const emittedCamera = useRef<Camera>();
-  const handleCameraMoveEnd = useCallback(() => {
+  const updateCamera = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
@@ -189,6 +189,14 @@ export default ({
       onCameraChange?.(c);
     }
   }, [camera, onCameraChange]);
+
+  const handleCameraChange = useCallback(() => {
+    updateCamera();
+  }, [updateCamera]);
+
+  const handleCameraMoveEnd = useCallback(() => {
+    updateCamera();
+  }, [updateCamera]);
 
   // camera
   useEffect(() => {
@@ -313,6 +321,7 @@ export default ({
     handleMount,
     handleUnmount,
     handleClick,
+    handleCameraChange,
     handleCameraMoveEnd,
   };
 };
