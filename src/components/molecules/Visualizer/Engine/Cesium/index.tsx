@@ -56,6 +56,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     handleMount,
     handleUnmount,
     handleClick,
+    handleCameraChange,
     handleCameraMoveEnd,
   } = useHooks({
     ref,
@@ -114,7 +115,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               : Number.POSITIVE_INFINITY
           }></ScreenSpaceCameraController>
         <Camera
-          onChange={handleCameraMoveEnd}
+          onChange={handleCameraChange}
           percentageChanged={0.2}
           onMoveEnd={handleCameraMoveEnd}
         />
