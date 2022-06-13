@@ -1,5 +1,5 @@
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
-import { BoundingSphere, Cartesian2, Cartesian3, SceneTransforms } from "cesium";
+import { BoundingSphere, Cartesian3, SceneTransforms, Cartesian2 } from "cesium";
 import React, { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
@@ -7,7 +7,7 @@ import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
 import { SceneProperty, indicatorTypes } from "../../ref";
-// import { useIcon } from "../common";
+import { useIcon } from "../common";
 
 export type Props = {
   className?: string;
@@ -18,15 +18,14 @@ export default function Indicator({ className, property }: Props): JSX.Element |
   const { viewer } = useCesium();
   const [isVisible, setIsVisible] = useState(true);
   const [pos, setPos] = useState<Cartesian2>();
+
   const transiton = useTransition(!!pos && isVisible, 500, {
     mountOnEnter: true,
     unmountOnExit: true,
   });
   const { indicator_type, indicator_image, img_scale } = property?.indicator ?? {};
-  // const [img, w, h] = useIcon({ image: indicator_image, imageSize: img_scale });
-  // console.log(img);
-  // console.log(w);
-  // console.log(h);
+  const [img, w, h] = useIcon({ image: indicator_image, imageSize: img_scale });
+
   useEffect(() => {
     if (!viewer) return;
     const handleTick = () => {
@@ -89,9 +88,9 @@ export default function Indicator({ className, property }: Props): JSX.Element |
       />
     ) : (
       <Image
-        src={indicator_image}
-        width={img_scale}
-        height={img_scale}
+        src={img}
+        width={w}
+        height={h}
         transition={transiton}
         style={{ left: pos.x + "px", top: pos.y + "px" }}
       />
