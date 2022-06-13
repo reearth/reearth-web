@@ -113,7 +113,11 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
               ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
               : Number.POSITIVE_INFINITY
           }></ScreenSpaceCameraController>
-        <Camera onChange={handleCameraMoveEnd} percentageChanged={0.2} />
+        <Camera
+          onChange={handleCameraMoveEnd}
+          percentageChanged={0.2}
+          onMoveEnd={handleCameraMoveEnd}
+        />
 
         {limiterDimensions && property?.cameraLimiter?.cameraLimitterShowHelper && (
           <Entity>
