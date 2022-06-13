@@ -26,7 +26,6 @@
         "cypress:run": "cypress run",
         "gql": "graphql-codegen --config codegen.yml",
         "i18n": "i18next",
-        "i18n:legacy": "extract-messages -d en -l=en,ja -o src/i18n/translations/legacy -f yaml 'src/**/*.ts*' --extractFromFormatMessageCall",
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {
@@ -92,7 +91,6 @@
         "@types/react": "^18.0.12",
         "@types/react-dom": "^18.0.5",
         "@types/react-ga": "^2.3.0",
-        "@types/react-intl": "^3.0.0",
         "@types/react-leaflet": "^2.5.2",
         "@types/storybook__addon-info": "^5.2.2",
         "@types/styled-components": "^5.1.25",
@@ -103,7 +101,6 @@
         "@welldone-software/why-did-you-render": "^7.0.1",
         "babel-jest": "^27.5.1",
         "babel-loader": "^8.2.5",
-        "babel-plugin-react-intl-auto": "^3.1.0",
         "clean-webpack-plugin": "^4.0.0",
         "copy-webpack-plugin": "11.0.0",
         "cross-fetch": "^3.1.5",
@@ -122,7 +119,6 @@
         "eslint-plugin-react": "^7.30.0",
         "eslint-plugin-react-hooks": "^4.5.0",
         "eslint-plugin-testing-library": "^5.5.1",
-        "extract-react-intl-messages": "^4.1.1",
         "file-loader": "^6.1.0",
         "hard-source-webpack-plugin": "^0.13.1",
         "html-webpack-plugin": "^5.4.0",
@@ -149,7 +145,7 @@
         "webpack": "^5.72.1",
         "webpack-cli": "^4.9.2",
         "webpack-dev-server": "^4.9.2",
-        "yaml-flat-loader": "^1.0.1"
+        "yaml-loader": "^0.8.0"
     },
     "dependencies": {
         "@apollo/client": "^3.6.6",
@@ -172,7 +168,7 @@
         "array-move": "^4.0.0",
         "axios": "^0.27.2",
         "cesium": "^1.93.0",
-        "cesium-dnd": "1.0.3",
+        "cesium-dnd": "1.1.0",
         "core-js": "^3.22.8",
         "date-fns": "^2.28.0",
         "detect-browser": "^5.3.0",
@@ -201,7 +197,6 @@
         "react-dropzone": "^14.2.1",
         "react-ga": "^3.3.0",
         "react-i18next": "^11.16.9",
-        "react-intl": "^6.0.4",
         "react-leaflet": "^4.0.0",
         "react-markdown": "^8.0.3",
         "react-nl2br": "^1.0.4",
