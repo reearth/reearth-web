@@ -247,5 +247,5 @@ export default {
   menuForDevice: MenuForDevice,
   plugin: Plugin,
   tag: Tag,
-  crosshair: crosshair,
+  crosshair: Crosshair,
 };
