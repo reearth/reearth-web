@@ -10,7 +10,6 @@ import { useCustomCompareCallback } from "use-custom-compare";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
-import { indicatorTypes } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
@@ -63,7 +62,7 @@ export default ({
 
   //indicator
   const selectionIndicator = useMemo(() => {
-    return property?.indicator?.indicator_type === indicatorTypes.default;
+    return property?.indicator?.indicator_type === "default";
   }, [property?.indicator?.indicator_type]);
 
   useDeepCompareEffect(() => {

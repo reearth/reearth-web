@@ -6,7 +6,7 @@ import { useCesium } from "resium";
 import Icon from "@reearth/components/atoms/Icon";
 import { styled } from "@reearth/theme";
 
-import { SceneProperty, indicatorTypes } from "../../ref";
+import { SceneProperty } from "../../ref";
 import { useIcon } from "../common";
 
 export type Props = {
@@ -23,8 +23,8 @@ export default function Indicator({ className, property }: Props): JSX.Element |
     mountOnEnter: true,
     unmountOnExit: true,
   });
-  const { indicator_type, indicator_image, img_scale } = property?.indicator ?? {};
-  const [img, w, h] = useIcon({ image: indicator_image, imageSize: img_scale });
+  const { indicator_type, indicator_image, indicator_img_scale } = property?.indicator ?? {};
+  const [img, w, h] = useIcon({ image: indicator_image, imageSize: indicator_img_scale });
 
   useEffect(() => {
     if (!viewer) return;
@@ -73,14 +73,14 @@ export default function Indicator({ className, property }: Props): JSX.Element |
   }, [viewer]);
   // console.log( indicator_type );
   return transiton !== "unmounted" && pos ? (
-    indicator_type === indicatorTypes.crosshair ? (
+    indicator_type === "crosshair" ? (
       <StyledIcon
         icon="crosshair"
         className={className}
         transition={transiton}
         style={{ left: pos.x + "px", top: pos.y + "px" }}
       />
-    ) : indicator_type === indicatorTypes.default ? (
+    ) : indicator_type === "default" ? (
       <I
         className={className}
         transition={transiton}
