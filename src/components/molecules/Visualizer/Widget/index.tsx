@@ -95,6 +95,7 @@ export default function WidgetComponent<PP = any, SP = any>({
       visible
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
+      sceneProperty={props.sceneProperty}
       widget={w}
       onRender={handleRender}
       onResize={handleResize}

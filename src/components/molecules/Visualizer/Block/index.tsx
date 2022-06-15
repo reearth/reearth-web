@@ -19,6 +19,7 @@ export type Props<BP = any, PP = any> = {
   infoboxProperty?: InfoboxProperty;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
+  sceneProperty?: any;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,
@@ -53,6 +54,7 @@ export default function BlockComponent<P = any, PP = any>({
         visible
         property={props.pluginProperty}
         pluginProperty={props.pluginProperty}
+        sceneProperty={props.sceneProperty}
         layer={props.layer}
         block={props.block}
         onClick={props.onClick}

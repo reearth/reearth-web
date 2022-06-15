@@ -18,6 +18,7 @@ export default function ({
   layer,
   widget,
   pluginProperty,
+  sceneProperty,
   onRender,
   onResize,
   overrideSceneProperty,
@@ -30,6 +31,7 @@ export default function ({
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
+  sceneProperty?: any;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   onRender?: (
     options:
@@ -55,6 +57,7 @@ export default function ({
       layer,
       widget,
       pluginProperty,
+      sceneProperty,
       overrideSceneProperty,
       onRender,
       onResize,
@@ -89,6 +92,7 @@ export function useAPI({
   extensionId = "",
   extensionType = "",
   pluginProperty,
+  sceneProperty,
   layer,
   block,
   widget,
@@ -100,6 +104,7 @@ export function useAPI({
   extensionId: string | undefined;
   extensionType: string | undefined;
   pluginProperty: any;
+  sceneProperty: any;
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
@@ -216,7 +221,7 @@ export function useAPI({
 
   useEffect(() => {
     event.current?.[1]("update");
-  }, [block, layer, widget]);
+  }, [block, layer, widget, sceneProperty]);
 
   return {
     staticExposed,

@@ -128,6 +128,7 @@ const Infobox: React.FC<Props> = ({
                 ? pluginProperty?.[`${b.pluginId}/${b.extensionId}`]
                 : undefined
             }
+            sceneProperty={sceneProperty}
             onChange={(...args) => onBlockChange?.(b.id, ...args)}
             onClick={() => {
               if (b.id && selectedBlockId !== b.id) {
