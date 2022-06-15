@@ -60,7 +60,7 @@ export default ({
   // imagery layers
   const [imageryLayers, setImageryLayers] = useState<ImageryLayerData[]>();
 
-  //indicator
+  // indicator
   const selectionIndicator = useMemo(() => {
     return property?.indicator?.indicator_type === "default";
   }, [property?.indicator?.indicator_type]);
