@@ -11,7 +11,7 @@ import { useIcon } from "../common";
 
 export type Props = {
   className?: string;
-  property: SceneProperty | undefined;
+  property?: SceneProperty;
 };
 
 export default function Indicator({ className, property }: Props): JSX.Element | null {
