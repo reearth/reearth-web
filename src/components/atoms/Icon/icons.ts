@@ -132,8 +132,8 @@ import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
 import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import PrivateGitHubRepo from "./Icons/privateGitHubRepo.svg";
 
-//Indicator
-import crosshair from "./Icons/crosshair.svg";
+// Indicator
+import Crosshair from "./Icons/crosshair.svg";
 
 export default {
   outline: Layer,
@@ -247,5 +247,5 @@ export default {
   menuForDevice: MenuForDevice,
   plugin: Plugin,
   tag: Tag,
-  crosshair: crosshair,
+  crosshair: Crosshair,
 };
