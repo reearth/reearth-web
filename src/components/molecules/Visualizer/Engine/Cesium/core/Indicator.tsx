@@ -107,6 +107,7 @@ const I = styled.div<{ transition: TransitionStatus }>`
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
 `;
+
 const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
   position: absolute;
   width: 50px;
