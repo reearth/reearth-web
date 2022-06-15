@@ -116,6 +116,7 @@ const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
 `;
+
 const Image = styled.img<{ transition: TransitionStatus }>`
   max-width: 100%;
   position: absolute;
