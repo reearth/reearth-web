@@ -71,21 +71,18 @@ export default function Indicator({ className, property }: Props): JSX.Element |
       viewer.clock.onTick.removeEventListener(handleTick);
     };
   }, [viewer]);
-  // console.log( indicator_type );
+
   return transiton !== "unmounted" && pos ? (
     indicator_type === "crosshair" ? (
       <StyledIcon
         icon="crosshair"
+        size="48px"
         className={className}
         transition={transiton}
         style={{ left: pos.x + "px", top: pos.y + "px" }}
       />
     ) : indicator_type === "default" ? (
-      <I
-        className={className}
-        transition={transiton}
-        style={{ left: pos.x + "px", top: pos.y + "px" }}
-      />
+      <StyledIndicator transition={transiton} style={{ left: pos.x + "px", top: pos.y + "px" }} />
     ) : (
       <Image
         src={img}
@@ -98,10 +95,8 @@ export default function Indicator({ className, property }: Props): JSX.Element |
   ) : null;
 }
 
-const I = styled.div<{ transition: TransitionStatus }>`
+const StyledIndicator = styled.div<{ transition: TransitionStatus }>`
   position: absolute;
-  width: 50px;
-  height: 50px;
   transform: translate(-50%, -50%);
   transition: ${({ transition }) =>
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
@@ -110,8 +105,6 @@ const I = styled.div<{ transition: TransitionStatus }>`
 
 const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
   position: absolute;
-  width: 50px;
-  height: 50px;
   transform: translate(-50%, -50%);
   transition: ${({ transition }) =>
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
@@ -119,16 +112,8 @@ const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
 `;
 
 const Image = styled.img<{ transition: TransitionStatus }>`
-  max-width: 100%;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  transform: translate(-50%, -50%);
   transition: ${({ transition }) =>
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};

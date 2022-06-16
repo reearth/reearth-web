@@ -62,7 +62,12 @@ export default ({
 
   // indicator
   const selectionIndicator = useMemo(() => {
-    return property?.indicator?.indicator_type === "default";
+    if (
+      property?.indicator?.indicator_type == undefined ||
+      property?.indicator?.indicator_type == "default"
+    )
+      return true;
+    return false;
   }, [property?.indicator?.indicator_type]);
 
   useDeepCompareEffect(() => {
