@@ -92,7 +92,7 @@ export type SceneProperty = {
   indicator?: {
     indicator_type: IndicatorTypes;
     indicator_image?: string;
-    indicator_img_scale?: number;
+    indicator_image_scale?: number;
   };
   tiles?: {
     id: string;

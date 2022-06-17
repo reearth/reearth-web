@@ -1,6 +1,6 @@
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import { BoundingSphere, Cartesian3, SceneTransforms, Cartesian2 } from "cesium";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -23,8 +23,8 @@ export default function Indicator({ className, property }: Props): JSX.Element |
     mountOnEnter: true,
     unmountOnExit: true,
   });
-  const { indicator_type, indicator_image, indicator_img_scale } = property?.indicator ?? {};
-  const [img, w, h] = useIcon({ image: indicator_image, imageSize: indicator_img_scale });
+  const { indicator_type, indicator_image, indicator_image_scale } = property?.indicator ?? {};
+  const [img, w, h] = useIcon({ image: indicator_image, imageSize: indicator_image_scale });
 
   useEffect(() => {
     if (!viewer) return;
@@ -81,9 +81,7 @@ export default function Indicator({ className, property }: Props): JSX.Element |
         transition={transiton}
         style={{ left: pos.x + "px", top: pos.y + "px" }}
       />
-    ) : indicator_type === "default" ? (
-      <StyledIndicator transition={transiton} style={{ left: pos.x + "px", top: pos.y + "px" }} />
-    ) : (
+    ) : indicator_type === "custom" ? (
       <Image
         src={img}
         width={w}
@@ -91,6 +89,8 @@ export default function Indicator({ className, property }: Props): JSX.Element |
         transition={transiton}
         style={{ left: pos.x + "px", top: pos.y + "px" }}
       />
+    ) : (
+      <StyledIndicator transition={transiton} style={{ left: pos.x + "px", top: pos.y + "px" }} />
     )
   ) : null;
 }

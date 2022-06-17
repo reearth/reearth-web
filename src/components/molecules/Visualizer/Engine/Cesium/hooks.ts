@@ -61,14 +61,22 @@ export default ({
   const [imageryLayers, setImageryLayers] = useState<ImageryLayerData[]>();
 
   // indicator
-  const selectionIndicator = useMemo(() => {
-    if (
-      property?.indicator?.indicator_type == undefined ||
-      property?.indicator?.indicator_type == "default"
-    )
-      return true;
-    return false;
-  }, [property?.indicator?.indicator_type]);
+  // const selectionIndicator = useMemo(() => {
+  //   if (
+  //     property?.indicator?.indicator_type == undefined ||
+  //     property?.indicator?.indicator_type == "default"
+  //   )
+  //     return true;
+  //   return false;
+  // }, [property?.indicator?.indicator_type]);
+  const selectionIndicator = useMemo(
+    () =>
+      !!(
+        property?.indicator?.indicator_type == undefined ||
+        property?.indicator?.indicator_type == "default"
+      ),
+    [property?.indicator?.indicator_type],
+  );
 
   useDeepCompareEffect(() => {
     const newTiles = (property?.tiles?.length ? property.tiles : undefined)
