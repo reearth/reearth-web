@@ -11,7 +11,7 @@ jobs:
   info:
     name: Collect information
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' && github.event.repository.full_name == 'reearth/reearth-web' && (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'release')
+    if: github.event.workflow_run.conclusion != 'failure' && github.event.repository.full_name == 'reearth/reearth-web' && (github.event.workflow_run.head_branch == 'release' || !startsWith(github.event.head_commit.message, 'v'))
     outputs:
       tag: ${{ steps.info.outputs.tag }}
       name: ${{ steps.info.outputs.name }}
@@ -27,12 +27,13 @@ jobs:
           BRANCH: ${{ github.event.workflow_run.head_branch }}
         # The tag name should be retrieved lazily, as tagging may be delayed.
         run: |
-          TAG=$(git tag --points-at HEAD)
-          if [[ ! -z "$TAG" ]]; then
-            echo "::set-output name=tag::$TAG"
-          fi
           if [[ "$BRANCH" = "release" ]]; then
-            echo "::set-output name=name::rc"
+            TAG=$(git tag --points-at HEAD)
+            if [[ ! -z "$TAG" ]]; then
+              echo "::set-output name=tag::$TAG"
+            else
+              echo "::set-output name=name::rc"
+            fi
           else
             echo "::set-output name=name::nightly"
           fi
@@ -44,6 +45,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    if: needs.info.outputs.name
     needs:
       - info
     steps:
@@ -79,7 +81,7 @@ jobs:
     needs:
       - info
       - build
-    if: "!needs.info.outputs.tag"
+    if: needs.info.outputs.name
     env:
       ARTIFACT: reearth-web_${{ needs.info.outputs.name }}.tar.gz
     steps:
@@ -110,23 +112,23 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - info
-    if: github.event.workflow_run.head_branch == 'release' && needs.info.outputs.tag
+    if: needs.info.outputs.tag
     env:
       ARTIFACT: reearth-web_${{ needs.info.outputs.tag }}.tar.gz
     steps:
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: tags/rc
+          file: reearth-web_rc.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rename artifact
+        run: mv reearth-web_rc.tar.gz $ARTIFACT
       - name: Download latest changelog
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: release.yml
           name: changelog-${{ needs.info.outputs.tag }}
-      - name: Download latest artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build.yml
-          commit: ${{ github.sha }}
-          name: build
-      - name: Rename artifact
-        run: mv reearth-web.tar.gz $ARTIFACT
       - name: Release
         uses: ncipollo/release-action@v1
         with:
@@ -141,18 +143,6 @@ jobs:
     name: Slack Notification
     needs:
       - release_nightly
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack Notification
-        uses: Gamesight/slack-workflow-status@master
-        if: always()
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-  slack-notification-release:
-    if: failure()
-    name: Slack Notification
-    needs:
       - release
     runs-on: ubuntu-latest
     steps:
