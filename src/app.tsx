@@ -39,6 +39,8 @@ if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
   });
 }
 
+// router test
+
 function AppRoutes() {
   const routes = useRoutes([
     { path: "/", element: <RootPage /> },
