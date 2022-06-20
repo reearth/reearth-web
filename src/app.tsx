@@ -68,7 +68,7 @@ function AppRoutes() {
     { path: "/settings/projects/:projectId/plugins", element: <PluginSettings /> },
     { path: "/plugin-editor", element: <PluginEditor /> },
     { path: "/graphql", element: process.env.NODE_ENV !== "production" && <GraphQLPlayground /> },
-    // redirections for breaking changs in urls
+    // redirections for breaking changes in urls
     {
       path: "/settings/workspace/:teamId",
       element: <Redirect to="/settings/workspaces/:teamId" />,
