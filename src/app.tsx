@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter as Router, useRoutes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, useRoutes, Navigate, useParams, Params } from "react-router-dom";
 
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBanner from "@reearth/components/organisms/Notification";
@@ -40,14 +40,14 @@ if (enableWhyDidYouRender && process.env.NODE_ENV === "development") {
 }
 
 function AppRoutes() {
-  // const Redirect = ({ to }: { to: string }) => {
-  //   const { teamId, projectId }: Readonly<Params<string>> = useParams();
-  //   return (
-  //     <Navigate
-  //       to={`${to.replace(":teamId", teamId ?? "").replace(":projectId", projectId ?? "")}`}
-  //     />
-  //   );
-  // };
+  const Redirect = ({ to }: { to: string }) => {
+    const { teamId, projectId }: Readonly<Params<string>> = useParams();
+    return (
+      <Navigate
+        to={`${to.replace(":teamId", teamId ?? "").replace(":projectId", projectId ?? "")}`}
+      />
+    );
+  };
   const routes = useRoutes([
     { path: "/", element: <RootPage /> },
     { path: "/login", element: <LoginPage /> },
@@ -69,30 +69,30 @@ function AppRoutes() {
     { path: "/plugin-editor", element: <PluginEditor /> },
     { path: "/graphql", element: process.env.NODE_ENV !== "production" && <GraphQLPlayground /> },
     // redirections for breaking changs in urls
-    // {
-    //   path: "/settings/workspace/:teamId",
-    //   element: <Redirect to="/settings/workspaces/:teamId" />,
-    // },
-    // {
-    //   path: "/settings/workspace/:teamId/projects",
-    //   element: <Redirect to="/settings/workspaces/:teamId/projects" />,
-    // },
-    // {
-    //   path: "/settings/workspace/:teamId/asset",
-    //   element: <Redirect to="/settings/workspaces/:teamId/asset" />,
-    // },
-    // {
-    //   path: "/settings/project/:projectId/public",
-    //   element: <Redirect to="/settings/projects/:projectId/public" />,
-    // },
-    // {
-    //   path: "/settings/project/:projectId/dataset",
-    //   element: <Redirect to="/settings/projects/:projectId/dataset" />,
-    // },
-    // {
-    //   path: "/settings/project/:projectId/plugins",
-    //   element: <Redirect to="/settings/projects/:projectId/plugins" />,
-    // },
+    {
+      path: "/settings/workspace/:teamId",
+      element: <Redirect to="/settings/workspaces/:teamId" />,
+    },
+    {
+      path: "/settings/workspace/:teamId/projects",
+      element: <Redirect to="/settings/workspaces/:teamId/projects" />,
+    },
+    {
+      path: "/settings/workspace/:teamId/asset",
+      element: <Redirect to="/settings/workspaces/:teamId/asset" />,
+    },
+    {
+      path: "/settings/project/:projectId/public",
+      element: <Redirect to="/settings/projects/:projectId/public" />,
+    },
+    {
+      path: "/settings/project/:projectId/dataset",
+      element: <Redirect to="/settings/projects/:projectId/dataset" />,
+    },
+    {
+      path: "/settings/project/:projectId/plugins",
+      element: <Redirect to="/settings/projects/:projectId/plugins" />,
+    },
     { path: "*", element: <NotFound /> },
   ]);
   return routes;
