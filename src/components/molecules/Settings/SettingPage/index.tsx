@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -7,6 +7,7 @@ import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
+import { AutoFetchMore } from "@reearth/util/AutoFetchMore";
 import { handleScroll } from "@reearth/util/handleScroll";
 
 export type SettingPageProps = {
@@ -29,7 +30,10 @@ const SettingPage: React.FC<SettingPageProps> = ({
   const handleClick = () => {
     setIsOpen(o => !o);
   };
-
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (wrapperRef.current && !loading && hasMoreItems) AutoFetchMore(wrapperRef, onScroll);
+  }, [hasMoreItems, loading, onScroll]);
   return (
     <Wrapper>
       <StyledHeader
@@ -47,6 +51,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
         }
       />
       <BodyWrapper
+        ref={wrapperRef}
         onScroll={e => {
           !loading && hasMoreItems && handleScroll(e, onScroll);
         }}>

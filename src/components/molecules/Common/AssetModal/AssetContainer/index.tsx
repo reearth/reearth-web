@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
@@ -11,6 +11,7 @@ import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/As
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
+import { AutoFetchMore } from "@reearth/util/AutoFetchMore";
 import { handleScroll } from "@reearth/util/handleScroll";
 
 import AssetCard from "../AssetCard";
@@ -97,7 +98,10 @@ const AssetContainer: React.FC<Props> = ({
     onRemove,
     onSearch,
   });
-
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (wrapperRef.current && !isLoading && hasMoreAssets) AutoFetchMore(wrapperRef, onGetMore);
+  }, [hasMoreAssets, isLoading, onGetMore]);
   return (
     <Wrapper>
       <Flex justify={onRemove ? "flex-end" : "center"}>
@@ -167,6 +171,7 @@ const AssetContainer: React.FC<Props> = ({
           </Template>
         ) : (
           <AssetListWrapper
+            ref={wrapperRef}
             onScroll={e => !isLoading && hasMoreAssets && handleScroll(e, onGetMore)}>
             <AssetList layoutType={layoutType}>
               {layoutType === "list"
