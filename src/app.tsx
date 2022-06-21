@@ -82,6 +82,10 @@ function AppRoutes() {
       element: <Redirect to="/settings/workspaces/:teamId/asset" />,
     },
     {
+      path: "/settings/project/:projectId",
+      element: <Redirect to="/settings/projects/:projectId" />,
+    },
+    {
       path: "/settings/project/:projectId/public",
       element: <Redirect to="/settings/projects/:projectId/public" />,
     },
