@@ -134,12 +134,14 @@ export function commonReearth({
   selectLayer,
   showLayer,
   hideLayer,
+  appendLayer,
   overrideLayerProperty,
   flyTo,
   lookAt,
   zoomIn,
   zoomOut,
   viewport,
+  builtinExtensionIds,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -155,12 +157,14 @@ export function commonReearth({
   layersInViewport: () => GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
+  appendLayer: GlobalThis["reearth"]["layers"]["append"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
+  builtinExtensionIds: () => string[];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -240,6 +244,12 @@ export function commonReearth({
       },
       get walk() {
         return layers().walk;
+      },
+      get append() {
+        return appendLayer;
+      },
+      get extensionIds() {
+        return builtinExtensionIds();
       },
     },
     ...events,

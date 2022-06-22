@@ -7,8 +7,10 @@ export type { Layer } from "../Primitive";
 // Layer objects but optimized for plugins
 type PluginLayer = Readonly<Layer>;
 
+type AppendedLayerData = { layer: Layer; parentId?: string };
+
 export class LayerStore {
-  constructor(root: Layer) {
+  constructor(databaseRootLayer?: Layer) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.#prototype = objectFromGetter<Omit<Layer, "id">>(
@@ -47,11 +49,15 @@ export class LayerStore {
       },
     );
 
-    this.#root = root;
-    this.#proot = this.#pluginLayer(root);
-    this.#flattenLayers = flattenLayers(root?.children ?? []);
+    this.#root = databaseRootLayer ?? { id: "" };
+    this.#appendedLayersData = [];
+    this.#databaseLayers = databaseRootLayer;
+
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
     this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+    this.renderKey = 0;
   }
 
   #root: Layer;
@@ -60,6 +66,7 @@ export class LayerStore {
   #map: Map<string, Layer>;
   #pmap: Map<string, PluginLayer>;
   #prototype: Readonly<Omit<Layer, "id">>;
+  renderKey: number;
 
   #pluginLayer(layer: Layer): PluginLayer {
     // use getter and setter
@@ -67,6 +74,62 @@ export class LayerStore {
     l.id = layer.id;
     return l;
   }
+
+  #databaseLayers: Layer | undefined;
+  #appendedLayersData: AppendedLayerData[];
+
+  #updateLayers = () => {
+    this.#root = this.#databaseLayers ?? { id: "" };
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
+    this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+    this.#appendedLayersData.map(l => this.#insertAppendedLayer(l));
+  };
+
+  #getUniqueAppendedLayerId = () => {
+    const genInnerId = () =>
+      "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
+        return ((Math.random() * 16) | 0).toString(16);
+      });
+    let uniqueAppendedLayerId;
+    do {
+      uniqueAppendedLayerId = genInnerId();
+    } while (this.#flattenLayers.map(l => l.id).indexOf(uniqueAppendedLayerId) !== -1);
+    return uniqueAppendedLayerId;
+  };
+
+  #insertAppendedLayer = (appendedLayerData: AppendedLayerData) => {
+    (appendedLayerData.parentId
+      ? this.#map.get(appendedLayerData.parentId)
+      : this.#root
+    )?.children?.push(appendedLayerData.layer);
+    Object.setPrototypeOf(this.#proot, { children: this.#root.children });
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
+    this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+  };
+
+  append = (layer: Omit<Layer, "id">, parentId?: string) => {
+    const appendedLayerData = {
+      layer: {
+        ...layer,
+        id: this.#getUniqueAppendedLayerId(),
+        pluginId: "reearth",
+      },
+      parentId,
+    };
+    this.#appendedLayersData.push(appendedLayerData);
+    this.#insertAppendedLayer(appendedLayerData);
+    this.renderKey += 1;
+  };
+
+  setDatabaseLayers = (databaseRootLayer: Layer | undefined) => {
+    if (databaseRootLayer) {
+      this.#databaseLayers = databaseRootLayer;
+      this.#updateLayers();
+    }
+  };
 
   isLayer = (obj: any): obj is PluginLayer => {
     return typeof obj === "object" && Object.getPrototypeOf(obj) === this.#prototype;
@@ -156,4 +219,4 @@ function flattenLayers(layers: Layer[] | undefined): Layer[] {
   );
 }
 
-export const empty = new LayerStore({ id: "" });
+export const empty = new LayerStore();

@@ -47,6 +47,7 @@ export type Props = {
   layerOverriddenProperties?: { [key: string]: any };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
+  appendLayer: (layer: Layer, parentId?: string) => void;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
@@ -84,6 +85,7 @@ export function Provider({
   layerOverriddenProperties,
   showLayer,
   hideLayer,
+  appendLayer,
   selectLayer,
   overrideLayerProperty,
   layersInViewport,
@@ -108,6 +110,15 @@ export function Provider({
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
   const getLayerOverriddenProperties = useGet(layerOverriddenProperties);
+  const getBuiltinExtensionIds = useCallback(
+    () =>
+      builtinPrimitives
+        ? Object.keys(builtinPrimitives)
+            .filter(p => !["reearth/polyline", "reearth/polygon", "reearth/rect"].includes(p))
+            .map(p => p.split("/")[1])
+        : [],
+    [builtinPrimitives],
+  );
 
   const value = useMemo<Context>(
     () => ({
@@ -129,6 +140,7 @@ export function Provider({
         layerOverriddenProperties: getLayerOverriddenProperties,
         showLayer,
         hideLayer,
+        appendLayer,
         selectLayer,
         overrideLayerProperty,
         layersInViewport,
@@ -137,6 +149,7 @@ export function Provider({
         zoomIn,
         zoomOut,
         viewport,
+        builtinExtensionIds: getBuiltinExtensionIds,
       }),
     }),
     [
@@ -156,6 +169,7 @@ export function Provider({
       showLayer,
       hideLayer,
       selectLayer,
+      appendLayer,
       overrideLayerProperty,
       layersInViewport,
       flyTo,
@@ -163,6 +177,7 @@ export function Provider({
       zoomIn,
       zoomOut,
       viewport,
+      getBuiltinExtensionIds,
     ],
   );
 

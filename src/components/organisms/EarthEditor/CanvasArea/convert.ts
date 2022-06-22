@@ -145,7 +145,7 @@ type GQLLayer = Maybe<
     EarthLayerCommonFragment
 >;
 
-const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
+export const processLayer = (layer: Maybe<GQLLayer>): Layer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
