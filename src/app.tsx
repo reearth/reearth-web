@@ -1,11 +1,5 @@
 import React, { Suspense } from "react";
-import {
-  BrowserRouter as Router,
-  useRoutes,
-  Navigate,
-  useParams,
-  type Params,
-} from "react-router-dom";
+import { BrowserRouter as Router, useRoutes, Navigate, useParams } from "react-router-dom";
 
 import Loading from "@reearth/components/atoms/Loading";
 import NotificationBanner from "@reearth/components/organisms/Notification";
@@ -99,7 +93,7 @@ const redirects = [
 }));
 
 function Redirect({ to }: { to: string }) {
-  const { teamId, projectId }: Readonly<Params<string>> = useParams();
+  const { teamId, projectId } = useParams();
   return (
     <Navigate
       to={`${to.replace(":teamId", teamId ?? "").replace(":projectId", projectId ?? "")}`}
