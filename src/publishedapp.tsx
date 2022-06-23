@@ -3,6 +3,7 @@ import PublishedPage from "@reearth/components/pages/Published";
 import { PublishedProvider as I18nProvider } from "./i18n";
 import { PublishedAppProvider as ThemeProvider } from "./theme";
 import { Provider as DndProvider } from "./util/use-dnd";
+import "./wdyr";
 
 export default function App() {
   return (
