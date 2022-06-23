@@ -29,7 +29,6 @@ import RootPage from "./components/pages/Authentication/RootPage";
 import Preview from "./components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
 import { Provider as ThemeProvider, styled } from "./theme";
-import "./wdyr";
 
 const EarthEditor = React.lazy(() => import("@reearth/components/pages/EarthEditor"));
 const Dashboard = React.lazy(() => import("@reearth/components/pages/Dashboard"));
