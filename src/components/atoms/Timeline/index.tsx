@@ -166,11 +166,6 @@ const MemoryContainer = styled.div`
   }
 `;
 
-type MemoryProps = {
-  isHour: boolean;
-  isStrongMemory: boolean;
-};
-
 const LabeledMemory = styled.div`
   display: flex;
   align-items: flex-end;
@@ -187,7 +182,10 @@ const MemoryLabel = styled.span`
   white-space: nowrap;
 `;
 
-const Memory = styled.div<MemoryProps>`
+const Memory = styled.div<{
+  isHour: boolean;
+  isStrongMemory: boolean;
+}>`
   flex-shrink: 0;
   width: ${({ isStrongMemory }) =>
     isStrongMemory ? `${STRONG_MEMORY_WIDTH}px` : `${NORMAL_MEMORY_WIDTH}px`};
