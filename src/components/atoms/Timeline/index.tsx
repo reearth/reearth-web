@@ -1,4 +1,3 @@
-import { padStart } from "lodash";
 import { FC, memo, ReactElement, useMemo } from "react";
 
 import { styled } from "@reearth/theme";
@@ -14,71 +13,85 @@ export interface Props {
    * These value need to be epoch time.
    */
   timelineRange: [start: number, end: number];
-  /**
-   * @description
-   * This value need to be in seconds.
-   * Default value is 600sec(10min).
-   */
-  memoryInterval?: number;
   renderIcon: () => ReactElement;
+  iconWidth: number;
 }
 
 const EPOCH_SEC = 1000;
-const PADDING_HORIZONTAL = 10;
+const PADDING_HORIZONTAL = 12;
 const STRONG_MEMORY_HOURS = 3;
 const STRONG_MEMORY_WIDTH = 2;
 const NORMAL_MEMORY_WIDTH = 1;
-const GAP_HORIZONTAL = 7;
+const GAP_HORIZONTAL = 14;
 const HOURS_SECS = 3600;
+const MEMORY_INTERVAL = 600;
 
-const Timeline: React.FC<Props> = ({
-  currentTime,
-  timelineRange,
-  memoryInterval = 600,
-  renderIcon,
-}) => {
+const Timeline: React.FC<Props> = ({ currentTime, timelineRange, renderIcon, iconWidth }) => {
   const [startRange, endRange] = timelineRange;
   const epochDiff = endRange - startRange;
 
   // convert epoch diff to second.
   const memoryCount = useMemo(
-    () => Math.trunc(epochDiff / EPOCH_SEC / memoryInterval),
-    [epochDiff, memoryInterval],
+    () => Math.trunc(epochDiff / EPOCH_SEC / MEMORY_INTERVAL),
+    [epochDiff],
   );
   const startRangeDate = useMemo(() => new Date(startRange), [startRange]);
-  const hoursCount = Math.trunc(HOURS_SECS / memoryInterval);
+  const hoursCount = Math.trunc(HOURS_SECS / MEMORY_INTERVAL);
   // Convert memory count to pixel.
   const currentPosition = useMemo(() => {
-    if (currentTime < startRange || currentTime > endRange) {
-      return 0;
-    }
-    const diff = (currentTime - startRange) / EPOCH_SEC / memoryInterval;
-    const currentMemoryCount = hoursCount * STRONG_MEMORY_HOURS;
-    return (
-      (diff * (currentMemoryCount * (GAP_HORIZONTAL + NORMAL_MEMORY_WIDTH) + STRONG_MEMORY_WIDTH)) /
-        currentMemoryCount +
-      GAP_HORIZONTAL / 2
+    const diff = Math.min((currentTime - startRange) / EPOCH_SEC / MEMORY_INTERVAL, memoryCount);
+    const strongMemoryCount = diff / (hoursCount * STRONG_MEMORY_HOURS);
+    return Math.max(
+      diff * GAP_HORIZONTAL +
+        (diff - strongMemoryCount) * NORMAL_MEMORY_WIDTH +
+        strongMemoryCount * STRONG_MEMORY_WIDTH +
+        STRONG_MEMORY_WIDTH / 2,
+      0,
     );
-  }, [currentTime, startRange, hoursCount, endRange, memoryInterval]);
+  }, [currentTime, startRange, memoryCount, hoursCount]);
 
   return (
     <Container>
-      <MemoryList
-        startRange={startRangeDate}
-        memoryCount={memoryCount}
-        memoryInterval={memoryInterval}
-        hoursCount={hoursCount}
-      />
-      {/* TODO: Subtract icon width from position left. Currently Icon is displayed left corner as pointer. */}
-      <Icon style={{ left: currentPosition + PADDING_HORIZONTAL }}>{renderIcon()}</Icon>
+      <MemoryBox>
+        <MemoryList startRange={startRangeDate} memoryCount={memoryCount} hoursCount={hoursCount} />
+        <Icon
+          style={{
+            left: currentPosition + PADDING_HORIZONTAL - iconWidth / 2,
+          }}>
+          {renderIcon()}
+        </Icon>
+      </MemoryBox>
     </Container>
   );
 };
 
 const Container = styled.div`
+  background: ${({ theme }) => theme.main.lighterBg};
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 5px 12px;
+  box-sizing: border-box;
+`;
+
+const MemoryBox = styled.div`
+  border: 1px solid #b5b5b5;
+  border-radius: 5px;
+  box-sizing: border-box;
   position: relative;
-  background: #303846;
   overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  ::-webkit-scrollbar {
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #aaa;
+  }
 `;
 
 const Icon = styled.div`
@@ -86,37 +99,51 @@ const Icon = styled.div`
   top: 2px;
 `;
 
+const MONTH_LABEL_LIST = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 type MemoryListProps = {
   startRange: Date;
   memoryCount: number;
-  memoryInterval: number;
   hoursCount: number;
 };
 
 const MemoryList: FC<MemoryListProps> = memo(
-  function MemoryListPresenter({ startRange, memoryCount, memoryInterval, hoursCount }) {
+  function MemoryListPresenter({ startRange, memoryCount, hoursCount }) {
     return (
       <MemoryContainer>
-        {[...Array(memoryCount)].map((_, idx) => {
+        {[...Array(memoryCount + 1)].map((_, idx) => {
           const isHour = idx % hoursCount === 0;
-          const isThreeHours = idx % (hoursCount * STRONG_MEMORY_HOURS) === 0;
-          if (isThreeHours) {
-            const d = new Date(startRange.getTime() + idx * EPOCH_SEC * memoryInterval);
+          const isStrongMemory = idx % (hoursCount * STRONG_MEMORY_HOURS) === 0;
+          if (isStrongMemory) {
+            const d = new Date(startRange.getTime() + idx * EPOCH_SEC * MEMORY_INTERVAL);
             const year = d.getFullYear();
-            const month = padStart(`${d.getMonth() + 1}`, 2, "0");
-            const date = padStart(`${d.getDate()}`, 2, "0");
-            const hour = padStart(`${d.getHours()}`, 2, "0");
+            const month = MONTH_LABEL_LIST[d.getMonth()];
+            const date = `${d.getDate()}`.padStart(2, "0");
+            const hour = `${d.getHours()}`.padStart(2, "0");
             // TODO: Fix date format
-            const label = `${year}/${month}/${date} ${hour}:00`;
+            const label = `${month} ${date} ${year} ${hour}:00:00.0000`;
 
             return (
               <LabeledMemory>
                 <MemoryLabel>{label}</MemoryLabel>
-                <Memory key={`${idx}`} isHour={isHour} isThreeHours={isThreeHours} />
+                <Memory key={`${idx}`} isHour={isHour} isStrongMemory={isStrongMemory} />
               </LabeledMemory>
             );
           }
-          return <Memory key={`${idx}`} isHour={isHour} isThreeHours={isThreeHours} />;
+          return <Memory key={`${idx}`} isHour={isHour} isStrongMemory={isStrongMemory} />;
         })}
       </MemoryContainer>
     );
@@ -128,7 +155,7 @@ const MemoryContainer = styled.div`
   display: flex;
   gap: 0 ${GAP_HORIZONTAL}px;
   min-width: 100%;
-  height: 32px;
+  height: 30px;
   align-items: flex-end;
   padding-left: ${PADDING_HORIZONTAL}px;
   ::after {
@@ -141,7 +168,7 @@ const MemoryContainer = styled.div`
 
 type MemoryProps = {
   isHour: boolean;
-  isThreeHours: boolean;
+  isStrongMemory: boolean;
 };
 
 const LabeledMemory = styled.div`
@@ -155,17 +182,18 @@ const MemoryLabel = styled.span`
   position: absolute;
   top: 0;
   left: 0;
-  color: #fff;
-  font-size: 11px;
+  color: ${({ theme }) => theme.other.white};
+  font-size: 10px;
   white-space: nowrap;
 `;
 
 const Memory = styled.div<MemoryProps>`
   flex-shrink: 0;
-  width: ${({ isThreeHours }) =>
-    isThreeHours ? `${STRONG_MEMORY_WIDTH}px` : `${NORMAL_MEMORY_WIDTH}px`};
-  height: ${({ isHour, isThreeHours }) => (isThreeHours && "15px") || (isHour && "13px") || "10px"};
-  background: ${({ isThreeHours }) => (isThreeHours ? "#fff" : "#aaa")};
+  width: ${({ isStrongMemory }) =>
+    isStrongMemory ? `${STRONG_MEMORY_WIDTH}px` : `${NORMAL_MEMORY_WIDTH}px`};
+  height: ${({ isHour, isStrongMemory }) =>
+    (isStrongMemory && "15px") || (isHour && "13px") || "10px"};
+  background: #f5f5f5;
 `;
 
 export default Timeline;
