@@ -49,9 +49,9 @@ export class LayerStore {
       },
     );
 
-    this.#root = databaseRootLayer ?? { id: "" };
+    this.#databaseLayers = databaseRootLayer ?? { id: "", children: [] };
     this.#appendedLayersData = [];
-    this.#databaseLayers = databaseRootLayer;
+    this.#root = this.#databaseLayers;
 
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
@@ -79,7 +79,7 @@ export class LayerStore {
   #appendedLayersData: AppendedLayerData[];
 
   #updateLayers = () => {
-    this.#root = this.#databaseLayers ?? { id: "" };
+    this.#root = this.#databaseLayers ?? { id: "", children: [] };
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
@@ -125,11 +125,9 @@ export class LayerStore {
   };
 
   setDatabaseLayers = (databaseRootLayer: Layer | undefined) => {
-    if (databaseRootLayer) {
-      this.#databaseLayers = databaseRootLayer;
-      this.#updateLayers();
-      this.renderKey += 1;
-    }
+    this.#databaseLayers = databaseRootLayer ?? { id: "", children: [] };
+    this.#updateLayers();
+    this.renderKey += 1;
   };
 
   isLayer = (obj: any): obj is PluginLayer => {

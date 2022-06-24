@@ -30,7 +30,7 @@ export default (alias?: string) => {
   const rootLayer = useMemo(() => {
     return {
       id: "",
-      children: data?.layers?.map(processLayer),
+      children: data?.layers?.map(processLayer) ?? [],
     };
   }, [data]);
 
