@@ -250,7 +250,7 @@ function useLayers({
   const [selectedLayerId, innerSelectLayer] = useState<string | undefined>();
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
-  const [layers] = useState<LayerStore>(() => new LayerStore());
+  const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
   const [, setLayersRenderKey] = useState<number>();
 
   useMemo(() => {
