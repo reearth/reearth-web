@@ -128,6 +128,7 @@ export class LayerStore {
     if (databaseRootLayer) {
       this.#databaseLayers = databaseRootLayer;
       this.#updateLayers();
+      this.renderKey += 1;
     }
   };
 
