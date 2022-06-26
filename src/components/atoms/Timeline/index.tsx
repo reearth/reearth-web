@@ -7,7 +7,7 @@ type Range = {
   end: number;
 };
 
-export interface Props {
+export type Props = {
   /**
    * @description
    * This value need to be epoch time.
@@ -20,7 +20,7 @@ export interface Props {
   range?: { [K in keyof Range]?: Range[K] };
   renderKnob: () => ReactElement;
   knobSize: number;
-}
+};
 
 const EPOCH_SEC = 1000;
 const PADDING_HORIZONTAL = 12;
