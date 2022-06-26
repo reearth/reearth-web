@@ -60,59 +60,57 @@ const getRange = (_range: Props["range"]): Range => {
   };
 };
 
-const Timeline: React.FC<Props> = memo(function TimelinePresenter({
-  currentTime,
-  range: _range,
-  renderKnob,
-  knobSize,
-}) {
-  const range = useMemo(() => {
-    const range = getRange(_range);
-    if (process.env.NODE_ENV !== "production") {
-      if (range.start > range.end) {
-        throw new Error("Out of range error. `range.start` should be less than `range.end`");
+const Timeline: React.FC<Props> = memo(
+  function TimelinePresenter({ currentTime, range: _range, renderKnob, knobSize }) {
+    const range = useMemo(() => {
+      const range = getRange(_range);
+      if (process.env.NODE_ENV !== "production") {
+        if (range.start > range.end) {
+          throw new Error("Out of range error. `range.start` should be less than `range.end`");
+        }
       }
-    }
-    return range;
-  }, [_range]);
-  const { start, end } = range;
-  const epochDiff = end - start;
+      return range;
+    }, [_range]);
+    const { start, end } = range;
+    const epochDiff = end - start;
 
-  // convert epoch diff to second.
-  const memoryCount = useMemo(
-    () => Math.trunc(epochDiff / EPOCH_SEC / MEMORY_INTERVAL),
-    [epochDiff],
-  );
-
-  const startDate = useMemo(() => new Date(start), [start]);
-  const hoursCount = Math.trunc(HOURS_SECS / MEMORY_INTERVAL);
-  // Convert memory count to pixel.
-  const currentPosition = useMemo(() => {
-    const diff = Math.min((currentTime - start) / EPOCH_SEC / MEMORY_INTERVAL, memoryCount);
-    const strongMemoryCount = diff / (hoursCount * STRONG_MEMORY_HOURS);
-    return Math.max(
-      diff * GAP_HORIZONTAL +
-        (diff - strongMemoryCount) * NORMAL_MEMORY_WIDTH +
-        strongMemoryCount * STRONG_MEMORY_WIDTH +
-        STRONG_MEMORY_WIDTH / 2,
-      0,
+    // convert epoch diff to second.
+    const memoryCount = useMemo(
+      () => Math.trunc(epochDiff / EPOCH_SEC / MEMORY_INTERVAL),
+      [epochDiff],
     );
-  }, [currentTime, start, memoryCount, hoursCount]);
 
-  return (
-    <Container>
-      <MemoryBox>
-        <MemoryList start={startDate} memoryCount={memoryCount} hoursCount={hoursCount} />
-        <Icon
-          style={{
-            left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
-          }}>
-          {renderKnob()}
-        </Icon>
-      </MemoryBox>
-    </Container>
-  );
-});
+    const startDate = useMemo(() => new Date(start), [start]);
+    const hoursCount = Math.trunc(HOURS_SECS / MEMORY_INTERVAL);
+    // Convert memory count to pixel.
+    const currentPosition = useMemo(() => {
+      const diff = Math.min((currentTime - start) / EPOCH_SEC / MEMORY_INTERVAL, memoryCount);
+      const strongMemoryCount = diff / (hoursCount * STRONG_MEMORY_HOURS);
+      return Math.max(
+        diff * GAP_HORIZONTAL +
+          (diff - strongMemoryCount) * NORMAL_MEMORY_WIDTH +
+          strongMemoryCount * STRONG_MEMORY_WIDTH +
+          STRONG_MEMORY_WIDTH / 2,
+        0,
+      );
+    }, [currentTime, start, memoryCount, hoursCount]);
+
+    return (
+      <Container>
+        <MemoryBox>
+          <MemoryList start={startDate} memoryCount={memoryCount} hoursCount={hoursCount} />
+          <Icon
+            style={{
+              left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
+            }}>
+            {renderKnob()}
+          </Icon>
+        </MemoryBox>
+      </Container>
+    );
+  },
+  (prev, next) => prev.currentTime === next.currentTime,
+);
 
 const Container = styled.div`
   background: ${({ theme }) => theme.main.lighterBg};
