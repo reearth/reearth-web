@@ -12,9 +12,9 @@ export interface Props {
    * @description
    * These value need to be epoch time.
    */
-  timelineRange: [start: number, end: number];
-  renderIcon: () => ReactElement;
-  iconWidth: number;
+  range: [start: number, end: number];
+  renderKnob: () => ReactElement;
+  knobSize: number;
 }
 
 const EPOCH_SEC = 1000;
@@ -28,11 +28,11 @@ const MEMORY_INTERVAL = 600;
 
 const Timeline: React.FC<Props> = memo(function TimelinePresenter({
   currentTime,
-  timelineRange,
-  renderIcon,
-  iconWidth,
+  range,
+  renderKnob,
+  knobSize,
 }) {
-  const [startRange, endRange] = timelineRange;
+  const [startRange, endRange] = range;
   const epochDiff = endRange - startRange;
 
   // convert epoch diff to second.
@@ -61,9 +61,9 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         <MemoryList startRange={startRangeDate} memoryCount={memoryCount} hoursCount={hoursCount} />
         <Icon
           style={{
-            left: currentPosition + PADDING_HORIZONTAL - iconWidth / 2,
+            left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
           }}>
-          {renderIcon()}
+          {renderKnob()}
         </Icon>
       </MemoryBox>
     </Container>
