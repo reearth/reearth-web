@@ -1,15 +1,15 @@
-import { Meta } from "@storybook/react";
+import { Meta, Story } from "@storybook/react";
 
 import Icon from "../Icon";
 
-import Timeline from ".";
+import Timeline, { Props } from ".";
 
 export default {
   title: "atoms/Timeline/Timeline",
   component: Timeline,
 } as Meta;
 
-export const Normal = () => (
+export const Normal: Story<Props> = () => (
   <Timeline
     currentTime={new Date("2022-06-30T12:20:00.000").getTime()}
     timelineRange={[
