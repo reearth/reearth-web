@@ -26,7 +26,12 @@ const GAP_HORIZONTAL = 14;
 const HOURS_SECS = 3600;
 const MEMORY_INTERVAL = 600;
 
-const Timeline: React.FC<Props> = ({ currentTime, timelineRange, renderIcon, iconWidth }) => {
+const Timeline: React.FC<Props> = memo(function TimelinePresenter({
+  currentTime,
+  timelineRange,
+  renderIcon,
+  iconWidth,
+}) {
   const [startRange, endRange] = timelineRange;
   const epochDiff = endRange - startRange;
 
@@ -63,7 +68,7 @@ const Timeline: React.FC<Props> = ({ currentTime, timelineRange, renderIcon, ico
       </MemoryBox>
     </Container>
   );
-};
+});
 
 const Container = styled.div`
   background: ${({ theme }) => theme.main.lighterBg};
