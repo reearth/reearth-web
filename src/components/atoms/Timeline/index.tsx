@@ -2,6 +2,11 @@ import { FC, memo, ReactElement, useMemo } from "react";
 
 import { styled } from "@reearth/theme";
 
+type Range = {
+  start: number;
+  end: number;
+};
+
 export interface Props {
   /**
    * @description
@@ -12,7 +17,7 @@ export interface Props {
    * @description
    * These value need to be epoch time.
    */
-  range: [start: number, end: number];
+  range?: { [K in keyof Range]?: Range[K] };
   renderKnob: () => ReactElement;
   knobSize: number;
 }
@@ -25,26 +30,65 @@ const NORMAL_MEMORY_WIDTH = 1;
 const GAP_HORIZONTAL = 14;
 const HOURS_SECS = 3600;
 const MEMORY_INTERVAL = 600;
+const DAY_SECS = 86400;
+
+const getRange = (_range: Props["range"]): Range => {
+  const { start, end } = _range || {};
+  if (start !== undefined && end !== undefined) {
+    return { start, end };
+  }
+
+  if (start !== undefined && end === undefined) {
+    return {
+      start,
+      end: start + DAY_SECS,
+    };
+  }
+
+  if (start === undefined && end !== undefined) {
+    return {
+      start: Math.max(end - DAY_SECS, 0),
+      end,
+    };
+  }
+
+  const defaultStart = Date.now();
+
+  return {
+    start: defaultStart,
+    end: defaultStart + DAY_SECS * EPOCH_SEC,
+  };
+};
 
 const Timeline: React.FC<Props> = memo(function TimelinePresenter({
   currentTime,
-  range,
+  range: _range,
   renderKnob,
   knobSize,
 }) {
-  const [startRange, endRange] = range;
-  const epochDiff = endRange - startRange;
+  const range = useMemo(() => {
+    const range = getRange(_range);
+    if (process.env.NODE_ENV !== "production") {
+      if (range.start > range.end) {
+        throw new Error("Out of range error. `range.start` should be less than `range.end`");
+      }
+    }
+    return range;
+  }, [_range]);
+  const { start, end } = range;
+  const epochDiff = end - start;
 
   // convert epoch diff to second.
   const memoryCount = useMemo(
     () => Math.trunc(epochDiff / EPOCH_SEC / MEMORY_INTERVAL),
     [epochDiff],
   );
-  const startRangeDate = useMemo(() => new Date(startRange), [startRange]);
+
+  const startDate = useMemo(() => new Date(start), [start]);
   const hoursCount = Math.trunc(HOURS_SECS / MEMORY_INTERVAL);
   // Convert memory count to pixel.
   const currentPosition = useMemo(() => {
-    const diff = Math.min((currentTime - startRange) / EPOCH_SEC / MEMORY_INTERVAL, memoryCount);
+    const diff = Math.min((currentTime - start) / EPOCH_SEC / MEMORY_INTERVAL, memoryCount);
     const strongMemoryCount = diff / (hoursCount * STRONG_MEMORY_HOURS);
     return Math.max(
       diff * GAP_HORIZONTAL +
@@ -53,12 +97,12 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
         STRONG_MEMORY_WIDTH / 2,
       0,
     );
-  }, [currentTime, startRange, memoryCount, hoursCount]);
+  }, [currentTime, start, memoryCount, hoursCount]);
 
   return (
     <Container>
       <MemoryBox>
-        <MemoryList startRange={startRangeDate} memoryCount={memoryCount} hoursCount={hoursCount} />
+        <MemoryList start={startDate} memoryCount={memoryCount} hoursCount={hoursCount} />
         <Icon
           style={{
             left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
@@ -120,20 +164,20 @@ const MONTH_LABEL_LIST = [
 ];
 
 type MemoryListProps = {
-  startRange: Date;
+  start: Date;
   memoryCount: number;
   hoursCount: number;
 };
 
 const MemoryList: FC<MemoryListProps> = memo(
-  function MemoryListPresenter({ startRange, memoryCount, hoursCount }) {
+  function MemoryListPresenter({ start, memoryCount, hoursCount }) {
     return (
       <MemoryContainer>
         {[...Array(memoryCount + 1)].map((_, idx) => {
           const isHour = idx % hoursCount === 0;
           const isStrongMemory = idx % (hoursCount * STRONG_MEMORY_HOURS) === 0;
           if (isStrongMemory) {
-            const d = new Date(startRange.getTime() + idx * EPOCH_SEC * MEMORY_INTERVAL);
+            const d = new Date(start.getTime() + idx * EPOCH_SEC * MEMORY_INTERVAL);
             const year = d.getFullYear();
             const month = MONTH_LABEL_LIST[d.getMonth()];
             const date = `${d.getDate()}`.padStart(2, "0");
@@ -153,7 +197,7 @@ const MemoryList: FC<MemoryListProps> = memo(
       </MemoryContainer>
     );
   },
-  (prev, next) => prev.memoryCount === next.memoryCount && prev.startRange === next.startRange,
+  (prev, next) => prev.memoryCount === next.memoryCount && prev.start === next.start,
 );
 
 const MemoryContainer = styled.div`
