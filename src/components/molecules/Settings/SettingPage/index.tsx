@@ -30,10 +30,13 @@ const SettingPage: React.FC<SettingPageProps> = ({
   const handleClick = () => {
     setIsOpen(o => !o);
   };
+
   const wrapperRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     if (wrapperRef.current && !loading && hasMoreItems) AutoFetchMore(wrapperRef, onScroll);
   }, [hasMoreItems, loading, onScroll]);
+  
   return (
     <Wrapper>
       <StyledHeader
