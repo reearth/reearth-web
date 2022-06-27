@@ -7,8 +7,7 @@ import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
-import { AutoFetchMore } from "@reearth/util/AutoFetchMore";
-import { handleScroll } from "@reearth/util/handleScroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export type SettingPageProps = {
   loading?: boolean;
@@ -32,11 +31,11 @@ const SettingPage: React.FC<SettingPageProps> = ({
   };
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
-    if (wrapperRef.current && !loading && hasMoreItems) AutoFetchMore(wrapperRef, onScroll);
+    if (wrapperRef.current && !loading && hasMoreItems) autoFillPage(wrapperRef, onScroll);
   }, [hasMoreItems, loading, onScroll]);
-  
+
   return (
     <Wrapper>
       <StyledHeader
@@ -56,7 +55,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
       <BodyWrapper
         ref={wrapperRef}
         onScroll={e => {
-          !loading && hasMoreItems && handleScroll(e, onScroll);
+          !loading && hasMoreItems && onScrollToBottom(e, onScroll);
         }}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />

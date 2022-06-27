@@ -11,8 +11,7 @@ import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/As
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import { AutoFetchMore } from "@reearth/util/AutoFetchMore";
-import { handleScroll } from "@reearth/util/handleScroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
@@ -101,7 +100,7 @@ const AssetContainer: React.FC<Props> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreAssets) AutoFetchMore(wrapperRef, onGetMore);
+    if (wrapperRef.current && !isLoading && hasMoreAssets) autoFillPage(wrapperRef, onGetMore);
   }, [hasMoreAssets, isLoading, onGetMore]);
 
   return (
@@ -174,7 +173,7 @@ const AssetContainer: React.FC<Props> = ({
         ) : (
           <AssetListWrapper
             ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && handleScroll(e, onGetMore)}>
+            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom(e, onGetMore)}>
             <AssetList layoutType={layoutType}>
               {layoutType === "list"
                 ? assets?.map(a => (

@@ -2,8 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 
 import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
-import { AutoFetchMore } from "@reearth/util/AutoFetchMore";
-import { handleScroll } from "@reearth/util/handleScroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export * from "./types";
 
@@ -27,14 +26,14 @@ const Dashboard: React.FC<Props> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (wrapperRef.current && !isLoading && hasMoreProjects)
-      AutoFetchMore(wrapperRef, onGetMoreProjects);
+      autoFillPage(wrapperRef, onGetMoreProjects);
   }, [hasMoreProjects, isLoading, onGetMoreProjects]);
   return (
     <Wrapper
       className={className}
       ref={wrapperRef}
       onScroll={e => {
-        !isLoading && hasMoreProjects && handleScroll(e, onGetMoreProjects);
+        !isLoading && hasMoreProjects && onScrollToBottom(e, onGetMoreProjects);
       }}>
       {header}
       <Content>
