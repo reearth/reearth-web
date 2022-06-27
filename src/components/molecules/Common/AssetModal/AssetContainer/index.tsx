@@ -99,11 +99,11 @@ const AssetContainer: React.FC<Props> = ({
     onSearch,
   });
   const wrapperRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     if (wrapperRef.current && !isLoading && hasMoreAssets) AutoFetchMore(wrapperRef, onGetMore);
   }, [hasMoreAssets, isLoading, onGetMore]);
-  
+
   return (
     <Wrapper>
       <Flex justify={onRemove ? "flex-end" : "center"}>
