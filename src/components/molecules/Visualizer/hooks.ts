@@ -251,11 +251,11 @@ function useLayers({
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
   const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
-  const [, setLayersRenderKey] = useState<number>();
+  const [, setLayersRenderKey] = useState<number>(0);
 
   useMemo(() => {
     layers.setDatabaseLayers(rootLayer);
-    setLayersRenderKey(layers.renderKey);
+    setLayersRenderKey(key => key + 1);
   }, [layers, rootLayer]);
 
   const selectedLayer = useMemo(
@@ -276,7 +276,7 @@ function useLayers({
   const appendLayer = useCallback(
     (layer: Layer, parentId?: string) => {
       layers.append(layer, parentId);
-      setLayersRenderKey(layers.renderKey);
+      setLayersRenderKey(key => key + 1);
     },
     [layers],
   );

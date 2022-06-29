@@ -57,7 +57,6 @@ export class LayerStore {
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
     this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
-    this.renderKey = 0;
   }
 
   #root: Layer;
@@ -66,7 +65,6 @@ export class LayerStore {
   #map: Map<string, Layer>;
   #pmap: Map<string, PluginLayer>;
   #prototype: Readonly<Omit<Layer, "id">>;
-  renderKey: number;
 
   #pluginLayer(layer: Layer): PluginLayer {
     // use getter and setter
@@ -121,13 +119,11 @@ export class LayerStore {
     };
     this.#appendedLayersData.push(appendedLayerData);
     this.#insertAppendedLayer(appendedLayerData);
-    this.renderKey += 1;
   };
 
   setDatabaseLayers = (databaseRootLayer: Layer | undefined) => {
     this.#databaseLayers = databaseRootLayer ?? { id: "", children: [] };
     this.#updateLayers();
-    this.renderKey += 1;
   };
 
   isLayer = (obj: any): obj is PluginLayer => {
