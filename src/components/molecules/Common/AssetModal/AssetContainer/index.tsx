@@ -80,11 +80,14 @@ const AssetContainer: React.FC<Props> = ({
     iconChoice,
     deleteModalVisible,
     sortOptions,
-    setLayoutType,
+    setLayoutTypeList,
+    setLayoutTypeMedium,
+    setLayoutTypeSmall,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    setDeleteModalVisible,
+    openDeleteModal,
+    closeDeleteModal,
     handleRemove,
   } = useHooks({
     sort,
@@ -122,7 +125,7 @@ const AssetContainer: React.FC<Props> = ({
             type="button"
             buttonType="secondary"
             disabled={selectedAssets?.length ? false : true}
-            onClick={() => setDeleteModalVisible(true)}
+            onClick={openDeleteModal}
           />
         )}
       </Flex>
@@ -140,19 +143,19 @@ const AssetContainer: React.FC<Props> = ({
         <LayoutButtons justify="left">
           <StyledIcon
             icon="assetList"
-            onClick={() => setLayoutType("list")}
+            onClick={setLayoutTypeList}
             selected={layoutType === "list"}
           />
           {smallCardOnly ? (
             <StyledIcon
               icon="assetGridSmall"
-              onClick={() => setLayoutType("small")}
+              onClick={setLayoutTypeSmall}
               selected={layoutType === "small"}
             />
           ) : (
             <StyledIcon
               icon="assetGrid"
-              onClick={() => setLayoutType("medium")}
+              onClick={setLayoutTypeMedium}
               selected={layoutType === "medium"}
             />
           )}
@@ -223,7 +226,7 @@ const AssetContainer: React.FC<Props> = ({
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}
-        onClose={() => setDeleteModalVisible(false)}
+        onClose={closeDeleteModal}
         handleRemove={handleRemove}
       />
     </Wrapper>
