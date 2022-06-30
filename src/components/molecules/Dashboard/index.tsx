@@ -24,10 +24,12 @@ const Dashboard: React.FC<Props> = ({
   onGetMoreProjects,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     if (wrapperRef.current && !isLoading && hasMoreProjects)
       autoFillPage(wrapperRef, onGetMoreProjects);
   }, [hasMoreProjects, isLoading, onGetMoreProjects]);
+  
   return (
     <Wrapper
       className={className}
