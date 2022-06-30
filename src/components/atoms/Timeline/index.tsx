@@ -112,40 +112,6 @@ const Timeline: React.FC<Props> = memo(
   (prev, next) => prev.currentTime === next.currentTime,
 );
 
-const Container = styled.div`
-  background: ${({ theme }) => theme.main.lighterBg};
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 5px 12px;
-  box-sizing: border-box;
-`;
-
-const MemoryBox = styled.div`
-  border: 1px solid #b5b5b5;
-  border-radius: 5px;
-  box-sizing: border-box;
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
-  width: 100%;
-  ::-webkit-scrollbar {
-    height: 5px;
-  }
-  ::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background-color: #aaa;
-  }
-`;
-
-const Icon = styled.div`
-  position: absolute;
-  top: 2px;
-`;
-
 const MONTH_LABEL_LIST = [
   "Jan",
   "Feb",
@@ -197,6 +163,40 @@ const MemoryList: React.FC<MemoryListProps> = memo(
   },
   (prev, next) => prev.memoryCount === next.memoryCount && prev.start === next.start,
 );
+
+const Container = styled.div`
+  background: ${({ theme }) => theme.main.lighterBg};
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 5px 12px;
+  box-sizing: border-box;
+`;
+
+const MemoryBox = styled.div`
+  border: 1px solid #b5b5b5;
+  border-radius: 5px;
+  box-sizing: border-box;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  ::-webkit-scrollbar {
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #aaa;
+  }
+`;
+
+const Icon = styled.div`
+  position: absolute;
+  top: 2px;
+`;
 
 const MemoryContainer = styled.div`
   display: flex;
