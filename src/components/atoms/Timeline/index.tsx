@@ -196,6 +196,7 @@ const MemoryBox = styled.div`
 const Icon = styled.div`
   position: absolute;
   top: 2px;
+  color: #00bebe;
 `;
 
 const MemoryContainer = styled.div`
