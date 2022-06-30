@@ -32,8 +32,8 @@ const HOURS_SECS = 3600;
 const MEMORY_INTERVAL = 600;
 const DAY_SECS = 86400;
 
-const getRange = (_range: Props["range"]): Range => {
-  const { start, end } = _range || {};
+const getRange = (range: Props["range"]): Range => {
+  const { start, end } = range || {};
   if (start !== undefined && end !== undefined) {
     return { start, end };
   }
