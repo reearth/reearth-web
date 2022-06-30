@@ -101,6 +101,7 @@ const StyledIndicator = styled.div<{ transition: TransitionStatus }>`
   transition: ${({ transition }) =>
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
+  pointer-events: none;
 `;
 
 const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
@@ -109,6 +110,7 @@ const StyledIcon = styled(Icon)<{ transition: TransitionStatus }>`
   transition: ${({ transition }) =>
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
+  pointer-events: none;
 `;
 
 const Image = styled.img<{ transition: TransitionStatus }>`
@@ -117,4 +119,5 @@ const Image = styled.img<{ transition: TransitionStatus }>`
   transition: ${({ transition }) =>
     transition === "entering" || transition === "exiting" ? "all 0.5s ease" : ""};
   opacity: ${({ transition }) => (transition === "entering" || transition === "entered" ? 1 : 0)};
+  pointer-events: none;
 `;
