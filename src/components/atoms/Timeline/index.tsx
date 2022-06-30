@@ -1,4 +1,4 @@
-import { FC, memo, ReactElement, useMemo } from "react";
+import { memo, ReactElement, useMemo } from "react";
 
 import { styled } from "@reearth/theme";
 
@@ -167,7 +167,7 @@ type MemoryListProps = {
   hoursCount: number;
 };
 
-const MemoryList: FC<MemoryListProps> = memo(
+const MemoryList: React.FC<MemoryListProps> = memo(
   function MemoryListPresenter({ start, memoryCount, hoursCount }) {
     return (
       <MemoryContainer>
