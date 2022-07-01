@@ -275,8 +275,9 @@ function useLayers({
 
   const appendLayer = useCallback(
     (layer: Layer, parentId?: string) => {
-      layers.append(layer, parentId);
+      const id = layers.append(layer, parentId);
       setLayersRenderKey(key => key + 1);
+      return id;
     },
     [layers],
   );

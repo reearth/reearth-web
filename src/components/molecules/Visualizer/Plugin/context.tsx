@@ -47,7 +47,7 @@ export type Props = {
   layerOverriddenProperties?: { [key: string]: any };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
-  appendLayer: (layer: Layer, parentId?: string) => void;
+  appendLayer: (layer: Layer, parentId?: string) => string;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;

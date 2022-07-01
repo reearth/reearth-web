@@ -74,7 +74,7 @@ export type Layers = {
   ) => T | undefined;
   readonly isLayer: (obj: any) => obj is Layer;
   readonly overrideProperty: (id: string, property: any) => void;
-  readonly append: (layer: Layer, parentId?: string) => void;
+  readonly append: (layer: Layer, parentId?: string) => string;
   readonly extensionIds: string[];
 };
 

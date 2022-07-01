@@ -113,10 +113,11 @@ export class LayerStore {
   };
 
   append = (layer: Omit<Layer, "id">, parentId?: string) => {
+    const layerId = this.#getUniqueAppendedResId();
     const appendedLayerData = {
       layer: {
         ...layer,
-        id: this.#getUniqueAppendedResId(),
+        id: layerId,
         pluginId: "reearth",
       },
       parentId,
@@ -128,6 +129,7 @@ export class LayerStore {
     }
     this.#appendedLayersData.push(appendedLayerData);
     this.#insertAppendedLayer(appendedLayerData);
+    return layerId;
   };
 
   setDatabaseLayers = (databaseRootLayer: Layer | undefined) => {
