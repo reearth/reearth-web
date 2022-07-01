@@ -76,25 +76,31 @@ export class LayerStore {
   #databaseLayers: Layer | undefined;
   #appendedLayersData: AppendedLayerData[];
 
-  #updateLayers = () => {
-    this.#root = this.#databaseLayers ?? { id: "", children: [] };
-    this.#proot = this.#pluginLayer(this.#root);
+  #mapLayers = () => {
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
     this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+  };
+
+  #updateLayers = () => {
+    this.#root = this.#databaseLayers ?? { id: "", children: [] };
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#mapLayers();
     this.#appendedLayersData.map(l => this.#insertAppendedLayer(l));
   };
 
-  #getUniqueAppendedLayerId = () => {
-    const genInnerId = () =>
+  #appendedResIds: string[] = [];
+  #getUniqueAppendedResId = () => {
+    const genResId = () =>
       "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
         return ((Math.random() * 16) | 0).toString(16);
       });
-    let uniqueAppendedLayerId;
+    let uniqueAppendedResId;
     do {
-      uniqueAppendedLayerId = genInnerId();
-    } while (this.#flattenLayers.map(l => l.id).indexOf(uniqueAppendedLayerId) !== -1);
-    return uniqueAppendedLayerId;
+      uniqueAppendedResId = genResId();
+    } while (this.#appendedResIds.indexOf(uniqueAppendedResId) !== -1);
+    this.#appendedResIds.push(uniqueAppendedResId);
+    return uniqueAppendedResId;
   };
 
   #insertAppendedLayer = (appendedLayerData: AppendedLayerData) => {
@@ -103,20 +109,23 @@ export class LayerStore {
       : this.#root
     )?.children?.push(appendedLayerData.layer);
     Object.setPrototypeOf(this.#proot, { children: this.#root.children });
-    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
-    this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
-    this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+    this.#mapLayers();
   };
 
   append = (layer: Omit<Layer, "id">, parentId?: string) => {
     const appendedLayerData = {
       layer: {
         ...layer,
-        id: this.#getUniqueAppendedLayerId(),
+        id: this.#getUniqueAppendedResId(),
         pluginId: "reearth",
       },
       parentId,
     };
+    if (layer.infobox?.blocks) {
+      layer.infobox.blocks.map(b => {
+        b.id = this.#getUniqueAppendedResId();
+      });
+    }
     this.#appendedLayersData.push(appendedLayerData);
     this.#insertAppendedLayer(appendedLayerData);
   };
