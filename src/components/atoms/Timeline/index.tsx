@@ -1,6 +1,7 @@
 import { memo, ReactElement, useMemo } from "react";
 
-import { styled } from "@reearth/theme";
+import { metricsSizes, styled } from "@reearth/theme";
+import { XXSRegular } from "@reearth/theme/fonts";
 
 type Range = {
   start: number;
@@ -23,7 +24,7 @@ export type Props = {
 };
 
 const EPOCH_SEC = 1000;
-const PADDING_HORIZONTAL = 12;
+const PADDING_HORIZONTAL = metricsSizes["m"];
 const STRONG_MEMORY_HOURS = 3;
 const STRONG_MEMORY_WIDTH = 2;
 const NORMAL_MEMORY_WIDTH = 1;
@@ -165,16 +166,16 @@ const MemoryList: React.FC<MemoryListProps> = memo(
 );
 
 const Container = styled.div`
-  background: ${({ theme }) => theme.main.lighterBg};
+  background: ${({ theme }) => theme.colors.publish.dark.other.background};
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 5px 12px;
+  padding: ${({ theme }) => `${theme.metrics.m} ${theme.metrics.xs}`};
   box-sizing: border-box;
 `;
 
 const MemoryBox = styled.div`
-  border: 1px solid #b5b5b5;
+  border: 1px solid ${({ theme }) => theme.colors.publish.dark.icon.weak};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
@@ -189,14 +190,14 @@ const MemoryBox = styled.div`
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: #aaa;
+    background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
   }
 `;
 
 const Icon = styled.div`
   position: absolute;
   top: 2px;
-  color: #00bebe;
+  color: ${({ theme }) => theme.colors.publish.dark.other.select};
 `;
 
 const MemoryContainer = styled.div`
@@ -221,12 +222,11 @@ const LabeledMemory = styled.div`
   height: 100%;
 `;
 
-const MemoryLabel = styled.span`
+const MemoryLabel = styled(XXSRegular)`
   position: absolute;
   top: 0;
   left: 0;
-  color: ${({ theme }) => theme.other.white};
-  font-size: 10px;
+  color: ${({ theme }) => theme.colors.publish.dark.text.main};
   white-space: nowrap;
 `;
 
@@ -237,9 +237,8 @@ const Memory = styled.div<{
   flex-shrink: 0;
   width: ${({ isStrongMemory }) =>
     isStrongMemory ? `${STRONG_MEMORY_WIDTH}px` : `${NORMAL_MEMORY_WIDTH}px`};
-  height: ${({ isHour, isStrongMemory }) =>
-    (isStrongMemory && "15px") || (isHour && "13px") || "10px"};
-  background: #f5f5f5;
+  height: ${({ isHour }) => (isHour && "16px") || "12px"};
+  background: ${({ theme }) => theme.colors.publish.dark.text.weak};
 `;
 
 export default Timeline;
