@@ -242,7 +242,7 @@ function useLayers({
   selected: outerSelectedPrimitiveId,
   onSelect,
 }: {
-  rootLayer: Layer | undefined;
+  rootLayer?: Layer;
   selected?: string;
   onSelect?: (id?: string, options?: SelectLayerOptions) => void;
 }) {
