@@ -114,7 +114,6 @@ export function Provider({
     () =>
       builtinPrimitives
         ? Object.keys(builtinPrimitives)
-            .filter(p => !["reearth/polyline", "reearth/polygon", "reearth/rect"].includes(p))
             .map(p => p.split("/")[1])
         : [],
     [builtinPrimitives],
