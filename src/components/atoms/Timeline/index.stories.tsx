@@ -1,4 +1,5 @@
 import { Meta, Story } from "@storybook/react";
+import { useCallback, useState } from "react";
 
 import Icon from "../Icon";
 
@@ -29,3 +30,19 @@ export const DefaultRange: Story<Props> = () => (
     renderKnob={() => <Icon icon="ellipse" alt="ellipse" size={25} />}
   />
 );
+
+export const Movable: Story<Props> = () => {
+  const [currentTime, setCurrentTime] = useState(() => Date.now() + 3600000);
+  const onClick = useCallback(setCurrentTime, [setCurrentTime]);
+  const onDrag = useCallback(setCurrentTime, [setCurrentTime]);
+  return (
+    <Timeline
+      // Forward a hour
+      currentTime={currentTime}
+      knobSize={25}
+      renderKnob={() => <Icon icon="ellipse" alt="ellipse" size={25} />}
+      onClick={onClick}
+      onDrag={onDrag}
+    />
+  );
+};
