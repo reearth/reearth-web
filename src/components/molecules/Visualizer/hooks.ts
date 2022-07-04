@@ -42,7 +42,6 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
-  layers?: LayerStore;
   rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
