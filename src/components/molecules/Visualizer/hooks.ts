@@ -264,8 +264,9 @@ function useLayers({
 
   const selectLayer = useCallback(
     (id?: string, { reason, overriddenInfobox }: SelectLayerOptions = {}) => {
+      if (!id || !layers.findById(id)) return;
       innerSelectLayer(id);
-      id && !!layers.findById(id) && onSelect?.(id);
+      onSelect?.(id);
       setSelectionReason(reason);
       setPrimitiveOverridenInfobox(overriddenInfobox);
     },
