@@ -98,7 +98,7 @@ export class LayerStore {
     let uniqueAppendedResId;
     do {
       uniqueAppendedResId = genResId();
-    } while (this.#appendedResIds.indexOf(uniqueAppendedResId) !== -1);
+    } while (this.#appendedResIds.includes(uniqueAppendedResId));
     this.#appendedResIds.push(uniqueAppendedResId);
     return uniqueAppendedResId;
   };
