@@ -90,7 +90,7 @@ export class LayerStore {
   };
 
   #appendedResIds: string[] = [];
-  #getUniqueAppendedResId = () => {
+  #newId = () => {
     const genResId = () =>
       "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
         return ((Math.random() * 16) | 0).toString(16);
@@ -113,7 +113,7 @@ export class LayerStore {
   };
 
   append = (layer: Omit<Layer, "id">, parentId?: string) => {
-    const layerId = this.#getUniqueAppendedResId();
+    const layerId = this.#newId();
     const appendedLayerData = {
       layer: {
         ...layer,
@@ -124,7 +124,7 @@ export class LayerStore {
     };
     if (layer.infobox?.blocks) {
       layer.infobox.blocks.forEach(b => {
-        b.id = this.#getUniqueAppendedResId();
+        b.id = this.#newId();
       });
     }
     this.#appendedLayersData.push(appendedLayerData);
