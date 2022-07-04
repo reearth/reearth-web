@@ -2,7 +2,7 @@ import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
 import { omit } from "lodash";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
-import { useSet } from "react-use";
+import { useSet, useUpdate } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
@@ -250,12 +250,12 @@ function useLayers({
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
   const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
-  const [, setLayersRenderKey] = useState<number>(0);
+  const forceUpdate = useUpdate();
 
   useMemo(() => {
     layers.setDatabaseLayers(rootLayer);
-    setLayersRenderKey(key => key + 1);
-  }, [layers, rootLayer]);
+    forceUpdate();
+  }, [layers, rootLayer, forceUpdate]);
 
   const selectedLayer = useMemo(
     () => (selectedLayerId ? layers?.findById(selectedLayerId) : undefined),
@@ -275,10 +275,10 @@ function useLayers({
   const appendLayer = useCallback(
     (layer: Layer, parentId?: string) => {
       const id = layers.append(layer, parentId);
-      setLayersRenderKey(key => key + 1);
+      forceUpdate();
       return id;
     },
-    [layers],
+    [layers, forceUpdate],
   );
 
   const blocks = useMemo(
