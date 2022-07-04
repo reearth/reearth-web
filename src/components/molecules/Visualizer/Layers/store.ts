@@ -86,7 +86,7 @@ export class LayerStore {
     this.#root = this.#databaseLayers ?? { id: "", children: [] };
     this.#proot = this.#pluginLayer(this.#root);
     this.#mapLayers();
-    this.#appendedLayersData.map(l => this.#insertAppendedLayer(l));
+    this.#appendedLayersData.forEach(l => this.#insertAppendedLayer(l));
   };
 
   #appendedResIds: string[] = [];
