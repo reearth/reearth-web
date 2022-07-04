@@ -29,7 +29,7 @@ export class LayerStore {
       function (key) {
         const id = (this as any).id;
         if (this !== self.#proot && !id) throw new Error("layer ID is not specified");
-        const target = this === self.#proot ? self.#root : self.#map.get(id);
+        const target: Layer | undefined = this === self.#proot ? self.#root : self.#map.get(id);
 
         if (key === "children") {
           return target?.children?.map(c => self.#pmap.get(c.id));
