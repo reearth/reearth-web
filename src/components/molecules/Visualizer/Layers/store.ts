@@ -123,7 +123,7 @@ export class LayerStore {
       parentId,
     };
     if (layer.infobox?.blocks) {
-      layer.infobox.blocks.map(b => {
+      layer.infobox.blocks.forEach(b => {
         b.id = this.#getUniqueAppendedResId();
       });
     }
