@@ -102,12 +102,7 @@ export default (isBuilt?: boolean) => {
 
   const rootLayer = useMemo(
     () =>
-      !(
-        !layerData ||
-        !layerData.node ||
-        layerData.node.__typename !== "Scene" ||
-        !layerData.node.rootLayer
-      )
+      layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
         ? processLayer(layerData?.node.rootLayer)
         : undefined,
     [layerData],
