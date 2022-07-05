@@ -1,7 +1,6 @@
 import { memo, ReactElement, useMemo } from "react";
 
 import { styled } from "@reearth/theme";
-import { XXSRegular } from "@reearth/theme/fonts";
 
 import {
   BORDER_WIDTH,
@@ -18,6 +17,7 @@ import {
   STRONG_SCALE_WIDTH,
 } from "./constants";
 import { useTimelineInteraction } from "./hooks";
+import { ScaleList } from "./ScaleList";
 import { Range, TimeEventHandler } from "./types";
 
 export type Props = {
@@ -125,16 +125,14 @@ const Timeline: React.FC<Props> = memo(
     return (
       <Container>
         <ScaleBox {...events}>
-          <ScaleContainer style={{ gap: `0 ${gapHorizontal}px` }}>
-            <ScaleList
-              start={startDate}
-              scaleCount={scaleCount}
-              hoursCount={hoursCount}
-              gapHorizontal={gapHorizontal}
-              scaleInterval={scaleInterval}
-              strongScaleHours={strongScaleHours}
-            />
-          </ScaleContainer>
+          <ScaleList
+            start={startDate}
+            scaleCount={scaleCount}
+            hoursCount={hoursCount}
+            gapHorizontal={gapHorizontal}
+            scaleInterval={scaleInterval}
+            strongScaleHours={strongScaleHours}
+          />
           <Icon
             style={{
               left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
@@ -146,66 +144,6 @@ const Timeline: React.FC<Props> = memo(
     );
   },
   (prev, next) => prev.currentTime === next.currentTime,
-);
-
-const MONTH_LABEL_LIST = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-type ScaleListProps = {
-  start: Date;
-  scaleCount: number;
-  hoursCount: number;
-  gapHorizontal: number;
-  scaleInterval: number;
-  strongScaleHours: number;
-};
-
-const ScaleList: React.FC<ScaleListProps> = memo(
-  function ScaleListPresenter({ start, scaleCount, hoursCount, scaleInterval, strongScaleHours }) {
-    const strongHours = hoursCount * strongScaleHours;
-    const lastStrongScaleIdx = strongHours * (scaleCount / strongHours);
-    return (
-      <>
-        {[...Array(scaleCount + 1)].map((_, idx) => {
-          const isHour = idx % hoursCount === 0;
-          const isStrongScale = idx % strongHours === 0;
-          if (isStrongScale && idx !== lastStrongScaleIdx) {
-            const d = new Date(start.getTime() + idx * EPOCH_SEC * scaleInterval);
-            const year = d.getFullYear();
-            const month = MONTH_LABEL_LIST[d.getMonth()];
-            const date = `${d.getDate()}`.padStart(2, "0");
-            const hour = `${d.getHours()}`.padStart(2, "0");
-            const label = `${month} ${date} ${year} ${hour}:00:00.0000`;
-
-            return (
-              <LabeledScale>
-                <ScaleLabel>{label}</ScaleLabel>
-                <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />
-              </LabeledScale>
-            );
-          }
-          return <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />;
-        })}
-      </>
-    );
-  },
-  (prev, next) =>
-    prev.scaleCount === next.scaleCount &&
-    prev.start === next.start &&
-    prev.scaleInterval === next.scaleInterval &&
-    prev.strongScaleHours === next.strongScaleHours,
 );
 
 const Container = styled.div`
@@ -245,47 +183,6 @@ const Icon = styled.div`
   position: absolute;
   top: 2px;
   color: ${({ theme }) => theme.colors.publish.dark.other.select};
-`;
-
-const ScaleContainer = styled.div`
-  display: flex;
-  min-width: 100%;
-  height: 30px;
-  align-items: flex-end;
-  will-change: auto;
-  padding-left: ${PADDING_HORIZONTAL}px;
-  ::after {
-    content: "";
-    display: block;
-    padding-right: ${PADDING_HORIZONTAL}px;
-    height: 1px;
-  }
-`;
-
-const LabeledScale = styled.div`
-  display: flex;
-  align-items: flex-end;
-  position: relative;
-  height: 100%;
-`;
-
-const ScaleLabel = styled(XXSRegular)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: ${({ theme }) => theme.colors.publish.dark.text.main};
-  white-space: nowrap;
-`;
-
-const Scale = styled.div<{
-  isHour: boolean;
-  isStrongScale: boolean;
-}>`
-  flex-shrink: 0;
-  width: ${({ isStrongScale }) =>
-    isStrongScale ? `${STRONG_SCALE_WIDTH}px` : `${NORMAL_SCALE_WIDTH}px`};
-  height: ${({ isHour }) => (isHour && "16px") || "12px"};
-  background: ${({ theme }) => theme.colors.publish.dark.text.weak};
 `;
 
 export default Timeline;
