@@ -74,7 +74,7 @@ export type Layers = {
   ) => T | undefined;
   readonly isLayer: (obj: any) => obj is Layer;
   readonly overrideProperty: (id: string, property: any) => void;
-  readonly append: (layer: Layer, parentId?: string) => string;
+  readonly add: (layer: Layer, parentId?: string) => string | undefined;
   readonly extensionIds: string[];
 };
 
@@ -101,6 +101,7 @@ export type Layer<P = any, IBP = any> = {
   propertyId?: string;
   tags?: Tag[];
   readonly children?: Layer<P, IBP>[];
+  creator?: string;
 };
 
 export type Tag = {

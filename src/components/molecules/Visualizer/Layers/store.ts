@@ -7,7 +7,7 @@ export type { Layer } from "../Primitive";
 // Layer objects but optimized for plugins
 type PluginLayer = Readonly<Layer>;
 
-type AppendedLayerData = { layer: Layer; parentId?: string };
+type AddedLayerData = { layer: Layer; parentId?: string };
 
 export class LayerStore {
   constructor(databaseRootLayer?: Layer) {
@@ -25,9 +25,10 @@ export class LayerStore {
         "title",
         "type",
         "tags",
+        "creator",
       ],
       function (key) {
-        const id = (this as any).id;
+        const id: string = (this as any).id;
         if (this !== self.#proot && !id) throw new Error("layer ID is not specified");
         const target: Layer | undefined = this === self.#proot ? self.#root : self.#map.get(id);
 
@@ -49,9 +50,8 @@ export class LayerStore {
       },
     );
 
-    this.#databaseLayers = databaseRootLayer ?? { id: "", children: [] };
-    this.#appendedLayersData = [];
-    this.#root = this.#databaseLayers;
+    this.#root = databaseRootLayer ?? { id: "", children: [] };
+    this.#addedLayersData = [];
 
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
@@ -65,6 +65,7 @@ export class LayerStore {
   #map: Map<string, Layer>;
   #pmap: Map<string, PluginLayer>;
   #prototype: Readonly<Omit<Layer, "id">>;
+  #addedLayersData: AddedLayerData[];
 
   #pluginLayer(layer: Layer): PluginLayer {
     // use getter and setter
@@ -73,68 +74,70 @@ export class LayerStore {
     return l;
   }
 
-  #databaseLayers: Layer | undefined;
-  #appendedLayersData: AppendedLayerData[];
-
-  #mapLayers = () => {
-    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
-    this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
-    this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
-  };
-
-  #updateLayers = () => {
-    this.#root = this.#databaseLayers ?? { id: "", children: [] };
-    this.#proot = this.#pluginLayer(this.#root);
-    this.#mapLayers();
-    this.#appendedLayersData.forEach(l => this.#insertAppendedLayer(l));
-  };
-
-  #appendedResIds: string[] = [];
+  #usedIds: string[] = [];
   #newId = () => {
     const genResId = () =>
       "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
         return ((Math.random() * 16) | 0).toString(16);
       });
-    let uniqueAppendedResId;
+    let id;
     do {
-      uniqueAppendedResId = genResId();
-    } while (this.#appendedResIds.includes(uniqueAppendedResId));
-    this.#appendedResIds.push(uniqueAppendedResId);
-    return uniqueAppendedResId;
+      id = genResId();
+    } while (this.#usedIds.includes(id));
+    this.#usedIds.push(id);
+    return id;
   };
 
-  #insertAppendedLayer = (appendedLayerData: AppendedLayerData) => {
-    (appendedLayerData.parentId
-      ? this.#map.get(appendedLayerData.parentId)
-      : this.#root
-    )?.children?.push(appendedLayerData.layer);
-    Object.setPrototypeOf(this.#proot, { children: this.#root.children });
-    this.#mapLayers();
+  #insertLayer = (layerData: AddedLayerData, save = false) => {
+    const tar = layerData.parentId ? this.#map.get(layerData.parentId) : this.#root;
+    if (!tar?.children) return;
+    tar.children.push(layerData.layer);
+    const flattenedLayers = flattenLayers([layerData.layer]);
+    flattenedLayers.forEach(l => {
+      this.#map.set(l.id, l);
+      this.#pmap.set(l.id, this.#pluginLayer(l));
+    });
+    save && !tar.creator && this.#addedLayersData.push(layerData);
+    return layerData.layer.id;
   };
 
-  append = (layer: Omit<Layer, "id">, parentId?: string) => {
-    const layerId = this.#newId();
-    const appendedLayerData = {
-      layer: {
-        ...layer,
-        id: layerId,
-        pluginId: "reearth",
-      },
-      parentId,
-    };
-    if (layer.infobox?.blocks) {
-      layer.infobox.blocks.forEach(b => {
+  #processLayer = (layer: Omit<Layer, "id">): Layer => {
+    const { children, ...self } = layer;
+    self.infobox?.blocks &&
+      self.infobox.blocks.forEach(b => {
         b.id = this.#newId();
       });
-    }
-    this.#appendedLayersData.push(appendedLayerData);
-    this.#insertAppendedLayer(appendedLayerData);
-    return layerId;
+    return {
+      ...self,
+      id: this.#newId(),
+      pluginId: "reearth",
+      creator: "pluginAPI",
+      children: children?.map(cl => this.#processLayer(cl)),
+    };
+  };
+
+  add = (layer: Omit<Layer, "id">, parentId?: string) => {
+    const id = this.#insertLayer(
+      {
+        layer: this.#processLayer(layer),
+        parentId,
+      },
+      true,
+    );
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    return id;
   };
 
   setDatabaseLayers = (databaseRootLayer: Layer | undefined) => {
-    this.#databaseLayers = databaseRootLayer ?? { id: "", children: [] };
-    this.#updateLayers();
+    this.#root = databaseRootLayer ?? { id: "", children: [] };
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
+    this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+    this.#addedLayersData.forEach(ld => this.#insertLayer(ld));
+    this.#proot = this.#pluginLayer(this.#root);
+    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
   };
 
   isLayer = (obj: any): obj is PluginLayer => {

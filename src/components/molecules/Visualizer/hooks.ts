@@ -115,7 +115,7 @@ export default ({
     hideLayers,
     isLayerHidden,
     showLayers,
-    appendLayer,
+    addLayer,
     overrideLayerProperty,
   } = useLayers({
     rootLayer,
@@ -194,7 +194,7 @@ export default ({
       layerOverriddenProperties,
       showLayer: showLayers,
       hideLayer: hideLayers,
-      appendLayer: appendLayer,
+      addLayer,
       selectLayer,
       overrideLayerProperty,
     },
@@ -273,9 +273,9 @@ function useLayers({
     [onSelect, layers],
   );
 
-  const appendLayer = useCallback(
+  const addLayer = useCallback(
     (layer: Layer, parentId?: string) => {
-      const id = layers.append(layer, parentId);
+      const id = layers.add(layer, parentId);
       forceUpdate();
       return id;
     },
@@ -359,7 +359,7 @@ function useLayers({
     selectLayer,
     showLayers,
     hideLayers,
-    appendLayer,
+    addLayer,
     overrideLayerProperty,
   };
 }

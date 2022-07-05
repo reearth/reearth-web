@@ -47,7 +47,7 @@ export type Props = {
   layerOverriddenProperties?: { [key: string]: any };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
-  appendLayer: (layer: Layer, parentId?: string) => string;
+  addLayer: (layer: Layer, parentId?: string) => string | undefined;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
@@ -85,7 +85,7 @@ export function Provider({
   layerOverriddenProperties,
   showLayer,
   hideLayer,
-  appendLayer,
+  addLayer,
   selectLayer,
   overrideLayerProperty,
   layersInViewport,
@@ -111,11 +111,7 @@ export function Provider({
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
   const getLayerOverriddenProperties = useGet(layerOverriddenProperties);
   const getBuiltinExtensionIds = useCallback(
-    () =>
-      builtinPrimitives
-        ? Object.keys(builtinPrimitives)
-            .map(p => p.split("/")[1])
-        : [],
+    () => (builtinPrimitives ? Object.keys(builtinPrimitives).map(p => p.split("/")[1]) : []),
     [builtinPrimitives],
   );
 
@@ -139,7 +135,7 @@ export function Provider({
         layerOverriddenProperties: getLayerOverriddenProperties,
         showLayer,
         hideLayer,
-        appendLayer,
+        addLayer,
         selectLayer,
         overrideLayerProperty,
         layersInViewport,
@@ -168,7 +164,7 @@ export function Provider({
       showLayer,
       hideLayer,
       selectLayer,
-      appendLayer,
+      addLayer,
       overrideLayerProperty,
       layersInViewport,
       flyTo,

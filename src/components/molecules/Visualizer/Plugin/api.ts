@@ -134,7 +134,7 @@ export function commonReearth({
   selectLayer,
   showLayer,
   hideLayer,
-  appendLayer,
+  addLayer,
   overrideLayerProperty,
   flyTo,
   lookAt,
@@ -157,7 +157,7 @@ export function commonReearth({
   layersInViewport: () => GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
-  appendLayer: GlobalThis["reearth"]["layers"]["append"];
+  addLayer: GlobalThis["reearth"]["layers"]["add"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
@@ -245,8 +245,8 @@ export function commonReearth({
       get walk() {
         return layers().walk;
       },
-      get append() {
-        return appendLayer;
+      get add() {
+        return addLayer;
       },
       get extensionIds() {
         return builtinExtensionIds();
