@@ -28,8 +28,7 @@ export default function Indicator({ className, property }: Props): JSX.Element |
 
   useEffect(() => {
     !(
-      property?.indicator?.indicator_type === "default" ||
-      property?.indicator?.indicator_type === undefined
+      !indicator_type || indicator_type === "default"
     )
       ? viewer?.selectionIndicator.viewModel.selectionIndicatorElement.setAttribute(
           "hidden",
