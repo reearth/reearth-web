@@ -10,12 +10,12 @@ import {
   GAP_HORIZONTAL,
   HOURS_SECS,
   MAX_ZOOM_RATIO,
-  MEMORY_INTERVAL,
-  MEMORY_ZOOM_INTERVAL,
+  SCALE_INTERVAL,
+  SCALE_ZOOM_INTERVAL,
   MINUTES_SEC,
-  NORMAL_MEMORY_WIDTH,
+  NORMAL_SCALE_WIDTH,
   PADDING_HORIZONTAL,
-  STRONG_MEMORY_WIDTH,
+  STRONG_SCALE_WIDTH,
 } from "./constants";
 import { useTimelineInteraction } from "./hooks";
 import { Range, TimeEventHandler } from "./types";
@@ -86,62 +86,62 @@ const Timeline: React.FC<Props> = memo(
     const { start, end } = range;
     const { zoom, events } = useTimelineInteraction({ range, onClick, onDrag });
     const gapHorizontal = GAP_HORIZONTAL * (zoom - Math.trunc(zoom) + 1);
-    const memoryInterval = Math.max(
-      MEMORY_INTERVAL - Math.trunc(zoom - 1) * MEMORY_ZOOM_INTERVAL * MINUTES_SEC,
+    const scaleInterval = Math.max(
+      SCALE_INTERVAL - Math.trunc(zoom - 1) * SCALE_ZOOM_INTERVAL * MINUTES_SEC,
       MINUTES_SEC,
     );
-    const strongMemoryHours = MAX_ZOOM_RATIO - Math.trunc(zoom) + 1;
+    const strongScaleHours = MAX_ZOOM_RATIO - Math.trunc(zoom) + 1;
     const epochDiff = end - start;
 
     // convert epoch diff to second.
-    const memoryCount = useMemo(
-      () => Math.trunc(epochDiff / EPOCH_SEC / memoryInterval),
-      [epochDiff, memoryInterval],
+    const scaleCount = useMemo(
+      () => Math.trunc(epochDiff / EPOCH_SEC / scaleInterval),
+      [epochDiff, scaleInterval],
     );
 
     const startDate = useMemo(() => new Date(start), [start]);
-    const hoursCount = Math.trunc(HOURS_SECS / memoryInterval);
-    // Convert memory count to pixel.
+    const hoursCount = Math.trunc(HOURS_SECS / scaleInterval);
+    // Convert scale count to pixel.
     const currentPosition = useMemo(() => {
-      const diff = Math.min((currentTime - start) / EPOCH_SEC / memoryInterval, memoryCount);
-      const strongMemoryCount = diff / (hoursCount * strongMemoryHours);
+      const diff = Math.min((currentTime - start) / EPOCH_SEC / scaleInterval, scaleCount);
+      const strongScaleCount = diff / (hoursCount * strongScaleHours);
       return Math.max(
         diff * gapHorizontal +
-          (diff - strongMemoryCount) * NORMAL_MEMORY_WIDTH +
-          strongMemoryCount * STRONG_MEMORY_WIDTH +
-          STRONG_MEMORY_WIDTH / 2,
+          (diff - strongScaleCount) * NORMAL_SCALE_WIDTH +
+          strongScaleCount * STRONG_SCALE_WIDTH +
+          STRONG_SCALE_WIDTH / 2,
         0,
       );
     }, [
       currentTime,
       start,
-      memoryCount,
+      scaleCount,
       hoursCount,
       gapHorizontal,
-      memoryInterval,
-      strongMemoryHours,
+      scaleInterval,
+      strongScaleHours,
     ]);
 
     return (
       <Container>
-        <MemoryBox {...events}>
-          <MemoryContainer style={{ gap: `0 ${gapHorizontal}px` }}>
-            <MemoryList
+        <ScaleBox {...events}>
+          <ScaleContainer style={{ gap: `0 ${gapHorizontal}px` }}>
+            <ScaleList
               start={startDate}
-              memoryCount={memoryCount}
+              scaleCount={scaleCount}
               hoursCount={hoursCount}
               gapHorizontal={gapHorizontal}
-              memoryInterval={memoryInterval}
-              strongMemoryHours={strongMemoryHours}
+              scaleInterval={scaleInterval}
+              strongScaleHours={strongScaleHours}
             />
-          </MemoryContainer>
+          </ScaleContainer>
           <Icon
             style={{
               left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
             }}>
             {renderKnob()}
           </Icon>
-        </MemoryBox>
+        </ScaleBox>
       </Container>
     );
   },
@@ -163,32 +163,26 @@ const MONTH_LABEL_LIST = [
   "Dec",
 ];
 
-type MemoryListProps = {
+type ScaleListProps = {
   start: Date;
-  memoryCount: number;
+  scaleCount: number;
   hoursCount: number;
   gapHorizontal: number;
-  memoryInterval: number;
-  strongMemoryHours: number;
+  scaleInterval: number;
+  strongScaleHours: number;
 };
 
-const MemoryList: React.FC<MemoryListProps> = memo(
-  function MemoryListPresenter({
-    start,
-    memoryCount,
-    hoursCount,
-    memoryInterval,
-    strongMemoryHours,
-  }) {
-    const strongHours = hoursCount * strongMemoryHours;
-    const lastStrongMemoryIdx = strongHours * (memoryCount / strongHours);
+const ScaleList: React.FC<ScaleListProps> = memo(
+  function ScaleListPresenter({ start, scaleCount, hoursCount, scaleInterval, strongScaleHours }) {
+    const strongHours = hoursCount * strongScaleHours;
+    const lastStrongScaleIdx = strongHours * (scaleCount / strongHours);
     return (
       <>
-        {[...Array(memoryCount + 1)].map((_, idx) => {
+        {[...Array(scaleCount + 1)].map((_, idx) => {
           const isHour = idx % hoursCount === 0;
-          const isStrongMemory = idx % strongHours === 0;
-          if (isStrongMemory && idx !== lastStrongMemoryIdx) {
-            const d = new Date(start.getTime() + idx * EPOCH_SEC * memoryInterval);
+          const isStrongScale = idx % strongHours === 0;
+          if (isStrongScale && idx !== lastStrongScaleIdx) {
+            const d = new Date(start.getTime() + idx * EPOCH_SEC * scaleInterval);
             const year = d.getFullYear();
             const month = MONTH_LABEL_LIST[d.getMonth()];
             const date = `${d.getDate()}`.padStart(2, "0");
@@ -196,22 +190,22 @@ const MemoryList: React.FC<MemoryListProps> = memo(
             const label = `${month} ${date} ${year} ${hour}:00:00.0000`;
 
             return (
-              <LabeledMemory>
-                <MemoryLabel>{label}</MemoryLabel>
-                <Memory key={`${idx}`} isHour={isHour} isStrongMemory={isStrongMemory} />
-              </LabeledMemory>
+              <LabeledScale>
+                <ScaleLabel>{label}</ScaleLabel>
+                <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />
+              </LabeledScale>
             );
           }
-          return <Memory key={`${idx}`} isHour={isHour} isStrongMemory={isStrongMemory} />;
+          return <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />;
         })}
       </>
     );
   },
   (prev, next) =>
-    prev.memoryCount === next.memoryCount &&
+    prev.scaleCount === next.scaleCount &&
     prev.start === next.start &&
-    prev.memoryInterval === next.memoryInterval &&
-    prev.strongMemoryHours === next.strongMemoryHours,
+    prev.scaleInterval === next.scaleInterval &&
+    prev.strongScaleHours === next.strongScaleHours,
 );
 
 const Container = styled.div`
@@ -227,7 +221,7 @@ const Container = styled.div`
   user-select: none;
 `;
 
-const MemoryBox = styled.div`
+const ScaleBox = styled.div`
   border: ${BORDER_WIDTH}px solid ${({ theme }) => theme.colors.publish.dark.icon.weak};
   border-radius: 5px;
   box-sizing: border-box;
@@ -253,7 +247,7 @@ const Icon = styled.div`
   color: ${({ theme }) => theme.colors.publish.dark.other.select};
 `;
 
-const MemoryContainer = styled.div`
+const ScaleContainer = styled.div`
   display: flex;
   min-width: 100%;
   height: 30px;
@@ -268,14 +262,14 @@ const MemoryContainer = styled.div`
   }
 `;
 
-const LabeledMemory = styled.div`
+const LabeledScale = styled.div`
   display: flex;
   align-items: flex-end;
   position: relative;
   height: 100%;
 `;
 
-const MemoryLabel = styled(XXSRegular)`
+const ScaleLabel = styled(XXSRegular)`
   position: absolute;
   top: 0;
   left: 0;
@@ -283,13 +277,13 @@ const MemoryLabel = styled(XXSRegular)`
   white-space: nowrap;
 `;
 
-const Memory = styled.div<{
+const Scale = styled.div<{
   isHour: boolean;
-  isStrongMemory: boolean;
+  isStrongScale: boolean;
 }>`
   flex-shrink: 0;
-  width: ${({ isStrongMemory }) =>
-    isStrongMemory ? `${STRONG_MEMORY_WIDTH}px` : `${NORMAL_MEMORY_WIDTH}px`};
+  width: ${({ isStrongScale }) =>
+    isStrongScale ? `${STRONG_SCALE_WIDTH}px` : `${NORMAL_SCALE_WIDTH}px`};
   height: ${({ isHour }) => (isHour && "16px") || "12px"};
   background: ${({ theme }) => theme.colors.publish.dark.text.weak};
 `;
