@@ -110,10 +110,6 @@ export function Provider({
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
   const getLayerOverriddenProperties = useGet(layerOverriddenProperties);
-  const getBuiltinExtensionIds = useCallback(
-    () => (builtinPrimitives ? Object.keys(builtinPrimitives).map(p => p.split("/")[1]) : []),
-    [builtinPrimitives],
-  );
 
   const value = useMemo<Context>(
     () => ({
@@ -144,7 +140,6 @@ export function Provider({
         zoomIn,
         zoomOut,
         viewport,
-        builtinExtensionIds: getBuiltinExtensionIds,
       }),
     }),
     [
@@ -172,7 +167,6 @@ export function Provider({
       zoomIn,
       zoomOut,
       viewport,
-      getBuiltinExtensionIds,
     ],
   );
 

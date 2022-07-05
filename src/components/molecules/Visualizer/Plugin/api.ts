@@ -141,7 +141,6 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   viewport,
-  builtinExtensionIds,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -164,7 +163,6 @@ export function commonReearth({
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
-  builtinExtensionIds: () => string[];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -247,9 +245,6 @@ export function commonReearth({
       },
       get add() {
         return addLayer;
-      },
-      get extensionIds() {
-        return builtinExtensionIds();
       },
     },
     ...events,
