@@ -61,7 +61,7 @@ export const context: ProviderProps = {
   hideLayer: act("layers.hide"),
   showLayer: act("layers.show"),
   selectLayer: act("layers.select"),
-  appendLayer: act("layers.append"),
+  addLayer: act("layers.add"),
   camera: {
     lat: 0,
     lng: 0,

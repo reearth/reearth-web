@@ -81,7 +81,7 @@ test("root", () => {
   expect(store.root).toBe(root);
 });
 
-test("append", () => {
+test("add", () => {
   const store = new LayerStore({
     id: "",
     children: [
@@ -93,7 +93,7 @@ test("append", () => {
       { id: "b", isVisible: true, title: "bbbb" },
     ],
   });
-  const id = store.append({
+  const id = store.add({
     isVisible: true,
     title: "cccc",
     infobox: {
