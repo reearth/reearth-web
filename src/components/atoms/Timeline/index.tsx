@@ -80,7 +80,7 @@ const Container = styled.div`
 `;
 
 const ScaleBox = styled.div`
-  border: ${BORDER_WIDTH}px solid ${({ theme }) => theme.colors.publish.dark.icon.weak};
+  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.colors.publish.dark.icon.weak}`};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
