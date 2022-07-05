@@ -1,22 +1,9 @@
-import { memo, ReactElement, useMemo } from "react";
+import { memo, ReactElement } from "react";
 
 import { styled } from "@reearth/theme";
 
-import {
-  BORDER_WIDTH,
-  DAY_SECS,
-  EPOCH_SEC,
-  GAP_HORIZONTAL,
-  HOURS_SECS,
-  MAX_ZOOM_RATIO,
-  SCALE_INTERVAL,
-  SCALE_ZOOM_INTERVAL,
-  MINUTES_SEC,
-  NORMAL_SCALE_WIDTH,
-  PADDING_HORIZONTAL,
-  STRONG_SCALE_WIDTH,
-} from "./constants";
-import { useTimelineInteraction } from "./hooks";
+import { BORDER_WIDTH, PADDING_HORIZONTAL } from "./constants";
+import { useTimeline } from "./hooks";
 import { ScaleList } from "./ScaleList";
 import { Range, TimeEventHandler } from "./types";
 
@@ -37,90 +24,23 @@ export type Props = {
   onDrag?: TimeEventHandler;
 };
 
-const getRange = (range: Props["range"]): Range => {
-  const { start, end } = range || {};
-  if (start !== undefined && end !== undefined) {
-    return { start, end };
-  }
-
-  if (start !== undefined && end === undefined) {
-    return {
-      start,
-      end: start + DAY_SECS,
-    };
-  }
-
-  if (start === undefined && end !== undefined) {
-    return {
-      start: Math.max(end - DAY_SECS, 0),
-      end,
-    };
-  }
-
-  const defaultStart = Date.now();
-
-  return {
-    start: defaultStart,
-    end: defaultStart + DAY_SECS * EPOCH_SEC,
-  };
-};
-
 const Timeline: React.FC<Props> = memo(
-  function TimelinePresenter({
-    currentTime,
-    range: _range,
-    renderKnob,
-    knobSize,
-    onClick,
-    onDrag,
-  }) {
-    const range = useMemo(() => {
-      const range = getRange(_range);
-      if (process.env.NODE_ENV !== "production") {
-        if (range.start > range.end) {
-          throw new Error("Out of range error. `range.start` should be less than `range.end`");
-        }
-      }
-      return range;
-    }, [_range]);
-    const { start, end } = range;
-    const { zoom, events } = useTimelineInteraction({ range, onClick, onDrag });
-    const gapHorizontal = GAP_HORIZONTAL * (zoom - Math.trunc(zoom) + 1);
-    const scaleInterval = Math.max(
-      SCALE_INTERVAL - Math.trunc(zoom - 1) * SCALE_ZOOM_INTERVAL * MINUTES_SEC,
-      MINUTES_SEC,
-    );
-    const strongScaleHours = MAX_ZOOM_RATIO - Math.trunc(zoom) + 1;
-    const epochDiff = end - start;
-
-    // convert epoch diff to second.
-    const scaleCount = useMemo(
-      () => Math.trunc(epochDiff / EPOCH_SEC / scaleInterval),
-      [epochDiff, scaleInterval],
-    );
-
-    const startDate = useMemo(() => new Date(start), [start]);
-    const hoursCount = Math.trunc(HOURS_SECS / scaleInterval);
-    // Convert scale count to pixel.
-    const currentPosition = useMemo(() => {
-      const diff = Math.min((currentTime - start) / EPOCH_SEC / scaleInterval, scaleCount);
-      const strongScaleCount = diff / (hoursCount * strongScaleHours);
-      return Math.max(
-        diff * gapHorizontal +
-          (diff - strongScaleCount) * NORMAL_SCALE_WIDTH +
-          strongScaleCount * STRONG_SCALE_WIDTH +
-          STRONG_SCALE_WIDTH / 2,
-        0,
-      );
-    }, [
-      currentTime,
-      start,
+  function TimelinePresenter({ currentTime, range, renderKnob, knobSize, onClick, onDrag }) {
+    const {
+      startDate,
       scaleCount,
       hoursCount,
       gapHorizontal,
       scaleInterval,
       strongScaleHours,
-    ]);
+      currentPosition,
+      events,
+    } = useTimeline({
+      currentTime,
+      range,
+      onClick,
+      onDrag,
+    });
 
     return (
       <Container>
