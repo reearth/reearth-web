@@ -91,8 +91,7 @@ export class LayerStore {
     const tar = layerData.parentId ? this.#map.get(layerData.parentId) : this.#root;
     if (!tar?.children) return;
     tar.children.push(layerData.layer);
-    const flattenedLayers = flattenLayers([layerData.layer]);
-    flattenedLayers.forEach(l => {
+    flattenLayers([layerData.layer]).forEach(l => {
       this.#map.set(l.id, l);
       this.#pmap.set(l.id, this.#pluginLayer(l));
     });
