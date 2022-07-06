@@ -9,7 +9,7 @@ type Props = {
   gapHorizontal: number;
 } & ScaleListInnerProps;
 
-export const ScaleList: React.FC<Props> = ({ gapHorizontal, ...rest }) => {
+const ScaleList: React.FC<Props> = ({ gapHorizontal, ...rest }) => {
   return (
     <ScaleContainer style={{ gap: `0 ${gapHorizontal}px` }}>
       <ScaleListInner {...rest} />
@@ -115,3 +115,5 @@ const Scale = styled.div<{
   height: ${({ isHour }) => (isHour && "16px") || "12px"};
   background: ${({ theme }) => theme.colors.publish.dark.text.weak};
 `;
+
+export default ScaleList;

@@ -4,7 +4,7 @@ import { styled } from "@reearth/theme";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL } from "./constants";
 import { useTimeline } from "./hooks";
-import { ScaleList } from "./ScaleList";
+import ScaleList from "./ScaleList";
 import { Range, TimeEventHandler } from "./types";
 
 export type Props = {
