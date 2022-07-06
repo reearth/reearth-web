@@ -94,9 +94,7 @@ const useTimelineInteraction = ({
 
   const handleOnClick: MouseEventHandler = useCallback(
     e => {
-      if (!onClick) {
-        return;
-      }
+      if (!onClick) return;
       onClick(convertPositionToTime(e, { start, end }, gapHorizontal));
     },
     [onClick, end, start, gapHorizontal],
