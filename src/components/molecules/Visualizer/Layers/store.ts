@@ -6,7 +6,6 @@ export type { Layer } from "../Primitive";
 
 // Layer objects but optimized for plugins
 type PluginLayer = Readonly<Layer>;
-
 type AddedLayerData = { layer: Layer; parentId?: string };
 
 export class LayerStore {
