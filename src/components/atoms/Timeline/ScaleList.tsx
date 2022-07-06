@@ -1,7 +1,8 @@
 import { memo } from "react";
 
 import { styled } from "@reearth/theme";
-import { XXSRegular } from "@reearth/theme/fonts";
+
+import Text from "../Text";
 
 import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL } from "./constants";
 
@@ -64,7 +65,7 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
 
           return (
             <LabeledScale key={`${idx}`}>
-              <ScaleLabel>{label}</ScaleLabel>
+              <ScaleLabel size="xs">{label}</ScaleLabel>
               <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />
             </LabeledScale>
           );
@@ -97,7 +98,7 @@ const LabeledScale = styled.div`
   height: 100%;
 `;
 
-const ScaleLabel = styled(XXSRegular)`
+const ScaleLabel = styled(Text)`
   position: absolute;
   top: 0;
   left: 0;
