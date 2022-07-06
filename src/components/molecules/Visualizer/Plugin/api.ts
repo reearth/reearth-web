@@ -64,6 +64,15 @@ export function exposed({
             overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
           },
         },
+        layers: merge(commonReearth.layers, {
+          add: (layer: Layer, parentId?: string) => {
+            commonReearth.layers.add(
+              layer,
+              parentId,
+              plugin ? `${plugin.id}/${plugin.extensionId}` : "",
+            );
+          },
+        }),
         ui: {
           show: (
             html: string,

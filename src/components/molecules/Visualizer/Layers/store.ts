@@ -99,7 +99,7 @@ export class LayerStore {
     return layerData.layer.id;
   };
 
-  #processLayer = (layer: Omit<Layer, "id">): Layer => {
+  #processLayer = (layer: Omit<Layer, "id">, creator?: string): Layer => {
     const { children, ...self } = layer;
     return {
       ...self,
@@ -113,15 +113,15 @@ export class LayerStore {
         : {}),
       id: this.#newId(),
       pluginId: "reearth",
-      creator: "pluginAPI",
-      children: children?.map(cl => this.#processLayer(cl)),
+      creator,
+      children: children?.map(cl => this.#processLayer(cl, creator)),
     };
   };
 
-  add = (layer: Omit<Layer, "id">, parentId?: string) => {
+  add = (layer: Omit<Layer, "id">, parentId?: string, creator?: string) => {
     const id = this.#insertLayer(
       {
-        layer: this.#processLayer(layer),
+        layer: this.#processLayer(layer, creator ?? "window"),
         parentId,
       },
       true,

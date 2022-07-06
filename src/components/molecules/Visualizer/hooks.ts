@@ -274,8 +274,8 @@ function useLayers({
   );
 
   const addLayer = useCallback(
-    (layer: Layer, parentId?: string) => {
-      const id = layers.add(layer, parentId);
+    (layer: Layer, parentId?: string, creator?: string) => {
+      const id = layers.add(layer, parentId, creator);
       forceUpdate();
       return id;
     },
