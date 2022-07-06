@@ -104,9 +104,7 @@ const useTimelineInteraction = ({
     e => {
       const { deltaX, deltaY } = e;
       const isHorizontal = Math.abs(deltaX) > 0 || Math.abs(deltaX) < 0;
-      if (isHorizontal) {
-        return;
-      }
+      if (isHorizontal) return;
 
       setZoom(() => Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO));
     },
