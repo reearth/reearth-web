@@ -10,10 +10,10 @@ type Props = {
   gapHorizontal: number;
 } & ScaleListInnerProps;
 
-const ScaleList: React.FC<Props> = ({ gapHorizontal, ...rest }) => {
+const ScaleList: React.FC<Props> = ({ gapHorizontal, ...props }) => {
   return (
     <ScaleContainer style={{ gap: `0 ${gapHorizontal}px` }}>
-      <ScaleListInner {...rest} />
+      <ScaleListInner {...props} />
     </ScaleContainer>
   );
 };
