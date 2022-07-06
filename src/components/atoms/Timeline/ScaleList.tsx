@@ -64,13 +64,13 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
           const label = `${month} ${date} ${year} ${hour}:00:00.0000`;
 
           return (
-            <LabeledScale key={`${idx}`}>
+            <LabeledScale key={idx}>
               <ScaleLabel size="xs">{label}</ScaleLabel>
-              <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />
+              <Scale isHour={isHour} isStrongScale={isStrongScale} />
             </LabeledScale>
           );
         }
-        return <Scale key={`${idx}`} isHour={isHour} isStrongScale={isStrongScale} />;
+        return <Scale key={idx} isHour={isHour} isStrongScale={isStrongScale} />;
       })}
     </>
   );
