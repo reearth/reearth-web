@@ -73,7 +73,7 @@ export class LayerStore {
     return l;
   }
 
-  #usedIds: string[] = [];
+  #usedIds: Set<string> = new Set();
   #newId = () => {
     const genResId = () =>
       "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
@@ -82,8 +82,8 @@ export class LayerStore {
     let id;
     do {
       id = genResId();
-    } while (this.#usedIds.includes(id));
-    this.#usedIds.push(id);
+    } while (this.#usedIds.has(id));
+    this.#usedIds.add(id);
     return id;
   };
 
