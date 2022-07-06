@@ -252,7 +252,7 @@ function useLayers({
   const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
   const forceUpdate = useUpdate();
 
-  useMemo(() => {
+  useEffect(() => {
     layers.setDatabaseLayers(rootLayer);
     forceUpdate();
   }, [layers, rootLayer, forceUpdate]);
