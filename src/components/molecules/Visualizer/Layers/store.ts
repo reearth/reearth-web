@@ -101,12 +101,16 @@ export class LayerStore {
 
   #processLayer = (layer: Omit<Layer, "id">): Layer => {
     const { children, ...self } = layer;
-    self.infobox?.blocks &&
-      self.infobox.blocks.forEach(b => {
-        b.id = this.#newId();
-      });
     return {
       ...self,
+      ...(self.infobox
+        ? {
+            infobox: {
+              ...self.infobox,
+              blocks: self.infobox.blocks?.map(b => ({ ...b, id: this.#newId() })),
+            },
+          }
+        : {}),
       id: this.#newId(),
       pluginId: "reearth",
       creator: "pluginAPI",
