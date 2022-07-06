@@ -49,9 +49,9 @@ export class LayerStore {
       },
     );
 
-    this.#root = rootLayer ?? { id: "", children: [] };
     this.#addedLayersData = [];
 
+    this.#root = rootLayer ?? { id: "", children: [] };
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
@@ -95,7 +95,7 @@ export class LayerStore {
       this.#map.set(l.id, l);
       this.#pmap.set(l.id, this.#pluginLayer(l));
     });
-    save && !tar.creator && this.#addedLayersData.push(layerData);
+    if (save && !tar.creator) this.#addedLayersData.push(layerData);
     return layerData.layer.id;
   };
 
@@ -127,12 +127,13 @@ export class LayerStore {
     return id;
   };
 
-  setRootLayer = (rootLayer: Layer | undefined) => {
-    this.#root = rootLayer ?? { id: "", children: [] };
+  setRootLayer = (root: Layer | undefined) => {
+    this.#root = root ?? { id: "", children: [] };
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
     this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
+
     this.#addedLayersData.forEach(ld => this.#insertLayer(ld));
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
