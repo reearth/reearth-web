@@ -253,7 +253,7 @@ function useLayers({
   const forceUpdate = useUpdate();
 
   useEffect(() => {
-    layers.setDatabaseLayers(rootLayer);
+    layers.setRootLayer(rootLayer);
     forceUpdate();
   }, [layers, rootLayer, forceUpdate]);
 

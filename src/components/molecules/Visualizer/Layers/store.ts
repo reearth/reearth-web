@@ -9,7 +9,7 @@ type PluginLayer = Readonly<Layer>;
 type AddedLayerData = { layer: Layer; parentId?: string };
 
 export class LayerStore {
-  constructor(databaseRootLayer?: Layer) {
+  constructor(rootLayer?: Layer) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.#prototype = objectFromGetter<Omit<Layer, "id">>(
@@ -49,7 +49,7 @@ export class LayerStore {
       },
     );
 
-    this.#root = databaseRootLayer ?? { id: "", children: [] };
+    this.#root = rootLayer ?? { id: "", children: [] };
     this.#addedLayersData = [];
 
     this.#proot = this.#pluginLayer(this.#root);
@@ -127,8 +127,8 @@ export class LayerStore {
     return id;
   };
 
-  setDatabaseLayers = (databaseRootLayer: Layer | undefined) => {
-    this.#root = databaseRootLayer ?? { id: "", children: [] };
+  setRootLayer = (rootLayer: Layer | undefined) => {
+    this.#root = rootLayer ?? { id: "", children: [] };
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));

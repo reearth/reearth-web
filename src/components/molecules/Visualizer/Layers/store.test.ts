@@ -112,7 +112,7 @@ test("add", () => {
   expect(root.children?.[2].infobox?.blocks?.[0]?.id).not.toBe("d");
 });
 
-test("setDatabaseLayers", () => {
+test("setRootLayer", () => {
   const store = new LayerStore({
     id: "",
     children: [
@@ -124,7 +124,7 @@ test("setDatabaseLayers", () => {
       { id: "b", isVisible: true, title: "bbbb" },
     ],
   });
-  store.setDatabaseLayers({
+  store.setRootLayer({
     id: "",
     children: [
       {
