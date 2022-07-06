@@ -122,7 +122,6 @@ export class LayerStore {
       },
       true,
     );
-    this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     return id;
   };
