@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef } from "react";
 
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
@@ -11,7 +11,7 @@ import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/As
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import { handleScroll } from "@reearth/util/handleScroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
@@ -80,11 +80,14 @@ const AssetContainer: React.FC<Props> = ({
     iconChoice,
     deleteModalVisible,
     sortOptions,
-    setLayoutType,
+    setLayoutTypeList,
+    setLayoutTypeMedium,
+    setLayoutTypeSmall,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
-    setDeleteModalVisible,
+    openDeleteModal,
+    closeDeleteModal,
     handleRemove,
   } = useHooks({
     sort,
@@ -97,6 +100,11 @@ const AssetContainer: React.FC<Props> = ({
     onRemove,
     onSearch,
   });
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (wrapperRef.current && !isLoading && hasMoreAssets) autoFillPage(wrapperRef, onGetMore);
+  }, [hasMoreAssets, isLoading, onGetMore]);
 
   return (
     <Wrapper>
@@ -117,7 +125,7 @@ const AssetContainer: React.FC<Props> = ({
             type="button"
             buttonType="secondary"
             disabled={selectedAssets?.length ? false : true}
-            onClick={() => setDeleteModalVisible(true)}
+            onClick={openDeleteModal}
           />
         )}
       </Flex>
@@ -135,19 +143,19 @@ const AssetContainer: React.FC<Props> = ({
         <LayoutButtons justify="left">
           <StyledIcon
             icon="assetList"
-            onClick={() => setLayoutType("list")}
+            onClick={setLayoutTypeList}
             selected={layoutType === "list"}
           />
           {smallCardOnly ? (
             <StyledIcon
               icon="assetGridSmall"
-              onClick={() => setLayoutType("small")}
+              onClick={setLayoutTypeSmall}
               selected={layoutType === "small"}
             />
           ) : (
             <StyledIcon
               icon="assetGrid"
-              onClick={() => setLayoutType("medium")}
+              onClick={setLayoutTypeMedium}
               selected={layoutType === "medium"}
             />
           )}
@@ -167,7 +175,8 @@ const AssetContainer: React.FC<Props> = ({
           </Template>
         ) : (
           <AssetListWrapper
-            onScroll={e => !isLoading && hasMoreAssets && handleScroll(e, onGetMore)}>
+            ref={wrapperRef}
+            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom(e, onGetMore)}>
             <AssetList layoutType={layoutType}>
               {layoutType === "list"
                 ? assets?.map(a => (
@@ -217,7 +226,7 @@ const AssetContainer: React.FC<Props> = ({
       </AssetWrapper>
       <AssetDeleteModal
         isVisible={deleteModalVisible}
-        onClose={() => setDeleteModalVisible(false)}
+        onClose={closeDeleteModal}
         handleRemove={handleRemove}
       />
     </Wrapper>

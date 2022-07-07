@@ -1,8 +1,10 @@
-import { memo, ReactElement } from "react";
+import { memo } from "react";
 
 import { styled } from "@reearth/theme";
 
-import { BORDER_WIDTH, PADDING_HORIZONTAL } from "./constants";
+import Icon from "../Icon";
+
+import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
 import { useTimeline } from "./hooks";
 import ScaleList from "./ScaleList";
 import { Range, TimeEventHandler } from "./types";
@@ -18,14 +20,12 @@ export type Props = {
    * These value need to be epoch time.
    */
   range?: { [K in keyof Range]?: Range[K] };
-  renderKnob: () => ReactElement;
-  knobSize: number;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
 };
 
 const Timeline: React.FC<Props> = memo(
-  function TimelinePresenter({ currentTime, range, renderKnob, knobSize, onClick, onDrag }) {
+  function TimelinePresenter({ currentTime, range, onClick, onDrag }) {
     const {
       startDate,
       scaleCount,
@@ -53,12 +53,12 @@ const Timeline: React.FC<Props> = memo(
             scaleInterval={scaleInterval}
             strongScaleHours={strongScaleHours}
           />
-          <Icon
+          <IconWrapper
             style={{
-              left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
+              left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
             }}>
-            {renderKnob()}
-          </Icon>
+            <Icon icon="ellipse" alt="ellipse" size={KNOB_SIZE} />
+          </IconWrapper>
         </ScaleBox>
       </Container>
     );
@@ -99,7 +99,7 @@ const ScaleBox = styled.div`
   }
 `;
 
-const Icon = styled.div`
+const IconWrapper = styled.div`
   position: absolute;
   top: 2px;
   color: ${({ theme }) => theme.colors.publish.dark.other.select};

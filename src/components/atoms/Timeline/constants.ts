@@ -12,3 +12,4 @@ export const SCALE_INTERVAL = 600;
 export const DAY_SECS = 86400;
 export const MINUTES_SEC = 60;
 export const SCALE_ZOOM_INTERVAL = 5;
+export const KNOB_SIZE = 25;
