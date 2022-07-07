@@ -9,7 +9,7 @@ type PluginLayer = Readonly<Layer>;
 type AddedLayerData = { layer: Layer; parentId?: string };
 
 export class LayerStore {
-  constructor(rootLayer?: Layer) {
+  constructor(root?: Layer) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.#prototype = objectFromGetter<Omit<Layer, "id">>(
@@ -51,7 +51,7 @@ export class LayerStore {
 
     this.#addedLayersData = [];
 
-    this.#root = rootLayer ?? { id: "", children: [] };
+    this.#root = root ?? { id: "", children: [] };
     this.#proot = this.#pluginLayer(this.#root);
     this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
@@ -137,9 +137,11 @@ export class LayerStore {
     this.#map = new Map(this.#flattenLayers.map(l => [l.id, l]));
     this.#pmap = new Map(this.#flattenLayers.map(l => [l.id, this.#pluginLayer(l)]));
 
-    this.#addedLayersData.forEach(ld => this.#insertLayer(ld));
-    this.#proot = this.#pluginLayer(this.#root);
-    this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    if (this.#addedLayersData) {
+      this.#addedLayersData.forEach(ld => this.#insertLayer(ld));
+      this.#proot = this.#pluginLayer(this.#root);
+      this.#flattenLayers = flattenLayers(this.#root?.children ?? []);
+    }
   };
 
   isLayer = (obj: any): obj is PluginLayer => {
