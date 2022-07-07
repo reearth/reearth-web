@@ -1,7 +1,9 @@
-import { memo, ReactElement, useMemo } from "react";
+import { memo, useMemo } from "react";
 
 import { metricsSizes, styled } from "@reearth/theme";
 import { XXSRegular } from "@reearth/theme/fonts";
+
+import Icon from "../Icon";
 
 type Range = {
   start: number;
@@ -19,8 +21,6 @@ export type Props = {
    * These value need to be epoch time.
    */
   range?: { [K in keyof Range]?: Range[K] };
-  renderKnob: () => ReactElement;
-  knobSize: number;
 };
 
 const EPOCH_SEC = 1000;
@@ -32,6 +32,7 @@ const GAP_HORIZONTAL = 14;
 const HOURS_SECS = 3600;
 const MEMORY_INTERVAL = 600;
 const DAY_SECS = 86400;
+const KNOB_SIZE = 25;
 
 const getRange = (range: Props["range"]): Range => {
   const { start, end } = range || {};
@@ -62,7 +63,7 @@ const getRange = (range: Props["range"]): Range => {
 };
 
 const Timeline: React.FC<Props> = memo(
-  function TimelinePresenter({ currentTime, range: _range, renderKnob, knobSize }) {
+  function TimelinePresenter({ currentTime, range: _range }) {
     const range = useMemo(() => {
       const range = getRange(_range);
       if (process.env.NODE_ENV !== "production") {
@@ -100,12 +101,12 @@ const Timeline: React.FC<Props> = memo(
       <Container>
         <MemoryBox>
           <MemoryList start={startDate} memoryCount={memoryCount} hoursCount={hoursCount} />
-          <Icon
+          <IconWrapper
             style={{
-              left: currentPosition + PADDING_HORIZONTAL - knobSize / 2,
+              left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
             }}>
-            {renderKnob()}
-          </Icon>
+            <Icon icon="ellipse" alt="ellipse" size={25} />
+          </IconWrapper>
         </MemoryBox>
       </Container>
     );
@@ -194,7 +195,7 @@ const MemoryBox = styled.div`
   }
 `;
 
-const Icon = styled.div`
+const IconWrapper = styled.div`
   position: absolute;
   top: 2px;
   color: ${({ theme }) => theme.colors.publish.dark.other.select};
