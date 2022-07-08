@@ -2,7 +2,6 @@ import { useApolloClient } from "@apollo/client";
 import { useCallback, useState, useEffect } from "react";
 
 import {
-  GetAssetsQuery,
   useCreateAssetMutation,
   useRemoveAssetMutation,
   useGetAssetsQuery,
@@ -11,8 +10,6 @@ import {
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
 import { useNotification } from "@reearth/state";
-
-export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
 
 export type AssetSortType = "date" | "name" | "size";
 
@@ -74,7 +71,21 @@ export default (teamId?: string, initialAssetUrl?: string | null, allowDeletion?
     data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
 
   const isRefetching = networkStatus === 3;
-  const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
+
+  const assets = data?.assets.edges
+    .map<Asset | undefined>(asset =>
+      asset.node
+        ? {
+            id: asset.node.id,
+            name: asset.node.name,
+            size: asset.node.size,
+            teamId: asset.node.teamId,
+            url: asset.node.url,
+            contentType: asset.node.contentType,
+          }
+        : undefined,
+    )
+    .filter((asset): asset is Asset => !!asset);
 
   const initialAsset = assets?.find(a => a.url === initialAssetUrl);
   const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);

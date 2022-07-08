@@ -26,25 +26,26 @@ export default ({ projectId }: Params) => {
   });
 
   const rawProject = useMemo(
-    () => data?.projects.nodes.find(p => p?.id === projectId),
+    () => data?.projects.edges.find(p => p.node?.id === projectId),
     [data, projectId],
   );
+
   const project = useMemo(
     () =>
-      rawProject?.id
+      rawProject?.node?.id
         ? {
-            id: rawProject.id,
-            name: rawProject.name,
-            description: rawProject.description,
-            publicTitle: rawProject.publicTitle,
-            publicDescription: rawProject.publicDescription,
-            isArchived: rawProject.isArchived,
-            isBasicAuthActive: rawProject.isBasicAuthActive,
-            basicAuthUsername: rawProject.basicAuthUsername,
-            basicAuthPassword: rawProject.basicAuthPassword,
-            imageUrl: rawProject.imageUrl,
-            alias: rawProject.alias,
-            publishmentStatus: rawProject.publishmentStatus,
+            id: rawProject?.node?.id,
+            name: rawProject?.node?.name,
+            description: rawProject?.node?.description,
+            publicTitle: rawProject?.node?.publicTitle,
+            publicDescription: rawProject?.node?.publicDescription,
+            isArchived: rawProject?.node?.isArchived,
+            isBasicAuthActive: rawProject?.node?.isBasicAuthActive,
+            basicAuthUsername: rawProject?.node?.basicAuthUsername,
+            basicAuthPassword: rawProject?.node?.basicAuthPassword,
+            imageUrl: rawProject?.node?.imageUrl,
+            alias: rawProject?.node?.alias,
+            publishmentStatus: rawProject?.node?.publishmentStatus,
           }
         : undefined,
     [rawProject],

@@ -10,19 +10,16 @@ import {
   useCreateSceneMutation,
   useGetProjectsQuery,
   Visualizer,
-  GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useNotification } from "@reearth/state";
 
-const toPublishmentStatus = (s: PublishmentStatus) =>
+const toPublishmentStatus = (s: PublishmentStatus | undefined) =>
   s === PublishmentStatus.Public
     ? "published"
     : s === PublishmentStatus.Limited
     ? "limited"
     : "unpublished";
-
-export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 const projectPerPage = 5;
 
@@ -65,19 +62,17 @@ export default (teamId: string) => {
     }
   }, [currentTeam, team, setTeam]);
 
-  const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
-
-  const currentProjects = (projectNodes ?? [])
+  const currentProjects = projectData?.projects.edges
     .map<Project | undefined>(project =>
-      project
+      project.node
         ? {
-            id: project.id,
-            description: project.description,
-            name: project.name,
-            imageUrl: project.imageUrl,
-            isArchived: project.isArchived,
-            status: toPublishmentStatus(project.publishmentStatus),
-            sceneId: project.scene?.id,
+            id: project.node.id,
+            description: project.node.description,
+            name: project.node.name,
+            imageUrl: project.node.imageUrl,
+            isArchived: project.node.isArchived,
+            status: toPublishmentStatus(project.node.publishmentStatus),
+            sceneId: project.node.scene?.id,
           }
         : undefined,
     )

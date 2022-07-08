@@ -66,10 +66,10 @@ export default (params: Params) => {
 
   useEffect(() => {
     if (!data) return;
-    const project = data?.projects.nodes.find(node => node?.id === params.projectId) ?? undefined;
+    const project = data?.projects.edges.find(e => e.node?.id === params.projectId) ?? undefined;
 
-    if (project?.id !== currentProject?.id) {
-      setProject(project);
+    if (project?.node?.id !== currentProject?.id) {
+      project?.node && setProject(project?.node);
     }
   }, [data, params, currentProject, setProject]);
 

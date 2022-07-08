@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode } from "react";
 
+import InfiniteScrollWrapper from "@reearth/components/atoms/InfiniteScroll";
 import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
-import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export * from "./types";
 
@@ -23,20 +23,12 @@ const Dashboard: React.FC<Props> = ({
   hasMoreProjects,
   onGetMoreProjects,
 }) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreProjects)
-      autoFillPage(wrapperRef, onGetMoreProjects);
-  }, [hasMoreProjects, isLoading, onGetMoreProjects]);
-
   return (
     <Wrapper
       className={className}
-      ref={wrapperRef}
-      onScroll={e => {
-        !isLoading && hasMoreProjects && onScrollToBottom(e, onGetMoreProjects);
-      }}>
+      loading={isLoading}
+      hasMoreItems={hasMoreProjects}
+      onGetMoreItems={onGetMoreProjects}>
       {header}
       <Content>
         {children}
@@ -46,10 +38,8 @@ const Dashboard: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled(InfiniteScrollWrapper)`
   background: ${({ theme }) => theme.dashboard.bg};
-  height: 100%;
-  overflow: auto;
 `;
 
 const Content = styled.div`
