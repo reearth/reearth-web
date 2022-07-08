@@ -3,7 +3,6 @@ import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "c
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
@@ -174,30 +173,37 @@ export default ({
 
   // call onCameraChange event after moving camera
   const emittedCamera = useRef<Camera>();
+  const isMovingCamera = useRef<boolean>(false);
   const updateCamera = useCallback(() => {
-    flushSync(() => {
-      const viewer = cesium?.current?.cesiumElement;
-      if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
+    const viewer = cesium?.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
-      const c = getCamera(viewer);
-      if (c && !isEqual(c, camera)) {
-        emittedCamera.current = c;
-        onCameraChange?.(c);
-      }
-    });
+    const c = getCamera(viewer);
+    if (c && !isEqual(c, camera)) {
+      emittedCamera.current = c;
+      onCameraChange?.(c);
+    }
   }, [camera, onCameraChange]);
 
   const handleCameraChange = useCallback(() => {
     updateCamera();
   }, [updateCamera]);
 
+  const handleCameraMoveStart = useCallback(() => {
+    isMovingCamera.current = true;
+  }, []);
   const handleCameraMoveEnd = useCallback(() => {
     updateCamera();
+    isMovingCamera.current = false;
   }, [updateCamera]);
 
   // camera
   useEffect(() => {
-    if (camera && (!emittedCamera.current || emittedCamera.current !== camera)) {
+    if (
+      camera &&
+      !isMovingCamera.current &&
+      (!emittedCamera.current || emittedCamera.current !== camera)
+    ) {
       engineAPI.flyTo(camera, { duration: 0 });
       emittedCamera.current = undefined;
     }
@@ -318,6 +324,7 @@ export default ({
     handleUnmount,
     handleClick,
     handleCameraChange,
+    handleCameraMoveStart,
     handleCameraMoveEnd,
   };
 };
