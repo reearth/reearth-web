@@ -3,6 +3,7 @@ import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "c
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { useDeepCompareEffect } from "react-use";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
@@ -172,14 +173,18 @@ export default ({
   }, []);
 
   // call onCameraChange event after moving camera
+  const emittedCamera = useRef<Camera>();
   const updateCamera = useCallback(() => {
-    const viewer = cesium?.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
+    flushSync(() => {
+      const viewer = cesium?.current?.cesiumElement;
+      if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
-    const c = getCamera(viewer);
-    if (c && !isEqual(c, camera)) {
-      onCameraChange?.(c);
-    }
+      const c = getCamera(viewer);
+      if (c && !isEqual(c, camera)) {
+        emittedCamera.current = c;
+        onCameraChange?.(c);
+      }
+    });
   }, [camera, onCameraChange]);
 
   const handleCameraChange = useCallback(() => {
@@ -189,6 +194,14 @@ export default ({
   const handleCameraMoveEnd = useCallback(() => {
     updateCamera();
   }, [updateCamera]);
+
+  // camera
+  useEffect(() => {
+    if (camera && (!emittedCamera.current || emittedCamera.current !== camera)) {
+      engineAPI.flyTo(camera, { duration: 0 });
+      emittedCamera.current = undefined;
+    }
+  }, [camera, engineAPI]);
 
   // manage layer selection
   useEffect(() => {
