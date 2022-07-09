@@ -63,23 +63,8 @@ const CameraField: React.FC<Props> = ({
     onlyPose,
     onlyPosition,
   });
-
-  const lat = typeof camera?.lat === "number" ? Math.round(camera?.lat * 1000) / 1000 : "";
-  const lng = typeof camera?.lng === "number" ? Math.round(camera?.lng * 1000) / 1000 : "";
-  const height = typeof camera?.height === "number" ? Math.round(camera?.height) : "";
-  const heading =
-    typeof camera?.heading === "number"
-      ? Math.round(((camera?.heading * 180) / Math.PI) * 1000) / 1000
-      : "";
-  const pitch =
-    typeof camera?.pitch === "number"
-      ? Math.round(((camera?.pitch * 180) / Math.PI) * 1000) / 1000
-      : "";
-  const roll =
-    typeof camera?.roll === "number"
-      ? Math.round(((camera?.roll * 180) / Math.PI) * 1000) / 1000
-      : "";
   const theme = useTheme();
+
   return (
     <Wrapper ref={wrapperRef} onClick={value ? undefined : startCapture} data-camera-popup>
       <CameraWrapper ref={cameraWrapperRef}>
@@ -104,7 +89,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={lat}
+                    value={camera?.lat}
                     step={0.01}
                     readOnly={!isCapturing}
                     onChange={handleLatChange}
@@ -116,7 +101,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={lng}
+                    value={camera?.lng}
                     step={0.01}
                     readOnly={!isCapturing}
                     onChange={handleLngChange}
@@ -128,7 +113,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={height}
+                    value={camera?.height}
                     step={1000}
                     readOnly={!isCapturing}
                     onChange={handleAltitudeChange}
@@ -149,7 +134,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={heading}
+                    value={camera?.heading}
                     step={1}
                     readOnly={!isCapturing}
                     onChange={handleHeadingChange}
@@ -161,7 +146,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={pitch}
+                    value={camera?.pitch}
                     step={1}
                     readOnly={!isCapturing}
                     onChange={handlePitchChange}
@@ -173,7 +158,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={roll}
+                    value={camera?.roll}
                     step={1}
                     readOnly={!isCapturing}
                     onChange={handleRollChange}
@@ -310,6 +295,13 @@ const Input = styled.input`
   width: 100%;
   padding: 5px;
   box-sizing: border-box;
+  -moz-appearance: textfield;
+
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `;
 
 const FloatText = styled(Text)`
