@@ -248,6 +248,6 @@ export default {
   menuForDevice: MenuForDevice,
   plugin: Plugin,
   tag: Tag,
-  ellipse: Ellipse,
   crosshair: Crosshair,
+  ellipse: Ellipse,
 };
