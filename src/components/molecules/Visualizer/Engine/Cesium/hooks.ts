@@ -172,15 +172,18 @@ export default ({
   }, []);
 
   // call onCameraChange event after moving camera
-  const emittedCamera = useRef<Camera>();
-  const isMovingCamera = useRef<boolean>(false);
+  const emittedCamera = useRef<Camera[]>([]);
   const updateCamera = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
-      emittedCamera.current = c;
+      emittedCamera.current?.push(c);
+      // an experience value base on how many data version global state can be lag behind
+      if (emittedCamera.current?.length > 6) {
+        emittedCamera.current?.shift();
+      }
       onCameraChange?.(c);
     }
   }, [camera, onCameraChange]);
@@ -189,23 +192,15 @@ export default ({
     updateCamera();
   }, [updateCamera]);
 
-  const handleCameraMoveStart = useCallback(() => {
-    isMovingCamera.current = true;
-  }, []);
   const handleCameraMoveEnd = useCallback(() => {
     updateCamera();
-    isMovingCamera.current = false;
   }, [updateCamera]);
 
   // camera
   useEffect(() => {
-    if (
-      camera &&
-      !isMovingCamera.current &&
-      (!emittedCamera.current || emittedCamera.current !== camera)
-    ) {
+    if (camera && (!emittedCamera.current || emittedCamera.current.indexOf(camera) === -1)) {
       engineAPI.flyTo(camera, { duration: 0 });
-      emittedCamera.current = undefined;
+      emittedCamera.current = [];
     }
   }, [camera, engineAPI]);
 
@@ -324,7 +319,6 @@ export default ({
     handleUnmount,
     handleClick,
     handleCameraChange,
-    handleCameraMoveStart,
     handleCameraMoveEnd,
   };
 };
