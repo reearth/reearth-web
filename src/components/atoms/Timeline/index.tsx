@@ -44,7 +44,11 @@ const Timeline: React.FC<Props> = memo(
 
     return (
       <Container>
-        <ScaleBox {...events}>
+        {/**
+         * TODO: Support keyboard operation for accessibility
+         * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
+         */}
+        <ScaleBox role="slider" {...events}>
           <ScaleList
             start={startDate}
             scaleCount={scaleCount}
@@ -54,6 +58,7 @@ const Timeline: React.FC<Props> = memo(
             strongScaleHours={strongScaleHours}
           />
           <IconWrapper
+            data-testid="knob-icon"
             style={{
               left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
             }}>

@@ -128,13 +128,13 @@ const getRange = (range?: { [K in keyof Range]?: Range[K] }): Range => {
   if (start !== undefined && end === undefined) {
     return {
       start,
-      end: start + DAY_SECS,
+      end: start + DAY_SECS * EPOCH_SEC,
     };
   }
 
   if (start === undefined && end !== undefined) {
     return {
-      start: Math.max(end - DAY_SECS, 0),
+      start: Math.max(end - DAY_SECS * EPOCH_SEC, 0),
       end,
     };
   }
@@ -172,7 +172,7 @@ export const useTimeline = ({ currentTime, range: _range, onClick, onDrag }: Opt
     SCALE_INTERVAL - Math.trunc(zoom - 1) * SCALE_ZOOM_INTERVAL * MINUTES_SEC,
     MINUTES_SEC,
   );
-  const strongScaleHours = MAX_ZOOM_RATIO - Math.trunc(zoom) + 1;
+  const strongScaleHours = Math.max(MAX_ZOOM_RATIO - Math.trunc(zoom) + 1, 1);
   const epochDiff = end - start;
 
   // convert epoch diff to minutes.
