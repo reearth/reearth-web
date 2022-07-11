@@ -197,7 +197,7 @@ export default ({
   }, [updateCamera]);
 
   useEffect(() => {
-    if (camera && (!emittedCamera.current || emittedCamera.current.indexOf(camera) === -1)) {
+    if (camera && !emittedCamera.current.includes(camera)) {
       engineAPI.flyTo(camera, { duration: 0 });
       emittedCamera.current = [];
     }
