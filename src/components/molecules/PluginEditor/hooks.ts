@@ -39,7 +39,7 @@ export default () => {
   const [mode, setMode] = useState("widget");
   const [showInfobox, setShowInfobox] = useState(false);
   const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
-  const [showAlignSystem, setShowAlignSystem] = useState(true);
+  const [showAlignSystem, setShowAlignSystem] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<Position>(defaultPosition);
   const [executableSourceCode, setExecutableSourceCode] = useState(originalSourceCode);
   const [fileName, setFileName] = useState(originalFileName);
@@ -96,18 +96,15 @@ export default () => {
   );
 
   const widgets = useMemo(() => {
-    if (!showAlignSystem) return {};
+    if (mode !== "widget") return {};
 
-    const widget =
-      mode === "widget"
-        ? [
-            {
-              id: "xxx",
-              // extended: true,
-              __REEARTH_SOURCECODE: executableSourceCode,
-            },
-          ]
-        : [];
+    const widget = [
+      {
+        id: "xxx",
+        // extended: true,
+        __REEARTH_SOURCECODE: executableSourceCode,
+      },
+    ];
     const alignment =
       currentPosition.section === "center" || currentPosition.area === "middle"
         ? "centered"
@@ -139,7 +136,7 @@ export default () => {
       },
     };
     return { alignSystem: { outer: newZone } };
-  }, [currentPosition.area, currentPosition.section, executableSourceCode, mode, showAlignSystem]);
+  }, [currentPosition.area, currentPosition.section, executableSourceCode, mode]);
 
   const handleRun = useCallback(() => {
     setExecutableSourceCode(sourceCode);
