@@ -213,7 +213,7 @@ export function useAPI({
 
   useEffect(() => {
     event.current?.[1]("update");
-  }, [block, layer, widget]);
+  }, [block, layer, widget, ctx?.reearth.visualizer.property]);
 
   return {
     staticExposed,
