@@ -58,7 +58,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
   layoutConstraint,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
-  overrideSceneProperty,
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
     onWidgetUpdate,
@@ -92,7 +91,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
-                overrideSceneProperty={overrideSceneProperty}
                 layoutConstraint={layoutConstraint}
               />
             )}
@@ -106,7 +104,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            overrideSceneProperty={overrideSceneProperty}
             layoutConstraint={layoutConstraint}>
             <ZoneComponent
               zoneName="inner"
@@ -116,7 +113,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}
-              overrideSceneProperty={overrideSceneProperty}
               layoutConstraint={layoutConstraint}
             />
           </ZoneComponent>

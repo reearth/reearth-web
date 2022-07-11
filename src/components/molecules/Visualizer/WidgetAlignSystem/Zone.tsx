@@ -29,7 +29,6 @@ export default function Zone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
-  overrideSceneProperty,
   children,
 }: Props) {
   return (
@@ -55,7 +54,6 @@ export default function Zone({
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
-                overrideSceneProperty={overrideSceneProperty}
               />
             ),
           )}

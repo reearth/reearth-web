@@ -197,6 +197,7 @@ export default ({
       addLayer,
       selectLayer,
       overrideLayerProperty,
+      overrideSceneProperty: handleScenePropertyOverride,
     },
     engineRef,
     layers,

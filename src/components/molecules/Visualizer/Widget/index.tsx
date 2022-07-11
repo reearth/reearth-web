@@ -23,7 +23,6 @@ export type Props<PP = any, SP = any> = {
   pluginBaseUrl?: string;
   layout?: WidgetLayout;
   editing?: boolean;
-  overrideSceneProperty?: (pluginId: string, property: any) => void;
   onExtend?: (id: string, extended: boolean | undefined) => void;
 };
 
@@ -39,7 +38,6 @@ export default function WidgetComponent<PP = any, SP = any>({
   pluginBaseUrl,
   layout,
   onExtend,
-  overrideSceneProperty,
   ...props
 }: Props<PP, SP>) {
   const { align, location } = layout ?? {};
@@ -98,7 +96,6 @@ export default function WidgetComponent<PP = any, SP = any>({
       widget={w}
       onRender={handleRender}
       onResize={handleResize}
-      overrideSceneProperty={overrideSceneProperty}
     />
   );
 }

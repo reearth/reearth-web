@@ -50,6 +50,7 @@ export type Props = {
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
+  overrideSceneProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
@@ -61,6 +62,7 @@ export type Props = {
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
+  overrideSceneProperty: (id: string, property: any) => void;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -88,6 +90,7 @@ export function Provider({
   addLayer,
   selectLayer,
   overrideLayerProperty,
+  overrideSceneProperty,
   layersInViewport,
   flyTo,
   lookAt,
@@ -110,6 +113,12 @@ export function Provider({
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
   const getLayerOverriddenProperties = useGet(layerOverriddenProperties);
+  const overrideScenePropertyCommon = useCallback(
+    (property: any) => {
+      return overrideSceneProperty("", property);
+    },
+    [overrideSceneProperty],
+  );
 
   const value = useMemo<Context>(
     () => ({
@@ -134,6 +143,7 @@ export function Provider({
         addLayer,
         selectLayer,
         overrideLayerProperty,
+        overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
         flyTo,
         lookAt,
@@ -141,6 +151,7 @@ export function Provider({
         zoomOut,
         viewport,
       }),
+      overrideSceneProperty,
     }),
     [
       api,
@@ -161,6 +172,8 @@ export function Provider({
       selectLayer,
       addLayer,
       overrideLayerProperty,
+      overrideSceneProperty,
+      overrideScenePropertyCommon,
       layersInViewport,
       flyTo,
       lookAt,

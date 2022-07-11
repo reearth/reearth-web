@@ -115,7 +115,6 @@ export default function Visualizer({
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
-    overrideSceneProperty,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
@@ -151,7 +150,6 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginBaseUrl={pluginBaseUrl}
             layoutConstraint={widgets.layoutConstraint}
-            overrideSceneProperty={overrideSceneProperty}
           />
         )}
         <Engine
@@ -195,7 +193,6 @@ export default function Visualizer({
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
                 pluginBaseUrl={pluginBaseUrl}
-                overrideSceneProperty={overrideSceneProperty}
               />
             ))}
         </Engine>

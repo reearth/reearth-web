@@ -20,7 +20,6 @@ type Props = {
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
   pluginBaseUrl?: string;
-  overrideSceneProperty?: (pluginId: string, property: any) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 };
@@ -32,7 +31,6 @@ export default function Area({
   align,
   widgets,
   pluginProperty,
-  overrideSceneProperty,
   layoutConstraint,
   ...props
 }: Props) {
@@ -94,7 +92,6 @@ export default function Area({
                 extended={extended}
                 editing={editing}
                 onExtend={handleExtend}
-                overrideSceneProperty={overrideSceneProperty}
                 {...props}
               />
             )}
