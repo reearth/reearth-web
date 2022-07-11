@@ -1,5 +1,5 @@
 import { cloneDeep, mergeWith, omit } from "lodash";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 export function mergeProperty(a: any, b: any) {
   const a2 = cloneDeep(a);
@@ -30,4 +30,10 @@ export function useOverridenProperty<T = any>(
   }, [property, overriddenPropertyCommon, overriddenProperty]);
 
   return [mergedProperty, overrideProperty];
+}
+
+export function useGet<T>(value: T): () => T {
+  const ref = useRef<T>(value);
+  ref.current = value;
+  return useCallback(() => ref.current, []);
 }

@@ -5,8 +5,10 @@ import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
+import { useGet } from "../utils";
+
 import { exposed } from "./api";
-import { useGet, useContext } from "./context";
+import { useContext } from "./context";
 import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({

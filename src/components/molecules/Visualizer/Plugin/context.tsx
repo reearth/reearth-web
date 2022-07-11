@@ -6,7 +6,6 @@ import {
   useContext as useReactContext,
   useEffect,
   useMemo,
-  useRef,
 } from "react";
 
 import events from "@reearth/util/event";
@@ -14,6 +13,7 @@ import { Rect } from "@reearth/util/value";
 
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
+import { useGet } from "../utils";
 
 import type { CommonReearth } from "./api";
 import { commonReearth } from "./api";
@@ -206,12 +206,6 @@ export function Provider({
   }, [value.reearth]);
 
   return <context.Provider value={value}>{children}</context.Provider>;
-}
-
-export function useGet<T>(value: T): () => T {
-  const ref = useRef<T>(value);
-  ref.current = value;
-  return useCallback(() => ref.current, []);
 }
 
 export function useEmit<T extends { [K in string]: any[] }>(
