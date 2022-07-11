@@ -171,7 +171,7 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
-  // call onCameraChange event after moving camera
+  // cache the camera data emmited from viewer camera change
   const emittedCamera = useRef<Camera[]>([]);
   const updateCamera = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
@@ -180,8 +180,8 @@ export default ({
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
       emittedCamera.current?.push(c);
-      // an experience value base on how many data version global state can be lag behind
-      if (emittedCamera.current?.length > 6) {
+      // The state change is not sync now. This number is how many state updates can actually happen to be merged within one re-render.
+      if (emittedCamera.current?.length > 10) {
         emittedCamera.current?.shift();
       }
       onCameraChange?.(c);
@@ -196,7 +196,6 @@ export default ({
     updateCamera();
   }, [updateCamera]);
 
-  // camera
   useEffect(() => {
     if (camera && (!emittedCamera.current || emittedCamera.current.indexOf(camera) === -1)) {
       engineAPI.flyTo(camera, { duration: 0 });
