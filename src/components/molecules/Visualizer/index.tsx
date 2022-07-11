@@ -106,7 +106,7 @@ export default function Visualizer({
     selectedBlockId,
     innerCamera,
     infobox,
-    mergedSceneProperty,
+    overriddenSceneProperty,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -144,7 +144,7 @@ export default function Visualizer({
             editing={widgetAlignEditorActivated}
             onWidgetUpdate={onWidgetUpdate}
             onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
-            sceneProperty={mergedSceneProperty}
+            sceneProperty={overriddenSceneProperty}
             pluginProperty={pluginProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
@@ -154,7 +154,7 @@ export default function Visualizer({
         )}
         <Engine
           ref={engineRef}
-          property={mergedSceneProperty}
+          property={overriddenSceneProperty}
           selectedLayerId={selectedLayer?.id}
           layerSelectionReason={layerSelectionReason}
           ready={ready}
@@ -171,7 +171,7 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
             clusterProperty={clusterProperty}
-            sceneProperty={mergedSceneProperty}
+            sceneProperty={overriddenSceneProperty}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}
@@ -184,7 +184,7 @@ export default function Visualizer({
               <W
                 key={widget.id}
                 widget={widget}
-                sceneProperty={mergedSceneProperty}
+                sceneProperty={overriddenSceneProperty}
                 pluginProperty={
                   widget.pluginId && widget.extensionId
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
@@ -201,7 +201,7 @@ export default function Visualizer({
             title={infobox?.title}
             infoboxKey={infobox?.infoboxKey}
             visible={!!infobox?.visible}
-            sceneProperty={mergedSceneProperty}
+            sceneProperty={overriddenSceneProperty}
             blocks={infobox?.blocks}
             layer={infobox?.layer}
             selectedBlockId={selectedBlockId}
