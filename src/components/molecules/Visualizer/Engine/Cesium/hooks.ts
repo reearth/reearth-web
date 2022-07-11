@@ -171,7 +171,7 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
-  // cache the camera data emmited from viewer camera change
+  // cache the camera data emitted from viewer camera change
   const emittedCamera = useRef<Camera[]>([]);
   const updateCamera = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
