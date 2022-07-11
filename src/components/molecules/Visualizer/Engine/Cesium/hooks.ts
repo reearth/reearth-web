@@ -182,7 +182,7 @@ export default ({
       emittedCamera.current?.push(c);
       // The state change is not sync now. This number is how many state updates can actually happen to be merged within one re-render.
       if (emittedCamera.current?.length > 10) {
-        emittedCamera.current?.shift();
+        emittedCamera.current.shift();
       }
       onCameraChange?.(c);
     }
