@@ -65,6 +65,19 @@ const CameraField: React.FC<Props> = ({
   });
   const theme = useTheme();
 
+  const heading =
+    typeof camera?.heading === "number"
+      ? Math.round(((camera?.heading * 180) / Math.PI) * 1000) / 1000
+      : "";
+  const pitch =
+    typeof camera?.pitch === "number"
+      ? Math.round(((camera?.pitch * 180) / Math.PI) * 1000) / 1000
+      : "";
+  const roll =
+    typeof camera?.roll === "number"
+      ? Math.round(((camera?.roll * 180) / Math.PI) * 1000) / 1000
+      : "";
+
   return (
     <Wrapper ref={wrapperRef} onClick={value ? undefined : startCapture} data-camera-popup>
       <CameraWrapper ref={cameraWrapperRef}>
@@ -134,7 +147,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={camera?.heading}
+                    value={heading}
                     step={1}
                     readOnly={!isCapturing}
                     onChange={handleHeadingChange}
@@ -146,7 +159,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={camera?.pitch}
+                    value={pitch}
                     step={1}
                     readOnly={!isCapturing}
                     onChange={handlePitchChange}
@@ -158,7 +171,7 @@ const CameraField: React.FC<Props> = ({
                 <FormWrapper>
                   <Input
                     type="number"
-                    value={camera?.roll}
+                    value={roll}
                     step={1}
                     readOnly={!isCapturing}
                     onChange={handleRollChange}
