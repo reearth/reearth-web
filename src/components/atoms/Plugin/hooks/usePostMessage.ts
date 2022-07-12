@@ -4,7 +4,7 @@ import type { Ref } from "../IFrame";
 
 export function usePostMessage(iFrameRef: RefObject<Ref>) {
   const messageQueue = useRef<any[]>([]);
-  const iframeAvailable = useRef(false);
+  const iframeAvailable = useRef(!!iFrameRef.current);
   const postMessage = useCallback(
     (msg: any) => {
       try {
@@ -24,9 +24,9 @@ export function usePostMessage(iFrameRef: RefObject<Ref>) {
   useEffect(() => {
     if (!iframeAvailable.current && iFrameRef.current) {
       if (messageQueue.current.length) {
-        messageQueue.current.forEach(message => {
+        for (const message of messageQueue.current) {
           iFrameRef.current?.postMessage(message);
-        });
+        }
         messageQueue.current = [];
       }
     }
