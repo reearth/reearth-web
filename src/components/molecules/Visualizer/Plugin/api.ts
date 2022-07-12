@@ -104,15 +104,11 @@ export function exposed({
         },
         ...events,
       },
-      plugin?.extensionType === "primitive"
+      plugin?.extensionType === "block"
         ? {
             get layer() {
               return layer?.();
             },
-          }
-        : {},
-      plugin?.extensionType === "block"
-        ? {
             get block() {
               return block?.();
             },
@@ -194,7 +190,9 @@ export function commonReearth({
         },
       },
       get property() {
-        return sceneProperty();
+        const sp = sceneProperty();
+        console.log("SCENE_PROPERTY", JSON.stringify(sp), new Error().stack);
+        return sp;
       },
       overrideProperty: overrideSceneProperty,
     },
