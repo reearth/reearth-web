@@ -1,12 +1,16 @@
 import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
 
-import useHook, { IFrameAPI, RefType } from "./hooks";
+import useHook, {
+  defaultIsMarshalable,
+  type IFrameAPI as IFrameAPIType,
+  type RefType,
+} from "./hooks";
 import IFrame, { AutoResize as AutoResizeType } from "./IFrame";
 
-export { defaultIsMarshalable } from "./hooks";
-export type { IFrameAPI } from "./hooks";
+export { defaultIsMarshalable };
 export type AutoResize = AutoResizeType;
 export type Ref = RefType;
+export type IFrameAPI = IFrameAPIType;
 
 export type Props = {
   className?: string;

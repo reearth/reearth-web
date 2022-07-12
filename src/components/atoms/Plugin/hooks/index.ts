@@ -2,7 +2,9 @@ import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useRef, useState, useMemo, useImperativeHandle, Ref } from "react";
 
-import type { Ref as IFrameRef } from "./IFrame";
+import type { Ref as IFrameRef } from "../IFrame";
+
+import { usePostMessage } from "./usePostMessage";
 
 export type IFrameAPI = {
   render: (
@@ -42,7 +44,7 @@ export const defaultIsMarshalable = (obj: any): boolean => {
 };
 
 const defaultOnError = (err: any) => {
-  console.error("plugin error", err?.message || err);
+  console.error("plugin error", err);
 };
 
 export default function useHook({
@@ -65,6 +67,7 @@ export default function useHook({
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
     [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
   >(["", undefined]);
+  const postMessage = usePostMessage(iFrameRef);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -103,11 +106,9 @@ export default function useHook({
       resize: (width, height) => {
         iFrameRef.current?.resize(width, height);
       },
-      postMessage: msg => {
-        iFrameRef.current?.postMessage(JSON.parse(JSON.stringify(msg)));
-      },
+      postMessage,
     }),
-    [iframeCanBeVisible],
+    [iframeCanBeVisible, postMessage],
   );
 
   useEffect(() => {
