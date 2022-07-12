@@ -6,7 +6,7 @@ import type { WidgetZone, WidgetSection, Layer } from "@reearth/components/molec
 
 export type Position = { section: string; area: string };
 
-const originalSourceCode = `
+const defaultSourceCode = `
 reearth.ui.show(\`
   <style>
     body {
@@ -32,7 +32,7 @@ const defaultPosition = {
   area: "top",
 };
 
-const originalFileName = "untitled.js";
+const defaultFileName = "untitled.js";
 
 export default () => {
   const [mode, setMode] = useState("widget");
@@ -40,9 +40,9 @@ export default () => {
   const [infoboxSize, setInfoboxSize] = useState<"small" | "medium" | "large">("small");
   const [showAlignSystem, setShowAlignSystem] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<Position>(defaultPosition);
-  const [executableSourceCode, setExecutableSourceCode] = useState(originalSourceCode);
-  const [fileName, setFileName] = useState(originalFileName);
-  const [sourceCode, setSourceCode] = useState(originalSourceCode);
+  const [executableSourceCode, setExecutableSourceCode] = useState(defaultSourceCode);
+  const [fileName, setFileName] = useState(defaultFileName);
+  const [sourceCode, setSourceCode] = useState(defaultSourceCode);
 
   const rootLayer: Layer<any, any> = useMemo(
     () => ({
@@ -170,12 +170,12 @@ export default () => {
 
   const handleReset = useCallback(() => {
     if (confirm("Are you sure you want to reset?")) {
-      setSourceCode(originalSourceCode);
-      setFileName(originalFileName);
+      setSourceCode(defaultSourceCode);
+      setFileName(defaultFileName);
       setCurrentPosition(defaultPosition);
-      handleRun();
+      setExecutableSourceCode(defaultSourceCode);
     }
-  }, [setCurrentPosition, handleRun]);
+  }, [setCurrentPosition, setExecutableSourceCode]);
 
   return {
     sourceCode: executableSourceCode,
