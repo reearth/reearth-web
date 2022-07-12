@@ -11,7 +11,6 @@ import useHooks, { positions } from "./hooks";
 const PluginEditor: React.FC = () => {
   const {
     sourceCode,
-    fileName,
     currentPosition,
     mode,
     widgets,
@@ -77,9 +76,7 @@ const PluginEditor: React.FC = () => {
                   <LargeButton style={{ background: "orange" }} onClick={handleRun}>
                     Run
                   </LargeButton>
-                  <LargeButton onClick={() => handleDownload(sourceCode, fileName)}>
-                    Download
-                  </LargeButton>
+                  <LargeButton onClick={handleDownload}>Download</LargeButton>
                   <LargeButton onClick={handleReset} style={{ padding: "3px 6px" }}>
                     Reset
                   </LargeButton>
@@ -182,24 +179,24 @@ const PluginEditor: React.FC = () => {
             height="100%"
             language="javascript"
             value={sourceCode}
-            onChange={value => {
-              setSourceCode(value ?? "");
-            }}
-            theme={"vs-dark"}
-            options={{
-              bracketPairColorization: {
-                enabled: true,
-              },
-              automaticLayout: true,
-              minimap: {
-                enabled: false,
-              },
-            }}
+            onChange={setSourceCode}
+            theme="vs-dark"
+            options={options}
           />
         </div>
       </div>
     </DndProvider>
   );
+};
+
+const options = {
+  bracketPairColorization: {
+    enabled: true,
+  },
+  automaticLayout: true,
+  minimap: {
+    enabled: false,
+  },
 };
 
 export default PluginEditor;

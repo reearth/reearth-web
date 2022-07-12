@@ -42,7 +42,7 @@ export default () => {
   const [currentPosition, setCurrentPosition] = useState<Position>(defaultPosition);
   const [executableSourceCode, setExecutableSourceCode] = useState(defaultSourceCode);
   const [fileName, setFileName] = useState(defaultFileName);
-  const [sourceCode, setSourceCode] = useState(defaultSourceCode);
+  const [sourceCode, setSourceCode] = useState<string | undefined>(defaultSourceCode);
 
   const rootLayer: Layer<any, any> = useMemo(
     () => ({
@@ -138,12 +138,12 @@ export default () => {
   }, [currentPosition.area, currentPosition.section, executableSourceCode, mode]);
 
   const handleRun = useCallback(() => {
-    setExecutableSourceCode(sourceCode);
+    setExecutableSourceCode(sourceCode ?? "");
   }, [setExecutableSourceCode, sourceCode]);
 
-  const handleDownload = (body?: string, filename?: string) => {
-    if (!body) return;
-    fileDownload(body, filename ?? "untitled.js");
+  const handleDownload = () => {
+    if (!sourceCode) return;
+    fileDownload(sourceCode, fileName);
   };
 
   const handleAlignSystemToggle = useCallback(() => {
@@ -170,16 +170,15 @@ export default () => {
 
   const handleReset = useCallback(() => {
     if (confirm("Are you sure you want to reset?")) {
-      setSourceCode(defaultSourceCode);
       setFileName(defaultFileName);
       setCurrentPosition(defaultPosition);
+      setSourceCode(defaultSourceCode);
       setExecutableSourceCode(defaultSourceCode);
     }
-  }, [setCurrentPosition, setExecutableSourceCode]);
+  }, []);
 
   return {
-    sourceCode: executableSourceCode,
-    fileName,
+    sourceCode,
     rootLayer,
     currentPosition,
     mode,
