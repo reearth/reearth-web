@@ -7,25 +7,24 @@ import type { WidgetZone, WidgetSection, Layer } from "@reearth/components/molec
 export type Position = { section: string; area: string };
 
 const originalSourceCode = `
-reearth.ui.show(
-  \`<style>
-      body {
-        margin: 0;
-      }
-      #wrapper {
-        background: #232226;
-        height: 100%;
-        color: white;
-        border: 3px dotted red;
-        border-radius: 5px;
-        padding: 20px 0;
-      }
+reearth.ui.show(\`
+  <style>
+    body {
+      margin: 0;
+    }
+    #wrapper {
+      background: #232226;
+      height: 100%;
+      color: white;
+      border: 3px dotted red;
+      border-radius: 5px;
+      padding: 20px 0;
+    }
   </style>
   <div id="wrapper">
-    <h2 style="text-align: center; margin: 0;">Hello2 World</h2>
+    <h2 style="text-align: center; margin: 0;">Hello World</h2>
   </div>
-  \`
-, { visible: true });
+\`);
 `.trim();
 
 const defaultPosition = {

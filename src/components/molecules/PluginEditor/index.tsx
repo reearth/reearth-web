@@ -175,16 +175,7 @@ const PluginEditor: React.FC = () => {
                   </select>
                 </div>
               </div>
-              <div
-                style={{
-                  flex: 2,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: "0 40px",
-                }}>
-                <Icon icon="logo" />
-              </div>
+              <Icon icon="logo" />
             </div>
           </div>
           <MonacoEditor
