@@ -55,14 +55,13 @@ export function exposed({
     reearth: merge(
       commonReearth,
       {
-        visualizer: {
-          ...commonReearth.visualizer,
+        visualizer: merge(commonReearth.visualizer, {
           get overrideProperty() {
             return (property: any) => {
               overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
             };
           },
-        },
+        }),
         layers: merge(commonReearth.layers, {
           get add() {
             return (layer: Layer, parentId?: string) => {
@@ -190,9 +189,7 @@ export function commonReearth({
         },
       },
       get property() {
-        const sp = sceneProperty();
-        console.log("SCENE_PROPERTY", JSON.stringify(sp), new Error().stack);
-        return sp;
+        return sceneProperty();
       },
       overrideProperty: overrideSceneProperty,
     },
