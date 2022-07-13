@@ -157,15 +157,8 @@ export function useAPI({
   }, []);
 
   const isMarshalable = useCallback(
-    (target: any) => {
-      if (defaultIsMarshalable(target)) return true;
-      if (ctx?.reearth.layers.isLayer(target)) return true;
-      if (typeof ctx?.engine.isMarshalable === "function") {
-        return ctx.engine.isMarshalable(target);
-      }
-      return ctx?.engine.isMarshalable || false;
-    },
-    [ctx?.engine, ctx?.reearth.layers],
+    (target: any) => defaultIsMarshalable(target) && !!ctx?.reearth.layers.isLayer(target),
+    [ctx?.reearth.layers],
   );
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {

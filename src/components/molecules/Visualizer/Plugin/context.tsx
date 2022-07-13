@@ -1,4 +1,3 @@
-import type { Options } from "quickjs-emscripten-sync";
 import {
   createContext,
   ReactNode,
@@ -29,7 +28,6 @@ import type {
 
 export type EngineContext = {
   api?: any;
-  isMarshalable?: Options["isMarshalable"];
   builtinPrimitives?: Record<string, PrimitiveComponent>;
 };
 
@@ -75,7 +73,7 @@ declare global {
 }
 
 export function Provider({
-  engine: { api, isMarshalable, builtinPrimitives },
+  engine: { api, builtinPrimitives },
   engineName,
   sceneProperty,
   tags,
@@ -124,7 +122,6 @@ export function Provider({
     () => ({
       engine: {
         api,
-        isMarshalable,
         builtinPrimitives,
       },
       reearth: commonReearth({
@@ -155,7 +152,6 @@ export function Provider({
     }),
     [
       api,
-      isMarshalable,
       builtinPrimitives,
       engineName,
       ev,
