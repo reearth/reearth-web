@@ -67,7 +67,7 @@ export default function useHook({
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
     [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
   >(["", undefined]);
-  const postMessage = usePostMessage(iFrameRef);
+  const postMessage = usePostMessage(iFrameRef, !loaded);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -84,7 +84,7 @@ export default function useHook({
         if (!arena.current) return;
         try {
           arena.current.executePendingJobs();
-          if (arena.current.vm.hasPendingJob()) {
+          if (arena.current.context.runtime.hasPendingJob()) {
             eventLoop.current = window.setTimeout(eventLoopCb, 0);
           }
         } catch (err) {
@@ -125,8 +125,8 @@ export default function useHook({
     onPreInit?.();
 
     (async () => {
-      const vm = (await getQuickJS()).createVm();
-      arena.current = new Arena(vm, {
+      const ctx = (await getQuickJS()).newContext();
+      arena.current = new Arena(ctx, {
         isMarshalable: target =>
           defaultIsMarshalable(target) ||
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
@@ -144,18 +144,18 @@ export default function useHook({
     return () => {
       onDispose?.();
       setIFrameState(["", undefined]);
+      setLoaded(false);
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
       }
       if (arena.current) {
         try {
           arena.current.dispose();
-          arena.current.vm.dispose();
+          arena.current.context.dispose();
         } catch (err) {
-          console.error(err);
+          console.debug("quickjs-emscripten dispose error", err);
         } finally {
           arena.current = undefined;
-          setLoaded(false);
         }
       }
     };

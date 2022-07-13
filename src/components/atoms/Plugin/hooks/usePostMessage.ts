@@ -2,14 +2,15 @@ import { RefObject, useCallback, useEffect, useRef } from "react";
 
 import type { Ref } from "../IFrame";
 
-export function usePostMessage(iFrameRef: RefObject<Ref>) {
+export function usePostMessage(iFrameRef: RefObject<Ref>, pending?: boolean) {
   const messageQueue = useRef<any[]>([]);
-  const iframeAvailable = useRef(!!iFrameRef.current);
+  const available = typeof pending !== "boolean" || !pending;
+  const iframeAvailable = useRef(!!iFrameRef.current && available);
   const postMessage = useCallback(
     (msg: any) => {
       try {
         const message = JSON.parse(JSON.stringify(msg));
-        if (iFrameRef.current) {
+        if (iFrameRef.current && available) {
           iFrameRef.current.postMessage(message);
         } else {
           messageQueue.current.push(message);
@@ -18,11 +19,11 @@ export function usePostMessage(iFrameRef: RefObject<Ref>) {
         console.error("plugin error: failed to post message", err);
       }
     },
-    [iFrameRef],
+    [iFrameRef, available],
   );
 
   useEffect(() => {
-    if (!iframeAvailable.current && iFrameRef.current) {
+    if (!iframeAvailable.current && iFrameRef.current && available) {
       if (messageQueue.current.length) {
         for (const message of messageQueue.current) {
           iFrameRef.current?.postMessage(message);
@@ -30,8 +31,8 @@ export function usePostMessage(iFrameRef: RefObject<Ref>) {
         messageQueue.current = [];
       }
     }
-    iframeAvailable.current = !!iFrameRef.current;
-  }, [iFrameRef]);
+    iframeAvailable.current = !!iFrameRef.current && available;
+  }, [iFrameRef, available]);
 
   return postMessage;
 }

@@ -12,9 +12,12 @@ test("usePostMessage", () => {
     },
   };
 
-  const { result, rerender } = renderHook(({ iFrame }) => usePostMessage(iFrame), {
-    initialProps: { iFrame: nullIFrame },
-  });
+  const { result, rerender } = renderHook(
+    ({ iFrame, pending }: { iFrame: P; pending?: boolean }) => usePostMessage(iFrame, pending),
+    {
+      initialProps: { iFrame: nullIFrame },
+    },
+  );
 
   result.current({ hoge: true });
   expect(iFrame.current?.postMessage).toBeCalledTimes(0);
@@ -26,4 +29,12 @@ test("usePostMessage", () => {
   result.current({ foo: true });
   expect(iFrame.current?.postMessage).toBeCalledTimes(2);
   expect(iFrame.current?.postMessage).toBeCalledWith({ foo: true });
+
+  rerender({ iFrame, pending: true });
+  result.current({ bar: true });
+  expect(iFrame.current?.postMessage).toBeCalledTimes(2);
+
+  rerender({ iFrame, pending: false });
+  expect(iFrame.current?.postMessage).toBeCalledTimes(3);
+  expect(iFrame.current?.postMessage).toBeCalledWith({ bar: true });
 });
