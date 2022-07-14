@@ -1,12 +1,10 @@
-import type { Options } from "quickjs-emscripten-sync";
-import React, {
+import {
   createContext,
-  PropsWithChildren,
+  ReactNode,
   useCallback,
   useContext as useReactContext,
   useEffect,
   useMemo,
-  useRef,
 } from "react";
 
 import events from "@reearth/util/event";
@@ -14,6 +12,7 @@ import { Rect } from "@reearth/util/value";
 
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
+import { useGet } from "../utils";
 
 import type { CommonReearth } from "./api";
 import { commonReearth } from "./api";
@@ -29,14 +28,14 @@ import type {
 
 export type EngineContext = {
   api?: any;
-  isMarshalable?: Options["isMarshalable"];
   builtinPrimitives?: Record<string, PrimitiveComponent>;
 };
 
 export type Props = {
+  children?: ReactNode;
   engine: EngineContext;
   engineName: string;
-  mergedSceneProperty?: any;
+  sceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
   layers: LayerStore;
@@ -46,8 +45,10 @@ export type Props = {
   layerOverriddenProperties?: { [key: string]: any };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
+  addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
+  overrideSceneProperty: (id: string, property: any) => void;
   flyTo: (dest: FlyToDestination) => void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
@@ -59,6 +60,7 @@ export type Props = {
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
+  overrideSceneProperty: (id: string, property: any) => void;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -71,9 +73,9 @@ declare global {
 }
 
 export function Provider({
-  engine: { api, isMarshalable, builtinPrimitives },
+  engine: { api, builtinPrimitives },
   engineName,
-  mergedSceneProperty,
+  sceneProperty,
   tags,
   camera,
   layers,
@@ -83,8 +85,10 @@ export function Provider({
   layerOverriddenProperties,
   showLayer,
   hideLayer,
+  addLayer,
   selectLayer,
   overrideLayerProperty,
+  overrideSceneProperty,
   layersInViewport,
   flyTo,
   lookAt,
@@ -92,7 +96,7 @@ export function Provider({
   zoomOut,
   viewport,
   children,
-}: PropsWithChildren<Props>): JSX.Element {
+}: Props): JSX.Element {
   const [ev, emit] = useMemo(
     () => events<Pick<ReearthEventType, "cameramove" | "select">>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,19 +104,24 @@ export function Provider({
   );
 
   const getLayers = useGet(layers);
-  const getSceneProperty = useGet(mergedSceneProperty);
+  const getSceneProperty = useGet(sceneProperty);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
   const getLayerOverriddenProperties = useGet(layerOverriddenProperties);
+  const overrideScenePropertyCommon = useCallback(
+    (property: any) => {
+      return overrideSceneProperty("", property);
+    },
+    [overrideSceneProperty],
+  );
 
   const value = useMemo<Context>(
     () => ({
       engine: {
         api,
-        isMarshalable,
         builtinPrimitives,
       },
       reearth: commonReearth({
@@ -128,8 +137,10 @@ export function Provider({
         layerOverriddenProperties: getLayerOverriddenProperties,
         showLayer,
         hideLayer,
+        addLayer,
         selectLayer,
         overrideLayerProperty,
+        overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
         flyTo,
         lookAt,
@@ -137,10 +148,10 @@ export function Provider({
         zoomOut,
         viewport,
       }),
+      overrideSceneProperty,
     }),
     [
       api,
-      isMarshalable,
       builtinPrimitives,
       engineName,
       ev,
@@ -155,7 +166,10 @@ export function Provider({
       showLayer,
       hideLayer,
       selectLayer,
+      addLayer,
       overrideLayerProperty,
+      overrideSceneProperty,
+      overrideScenePropertyCommon,
       layersInViewport,
       flyTo,
       lookAt,
@@ -167,8 +181,14 @@ export function Provider({
 
   useEmit<Pick<ReearthEventType, "cameramove" | "select">>(
     {
-      select: selectedLayer ? [selectedLayer.id] : undefined,
-      cameramove: camera ? [camera] : undefined,
+      select: useMemo<[layerId: string | undefined]>(
+        () => (selectedLayer ? [selectedLayer.id] : [undefined]),
+        [selectedLayer],
+      ),
+      cameramove: useMemo<[camera: CameraPosition] | undefined>(
+        () => (camera ? [camera] : undefined),
+        [camera],
+      ),
     },
     emit,
   );
@@ -182,12 +202,6 @@ export function Provider({
   }, [value.reearth]);
 
   return <context.Provider value={value}>{children}</context.Provider>;
-}
-
-export function useGet<T>(value: T): () => T {
-  const ref = useRef<T>(value);
-  ref.current = value;
-  return useCallback(() => ref.current, []);
 }
 
 export function useEmit<T extends { [K in string]: any[] }>(

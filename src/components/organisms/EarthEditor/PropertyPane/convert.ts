@@ -265,10 +265,11 @@ export const convertLinkableDatasets = (
     .filter((s): s is DatasetSchema => !!s);
 };
 
-type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> & {
+type GQLLayer = GetLayersFromLayerIdQuery["layer"] & {
   linkedDatasetSchemaId?: string | null;
   linkedDatasetId?: string | null;
   layers?: (GQLLayer | null | undefined)[];
+  merged?: (GQLLayer | null | undefined)[];
 };
 
 export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Layer[] {
@@ -298,7 +299,7 @@ export function convertLayers(data: GetLayersFromLayerIdQuery | undefined): Laye
   }
 
   return layers
-    .map(mapper)
+    .map(l => mapper(l as GQLLayer))
     .filter((l): l is Layer => !!l)
     .reverse();
 }

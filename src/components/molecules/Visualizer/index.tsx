@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 
 import DropHolder from "@reearth/components/atoms/DropHolder";
 import Filled from "@reearth/components/atoms/Filled";
@@ -9,7 +9,7 @@ import { LatLng } from "@reearth/util/value";
 import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
-import Layers, { LayerStore } from "./Layers";
+import Layers, { LayerStore, Layer } from "./Layers";
 import { Provider } from "./Plugin";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
@@ -36,40 +36,39 @@ export type {
 } from "./WidgetAlignSystem";
 export { LayerStore };
 
-export type Props = PropsWithChildren<
-  {
-    rootLayerId?: string;
-    layers?: LayerStore;
-    widgets?: {
-      floatingWidgets?: Widget[];
-      alignSystem?: WidgetAlignSystemType;
-      layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
-    };
-    sceneProperty?: SceneProperty;
-    tags?: Tag[];
-    pluginProperty?: { [key: string]: any };
-    clusterProperty?: ClusterProperty[];
-    selectedLayerId?: string;
-    selectedBlockId?: string;
-    pluginBaseUrl?: string;
-    isPublished?: boolean;
-    widgetAlignEditorActivated?: boolean;
-    onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
-    onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
-    renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
-    onLayerSelect?: (id?: string) => void;
-    onLayerDrop?: (layerId: string, key: string, latlng: LatLng) => void;
-  } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
-    Pick<
-      InfoboxProps,
-      "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
-    >
->;
+export type Props = {
+  children?: ReactNode;
+  rootLayerId?: string;
+  rootLayer?: Layer;
+  widgets?: {
+    floatingWidgets?: Widget[];
+    alignSystem?: WidgetAlignSystemType;
+    layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
+  };
+  sceneProperty?: SceneProperty;
+  tags?: Tag[];
+  pluginProperty?: { [key: string]: any };
+  clusterProperty?: ClusterProperty[];
+  selectedLayerId?: string;
+  selectedBlockId?: string;
+  pluginBaseUrl?: string;
+  isPublished?: boolean;
+  widgetAlignEditorActivated?: boolean;
+  onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
+  onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
+  renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
+  onLayerSelect?: (id?: string) => void;
+  onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
+} & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
+  Pick<
+    InfoboxProps,
+    "onBlockChange" | "onBlockDelete" | "onBlockMove" | "onBlockInsert" | "onBlockSelect"
+  >;
 
 export default function Visualizer({
   ready,
   rootLayerId,
-  layers,
+  rootLayer,
   widgets,
   sceneProperty,
   tags,
@@ -100,28 +99,29 @@ export default function Visualizer({
     providerProps,
     selectedLayerId,
     selectedLayer,
+    layers,
     layerSelectionReason,
     layerOverriddenProperties,
     isLayerDragging,
     selectedBlockId,
     innerCamera,
     infobox,
-    mergedSceneProperty,
+    overriddenSceneProperty,
     isLayerHidden,
     selectLayer,
     selectBlock,
+    changeBlock,
     updateCamera,
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
-    overrideSceneProperty,
   } = useHooks({
     engineType: props.engine,
     rootLayerId,
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
     isPublished,
-    layers,
+    rootLayer,
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
@@ -129,6 +129,7 @@ export default function Visualizer({
     tags,
     onLayerSelect,
     onBlockSelect,
+    onBlockChange,
     onCameraChange: props.onCameraChange,
     onLayerDrop,
   });
@@ -143,18 +144,17 @@ export default function Visualizer({
             editing={widgetAlignEditorActivated}
             onWidgetUpdate={onWidgetUpdate}
             onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
-            sceneProperty={mergedSceneProperty}
+            sceneProperty={overriddenSceneProperty}
             pluginProperty={pluginProperty}
             isEditable={props.isEditable}
             isBuilt={props.isBuilt}
             pluginBaseUrl={pluginBaseUrl}
             layoutConstraint={widgets.layoutConstraint}
-            overrideSceneProperty={overrideSceneProperty}
           />
         )}
         <Engine
           ref={engineRef}
-          property={mergedSceneProperty}
+          property={overriddenSceneProperty}
           selectedLayerId={selectedLayer?.id}
           layerSelectionReason={layerSelectionReason}
           ready={ready}
@@ -171,7 +171,7 @@ export default function Visualizer({
             isBuilt={props.isBuilt}
             pluginProperty={pluginProperty}
             clusterProperty={clusterProperty}
-            sceneProperty={mergedSceneProperty}
+            sceneProperty={overriddenSceneProperty}
             pluginBaseUrl={pluginBaseUrl}
             selectedLayerId={selectedLayerId}
             layers={layers}
@@ -184,7 +184,7 @@ export default function Visualizer({
               <W
                 key={widget.id}
                 widget={widget}
-                sceneProperty={mergedSceneProperty}
+                sceneProperty={overriddenSceneProperty}
                 pluginProperty={
                   widget.pluginId && widget.extensionId
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
@@ -193,7 +193,6 @@ export default function Visualizer({
                 isEditable={props.isEditable}
                 isBuilt={props.isBuilt}
                 pluginBaseUrl={pluginBaseUrl}
-                overrideSceneProperty={overrideSceneProperty}
               />
             ))}
         </Engine>
@@ -202,14 +201,14 @@ export default function Visualizer({
             title={infobox?.title}
             infoboxKey={infobox?.infoboxKey}
             visible={!!infobox?.visible}
-            sceneProperty={mergedSceneProperty}
+            sceneProperty={overriddenSceneProperty}
             blocks={infobox?.blocks}
             layer={infobox?.layer}
             selectedBlockId={selectedBlockId}
             pluginProperty={pluginProperty}
             isBuilt={props.isBuilt}
             isEditable={props.isEditable && !!infobox?.isEditable}
-            onBlockChange={onBlockChange}
+            onBlockChange={changeBlock}
             onBlockDelete={onBlockDelete}
             onBlockMove={onBlockMove}
             onBlockInsert={onBlockInsert}

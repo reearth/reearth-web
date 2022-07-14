@@ -125,7 +125,7 @@ export default () => {
   const layers = useMemo(
     () =>
       (data?.layer?.__typename === "LayerGroup" ? data.layer.layers : undefined)
-        ?.map(convertLayer)
+        ?.map(l => convertLayer(l as GQLLayer))
         .filter((l): l is Layer => !!l)
         .reverse() ?? [],
     [data?.layer],
@@ -209,6 +209,7 @@ export default () => {
           destLayerId,
           index: i,
         },
+        refetchQueries: ["GetLayers"],
       });
     },
     [moveLayerMutation],
@@ -272,7 +273,7 @@ export default () => {
     if (!rootLayerId) return;
 
     const layers: (Maybe<GQLLayer> | undefined)[] =
-      data?.layer?.__typename === "LayerGroup" ? data.layer.layers : [];
+      data?.layer?.__typename === "LayerGroup" ? (data.layer.layers as GQLLayer[]) : [];
     const children = (l: Maybe<GQLLayer> | undefined) =>
       l?.__typename == "LayerGroup" ? l.layers : undefined;
 
@@ -295,6 +296,7 @@ export default () => {
         index: layerIndex?.[layerIndex.length - 1],
         name: t("Folder"),
       },
+      refetchQueries: ["GetLayers"],
     });
   }, [rootLayerId, data?.layer, selected, addLayerGroupMutation, t]);
 

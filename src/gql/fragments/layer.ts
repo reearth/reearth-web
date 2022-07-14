@@ -77,43 +77,7 @@ export const LayerSystemFragments = gql`
 `;
 
 export const EarthLayerFragments = gql`
-  fragment EarthLayerItem on LayerItem {
-    id
-    linkedDatasetId
-    scenePlugin {
-      property {
-        id
-        ...PropertyFragment
-      }
-    }
-    merged {
-      parentId
-      property {
-        ...MergedPropertyFragmentWithoutSchema
-      }
-      infobox {
-        property {
-          ...MergedPropertyFragmentWithoutSchema
-        }
-        fields {
-          originalId
-          pluginId
-          extensionId
-          property {
-            ...MergedPropertyFragmentWithoutSchema
-          }
-          scenePlugin {
-            property {
-              id
-              ...PropertyFragment
-            }
-          }
-        }
-      }
-    }
-  }
-
-  fragment EarthLayer on Layer {
+  fragment EarthLayerCommon on Layer {
     id
     name
     isVisible
@@ -175,6 +139,47 @@ export const EarthLayerFragments = gql`
         id
       }
     }
+  }
+
+  fragment EarthLayerItem on LayerItem {
+    id
+    linkedDatasetId
+    scenePlugin {
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
+    merged {
+      parentId
+      property {
+        ...MergedPropertyFragmentWithoutSchema
+      }
+      infobox {
+        property {
+          ...MergedPropertyFragmentWithoutSchema
+        }
+        fields {
+          originalId
+          pluginId
+          extensionId
+          property {
+            ...MergedPropertyFragmentWithoutSchema
+          }
+          scenePlugin {
+            property {
+              id
+              ...PropertyFragment
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fragment EarthLayer on Layer {
+    id
+    ...EarthLayerCommon
     ...EarthLayerItem
   }
 
@@ -265,15 +270,6 @@ export const layerFragment = gql`
         }
       }
     }
-    # plugin {
-    #   id
-    #   scenePlugin(sceneId: $sceneId) {
-    #     property {
-    #       id
-    #       ...PropertyFragment
-    #     }
-    #   }
-    # }
   }
 
   fragment Layer0Fragment on Layer {

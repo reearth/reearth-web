@@ -1,9 +1,8 @@
 import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
-import type { Viewer as CesiumViewer, ImageryProvider, TerrainProvider } from "cesium";
+import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDeepCompareEffect } from "react-use";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
@@ -13,18 +12,9 @@ import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, layerIdField } from "./common";
-import imagery from "./imagery";
 import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
-
-export type ImageryLayerData = {
-  id: string;
-  provider: ImageryProvider;
-  min?: number;
-  max?: number;
-  opacity?: number;
-};
 
 const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
 
@@ -56,36 +46,6 @@ export default ({
 
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
-
-  // imagery layers
-  const [imageryLayers, setImageryLayers] = useState<ImageryLayerData[]>();
-
-  useDeepCompareEffect(() => {
-    const newTiles = (property?.tiles?.length ? property.tiles : undefined)
-      ?.map(
-        t =>
-          [
-            t.id,
-            t.tile_type || "default",
-            t.tile_url,
-            t.tile_minLevel,
-            t.tile_maxLevel,
-            t.tile_opacity,
-          ] as const,
-      )
-      .map(
-        ([id, type, url, min, max, opacity]) =>
-          <ImageryLayerData>{
-            id,
-            provider: type ? (url ? imagery[type](url) : imagery[type]()) : null,
-            min,
-            max,
-            opacity,
-          },
-      )
-      .filter(t => !!t.provider);
-    setImageryLayers(newTiles);
-  }, [property?.tiles ?? [], cesiumIonAccessToken]);
 
   // terrain
   const terrainProperty = useMemo(
@@ -171,15 +131,19 @@ export default ({
     initialCameraFlight.current = false;
   }, []);
 
-  // call onCameraChange event after moving camera
-  const emittedCamera = useRef<Camera>();
+  // cache the camera data emitted from viewer camera change
+  const emittedCamera = useRef<Camera[]>([]);
   const updateCamera = useCallback(() => {
     const viewer = cesium?.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !onCameraChange) return;
 
     const c = getCamera(viewer);
     if (c && !isEqual(c, camera)) {
-      emittedCamera.current = c;
+      emittedCamera.current.push(c);
+      // The state change is not sync now. This number is how many state updates can actually happen to be merged within one re-render.
+      if (emittedCamera.current.length > 10) {
+        emittedCamera.current.shift();
+      }
       onCameraChange?.(c);
     }
   }, [camera, onCameraChange]);
@@ -192,11 +156,10 @@ export default ({
     updateCamera();
   }, [updateCamera]);
 
-  // camera
   useEffect(() => {
-    if (camera && (!emittedCamera.current || emittedCamera.current !== camera)) {
+    if (camera && !emittedCamera.current.includes(camera)) {
       engineAPI.flyTo(camera, { duration: 0 });
-      emittedCamera.current = undefined;
+      emittedCamera.current = [];
     }
   }, [camera, engineAPI]);
 
@@ -306,7 +269,6 @@ export default ({
     terrainProvider,
     terrainProperty,
     backgroundColor,
-    imageryLayers,
     cesium,
     limiterDimensions,
     cameraViewOuterBoundaries,

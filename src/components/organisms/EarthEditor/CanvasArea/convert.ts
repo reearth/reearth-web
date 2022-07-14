@@ -1,6 +1,5 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
 import {
-  LayerStore,
   Layer,
   Widget,
   Block,
@@ -13,7 +12,6 @@ import {
   Tag,
 } from "@reearth/components/molecules/Visualizer";
 import {
-  GetLayersQuery,
   GetBlocksQuery,
   Maybe,
   MergedPropertyGroupFragmentFragment,
@@ -21,12 +19,12 @@ import {
   MergedPropertyGroupCommonFragmentFragment,
   EarthLayerFragment,
   EarthLayerItemFragment,
-  EarthLayer5Fragment,
   GetEarthWidgetsQuery,
   PropertyFragmentFragment,
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
+  EarthLayer5Fragment,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
@@ -134,7 +132,7 @@ const processMergedInfobox = (
   };
 };
 
-const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined => {
+export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -152,7 +150,9 @@ const processLayer = (layer: EarthLayer5Fragment | undefined): Layer | undefined
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
+        ? layer.layers
+            ?.map(l => processLayer((l as EarthLayer5Fragment) ?? undefined))
+            .filter((l): l is Layer => !!l)
         : undefined,
   };
 };
@@ -261,15 +261,6 @@ export const convertWidgets = (
     },
     layoutConstraint,
   };
-};
-
-export const convertLayers = (data: GetLayersQuery | undefined): LayerStore | undefined => {
-  if (!data || !data.node || data.node.__typename !== "Scene" || !data.node.rootLayer) {
-    return;
-  }
-  const rl = processLayer(data.node.rootLayer);
-  if (!rl) return;
-  return new LayerStore(rl);
 };
 
 export const convertToBlocks = (data?: GetBlocksQuery): BlockType[] | undefined => {

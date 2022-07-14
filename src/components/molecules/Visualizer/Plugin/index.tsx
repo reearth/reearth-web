@@ -1,5 +1,3 @@
-import React from "react";
-
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
@@ -25,14 +23,13 @@ export type Props = {
   extensionType?: string;
   autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
-  iFrameProps?: PluginProps["iFrameProps"];
   property?: any;
   pluginProperty?: any;
   pluginBaseUrl?: string;
   layer?: Layer;
   widget?: Widget;
   block?: Block;
-  overrideSceneProperty?: (pluginId: string, property: any) => void;
+  iFrameProps?: PluginProps["iFrameProps"];
   onClick?: () => void;
   onRender?: (
     options:
@@ -57,14 +54,13 @@ export default function Plugin({
   extensionId,
   extensionType,
   autoResize,
-  iFrameProps,
   visible,
   pluginBaseUrl = "/plugins",
   layer,
   widget,
   block,
   pluginProperty,
-  overrideSceneProperty,
+  iFrameProps,
   onClick,
   onRender,
   onResize,
@@ -78,7 +74,6 @@ export default function Plugin({
     widget,
     block,
     pluginProperty,
-    overrideSceneProperty,
     onRender,
     onResize,
   });
