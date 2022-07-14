@@ -1,5 +1,5 @@
 import { omit, pick } from "lodash-es";
-import { type IframeHTMLAttributes, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, CSSProperties } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
@@ -78,22 +78,24 @@ export default function Area({
             id={widget.id}
             index={i}
             extended={extended ?? widget.extended}
-            extendable={extendable2}>
+            extendable={extendable2}
+            style={props.isEditable ? pointerEventsAutoStyle : undefined}>
             {({ editing }) => (
-              <W
-                widget={widget}
-                pluginProperty={
-                  widget.pluginId && widget.extensionId
-                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                    : undefined
-                }
-                layout={layout}
-                extended={extended}
-                editing={editing}
-                onExtend={handleExtend}
-                iFrameProps={iFrameProps}
-                {...props}
-              />
+              <div style={pointerEventsAutoStyle}>
+                <W
+                  widget={widget}
+                  pluginProperty={
+                    widget.pluginId && widget.extensionId
+                      ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                      : undefined
+                  }
+                  layout={layout}
+                  extended={extended}
+                  editing={editing}
+                  onExtend={handleExtend}
+                  {...props}
+                />
+              </div>
             )}
           </GridItem>
         );
@@ -102,7 +104,7 @@ export default function Area({
   ) : null;
 }
 
-const iFrameProps: IframeHTMLAttributes<HTMLIFrameElement> = { style: { pointerEvents: "auto" } };
+const pointerEventsAutoStyle: CSSProperties = { pointerEvents: "auto" };
 
 function useOverriddenExtended({
   layout,
