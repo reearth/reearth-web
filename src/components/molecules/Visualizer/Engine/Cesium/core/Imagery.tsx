@@ -26,7 +26,7 @@ export type Props = {
   cesiumIonAccessToken?: string;
 };
 
-export default function ImargeryLayers({ tiles, cesiumIonAccessToken }: Props) {
+export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   const providers = useImageryProviders({
     tiles,
     cesiumIonAccessToken,

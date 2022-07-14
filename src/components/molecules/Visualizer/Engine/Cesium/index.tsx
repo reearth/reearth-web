@@ -19,7 +19,7 @@ import {
 import type { EngineProps, Ref as EngineRef } from "..";
 
 import Clock from "./core/Clock";
-import ImargeryLayers from "./core/Imagery";
+import ImageryLayers from "./core/Imagery";
 import Indicator from "./core/Indicator";
 import Event from "./Event";
 import useHooks from "./hooks";
@@ -102,7 +102,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         onClick={handleClick}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />
         <Clock property={property} />
-        <ImargeryLayers tiles={property?.tiles} cesiumIonAccessToken={property?.default?.ion} />
+        <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={property?.default?.ion} />
         <Entity>
           <Indicator property={property} />
         </Entity>

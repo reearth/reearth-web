@@ -11,7 +11,7 @@ export function mergeProperty(a: any, b: any) {
   );
 }
 
-export function useOverridenProperty<T = any>(
+export function useOverriddenProperty<T = any>(
   property: T,
 ): [T, (pluginId: string, property: T) => void] {
   const [{ "": overriddenPropertyCommon, ...overriddenProperty }, setOverrideProperty] = useState<{

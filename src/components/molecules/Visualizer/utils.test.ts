@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 
-import { mergeProperty, useOverridenProperty, useGet } from "./utils";
+import { mergeProperty, useOverriddenProperty, useGet } from "./utils";
 
 test("mergeProperty", () => {
   const a = { a: { b: { lat: 0, lng: 1 } }, c: [{ d: 1 }, { d: 2 }], d: 1 };
@@ -15,10 +15,10 @@ test("mergeProperty", () => {
   expect(result.c[0]).not.toBe(a.c[0]);
 });
 
-test("useOverrideProperty", () => {
+test("useOverriddenProperty", () => {
   const a = { a: { b: { lat: 0, lng: 1 } }, b: 1 };
 
-  const { result } = renderHook(() => useOverridenProperty<any>(a));
+  const { result } = renderHook(() => useOverriddenProperty<any>(a));
   let [overridenProperty, overrideProperty] = result.current;
   expect(overridenProperty).toEqual({ a: { b: { lat: 0, lng: 1 } }, b: 1 });
 

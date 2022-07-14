@@ -16,7 +16,7 @@ import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
-import { useOverridenProperty } from "./utils";
+import { useOverriddenProperty } from "./utils";
 
 export default ({
   engineType,
@@ -61,7 +61,7 @@ export default ({
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
-  const [overriddenSceneProperty, overrideSceneProperty] = useOverridenProperty(
+  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(
     sceneProperty ?? {},
   );
 
