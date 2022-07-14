@@ -62,12 +62,15 @@ export default function useHook({
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
+  const [iFrameLoaded, setIFrameLoaded] = useState(false);
   const [code, setCode] = useState("");
   const iFrameRef = useRef<IFrameRef>(null);
   const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
     [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
   >(["", undefined]);
-  const postMessage = usePostMessage(iFrameRef, !loaded);
+  const postMessage = usePostMessage(iFrameRef, !loaded || !iFrameLoaded);
+
+  const handleIFrameLoad = useCallback(() => setIFrameLoaded(true), []);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -161,6 +164,10 @@ export default function useHook({
     };
   }, [code, evalCode, iFrameApi, isMarshalable, onDispose, onPreInit, skip, exposed]);
 
+  useEffect(() => {
+    if (!loaded) setIFrameLoaded(false);
+  }, [loaded]);
+
   useImperativeHandle(
     ref,
     (): RefType => ({
@@ -177,5 +184,6 @@ export default function useHook({
     iFrameRef,
     iFrameOptions,
     loaded,
+    handleIFrameLoad,
   };
 }

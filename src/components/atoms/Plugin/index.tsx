@@ -50,7 +50,7 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
   },
   ref,
 ) => {
-  const { iFrameRef, iFrameHtml, iFrameOptions } = useHook({
+  const { iFrameRef, iFrameHtml, iFrameOptions, handleIFrameLoad } = useHook({
     iframeCanBeVisible: canBeVisible,
     skip,
     src,
@@ -70,11 +70,12 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
       html={iFrameHtml}
       width={iFrameOptions?.width}
       height={iFrameOptions?.height}
-      ref={iFrameRef}
       visible={iFrameOptions?.visible}
-      onMessage={onMessage}
       iFrameProps={iFrameProps}
+      ref={iFrameRef}
+      onMessage={onMessage}
       onClick={onClick}
+      onLoad={handleIFrameLoad}
     />
   ) : renderPlaceholder ? (
     <>{renderPlaceholder}</>
