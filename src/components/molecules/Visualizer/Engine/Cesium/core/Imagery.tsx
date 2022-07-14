@@ -1,5 +1,6 @@
 import { ImageryProvider } from "cesium";
-import { useCallback, useMemo, useRef } from "react";
+import { isEqual } from "lodash";
+import { useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { ImageryLayer } from "resium";
 
 import { tiles as tilePresets } from "./presets";
@@ -27,20 +28,27 @@ export type Props = {
 };
 
 export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
-  const providers = useImageryProviders({
+  const { providers, updated } = useImageryProviders({
     tiles,
     cesiumIonAccessToken,
     presets: tilePresets,
   });
 
+  // force rerendering all layers when any provider is updated
+  // since Resium does not sort layers according to ImageryLayer component order
+  const counter = useRef(0);
+  useLayoutEffect(() => {
+    if (updated) counter.current++;
+  }, [providers, updated]);
+
   return (
     <>
       {tiles
-        ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[1] }))
-        .map(({ id, tile_opacity: opacity, tile_minLevel: min, tile_maxLevel: max, provider }) =>
+        ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
+        .map(({ id, tile_opacity: opacity, tile_minLevel: min, tile_maxLevel: max, provider }, i) =>
           provider ? (
             <ImageryLayer
-              key={id}
+              key={`${id}_${i}_${counter.current}`}
               imageryProvider={provider}
               minimumTerrainLevel={min}
               maximumTerrainLevel={max}
@@ -52,6 +60,8 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   );
 }
 
+type Providers = { [id: string]: [string | undefined, string | undefined, ImageryProvider] };
+
 export function useImageryProviders({
   tiles = [],
   cesiumIonAccessToken,
@@ -62,7 +72,7 @@ export function useImageryProviders({
   presets: {
     [key: string]: (url?: string) => ImageryProvider | null;
   };
-}): { [id: string]: [string, ImageryProvider] } {
+}): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
     (t: Tile) =>
       t.tile_url && t.tile_type
@@ -72,40 +82,71 @@ export function useImageryProviders({
   );
 
   const prevCesiumIonAccessToken = useRef(cesiumIonAccessToken);
-  const prevProviders = useRef<{ [id: string]: [string, ImageryProvider] }>({});
+  const tileKeys = tiles.map(t => t.id);
+  const prevTileKeys = useRef(tileKeys);
+  const prevProviders = useRef<Providers>({});
 
-  const providers = useMemo(() => {
+  const { providers, updated } = useMemo(() => {
     const updatedCesiumAccessToken = prevCesiumIonAccessToken.current !== cesiumIonAccessToken;
-    const prevTileKeys = Object.keys(prevProviders.current);
-    const added = tiles.map(t => t.id).filter(t => t && !prevTileKeys.includes(t));
+    const prevProvidersKeys = Object.keys(prevProviders.current);
+    const added = tiles.map(t => t.id).filter(t => t && !prevProvidersKeys.includes(t));
+
+    const rawProviders = [
+      ...Object.entries(prevProviders.current),
+      ...added.map(a => [a, undefined] as const),
+    ].map(([k, v]) => ({
+      key: k,
+      added: added.includes(k),
+      prevType: v?.[0],
+      prevUrl: v?.[1],
+      prevProvider: v?.[2],
+      tile: tiles.find(t => t.id === k),
+    }));
 
     const providers = Object.fromEntries(
-      [...Object.entries(prevProviders.current), ...added.map(a => [a, undefined] as const)]
-        .map(([k, v]) => ({
-          key: k,
-          added: added.includes(k),
-          prevUrl: v?.[0],
-          prevProvider: v?.[1],
-          tile: tiles.find(t => t.id === k),
-        }))
-        .map(({ key, added, prevUrl, prevProvider, tile }) =>
-          !tile
-            ? null
-            : [
-                key,
-                added ||
-                prevUrl !== tile.tile_url ||
-                (updatedCesiumAccessToken && (!tile.tile_type || tile.tile_type === "default"))
-                  ? [tile.tile_url, newTile(tile)]
-                  : [prevUrl, prevProvider],
-              ],
+      rawProviders
+        .map(
+          ({
+            key,
+            added,
+            prevType,
+            prevUrl,
+            prevProvider,
+            tile,
+          }):
+            | [string, [string | undefined, string | undefined, ImageryProvider | null | undefined]]
+            | null =>
+            !tile
+              ? null
+              : [
+                  key,
+                  added ||
+                  prevType !== tile.tile_type ||
+                  prevUrl !== tile.tile_url ||
+                  (updatedCesiumAccessToken && (!tile.tile_type || tile.tile_type === "default"))
+                    ? [tile.tile_type, tile.tile_url, newTile(tile)]
+                    : [prevType, prevUrl, prevProvider],
+                ],
         )
-        .filter((e): e is [string, [string, ImageryProvider]] => !!e),
+        .filter(
+          (e): e is [string, [string | undefined, string | undefined, ImageryProvider]] =>
+            !!e?.[1][2],
+        ),
     );
 
-    return providers;
-  }, [tiles, cesiumIonAccessToken, newTile]);
+    const updated =
+      !!added.length ||
+      !!updatedCesiumAccessToken ||
+      !isEqual(prevTileKeys.current, tileKeys) ||
+      rawProviders.some(
+        p => p.tile && (p.prevType !== p.tile.tile_type || p.prevUrl !== p.tile.tile_url),
+      );
+
+    prevTileKeys.current = tileKeys;
+
+    return { providers, updated };
+  }, [cesiumIonAccessToken, tiles, tileKeys, newTile]);
 
   prevProviders.current = providers;
-  return providers;
+  return { providers, updated };
 }
