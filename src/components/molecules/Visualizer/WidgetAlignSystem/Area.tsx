@@ -15,6 +15,7 @@ type Props = {
   area: "top" | "middle" | "bottom";
   align: Alignment;
   widgets?: Widget[];
+  editing?: boolean;
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
@@ -32,6 +33,7 @@ export default function Area({
   widgets,
   pluginProperty,
   layoutConstraint,
+  editing: _,
   ...props
 }: Props) {
   const theme = useTheme();
@@ -78,24 +80,22 @@ export default function Area({
             id={widget.id}
             index={i}
             extended={extended ?? widget.extended}
-            extendable={extendable2}
-            style={props.isEditable ? pointerEventsAutoStyle : undefined}>
+            extendable={extendable2}>
             {({ editing }) => (
-              <div style={pointerEventsAutoStyle}>
-                <W
-                  widget={widget}
-                  pluginProperty={
-                    widget.pluginId && widget.extensionId
-                      ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                      : undefined
-                  }
-                  layout={layout}
-                  extended={extended}
-                  editing={editing}
-                  onExtend={handleExtend}
-                  {...props}
-                />
-              </div>
+              <W
+                widget={widget}
+                pluginProperty={
+                  widget.pluginId && widget.extensionId
+                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                    : undefined
+                }
+                layout={layout}
+                extended={extended}
+                editing={editing}
+                onExtend={handleExtend}
+                iFrameProps={editing ? undefined : iFrameProps}
+                {...props}
+              />
             )}
           </GridItem>
         );
@@ -105,6 +105,7 @@ export default function Area({
 }
 
 const pointerEventsAutoStyle: CSSProperties = { pointerEvents: "auto" };
+const iFrameProps = { style: pointerEventsAutoStyle };
 
 function useOverriddenExtended({
   layout,
