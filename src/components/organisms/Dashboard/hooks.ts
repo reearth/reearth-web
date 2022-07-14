@@ -12,12 +12,9 @@ import {
   useCreateProjectMutation,
   useCreateSceneMutation,
   Visualizer,
-  GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
-
-export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 const projectsPerPage = 9;
 
@@ -117,25 +114,23 @@ export default (teamId?: string) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
-
   const projects = useMemo(() => {
-    return (projectNodes ?? [])
+    return (projectData?.projects.edges ?? [])
       .map<Project | undefined>(project =>
-        project
+        project.node
           ? {
-              id: project.id,
-              description: project.description,
-              name: project.name,
-              image: project.imageUrl,
-              status: toPublishmentStatus(project.publishmentStatus),
-              isArchived: project.isArchived,
-              sceneId: project.scene?.id,
+              id: project.node.id,
+              description: project.node.description,
+              name: project.node.name,
+              image: project.node.imageUrl,
+              status: toPublishmentStatus(project.node.publishmentStatus),
+              isArchived: project.node.isArchived,
+              sceneId: project.node.scene?.id,
             }
           : undefined,
       )
       .filter((project): project is Project => !!project);
-  }, [projectNodes]);
+  }, [projectData?.projects.edges]);
 
   const hasMoreProjects =
     projectData?.projects.pageInfo?.hasNextPage || projectData?.projects.pageInfo?.hasPreviousPage;

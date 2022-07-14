@@ -1,9 +1,8 @@
-import { useEffect, useRef } from "react";
-
 import Button from "@reearth/components/atoms/Button";
 import Divider from "@reearth/components/atoms/Divider";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
+import InfiniteScrollWrapper from "@reearth/components/atoms/InfiniteScroll";
 import Loading from "@reearth/components/atoms/Loading";
 import SearchBar from "@reearth/components/atoms/SearchBar";
 import Text from "@reearth/components/atoms/Text";
@@ -11,7 +10,6 @@ import AssetDeleteModal from "@reearth/components/molecules/Common/AssetModal/As
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
-import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 import AssetCard from "../AssetCard";
 import AssetListItem from "../AssetListItem";
@@ -100,11 +98,6 @@ const AssetContainer: React.FC<Props> = ({
     onRemove,
     onSearch,
   });
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreAssets) autoFillPage(wrapperRef, onGetMore);
-  }, [hasMoreAssets, isLoading, onGetMore]);
 
   return (
     <Wrapper>
@@ -175,8 +168,9 @@ const AssetContainer: React.FC<Props> = ({
           </Template>
         ) : (
           <AssetListWrapper
-            ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom(e, onGetMore)}>
+            loading={isLoading}
+            hasMoreItems={hasMoreAssets}
+            onGetMoreItems={onGetMore}>
             <AssetList layoutType={layoutType}>
               {layoutType === "list"
                 ? assets?.map(a => (
@@ -244,10 +238,9 @@ const AssetWrapper = styled.div<{ height?: number }>`
   justify-content: space-between;
 `;
 
-const AssetListWrapper = styled.div`
+const AssetListWrapper = styled(InfiniteScrollWrapper)`
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;

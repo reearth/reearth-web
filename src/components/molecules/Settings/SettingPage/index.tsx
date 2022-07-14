@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
+import InfiniteScrollWrapper from "@reearth/components/atoms/InfiniteScroll";
 import Loading from "@reearth/components/atoms/Loading";
 import Header, { Props } from "@reearth/components/molecules/Common/Header";
 import ProjectMenu from "@reearth/components/molecules/Common/ProjectMenu";
 import Navigation from "@reearth/components/molecules/Settings/Navigation";
 import { styled } from "@reearth/theme";
-import { autoFillPage, onScrollToBottom } from "@reearth/util/infinite-scroll";
 
 export type SettingPageProps = {
   loading?: boolean;
@@ -30,12 +30,6 @@ const SettingPage: React.FC<SettingPageProps> = ({
     setIsOpen(o => !o);
   };
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (wrapperRef.current && !loading && hasMoreItems) autoFillPage(wrapperRef, onScroll);
-  }, [hasMoreItems, loading, onScroll]);
-
   return (
     <Wrapper>
       <StyledHeader
@@ -52,11 +46,7 @@ const SettingPage: React.FC<SettingPageProps> = ({
           currentProject && <ProjectMenu currentProject={currentProject} teamId={currentTeam?.id} />
         }
       />
-      <BodyWrapper
-        ref={wrapperRef}
-        onScroll={e => {
-          !loading && hasMoreItems && onScrollToBottom(e, onScroll);
-        }}>
+      <BodyWrapper loading={loading} hasMoreItems={hasMoreItems} onGetMoreItems={onScroll}>
         <LeftWrapper>
           <Navigation team={currentTeam} project={currentProject} />
         </LeftWrapper>
@@ -96,10 +86,8 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const BodyWrapper = styled.div`
-  height: 100%;
+const BodyWrapper = styled(InfiniteScrollWrapper)`
   padding-top: 48px;
-  overflow-y: scroll;
 `;
 
 const LeftWrapper = styled.div`

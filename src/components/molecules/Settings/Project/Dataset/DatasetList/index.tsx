@@ -9,7 +9,7 @@ export type Item = {
 };
 
 export type Props = {
-  items: Item[];
+  items?: Item[];
   isLoading?: boolean;
   hasMore?: boolean;
   removeDatasetSchema?: (schemaId: string) => void;
@@ -19,7 +19,7 @@ export type Props = {
 const DatasetList: React.FC<Props> = ({ items, removeDatasetSchema }) => {
   return (
     <Wrapper>
-      {items.map(item => (
+      {items?.map(item => (
         <DatasetItem key={item.id} {...item} removeDatasetSchema={removeDatasetSchema} />
       ))}
     </Wrapper>

@@ -14,14 +14,6 @@ export const GET_ASSETS = gql`
           contentType
         }
       }
-      nodes {
-        id
-        teamId
-        name
-        size
-        url
-        contentType
-      }
       pageInfo {
         endCursor
         hasNextPage

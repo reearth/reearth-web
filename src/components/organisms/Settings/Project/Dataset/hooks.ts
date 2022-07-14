@@ -1,8 +1,8 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
+import { Item } from "@reearth/components/molecules/Settings/Project/Dataset/DatasetList";
 import {
-  DatasetsListQuery,
   useGetProjectSceneQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
@@ -10,10 +10,6 @@ import {
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
 import { useTeam, useProject, useNotification } from "@reearth/state";
-
-type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
-
-type DatasetSchemas = NonNullable<Nodes[number]>[];
 
 const datasetPerPage = 20;
 
@@ -38,9 +34,11 @@ export default (projectId: string) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const nodes = data?.datasetSchemas.edges.map(e => e.node) ?? [];
-
-  const datasetSchemas = nodes.filter(Boolean) as DatasetSchemas;
+  const datasetSchemas = data?.datasetSchemas.edges
+    .map<Item | undefined>(item =>
+      item.node ? { id: item.node.id, name: item.node.name } : undefined,
+    )
+    .filter((item): item is Item => !!item);
 
   const hasMoreDataSets =
     data?.datasetSchemas?.pageInfo.hasNextPage || data?.datasetSchemas?.pageInfo.hasPreviousPage;

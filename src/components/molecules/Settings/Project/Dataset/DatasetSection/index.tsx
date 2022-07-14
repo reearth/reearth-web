@@ -10,7 +10,7 @@ import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 type Props = {
-  datasetSchemas: Item[];
+  datasetSchemas?: Item[];
   removeDatasetSchema: (schemaId: string) => void;
   onDatasetImport?: (file: File, datasetSchemaId: string | null) => void | Promise<void>;
 };

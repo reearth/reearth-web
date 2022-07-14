@@ -42,26 +42,27 @@ export default ({ projectId }: Params) => {
   });
 
   const rawProject = useMemo(
-    () => data?.projects.nodes.find(p => p?.id === projectId),
+    () => data?.projects.edges.find(p => p.node?.id === projectId),
     [data, projectId],
   );
+
   const project = useMemo(
     () =>
-      rawProject?.id
+      rawProject?.node?.id
         ? {
-            id: rawProject.id,
-            name: rawProject.name,
-            description: rawProject.description,
-            imageUrl: rawProject.imageUrl,
-            publicTitle: rawProject.publicTitle ?? undefined,
-            publicDescription: rawProject.publicDescription ?? undefined,
-            publicImage: rawProject.publicImage ?? undefined,
-            isArchived: rawProject.isArchived,
-            isBasicAuthActive: rawProject.isBasicAuthActive,
-            basicAuthUsername: rawProject.basicAuthUsername,
-            basicAuthPassword: rawProject.basicAuthPassword,
-            alias: rawProject.alias,
-            publishmentStatus: rawProject.publishmentStatus,
+            id: rawProject.node?.id,
+            name: rawProject.node?.name,
+            description: rawProject.node?.description,
+            imageUrl: rawProject.node?.imageUrl,
+            publicTitle: rawProject.node?.publicTitle ?? undefined,
+            publicDescription: rawProject.node?.publicDescription ?? undefined,
+            publicImage: rawProject.node?.publicImage ?? undefined,
+            isArchived: rawProject.node?.isArchived,
+            isBasicAuthActive: rawProject.node?.isBasicAuthActive,
+            basicAuthUsername: rawProject.node?.basicAuthUsername,
+            basicAuthPassword: rawProject.node?.basicAuthPassword,
+            alias: rawProject.node?.alias,
+            publishmentStatus: rawProject.node?.publishmentStatus,
           }
         : undefined,
     [rawProject],
