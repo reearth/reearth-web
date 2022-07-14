@@ -33,7 +33,7 @@ export default function Area({
   widgets,
   pluginProperty,
   layoutConstraint,
-  editing: _,
+  editing,
   ...props
 }: Props) {
   const theme = useTheme();
@@ -80,7 +80,8 @@ export default function Area({
             id={widget.id}
             index={i}
             extended={extended ?? widget.extended}
-            extendable={extendable2}>
+            extendable={extendable2}
+            style={editing ? undefined : pointerEventsAutoStyle}>
             {({ editing }) => (
               <W
                 widget={widget}
