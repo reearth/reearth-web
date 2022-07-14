@@ -23,6 +23,7 @@ export type Props<PP = any, SP = any> = {
   pluginBaseUrl?: string;
   layout?: WidgetLayout;
   editing?: boolean;
+  iFrameProps?: PluginProps["iFrameProps"];
   onExtend?: (id: string, extended: boolean | undefined) => void;
 };
 
@@ -37,6 +38,7 @@ export default function WidgetComponent<PP = any, SP = any>({
   extended,
   pluginBaseUrl,
   layout,
+  iFrameProps,
   onExtend,
   ...props
 }: Props<PP, SP>) {
@@ -94,6 +96,7 @@ export default function WidgetComponent<PP = any, SP = any>({
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
       widget={w}
+      iFrameProps={iFrameProps}
       onRender={handleRender}
       onResize={handleResize}
     />

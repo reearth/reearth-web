@@ -1,5 +1,5 @@
 import { omit, pick } from "lodash-es";
-import { useCallback, useMemo, useState } from "react";
+import { type IframeHTMLAttributes, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
@@ -80,21 +80,20 @@ export default function Area({
             extended={extended ?? widget.extended}
             extendable={extendable2}>
             {({ editing }) => (
-              <div style={{ pointerEvents: "auto" }}>
-                <W
-                  widget={widget}
-                  pluginProperty={
-                    widget.pluginId && widget.extensionId
-                      ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                      : undefined
-                  }
-                  layout={layout}
-                  extended={extended}
-                  editing={editing}
-                  onExtend={handleExtend}
-                  {...props}
-                />
-              </div>
+              <W
+                widget={widget}
+                pluginProperty={
+                  widget.pluginId && widget.extensionId
+                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                    : undefined
+                }
+                layout={layout}
+                extended={extended}
+                editing={editing}
+                onExtend={handleExtend}
+                iFrameProps={iFrameProps}
+                {...props}
+              />
             )}
           </GridItem>
         );
@@ -102,6 +101,8 @@ export default function Area({
     </GridArea>
   ) : null;
 }
+
+const iFrameProps: IframeHTMLAttributes<HTMLIFrameElement> = { style: { pointerEvents: "auto" } };
 
 function useOverriddenExtended({
   layout,
