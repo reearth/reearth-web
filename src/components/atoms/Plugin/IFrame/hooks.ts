@@ -161,7 +161,7 @@ export default function useHook({
     () => ({
       ...iFrameProps,
       style: {
-        display: visible ? undefined : "none",
+        display: visible ? "block" : "none",
         width: visible
           ? !autoResize || autoResize == "height-only"
             ? "100%"
