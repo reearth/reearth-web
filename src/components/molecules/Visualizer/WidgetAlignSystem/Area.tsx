@@ -78,22 +78,23 @@ export default function Area({
             id={widget.id}
             index={i}
             extended={extended ?? widget.extended}
-            extendable={extendable2}
-            style={{ pointerEvents: "auto" }}>
+            extendable={extendable2}>
             {({ editing }) => (
-              <W
-                widget={widget}
-                pluginProperty={
-                  widget.pluginId && widget.extensionId
-                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                    : undefined
-                }
-                layout={layout}
-                extended={extended}
-                editing={editing}
-                onExtend={handleExtend}
-                {...props}
-              />
+              <div style={{ pointerEvents: "auto" }}>
+                <W
+                  widget={widget}
+                  pluginProperty={
+                    widget.pluginId && widget.extensionId
+                      ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                      : undefined
+                  }
+                  layout={layout}
+                  extended={extended}
+                  editing={editing}
+                  onExtend={handleExtend}
+                  {...props}
+                />
+              </div>
             )}
           </GridItem>
         );
