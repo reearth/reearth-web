@@ -157,7 +157,7 @@ export function useAPI({
   }, []);
 
   const isMarshalable = useCallback(
-    (target: any) => defaultIsMarshalable(target) && !!ctx?.reearth.layers.isLayer(target),
+    (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
     [ctx?.reearth.layers],
   );
 
