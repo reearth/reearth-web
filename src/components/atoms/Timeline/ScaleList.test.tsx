@@ -38,7 +38,9 @@ test("it should render memory and date label", () => {
     "Jul 04 2022 09:00:00.0000",
   ];
 
-  expectedStrongScaleLabelList.map(label => screen.getByText(label));
+  expectedStrongScaleLabelList.forEach(label => {
+    expect(screen.getByText(label)).toBeInTheDocument();
+  });
 });
 
 test("it should render memory and date label when scaleInterval is changed", () => {
@@ -74,7 +76,9 @@ test("it should render memory and date label when scaleInterval is changed", () 
     "Jul 04 2022 09:00:00.0000",
   ];
 
-  expectedStrongScaleLabelList.map(label => screen.getByText(label));
+  expectedStrongScaleLabelList.forEach(label => {
+    expect(screen.getByText(label)).toBeInTheDocument();
+  });
 });
 
 test("it should render memory and date label when strongScaleHours is changed", () => {
@@ -125,5 +129,7 @@ test("it should render memory and date label when strongScaleHours is changed", 
     "Jul 04 2022 09:00:00.0000",
   ];
 
-  expectedStrongScaleLabelList.map(label => screen.getByText(label));
+  expectedStrongScaleLabelList.forEach(label => {
+    expect(screen.getByText(label)).toBeInTheDocument();
+  });
 });
