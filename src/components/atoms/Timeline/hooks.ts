@@ -1,9 +1,11 @@
 import React, {
+  ChangeEventHandler,
   MouseEvent,
   MouseEventHandler,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   WheelEventHandler,
 } from "react";
@@ -23,6 +25,7 @@ import {
   STRONG_SCALE_WIDTH,
 } from "./constants";
 import { TimeEventHandler, Range } from "./types";
+import { formatDateForTimeline } from "./utils";
 
 const convertPositionToTime = (e: MouseEvent, { start, end }: Range, gapHorizontal: number) => {
   const curTar = e.currentTarget;
@@ -34,7 +37,7 @@ const convertPositionToTime = (e: MouseEvent, { start, end }: Range, gapHorizont
   const percent = posX / width;
   const rangeDiff = end - start;
   const sec = rangeDiff * percent;
-  return start + sec;
+  return Math.min(Math.max(start, start + sec), end);
 };
 
 type InteractionOption = {
@@ -119,6 +122,91 @@ const useTimelineInteraction = ({
   };
 };
 
+const DEFAULT_INTERVAL = 10;
+
+type TimelinePlayerOptions = {
+  currentTime: number;
+  onPlay?: TimeEventHandler;
+  range: Range;
+};
+
+const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions) => {
+  const [playSpeed, setPlaySpeed] = useState(1.0);
+  const [isPlayed, setIsPlayed] = useState(false);
+  const [isPlayBacked, setIsPlayBacked] = useState(false);
+  const syncCurrentTimeRef = useRef(currentTime);
+  const playTimerRef = useRef<NodeJS.Timer | null>(null);
+  const onChangePlaySpeed: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
+    setPlaySpeed(parseInt(e.currentTarget.value, 10) / 10);
+  }, []);
+  const toggleIsPlayed = useCallback(() => {
+    if (isPlayBacked) {
+      setIsPlayBacked(false);
+    }
+    setIsPlayed(p => !p);
+  }, [isPlayBacked]);
+  const toggleIsPlayBacked = useCallback(() => {
+    if (isPlayed) {
+      setIsPlayed(false);
+    }
+    setIsPlayBacked(p => !p);
+  }, [isPlayed]);
+  const formattedCurrentTime = useMemo(() => {
+    const textDate = formatDateForTimeline(currentTime, { detail: true });
+    const lastIdx = textDate.lastIndexOf(" ");
+    const date = textDate.slice(0, lastIdx);
+    const time = textDate.slice(lastIdx);
+    return `${date}\n${time}`;
+  }, [currentTime]);
+
+  useEffect(() => {
+    syncCurrentTimeRef.current = currentTime;
+  }, [currentTime]);
+
+  useEffect(() => {
+    const clearPlayTimer = () => {
+      if (playTimerRef.current) {
+        clearInterval(playTimerRef.current);
+      }
+    };
+
+    if ((!isPlayed && !isPlayBacked) || !onPlay) {
+      return clearPlayTimer;
+    }
+
+    playTimerRef.current = setInterval(() => {
+      const interval = EPOCH_SEC * playSpeed;
+      if (isPlayed) {
+        onPlay(Math.min(syncCurrentTimeRef.current + interval, range.end));
+        window.scroll(window.scrollX + playSpeed, 0);
+      }
+      if (isPlayBacked) {
+        onPlay(Math.max(syncCurrentTimeRef.current - interval, range.start));
+        window.scroll(window.scrollX - playSpeed, 0);
+      }
+    }, DEFAULT_INTERVAL);
+
+    return clearPlayTimer;
+  }, [playSpeed, onPlay, isPlayed, isPlayBacked, range]);
+
+  return {
+    playSpeed,
+    onChangePlaySpeed,
+    formattedCurrentTime,
+    isPlayed,
+    isPlayBacked,
+    toggleIsPlayed,
+    toggleIsPlayBacked,
+  };
+};
+
+const truncDate = (time: number) => {
+  const date = new Date(time);
+  date.setMinutes(0);
+  date.setSeconds(0, 0);
+  return date.getTime();
+};
+
 const getRange = (range?: { [K in keyof Range]?: Range[K] }): Range => {
   const { start, end } = range || {};
   if (start !== undefined && end !== undefined) {
@@ -152,9 +240,10 @@ type Option = {
   range?: { [K in keyof Range]?: Range[K] };
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
+  onPlay?: TimeEventHandler;
 };
 
-export const useTimeline = ({ currentTime, range: _range, onClick, onDrag }: Option) => {
+export const useTimeline = ({ currentTime, range: _range, onClick, onDrag, onPlay }: Option) => {
   const [zoom, setZoom] = useState(1);
   const range = useMemo(() => {
     const range = getRange(_range);
@@ -163,7 +252,7 @@ export const useTimeline = ({ currentTime, range: _range, onClick, onDrag }: Opt
         throw new Error("Out of range error. `range.start` should be less than `range.end`");
       }
     }
-    return range;
+    return { start: truncDate(range.start), end: truncDate(range.end) };
   }, [_range]);
   const { start, end } = range;
   const startDate = useMemo(() => new Date(start), [start]);
@@ -195,6 +284,7 @@ export const useTimeline = ({ currentTime, range: _range, onClick, onDrag }: Opt
   }, [currentTime, start, scaleCount, hoursCount, gapHorizontal, scaleInterval, strongScaleHours]);
 
   const events = useTimelineInteraction({ range, zoom, setZoom, gapHorizontal, onClick, onDrag });
+  const player = useTimelinePlayer({ currentTime, onPlay, range });
 
   return {
     startDate,
@@ -205,5 +295,6 @@ export const useTimeline = ({ currentTime, range: _range, onClick, onDrag }: Opt
     strongScaleHours,
     currentPosition,
     events,
+    player,
   };
 };

@@ -15,6 +15,7 @@ export const Normal: Story<Props> = () => (
       start: new Date("2022-06-30T21:00:00.000").getTime(),
       end: new Date("2022-07-03T12:21:21.221").getTime(),
     }}
+    isOpened={true}
   />
 );
 
@@ -22,17 +23,32 @@ export const DefaultRange: Story<Props> = () => (
   <Timeline
     // Forward a hour
     currentTime={Date.now() + 3600000}
+    isOpened={true}
   />
 );
 
 export const Movable: Story<Props> = () => {
+  // Forward a hour
   const [currentTime, setCurrentTime] = useState(() => Date.now() + 3600000);
+  const [isOpened, setIsOpened] = useState(false);
   return (
     <Timeline
-      // Forward a hour
       currentTime={currentTime}
       onClick={setCurrentTime}
       onDrag={setCurrentTime}
+      onPlay={setCurrentTime}
+      isOpened={isOpened}
+      onOpen={() => setIsOpened(true)}
+      onClose={() => setIsOpened(false)}
     />
   );
 };
+
+export const ThemeColor: Story<Props> = () => (
+  <Timeline
+    // Forward a hour
+    currentTime={Date.now() + 3600000}
+    isOpened={true}
+    themeColor="red"
+  />
+);
