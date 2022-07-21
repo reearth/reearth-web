@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
+import { PublishTheme, styled } from "@reearth/theme";
 
 import Icon from "../Icon";
 import Text from "../Text";
@@ -28,7 +28,7 @@ export type Props = {
   onOpen?: () => void;
   onClose?: () => void;
   isOpened?: boolean;
-  themeColor?: string;
+  publishedTheme?: PublishTheme;
 };
 
 const Timeline: React.FC<Props> = memo(
@@ -41,7 +41,7 @@ const Timeline: React.FC<Props> = memo(
     isOpened,
     onOpen,
     onClose,
-    themeColor,
+    publishedTheme,
   }) {
     const {
       startDate,
@@ -72,13 +72,13 @@ const Timeline: React.FC<Props> = memo(
 
     return isOpened ? (
       <Container>
-        <CloseButton themeColor={themeColor} onClick={onClose}>
+        <CloseButton publishedTheme={publishedTheme} onClick={onClose}>
           <Icon alt={t("Close timeline")} icon="cancel" size={16} />
         </CloseButton>
         <ToolBox>
           <li>
             <PlayButton
-              themeColor={themeColor}
+              publishedTheme={publishedTheme}
               isPlaying={isPlayingReversed}
               onClick={toggleIsPlayingReversed}>
               <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
@@ -87,7 +87,7 @@ const Timeline: React.FC<Props> = memo(
           <li>
             <PlayButton
               isRight
-              themeColor={themeColor}
+              publishedTheme={publishedTheme}
               isPlaying={isPlaying}
               onClick={toggleIsPlaying}>
               <Icon alt={t("Play timeline")} icon="playRight" size={16} />
@@ -97,7 +97,7 @@ const Timeline: React.FC<Props> = memo(
             <InputRangeLabel>
               <InputRangeLabelText size="xs">{playSpeed}X</InputRangeLabelText>
               <InputRange
-                themeColor={themeColor}
+                publishedTheme={publishedTheme}
                 type="range"
                 max={10000}
                 min={1}
@@ -125,7 +125,7 @@ const Timeline: React.FC<Props> = memo(
           />
           <IconWrapper
             data-testid="knob-icon"
-            themeColor={themeColor}
+            publishedTheme={publishedTheme}
             style={{
               left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
             }}>
@@ -143,7 +143,7 @@ const Timeline: React.FC<Props> = memo(
 );
 
 type StyledColorProps = {
-  themeColor: string | undefined;
+  publishedTheme: PublishTheme | undefined;
 };
 
 const Container = styled.div`
@@ -160,7 +160,7 @@ const OpenButton = styled.button`
 `;
 
 const CloseButton = styled.button<StyledColorProps>`
-  background: ${({ theme, themeColor }) => themeColor || theme.main.select};
+  background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
   padding: 4px;
   color: ${({ theme }) => theme.main.text};
   display: flex;
@@ -189,8 +189,8 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & St
   align-items: center;
   justify-content: center;
   margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.s}px` : 0)};
-  background: ${({ isPlaying, themeColor, theme }) =>
-    isPlaying ? themeColor || theme.main.select : "transparent"};
+  background: ${({ isPlaying, publishedTheme, theme }) =>
+    isPlaying ? publishedTheme?.select || theme.main.select : "transparent"};
 `;
 
 const InputRangeLabel = styled.label`
@@ -216,7 +216,7 @@ const InputRange = styled.input<StyledColorProps>`
   border: none;
   ::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background: ${({ theme, themeColor }) => themeColor || theme.main.select};
+    background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
     height: 10px;
     width: 10px;
     border-radius: 50%;
@@ -259,7 +259,7 @@ const ScaleBox = styled.div`
 const IconWrapper = styled.div<StyledColorProps>`
   position: absolute;
   top: 2px;
-  color: ${({ theme, themeColor }) => themeColor || theme.main.select};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.main.select};
 `;
 
 export default Timeline;
