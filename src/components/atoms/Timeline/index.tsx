@@ -70,15 +70,7 @@ const Timeline: React.FC<Props> = memo(
     });
     const t = useT();
 
-    if (!isOpened) {
-      return (
-        <OpenButton onClick={onOpen}>
-          <Icon alt={t("Open timeline")} icon="timeline" size={24} />
-        </OpenButton>
-      );
-    }
-
-    return (
+    return isOpened ? (
       <Container>
         <CloseButton themeColor={themeColor} onClick={onClose}>
           <Icon alt={t("Close timeline")} icon="cancel" size={16} />
@@ -145,6 +137,10 @@ const Timeline: React.FC<Props> = memo(
           </IconWrapper>
         </ScaleBox>
       </Container>
+    ) : (
+      <OpenButton onClick={onOpen}>
+        <Icon alt={t("Open timeline")} icon="timeline" size={24} />
+      </OpenButton>
     );
   },
   (prev, next) => prev.currentTime === next.currentTime && prev.isOpened === next.isOpened,
