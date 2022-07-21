@@ -8,7 +8,6 @@ import Plugin, {
 } from "../Plugin";
 
 import builtin from "./builtin";
-import BuiltinWrapper from "./BuiltinWrapper";
 
 export type { WidgetLayout } from "../Plugin";
 
@@ -84,9 +83,9 @@ export default function WidgetComponent<PP = any, SP = any>({
     : "both";
 
   return Builtin ? (
-    <BuiltinWrapper editing={editing}>
+    <div style={{ pointerEvents: editing ? "none" : "auto" }}>
       <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
-    </BuiltinWrapper>
+    </div>
   ) : (
     <Plugin
       autoResize={autoResize}
