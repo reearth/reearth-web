@@ -76,40 +76,36 @@ const Timeline: React.FC<Props> = memo(
           <Icon alt={t("Close timeline")} icon="cancel" size={16} />
         </CloseButton>
         <ToolBox>
-          <>
-            <li>
-              <PlayButton
+          <li>
+            <PlayButton
+              themeColor={themeColor}
+              isPlaying={isPlayingReversed}
+              onClick={toggleIsPlayingReversed}>
+              <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
+            </PlayButton>
+          </li>
+          <li>
+            <PlayButton
+              isRight
+              themeColor={themeColor}
+              isPlaying={isPlaying}
+              onClick={toggleIsPlaying}>
+              <Icon alt={t("Play timeline")} icon="playRight" size={16} />
+            </PlayButton>
+          </li>
+          <li>
+            <InputRangeLabel>
+              <InputRangeLabelText size="xs">{playSpeed}X</InputRangeLabelText>
+              <InputRange
                 themeColor={themeColor}
-                isPlaying={isPlayingReversed}
-                onClick={toggleIsPlayingReversed}>
-                <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
-              </PlayButton>
-            </li>
-            <li>
-              <PlayButton
-                isRight
-                themeColor={themeColor}
-                isPlaying={isPlaying}
-                onClick={toggleIsPlaying}>
-                <Icon alt={t("Play timeline")} icon="playRight" size={16} />
-              </PlayButton>
-            </li>
-            <li>
-              <InputRangeLabel>
-                <>
-                  <InputRangeLabelText size="xs">{playSpeed}X</InputRangeLabelText>
-                  <InputRange
-                    themeColor={themeColor}
-                    type="range"
-                    max={10000}
-                    min={1}
-                    value={playSpeed * 10}
-                    onChange={onPlaySpeedChange}
-                  />
-                </>
-              </InputRangeLabel>
-            </li>
-          </>
+                type="range"
+                max={10000}
+                min={1}
+                value={playSpeed * 10}
+                onChange={onPlaySpeedChange}
+              />
+            </InputRangeLabel>
+          </li>
         </ToolBox>
         <CurrentTime size="xs" weight="bold">
           {formattedCurrentTime}
