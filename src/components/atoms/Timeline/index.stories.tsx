@@ -1,4 +1,5 @@
 import { Meta, Story } from "@storybook/react";
+import { useState } from "react";
 
 import Timeline, { Props } from ".";
 
@@ -23,3 +24,15 @@ export const DefaultRange: Story<Props> = () => (
     currentTime={Date.now() + 3600000}
   />
 );
+
+export const Movable: Story<Props> = () => {
+  const [currentTime, setCurrentTime] = useState(() => Date.now() + 3600000);
+  return (
+    <Timeline
+      // Forward a hour
+      currentTime={currentTime}
+      onClick={setCurrentTime}
+      onDrag={setCurrentTime}
+    />
+  );
+};
