@@ -1,7 +1,38 @@
 import { gql } from "@apollo/client";
 
+import { projectFragment } from "../fragments/project";
+
 export const GET_PROJECT = gql`
-  query GetProject($sceneId: ID!) {
+  query GetProject($projectId: ID!) {
+    node(id: $projectId, type: PROJECT) {
+      id
+      ... on Project {
+        ...ProjectFragment
+      }
+    }
+  }
+
+  ${projectFragment}
+`;
+
+export const GET_PROJECT_WITH_SCENE_ID = gql`
+  query GetProjectWithSceneId($projectId: ID!) {
+    node(id: $projectId, type: PROJECT) {
+      id
+      ... on Project {
+        ...ProjectFragment
+        scene {
+          id
+        }
+      }
+    }
+  }
+
+  ${projectFragment}
+`;
+
+export const GET_PROJECT_BY_SCENE = gql`
+  query GetProjectByScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
@@ -35,18 +66,7 @@ export const GET_PROJECTS = gql`
       edges {
         node {
           id
-          name
-          description
-          imageUrl
-          isArchived
-          isBasicAuthActive
-          basicAuthUsername
-          basicAuthPassword
-          publicTitle
-          publicDescription
-          publicImage
-          alias
-          publishmentStatus
+          ...ProjectFragment
           scene {
             id
           }
@@ -54,18 +74,7 @@ export const GET_PROJECTS = gql`
       }
       nodes {
         id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
+        ...ProjectFragment
         scene {
           id
         }
@@ -79,6 +88,8 @@ export const GET_PROJECTS = gql`
       totalCount
     }
   }
+
+  ${projectFragment}
 `;
 
 export const CHECK_PROJECT_ALIAS = gql`
@@ -152,21 +163,12 @@ export const UPDATE_PROJECT = gql`
     ) {
       project {
         id
-        name
-        description
-        imageUrl
-        isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
+        ...ProjectFragment
       }
     }
   }
+
+  ${projectFragment}
 `;
 
 export const UPDATE_PROJECT_BASIC_AUTH = gql`
@@ -224,18 +226,7 @@ export const ARCHIVE_PROJECT = gql`
     updateProject(input: { projectId: $projectId, archived: $archived }) {
       project {
         id
-        name
-        description
-        imageUrl
         isArchived
-        isBasicAuthActive
-        basicAuthUsername
-        basicAuthPassword
-        publicTitle
-        publicDescription
-        publicImage
-        alias
-        publishmentStatus
       }
     }
   }
