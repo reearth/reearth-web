@@ -151,6 +151,10 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 const OpenButton = styled.button`
