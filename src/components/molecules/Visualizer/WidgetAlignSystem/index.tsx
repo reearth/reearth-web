@@ -81,8 +81,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}
-            editing={editing}>
+            layoutConstraint={layoutConstraint}>
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
