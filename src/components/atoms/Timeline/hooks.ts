@@ -132,25 +132,25 @@ type TimelinePlayerOptions = {
 
 const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions) => {
   const [playSpeed, setPlaySpeed] = useState(1.0);
-  const [isPlayed, setIsPlayed] = useState(false);
-  const [isPlayBacked, setIsPlayBacked] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const syncCurrentTimeRef = useRef(currentTime);
   const playTimerRef = useRef<NodeJS.Timer | null>(null);
   const onPlaySpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
     setPlaySpeed(parseInt(e.currentTarget.value, 10) / 10);
   }, []);
-  const toggleIsPlayed = useCallback(() => {
-    if (isPlayBacked) {
-      setIsPlayBacked(false);
+  const toggleIsPlaying = useCallback(() => {
+    if (isPlayingReversed) {
+      setIsPlayingReversed(false);
     }
-    setIsPlayed(p => !p);
-  }, [isPlayBacked]);
-  const toggleIsPlayBacked = useCallback(() => {
-    if (isPlayed) {
-      setIsPlayed(false);
+    setIsPlaying(p => !p);
+  }, [isPlayingReversed]);
+  const toggleIsPlayingReversed = useCallback(() => {
+    if (isPlaying) {
+      setIsPlaying(false);
     }
-    setIsPlayBacked(p => !p);
-  }, [isPlayed]);
+    setIsPlayingReversed(p => !p);
+  }, [isPlaying]);
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(currentTime, { detail: true });
     const lastIdx = textDate.lastIndexOf(" ");
@@ -170,33 +170,33 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
       }
     };
 
-    if ((!isPlayed && !isPlayBacked) || !onPlay) {
+    if ((!isPlaying && !isPlayingReversed) || !onPlay) {
       return clearPlayTimer;
     }
 
     playTimerRef.current = setInterval(() => {
       const interval = EPOCH_SEC * playSpeed;
-      if (isPlayed) {
+      if (isPlaying) {
         onPlay(Math.min(syncCurrentTimeRef.current + interval, range.end));
         window.scroll(window.scrollX + playSpeed, 0);
       }
-      if (isPlayBacked) {
+      if (isPlayingReversed) {
         onPlay(Math.max(syncCurrentTimeRef.current - interval, range.start));
         window.scroll(window.scrollX - playSpeed, 0);
       }
     }, DEFAULT_INTERVAL);
 
     return clearPlayTimer;
-  }, [playSpeed, onPlay, isPlayed, isPlayBacked, range]);
+  }, [playSpeed, onPlay, isPlaying, isPlayingReversed, range]);
 
   return {
     playSpeed,
     onPlaySpeedChange,
     formattedCurrentTime,
-    isPlayed,
-    isPlayBacked,
-    toggleIsPlayed,
-    toggleIsPlayBacked,
+    isPlaying,
+    isPlayingReversed,
+    toggleIsPlaying,
+    toggleIsPlayingReversed,
   };
 };
 

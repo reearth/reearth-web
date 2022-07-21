@@ -56,10 +56,10 @@ const Timeline: React.FC<Props> = memo(
         playSpeed,
         onPlaySpeedChange,
         formattedCurrentTime,
-        isPlayed,
-        isPlayBacked,
-        toggleIsPlayed,
-        toggleIsPlayBacked,
+        isPlaying,
+        isPlayingReversed,
+        toggleIsPlaying,
+        toggleIsPlayingReversed,
       },
     } = useTimeline({
       currentTime,
@@ -88,8 +88,8 @@ const Timeline: React.FC<Props> = memo(
             <li>
               <PlayButton
                 themeColor={themeColor}
-                isPlayed={isPlayBacked}
-                onClick={toggleIsPlayBacked}>
+                isPlaying={isPlayingReversed}
+                onClick={toggleIsPlayingReversed}>
                 <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
               </PlayButton>
             </li>
@@ -97,8 +97,8 @@ const Timeline: React.FC<Props> = memo(
               <PlayButton
                 isRight
                 themeColor={themeColor}
-                isPlayed={isPlayed}
-                onClick={toggleIsPlayed}>
+                isPlaying={isPlaying}
+                onClick={toggleIsPlaying}>
                 <Icon alt={t("Play timeline")} icon="playRight" size={16} />
               </PlayButton>
             </li>
@@ -187,7 +187,7 @@ const ToolBox = styled.ul`
   padding: 0;
 `;
 
-const PlayButton = styled.button<{ isRight?: boolean; isPlayed?: boolean } & StyledColorProps>`
+const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & StyledColorProps>`
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -197,8 +197,8 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlayed?: boolean } & Sty
   align-items: center;
   justify-content: center;
   margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.s}px` : 0)};
-  background: ${({ isPlayed, themeColor, theme }) =>
-    isPlayed ? themeColor || theme.main.select : "transparent"};
+  background: ${({ isPlaying, themeColor, theme }) =>
+    isPlaying ? themeColor || theme.main.select : "transparent"};
 `;
 
 const InputRangeLabel = styled.label`
