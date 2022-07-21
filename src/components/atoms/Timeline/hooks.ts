@@ -136,7 +136,7 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
   const [isPlayBacked, setIsPlayBacked] = useState(false);
   const syncCurrentTimeRef = useRef(currentTime);
   const playTimerRef = useRef<NodeJS.Timer | null>(null);
-  const onChangePlaySpeed: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
+  const onPlaySpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(e => {
     setPlaySpeed(parseInt(e.currentTarget.value, 10) / 10);
   }, []);
   const toggleIsPlayed = useCallback(() => {
@@ -191,7 +191,7 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
 
   return {
     playSpeed,
-    onChangePlaySpeed,
+    onPlaySpeedChange,
     formattedCurrentTime,
     isPlayed,
     isPlayBacked,

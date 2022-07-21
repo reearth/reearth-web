@@ -54,7 +54,7 @@ const Timeline: React.FC<Props> = memo(
       events,
       player: {
         playSpeed,
-        onChangePlaySpeed,
+        onPlaySpeedChange,
         formattedCurrentTime,
         isPlayed,
         isPlayBacked,
@@ -112,7 +112,7 @@ const Timeline: React.FC<Props> = memo(
                     max={10000}
                     min={1}
                     value={playSpeed * 10}
-                    onChange={onChangePlaySpeed}
+                    onChange={onPlaySpeedChange}
                   />
                 </>
               </InputRangeLabel>
