@@ -122,8 +122,6 @@ const useTimelineInteraction = ({
   };
 };
 
-const DEFAULT_INTERVAL = 10;
-
 type TimelinePlayerOptions = {
   currentTime: number;
   onPlay?: TimeEventHandler;
@@ -174,6 +172,8 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
       return clearPlayTimer;
     }
 
+    const defaultInterval = 10;
+
     playTimerRef.current = setInterval(() => {
       const interval = EPOCH_SEC * playSpeed;
       if (isPlaying) {
@@ -184,7 +184,7 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
         onPlay(Math.max(syncCurrentTimeRef.current - interval, range.start));
         window.scroll(window.scrollX - playSpeed, 0);
       }
-    }, DEFAULT_INTERVAL);
+    }, defaultInterval);
 
     return clearPlayTimer;
   }, [playSpeed, onPlay, isPlaying, isPlayingReversed, range]);
