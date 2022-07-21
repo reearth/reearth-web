@@ -106,8 +106,20 @@ export default function useHook({
             horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
             verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
             const scrollbarW = win.innerWidth - html.offsetWidth;
-            const width = html.offsetWidth + horizontalMargin + scrollbarW;
-            const height = html.offsetHeight + verticalMargin;
+            const width = ${
+              width
+                ? typeof width === "number"
+                  ? width
+                  : width + "px"
+                : "html.offsetWidth + horizontalMargin + scrollbarW"
+            };
+            const height = ${
+              height
+                ? typeof height === "number"
+                  ? height + "px"
+                  : height
+                : "html.offsetHeight + verticalMargin"
+            };
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
             })
@@ -143,12 +155,13 @@ export default function useHook({
 
     loaded.current = true;
     onLoad?.();
-  }, [autoResizeMessageKey, html, onLoad]);
+  }, [autoResizeMessageKey, html, onLoad, height, width]);
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
     () => ({
+      ...iFrameProps,
       style: {
-        display: visible ? undefined : "none",
+        display: visible ? "block" : "none",
         width: visible
           ? !autoResize || autoResize == "height-only"
             ? "100%"
@@ -161,7 +174,6 @@ export default function useHook({
           : "0px",
         ...iFrameProps?.style,
       },
-      ...iFrameProps,
     }),
     [autoResize, iFrameProps, iFrameSize, visible],
   );

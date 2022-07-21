@@ -1,8 +1,7 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
-import { omit } from "lodash";
-import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useReducer } from "react";
 import { initialize, pageview } from "react-ga";
-import { useSet, useUpdate } from "react-use";
+import { useSet } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
@@ -17,7 +16,7 @@ import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
-import { mergeProperty } from "./utils";
+import { useOverriddenProperty } from "./utils";
 
 export default ({
   engineType,
@@ -62,23 +61,9 @@ export default ({
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
-
-  const [overriddenSceneProperty, overrideSceneProperty] = useState<{ [pluginId: string]: any }>(
-    {},
+  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(
+    sceneProperty ?? {},
   );
-
-  const handleScenePropertyOverride = useCallback((pluginId: string, property: any) => {
-    overrideSceneProperty(p =>
-      pluginId && property ? { ...p, [pluginId]: property } : omit(p, pluginId),
-    );
-  }, []);
-
-  const mergedSceneProperty = useMemo(() => {
-    return Object.values(overriddenSceneProperty).reduce(
-      (p, v) => mergeProperty(p, v),
-      sceneProperty,
-    );
-  }, [sceneProperty, overriddenSceneProperty]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -185,7 +170,7 @@ export default ({
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
-      mergedSceneProperty,
+      sceneProperty: overriddenSceneProperty,
       tags,
       camera: innerCamera,
       selectedLayer,
@@ -197,6 +182,7 @@ export default ({
       addLayer,
       selectLayer,
       overrideLayerProperty,
+      overrideSceneProperty,
     },
     engineRef,
     layers,
@@ -224,7 +210,7 @@ export default ({
     selectedBlockId,
     innerCamera,
     infobox,
-    mergedSceneProperty,
+    overriddenSceneProperty,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -233,7 +219,6 @@ export default ({
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
-    overrideSceneProperty: handleScenePropertyOverride,
   };
 };
 
@@ -250,16 +235,18 @@ function useLayers({
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
   const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
-  const forceUpdate = useUpdate();
+  const updateReducer = useCallback((num: number): number => (num + 1) % 1_000_000, []);
+  const [layersRenderKey, forceUpdate] = useReducer(updateReducer, 0);
 
   useEffect(() => {
     layers.setRootLayer(rootLayer);
     forceUpdate();
-  }, [layers, rootLayer, forceUpdate]);
+  }, [layers, rootLayer]);
 
   const selectedLayer = useMemo(
     () => (selectedLayerId ? layers?.findById(selectedLayerId) : undefined),
-    [selectedLayerId, layers],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedLayerId, layers, layersRenderKey],
   );
 
   const selectLayer = useCallback(
@@ -278,7 +265,7 @@ function useLayers({
       forceUpdate();
       return id;
     },
-    [layers, forceUpdate],
+    [layers],
   );
 
   const blocks = useMemo(
