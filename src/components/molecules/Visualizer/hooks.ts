@@ -404,7 +404,6 @@ function useProviderProps(
     | "layers"
     | "layersInViewport"
     | "viewport"
-    // | "onMouseMove"
     | "onMouseEvent"
   >,
   engineRef: RefObject<EngineRef>,
@@ -486,13 +485,6 @@ function useProviderProps(
     [engineRef],
   );
 
-  // const onMouseMove = useCallback(
-  //   (fn: any) => {
-  //     engineRef.current?.onMouseMove(fn);
-  //   },
-  //   [engineRef],
-  // );
-
   const onMouseEvent = useCallback(
     (eventType: keyof EngineRef, fn: any) => {
       engineRef.current?.[eventType]?.(fn);
@@ -510,7 +502,6 @@ function useProviderProps(
     layers,
     layersInViewport,
     viewport,
-    // onMouseMove,
     onMouseEvent,
   };
 }
