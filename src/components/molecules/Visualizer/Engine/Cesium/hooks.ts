@@ -238,7 +238,7 @@ export default ({
 
   const handleClick = useCallback(
     (_: CesiumMovementEvent, target: RootEventTarget) => {
-      mouseEventHandles.click(_, target);
+      mouseEventHandles.click?.(_, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
