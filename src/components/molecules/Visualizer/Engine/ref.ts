@@ -5,6 +5,8 @@ import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 import type { Component } from "../Primitive";
 
 export type MouseEventProps = {
+  x?: number;
+  y?: number;
   lat?: number;
   lng?: number;
   height?: number;

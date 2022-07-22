@@ -33,6 +33,8 @@ export type Reearth = {
 };
 
 export type MouseEventProps = {
+  x?: number;
+  y?: number;
   lat?: number;
   lng?: number;
   height?: number;

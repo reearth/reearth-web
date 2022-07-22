@@ -186,9 +186,11 @@ export default ({
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const position = e.position || e.startPosition;
-        const props: MouseEventProps = position
-          ? getLocationFromScreenXY(viewer.scene, position.x, position.y) ?? {}
-          : {};
+        const props: MouseEventProps = {
+          x: position?.x,
+          y: position?.y,
+          ...(position ? getLocationFromScreenXY(viewer.scene, position.x, position.y) ?? {} : {}),
+        };
         const layerId = getLayerId(target);
         if (layerId) props.layerId = layerId;
         engineAPI.mouseEventCallbacks[type]?.(props);
