@@ -204,7 +204,8 @@ export default ({
   );
 
   const mouseEventHandles = useMemo(() => {
-    const mouseEvents: any = {
+    const mouseEvents: { [index in keyof MouseEvents]: undefined | any } = {
+      click: undefined,
       doubleclick: undefined,
       mousedown: undefined,
       mouseup: undefined,
@@ -222,7 +223,7 @@ export default ({
       pinchmove: undefined,
       wheel: undefined,
     };
-    Object.keys(mouseEvents).forEach((type: string) => {
+    (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
       mouseEvents[type] =
         type === "wheel"
           ? (delta: number) => {
@@ -237,7 +238,7 @@ export default ({
 
   const handleClick = useCallback(
     (_: CesiumMovementEvent, target: RootEventTarget) => {
-      handleMouseEvent("click", _, target);
+      mouseEventHandles.click(_, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
@@ -261,7 +262,7 @@ export default ({
 
       onLayerSelect?.();
     },
-    [onLayerSelect, handleMouseEvent],
+    [onLayerSelect, mouseEventHandles],
   );
 
   // E2E test
