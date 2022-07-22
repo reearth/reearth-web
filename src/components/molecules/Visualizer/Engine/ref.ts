@@ -32,21 +32,7 @@ export type MouseEvents = {
   wheel: ((props: MouseEventProps) => void) | undefined;
 };
 
-export type EngineRef = {
-  name: string;
-  requestRender: () => void;
-  getViewport: () => Rect | undefined;
-  getCamera: () => Camera | undefined;
-  getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
-  flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
-  lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
-  zoomIn: (amount: number) => void;
-  zoomOut: (amount: number) => void;
-  changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
-  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
-  builtinPrimitives?: Record<string, Component>;
-  pluginApi?: any;
-  clusterComponent?: ComponentType<ClusterProps>;
+export type MouseEventHandles = {
   onClick: (fn: MouseEvents["click"]) => void;
   onDoubleClick: (fn: MouseEvents["doubleclick"]) => void;
   onMouseDown: (fn: MouseEvents["mousedown"]) => void;
@@ -64,6 +50,25 @@ export type EngineRef = {
   onPinchEnd: (fn: MouseEvents["pinchend"]) => void;
   onPinchMove: (fn: MouseEvents["pinchmove"]) => void;
   onWheel: (fn: MouseEvents["wheel"]) => void;
+};
+
+export type EngineRef = {
+  [index in keyof MouseEventHandles]: MouseEventHandles[index];
+} & {
+  name: string;
+  requestRender: () => void;
+  getViewport: () => Rect | undefined;
+  getCamera: () => Camera | undefined;
+  getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
+  flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
+  lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  zoomIn: (amount: number) => void;
+  zoomOut: (amount: number) => void;
+  changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
+  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
+  builtinPrimitives?: Record<string, Component>;
+  pluginApi?: any;
+  clusterComponent?: ComponentType<ClusterProps>;
   mouseEventCallbacks: MouseEvents;
 };
 

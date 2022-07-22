@@ -10,7 +10,7 @@ import {
 import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
-import { EngineRef, MouseEvents } from "../Engine/ref";
+import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 import { useGet } from "../utils";
@@ -57,8 +57,7 @@ export type Props = {
   zoomOut: (amount: number) => void;
   layersInViewport: () => Layer[];
   viewport: () => Rect | undefined;
-  // onMouseMove: (fn: any) => void;
-  onMouseEvent: (type: keyof EngineRef, fn: any) => void;
+  onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
 };
 
 export type Context = {
@@ -200,7 +199,7 @@ export function Provider({
 
   useEffect(() => {
     const eventHandles: {
-      [index in keyof MouseEvents]: keyof EngineRef;
+      [index in keyof MouseEvents]: keyof MouseEventHandles;
     } = {
       click: "onClick",
       doubleclick: "onDoubleClick",
