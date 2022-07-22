@@ -4,6 +4,7 @@ import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
+import type { MouseEvents } from "../ref";
 
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
@@ -14,6 +15,25 @@ export default function useEngineRef(
   cesium: RefObject<CesiumComponentRef<Cesium.Viewer>>,
 ): EngineRef {
   const cancelCameraFlight = useRef<() => void>();
+  const mouseEventCallbacks = useRef<MouseEvents>({
+    click: undefined,
+    doubleclick: undefined,
+    mousedown: undefined,
+    mouseup: undefined,
+    rightclick: undefined,
+    rightdown: undefined,
+    rightup: undefined,
+    middleclick: undefined,
+    middledown: undefined,
+    middleup: undefined,
+    mousemove: undefined,
+    mouseenter: undefined,
+    mouseleave: undefined,
+    pinchstart: undefined,
+    pinchend: undefined,
+    pinchmove: undefined,
+    wheel: undefined,
+  });
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -91,6 +111,58 @@ export default function useEngineRef(
             break;
         }
       },
+      onClick: (cb: any) => {
+        mouseEventCallbacks.current.click = cb;
+      },
+      onDoubleClick: (cb: any) => {
+        mouseEventCallbacks.current.doubleclick = cb;
+      },
+      onMouseDown: (cb: any) => {
+        mouseEventCallbacks.current.mousedown = cb;
+      },
+      onMouseUp: (cb: any) => {
+        mouseEventCallbacks.current.mouseup = cb;
+      },
+      onRightClick: (cb: any) => {
+        mouseEventCallbacks.current.rightclick = cb;
+      },
+      onRightDown: (cb: any) => {
+        mouseEventCallbacks.current.rightdown = cb;
+      },
+      onRightUp: (cb: any) => {
+        mouseEventCallbacks.current.rightup = cb;
+      },
+      onMiddleClick: (cb: any) => {
+        mouseEventCallbacks.current.middleclick = cb;
+      },
+      onMiddleDown: (cb: any) => {
+        mouseEventCallbacks.current.middledown = cb;
+      },
+      onMiddleUp: (cb: any) => {
+        mouseEventCallbacks.current.middleup = cb;
+      },
+      onMouseMove: (cb: any) => {
+        mouseEventCallbacks.current.mousemove = cb;
+      },
+      onMouseEnter: (cb: any) => {
+        mouseEventCallbacks.current.mouseenter = cb;
+      },
+      onMouseLeave: (cb: any) => {
+        mouseEventCallbacks.current.mouseleave = cb;
+      },
+      onPinchStart: (cb: any) => {
+        mouseEventCallbacks.current.pinchstart = cb;
+      },
+      onPinchEnd: (cb: any) => {
+        mouseEventCallbacks.current.pinchend = cb;
+      },
+      onPinchMove: (cb: any) => {
+        mouseEventCallbacks.current.pinchmove = cb;
+      },
+      onWheel: (cb: any) => {
+        mouseEventCallbacks.current.wheel = cb;
+      },
+      mouseEventCallbacks: mouseEventCallbacks.current,
       builtinPrimitives,
       clusterComponent: Cluster,
     };

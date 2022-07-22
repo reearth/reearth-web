@@ -4,6 +4,34 @@ import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
 import type { Component } from "../Primitive";
 
+export type MouseEventProps = {
+  lat?: number;
+  lng?: number;
+  height?: number;
+  layerId?: string;
+  delta?: number;
+};
+
+export type MouseEvents = {
+  click: ((props: MouseEventProps) => void) | undefined;
+  doubleclick: ((props: MouseEventProps) => void) | undefined;
+  mousedown: ((props: MouseEventProps) => void) | undefined;
+  mouseup: ((props: MouseEventProps) => void) | undefined;
+  rightclick: ((props: MouseEventProps) => void) | undefined;
+  rightdown: ((props: MouseEventProps) => void) | undefined;
+  rightup: ((props: MouseEventProps) => void) | undefined;
+  middleclick: ((props: MouseEventProps) => void) | undefined;
+  middledown: ((props: MouseEventProps) => void) | undefined;
+  middleup: ((props: MouseEventProps) => void) | undefined;
+  mousemove: ((props: MouseEventProps) => void) | undefined;
+  mouseenter: ((props: MouseEventProps) => void) | undefined;
+  mouseleave: ((props: MouseEventProps) => void) | undefined;
+  pinchstart: ((props: MouseEventProps) => void) | undefined;
+  pinchend: ((props: MouseEventProps) => void) | undefined;
+  pinchmove: ((props: MouseEventProps) => void) | undefined;
+  wheel: ((props: MouseEventProps) => void) | undefined;
+};
+
 export type EngineRef = {
   name: string;
   requestRender: () => void;
@@ -19,6 +47,24 @@ export type EngineRef = {
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
   clusterComponent?: ComponentType<ClusterProps>;
+  onClick: (fn: MouseEvents["click"]) => void;
+  onDoubleClick: (fn: MouseEvents["doubleclick"]) => void;
+  onMouseDown: (fn: MouseEvents["mousedown"]) => void;
+  onMouseUp: (fn: MouseEvents["mouseup"]) => void;
+  onRightClick: (fn: MouseEvents["rightclick"]) => void;
+  onRightDown: (fn: MouseEvents["rightdown"]) => void;
+  onRightUp: (fn: MouseEvents["rightup"]) => void;
+  onMiddleClick: (fn: MouseEvents["middleclick"]) => void;
+  onMiddleDown: (fn: MouseEvents["middledown"]) => void;
+  onMiddleUp: (fn: MouseEvents["middleup"]) => void;
+  onMouseMove: (fn: MouseEvents["mousemove"]) => void;
+  onMouseEnter: (fn: MouseEvents["mouseenter"]) => void;
+  onMouseLeave: (fn: MouseEvents["mouseleave"]) => void;
+  onPinchStart: (fn: MouseEvents["pinchstart"]) => void;
+  onPinchEnd: (fn: MouseEvents["pinchend"]) => void;
+  onPinchMove: (fn: MouseEvents["pinchmove"]) => void;
+  onWheel: (fn: MouseEvents["wheel"]) => void;
+  mouseEventCallbacks: MouseEvents;
 };
 
 export type SceneMode = "3d" | "2d" | "columbus";
