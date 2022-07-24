@@ -178,11 +178,9 @@ const useTimelinePlayer = ({ currentTime, onPlay, range }: TimelinePlayerOptions
       const interval = EPOCH_SEC * playSpeed;
       if (isPlaying) {
         onPlay(Math.min(syncCurrentTimeRef.current + interval, range.end));
-        window.scroll(window.scrollX + playSpeed, 0);
       }
       if (isPlayingReversed) {
         onPlay(Math.max(syncCurrentTimeRef.current - interval, range.start));
-        window.scroll(window.scrollX - playSpeed, 0);
       }
     }, defaultInterval);
 
