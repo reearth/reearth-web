@@ -49,16 +49,6 @@ export const ThemeColor: Story<Props> = () => (
     // Forward a hour
     currentTime={Date.now() + 3600000}
     isOpened={true}
-    publishedTheme={{
-      strongText: "red",
-      mainText: "red",
-      weakText: "red",
-      strongIcon: "red",
-      mainIcon: "red",
-      weakIcon: "red",
-      select: "red",
-      mask: "red",
-      background: "red",
-    }}
+    sceneProperty={{ theme: { themeType: "forest" } }}
   />
 );

@@ -1,8 +1,9 @@
 import { memo } from "react";
 
 import { useT } from "@reearth/i18n";
-import { PublishTheme, styled } from "@reearth/theme";
+import { PublishTheme, styled, usePublishTheme } from "@reearth/theme";
 
+import { SceneProperty } from "../../molecules/Visualizer";
 import Icon from "../Icon";
 import Text from "../Text";
 
@@ -28,7 +29,7 @@ export type Props = {
   onOpen?: () => void;
   onClose?: () => void;
   isOpened?: boolean;
-  publishedTheme?: PublishTheme;
+  sceneProperty?: SceneProperty;
 };
 
 const Timeline: React.FC<Props> = memo(
@@ -41,7 +42,7 @@ const Timeline: React.FC<Props> = memo(
     isOpened,
     onOpen,
     onClose,
-    publishedTheme,
+    sceneProperty,
   }) {
     const {
       startDate,
@@ -68,6 +69,7 @@ const Timeline: React.FC<Props> = memo(
       onDrag,
       onPlay,
     });
+    const publishedTheme = usePublishTheme(sceneProperty?.theme);
     const t = useT();
 
     return isOpened ? (
