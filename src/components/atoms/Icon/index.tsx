@@ -1,5 +1,5 @@
 import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { ComponentProps, CSSProperties, memo, useMemo } from "react";
+import React, { AriaRole, ComponentProps, CSSProperties, memo, useMemo } from "react";
 import { ReactSVG } from "react-svg";
 
 import { styled } from "@reearth/theme";
@@ -15,10 +15,11 @@ export type Props = {
   alt?: string;
   color?: string;
   style?: CSSProperties;
+  role?: AriaRole;
   onClick?: () => void;
 };
 
-const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, onClick }) => {
+const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, role, onClick }) => {
   const src = useMemo(
     () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
     [icon],
@@ -37,6 +38,7 @@ const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, onCli
       color={color}
       style={style}
       alt={alt}
+      role={role}
       size={sizeStr}
       onClick={onClick}
     />
@@ -49,7 +51,7 @@ const StyledImg = styled.img<{ size?: string }>`
 `;
 
 const SVG: React.FC<
-  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt" | "style">
+  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt" | "style" | "role">
 > = props => {
   return <ReactSVG {...props} wrapper="span" />;
 };

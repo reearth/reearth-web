@@ -1,10 +1,12 @@
-import { ReactNode, CSSProperties } from "react";
+import { ReactNode, CSSProperties, AriaRole } from "react";
 
 export type Props = {
   className?: string;
   onClick?: () => void;
   children?: ReactNode;
   testId?: string;
+  role?: AriaRole;
+  hidden?: boolean;
 } & FlexOptions;
 
 export type FlexOptions = {
@@ -33,21 +35,28 @@ const Flex: React.FC<Props> = ({
   shrink,
   flex,
   gap,
+  role,
+  hidden,
 }) => {
-  const styles = {
-    display: "flex",
-    flexDirection: direction,
-    alignItems: align,
-    justifyContent: justify,
-    flexWrap: wrap,
-    flexBasis: basis,
-    flexGrow: grow,
-    flexShrink: shrink,
-    flex: flex,
-    gap: gap, // TODO: Safari doesn't support this property and please develop polyfill
-  };
   return (
-    <div className={className} style={styles} onClick={onClick} data-testid={testId}>
+    <div
+      className={className}
+      role={role}
+      style={{
+        display: "flex",
+        flexDirection: direction,
+        alignItems: align,
+        justifyContent: justify,
+        flexWrap: wrap,
+        flexBasis: basis,
+        flexGrow: grow,
+        flexShrink: shrink,
+        flex,
+        gap, // TODO: Safari doesn't support this property and please develop polyfill
+      }}
+      onClick={onClick}
+      data-testid={testId}
+      aria-hidden={!hidden}>
       {children}
     </div>
   );
