@@ -32,7 +32,7 @@ export default defineConfig({
         "src/gql/graphql-client-api.tsx",
         "src/test/**/*",
       ],
-      reporter: ["text", "json"],
+      reporter: ["text", "json", "lcov"],
     },
   },
 });
