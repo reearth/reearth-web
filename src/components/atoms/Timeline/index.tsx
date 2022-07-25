@@ -1,11 +1,11 @@
 import { memo } from "react";
 
+import Icon from "@reearth/components/atoms/Icon";
+import Text from "@reearth/components/atoms/Text";
+// eslint-disable-next-line no-restricted-imports
+import type { SceneProperty } from "@reearth/components/molecules/Visualizer";
 import { useT } from "@reearth/i18n";
 import { PublishTheme, styled, usePublishTheme } from "@reearth/theme";
-
-import { SceneProperty } from "../../molecules/Visualizer";
-import Icon from "../Icon";
-import Text from "../Text";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
 import { useTimeline } from "./hooks";
