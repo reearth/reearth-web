@@ -1,6 +1,6 @@
 import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { AriaRole, ComponentProps, CSSProperties, memo, useMemo } from "react";
-import { ReactSVG } from "react-svg";
+import React, { AriaRole, CSSProperties, memo, useMemo } from "react";
+import SVG from "react-inlinesvg";
 
 import { styled } from "@reearth/theme";
 
@@ -35,10 +35,9 @@ const Icon: React.FC<Props> = ({ className, icon, alt, style, color, size, role,
     <StyledSvg
       className={className}
       src={src}
-      color={color}
       style={style}
-      alt={alt}
       role={role}
+      color={color}
       size={sizeStr}
       onClick={onClick}
     />
@@ -50,21 +49,12 @@ const StyledImg = styled.img<{ size?: string }>`
   height: ${({ size }) => size};
 `;
 
-const SVG: React.FC<
-  Pick<ComponentProps<typeof ReactSVG>, "className" | "src" | "onClick" | "alt" | "style" | "role">
-> = props => {
-  return <ReactSVG {...props} wrapper="span" />;
-};
-
 const StyledSvg = styled(SVG)<{ color?: string; size?: string }>`
   font-size: 0;
-  color: ${({ color }) => color};
   display: inline-block;
-
-  svg {
-    width: ${({ size }) => size};
-    height: ${({ size }) => size};
-  }
+  width: ${({ size }) => size};
+  height: ${({ size }) => size};
+  color: ${({ color }) => color};
 `;
 
 export default memo(Icon);
