@@ -29,7 +29,7 @@ const NotificationBanner: React.FC<Props> = ({
 
   return (
     <StyledNotificationBanner
-      hidden={!!visible}
+      aria-hidden={!visible}
       role="banner"
       visible={visible}
       type={notification?.type}

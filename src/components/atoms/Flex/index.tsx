@@ -1,4 +1,6 @@
-import { ReactNode, CSSProperties, AriaRole } from "react";
+import { ReactNode, CSSProperties, AriaRole, AriaAttributes } from "react";
+
+import { ariaProps } from "@reearth/util/aria";
 
 export type Props = {
   className?: string;
@@ -6,8 +8,8 @@ export type Props = {
   children?: ReactNode;
   testId?: string;
   role?: AriaRole;
-  hidden?: boolean;
-} & FlexOptions;
+} & FlexOptions &
+  AriaAttributes;
 
 export type FlexOptions = {
   align?: CSSProperties["alignItems"];
@@ -36,8 +38,10 @@ const Flex: React.FC<Props> = ({
   flex,
   gap,
   role,
-  hidden,
+  ...props
 }) => {
+  const aria = ariaProps(props);
+
   return (
     <div
       className={className}
@@ -56,7 +60,7 @@ const Flex: React.FC<Props> = ({
       }}
       onClick={onClick}
       data-testid={testId}
-      aria-hidden={!hidden}>
+      {...aria}>
       {children}
     </div>
   );
