@@ -139,10 +139,12 @@ test("it should move the knob when play button is clicked and back the move when
   fireEvent.click(screen.getAllByRole("button")[2]);
 
   // Check knob move to `expectedLeft`.
-  await waitFor(() =>
-    expect(
-      Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
-    ).toBeGreaterThan(movedPosition),
+  await waitFor(
+    () =>
+      expect(
+        Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
+      ).toBeGreaterThan(movedPosition),
+    { timeout: 1500 },
   );
 
   // TODO: get element by label text
@@ -150,9 +152,11 @@ test("it should move the knob when play button is clicked and back the move when
   fireEvent.click(screen.getAllByRole("button")[1]);
 
   // Check knob back to initialPosition.
-  await waitFor(() =>
-    expect(
-      Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
-    ).toBeLessThan(movedPosition),
+  await waitFor(
+    () =>
+      expect(
+        Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
+      ).toBeLessThan(movedPosition),
+    { timeout: 1500 },
   );
 });
