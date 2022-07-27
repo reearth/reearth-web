@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { render, screen, fireEvent } from "@reearth/test/utils";
+import { render, screen, fireEvent, waitFor } from "@reearth/test/utils";
 
 import {
   PADDING_HORIZONTAL,
@@ -12,11 +12,11 @@ import {
 
 import Timeline from ".";
 
-const CURRENT_TIME = new Date("2022-07-03T12:21:21.100").getTime();
+const CURRENT_TIME = new Date("2022-07-03T00:00:00.000").getTime();
 // This is width when range is one day.
 const SCROLL_WIDTH = 2208;
 
-const TimelineWrapper: React.FC = () => {
+const TimelineWrapper: React.FC<{ isOpened?: boolean }> = ({ isOpened = true }) => {
   const [currentTime, setCurrentTime] = useState(CURRENT_TIME);
   return (
     <Timeline
@@ -24,13 +24,25 @@ const TimelineWrapper: React.FC = () => {
       range={{ start: CURRENT_TIME }}
       onClick={setCurrentTime}
       onDrag={setCurrentTime}
+      onPlay={setCurrentTime}
+      isOpened={isOpened}
     />
   );
 };
 
+test("it should open when timeline open button is clicked", () => {
+  const { rerender } = render(<TimelineWrapper isOpened={false} />);
+
+  expect(screen.queryAllByRole("slider")).toHaveLength(0);
+
+  rerender(<TimelineWrapper isOpened />);
+
+  expect(screen.queryAllByRole("slider")).not.toHaveLength(0);
+});
+
 test("it should get time from clicked position", () => {
   render(<TimelineWrapper />);
-  const slider = screen.getByRole("slider");
+  const slider = screen.getAllByRole("slider")[1];
   const currentPosition = 12;
   jest.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
@@ -47,7 +59,7 @@ test("it should get time from clicked position", () => {
 
 test("it should get time from mouse moved position", () => {
   render(<TimelineWrapper />);
-  const slider = screen.getByRole("slider");
+  const slider = screen.getAllByRole("slider")[1];
   const currentPosition = 12;
   const clientX = PADDING_HORIZONTAL + BORDER_WIDTH + currentPosition;
   const expectedLeft = Math.trunc(
@@ -93,7 +105,7 @@ test("it should get time from mouse moved position", () => {
 
 test("it should get correct strongScaleHours from amount of scroll", () => {
   render(<TimelineWrapper />);
-  const slider = screen.getByRole("slider");
+  const slider = screen.getAllByRole("slider")[1];
   jest.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   fireEvent.wheel(slider, {
@@ -110,4 +122,41 @@ test("it should get correct strongScaleHours from amount of scroll", () => {
   expect(
     parseInt(slider.querySelector("div")?.style.gap.split(" ")[1].split("px")[0] || "", 10),
   ).toBe(GAP_HORIZONTAL);
+});
+
+test("it should move the knob when play button is clicked and back the move when playback button is clicked", async () => {
+  render(<TimelineWrapper />);
+  const initialPosition = 0;
+  const movedPosition = initialPosition + 1;
+
+  // Check initial position
+  expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
+    initialPosition,
+  );
+
+  // TODO: get element by label text
+  // Click play button
+  fireEvent.click(screen.getAllByRole("button")[2]);
+
+  // Check knob move to `expectedLeft`.
+  await waitFor(
+    () =>
+      expect(
+        Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
+      ).toBeGreaterThan(movedPosition),
+    { timeout: 1500 },
+  );
+
+  // TODO: get element by label text
+  // Click playback button
+  fireEvent.click(screen.getAllByRole("button")[1]);
+
+  // Check knob back to initialPosition.
+  await waitFor(
+    () =>
+      expect(
+        Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10)),
+      ).toBeLessThan(movedPosition),
+    { timeout: 1500 },
+  );
 });

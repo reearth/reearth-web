@@ -1,10 +1,10 @@
 import { memo } from "react";
 
+import Text from "@reearth/components/atoms/Text";
 import { styled } from "@reearth/theme";
 
-import Text from "../Text";
-
 import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL } from "./constants";
+import { formatDateForTimeline } from "./utils";
 
 type Props = {
   gapHorizontal: number;
@@ -17,21 +17,6 @@ const ScaleList: React.FC<Props> = ({ gapHorizontal, ...props }) => {
     </ScaleContainer>
   );
 };
-
-const MONTH_LABEL_LIST = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 type ScaleListInnerProps = {
   start: Date;
@@ -56,12 +41,7 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
         const isHour = idx % hoursCount === 0;
         const isStrongScale = idx % strongHours === 0;
         if (isStrongScale && idx !== lastStrongScaleIdx) {
-          const d = new Date(start.getTime() + idx * EPOCH_SEC * scaleInterval);
-          const year = d.getFullYear();
-          const month = MONTH_LABEL_LIST[d.getMonth()];
-          const date = `${d.getDate()}`.padStart(2, "0");
-          const hour = `${d.getHours()}`.padStart(2, "0");
-          const label = `${month} ${date} ${year} ${hour}:00:00.0000`;
+          const label = formatDateForTimeline(start.getTime() + idx * EPOCH_SEC * scaleInterval);
 
           return (
             <LabeledScale key={idx}>
