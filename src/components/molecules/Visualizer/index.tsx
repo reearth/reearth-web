@@ -10,6 +10,7 @@ import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import Layers, { LayerStore, Layer } from "./Layers";
+import PluginModal from "./Modal";
 import { Provider } from "./Plugin";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
@@ -133,9 +134,13 @@ export default function Visualizer({
     onCameraChange: props.onCameraChange,
     onLayerDrop,
   });
+  // const [modal, setModal] = useState(true);
 
   return (
     <Provider {...providerProps}>
+      {/* <button style={{ background: "white", padding: "4px" }} onClick={() => setModal(!modal)}>
+        Show modal
+      </button> */}
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
         {ready && widgets?.alignSystem && (
@@ -196,6 +201,7 @@ export default function Visualizer({
               />
             ))}
         </Engine>
+        {ready && <PluginModal open={true} />}
         {ready && (
           <Infobox
             title={infobox?.title}
