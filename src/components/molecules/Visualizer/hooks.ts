@@ -17,6 +17,8 @@ import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
+import { TIMELINE_BUILTIN_WIDGET_ID } from "./Widget/builtin";
+import { WidgetAlignSystem as WidgetAlignSystemType } from "./WidgetAlignSystem";
 
 export default ({
   engineType,
@@ -29,6 +31,7 @@ export default ({
   selectedBlockId: outerSelectedBlockId,
   camera,
   sceneProperty,
+  alignSystem,
   tags,
   onLayerSelect,
   onBlockSelect,
@@ -46,6 +49,7 @@ export default ({
   selectedBlockId?: string;
   camera?: Camera;
   sceneProperty?: SceneProperty;
+  alignSystem?: WidgetAlignSystemType;
   tags?: Tag[];
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
@@ -64,6 +68,33 @@ export default ({
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(
     sceneProperty ?? {},
   );
+
+  const hasTimelineBuiltinWidget = useMemo(() => {
+    if (!alignSystem) {
+      return false;
+    }
+    return !!Object.keys(alignSystem).some(key => {
+      const align = alignSystem[key as keyof WidgetAlignSystemType];
+      if (!align) {
+        return false;
+      }
+      return !!Object.keys(align).some(alignKey => {
+        const pos = align[alignKey as keyof typeof align];
+        if (!pos) {
+          return false;
+        }
+        return !!Object.keys(pos).some(posKey => {
+          const widget = pos[posKey as keyof typeof pos];
+          if (!widget) {
+            return false;
+          }
+          return !!widget.widgets?.some(
+            w => `${w.pluginId}/${w.extensionId}` === TIMELINE_BUILTIN_WIDGET_ID,
+          );
+        });
+      });
+    });
+  }, [alignSystem]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -211,6 +242,7 @@ export default ({
     innerCamera,
     infobox,
     overriddenSceneProperty,
+    shouldRender: hasTimelineBuiltinWidget,
     isLayerHidden,
     selectLayer,
     selectBlock,

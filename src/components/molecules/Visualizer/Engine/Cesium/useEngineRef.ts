@@ -93,8 +93,8 @@ export default function useEngineRef(
       },
       getClock: () => {
         const viewer = cesium.current?.cesiumElement;
-        const clock = viewer?.clock;
-        return clock;
+        if (!viewer || viewer.isDestroyed() || !viewer.clock) return;
+        return viewer.clock;
       },
       builtinPrimitives,
       clusterComponent: Cluster,

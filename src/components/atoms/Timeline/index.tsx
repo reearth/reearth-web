@@ -141,7 +141,10 @@ const Timeline: React.FC<Props> = memo(
       </OpenButton>
     );
   },
-  (prev, next) => prev.currentTime === next.currentTime && prev.isOpened === next.isOpened,
+  (prev, next) =>
+    prev.range === next.range &&
+    prev.currentTime === next.currentTime &&
+    prev.isOpened === next.isOpened,
 );
 
 type StyledColorProps = {
@@ -259,7 +262,8 @@ const ScaleBox = styled.div`
     border-radius: 5px;
     background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
   }
-  margin: ${({ theme }) => `${theme.metrics.s}px 0 ${theme.metrics.s}px ${theme.metrics.xs}px`};
+  margin: ${({ theme }) =>
+    `${theme.metrics.s}px ${theme.metrics.m}px ${theme.metrics.s}px ${theme.metrics.xs}px`};
 `;
 
 const IconWrapper = styled.div<StyledColorProps>`

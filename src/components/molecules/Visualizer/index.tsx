@@ -107,6 +107,7 @@ export default function Visualizer({
     innerCamera,
     infobox,
     overriddenSceneProperty,
+    shouldRender,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -126,6 +127,7 @@ export default function Visualizer({
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
     sceneProperty,
+    alignSystem: widgets?.alignSystem,
     tags,
     onLayerSelect,
     onBlockSelect,
@@ -161,6 +163,7 @@ export default function Visualizer({
           camera={innerCamera}
           isLayerDragging={isLayerDragging}
           isLayerDraggable={props.isEditable}
+          shouldRender={shouldRender}
           onLayerSelect={selectLayer}
           onCameraChange={updateCamera}
           onLayerDrop={handleLayerDrop}
