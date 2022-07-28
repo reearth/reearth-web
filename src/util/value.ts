@@ -1,4 +1,4 @@
-import { Color } from "cesium";
+import { Color, Clock as CesiumClock } from "cesium";
 
 import { ValueType as GQLValueType } from "@reearth/gql";
 import { css } from "@reearth/theme";
@@ -23,6 +23,8 @@ export type Camera = {
   roll: number;
   fov: number;
 };
+
+export type Clock = CesiumClock | undefined;
 
 export type Typography = {
   fontFamily?: string;

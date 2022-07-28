@@ -1,3 +1,5 @@
+import { Clock } from "@reearth/util/value";
+
 export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
@@ -220,6 +222,7 @@ export type Visualizer = {
   /** Current visualization engine type. Currently only "cesium" is available. */
   readonly engine: string;
   readonly camera: Camera;
+  readonly clock: Clock | undefined;
   /** Current scene property */
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;

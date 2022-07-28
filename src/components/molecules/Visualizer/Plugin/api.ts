@@ -132,6 +132,7 @@ export function commonReearth({
   sceneProperty,
   tags,
   camera,
+  clock,
   selectedLayer,
   layerSelectionReason,
   layerOverriddenInfobox,
@@ -154,6 +155,7 @@ export function commonReearth({
   sceneProperty: () => any;
   tags: () => Tag[];
   camera: () => GlobalThis["reearth"]["visualizer"]["camera"]["position"];
+  clock: () => GlobalThis["reearth"]["visualizer"]["clock"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
@@ -190,6 +192,9 @@ export function commonReearth({
       },
       get property() {
         return sceneProperty();
+      },
+      get clock() {
+        return clock();
       },
       overrideProperty: overrideSceneProperty,
     },

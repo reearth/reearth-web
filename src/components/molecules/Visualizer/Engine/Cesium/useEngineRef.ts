@@ -91,6 +91,11 @@ export default function useEngineRef(
             break;
         }
       },
+      getClock: () => {
+        const viewer = cesium.current?.cesiumElement;
+        const clock = viewer?.clock;
+        return clock;
+      },
       builtinPrimitives,
       clusterComponent: Cluster,
     };

@@ -404,6 +404,7 @@ function useProviderProps(
     | "layers"
     | "layersInViewport"
     | "viewport"
+    | "clock"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -428,6 +429,8 @@ function useProviderProps(
     }),
     [engineRef, isMarshalable],
   );
+
+  const clock = useCallback(() => engineRef.current?.getClock(), [engineRef]);
 
   const flyTo = useCallback(
     (dest: FlyToDestination, options?: CameraOptions) => {
@@ -487,6 +490,7 @@ function useProviderProps(
   return {
     ...props,
     engine,
+    clock,
     flyTo,
     lookAt,
     zoomIn,

@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import events from "@reearth/util/event";
-import { Rect } from "@reearth/util/value";
+import { Clock, Rect } from "@reearth/util/value";
 
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
@@ -38,6 +38,7 @@ export type Props = {
   sceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
+  clock: () => Clock | undefined;
   layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
@@ -78,6 +79,7 @@ export function Provider({
   sceneProperty,
   tags,
   camera,
+  clock,
   layers,
   selectedLayer,
   layerSelectionReason,
@@ -131,6 +133,7 @@ export function Provider({
         sceneProperty: getSceneProperty,
         tags: getTags,
         camera: getCamera,
+        clock,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
@@ -159,6 +162,7 @@ export function Provider({
       getSceneProperty,
       getTags,
       getCamera,
+      clock,
       getSelectedLayer,
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
