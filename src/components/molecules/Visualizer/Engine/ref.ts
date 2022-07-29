@@ -15,23 +15,23 @@ export type MouseEventProps = {
 };
 
 export type MouseEvents = {
-  click: ((props: MouseEventProps) => void) | undefined;
-  doubleclick: ((props: MouseEventProps) => void) | undefined;
-  mousedown: ((props: MouseEventProps) => void) | undefined;
-  mouseup: ((props: MouseEventProps) => void) | undefined;
-  rightclick: ((props: MouseEventProps) => void) | undefined;
-  rightdown: ((props: MouseEventProps) => void) | undefined;
-  rightup: ((props: MouseEventProps) => void) | undefined;
-  middleclick: ((props: MouseEventProps) => void) | undefined;
-  middledown: ((props: MouseEventProps) => void) | undefined;
-  middleup: ((props: MouseEventProps) => void) | undefined;
-  mousemove: ((props: MouseEventProps) => void) | undefined;
-  mouseenter: ((props: MouseEventProps) => void) | undefined;
-  mouseleave: ((props: MouseEventProps) => void) | undefined;
-  pinchstart: ((props: MouseEventProps) => void) | undefined;
-  pinchend: ((props: MouseEventProps) => void) | undefined;
-  pinchmove: ((props: MouseEventProps) => void) | undefined;
-  wheel: ((props: MouseEventProps) => void) | undefined;
+  click?: (props: MouseEventProps) => void;
+  doubleclick?: (props: MouseEventProps) => void;
+  mousedown?: (props: MouseEventProps) => void;
+  mouseup?: (props: MouseEventProps) => void;
+  rightclick?: (props: MouseEventProps) => void;
+  rightdown?: (props: MouseEventProps) => void;
+  rightup?: (props: MouseEventProps) => void;
+  middleclick?: (props: MouseEventProps) => void;
+  middledown?: (props: MouseEventProps) => void;
+  middleup?: (props: MouseEventProps) => void;
+  mousemove?: (props: MouseEventProps) => void;
+  mouseenter?: (props: MouseEventProps) => void;
+  mouseleave?: (props: MouseEventProps) => void;
+  pinchstart?: (props: MouseEventProps) => void;
+  pinchend?: (props: MouseEventProps) => void;
+  pinchmove?: (props: MouseEventProps) => void;
+  wheel?: (props: MouseEventProps) => void;
 };
 
 export type MouseEventHandles = {

@@ -111,55 +111,55 @@ export default function useEngineRef(
             break;
         }
       },
-      onClick: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onClick: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.click = cb;
       },
-      onDoubleClick: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onDoubleClick: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.doubleclick = cb;
       },
-      onMouseDown: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMouseDown: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.mousedown = cb;
       },
-      onMouseUp: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMouseUp: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.mouseup = cb;
       },
-      onRightClick: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onRightClick: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.rightclick = cb;
       },
-      onRightDown: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onRightDown: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.rightdown = cb;
       },
-      onRightUp: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onRightUp: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.rightup = cb;
       },
-      onMiddleClick: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMiddleClick: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.middleclick = cb;
       },
-      onMiddleDown: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMiddleDown: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.middledown = cb;
       },
-      onMiddleUp: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMiddleUp: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.middleup = cb;
       },
-      onMouseMove: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMouseMove: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.mousemove = cb;
       },
-      onMouseEnter: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMouseEnter: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.mouseenter = cb;
       },
-      onMouseLeave: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onMouseLeave: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.mouseleave = cb;
       },
-      onPinchStart: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onPinchStart: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.pinchstart = cb;
       },
-      onPinchEnd: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onPinchEnd: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.pinchend = cb;
       },
-      onPinchMove: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onPinchMove: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.pinchmove = cb;
       },
-      onWheel: (cb: ((props: MouseEventProps) => void) | undefined) => {
+      onWheel: (cb?: (props: MouseEventProps) => void) => {
         mouseEventCallbacks.current.wheel = cb;
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
