@@ -198,6 +198,7 @@ export default ({
     },
     [engineAPI],
   );
+
   const handleMouseWheel = useCallback(
     (delta: number) => {
       engineAPI.mouseEventCallbacks.wheel?.({ delta });
