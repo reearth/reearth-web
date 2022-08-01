@@ -37,6 +37,13 @@ jobs:
           file: ./coverage/lcov.info
       - name: Check translations
         run: yarn run i18n --fail-on-update
+      - uses: reearth/changelog-action@main
+        id: changelog
+        with:
+          version: unreleased
+      - run: echo $CHANGELOG
+        env:
+          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
   slack-notification:
     if: success() || failure()
     name: Slack Notification
