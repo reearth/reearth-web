@@ -1,4 +1,7 @@
+import { useCallback } from "react";
+
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
+import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 
 import useHooks from "./hooks";
 import type { Layer, Widget, Block } from "./types";
@@ -78,6 +81,13 @@ export default function Plugin({
     onResize,
   });
 
+  const { changePluginModal } = useContext() ?? {};
+
+  const handleChangePluginModal = useCallback(
+    (html?: string) => changePluginModal?.(html),
+    [changePluginModal],
+  );
+
   return !skip && (src || sourceCode) ? (
     <P
       className={className}
@@ -93,6 +103,7 @@ export default function Plugin({
       onPreInit={onPreInit}
       onDispose={onDispose}
       onClick={onClick}
+      onModalChange={handleChangePluginModal}
     />
   ) : null;
 }

@@ -43,6 +43,7 @@ export type Props = {
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
+  changePluginModal: (html?: string) => void;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -61,6 +62,7 @@ export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
   overrideSceneProperty: (id: string, property: any) => void;
+  changePluginModal: (html?: string) => void;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -83,6 +85,7 @@ export function Provider({
   layerSelectionReason,
   layerOverridenInfobox,
   layerOverriddenProperties,
+  changePluginModal,
   showLayer,
   hideLayer,
   addLayer,
@@ -117,6 +120,12 @@ export function Provider({
     },
     [overrideSceneProperty],
   );
+  const changePluginModalCommon = useCallback(
+    (m?: string) => {
+      return changePluginModal(m);
+    },
+    [changePluginModal],
+  );
 
   const value = useMemo<Context>(
     () => ({
@@ -149,6 +158,7 @@ export function Provider({
         viewport,
       }),
       overrideSceneProperty,
+      changePluginModal: changePluginModalCommon,
     }),
     [
       api,
@@ -176,6 +186,7 @@ export function Provider({
       zoomIn,
       zoomOut,
       viewport,
+      changePluginModalCommon,
     ],
   );
 

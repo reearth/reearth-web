@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
+import { ModalIFrameAPI } from "@reearth/components/atoms/Plugin/hooks";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
 import { useGet } from "../utils";
@@ -116,7 +117,7 @@ export function useAPI({
     extended: boolean | undefined,
   ) => void;
 }): {
-  staticExposed: ((api: IFrameAPI) => GlobalThis) | undefined;
+  staticExposed: ((api: IFrameAPI, modalApi: ModalIFrameAPI) => GlobalThis) | undefined;
   isMarshalable: Options["isMarshalable"] | undefined;
   onMessage: (message: any) => void;
   onPreInit: () => void;
@@ -161,9 +162,19 @@ export function useAPI({
     [ctx?.reearth.layers],
   );
 
-  const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
+  const staticExposed = useMemo(():
+    | ((api: IFrameAPI, modalApi: ModalIFrameAPI) => GlobalThis)
+    | undefined => {
     if (!ctx?.reearth) return;
-    return ({ postMessage, render, resize }: IFrameAPI) => {
+    return (
+      { postMessage, render, resize }: IFrameAPI,
+      {
+        postMessage: ModalPostMessage,
+        render: modalRender,
+        resize: modalResize,
+        close: modalClose,
+      }: ModalIFrameAPI,
+    ) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },
@@ -186,6 +197,23 @@ export function useAPI({
         resize: (width, height, extended) => {
           resize(width, height);
           onResize?.(width, height, extended);
+        },
+        modal: {
+          render: (html, { extended, ...options } = {}) => {
+            console.log(extended, "extended!!");
+            modalRender(html, options);
+            // onRender?.(
+            //   typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
+            // );
+          },
+          resize: (width, height) => {
+            modalResize(width, height);
+            // onResize?.(width, height);
+          },
+          postMessage: ModalPostMessage,
+          close: () => {
+            modalClose();
+          },
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
       });

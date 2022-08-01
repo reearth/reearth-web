@@ -108,6 +108,7 @@ export default function Visualizer({
     innerCamera,
     infobox,
     overriddenSceneProperty,
+    pluginModal,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -134,13 +135,9 @@ export default function Visualizer({
     onCameraChange: props.onCameraChange,
     onLayerDrop,
   });
-  // const [modal, setModal] = useState(true);
 
   return (
     <Provider {...providerProps}>
-      {/* <button style={{ background: "white", padding: "4px" }} onClick={() => setModal(!modal)}>
-        Show modal
-      </button> */}
       <Filled ref={wrapperRef}>
         {isDroppable && <DropHolder />}
         {ready && widgets?.alignSystem && (
@@ -201,7 +198,7 @@ export default function Visualizer({
               />
             ))}
         </Engine>
-        {ready && <PluginModal open={true} />}
+        {ready && <PluginModal modal={pluginModal} />}
         {ready && (
           <Infobox
             title={infobox?.title}

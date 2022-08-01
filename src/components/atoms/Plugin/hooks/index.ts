@@ -15,6 +15,10 @@ export type IFrameAPI = {
   postMessage: (message: any) => void;
 };
 
+export type ModalIFrameAPI = IFrameAPI & {
+  close: () => void;
+};
+
 export type RefType = {
   resize: (width: string | number | undefined, height: string | number | undefined) => void;
   arena: () => Arena | undefined;
@@ -30,7 +34,10 @@ export type Options = {
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
-  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
+  exposed?:
+    | ((api: IFrameAPI, modalApi: IFrameAPI) => { [key: string]: any })
+    | { [key: string]: any };
+  onModalChange?: (html?: string | undefined) => void;
 };
 
 // restrict any classes
@@ -58,6 +65,7 @@ export default function useHook({
   onError = defaultOnError,
   onDispose,
   exposed,
+  onModalChange,
 }: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
@@ -114,6 +122,23 @@ export default function useHook({
     [iframeCanBeVisible, postMessage],
   );
 
+  const ModalIFrameApi = useMemo<ModalIFrameAPI>(
+    () => ({
+      render: html => {
+        onModalChange?.(html);
+      },
+      resize: (width, height) => {
+        console.log(width, height, "sladkfj");
+        // iFrameRef.current?.resize(width, height);
+      },
+      postMessage,
+      close: () => {
+        onModalChange?.(undefined);
+      },
+    }),
+    [iframeCanBeVisible, postMessage],
+  );
+
   useEffect(() => {
     (async () => {
       const code = sourceCode ?? (src ? await (await fetch(src)).text() : "");
@@ -135,7 +160,7 @@ export default function useHook({
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
 
-      const e = typeof exposed === "function" ? exposed(iFrameApi) : exposed;
+      const e = typeof exposed === "function" ? exposed(iFrameApi, ModalIFrameApi) : exposed;
       if (e) {
         arena.current.expose(e);
       }

@@ -64,6 +64,7 @@ export default ({
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(
     sceneProperty ?? {},
   );
+  const [pluginModal, changePluginModal] = useState<string>();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -177,6 +178,7 @@ export default ({
       layerSelectionReason,
       layerOverridenInfobox,
       layerOverriddenProperties,
+      changePluginModal,
       showLayer: showLayers,
       hideLayer: hideLayers,
       addLayer,
@@ -211,6 +213,7 @@ export default ({
     innerCamera,
     infobox,
     overriddenSceneProperty,
+    pluginModal,
     isLayerHidden,
     selectLayer,
     selectBlock,

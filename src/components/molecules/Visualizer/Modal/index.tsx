@@ -1,132 +1,69 @@
-import { useCallback } from "react";
+import { useTransition, TransitionStatus } from "@rot1024/use-transition";
 
-// import { withTheme } from "styled-components";
 import { styled } from "@reearth/theme";
 
-import Plugin, { Widget as RawWidget, Props as PluginProps } from "../Plugin";
-
-export type Widget = Omit<RawWidget, "layout" | "extended"> & { extended?: boolean };
+import Plugin from "../Plugin";
 
 export type Props<PP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
-  //   widget: Widget;
-  //   extended?: boolean;
-  open?: boolean;
+  modal?: string;
   sourceCode?: string;
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
   editing?: boolean;
-  onExtend?: (id: string, extended: boolean | undefined) => void;
+  // onExtend?: (id: string, extended: boolean | undefined) => void;
 };
 
-export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {
-  widget: RawWidget;
-};
-
-export default function PluginModal<PP = any, SP = any>({
-  //   widget,
+function PluginModal<PP = any, SP = any>({
+  modal,
   // sourceCode,
-  open,
   pluginBaseUrl,
-  onExtend,
+  // onExtend,
   // editing,
   ...props
 }: Props<PP, SP>) {
-  const id = "modal";
-  // const w = useMemo<RawWidget | undefined>(
-  //   () => ({
-  //     ...widget,
-  //     extended: {
-  //       horizontally: actualExtended && horizontal,
-  //       vertically: actualExtended && vertical,
-  //     },
-  //     layout: align && location ? { align, location } : undefined,
-  //   }),
-  //   [widget, actualExtended, horizontal, vertical, align, location],
+  // const id = "modal";
+
+  // const handleRender = useCallback<NonNullable<PluginProps["onRender"]>>(
+  //   options => {
+  //     onExtend?.(id, options?.extended);
+  //   },
+  //   [id, onExtend],
+  // );
+  // const handleResize = useCallback<NonNullable<PluginProps["onResize"]>>(
+  //   (_width, _height, extended) => {
+  //     onExtend?.(id, extended);
+  //   },
+  //   [id, onExtend],
   // );
 
-  const handleRender = useCallback<NonNullable<PluginProps["onRender"]>>(
-    options => {
-      onExtend?.(id, options?.extended);
-    },
-    [id, onExtend],
-  );
-  const handleResize = useCallback<NonNullable<PluginProps["onResize"]>>(
-    (_width, _height, extended) => {
-      onExtend?.(id, extended);
-    },
-    [id, onExtend],
-  );
-
-  const sC = `
-  const html = \`
-    <html>
-      <style>
-      html{
-          margin: 0;
-          width: 400px;
-        }
-        body{
-          color: white;
-          margin: 0;
-          padding: 2px;
-        }
-        #main {
-          border: 1px solid black;
-          border-radius: 15px;
-          background: green;
-          // padding: 5px;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          // width: 100%;
-          // height: 100%;
-          }
-        #top {
-          width: 100%;
-          display: flex;
-          justify-content: right;
-          padding: 0;
-        }
-      </style>
-      <body>
-        <div id="main">
-          <div id="top">
-            <p style="margin: 0; padding: 3px 6px 0 0">x</p>
-          </div>
-          <h1>Hello, さよなら</h1>
-          <h5>I am a plugin modal</h5>
-          
-        </div>
-      </body>
-    </html>
-    \`
-    console.log(reearth, "reearth")
-    reearth.ui.show(html);
-    `;
+  const transition = useTransition(!!modal, 200, {
+    mountOnEnter: true,
+    unmountOnExit: true,
+  });
 
   return (
-    <Wrapper open={open}>
+    <Wrapper transition={transition}>
       <Plugin
         autoResize={"both"} // MAYBE/PROBABLY REMOVE
-        sourceCode={sC}
-        // extensionType="widget" //Set to Modal??
+        sourceCode={modal}
+        extensionType="modal" //Set to Modal??
         visible
         pluginBaseUrl={pluginBaseUrl}
         property={props.pluginProperty}
-        iFrameProps={{ style: { pointerEvents: "auto" } }}
-        onRender={handleRender}
-        onResize={handleResize}
+        iFrameProps={{ style: { pointerEvents: modal ? "auto" : "none" } }}
+        // onRender={handleRender}
+        // onResize={handleResize}
       />
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div<{ open?: boolean }>`
+export default PluginModal;
+
+const Wrapper = styled.div<{ transition?: TransitionStatus }>`
   position: absolute;
   top: 15%;
   z-index: ${({ theme }) => theme.zIndexes.fullScreenModal};
@@ -134,9 +71,12 @@ const Wrapper = styled.div<{ open?: boolean }>`
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  // background: red;
+  transition: all 0.6s;
+  position: absolute;
+  opacity: ${({ transition }) =>
+    transition === "entering" || transition === "entered" ? "1" : "0"};
 
-  display: ${({ open }) => (open ? "flex" : "none")};
+  display: flex;
   justify-content: center;
   pointer-events: none;
 `;

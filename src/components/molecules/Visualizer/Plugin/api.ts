@@ -20,6 +20,7 @@ export function exposed({
   render,
   postMessage,
   resize,
+  modal,
   events,
   commonReearth,
   plugin,
@@ -39,6 +40,20 @@ export function exposed({
   ) => void;
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
+  modal: {
+    render: (
+      html: string,
+      options?: {
+        visible?: boolean;
+        width?: string | number;
+        height?: string | number;
+        extended?: boolean;
+      },
+    ) => void;
+    postMessage: Reearth["ui"]["modal"]["postMessage"];
+    resize: Reearth["ui"]["modal"]["resize"];
+    close: () => void;
+  };
   events: Events<ReearthEventType>;
   commonReearth: CommonReearth;
   plugin?: Plugin;
@@ -47,6 +62,12 @@ export function exposed({
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
 }): GlobalThis {
+  const {
+    render: modalRender,
+    resize: modalResize,
+    postMessage: modalPostMessage,
+    close: modalClose,
+  } = modal;
   return merge({
     console: {
       error: console.error,
@@ -78,7 +99,7 @@ export function exposed({
             html: string,
             options?:
               | {
-                  visible?: boolean | undefined;
+                  visible?: boolean;
                 }
               | undefined,
           ) => {
@@ -86,6 +107,23 @@ export function exposed({
           },
           postMessage,
           resize,
+          modal: {
+            show: (
+              html: string,
+              options?:
+                | {
+                    width?: number | string;
+                    height?: number | string;
+                    visible?: boolean;
+                  }
+                | undefined,
+            ) => {
+              modalRender(html, options);
+            },
+            postMessage: modalPostMessage,
+            resize: modalResize,
+            close: modalClose,
+          },
         },
         plugin: {
           get id() {

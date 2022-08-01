@@ -22,12 +22,15 @@ export type Props = {
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
-  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
+  exposed?:
+    | ((api: IFrameAPI, modalApi: IFrameAPI) => { [key: string]: any })
+    | { [key: string]: any };
   onMessage?: (message: any) => void;
   onPreInit?: () => void;
   onError?: (err: any) => void;
   onDispose?: () => void;
   onClick?: () => void;
+  onModalChange?: (html?: string | undefined) => void;
 };
 
 const Plugin: ForwardRefRenderFunction<RefType, Props> = (
@@ -47,6 +50,7 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
     onError,
     onDispose,
     onClick,
+    onModalChange,
   },
   ref,
 ) => {
@@ -61,6 +65,7 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
     onPreInit,
     onError,
     onDispose,
+    onModalChange,
   });
 
   return iFrameHtml ? (
