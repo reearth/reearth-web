@@ -32,7 +32,7 @@ export type Reearth = {
   ) => void;
 };
 
-export type MouseEventProps = {
+export type MouseEvent = {
   x?: number;
   y?: number;
   lat?: number;
@@ -48,23 +48,23 @@ export type ReearthEventType = {
   cameramove: [camera: CameraPosition];
   select: [layerId: string | undefined];
   message: [message: any];
-  click: [props: MouseEventProps];
-  doubleclick: [props: MouseEventProps];
-  mousedown: [props: MouseEventProps];
-  mouseup: [props: MouseEventProps];
-  rightclick: [props: MouseEventProps];
-  rightdown: [props: MouseEventProps];
-  rightup: [props: MouseEventProps];
-  middleclick: [props: MouseEventProps];
-  middledown: [props: MouseEventProps];
-  middleup: [props: MouseEventProps];
-  mousemove: [props: MouseEventProps];
-  mouseenter: [props: MouseEventProps];
-  mouseleave: [props: MouseEventProps];
-  pinchstart: [props: MouseEventProps];
-  pinchend: [props: MouseEventProps];
-  pinchmove: [props: MouseEventProps];
-  wheel: [props: MouseEventProps];
+  click: [props: MouseEvent];
+  doubleclick: [props: MouseEvent];
+  mousedown: [props: MouseEvent];
+  mouseup: [props: MouseEvent];
+  rightclick: [props: MouseEvent];
+  rightdown: [props: MouseEvent];
+  rightup: [props: MouseEvent];
+  middleclick: [props: MouseEvent];
+  middledown: [props: MouseEvent];
+  middleup: [props: MouseEvent];
+  mousemove: [props: MouseEvent];
+  mouseenter: [props: MouseEvent];
+  mouseleave: [props: MouseEvent];
+  pinchstart: [props: MouseEvent];
+  pinchend: [props: MouseEvent];
+  pinchmove: [props: MouseEvent];
+  wheel: [props: MouseEvent];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */

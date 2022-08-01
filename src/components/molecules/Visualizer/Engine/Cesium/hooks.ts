@@ -9,7 +9,7 @@ import { useCustomCompareCallback } from "use-custom-compare";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
-import { MouseEventProps, MouseEvents } from "../ref";
+import { MouseEvent, MouseEvents } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import {
@@ -186,7 +186,7 @@ export default ({
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const position = e.position || e.startPosition;
-        const props: MouseEventProps = {
+        const props: MouseEvent = {
           x: position?.x,
           y: position?.y,
           ...(position ? getLocationFromScreenXY(viewer.scene, position.x, position.y) ?? {} : {}),

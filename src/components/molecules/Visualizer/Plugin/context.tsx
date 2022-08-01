@@ -25,7 +25,7 @@ import type {
   FlyToDestination,
   LookAtDestination,
   Tag,
-  MouseEventProps,
+  MouseEvent,
 } from "./types";
 
 export type EngineContext = {
@@ -220,7 +220,7 @@ export function Provider({
       wheel: "onWheel",
     };
     (Object.keys(eventHandles) as (keyof MouseEvents)[]).forEach((event: keyof MouseEvents) => {
-      onMouseEvent(eventHandles[event], (props: MouseEventProps) => {
+      onMouseEvent(eventHandles[event], (props: MouseEvent) => {
         emit(event, props);
       });
     });

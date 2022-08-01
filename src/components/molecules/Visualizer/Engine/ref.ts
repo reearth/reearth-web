@@ -4,7 +4,7 @@ import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
 import type { Component } from "../Primitive";
 
-export type MouseEventProps = {
+export type MouseEvent = {
   x?: number;
   y?: number;
   lat?: number;
@@ -15,23 +15,23 @@ export type MouseEventProps = {
 };
 
 export type MouseEvents = {
-  click: ((props: MouseEventProps) => void) | undefined;
-  doubleclick: ((props: MouseEventProps) => void) | undefined;
-  mousedown: ((props: MouseEventProps) => void) | undefined;
-  mouseup: ((props: MouseEventProps) => void) | undefined;
-  rightclick: ((props: MouseEventProps) => void) | undefined;
-  rightdown: ((props: MouseEventProps) => void) | undefined;
-  rightup: ((props: MouseEventProps) => void) | undefined;
-  middleclick: ((props: MouseEventProps) => void) | undefined;
-  middledown: ((props: MouseEventProps) => void) | undefined;
-  middleup: ((props: MouseEventProps) => void) | undefined;
-  mousemove: ((props: MouseEventProps) => void) | undefined;
-  mouseenter: ((props: MouseEventProps) => void) | undefined;
-  mouseleave: ((props: MouseEventProps) => void) | undefined;
-  pinchstart: ((props: MouseEventProps) => void) | undefined;
-  pinchend: ((props: MouseEventProps) => void) | undefined;
-  pinchmove: ((props: MouseEventProps) => void) | undefined;
-  wheel: ((props: MouseEventProps) => void) | undefined;
+  click: ((props: MouseEvent) => void) | undefined;
+  doubleclick: ((props: MouseEvent) => void) | undefined;
+  mousedown: ((props: MouseEvent) => void) | undefined;
+  mouseup: ((props: MouseEvent) => void) | undefined;
+  rightclick: ((props: MouseEvent) => void) | undefined;
+  rightdown: ((props: MouseEvent) => void) | undefined;
+  rightup: ((props: MouseEvent) => void) | undefined;
+  middleclick: ((props: MouseEvent) => void) | undefined;
+  middledown: ((props: MouseEvent) => void) | undefined;
+  middleup: ((props: MouseEvent) => void) | undefined;
+  mousemove: ((props: MouseEvent) => void) | undefined;
+  mouseenter: ((props: MouseEvent) => void) | undefined;
+  mouseleave: ((props: MouseEvent) => void) | undefined;
+  pinchstart: ((props: MouseEvent) => void) | undefined;
+  pinchend: ((props: MouseEvent) => void) | undefined;
+  pinchmove: ((props: MouseEvent) => void) | undefined;
+  wheel: ((props: MouseEvent) => void) | undefined;
 };
 
 export type MouseEventHandles = {
