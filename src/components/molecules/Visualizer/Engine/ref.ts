@@ -1,6 +1,7 @@
+import { Clock } from "cesium";
 import { ComponentType, ReactNode } from "react";
 
-import { LatLngHeight, Camera, Typography, Rect, Clock } from "@reearth/util/value";
+import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
 import type { Component } from "../Primitive";
 
@@ -15,7 +16,7 @@ export type EngineRef = {
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
-  getClock: () => Clock;
+  getClock: () => Clock | undefined;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
