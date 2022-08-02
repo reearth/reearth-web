@@ -14,6 +14,7 @@ import { Provider } from "./Plugin";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
+import { BuiltinWidgets, TIMELINE_BUILTIN_WIDGET_ID } from "./Widget/builtin";
 import WidgetAlignSystem, {
   Props as WidgetAlignSystemProps,
   WidgetAlignSystem as WidgetAlignSystemType,
@@ -44,6 +45,7 @@ export type Props = {
     floatingWidgets?: Widget[];
     alignSystem?: WidgetAlignSystemType;
     layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
+    ownBuiltinWidgets: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
   };
   sceneProperty?: SceneProperty;
   tags?: Tag[];
@@ -107,7 +109,6 @@ export default function Visualizer({
     innerCamera,
     infobox,
     overriddenSceneProperty,
-    shouldRender,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -127,7 +128,6 @@ export default function Visualizer({
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
     sceneProperty,
-    alignSystem: widgets?.alignSystem,
     tags,
     onLayerSelect,
     onBlockSelect,
@@ -163,7 +163,7 @@ export default function Visualizer({
           camera={innerCamera}
           isLayerDragging={isLayerDragging}
           isLayerDraggable={props.isEditable}
-          shouldRender={shouldRender}
+          shouldRender={widgets?.ownBuiltinWidgets[TIMELINE_BUILTIN_WIDGET_ID]}
           onLayerSelect={selectLayer}
           onCameraChange={updateCamera}
           onLayerDrop={handleLayerDrop}
