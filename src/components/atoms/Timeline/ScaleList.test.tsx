@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { render, screen } from "@reearth/test/utils";
 
 import { EPOCH_SEC, GAP_HORIZONTAL, HOURS_SECS, MAX_ZOOM_RATIO, SCALE_INTERVAL } from "./constants";

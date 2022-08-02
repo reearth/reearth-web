@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { expect, test, vi } from "vitest";
 
 import { render, screen, fireEvent, waitFor } from "@reearth/test/utils";
 
@@ -44,7 +45,7 @@ test("it should get time from clicked position", () => {
   render(<TimelineWrapper />);
   const slider = screen.getAllByRole("slider")[1];
   const currentPosition = 12;
-  jest.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
+  vi.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   fireEvent.click(slider, {
     clientX: PADDING_HORIZONTAL + BORDER_WIDTH + currentPosition,
@@ -66,10 +67,10 @@ test("it should get time from mouse moved position", () => {
     currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2 + NORMAL_SCALE_WIDTH,
   );
 
-  const scroll = jest.fn();
+  const scroll = vi.fn();
   window.HTMLElement.prototype.scroll = scroll;
 
-  jest.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
+  vi.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   // Check initial position
   expect(Math.trunc(parseInt(screen.getByTestId("knob-icon").style.left.split("px")[0], 10))).toBe(
@@ -106,7 +107,7 @@ test("it should get time from mouse moved position", () => {
 test("it should get correct strongScaleHours from amount of scroll", () => {
   render(<TimelineWrapper />);
   const slider = screen.getAllByRole("slider")[1];
-  jest.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
+  vi.spyOn(slider, "scrollWidth", "get").mockImplementation(() => SCROLL_WIDTH);
 
   fireEvent.wheel(slider, {
     deltaY: -50,
