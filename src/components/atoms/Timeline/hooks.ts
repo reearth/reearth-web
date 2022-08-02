@@ -74,7 +74,8 @@ const useTimelineInteraction = ({
 
       const scrollThreshold = 30;
       const scrollAmount = 20;
-      const clientX = e.clientX;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clientX = e.clientX - rect.x;
       const curTar = e.currentTarget;
       const clientWidth = curTar.clientWidth;
 

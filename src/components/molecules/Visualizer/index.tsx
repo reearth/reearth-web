@@ -45,7 +45,7 @@ export type Props = {
     floatingWidgets?: Widget[];
     alignSystem?: WidgetAlignSystemType;
     layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
-    ownBuiltinWidgets: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
+    ownBuiltinWidgets?: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
   };
   sceneProperty?: SceneProperty;
   tags?: Tag[];
@@ -163,7 +163,7 @@ export default function Visualizer({
           camera={innerCamera}
           isLayerDragging={isLayerDragging}
           isLayerDraggable={props.isEditable}
-          shouldRender={widgets?.ownBuiltinWidgets[TIMELINE_BUILTIN_WIDGET_ID]}
+          shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}
           onLayerSelect={selectLayer}
           onCameraChange={updateCamera}
           onLayerDrop={handleLayerDrop}
