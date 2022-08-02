@@ -18,15 +18,21 @@ const config: StorybookViteConfig = {
     disableTelemetry: true,
   },
   staticDirs: ["./public"],
-  viteFinal(config) {
+  viteFinal(config, { configType }) {
     return mergeConfig(config, {
       plugins: [yaml(), cesium()],
       define: {
-        "process.env.QTS_DEBUG": "false",
+        "process.env.QTS_DEBUG": "false", // quickjs-emscripten
       },
+      build:
+        configType === "PRODUCTION"
+          ? {
+              sourcemap: false, // https://github.com/storybookjs/builder-vite/issues/409
+            }
+          : {},
       resolve: {
         alias: [
-          { find: "crypto", replacement: "crypto-js" },
+          { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
           { find: "@reearth", replacement: resolve(__dirname, "..", "src") },
         ],
       },
