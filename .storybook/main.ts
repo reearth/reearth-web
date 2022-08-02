@@ -27,7 +27,9 @@ const config: StorybookViteConfig = {
       build:
         configType === "PRODUCTION"
           ? {
-              sourcemap: false, // https://github.com/storybookjs/builder-vite/issues/409
+              // https://github.com/storybookjs/builder-vite/issues /409
+              minify: false,
+              sourcemap: false,
             }
           : {},
       resolve: {
