@@ -27,7 +27,7 @@
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {
-        "node": ">=16"
+        "node": ">=14"
     },
     "lint-staged": {
         "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix"
