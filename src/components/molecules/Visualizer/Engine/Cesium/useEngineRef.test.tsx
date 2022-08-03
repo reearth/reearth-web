@@ -128,3 +128,26 @@ test("bind mouse events", () => {
   expect(fn).toHaveBeenCalledTimes(14);
   expect(fn).toHaveBeenCalledWith(wheelProps);
 });
+
+const mockRequestRender = vi.fn();
+test("requestRender", () => {
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        scene: {
+          requestRender: mockRequestRender,
+        },
+        isDestroyed: () => {
+          return false;
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+  result.current.current?.requestRender();
+  expect(mockRequestRender).toHaveBeenCalledTimes(1);
+});
