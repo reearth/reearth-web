@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Cartesian2 } from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
 import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -184,6 +184,7 @@ export default ({
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
       if (engineAPI.mouseEventCallbacks[type]) {
+        alert(type + JSON.stringify(e));
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const position = e.position || e.startPosition;
@@ -195,20 +196,6 @@ export default ({
         const layerId = getLayerId(target);
         if (layerId) props.layerId = layerId;
         engineAPI.mouseEventCallbacks[type]?.(props);
-      }
-    },
-    [engineAPI],
-  );
-
-  const handlePinchEvent = useCallback(
-    (
-      type: keyof MouseEvents,
-      e: CesiumMovementEvent & { position1?: Cartesian2 | undefined },
-      target: RootEventTarget,
-    ) => {
-      if (engineAPI.mouseEventCallbacks[type]) {
-        alert(type + JSON.stringify(e) + JSON.stringify(target));
-        engineAPI.mouseEventCallbacks[type]?.({});
       }
     },
     [engineAPI],
@@ -236,25 +223,17 @@ export default ({
       mousemove: undefined,
       mouseenter: undefined,
       mouseleave: undefined,
-      pinchstart: undefined,
-      pinchend: undefined,
-      pinchmove: undefined,
       wheel: undefined,
     };
     (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
-      if (type === "wheel") {
-        mouseEvents[type] = (delta: number) => {
-          handleMouseWheel(delta);
-        };
-      } else if (type === "pinchstart" || type === "pinchmove" || type === "pinchend") {
-        mouseEvents[type] = (e: CesiumMovementEvent, target: RootEventTarget) => {
-          handlePinchEvent(type as keyof MouseEvents, e, target);
-        };
-      } else {
-        mouseEvents[type] = (e: CesiumMovementEvent, target: RootEventTarget) => {
-          handleMouseEvent(type as keyof MouseEvents, e, target);
-        };
-      }
+      mouseEvents[type] =
+        type === "wheel"
+          ? (delta: number) => {
+              handleMouseWheel(delta);
+            }
+          : (e: CesiumMovementEvent, target: RootEventTarget) => {
+              handleMouseEvent(type as keyof MouseEvents, e, target);
+            };
     });
     return mouseEvents;
   }, [handleMouseEvent, handleMouseWheel]);

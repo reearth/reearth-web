@@ -120,32 +120,11 @@ test("bind mouse events", () => {
   expect(fn).toHaveBeenCalledTimes(13);
   expect(fn).toHaveBeenCalledWith(props);
 
-  result.current.current?.onPinchStart(fn);
-  expect(result.current.current?.mouseEventCallbacks.pinchstart).toBe(fn);
-
-  result.current.current?.mouseEventCallbacks.pinchstart?.(props);
-  expect(fn).toHaveBeenCalledTimes(14);
-  expect(fn).toHaveBeenCalledWith(props);
-
-  result.current.current?.onPinchEnd(fn);
-  expect(result.current.current?.mouseEventCallbacks.pinchend).toBe(fn);
-
-  result.current.current?.mouseEventCallbacks.pinchend?.(props);
-  expect(fn).toHaveBeenCalledTimes(15);
-  expect(fn).toHaveBeenCalledWith(props);
-
-  result.current.current?.onPinchMove(fn);
-  expect(result.current.current?.mouseEventCallbacks.pinchmove).toBe(fn);
-
-  result.current.current?.mouseEventCallbacks.pinchmove?.(props);
-  expect(fn).toHaveBeenCalledTimes(16);
-  expect(fn).toHaveBeenCalledWith(props);
-
   result.current.current?.onWheel(fn);
   expect(result.current.current?.mouseEventCallbacks.wheel).toBe(fn);
 
   const wheelProps = { delta: 1 };
   result.current.current?.mouseEventCallbacks.wheel?.(wheelProps);
-  expect(fn).toHaveBeenCalledTimes(17);
+  expect(fn).toHaveBeenCalledTimes(14);
   expect(fn).toHaveBeenCalledWith(wheelProps);
 });
