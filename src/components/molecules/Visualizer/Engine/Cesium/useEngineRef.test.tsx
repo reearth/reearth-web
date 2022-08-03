@@ -151,3 +151,38 @@ test("requestRender", () => {
   result.current.current?.requestRender();
   expect(mockRequestRender).toHaveBeenCalledTimes(1);
 });
+
+const mockZoomIn = vi.fn(amount => amount);
+const mockZoomOut = vi.fn(amount => amount);
+test("zoom", () => {
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        scene: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          camera: {
+            zoomIn: mockZoomIn,
+            zoomOut: mockZoomOut,
+          },
+        },
+        isDestroyed: () => {
+          return false;
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.zoomIn(10);
+  expect(mockZoomIn).toHaveBeenCalledTimes(1);
+  expect(mockZoomIn).toHaveBeenCalledWith(10);
+
+  result.current.current?.zoomOut(20);
+  expect(mockZoomOut).toHaveBeenCalledTimes(1);
+  expect(mockZoomOut).toHaveBeenCalledWith(20);
+});
