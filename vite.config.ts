@@ -67,24 +67,22 @@ function config(): Plugin {
   return {
     name: "reearth-config",
     async configureServer(server) {
-      const reearthConfig = loadJSON("./reearth-config.json");
-
-      const env = loadEnv(
-        server.config.mode,
-        server.config.envDir ?? process.cwd(),
-        server.config.envPrefix,
+      const configRes = JSON.stringify(
+        {
+          api: "http://localhost:8080/api",
+          published: "/published.html?alias={}",
+          ...readEnv("REEARTH_WEB", {
+            source: loadEnv(
+              server.config.mode,
+              server.config.envDir ?? process.cwd(),
+              server.config.envPrefix,
+            ),
+          }),
+          ...loadJSON("./reearth-config.json"),
+        },
+        null,
+        2,
       );
-
-      const config = {
-        api: "http://localhost:8080/api",
-        published: "/published.html?alias={}",
-        ...readEnv("REEARTH_WEB", {
-          source: env,
-        }),
-        ...reearthConfig,
-      };
-
-      const configRes = JSON.stringify(config, null, 2);
 
       server.middlewares.use((req, res, next) => {
         if (req.method === "GET" && req.url === "/reearth_config.json") {
