@@ -114,6 +114,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         onMouseEnter={mouseEventHandles.mouseenter}
         onMouseLeave={mouseEventHandles.mouseleave}
         onPinchStart={mouseEventHandles.pinchstart}
+        onPinchEnd={mouseEventHandles.pinchend}
         onPinchMove={mouseEventHandles.pinchmove}
         onWheel={mouseEventHandles.wheel}>
         <Event onMount={handleMount} onUnmount={handleUnmount} />
