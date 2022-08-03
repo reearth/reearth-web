@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Cartesian2 } from "cesium";
 import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -182,12 +182,16 @@ export default ({
   }, [cesium, selectedLayerId]);
 
   const handleMouseEvent = useCallback(
-    (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
+    (
+      type: keyof MouseEvents,
+      e: CesiumMovementEvent & { position1?: Cartesian2 | undefined },
+      target: RootEventTarget,
+    ) => {
       if (engineAPI.mouseEventCallbacks[type]) {
-        alert(JSON.stringify(e));
+        alert(type + JSON.stringify(e));
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const position = e.position || e.startPosition;
+        const position = e.position || e.startPosition || e.position1;
         const props: MouseEvent = {
           x: position?.x,
           y: position?.y,
