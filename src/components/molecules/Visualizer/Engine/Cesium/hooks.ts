@@ -184,7 +184,6 @@ export default ({
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
       if (engineAPI.mouseEventCallbacks[type]) {
-        alert(type + JSON.stringify(e));
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const position = e.position || e.startPosition;
