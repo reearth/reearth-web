@@ -26,7 +26,7 @@ const Widget = styled.div<{
   extended?: boolean;
 }>`
   max-width: 100vw;
-  width: ${({ extended }) => (extended ? "100%" : "500px")};
+  width: ${({ extended }) => (extended ? "100%" : "720px")};
 
   @media (max-width: 560px) {
     width: ${({ extended }) => (extended ? "100%" : "90vw")};
