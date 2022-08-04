@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
+import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
@@ -221,9 +222,6 @@ export default ({
       mousemove: undefined,
       mouseenter: undefined,
       mouseleave: undefined,
-      pinchstart: undefined,
-      pinchend: undefined,
-      pinchmove: undefined,
       wheel: undefined,
     };
     (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
@@ -270,10 +268,10 @@ export default ({
 
   // E2E test
   useEffect(() => {
-    if (window.REEARTH_E2E_ACCESS_TOKEN) {
-      window.REEARTH_E2E_CESIUM_VIEWER = cesium.current?.cesiumElement;
+    if (e2eAccessToken()) {
+      setE2ECesiumViewer(cesium.current?.cesiumElement);
       return () => {
-        delete window.REEARTH_E2E_CESIUM_VIEWER;
+        setE2ECesiumViewer(undefined);
       };
     }
     return;
