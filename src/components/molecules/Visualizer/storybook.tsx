@@ -86,6 +86,7 @@ export const context: ProviderProps = {
   overrideSceneProperty: act("overrideSceneProperty"),
   layersInViewport: act("layersInViewport"),
   viewport: act("viewport"),
+  onMouseEvent: act("onMouseEvent"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(
