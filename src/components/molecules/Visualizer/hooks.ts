@@ -12,6 +12,7 @@ import type {
   SceneProperty,
   SelectLayerOptions,
 } from "./Engine";
+import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
@@ -407,6 +408,7 @@ function useProviderProps(
     | "layers"
     | "layersInViewport"
     | "viewport"
+    | "onMouseEvent"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -487,6 +489,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const onMouseEvent = useCallback(
+    (eventType: keyof MouseEventHandles, fn: any) => {
+      engineRef.current?.[eventType]?.(fn);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -497,5 +506,6 @@ function useProviderProps(
     layers,
     layersInViewport,
     viewport,
+    onMouseEvent,
   };
 }
