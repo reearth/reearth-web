@@ -22,6 +22,7 @@ export type Props = {
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
+  isModal?: boolean;
   exposed?:
     | ((api: IFrameAPI, modalApi: IFrameAPI) => { [key: string]: any })
     | { [key: string]: any };
@@ -44,6 +45,7 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
     autoResize,
     iFrameProps,
     isMarshalable,
+    isModal,
     exposed,
     onMessage,
     onPreInit,
@@ -59,6 +61,7 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
     skip,
     src,
     sourceCode,
+    isModal,
     isMarshalable,
     exposed,
     ref,

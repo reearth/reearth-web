@@ -219,8 +219,7 @@ export function useAPI({
           onResize?.(width, height, extended);
         },
         modal: {
-          render: (html, { extended, ...options } = {}) => {
-            console.log(extended, "extended!!");
+          render: (html, { ...options } = {}) => {
             modalRender(html, options);
             // onRender?.(
             //   typeof extended !== "undefined" || options ? { extended, ...options } : undefined,

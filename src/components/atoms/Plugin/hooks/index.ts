@@ -31,6 +31,7 @@ export type Options = {
   iframeCanBeVisible?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   ref?: Ref<RefType>;
+  isModal?: boolean;
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
@@ -61,6 +62,7 @@ export default function useHook({
   iframeCanBeVisible,
   isMarshalable,
   ref,
+  isModal,
   onPreInit,
   onError = defaultOnError,
   onDispose,
@@ -124,8 +126,12 @@ export default function useHook({
 
   const ModalIFrameApi = useMemo<ModalIFrameAPI>(
     () => ({
-      render: html => {
-        onModalChange?.(html);
+      render: (html, { visible = true, ...options } = {}) => {
+        if (isModal) {
+          setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
+        } else {
+          onModalChange?.(html);
+        }
       },
       resize: (width, height) => {
         console.log(width, height, "sladkfj");

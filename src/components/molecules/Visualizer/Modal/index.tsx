@@ -66,7 +66,7 @@ export default PluginModal;
 const Wrapper = styled.div<{ transition?: TransitionStatus }>`
   position: absolute;
   top: 15%;
-  z-index: ${({ theme }) => theme.zIndexes.fullScreenModal};
+  z-index: ${({ theme }) => theme.zIndexes.pluginModal};
   left: 0;
   right: 0;
   margin-left: auto;

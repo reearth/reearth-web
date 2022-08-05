@@ -97,6 +97,7 @@ export default function Plugin({
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
+      isModal={extensionType === "modal"}
       exposed={exposed}
       onError={onError}
       onMessage={onMessage}
