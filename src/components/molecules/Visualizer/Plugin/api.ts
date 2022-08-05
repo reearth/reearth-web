@@ -47,7 +47,6 @@ export function exposed({
         visible?: boolean;
         width?: string | number;
         height?: string | number;
-        extended?: boolean;
       },
     ) => void;
     postMessage: Reearth["ui"]["modal"]["postMessage"];

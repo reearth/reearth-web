@@ -202,6 +202,7 @@ export type Theme = {
     hidden: number;
     form: number;
     infoBox: number;
+    pluginModal: number;
     propertyFieldPopup: number;
     descriptionBalloon: number;
     dropDown: number;
