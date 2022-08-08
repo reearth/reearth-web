@@ -4,6 +4,7 @@ import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
+import type { MouseEvents, MouseEvent } from "../ref";
 
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
@@ -14,6 +15,22 @@ export default function useEngineRef(
   cesium: RefObject<CesiumComponentRef<Cesium.Viewer>>,
 ): EngineRef {
   const cancelCameraFlight = useRef<() => void>();
+  const mouseEventCallbacks = useRef<MouseEvents>({
+    click: undefined,
+    doubleclick: undefined,
+    mousedown: undefined,
+    mouseup: undefined,
+    rightclick: undefined,
+    rightdown: undefined,
+    rightup: undefined,
+    middleclick: undefined,
+    middledown: undefined,
+    middleup: undefined,
+    mousemove: undefined,
+    mouseenter: undefined,
+    mouseleave: undefined,
+    wheel: undefined,
+  });
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -91,6 +108,49 @@ export default function useEngineRef(
             break;
         }
       },
+      onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.click = cb;
+      },
+      onDoubleClick: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.doubleclick = cb;
+      },
+      onMouseDown: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.mousedown = cb;
+      },
+      onMouseUp: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.mouseup = cb;
+      },
+      onRightClick: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.rightclick = cb;
+      },
+      onRightDown: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.rightdown = cb;
+      },
+      onRightUp: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.rightup = cb;
+      },
+      onMiddleClick: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.middleclick = cb;
+      },
+      onMiddleDown: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.middledown = cb;
+      },
+      onMiddleUp: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.middleup = cb;
+      },
+      onMouseMove: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.mousemove = cb;
+      },
+      onMouseEnter: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.mouseenter = cb;
+      },
+      onMouseLeave: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.mouseleave = cb;
+      },
+      onWheel: (cb: ((props: MouseEvent) => void) | undefined) => {
+        mouseEventCallbacks.current.wheel = cb;
+      },
+      mouseEventCallbacks: mouseEventCallbacks.current,
       builtinPrimitives,
       clusterComponent: Cluster,
     };

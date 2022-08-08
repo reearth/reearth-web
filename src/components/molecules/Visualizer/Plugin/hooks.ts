@@ -140,7 +140,24 @@ export function useAPI({
         off: ctx.reearth.off,
         once: ctx.reearth.once,
       };
-      cancel = mergeEvents(source, e[1], ["cameramove", "select"]);
+      cancel = mergeEvents(source, e[1], [
+        "cameramove",
+        "select",
+        "click",
+        "doubleclick",
+        "mousedown",
+        "mouseup",
+        "rightclick",
+        "rightdown",
+        "rightup",
+        "middleclick",
+        "middledown",
+        "middleup",
+        "mousemove",
+        "mouseenter",
+        "mouseleave",
+        "wheel",
+      ]);
     }
 
     event.current = [e[0], e[1], cancel];
