@@ -1,6 +1,10 @@
 import { Viewer } from "cesium";
 
-export type ExtensionType = "dataset-import" | "publication";
+export type ExtensionType =
+  | "dataset-import"
+  | "publication"
+  | "plugin-library"
+  | "plugin-installed";
 
 export type SharedExtensionProps = {
   theme?: string;
@@ -25,9 +29,18 @@ export type ProjectPublicationExtensionProps = {
   publishDisabled?: boolean;
 } & SharedExtensionProps;
 
+export type PluginExtensionProps = {
+  pluginIds?: string[];
+  onInstall?: (props: any) => void;
+  onUninstall?: (props: any) => void;
+  onUpdate?: (props: any) => void;
+} & SharedExtensionProps;
+
 export type ExtensionProps = {
   "dataset-import": DatasetImportExtensionProps;
   publication: ProjectPublicationExtensionProps;
+  "plugin-library": PluginExtensionProps;
+  "plugin-installed": PluginExtensionProps;
 };
 
 export type Extension<T extends ExtensionType = ExtensionType> = {
@@ -41,6 +54,8 @@ export type Extension<T extends ExtensionType = ExtensionType> = {
 export type Extensions = {
   publication?: Extension<"publication">[];
   datasetImport?: Extension<"dataset-import">[];
+  pluginLibrary?: Extension<"plugin-library">[];
+  pluginInstalled?: Extension<"plugin-installed">[];
 };
 
 export type Config = {
@@ -110,6 +125,10 @@ export async function loadExtensions(urls?: string[]): Promise<Extensions | unde
   const publication: Extension<"publication">[] = [];
   // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal/hooks.ts
   const datasetImport: Extension<"dataset-import">[] = [];
+  // Entry point for plugin library extensions is @reearth/components/molecules/Settings/Project/Plugin/PluginSection/PluginInstall
+  const pluginLibrary: Extension<"plugin-library">[] = [];
+  // Entry point for plugin installed extensions is @reearth/components/molecules/Settings/Project/Plugin/PluginSection/PluginInstall
+  const pluginInstalled: Extension<"plugin-installed">[] = [];
 
   for (const url of urls) {
     try {
@@ -119,6 +138,10 @@ export async function loadExtensions(urls?: string[]): Promise<Extensions | unde
           ? datasetImport.push(ext as Extension<"dataset-import">)
           : ext.type === "publication"
           ? publication.push(ext as Extension<"publication">)
+          : ext.type === "plugin-library"
+          ? pluginLibrary.push(ext as Extension<"plugin-library">)
+          : ext.type === "plugin-installed"
+          ? pluginInstalled.push(ext as Extension<"plugin-installed">)
           : undefined,
       );
     } catch (e) {

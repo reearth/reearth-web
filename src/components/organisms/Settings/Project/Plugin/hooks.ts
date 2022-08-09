@@ -1,6 +1,7 @@
 import { useApolloClient } from "@apollo/client";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useAuth } from "@reearth/auth";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useGetInstallablePluginsQuery,
@@ -18,10 +19,25 @@ export default (projectId: string) => {
   const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
+  const { getAccessToken } = useAuth();
+  const [accessToken, setAccessToken] = useState<string>();
+
+  useEffect(() => {
+    getAccessToken().then(token => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
 
   const { loading: pluginLoading } = useGetInstallablePluginsQuery();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
+
+  const extensions = accessToken
+    ? {
+        library: window.REEARTH_CONFIG?.extensions?.pluginLibrary,
+        installed: window.REEARTH_CONFIG?.extensions?.pluginInstalled,
+      }
+    : undefined;
 
   const {
     data: rawSceneData,
@@ -130,6 +146,7 @@ export default (projectId: string) => {
     currentProject,
     loading,
     installedPlugins,
+    extensions,
     installByUploadingZipFile,
     installFromPublicRepo,
     uninstallPlugin,

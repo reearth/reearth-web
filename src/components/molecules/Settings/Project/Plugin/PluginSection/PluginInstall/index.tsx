@@ -51,9 +51,19 @@ const PluginInstall: React.FC<Props> = ({
         <Flex gap={28}>
           {installChoices.map(c => {
             return c.mode === "install-public-repo" ? (
-              <PublicRepo icon={c.icon} buttonText={c.text} onSend={installFromPublicRepo} />
+              <PublicRepo
+                key={c.mode}
+                icon={c.icon}
+                buttonText={c.text}
+                onSend={installFromPublicRepo}
+              />
             ) : c.mode === "install-zip" ? (
-              <ZipUpload icon={c.icon} buttonText={c.text} onSend={installByUploadingZipFile} />
+              <ZipUpload
+                key={c.mode}
+                icon={c.icon}
+                buttonText={c.text}
+                onSend={installByUploadingZipFile}
+              />
             ) : null;
           })}
         </Flex>

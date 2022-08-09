@@ -49,7 +49,10 @@ const TabSection = <T extends string>({
               select(m);
               onChange?.(m);
             }}>
-            <Text size="m" color={selectedTab === m ? theme.main.select : theme.main.text}>
+            <Text
+              size="m"
+              color={selectedTab === m ? theme.main.select : theme.main.text}
+              otherProperties={{ marginBottom: "12px" }}>
               {headers?.[m] ?? m}
             </Text>
           </TabTitle>
@@ -82,7 +85,7 @@ const TabHeader = styled.div<{ menuAlignment?: MenuAlignment }>`
 const TabTitle = styled.div<{ selected?: boolean }>`
   cursor: pointer;
   user-select: none;
-  border-bottom: 2px solid ${({ selected, theme }) => (selected ? theme.main.select : "none")};
+  border-bottom: 1px solid ${({ selected, theme }) => (selected ? theme.main.select : "none")};
   opacity: ${({ selected }) => (selected ? "1" : "0.7")};
 `;
 
