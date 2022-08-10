@@ -146,8 +146,7 @@ export default function useHook({
           return chain.then(() => runScript(oldScript));
         }, Promise.resolve())
         .finally(() => {
-          loaded.current = true;
-          onLoad?.();
+          onLoaded();
           Array.from(scripts)
             .filter(
               script =>
@@ -155,23 +154,27 @@ export default function useHook({
                 script.getAttribute("async") ||
                 script.getAttribute("defer"),
             )
-            .reduce((chain, oldScript) => {
-              return chain.then(() => runScript(oldScript));
-            }, Promise.resolve());
+            .forEach(oldScript => {
+              runScript(oldScript);
+            });
         });
     }
 
-    // post pending messages
-    if (pendingMesages.current.length) {
-      for (const msg of pendingMesages.current) {
-        win.postMessage(msg, "*");
+    const onLoaded = () => {
+      // post pending messages
+      if (pendingMesages.current.length) {
+        for (const msg of pendingMesages.current) {
+          win.postMessage(msg, "*");
+        }
+        pendingMesages.current = [];
       }
-      pendingMesages.current = [];
-    }
 
-    if (!scripts) {
       loaded.current = true;
       onLoad?.();
+    };
+
+    if (!scripts) {
+      onLoaded();
     }
   }, [autoResizeMessageKey, html, onLoad, height, width]);
 
