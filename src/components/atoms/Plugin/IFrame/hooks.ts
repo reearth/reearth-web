@@ -131,35 +131,6 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    // exec scripts
-    const scripts = doc.body.querySelectorAll("script");
-
-    if (scripts) {
-      Array.from(scripts)
-        .filter(
-          script =>
-            script.getAttribute("type") !== "module" &&
-            !script.getAttribute("async") &&
-            !script.getAttribute("defer"),
-        )
-        .reduce((chain, oldScript) => {
-          return chain.then(() => runScript(oldScript));
-        }, Promise.resolve())
-        .finally(() => {
-          onLoaded();
-          Array.from(scripts)
-            .filter(
-              script =>
-                script.getAttribute("type") === "module" ||
-                script.getAttribute("async") ||
-                script.getAttribute("defer"),
-            )
-            .forEach(oldScript => {
-              runScript(oldScript);
-            });
-        });
-    }
-
     const onLoaded = () => {
       // post pending messages
       if (pendingMesages.current.length) {
@@ -168,12 +139,17 @@ export default function useHook({
         }
         pendingMesages.current = [];
       }
-
       loaded.current = true;
       onLoad?.();
     };
 
-    if (!scripts) {
+    // exec scripts
+    const scripts = doc.body.querySelectorAll("script");
+    if (scripts) {
+      execScripts(scripts, false)
+        .finally(() => execScripts(scripts, true))
+        .finally(onLoaded);
+    } else {
       onLoaded();
     }
   }, [autoResizeMessageKey, html, onLoad, height, width]);
@@ -224,7 +200,20 @@ export default function useHook({
   };
 }
 
-const runScript = (oldScript: HTMLScriptElement) => {
+function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
+  const isAsync = (script: HTMLScriptElement) =>
+    script.getAttribute("type") === "module" ||
+    script.getAttribute("async") ||
+    script.getAttribute("defer");
+
+  return Array.from(scripts)
+    .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
+    .reduce((chain, oldScript) => {
+      return chain.then(() => runScript(oldScript));
+    }, Promise.resolve());
+}
+
+function runScript(oldScript: HTMLScriptElement) {
   return new Promise<void>((resolve, rejected) => {
     const newScript = document.createElement("script");
     for (const attr of Array.from(oldScript.attributes)) {
@@ -238,4 +227,4 @@ const runScript = (oldScript: HTMLScriptElement) => {
       resolve();
     }
   });
-};
+}
