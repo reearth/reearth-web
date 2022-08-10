@@ -131,8 +131,9 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    // exec
+    // exec scripts
     const scripts = doc.body.querySelectorAll("script");
+
     if (scripts) {
       Array.from(scripts)
         .filter(
