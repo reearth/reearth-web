@@ -131,7 +131,7 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    const onLoaded = () => {
+    const onScriptsLoaded = () => {
       // post pending messages
       if (pendingMesages.current.length) {
         for (const msg of pendingMesages.current) {
@@ -148,9 +148,9 @@ export default function useHook({
     if (scripts) {
       execScripts(scripts, false)
         .finally(() => execScripts(scripts, true))
-        .finally(onLoaded);
+        .finally(onScriptsLoaded);
     } else {
-      onLoaded();
+      onScriptsLoaded();
     }
   }, [autoResizeMessageKey, html, onLoad, height, width]);
 
