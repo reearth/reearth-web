@@ -133,16 +133,26 @@ export default function useHook({
 
     // exec scripts
     Array.from(doc.body.querySelectorAll("script"))
-      .map<[HTMLScriptElement, HTMLScriptElement]>(oldScript => {
-        const newScript = document.createElement("script");
-        for (const attr of Array.from(oldScript.attributes)) {
-          newScript.setAttribute(attr.name, attr.value);
-        }
-        newScript.appendChild(document.createTextNode(oldScript.innerText));
-        return [oldScript, newScript];
-      })
-      .forEach(([oldScript, newScript]) => {
-        oldScript.parentNode?.replaceChild(newScript, oldScript);
+      .filter(
+        script =>
+          script.getAttribute("type") !== "module" &&
+          !script.getAttribute("async") &&
+          !script.getAttribute("defer"),
+      )
+      .reduce((chain, oldScript) => {
+        return chain.then(() => runScript(oldScript));
+      }, Promise.resolve())
+      .finally(() => {
+        Array.from(doc.body.querySelectorAll("script"))
+          .filter(
+            script =>
+              script.getAttribute("type") === "module" ||
+              script.getAttribute("async") ||
+              script.getAttribute("defer"),
+          )
+          .reduce((chain, oldScript) => {
+            return chain.then(() => runScript(oldScript));
+          }, Promise.resolve());
       });
 
     // post pending messages
@@ -202,3 +212,19 @@ export default function useHook({
     onLoad: onIframeLoad,
   };
 }
+
+const runScript = (oldScript: HTMLScriptElement) => {
+  return new Promise<void>((resolve, rejected) => {
+    const newScript = document.createElement("script");
+    for (const attr of Array.from(oldScript.attributes)) {
+      newScript.setAttribute(attr.name, attr.value);
+    }
+    newScript.appendChild(document.createTextNode(oldScript.innerText));
+    newScript.onload = () => resolve();
+    newScript.onerror = () => rejected();
+    oldScript.parentNode?.replaceChild(newScript, oldScript);
+    if (!newScript.getAttribute("src")) {
+      resolve();
+    }
+  });
+};
