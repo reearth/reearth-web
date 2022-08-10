@@ -1,10 +1,10 @@
 import { renderHook } from "@testing-library/react";
-import type { Viewer as CesiumViewer } from "cesium";
+import { JulianDate, Viewer as CesiumViewer } from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 import { vi, expect, test } from "vitest";
 
-import { EngineRef } from "../ref";
+import { Clock, EngineRef } from "../ref";
 
 import useEngineRef from "./useEngineRef";
 
@@ -185,4 +185,67 @@ test("zoom", () => {
   result.current.current?.zoomOut(20);
   expect(mockZoomOut).toHaveBeenCalledTimes(1);
   expect(mockZoomOut).toHaveBeenCalledWith(20);
+});
+
+test("getClock", () => {
+  const tickTime = JulianDate.fromIso8601("2022-01-13");
+  const mockAddEventHandler: any = vi.fn(_cb => {});
+  const mockRemoveEventHandler: any = vi.fn(_cb => {});
+  const mockTick = vi.fn(() => tickTime);
+
+  const startTime = JulianDate.fromIso8601("2022-01-11");
+  const stopTime = JulianDate.fromIso8601("2022-01-15");
+  const currentTime = JulianDate.fromIso8601("2022-01-14");
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        clock: {
+          startTime,
+          stopTime,
+          tick: mockTick,
+          currentTime,
+          shouldAnimate: false,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          // TODO: should test cesium event
+          onTick: {
+            addEventListener: mockAddEventHandler,
+            removeEventListener: mockRemoveEventHandler,
+          },
+        },
+        isDestroyed: () => {
+          return false;
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  expect(result.current.current?.getClock()?.startTime).toEqual(JulianDate.toDate(startTime));
+  expect(result.current.current?.getClock()?.stopTime).toEqual(JulianDate.toDate(stopTime));
+  expect(result.current.current?.getClock()?.currentTime).toEqual(JulianDate.toDate(currentTime));
+  expect(result.current.current?.getClock()?.shouldAnimate).toBeFalsy();
+
+  const nextTickTime = result.current.current?.getClock()?.tick();
+
+  expect(nextTickTime).toEqual(JulianDate.toDate(tickTime));
+
+  const nextStartTime = JulianDate.fromIso8601("2022-01-10");
+  const nextStopTime = JulianDate.fromIso8601("2022-01-16");
+  const nextCurrentTime = JulianDate.fromIso8601("2022-01-11");
+  const clock = result.current.current?.getClock() || ({} as Clock);
+  clock.startTime = JulianDate.toDate(nextStartTime);
+  clock.stopTime = JulianDate.toDate(nextStopTime);
+  clock.currentTime = JulianDate.toDate(nextCurrentTime);
+  clock.shouldAnimate = true;
+  expect(result.current.current?.getClock()?.startTime).toEqual(JulianDate.toDate(nextStartTime));
+  expect(result.current.current?.getClock()?.stopTime).toEqual(JulianDate.toDate(nextStopTime));
+  expect(result.current.current?.getClock()?.currentTime).toEqual(
+    JulianDate.toDate(nextCurrentTime),
+  );
+  expect(result.current.current?.getClock()?.shouldAnimate).toBeTruthy();
 });

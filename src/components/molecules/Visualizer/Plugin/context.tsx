@@ -1,4 +1,3 @@
-import { Clock } from "cesium";
 import {
   createContext,
   ReactNode,
@@ -11,7 +10,7 @@ import {
 import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
-import { MouseEvents, MouseEventHandles } from "../Engine/ref";
+import { MouseEvents, MouseEventHandles, Clock } from "../Engine/ref";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 import { useGet } from "../utils";

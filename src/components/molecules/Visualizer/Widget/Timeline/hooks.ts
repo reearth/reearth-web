@@ -1,28 +1,29 @@
-import { JulianDate, requestAnimationFrame } from "cesium";
 import { useState, useCallback, useEffect } from "react";
 
 import { TimeEventHandler } from "@reearth/components/atoms/Timeline/types";
 
+import { Clock } from "../../Engine/ref";
 import { useContext } from "../../Plugin";
 
-const JulianDateToDate = (jd?: JulianDate) => (jd ? JulianDate.toDate(jd) : new Date());
-const makeRange = (startTimeJulian?: JulianDate, stopTimeJulian?: JulianDate) => {
-  const startTime = JulianDateToDate(startTimeJulian);
-  const stopTime = JulianDateToDate(stopTimeJulian);
+const getOrNewDate = (d?: Date) => d ?? new Date();
+const makeRange = (startTime?: number, stopTime?: number) => {
   return {
-    start: startTime.getTime(),
-    end: startTime < stopTime ? stopTime.getTime() : Date.now(),
+    start: startTime,
+    end: (startTime || 0) < (stopTime || 0) ? stopTime : undefined,
   };
 };
 
 export const useTimeline = () => {
   const ctx = useContext();
   const clock = ctx?.reearth.visualizer.clock;
-  const [range, setRange] = useState(() => makeRange(clock?.startTime, clock?.stopTime));
-  const [isOpened, setIsOpened] = useState(false);
-  const [currentTime, setCurrentTime] = useState(() =>
-    JulianDateToDate(clock?.currentTime).getTime(),
+  const [range, setRange] = useState(() =>
+    makeRange(clock?.startTime.getTime(), clock?.stopTime.getTime()),
   );
+  const [isOpened, setIsOpened] = useState(false);
+  const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.currentTime).getTime());
+  const clockCurrentTime = clock?.currentTime.getTime();
+  const clockStartTime = clock?.startTime.getTime();
+  const clockStopTime = clock?.stopTime.getTime();
 
   const handleOnOpen = useCallback(() => {
     setIsOpened(true);
@@ -36,8 +37,8 @@ export const useTimeline = () => {
       if (!clock) {
         return;
       }
-      clock.currentTime = JulianDate.fromDate(new Date(currentTime));
-      setCurrentTime(JulianDateToDate(clock.tick()).getTime());
+      clock.currentTime = new Date(currentTime);
+      setCurrentTime(getOrNewDate(clock.tick()).getTime());
     },
     [clock],
   );
@@ -54,18 +55,16 @@ export const useTimeline = () => {
 
       handleTimeEvent(currentTime);
     },
-    [handleTimeEvent],
+    [handleTimeEvent, clock],
   );
 
   // Sync cesium clock.
   useEffect(() => {
-    setCurrentTime(JulianDateToDate(clock?.currentTime).getTime());
-    setRange(makeRange(clock?.startTime, clock?.stopTime));
-    clock?.onTick.addEventListener(clock => {
+    const removeHandler = clock?.onTick.addEventListener((nextClock: Clock) => {
       requestAnimationFrame(() => {
-        setCurrentTime(JulianDateToDate(clock?.currentTime).getTime());
+        setCurrentTime(getOrNewDate(nextClock?.currentTime).getTime());
         setRange(prev => {
-          const next = makeRange(clock?.startTime, clock?.stopTime);
+          const next = makeRange(nextClock?.startTime.getTime(), nextClock?.stopTime.getTime());
           if (prev.start !== next.start || prev.end !== next.end) {
             return next;
           }
@@ -73,7 +72,14 @@ export const useTimeline = () => {
         });
       });
     });
-  }, [clock]);
+    return () => removeHandler && clock?.onTick.removeEventListener(removeHandler);
+  }, []);
+
+  // Sync cesium clock.
+  useEffect(() => {
+    setCurrentTime(clockCurrentTime || Date.now());
+    setRange(makeRange(clockStartTime, clockStopTime));
+  }, [clockCurrentTime, clockStartTime, clockStopTime]);
 
   return {
     range,

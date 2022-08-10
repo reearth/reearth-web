@@ -1,4 +1,3 @@
-import { Clock } from "cesium";
 import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
@@ -47,6 +46,19 @@ export type MouseEventHandles = {
   onMouseEnter: (fn: MouseEvents["mouseenter"]) => void;
   onMouseLeave: (fn: MouseEvents["mouseleave"]) => void;
   onWheel: (fn: MouseEvents["wheel"]) => void;
+};
+
+type ClockEventHandler<R = void> = (cb: (clock: Clock) => void) => R;
+export type Clock = {
+  startTime: Date;
+  stopTime: Date;
+  currentTime: Date;
+  tick: () => Date;
+  shouldAnimate: boolean;
+  onTick: {
+    addEventListener: ClockEventHandler<() => void>;
+    removeEventListener: ClockEventHandler;
+  };
 };
 
 export type EngineRef = {

@@ -1,5 +1,4 @@
 import { action } from "@storybook/addon-actions";
-import { Clock, JulianDate } from "cesium";
 import type { ReactNode } from "react";
 
 import type { ProviderProps } from "./Plugin";
@@ -72,11 +71,17 @@ export const context: ProviderProps = {
     roll: 0,
     fov: Math.PI * (60 / 180),
   },
-  clock: () =>
-    new Clock({
-      startTime: JulianDate.fromIso8601("2022-06-01"),
-      stopTime: JulianDate.fromIso8601("2022-06-03"),
-    }),
+  clock: () => ({
+    startTime: new Date("2022-06-01"),
+    stopTime: new Date("2022-06-03"),
+    currentTime: new Date("2022-06-02"),
+    tick: () => new Date("2022-06-03"),
+    shouldAnimate: false,
+    onTick: {
+      addEventListener: () => () => {},
+      removeEventListener: () => {},
+    },
+  }),
   layers: new LayerStore({ id: "", children: layers }),
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),

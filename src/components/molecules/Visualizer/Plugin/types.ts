@@ -1,4 +1,4 @@
-import { Clock } from "cesium";
+import { Clock } from "../Engine/ref";
 
 export type GlobalThis = {
   Cesium?: Cesium;
