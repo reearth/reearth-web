@@ -131,29 +131,34 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    // exec scripts
-    Array.from(doc.body.querySelectorAll("script"))
-      .filter(
-        script =>
-          script.getAttribute("type") !== "module" &&
-          !script.getAttribute("async") &&
-          !script.getAttribute("defer"),
-      )
-      .reduce((chain, oldScript) => {
-        return chain.then(() => runScript(oldScript));
-      }, Promise.resolve())
-      .finally(() => {
-        Array.from(doc.body.querySelectorAll("script"))
-          .filter(
-            script =>
-              script.getAttribute("type") === "module" ||
-              script.getAttribute("async") ||
-              script.getAttribute("defer"),
-          )
-          .reduce((chain, oldScript) => {
-            return chain.then(() => runScript(oldScript));
-          }, Promise.resolve());
-      });
+    // exec
+    const scripts = doc.body.querySelectorAll("script");
+    if (scripts) {
+      Array.from(scripts)
+        .filter(
+          script =>
+            script.getAttribute("type") !== "module" &&
+            !script.getAttribute("async") &&
+            !script.getAttribute("defer"),
+        )
+        .reduce((chain, oldScript) => {
+          return chain.then(() => runScript(oldScript));
+        }, Promise.resolve())
+        .finally(() => {
+          loaded.current = true;
+          onLoad?.();
+          Array.from(scripts)
+            .filter(
+              script =>
+                script.getAttribute("type") === "module" ||
+                script.getAttribute("async") ||
+                script.getAttribute("defer"),
+            )
+            .reduce((chain, oldScript) => {
+              return chain.then(() => runScript(oldScript));
+            }, Promise.resolve());
+        });
+    }
 
     // post pending messages
     if (pendingMesages.current.length) {
@@ -163,8 +168,10 @@ export default function useHook({
       pendingMesages.current = [];
     }
 
-    loaded.current = true;
-    onLoad?.();
+    if (!scripts) {
+      loaded.current = true;
+      onLoad?.();
+    }
   }, [autoResizeMessageKey, html, onLoad, height, width]);
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
