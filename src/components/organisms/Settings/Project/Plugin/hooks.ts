@@ -147,6 +147,7 @@ export default (projectId: string) => {
     loading,
     installedPlugins,
     extensions,
+    accessToken,
     installByUploadingZipFile,
     installFromPublicRepo,
     uninstallPlugin,

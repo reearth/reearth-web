@@ -20,6 +20,7 @@ export type Props = {
     library: Extension<"plugin-library">[] | undefined;
     installed: Extension<"plugin-installed">[] | undefined;
   };
+  accessToken?: string;
   installFromPublicRepo: (repoUrl: string) => void;
   installByUploadingZipFile: (files: FileList) => void;
   uninstallPlugin: (pluginId: string) => void;
@@ -35,6 +36,7 @@ const PluginSection: React.FC<Props> = ({
   loading,
   installedPlugins,
   extensions,
+  accessToken,
   installByUploadingZipFile,
   installFromPublicRepo,
   uninstallPlugin,
@@ -53,14 +55,22 @@ const PluginSection: React.FC<Props> = ({
           Library: (
             <Box p="2xl">
               {extensions?.library?.map(ext => (
-                <ext.component key={ext.id} />
+                <ext.component
+                  key={ext.id}
+                  accessToken={accessToken}
+                  onUninstall={uninstallPlugin}
+                />
               ))}
             </Box>
           ),
           Installed: (
             <Box p="2xl">
               {extensions?.installed?.map(ext => (
-                <ext.component key={ext.id} />
+                <ext.component
+                  key={ext.id}
+                  accessToken={accessToken}
+                  onUninstall={uninstallPlugin}
+                />
               ))}
             </Box>
           ),

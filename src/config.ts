@@ -30,10 +30,14 @@ export type ProjectPublicationExtensionProps = {
 } & SharedExtensionProps;
 
 export type PluginExtensionProps = {
-  pluginIds?: string[];
-  onInstall?: (props: any) => void;
-  onUninstall?: (props: any) => void;
-  onUpdate?: (props: any) => void;
+  accessToken?: string;
+  pluginId?: string;
+  installedPlugins?: {
+    id: string;
+    version: string;
+  };
+  onInstall?: (pluginId: string) => void;
+  onUninstall?: (pluginId: string) => void;
 } & SharedExtensionProps;
 
 export type ExtensionProps = {

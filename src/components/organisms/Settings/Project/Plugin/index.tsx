@@ -21,6 +21,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
     installedPlugins,
     loading,
     extensions,
+    accessToken,
     installFromPublicRepo,
     installByUploadingZipFile,
     uninstallPlugin,
@@ -34,6 +35,7 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
           loading={loading}
           installedPlugins={installedPlugins}
           extensions={extensions}
+          accessToken={accessToken}
           installFromPublicRepo={installFromPublicRepo}
           installByUploadingZipFile={installByUploadingZipFile}
           uninstallPlugin={uninstallPlugin}
