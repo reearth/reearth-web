@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useLocation } from "react-router-dom";
 
 import Box from "@reearth/components/atoms/Box";
 import Loading from "@reearth/components/atoms/Loading";
@@ -42,6 +43,13 @@ const PluginSection: React.FC<Props> = ({
   uninstallPlugin,
 }) => {
   const t = useT();
+  const { search } = useLocation();
+  const queriedPluginId = useMemo(
+    () => new URLSearchParams(search).get("pluginId") ?? undefined,
+    [search],
+  );
+
+  console.log(queriedPluginId, "aldsfkjalskdfljksdf");
 
   const tabHeaders = {
     Library: t("Plugin Library"),
@@ -57,6 +65,7 @@ const PluginSection: React.FC<Props> = ({
               {extensions?.library?.map(ext => (
                 <ext.component
                   key={ext.id}
+                  pluginId={queriedPluginId}
                   accessToken={accessToken}
                   onUninstall={uninstallPlugin}
                 />
@@ -68,6 +77,7 @@ const PluginSection: React.FC<Props> = ({
               {extensions?.installed?.map(ext => (
                 <ext.component
                   key={ext.id}
+                  pluginId={queriedPluginId}
                   accessToken={accessToken}
                   onUninstall={uninstallPlugin}
                 />
