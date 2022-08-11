@@ -354,7 +354,7 @@ export type Clock = {
   stopTime: Date;
   currentTime: Date;
   tick: () => Date;
-  shouldAnimate: boolean;
+  isPlaying: boolean;
   onTick: {
     addEventListener: ClockEventHandler<() => void>;
     removeEventListener: ClockEventHandler;

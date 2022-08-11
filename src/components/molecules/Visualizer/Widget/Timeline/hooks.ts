@@ -50,7 +50,7 @@ export const useTimeline = () => {
       }
 
       // Stop cesium animation
-      clock.shouldAnimate = false;
+      clock.isPlaying = false;
       clock.tick();
 
       handleTimeEvent(currentTime);

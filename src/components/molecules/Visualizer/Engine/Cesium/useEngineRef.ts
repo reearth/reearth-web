@@ -118,7 +118,7 @@ export default function useEngineRef(
           stopTime: Cesium.JulianDate.toDate(clock.stopTime),
           currentTime: Cesium.JulianDate.toDate(clock.currentTime),
           tick: () => Cesium.JulianDate.toDate(clock.tick()),
-          shouldAnimate: clock.shouldAnimate,
+          isPlaying: clock.shouldAnimate,
           onTick: {
             addEventListener: cb => {
               const handleOnTick = (c: Cesium.Clock) => {
@@ -127,7 +127,7 @@ export default function useEngineRef(
                   stopTime: Cesium.JulianDate.toDate(c.stopTime),
                   currentTime: Cesium.JulianDate.toDate(c.currentTime),
                   tick: () => Cesium.JulianDate.toDate(c.tick()),
-                  shouldAnimate: c.shouldAnimate,
+                  isPlaying: c.shouldAnimate,
                   onTick: {
                     addEventListener: () => () => {},
                     removeEventListener: () => {},
@@ -145,7 +145,9 @@ export default function useEngineRef(
           set: (_, prop: keyof Clock, val) => {
             // Sync with cesium value.
             const cesiumVal = val instanceof Date ? Cesium.JulianDate.fromDate(val) : val;
-            clock[prop] = cesiumVal;
+            // Convert prop to cesium clock object key
+            const cesiumKey = prop === "isPlaying" ? "shouldAnimate" : prop;
+            clock[cesiumKey] = cesiumVal;
             return true;
           },
         });

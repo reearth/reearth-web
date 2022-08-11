@@ -207,7 +207,7 @@ test("getClock", () => {
           stopTime,
           tick: mockTick,
           currentTime,
-          shouldAnimate: false,
+          isPlaying: false,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           // TODO: should test cesium event
@@ -229,7 +229,7 @@ test("getClock", () => {
   expect(result.current.current?.getClock()?.startTime).toEqual(JulianDate.toDate(startTime));
   expect(result.current.current?.getClock()?.stopTime).toEqual(JulianDate.toDate(stopTime));
   expect(result.current.current?.getClock()?.currentTime).toEqual(JulianDate.toDate(currentTime));
-  expect(result.current.current?.getClock()?.shouldAnimate).toBeFalsy();
+  expect(result.current.current?.getClock()?.isPlaying).toBeFalsy();
 
   const nextTickTime = result.current.current?.getClock()?.tick();
 
@@ -242,11 +242,11 @@ test("getClock", () => {
   clock.startTime = JulianDate.toDate(nextStartTime);
   clock.stopTime = JulianDate.toDate(nextStopTime);
   clock.currentTime = JulianDate.toDate(nextCurrentTime);
-  clock.shouldAnimate = true;
+  clock.isPlaying = true;
   expect(result.current.current?.getClock()?.startTime).toEqual(JulianDate.toDate(nextStartTime));
   expect(result.current.current?.getClock()?.stopTime).toEqual(JulianDate.toDate(nextStopTime));
   expect(result.current.current?.getClock()?.currentTime).toEqual(
     JulianDate.toDate(nextCurrentTime),
   );
-  expect(result.current.current?.getClock()?.shouldAnimate).toBeTruthy();
+  expect(result.current.current?.getClock()?.isPlaying).toBeTruthy();
 });

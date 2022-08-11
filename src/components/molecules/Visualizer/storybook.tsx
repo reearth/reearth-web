@@ -76,7 +76,7 @@ export const context: ProviderProps = {
     stopTime: new Date("2022-06-03"),
     currentTime: new Date("2022-06-02"),
     tick: () => new Date("2022-06-03"),
-    shouldAnimate: false,
+    isPlaying: false,
     onTick: {
       addEventListener: () => () => {},
       removeEventListener: () => {},
