@@ -157,6 +157,7 @@ export function useAPI({
         "mouseenter",
         "mouseleave",
         "wheel",
+        "tick",
       ]);
     }
 

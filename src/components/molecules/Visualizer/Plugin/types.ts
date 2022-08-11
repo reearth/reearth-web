@@ -62,6 +62,7 @@ export type ReearthEventType = {
   mouseenter: [props: MouseEvent];
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
+  tick: [props: Clock];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -348,15 +349,10 @@ export type CameraOptions = {
 /** Cesium API: available only when the plugin is a primitive */
 export type Cesium = {};
 
-type ClockEventHandler<R = void> = (cb: (clock: Clock) => void) => R;
 export type Clock = {
   startTime: Date;
   stopTime: Date;
   currentTime: Date;
   tick: () => Date;
   isPlaying: boolean;
-  onTick: {
-    addEventListener: ClockEventHandler<() => void>;
-    removeEventListener: ClockEventHandler;
-  };
 };

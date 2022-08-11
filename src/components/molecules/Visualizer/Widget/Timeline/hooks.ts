@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from "react";
 import { TimeEventHandler } from "@reearth/components/atoms/Timeline/types";
 
 import { useContext } from "../../Plugin";
-import { Clock } from "../../Plugin/types";
 
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {
@@ -60,25 +59,14 @@ export const useTimeline = () => {
 
   // Sync cesium clock.
   useEffect(() => {
-    const removeHandler = clock?.onTick.addEventListener((nextClock: Clock) => {
-      requestAnimationFrame(() => {
-        setCurrentTime(getOrNewDate(nextClock?.currentTime).getTime());
-        setRange(prev => {
-          const next = makeRange(nextClock?.startTime.getTime(), nextClock?.stopTime.getTime());
-          if (prev.start !== next.start || prev.end !== next.end) {
-            return next;
-          }
-          return prev;
-        });
-      });
-    });
-    return () => removeHandler && clock?.onTick.removeEventListener(removeHandler);
-  }, []);
-
-  // Sync cesium clock.
-  useEffect(() => {
     setCurrentTime(clockCurrentTime || Date.now());
-    setRange(makeRange(clockStartTime, clockStopTime));
+    setRange(prev => {
+      const next = makeRange(clock?.startTime.getTime(), clock?.stopTime.getTime());
+      if (prev.start !== next.start || prev.end !== next.end) {
+        return next;
+      }
+      return prev;
+    });
   }, [clockCurrentTime, clockStartTime, clockStopTime]);
 
   return {

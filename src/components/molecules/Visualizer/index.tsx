@@ -114,6 +114,7 @@ export default function Visualizer({
     selectBlock,
     changeBlock,
     updateCamera,
+    updateClock,
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
@@ -166,6 +167,7 @@ export default function Visualizer({
           shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}
           onLayerSelect={selectLayer}
           onCameraChange={updateCamera}
+          onTick={updateClock}
           onLayerDrop={handleLayerDrop}
           onLayerDrag={handleLayerDrag}
           {...props}>

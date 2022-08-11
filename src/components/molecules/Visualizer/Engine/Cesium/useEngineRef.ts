@@ -4,12 +4,11 @@ import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
-import { Clock } from "../../Plugin/types";
 import type { MouseEvents, MouseEvent } from "../ref";
 
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
-import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
+import { getLocationFromScreenXY, flyTo, lookAt, getCamera, getClock } from "./common";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -113,44 +112,7 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed() || !viewer.clock) return;
         const clock: Cesium.Clock = viewer.clock;
-        const nextClock: Clock = {
-          startTime: Cesium.JulianDate.toDate(clock.startTime),
-          stopTime: Cesium.JulianDate.toDate(clock.stopTime),
-          currentTime: Cesium.JulianDate.toDate(clock.currentTime),
-          tick: () => Cesium.JulianDate.toDate(clock.tick()),
-          isPlaying: clock.shouldAnimate,
-          onTick: {
-            addEventListener: cb => {
-              const handleOnTick = (c: Cesium.Clock) => {
-                const nextClock: Clock = {
-                  startTime: Cesium.JulianDate.toDate(c.startTime),
-                  stopTime: Cesium.JulianDate.toDate(c.stopTime),
-                  currentTime: Cesium.JulianDate.toDate(c.currentTime),
-                  tick: () => Cesium.JulianDate.toDate(c.tick()),
-                  isPlaying: c.shouldAnimate,
-                  onTick: {
-                    addEventListener: () => () => {},
-                    removeEventListener: () => {},
-                  },
-                };
-                cb(nextClock);
-              };
-              return clock.onTick.addEventListener(handleOnTick);
-            },
-            removeEventListener: cb => clock.onTick.removeEventListener(cb),
-          },
-        };
-        return new Proxy(nextClock, {
-          get: (target, prop: keyof Clock) => target[prop],
-          set: (_, prop: keyof Clock, val) => {
-            // Sync with cesium value.
-            const cesiumVal = val instanceof Date ? Cesium.JulianDate.fromDate(val) : val;
-            // Convert prop to cesium clock object key
-            const cesiumKey = prop === "isPlaying" ? "shouldAnimate" : prop;
-            clock[cesiumKey] = cesiumVal;
-            return true;
-          },
-        });
+        return getClock(clock);
       },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;

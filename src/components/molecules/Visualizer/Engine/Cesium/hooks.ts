@@ -1,4 +1,4 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3 } from "cesium";
+import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock } from "cesium";
 import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -10,6 +10,7 @@ import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
+import { Clock } from "../../Plugin/types";
 import { MouseEvent, MouseEvents } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
@@ -19,6 +20,7 @@ import {
   isSelectable,
   layerIdField,
   getLocationFromScreenXY,
+  getClock,
 } from "./common";
 import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
@@ -30,9 +32,11 @@ export default ({
   ref,
   property,
   camera,
+  clock,
   selectedLayerId,
   onLayerSelect,
   onCameraChange,
+  onTick,
   isLayerDraggable,
   onLayerDrag,
   onLayerDrop,
@@ -40,9 +44,11 @@ export default ({
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
   camera?: Camera;
+  clock?: Clock;
   selectedLayerId?: string;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
+  onTick?: (clock: Clock) => void;
   isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
@@ -163,6 +169,14 @@ export default ({
   const handleCameraMoveEnd = useCallback(() => {
     updateCamera();
   }, [updateCamera]);
+
+  const handleTick = useCallback((cesiumClock: CesiumClock) => {
+    const nextClock = getClock(cesiumClock);
+    if (isEqual(clock, nextClock)) {
+      return;
+    }
+    onTick?.(nextClock);
+  }, []);
 
   useEffect(() => {
     if (camera && !emittedCamera.current.includes(camera)) {
@@ -342,6 +356,7 @@ export default ({
     handleUnmount,
     handleClick,
     handleCameraChange,
+    handleTick,
     handleCameraMoveEnd,
     mouseEventHandles,
   };

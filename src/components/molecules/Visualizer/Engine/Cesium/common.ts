@@ -17,12 +17,16 @@ import {
   ShadowMode,
   Entity,
   PropertyBag,
+  Clock as CesiumClock,
+  JulianDate,
 } from "cesium";
 import { useCallback } from "react";
 
 import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
+
+import { Clock } from "../../Plugin/types";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -312,6 +316,28 @@ export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | u
   const { heading, pitch, roll } = camera;
   const fov = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.fov : 1;
   return { lng, lat, height, heading, pitch, roll, fov };
+};
+
+export const getClock = (clock: CesiumClock) => {
+  const nextClock: Clock = {
+    startTime: JulianDate.toDate(clock.startTime),
+    stopTime: JulianDate.toDate(clock.stopTime),
+    currentTime: JulianDate.toDate(clock.currentTime),
+    tick: () => JulianDate.toDate(clock.tick()),
+    isPlaying: clock.shouldAnimate,
+  };
+
+  return new Proxy(nextClock, {
+    get: (target, prop: keyof Clock) => target[prop],
+    set: (_, prop: keyof Clock, val) => {
+      // Sync with cesium value.
+      const cesiumVal = val instanceof Date ? JulianDate.fromDate(val) : val;
+      // Convert prop to cesium clock object key
+      const cesiumKey = prop === "isPlaying" ? "shouldAnimate" : prop;
+      clock[cesiumKey] = cesiumVal;
+      return true;
+    },
+  });
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
