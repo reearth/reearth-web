@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 
 import { TimeEventHandler } from "@reearth/components/atoms/Timeline/types";
 
-import { Clock } from "../../Engine/ref";
 import { useContext } from "../../Plugin";
+import { Clock } from "../../Plugin/types";
 
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {

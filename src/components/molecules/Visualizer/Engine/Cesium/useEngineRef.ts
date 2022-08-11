@@ -4,7 +4,8 @@ import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
-import type { MouseEvents, MouseEvent, Clock } from "../ref";
+import { Clock } from "../../Plugin/types";
+import type { MouseEvents, MouseEvent } from "../ref";
 
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";

@@ -1,5 +1,3 @@
-import { Clock } from "../Engine/ref";
-
 export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
@@ -349,3 +347,16 @@ export type CameraOptions = {
 
 /** Cesium API: available only when the plugin is a primitive */
 export type Cesium = {};
+
+type ClockEventHandler<R = void> = (cb: (clock: Clock) => void) => R;
+export type Clock = {
+  startTime: Date;
+  stopTime: Date;
+  currentTime: Date;
+  tick: () => Date;
+  shouldAnimate: boolean;
+  onTick: {
+    addEventListener: ClockEventHandler<() => void>;
+    removeEventListener: ClockEventHandler;
+  };
+};

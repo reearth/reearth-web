@@ -4,7 +4,8 @@ import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 import { vi, expect, test } from "vitest";
 
-import { Clock, EngineRef } from "../ref";
+import { Clock } from "../../Plugin/types";
+import { EngineRef } from "../ref";
 
 import useEngineRef from "./useEngineRef";
 
