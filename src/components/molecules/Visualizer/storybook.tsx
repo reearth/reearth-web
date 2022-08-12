@@ -71,17 +71,13 @@ export const context: ProviderProps = {
     roll: 0,
     fov: Math.PI * (60 / 180),
   },
-  clock: () => ({
+  clock: {
     startTime: new Date("2022-06-01"),
     stopTime: new Date("2022-06-03"),
     currentTime: new Date("2022-06-02"),
     tick: () => new Date("2022-06-03"),
     isPlaying: false,
-    onTick: {
-      addEventListener: () => () => {},
-      removeEventListener: () => {},
-    },
-  }),
+  },
   layers: new LayerStore({ id: "", children: layers }),
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
