@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import type { Item as TreeViewItem } from "@reearth/components/atoms/TreeView";
-import arrayDiff from "@reearth/util/arrayDiff";
 import deepFind from "@reearth/util/deepFind";
+import { arrayIndexDiff } from "@reearth/util/diff";
 
 import type { Layer as LayerType } from "../PropertyItem";
 
@@ -85,7 +85,7 @@ export default ({
         return;
       }
 
-      const diff = arrayDiff(
+      const diff = arrayIndexDiff(
         items.map(i => i.layerId).filter((i): i is string => !!i),
         newLayers.map(l => l.id),
       );
