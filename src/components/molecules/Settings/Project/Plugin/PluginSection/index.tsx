@@ -74,7 +74,7 @@ const PluginSection: React.FC<Props> = ({
           ),
           Installed: (
             <Box p="2xl">
-              {extensions?.installed?.map(ext => (
+              {accessToken && extensions?.installed?.map(ext => (
                 <ext.component
                   key={ext.id}
                   pluginId={queriedPluginId}
