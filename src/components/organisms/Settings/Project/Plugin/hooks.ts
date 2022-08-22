@@ -32,12 +32,10 @@ export default (projectId: string) => {
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
 
-  const extensions = accessToken
-    ? {
+  const extensions = useMemo(() => ({
         library: window.REEARTH_CONFIG?.extensions?.pluginLibrary,
         installed: window.REEARTH_CONFIG?.extensions?.pluginInstalled,
-      }
-    : undefined;
+  }), []);
 
   const {
     data: rawSceneData,
