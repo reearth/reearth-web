@@ -62,7 +62,7 @@ const PluginSection: React.FC<Props> = ({
         {{
           Library: (
             <Box p="2xl">
-              {extensions?.library?.map(ext => (
+              {accessToken && extensions?.library?.map(ext => (
                 <ext.component
                   key={ext.id}
                   pluginId={queriedPluginId}
