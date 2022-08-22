@@ -51,11 +51,11 @@ const PluginSection: React.FC<Props> = ({
 
   console.log(queriedPluginId, "aldsfkjalskdfljksdf");
 
-  const tabHeaders = {
+  const tabHeaders = useMemo(() => ({
     Library: t("Plugin Library"),
     Installed: t("Installed"),
     Uploaded: t("Uploaded Plugins"),
-  };
+  }), [t]);
   return (
     <>
       <TabSection<PluginTabs> selected="Library" menuAlignment="top" headers={tabHeaders}>
