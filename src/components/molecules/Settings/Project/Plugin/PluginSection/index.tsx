@@ -49,8 +49,6 @@ const PluginSection: React.FC<Props> = ({
     [search],
   );
 
-  console.log(queriedPluginId, "aldsfkjalskdfljksdf");
-
   const tabHeaders = useMemo(() => ({
     Library: t("Plugin Library"),
     Installed: t("Installed"),
