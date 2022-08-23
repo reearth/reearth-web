@@ -225,7 +225,6 @@ export function useAPI({
           },
           resize: (width, height) => {
             modalResize(width, height);
-            // onResize?.(width, height);
           },
           postMessage: modalPostMessage,
           close: () => {

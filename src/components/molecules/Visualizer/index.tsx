@@ -198,7 +198,6 @@ export default function Visualizer({
               />
             ))}
         </Engine>
-        {ready && <PluginModal modal={pluginModal} />}
         {ready && (
           <>
             <PluginModal modal={pluginModal} />
