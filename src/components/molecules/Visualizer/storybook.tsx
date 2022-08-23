@@ -81,6 +81,7 @@ export const context: ProviderProps = {
   layersInViewport: act("layersInViewport"),
   viewport: act("viewport"),
   onMouseEvent: act("onMouseEvent"),
+  changePluginModal: act("changePluginModal"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

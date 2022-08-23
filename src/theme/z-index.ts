@@ -2,7 +2,6 @@ const zIndexes = {
   base: 1,
   hidden: -1,
   form: 100,
-  pluginModal: 150,
   infoBox: 300,
   pluginModal: 350,
   propertyFieldPopup: 500,
