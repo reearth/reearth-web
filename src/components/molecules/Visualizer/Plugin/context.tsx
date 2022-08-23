@@ -125,9 +125,7 @@ export function Provider({
     [overrideSceneProperty],
   );
   const changePluginModalCommon = useCallback(
-    (html?: string) => {
-      return changePluginModal(html);
-    },
+    (html?: string) => changePluginModal(html),
     [changePluginModal],
   );
 
@@ -161,8 +159,8 @@ export function Provider({
         zoomOut,
         viewport,
       }),
-      overrideSceneProperty,
       changePluginModal: changePluginModalCommon,
+      overrideSceneProperty,
     }),
     [
       api,

@@ -67,9 +67,7 @@ export default ({
   );
   const [pluginModal, changePluginModal] = useState<string>();
 
-  const handlePluginModalChange = useCallback((html?: string) => {
-    changePluginModal(html);
-  }, []);
+  const handlePluginModalChange = useCallback((html?: string) => changePluginModal(html), []);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
