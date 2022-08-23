@@ -19,6 +19,7 @@ import {
   PropertyBag,
   Clock as CesiumClock,
   JulianDate,
+  ClockStep,
 } from "cesium";
 import { useCallback } from "react";
 
@@ -318,26 +319,51 @@ export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | u
   return { lng, lat, height, heading, pitch, roll, fov };
 };
 
-export const getClock = (clock: CesiumClock) => {
-  const nextClock: Clock = {
-    startTime: JulianDate.toDate(clock.startTime),
-    stopTime: JulianDate.toDate(clock.stopTime),
-    currentTime: JulianDate.toDate(clock.currentTime),
-    tick: () => JulianDate.toDate(clock.tick()),
-    isPlaying: clock.shouldAnimate,
-  };
-
-  return new Proxy(nextClock, {
-    get: (target, prop: keyof Clock) => target[prop],
-    set: (_, prop: keyof Clock, val) => {
-      // Sync with cesium value.
-      const cesiumVal = val instanceof Date ? JulianDate.fromDate(val) : val;
-      // Convert prop to cesium clock object key
-      const cesiumKey = prop === "isPlaying" ? "shouldAnimate" : prop;
-      clock[cesiumKey] = cesiumVal;
-      return true;
+export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
+  if (!clock) return undefined;
+  return {
+    // Getter
+    get startTime() {
+      return JulianDate.toDate(clock.startTime);
     },
-  });
+    get stopTime() {
+      return JulianDate.toDate(clock.stopTime);
+    },
+    get currentTime() {
+      return JulianDate.toDate(clock.currentTime);
+    },
+    get tick() {
+      return () => JulianDate.toDate(clock.tick());
+    },
+    get isPlaying() {
+      return clock.shouldAnimate;
+    },
+    get speed() {
+      return clock.multiplier;
+    },
+
+    // Setter
+    set startTime(d: Date) {
+      clock["startTime"] = JulianDate.fromDate(d);
+    },
+    set stopTime(d: Date) {
+      clock["stopTime"] = JulianDate.fromDate(d);
+    },
+    set currentTime(d: Date) {
+      clock["currentTime"] = JulianDate.fromDate(d);
+    },
+    set tick(cb: () => Date) {
+      clock["tick"] = () => JulianDate.fromDate(cb());
+    },
+    set isPlaying(v: boolean) {
+      clock["shouldAnimate"] = v;
+    },
+    set speed(v: number) {
+      clock["multiplier"] = v;
+      // Force multiplier
+      clock["clockStep"] = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+    },
+  };
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>

@@ -355,4 +355,6 @@ export type Clock = {
   currentTime: Date;
   tick: () => Date;
   isPlaying: boolean;
+  // Speed of time. Specifies a multiplier for the speed of time in reality. Default is 1.
+  speed: number;
 };

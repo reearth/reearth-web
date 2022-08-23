@@ -7,7 +7,7 @@ import { useTimeline } from "./hooks";
 export type Props = WidgetProps;
 
 const Timeline = ({ widget, sceneProperty }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, events } = useTimeline();
+  const { isOpened, currentTime, range, speed, events } = useTimeline();
 
   return (
     <Widget extended={!!widget?.extended?.horizontally}>
@@ -16,6 +16,7 @@ const Timeline = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         currentTime={currentTime}
         range={range}
         sceneProperty={sceneProperty}
+        speed={speed}
         {...events}
       />
     </Widget>

@@ -23,11 +23,14 @@ export type Props = {
    * These value need to be epoch time.
    */
   range?: { [K in keyof Range]?: Range[K] };
+  speed?: number;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
-  onPlay?: TimeEventHandler;
+  onPlay?: (isPlaying: boolean) => void;
+  onPlayReversed?: (isPlaying: boolean) => void;
   onOpen?: () => void;
   onClose?: () => void;
+  onSpeedChange?: (speed: number) => void;
   isOpened?: boolean;
   sceneProperty?: SceneProperty;
 };
@@ -36,12 +39,15 @@ const Timeline: React.FC<Props> = memo(
   function TimelinePresenter({
     currentTime,
     range,
+    speed,
     onClick,
     onDrag,
     onPlay,
+    onPlayReversed,
     isOpened,
     onOpen,
     onClose,
+    onSpeedChange: onSpeedChangeProps,
     sceneProperty,
   }) {
     const {
@@ -54,13 +60,12 @@ const Timeline: React.FC<Props> = memo(
       currentPosition,
       events,
       player: {
-        playSpeed,
-        onPlaySpeedChange,
         formattedCurrentTime,
         isPlaying,
         isPlayingReversed,
         toggleIsPlaying,
         toggleIsPlayingReversed,
+        onSpeedChange,
       },
     } = useTimeline({
       currentTime,
@@ -68,6 +73,8 @@ const Timeline: React.FC<Props> = memo(
       onClick,
       onDrag,
       onPlay,
+      onPlayReversed,
+      onSpeedChange: onSpeedChangeProps,
     });
     const publishedTheme = usePublishTheme(sceneProperty?.theme);
     const t = useT();
@@ -97,14 +104,14 @@ const Timeline: React.FC<Props> = memo(
           </li>
           <li>
             <InputRangeLabel>
-              <InputRangeLabelText size="xs">{playSpeed}X</InputRangeLabelText>
+              <InputRangeLabelText size="xs">{speed}X</InputRangeLabelText>
               <InputRange
                 publishedTheme={publishedTheme}
                 type="range"
                 max={10000}
                 min={1}
-                value={playSpeed * 10}
-                onChange={onPlaySpeedChange}
+                value={speed}
+                onChange={onSpeedChange}
               />
             </InputRangeLabel>
           </li>

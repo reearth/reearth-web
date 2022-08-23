@@ -77,6 +77,7 @@ export const context: ProviderProps = {
     currentTime: new Date("2022-06-02"),
     tick: () => new Date("2022-06-03"),
     isPlaying: false,
+    speed: 1,
   },
   layers: new LayerStore({ id: "", children: layers }),
   flyTo: act("flyTo"),

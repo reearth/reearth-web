@@ -12,6 +12,8 @@ const makeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
+const DEFAULT_SPEED = 1;
+
 export const useTimeline = () => {
   const ctx = useContext();
   const clock = ctx?.reearth.visualizer.clock;
@@ -23,6 +25,9 @@ export const useTimeline = () => {
   const clockCurrentTime = clock?.currentTime.getTime();
   const clockStartTime = clock?.startTime.getTime();
   const clockStopTime = clock?.stopTime.getTime();
+  const clockSpeed = clock?.speed || DEFAULT_SPEED;
+
+  const [speed, setSpeed] = useState(clockSpeed);
 
   const handleOnOpen = useCallback(() => {
     setIsOpened(true);
@@ -42,20 +47,53 @@ export const useTimeline = () => {
     [clock],
   );
 
-  const handleOnPlay: TimeEventHandler = useCallback(
-    currentTime => {
+  const handleOnPlay = useCallback(
+    (isPlaying: boolean) => {
       if (!clock) {
         return;
       }
 
       // Stop cesium animation
-      clock.isPlaying = false;
+      clock.isPlaying = isPlaying;
+      clock.speed = Math.abs(speed);
       clock.tick();
-
-      handleTimeEvent(currentTime);
     },
-    [handleTimeEvent, clock],
+    [clock, speed],
   );
+
+  const handleOnPlayReversed = useCallback(
+    (isPlaying: boolean) => {
+      if (!clock) {
+        return;
+      }
+
+      // Stop cesium animation
+      clock.isPlaying = isPlaying;
+      clock.speed = Math.abs(speed) * -1;
+      clock.tick();
+    },
+    [clock, speed],
+  );
+
+  const handleOnSpeedChange = useCallback((speed: number) => {
+    setSpeed(speed);
+    if (clock) {
+      const absSpeed = Math.abs(speed);
+      // Maybe we need to throttle changing speed.
+      clock.speed = clock.speed > 0 ? absSpeed : absSpeed * -1;
+      clock.tick();
+    }
+  }, []);
+
+  // Initialize clock value
+  useEffect(() => {
+    if (clock) {
+      queueMicrotask(() => {
+        clock.speed = 1;
+        clock.tick();
+      });
+    }
+  }, []);
 
   // Sync cesium clock.
   useEffect(() => {
@@ -67,9 +105,11 @@ export const useTimeline = () => {
       }
       return prev;
     });
-  }, [clockCurrentTime, clockStartTime, clockStopTime]);
+    setSpeed(clockSpeed);
+  }, [clockCurrentTime, clockStartTime, clockStopTime, clockSpeed]);
 
   return {
+    speed,
     range,
     isOpened,
     currentTime,
@@ -79,6 +119,8 @@ export const useTimeline = () => {
       onClick: handleTimeEvent,
       onDrag: handleTimeEvent,
       onPlay: handleOnPlay,
+      onPlayReversed: handleOnPlayReversed,
+      onSpeedChange: handleOnSpeedChange,
     },
   };
 };

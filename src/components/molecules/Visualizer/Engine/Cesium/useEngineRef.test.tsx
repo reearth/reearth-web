@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { JulianDate, Viewer as CesiumViewer } from "cesium";
+import { ClockStep, JulianDate, Viewer as CesiumViewer } from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 import { vi, expect, test } from "vitest";
@@ -207,7 +207,9 @@ test("getClock", () => {
           stopTime,
           tick: mockTick,
           currentTime,
-          isPlaying: false,
+          shouldAnimate: false,
+          multiplier: 1,
+          clockStep: ClockStep.SYSTEM_CLOCK,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           // TODO: should test cesium event
@@ -223,30 +225,53 @@ test("getClock", () => {
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
-    return engineRef;
+    return { engineRef, cesium };
   });
 
-  expect(result.current.current?.getClock()?.startTime).toEqual(JulianDate.toDate(startTime));
-  expect(result.current.current?.getClock()?.stopTime).toEqual(JulianDate.toDate(stopTime));
-  expect(result.current.current?.getClock()?.currentTime).toEqual(JulianDate.toDate(currentTime));
-  expect(result.current.current?.getClock()?.isPlaying).toBeFalsy();
+  expect(result.current.engineRef.current?.getClock()?.startTime).toEqual(
+    JulianDate.toDate(startTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.stopTime).toEqual(
+    JulianDate.toDate(stopTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.currentTime).toEqual(
+    JulianDate.toDate(currentTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.isPlaying).toBeFalsy();
+  expect(result.current.cesium.current.cesiumElement?.clock?.shouldAnimate).toBeFalsy();
+  expect(result.current.engineRef.current?.getClock()?.speed).toBe(1);
+  expect(result.current.cesium.current.cesiumElement?.clock?.multiplier).toBe(1);
+  expect(result.current.cesium.current.cesiumElement?.clock?.clockStep).toBe(
+    ClockStep.SYSTEM_CLOCK,
+  );
 
-  const nextTickTime = result.current.current?.getClock()?.tick();
+  const nextTickTime = result.current.engineRef.current?.getClock()?.tick();
 
   expect(nextTickTime).toEqual(JulianDate.toDate(tickTime));
 
   const nextStartTime = JulianDate.fromIso8601("2022-01-10");
   const nextStopTime = JulianDate.fromIso8601("2022-01-16");
   const nextCurrentTime = JulianDate.fromIso8601("2022-01-11");
-  const clock = result.current.current?.getClock() || ({} as Clock);
+  const clock = result.current.engineRef.current?.getClock() || ({} as Clock);
   clock.startTime = JulianDate.toDate(nextStartTime);
   clock.stopTime = JulianDate.toDate(nextStopTime);
   clock.currentTime = JulianDate.toDate(nextCurrentTime);
   clock.isPlaying = true;
-  expect(result.current.current?.getClock()?.startTime).toEqual(JulianDate.toDate(nextStartTime));
-  expect(result.current.current?.getClock()?.stopTime).toEqual(JulianDate.toDate(nextStopTime));
-  expect(result.current.current?.getClock()?.currentTime).toEqual(
+  clock.speed = 2;
+  expect(result.current.engineRef.current?.getClock()?.startTime).toEqual(
+    JulianDate.toDate(nextStartTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.stopTime).toEqual(
+    JulianDate.toDate(nextStopTime),
+  );
+  expect(result.current.engineRef.current?.getClock()?.currentTime).toEqual(
     JulianDate.toDate(nextCurrentTime),
   );
-  expect(result.current.current?.getClock()?.isPlaying).toBeTruthy();
+  expect(result.current.engineRef.current?.getClock()?.isPlaying).toBeTruthy();
+  expect(result.current.cesium.current.cesiumElement?.clock?.shouldAnimate).toBeTruthy();
+  expect(result.current.engineRef.current?.getClock()?.speed).toBe(2);
+  expect(result.current.cesium.current.cesiumElement?.clock?.multiplier).toBe(2);
+  expect(result.current.cesium.current.cesiumElement?.clock?.clockStep).toBe(
+    ClockStep.SYSTEM_CLOCK_MULTIPLIER,
+  );
 });
