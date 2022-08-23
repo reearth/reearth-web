@@ -128,6 +128,8 @@ export function useAPI({
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
 
+  const isModal = extensionId === "modal";
+
   const event =
     useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
 
@@ -186,7 +188,7 @@ export function useAPI({
     return (
       { postMessage, render, resize }: IFrameAPI,
       {
-        postMessage: ModalPostMessage,
+        postMessage: modalPostMessage,
         render: modalRender,
         resize: modalResize,
         close: modalClose,
@@ -206,27 +208,26 @@ export function useAPI({
         widget: getWidget,
         postMessage,
         render: (html, { extended, ...options } = {}) => {
+          if (isModal) return;
           render(html, options);
           onRender?.(
             typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
           );
         },
         resize: (width, height, extended) => {
+          if (isModal) return;
           resize(width, height);
           onResize?.(width, height, extended);
         },
         modal: {
           render: (html, { ...options } = {}) => {
             modalRender(html, options);
-            // onRender?.(
-            //   typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
-            // );
           },
           resize: (width, height) => {
             modalResize(width, height);
             // onResize?.(width, height);
           },
-          postMessage: ModalPostMessage,
+          postMessage: modalPostMessage,
           close: () => {
             modalClose();
           },

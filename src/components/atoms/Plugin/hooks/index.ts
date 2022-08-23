@@ -32,13 +32,13 @@ export type Options = {
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
   ref?: Ref<RefType>;
   isModal?: boolean;
+  onModalChange?: (html?: string | undefined) => void;
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
   exposed?:
     | ((api: IFrameAPI, modalApi: IFrameAPI) => { [key: string]: any })
     | { [key: string]: any };
-  onModalChange?: (html?: string | undefined) => void;
 };
 
 // restrict any classes
@@ -63,11 +63,11 @@ export default function useHook({
   isMarshalable,
   ref,
   isModal,
+  onModalChange,
   onPreInit,
   onError = defaultOnError,
   onDispose,
   exposed,
-  onModalChange,
 }: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
@@ -114,12 +114,17 @@ export default function useHook({
   const iFrameApi = useMemo<IFrameAPI>(
     () => ({
       render: (html, { visible = true, ...options } = {}) => {
+        if (isModal) return;
         setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
       },
       resize: (width, height) => {
+        if (isModal) return;
         iFrameRef.current?.resize(width, height);
       },
-      postMessage,
+      postMessage: (msg: any) => {
+        if (isModal) return;
+        postMessage(msg);
+      },
     }),
     [iframeCanBeVisible, postMessage],
   );
@@ -134,10 +139,13 @@ export default function useHook({
         }
       },
       resize: (width, height) => {
-        console.log(width, height, "sladkfj");
-        // iFrameRef.current?.resize(width, height);
+        if (!isModal) return;
+        iFrameRef.current?.resize(width, height);
       },
-      postMessage,
+      postMessage: (msg: any) => {
+        if (!isModal) return;
+        postMessage(msg);
+      },
       close: () => {
         onModalChange?.(undefined);
       },

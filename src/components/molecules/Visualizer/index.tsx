@@ -200,26 +200,29 @@ export default function Visualizer({
         </Engine>
         {ready && <PluginModal modal={pluginModal} />}
         {ready && (
-          <Infobox
-            title={infobox?.title}
-            infoboxKey={infobox?.infoboxKey}
-            visible={!!infobox?.visible}
-            sceneProperty={overriddenSceneProperty}
-            blocks={infobox?.blocks}
-            layer={infobox?.layer}
-            selectedBlockId={selectedBlockId}
-            pluginProperty={pluginProperty}
-            isBuilt={props.isBuilt}
-            isEditable={props.isEditable && !!infobox?.isEditable}
-            onBlockChange={changeBlock}
-            onBlockDelete={onBlockDelete}
-            onBlockMove={onBlockMove}
-            onBlockInsert={onBlockInsert}
-            onBlockSelect={selectBlock}
-            renderInsertionPopUp={renderInfoboxInsertionPopUp}
-            pluginBaseUrl={pluginBaseUrl}
-            onMaskClick={handleInfoboxMaskClick}
-          />
+          <>
+            <PluginModal modal={pluginModal} />
+            <Infobox
+              title={infobox?.title}
+              infoboxKey={infobox?.infoboxKey}
+              visible={!!infobox?.visible}
+              sceneProperty={overriddenSceneProperty}
+              blocks={infobox?.blocks}
+              layer={infobox?.layer}
+              selectedBlockId={selectedBlockId}
+              pluginProperty={pluginProperty}
+              isBuilt={props.isBuilt}
+              isEditable={props.isEditable && !!infobox?.isEditable}
+              onBlockChange={changeBlock}
+              onBlockDelete={onBlockDelete}
+              onBlockMove={onBlockMove}
+              onBlockInsert={onBlockInsert}
+              onBlockSelect={selectBlock}
+              renderInsertionPopUp={renderInfoboxInsertionPopUp}
+              pluginBaseUrl={pluginBaseUrl}
+              onMaskClick={handleInfoboxMaskClick}
+            />
+          </>
         )}
         {children}
         {!ready && (

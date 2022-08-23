@@ -125,8 +125,8 @@ export function Provider({
     [overrideSceneProperty],
   );
   const changePluginModalCommon = useCallback(
-    (m?: string) => {
-      return changePluginModal(m);
+    (html?: string) => {
+      return changePluginModal(html);
     },
     [changePluginModal],
   );

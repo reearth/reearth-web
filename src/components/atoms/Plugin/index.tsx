@@ -46,13 +46,13 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
     iFrameProps,
     isMarshalable,
     isModal,
+    onModalChange,
     exposed,
     onMessage,
     onPreInit,
     onError,
     onDispose,
     onClick,
-    onModalChange,
   },
   ref,
 ) => {
@@ -61,14 +61,14 @@ const Plugin: ForwardRefRenderFunction<RefType, Props> = (
     skip,
     src,
     sourceCode,
-    isModal,
     isMarshalable,
-    exposed,
     ref,
+    isModal,
+    onModalChange,
+    exposed,
     onPreInit,
     onError,
     onDispose,
-    onModalChange,
   });
 
   return iFrameHtml ? (

@@ -8,7 +8,6 @@ export type Props<PP = any, SP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   modal?: string;
-  sourceCode?: string;
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
@@ -24,19 +23,22 @@ function PluginModal<PP = any, SP = any>({
   // editing,
   ...props
 }: Props<PP, SP>) {
-  // const id = "modal";
+  // const modalType = "modal";
+  // const { pluginModal, changePluginModal } = useContext() ?? {};
 
-  // const handleRender = useCallback<NonNullable<PluginProps["onRender"]>>(
-  //   options => {
-  //     onExtend?.(id, options?.extended);
+  // const handleChangePluginModal = useCallback(
+  //   (html?: string | undefined) => {
+  //     console.log("change?");
+  //     if (id && html) {
+  //       console.log(id, "change from parent?");
+  //       // console.log(html, "change from parent?");
+  //       changePluginModal?.({ parentId: id, html });
+  //     } else if (id === pluginModal?.parentId || isModal) {
+  //       console.log("close?");
+  //       changePluginModal?.({});
+  //     }
   //   },
-  //   [id, onExtend],
-  // );
-  // const handleResize = useCallback<NonNullable<PluginProps["onResize"]>>(
-  //   (_width, _height, extended) => {
-  //     onExtend?.(id, extended);
-  //   },
-  //   [id, onExtend],
+  //   [id, isModal, pluginModal?.parentId, changePluginModal],
   // );
 
   const transition = useTransition(!!modal, 200, {
@@ -44,21 +46,21 @@ function PluginModal<PP = any, SP = any>({
     unmountOnExit: true,
   });
 
-  return (
+  return modal ? (
     <Wrapper transition={transition}>
       <Plugin
         autoResize={"both"} // MAYBE/PROBABLY REMOVE
+        extensionType="modal"
         sourceCode={modal}
-        extensionType="modal" //Set to Modal??
         visible
         pluginBaseUrl={pluginBaseUrl}
         property={props.pluginProperty}
-        iFrameProps={{ style: { pointerEvents: modal ? "auto" : "none" } }}
+        iFrameProps={{ style: { pointerEvents: "auto" } }}
         // onRender={handleRender}
         // onResize={handleResize}
       />
     </Wrapper>
-  );
+  ) : null;
 }
 
 export default PluginModal;

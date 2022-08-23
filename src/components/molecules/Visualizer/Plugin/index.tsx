@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
-import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 
+import { useContext } from "./context";
 import useHooks from "./hooks";
 import type { Layer, Widget, Block } from "./types";
 
@@ -81,6 +81,7 @@ export default function Plugin({
     onResize,
   });
 
+  const isModal = extensionType === "modal";
   const { changePluginModal } = useContext() ?? {};
 
   const handleChangePluginModal = useCallback(
@@ -97,14 +98,14 @@ export default function Plugin({
       iFrameProps={iFrameProps}
       canBeVisible={visible}
       isMarshalable={isMarshalable}
-      isModal={extensionType === "modal"}
+      isModal={isModal}
+      onModalChange={handleChangePluginModal}
       exposed={exposed}
       onError={onError}
       onMessage={onMessage}
       onPreInit={onPreInit}
       onDispose={onDispose}
       onClick={onClick}
-      onModalChange={handleChangePluginModal}
     />
   ) : null;
 }
