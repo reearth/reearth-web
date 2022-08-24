@@ -58,6 +58,8 @@ export type Props = {
   layersInViewport: () => Layer[];
   viewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
+  enableScreenSpaceCameraController: () => void;
+  disableScreenSpaceCameraController: () => void;
 };
 
 export type Context = {
@@ -99,6 +101,8 @@ export function Provider({
   zoomOut,
   viewport,
   onMouseEvent,
+  enableScreenSpaceCameraController,
+  disableScreenSpaceCameraController,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
@@ -151,6 +155,8 @@ export function Provider({
         zoomIn,
         zoomOut,
         viewport,
+        enableScreenSpaceCameraController,
+        disableScreenSpaceCameraController,
       }),
       overrideSceneProperty,
     }),
@@ -180,6 +186,8 @@ export function Provider({
       zoomIn,
       zoomOut,
       viewport,
+      enableScreenSpaceCameraController,
+      disableScreenSpaceCameraController,
     ],
   );
 

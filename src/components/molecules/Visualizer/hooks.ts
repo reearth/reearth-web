@@ -406,6 +406,8 @@ function useProviderProps(
     | "layersInViewport"
     | "viewport"
     | "onMouseEvent"
+    | "enableScreenSpaceCameraController"
+    | "disableScreenSpaceCameraController"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -493,6 +495,16 @@ function useProviderProps(
     [engineRef],
   );
 
+  const enableScreenSpaceCameraController = useCallback(
+    () => engineRef?.current?.enableScreenSpaceCameraController(),
+    [engineRef],
+  );
+
+  const disableScreenSpaceCameraController = useCallback(
+    () => engineRef?.current?.disableScreenSpaceCameraController(),
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -504,5 +516,7 @@ function useProviderProps(
     layersInViewport,
     viewport,
     onMouseEvent,
+    enableScreenSpaceCameraController,
+    disableScreenSpaceCameraController,
   };
 }

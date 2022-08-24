@@ -147,6 +147,8 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   viewport,
+  enableScreenSpaceCameraController,
+  disableScreenSpaceCameraController,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -170,6 +172,8 @@ export function commonReearth({
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
+  enableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["enableScreenSpaceControl"];
+  disableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["disableScreenSpaceControl"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -187,6 +191,8 @@ export function commonReearth({
         get viewport() {
           return viewport();
         },
+        enableScreenSpaceControl: enableScreenSpaceCameraController,
+        disableScreenSpaceControl: disableScreenSpaceCameraController,
       },
       get property() {
         return sceneProperty();

@@ -61,6 +61,8 @@ export type EngineRef = {
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
+  enableScreenSpaceCameraController: () => void;
+  disableScreenSpaceCameraController: () => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
