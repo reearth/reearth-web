@@ -24,4 +24,7 @@ test("attachTag", () => {
   expect(entity.properties?.hasProperty("tag_a")).toBe(true);
   const result3 = entity.properties?.getValue(time);
   expect(result3["tag_a"]).toBe("value_a2");
+
+  attachTag(entity, "tag_a", undefined);
+  expect(entity.properties?.hasProperty("tag_a")).toBe(false);
 });
