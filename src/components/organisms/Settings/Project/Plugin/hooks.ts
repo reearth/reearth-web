@@ -5,6 +5,7 @@ import { useAuth } from "@reearth/auth";
 import { PluginItem } from "@reearth/components/molecules/Settings/Project/Plugin/PluginSection";
 import {
   useGetInstalledPluginsQuery,
+  useInstallPluginMutation,
   useUninstallPluginMutation,
   useUploadPluginMutation,
 } from "@reearth/gql/graphql-client-api";
@@ -27,6 +28,7 @@ export default (projectId: string) => {
     });
   }, [getAccessToken]);
 
+  const [installPluginMutation] = useInstallPluginMutation();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
 
@@ -38,14 +40,12 @@ export default (projectId: string) => {
     [],
   );
 
-  const {
-    data: rawSceneData,
-    loading: sceneLoading,
-    // refetch: refetchInstalledPlugins,
-  } = useGetInstalledPluginsQuery({
+  const { data: rawSceneData, loading: sceneLoading } = useGetInstalledPluginsQuery({
     variables: { projectId: projectId ?? "", lang: locale },
     skip: !projectId,
   });
+
+  const sceneId = useMemo(() => rawSceneData?.scene?.id, [rawSceneData]);
 
   const installedPlugins = useMemo(() => {
     return rawSceneData
@@ -62,9 +62,27 @@ export default (projectId: string) => {
       : [];
   }, [rawSceneData]);
 
-  const installByUploadingZipFile = useCallback(
+  const handleInstallByMarketplace = useCallback(async (pluginId: string) => {
+    if (!sceneId) return;
+    const results = await installPluginMutation({
+      variables: { sceneId, pluginId },
+    });
+    if (results.errors || !results.data?.installPlugin?.scenePlugin) {
+      setNotification({
+        type: "error",
+        text: t("Failed to install plugin."),
+      });
+    } else {
+      setNotification({
+        type: "success",
+        text: t("Successfully installed plugin!"),
+      });
+      await client.resetStore();
+    }
+  }, []);
+
+  const handleInstallByUploadingZipFile = useCallback(
     async (files: FileList) => {
-      const sceneId = rawSceneData?.scene?.id;
       if (!sceneId) return;
       const results = await Promise.all(
         Array.from(files).map(f =>
@@ -84,16 +102,14 @@ export default (projectId: string) => {
           type: "success",
           text: t("Successfully installed plugin!"),
         });
-        // await refetchInstalledPlugins();
         client.resetStore();
       }
     },
     [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
   );
 
-  const installFromPublicRepo = useCallback(
+  const handleInstallFromPublicRepo = useCallback(
     async (repoUrl: string) => {
-      const sceneId = rawSceneData?.scene?.id;
       if (!sceneId) return;
       const results = await uploadPluginMutation({
         variables: { sceneId: sceneId, url: repoUrl },
@@ -108,7 +124,6 @@ export default (projectId: string) => {
           type: "success",
           text: t("Successfully installed plugin!"),
         });
-        // await refetchInstalledPlugins();
         await client.resetStore();
       }
     },
@@ -147,8 +162,9 @@ export default (projectId: string) => {
     installedPlugins,
     extensions,
     accessToken,
-    installByUploadingZipFile,
-    installFromPublicRepo,
+    handleInstallByMarketplace,
+    handleInstallByUploadingZipFile,
+    handleInstallFromPublicRepo,
     uninstallPlugin,
   };
 };

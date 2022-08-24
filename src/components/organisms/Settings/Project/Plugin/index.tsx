@@ -22,8 +22,9 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
     loading,
     extensions,
     accessToken,
-    installFromPublicRepo,
-    installByUploadingZipFile,
+    handleInstallByMarketplace,
+    handleInstallByUploadingZipFile,
+    handleInstallFromPublicRepo,
     uninstallPlugin,
   } = useHooks(projectId);
 
@@ -36,8 +37,9 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
           installedPlugins={installedPlugins}
           extensions={extensions}
           accessToken={accessToken}
-          installFromPublicRepo={installFromPublicRepo}
-          installByUploadingZipFile={installByUploadingZipFile}
+          onInstallByMarketplace={handleInstallByMarketplace}
+          onInstallByUploadingZipFile={handleInstallByUploadingZipFile}
+          onInstallFromPublicRepo={handleInstallFromPublicRepo}
           uninstallPlugin={uninstallPlugin}
         />
       ) : (
