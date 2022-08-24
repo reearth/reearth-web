@@ -24,7 +24,7 @@ export type Props = {
 const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg }) => {
   const theme = useTheme();
   return (
-    <Box m="2xl" key={id} className={className} bg={bg} data-testid="atoms-accordion-item">
+    <Box mv="2xl" key={id} className={className} bg={bg} data-testid="atoms-accordion-item">
       <AccordionItemComponent>
         <AccordionItemHeading>
           <StyledAccordionItemButton data-testid="atoms-accordion-item-header">

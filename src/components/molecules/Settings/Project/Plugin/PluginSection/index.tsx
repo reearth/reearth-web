@@ -14,9 +14,14 @@ export type PluginItem = PluginItemType;
 
 export type Props = {
   title?: string;
-  plugins?: PluginItem[];
   loading?: boolean;
-  installedPlugins?: PluginItem[];
+  marketplacePluginIds?:
+    | {
+        id: string;
+        version: string;
+      }[]
+    | undefined;
+  personalPlugins?: PluginItem[];
   extensions?: {
     library: Extension<"plugin-library">[] | undefined;
     installed: Extension<"plugin-installed">[] | undefined;
@@ -32,11 +37,12 @@ export type PluginPageMode = "list" | "install-way" | PluginInstallWay;
 
 export type PluginInstallWay = "install-zip" | "install-public-repo" | "install-private-repo";
 
-export type PluginTabs = "Library" | "Installed" | "Uploaded";
+export type PluginTabs = "Marketplace" | "Public" | "Personal";
 
 const PluginSection: React.FC<Props> = ({
   loading,
-  installedPlugins,
+  marketplacePluginIds,
+  personalPlugins,
   extensions,
   accessToken,
   onInstallByMarketplace,
@@ -53,24 +59,24 @@ const PluginSection: React.FC<Props> = ({
 
   const tabHeaders = useMemo(
     () => ({
-      Library: t("Plugin Library"),
-      Installed: t("Installed"),
-      Uploaded: t("Uploaded Plugins"),
+      Marketplace: t("Plugin Marketplace"),
+      Public: t("Public Installed"),
+      Personal: t("Personal Installed"),
     }),
     [t],
   );
 
   return (
     <>
-      <TabSection<PluginTabs> selected="Library" menuAlignment="top" headers={tabHeaders}>
+      <TabSection<PluginTabs> selected="Marketplace" menuAlignment="top" headers={tabHeaders}>
         {{
-          Library: (
+          Marketplace: (
             <Box p="2xl">
               {accessToken &&
                 extensions?.library?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    pluginId={queriedPluginId}
+                    selectedPluginId={queriedPluginId}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}
@@ -78,13 +84,13 @@ const PluginSection: React.FC<Props> = ({
                 ))}
             </Box>
           ),
-          Installed: (
+          Public: (
             <Box p="2xl">
               {accessToken &&
                 extensions?.installed?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    pluginId={queriedPluginId}
+                    installedPlugins={marketplacePluginIds}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}
@@ -92,11 +98,11 @@ const PluginSection: React.FC<Props> = ({
                 ))}
             </Box>
           ),
-          Uploaded: loading ? (
+          Personal: loading ? (
             <Loading />
           ) : (
             <PluginInstall
-              installedPlugins={installedPlugins}
+              installedPlugins={personalPlugins}
               installFromPublicRepo={onInstallFromPublicRepo}
               installByUploadingZipFile={onInstallByUploadingZipFile}
               uninstallPlugin={uninstallPlugin}

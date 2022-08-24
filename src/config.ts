@@ -31,11 +31,11 @@ export type ProjectPublicationExtensionProps = {
 
 export type PluginExtensionProps = {
   accessToken?: string;
-  pluginId?: string;
+  selectedPluginId?: string;
   installedPlugins?: {
     id: string;
     version: string;
-  };
+  }[];
   onInstall?: (pluginId: string) => void;
   onUninstall?: (pluginId: string) => void;
 } & SharedExtensionProps;

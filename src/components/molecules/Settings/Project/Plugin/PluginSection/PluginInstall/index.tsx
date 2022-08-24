@@ -47,7 +47,7 @@ const PluginInstall: React.FC<Props> = ({
 
   return (
     <>
-      <Box p="2xl">
+      <Box pv="2xl">
         <Flex gap={28}>
           {installChoices.map(c => {
             return c.mode === "install-public-repo" ? (
@@ -68,21 +68,22 @@ const PluginInstall: React.FC<Props> = ({
           })}
         </Flex>
       </Box>
-      <SectionTitle>
-        <Box mh="m">
-          <Text weight="bold" size="m">
-            {t("Installed plugins")}
-          </Text>
-        </Box>
-      </SectionTitle>
+      <StyledBox pb="s">
+        <StyledText weight="bold" size="m" customColor>
+          {t("Installed")}
+        </StyledText>
+      </StyledBox>
       <PluginAccordion items={installedPlugins} uninstallPlugin={uninstallPlugin} />
     </>
   );
 };
 
-const SectionTitle = styled.div`
+const StyledBox = styled(Box)`
   border-bottom: ${props => `solid 1px ${props.theme.main.border}`};
-  padding-bottom: ${props => props.theme.metrics.xl}px;
+`;
+
+const StyledText = styled(Text)`
+  color: ${({ theme }) => theme.text.pale};
 `;
 
 export default PluginInstall;

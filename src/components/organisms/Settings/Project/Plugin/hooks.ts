@@ -47,7 +47,23 @@ export default (projectId: string) => {
 
   const sceneId = useMemo(() => rawSceneData?.scene?.id, [rawSceneData]);
 
-  const installedPlugins = useMemo(() => {
+  const marketplacePluginIds = useMemo(
+    () =>
+      rawSceneData
+        ? rawSceneData?.scene?.plugins
+            .filter(p => p.plugin?.id !== "reearth" && !sceneId)
+            .map<{ id: string; version: string }>(p => {
+              const [id, version] = p.plugin?.id.split("~") ?? ["", ""];
+              return {
+                id,
+                version,
+              };
+            })
+        : [],
+    [],
+  );
+
+  const personalPlugins = useMemo(() => {
     return rawSceneData
       ? rawSceneData?.scene?.plugins
           .filter(p => p.plugin?.id !== "reearth")
@@ -159,7 +175,8 @@ export default (projectId: string) => {
     currentTeam,
     currentProject,
     loading,
-    installedPlugins,
+    marketplacePluginIds,
+    personalPlugins,
     extensions,
     accessToken,
     handleInstallByMarketplace,
