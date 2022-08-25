@@ -52,6 +52,7 @@ export type Props = {
   onLayerGroupCreate?: () => void;
   onLayerImport?: (file: File, format: Format) => void;
   onDrop?: (layer: string, index: number, childrenCount: number) => any;
+  onZoomToLayer?: (layerId: string) => void;
 };
 
 const OutlinePane: React.FC<Props> = ({
@@ -84,6 +85,7 @@ const OutlinePane: React.FC<Props> = ({
   onLayerImport,
   onLayerGroupCreate,
   onDrop,
+  // onZoomToLayer, // TODO
   loading,
 }) => {
   const t = useT();

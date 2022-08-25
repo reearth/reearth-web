@@ -58,6 +58,7 @@ export type EngineRef = {
   getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;

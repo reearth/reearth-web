@@ -69,6 +69,13 @@ export default function useEngineRef(
           options,
         );
       },
+      lookAtLayer: layerId => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const e = viewer.entities.getById(layerId);
+        if (!e) return;
+        viewer.zoomTo(e);
+      },
       getViewport: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;

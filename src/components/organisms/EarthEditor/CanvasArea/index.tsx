@@ -17,6 +17,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
   const {
     rootLayerId,
     selectedBlockId,
+    zoomedLayerId,
     sceneProperty,
     pluginProperty,
     clusterProperty,
@@ -61,6 +62,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       widgets={widgets}
       selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}
+      zoomedLayerId={zoomedLayerId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}
       tags={tags}
