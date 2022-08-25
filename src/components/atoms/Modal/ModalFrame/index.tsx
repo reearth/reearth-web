@@ -7,7 +7,6 @@ import { styled } from "@reearth/theme";
 
 export type Props = {
   children?: ReactNode;
-  title?: string;
   size?: "sm" | "md" | "lg";
   isVisible?: boolean;
   onClose?: () => void;
