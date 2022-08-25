@@ -78,8 +78,10 @@ const Thumbnail = styled.img`
 
 const StyledButton = styled(Button)`
   font-weight: ${fonts.weight.bold};
+  width: 153px;
   border-radius: ${props => props.theme.metrics.s}px;
   padding: ${({ theme }) => `${theme.metrics.s}px ${theme.metrics["2xl"]}`};
+  transition: all 0.3s;
 `;
 
 export default PluginAccordionItemHeader;

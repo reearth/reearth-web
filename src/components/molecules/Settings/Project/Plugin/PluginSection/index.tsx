@@ -33,9 +33,13 @@ export type Props = {
   uninstallPlugin: (pluginId: string) => void;
 };
 
-export type PluginPageMode = "list" | "install-way" | PluginInstallWay;
+export type PluginPageMode = "list" | "install-way" | PluginActions;
 
-export type PluginInstallWay = "install-zip" | "install-public-repo" | "install-private-repo";
+export type PluginActions =
+  | "install-zip"
+  | "install-public-repo"
+  | "install-private-repo"
+  | "market-publish";
 
 export type PluginTabs = "Marketplace" | "Public" | "Personal";
 

@@ -7,9 +7,10 @@ import Text from "@reearth/components/atoms/Text";
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
-import { PluginInstallWay } from "..";
+import { PluginActions } from "..";
 import PluginAccordion, { PluginItem } from "../../PluginAccordion";
 
+import MarketplacePublish from "./MarketplacePublish";
 import PublicRepo from "./PublicRepo";
 import ZipUpload from "./ZipUpload";
 
@@ -27,7 +28,7 @@ const PluginInstall: React.FC<Props> = ({
   uninstallPlugin,
 }) => {
   const t = useT();
-  const installChoices: { text: string; mode: PluginInstallWay; icon: Icons }[] = [
+  const actionChoices: { text: string; mode: PluginActions; icon: Icons }[] = [
     {
       text: t("Zip file from PC"),
       mode: "install-zip",
@@ -37,6 +38,11 @@ const PluginInstall: React.FC<Props> = ({
       text: t("Public GitHub repository"),
       mode: "install-public-repo",
       icon: "publicGitHubRepo",
+    },
+    {
+      text: t("Publish your plugin in the Marketplace"),
+      mode: "market-publish",
+      icon: "marketplace",
     },
     // {
     //   text: t("Private GitHub repository"),
@@ -48,8 +54,8 @@ const PluginInstall: React.FC<Props> = ({
   return (
     <>
       <Box pv="2xl">
-        <Flex gap={28}>
-          {installChoices.map(c => {
+        <StyledFlex gap={28} wrap="wrap">
+          {actionChoices.map(c => {
             return c.mode === "install-public-repo" ? (
               <PublicRepo
                 key={c.mode}
@@ -64,9 +70,11 @@ const PluginInstall: React.FC<Props> = ({
                 buttonText={c.text}
                 onSend={installByUploadingZipFile}
               />
+            ) : c.mode === "market-publish" ? (
+              <MarketplacePublish key={c.mode} icon={c.icon} buttonText={c.text} />
             ) : null;
           })}
-        </Flex>
+        </StyledFlex>
       </Box>
       <StyledBox pb="s">
         <StyledText weight="bold" size="m" customColor>
@@ -77,6 +85,10 @@ const PluginInstall: React.FC<Props> = ({
     </>
   );
 };
+
+const StyledFlex = styled(Flex)`
+  width: 782px;
+`;
 
 const StyledBox = styled(Box)`
   border-bottom: ${props => `solid 1px ${props.theme.main.border}`};
