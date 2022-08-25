@@ -1,0 +1,57 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import type { Ref as IFrameRef } from "../IFrame";
+
+import { usePostMessage } from "./usePostMessage";
+
+export type IFrameAPI = {
+  render: (
+    html: string,
+    options?: { visible?: boolean; width?: number | string; height?: number | string },
+  ) => void;
+  resize: (width: string | number | undefined, height: string | number | undefined) => void;
+  postMessage: (message: any) => void;
+};
+
+export default function useIFrame({
+  loaded,
+  visible: iframeCanBeVisible,
+}: {
+  loaded?: boolean;
+  visible?: boolean;
+}) {
+  const ref = useRef<IFrameRef>(null);
+  const [iFrameLoaded, setIFrameLoaded] = useState(false);
+  const [[html, options], setIFrameState] = useState<
+    [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
+  >(["", undefined]);
+  const postMessage = usePostMessage(ref, !loaded || !iFrameLoaded);
+  const handleLoad = useCallback(() => setIFrameLoaded(true), []);
+  const reset = useCallback(() => setIFrameState(["", undefined]), []);
+
+  const api = useMemo<IFrameAPI>(
+    () => ({
+      render: (html, { visible = true, ...options } = {}) => {
+        setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
+      },
+      resize: (width, height) => {
+        ref.current?.resize(width, height);
+      },
+      postMessage,
+    }),
+    [],
+  );
+
+  useEffect(() => {
+    if (!loaded) setIFrameLoaded(false);
+  }, [loaded]);
+
+  return {
+    ref,
+    api,
+    html,
+    options,
+    handleLoad,
+    reset,
+  };
+}

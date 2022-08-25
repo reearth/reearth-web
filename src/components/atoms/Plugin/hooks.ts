@@ -1,36 +1,18 @@
 import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useRef, useState, useMemo, useImperativeHandle, Ref } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { Ref as IFrameRef } from "../IFrame";
-
-import { usePostMessage } from "./usePostMessage";
-
-export type IFrameAPI = {
-  render: (
-    html: string,
-    options?: { visible?: boolean; width?: number | string; height?: number | string },
-  ) => void;
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
-  postMessage: (message: any) => void;
-};
-
-export type RefType = {
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
-  arena: () => Arena | undefined;
-};
+import { IFrameAPI, Ref as IFrameRef } from "./PluginIFrame";
 
 export type Options = {
   src?: string;
   sourceCode?: string;
   skip?: boolean;
-  iframeCanBeVisible?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
-  ref?: Ref<RefType>;
+  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
-  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
 };
 
 // restrict any classes
@@ -51,9 +33,7 @@ export default function useHook({
   src,
   sourceCode,
   skip,
-  iframeCanBeVisible,
   isMarshalable,
-  ref,
   onPreInit,
   onError = defaultOnError,
   onDispose,
@@ -62,15 +42,9 @@ export default function useHook({
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
-  const [iFrameLoaded, setIFrameLoaded] = useState(false);
   const [code, setCode] = useState("");
-  const iFrameRef = useRef<IFrameRef>(null);
-  const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
-    [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
-  >(["", undefined]);
-  const postMessage = usePostMessage(iFrameRef, !loaded || !iFrameLoaded);
 
-  const handleIFrameLoad = useCallback(() => setIFrameLoaded(true), []);
+  const mainIFrameRef = useRef<IFrameRef>(null);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -101,19 +75,6 @@ export default function useHook({
     [onError],
   );
 
-  const iFrameApi = useMemo<IFrameAPI>(
-    () => ({
-      render: (html, { visible = true, ...options } = {}) => {
-        setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
-      },
-      resize: (width, height) => {
-        iFrameRef.current?.resize(width, height);
-      },
-      postMessage,
-    }),
-    [iframeCanBeVisible, postMessage],
-  );
-
   useEffect(() => {
     (async () => {
       const code = sourceCode ?? (src ? await (await fetch(src)).text() : "");
@@ -124,6 +85,8 @@ export default function useHook({
   // init and dispose of vm
   useEffect(() => {
     if (skip || !code) return;
+    const mainIFrameAPI = mainIFrameRef.current?.api;
+    if (!mainIFrameAPI) return;
 
     onPreInit?.();
 
@@ -135,7 +98,7 @@ export default function useHook({
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
 
-      const e = typeof exposed === "function" ? exposed(iFrameApi) : exposed;
+      const e = typeof exposed === "function" ? exposed(mainIFrameAPI) : exposed;
       if (e) {
         arena.current.expose(e);
       }
@@ -146,7 +109,7 @@ export default function useHook({
 
     return () => {
       onDispose?.();
-      setIFrameState(["", undefined]);
+      mainIFrameRef.current?.reset();
       setLoaded(false);
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
@@ -162,28 +125,10 @@ export default function useHook({
         }
       }
     };
-  }, [code, evalCode, iFrameApi, isMarshalable, onDispose, onPreInit, skip, exposed]);
-
-  useEffect(() => {
-    if (!loaded) setIFrameLoaded(false);
-  }, [loaded]);
-
-  useImperativeHandle(
-    ref,
-    (): RefType => ({
-      resize: (width, height) => {
-        iFrameRef.current?.resize(width, height);
-      },
-      arena: () => arena.current,
-    }),
-    [],
-  );
+  }, [code, evalCode, isMarshalable, onDispose, onPreInit, skip, exposed]);
 
   return {
-    iFrameHtml,
-    iFrameRef,
-    iFrameOptions,
+    mainIFrameRef,
     loaded,
-    handleIFrameLoad,
   };
 }
