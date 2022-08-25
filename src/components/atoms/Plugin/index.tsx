@@ -1,12 +1,12 @@
-import { IframeHTMLAttributes, ReactNode } from "react";
+import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
 
-import useHook, { defaultIsMarshalable, IFrameType, API } from "./hooks";
+import useHook, { defaultIsMarshalable, IFrameType, API, Ref } from "./hooks";
 import PluginIFrame, { AutoResize } from "./PluginIFrame";
 
 export { defaultIsMarshalable };
 
 export type { AutoResize } from "./PluginIFrame";
-export type { API, IFrameType } from "./hooks";
+export type { API, IFrameType, Ref } from "./hooks";
 
 export type Props = {
   className?: string;
@@ -31,37 +31,42 @@ export type Props = {
   onRender?: (type: IFrameType) => void;
 };
 
-export default function Plugin({
-  className,
-  canBeVisible,
-  modalCanBeVisible,
-  popupCanBeVisible,
-  skip,
-  src,
-  sourceCode,
-  renderPlaceholder,
-  autoResize,
-  iFrameProps,
-  isMarshalable,
-  modalContainer,
-  popupContainer,
-  exposed,
-  onMessage,
-  onPreInit,
-  onError,
-  onDispose,
-  onClick,
-  onRender,
-}: Props) {
-  const { mainIFrameRef, modalIFrameRef, popupIFrameRef, loaded } = useHook({
+const Plugin: ForwardRefRenderFunction<Ref, Props> = (
+  {
+    className,
+    canBeVisible,
+    modalCanBeVisible,
+    popupCanBeVisible,
+    skip,
+    src,
+    sourceCode,
+    renderPlaceholder,
+    autoResize,
+    iFrameProps,
+    isMarshalable,
+    modalContainer,
+    popupContainer,
+    exposed,
+    onPreInit,
+    onError,
+    onDispose,
+    onClick,
+    onMessage,
+    onRender,
+  },
+  ref,
+) => {
+  const { mainIFrameRef, modalIFrameRef, popupIFrameRef, loaded, handleMessage } = useHook({
     src,
     sourceCode,
     skip,
     isMarshalable,
+    ref,
     exposed,
     onError,
     onPreInit,
     onDispose,
+    onMessage,
   });
 
   return (
@@ -75,9 +80,9 @@ export default function Plugin({
         iFrameProps={iFrameProps}
         autoResize={autoResize}
         renderPlaceholder={renderPlaceholder}
-        onMessage={onMessage}
         onClick={onClick}
         onRender={onRender as (type: string) => void}
+        onMessage={handleMessage}
       />
       <PluginIFrame
         type="modal"
@@ -88,6 +93,7 @@ export default function Plugin({
         loaded={loaded}
         autoResize="both"
         onRender={onRender as (type: string) => void}
+        onMessage={handleMessage}
       />
       <PluginIFrame
         type="popup"
@@ -98,7 +104,10 @@ export default function Plugin({
         loaded={loaded}
         autoResize="both"
         onRender={onRender as (type: string) => void}
+        onMessage={handleMessage}
       />
     </>
   );
-}
+};
+
+export default forwardRef(Plugin);

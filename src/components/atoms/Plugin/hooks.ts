@@ -1,6 +1,14 @@
 import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ForwardedRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { IFrameAPI, Ref as IFrameRef } from "./PluginIFrame";
 
@@ -9,15 +17,30 @@ export type Options = {
   sourceCode?: string;
   skip?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
+  ref?: ForwardedRef<Ref>;
   exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
+  onMessage?: (msg: any) => void;
 };
 
 export type IFrameType = "main" | "modal" | "popup";
 
-export type API = { main: IFrameAPI; modal: IFrameAPI; popup: IFrameAPI };
+export type API = {
+  main: IFrameAPI;
+  modal: IFrameAPI;
+  popup: IFrameAPI;
+  messages: {
+    on: (e: (msg: any) => void) => void;
+    off: (e: (msg: any) => void) => void;
+    once: (e: (msg: any) => void) => void;
+  };
+};
+
+export type Ref = {
+  arena: () => Arena | undefined;
+};
 
 // restrict any classes
 export const defaultIsMarshalable = (obj: any): boolean => {
@@ -38,10 +61,12 @@ export default function useHook({
   sourceCode,
   skip,
   isMarshalable,
+  ref,
   exposed,
   onPreInit,
   onError = defaultOnError,
   onDispose,
+  onMessage: rawOnMessage,
 }: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
@@ -51,6 +76,31 @@ export default function useHook({
   const mainIFrameRef = useRef<IFrameRef>(null);
   const modalIFrameRef = useRef<IFrameRef>(null);
   const popupIFrameRef = useRef<IFrameRef>(null);
+
+  const messageEvents = useMemo(() => new Set<(msg: any) => void>(), []);
+  const messageOnceEvents = useMemo(() => new Set<(msg: any) => void>(), []);
+  const onMessage = useCallback((e: (msg: any) => void) => {
+    messageEvents.add(e);
+  }, []);
+  const offMessage = useCallback((e: (msg: any) => void) => {
+    messageEvents.delete(e);
+  }, []);
+  const onceMessage = useCallback((e: (msg: any) => void) => {
+    messageOnceEvents.add(e);
+  }, []);
+  const handleMessage = useCallback(
+    (msg: any) => {
+      try {
+        messageEvents.forEach(e => e(msg));
+        messageOnceEvents.forEach(e => e(msg));
+      } catch (e) {
+        onError(e);
+      }
+      rawOnMessage?.(msg);
+      messageOnceEvents.clear();
+    },
+    [messageEvents],
+  );
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -112,6 +162,11 @@ export default function useHook({
               main: mainIFrameApi,
               modal: modalIFrameApi,
               popup: popupIFrameApi,
+              messages: {
+                on: onMessage,
+                off: offMessage,
+                once: onceMessage,
+              },
             })
           : exposed;
       if (e) {
@@ -124,6 +179,8 @@ export default function useHook({
 
     return () => {
       onDispose?.();
+      messageEvents.clear();
+      messageOnceEvents.clear();
       mainIFrameRef.current?.reset();
       setLoaded(false);
       if (typeof eventLoop.current === "number") {
@@ -142,10 +199,19 @@ export default function useHook({
     };
   }, [code, evalCode, isMarshalable, onDispose, onPreInit, skip, exposed]);
 
+  useImperativeHandle(
+    ref,
+    (): Ref => ({
+      arena: () => arena.current,
+    }),
+    [],
+  );
+
   return {
     mainIFrameRef,
     modalIFrameRef,
     popupIFrameRef,
     loaded,
+    handleMessage,
   };
 }
