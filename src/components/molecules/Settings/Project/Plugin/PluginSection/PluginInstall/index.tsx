@@ -54,7 +54,7 @@ const PluginInstall: React.FC<Props> = ({
   return (
     <>
       <Box pv="2xl">
-        <StyledFlex gap={28} wrap="wrap">
+        <StyledFlex gap={28} justify="space-between" wrap="wrap">
           {actionChoices.map(c => {
             return c.mode === "install-public-repo" ? (
               <PublicRepo
