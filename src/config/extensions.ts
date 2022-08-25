@@ -38,16 +38,12 @@ export type PluginExtensionProps = {
   onUninstall?: (pluginId: string) => void;
 } & SharedExtensionProps;
 
-export type GlobalModalProps = {
-  //   onContentChange?: () => React.ReactNode;
-} & SharedExtensionProps;
-
 export type ExtensionProps = {
   "dataset-import": DatasetImportExtensionProps;
   publication: ProjectPublicationExtensionProps;
   "plugin-library": PluginExtensionProps;
   "plugin-installed": PluginExtensionProps;
-  "global-modal": GlobalModalProps;
+  "global-modal": SharedExtensionProps;
 };
 
 export type Extension<T extends ExtensionType = ExtensionType> = {
