@@ -81,7 +81,7 @@ const PluginInstall: React.FC<Props> = ({
           {t("Installed")}
         </StyledText>
       </StyledBox>
-      <PluginAccordion items={installedPlugins} uninstallPlugin={uninstallPlugin} />
+      <PluginAccordion plugins={installedPlugins} uninstallPlugin={uninstallPlugin} />
     </>
   );
 };
