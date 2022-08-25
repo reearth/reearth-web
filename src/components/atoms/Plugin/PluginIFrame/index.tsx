@@ -1,4 +1,5 @@
 import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import IFrame, { AutoResize } from "../IFrame";
 
@@ -9,22 +10,44 @@ export type { IFrameAPI, Ref } from "./hooks";
 
 export type Props = {
   className?: string;
+  type: string;
   visible?: boolean;
   loaded?: boolean;
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   renderPlaceholder?: ReactNode;
+  useContainer?: boolean;
+  container?: HTMLElement | DocumentFragment;
+  onRender?: (type: string) => void;
   onClick?: () => void;
   onMessage?: (message: any) => void;
 };
 
 const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
-  { className, visible, loaded, autoResize, iFrameProps, renderPlaceholder, onClick, onMessage },
+  {
+    className,
+    type,
+    visible,
+    loaded,
+    autoResize,
+    iFrameProps,
+    renderPlaceholder,
+    useContainer,
+    container,
+    onRender,
+    onClick,
+    onMessage,
+  },
   ref,
 ) => {
-  const { ref: iFrameRef, html, options, handleLoad } = useHooks({ loaded, ref, visible });
+  const {
+    ref: iFrameRef,
+    html,
+    options,
+    handleLoad,
+  } = useHooks({ loaded, ref, visible, type, onRender });
 
-  return (
+  const children = (
     <>
       {html ? (
         <IFrame
@@ -43,6 +66,8 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
       ) : null}
     </>
   );
+
+  return useContainer && container ? createPortal(children, container) : children;
 };
 
 export default forwardRef(PluginIFrame);

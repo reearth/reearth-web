@@ -1,7 +1,7 @@
 import { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import type { IFrameAPI } from "@reearth/components/atoms/Plugin";
+import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
 import events, { EventEmitter, Events, mergeEvents } from "@reearth/util/event";
 
@@ -180,7 +180,7 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ postMessage, render, resize }: IFrameAPI) => {
+    return ({ main: { postMessage, render, resize } }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: event.current?.[0] ?? { on: () => {}, off: () => {}, once: () => {} },

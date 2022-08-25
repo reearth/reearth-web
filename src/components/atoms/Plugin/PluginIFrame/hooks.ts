@@ -1,4 +1,4 @@
-import { ForwardedRef, useImperativeHandle } from "react";
+import { ForwardedRef, useCallback, useImperativeHandle } from "react";
 
 import useIFrame, { IFrameAPI } from "./useIFrame";
 
@@ -13,11 +13,17 @@ export default function useHooks({
   ref,
   loaded,
   visible,
+  type,
+  onRender,
 }: {
   ref?: ForwardedRef<Ref>;
   loaded?: boolean;
   visible?: boolean;
+  type?: string;
+  onRender?: (type: string) => void;
 }) {
+  const handleRender = useCallback(() => type && onRender?.(type), [type, onRender]);
+
   const {
     ref: IFrameRef,
     api,
@@ -28,6 +34,7 @@ export default function useHooks({
   } = useIFrame({
     loaded,
     visible,
+    onRender: handleRender,
   });
 
   useImperativeHandle(

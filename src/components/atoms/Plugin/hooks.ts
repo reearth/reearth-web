@@ -9,11 +9,15 @@ export type Options = {
   sourceCode?: string;
   skip?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
-  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
+  exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
 };
+
+export type IFrameType = "main" | "modal" | "popup";
+
+export type API = { main: IFrameAPI; modal: IFrameAPI; popup: IFrameAPI };
 
 // restrict any classes
 export const defaultIsMarshalable = (obj: any): boolean => {
@@ -34,10 +38,10 @@ export default function useHook({
   sourceCode,
   skip,
   isMarshalable,
+  exposed,
   onPreInit,
   onError = defaultOnError,
   onDispose,
-  exposed,
 }: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
@@ -45,6 +49,8 @@ export default function useHook({
   const [code, setCode] = useState("");
 
   const mainIFrameRef = useRef<IFrameRef>(null);
+  const modalIFrameRef = useRef<IFrameRef>(null);
+  const popupIFrameRef = useRef<IFrameRef>(null);
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -85,8 +91,10 @@ export default function useHook({
   // init and dispose of vm
   useEffect(() => {
     if (skip || !code) return;
-    const mainIFrameAPI = mainIFrameRef.current?.api;
-    if (!mainIFrameAPI) return;
+    const { api: mainIFrameApi } = mainIFrameRef.current ?? {};
+    const { api: modalIFrameApi } = modalIFrameRef.current ?? {};
+    const { api: popupIFrameApi } = popupIFrameRef.current ?? {};
+    if (!mainIFrameApi || !modalIFrameApi || !popupIFrameApi) return;
 
     onPreInit?.();
 
@@ -98,7 +106,14 @@ export default function useHook({
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
 
-      const e = typeof exposed === "function" ? exposed(mainIFrameAPI) : exposed;
+      const e =
+        typeof exposed === "function"
+          ? exposed({
+              main: mainIFrameApi,
+              modal: modalIFrameApi,
+              popup: popupIFrameApi,
+            })
+          : exposed;
       if (e) {
         arena.current.expose(e);
       }
@@ -129,6 +144,8 @@ export default function useHook({
 
   return {
     mainIFrameRef,
+    modalIFrameRef,
+    popupIFrameRef,
     loaded,
   };
 }

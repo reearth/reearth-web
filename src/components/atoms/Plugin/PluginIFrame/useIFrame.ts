@@ -16,9 +16,11 @@ export type IFrameAPI = {
 export default function useIFrame({
   loaded,
   visible: iframeCanBeVisible,
+  onRender,
 }: {
   loaded?: boolean;
   visible?: boolean;
+  onRender?: () => void;
 }) {
   const ref = useRef<IFrameRef>(null);
   const [iFrameLoaded, setIFrameLoaded] = useState(false);
@@ -33,6 +35,7 @@ export default function useIFrame({
     () => ({
       render: (html, { visible = true, ...options } = {}) => {
         setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
+        onRender?.();
       },
       resize: (width, height) => {
         ref.current?.resize(width, height);
