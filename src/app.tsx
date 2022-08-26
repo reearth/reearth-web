@@ -19,7 +19,6 @@ import WorkspaceList from "@reearth/components/pages/Settings/WorkspaceList";
 import { Provider as I18nProvider } from "@reearth/i18n";
 
 import { Provider as Auth0Provider } from "./auth";
-import GlobalModal from "./components/organisms/GlobalModal";
 import RootPage from "./components/pages/Authentication/RootPage";
 import Preview from "./components/pages/Preview";
 import { Provider as GqlProvider } from "./gql";
@@ -64,7 +63,6 @@ export default function App() {
           <I18nProvider>
             <Suspense fallback={<Loading />}>
               <NotificationBanner />
-              <GlobalModal />
               <StyledRouter>
                 <AppRoutes />
               </StyledRouter>
