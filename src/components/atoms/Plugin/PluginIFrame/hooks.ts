@@ -11,13 +11,13 @@ export type Ref = {
 
 export default function useHooks({
   ref,
-  loaded,
+  ready,
   visible,
   type,
   onRender,
 }: {
   ref?: ForwardedRef<Ref>;
-  loaded?: boolean;
+  ready?: boolean;
   visible?: boolean;
   type?: string;
   onRender?: (type: string) => void;
@@ -32,7 +32,7 @@ export default function useHooks({
     handleLoad,
     reset,
   } = useIFrame({
-    loaded,
+    ready,
     visible,
     onRender: handleRender,
   });

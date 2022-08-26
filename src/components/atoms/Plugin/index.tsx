@@ -74,8 +74,9 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
       <PluginIFrame
         type="main"
         ref={mainIFrameRef}
-        loaded={loaded}
+        ready={loaded}
         visible={canBeVisible}
+        enabled
         className={className}
         iFrameProps={iFrameProps}
         autoResize={autoResize}
@@ -89,8 +90,9 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         ref={modalIFrameRef}
         container={modalContainer}
         useContainer
-        visible={modalCanBeVisible}
-        loaded={loaded}
+        visible
+        enabled={modalCanBeVisible}
+        ready={loaded}
         autoResize="both"
         onRender={onRender as (type: string) => void}
         onMessage={handleMessage}
@@ -100,8 +102,9 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         ref={popupIFrameRef}
         container={popupContainer}
         useContainer
-        visible={popupCanBeVisible}
-        loaded={loaded}
+        visible
+        enabled={popupCanBeVisible}
+        ready={loaded}
         autoResize="both"
         onRender={onRender as (type: string) => void}
         onMessage={handleMessage}

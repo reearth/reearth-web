@@ -14,11 +14,11 @@ export type IFrameAPI = {
 };
 
 export default function useIFrame({
-  loaded,
+  ready,
   visible: iframeCanBeVisible,
   onRender,
 }: {
-  loaded?: boolean;
+  ready?: boolean;
   visible?: boolean;
   onRender?: () => void;
 }) {
@@ -27,7 +27,7 @@ export default function useIFrame({
   const [[html, options], setIFrameState] = useState<
     [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
   >(["", undefined]);
-  const postMessage = usePostMessage(ref, !loaded || !iFrameLoaded);
+  const postMessage = usePostMessage(ref, !ready || !iFrameLoaded);
   const handleLoad = useCallback(() => setIFrameLoaded(true), []);
   const reset = useCallback(() => setIFrameState(["", undefined]), []);
 
@@ -46,8 +46,8 @@ export default function useIFrame({
   );
 
   useEffect(() => {
-    if (!loaded) setIFrameLoaded(false);
-  }, [loaded]);
+    if (!ready) setIFrameLoaded(false);
+  }, [ready]);
 
   return {
     ref,

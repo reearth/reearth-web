@@ -12,7 +12,8 @@ export type Props = {
   className?: string;
   type: string;
   visible?: boolean;
-  loaded?: boolean;
+  ready?: boolean;
+  enabled?: boolean;
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   renderPlaceholder?: ReactNode;
@@ -28,7 +29,8 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     className,
     type,
     visible,
-    loaded,
+    ready,
+    enabled,
     autoResize,
     iFrameProps,
     renderPlaceholder,
@@ -45,7 +47,7 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     html,
     options,
     handleLoad,
-  } = useHooks({ loaded, ref, visible, type, onRender });
+  } = useHooks({ ready, ref, visible, type, onRender });
 
   const children = (
     <>
@@ -67,7 +69,13 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     </>
   );
 
-  return useContainer && container ? createPortal(children, container) : children;
+  return enabled
+    ? container
+      ? useContainer
+        ? createPortal(children, container)
+        : null
+      : children
+    : null;
 };
 
 export default forwardRef(PluginIFrame);
