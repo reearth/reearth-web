@@ -166,7 +166,7 @@ export default ({
       setInnerClock(clock);
       onTick?.(clock);
     },
-    [onCameraChange],
+    [onTick],
   );
 
   // dnd
@@ -235,6 +235,7 @@ export default ({
     isLayerDragging,
     selectedBlockId,
     innerCamera,
+    innerClock,
     infobox,
     overriddenSceneProperty,
     isLayerHidden,

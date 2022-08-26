@@ -107,6 +107,7 @@ export default function Visualizer({
     isLayerDragging,
     selectedBlockId,
     innerCamera,
+    innerClock,
     infobox,
     overriddenSceneProperty,
     isLayerHidden,
@@ -128,12 +129,14 @@ export default function Visualizer({
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     camera: props.camera,
+    clock: props.clock,
     sceneProperty,
     tags,
     onLayerSelect,
     onBlockSelect,
     onBlockChange,
     onCameraChange: props.onCameraChange,
+    onTick: props.onTick,
     onLayerDrop,
   });
 
@@ -162,6 +165,7 @@ export default function Visualizer({
           layerSelectionReason={layerSelectionReason}
           ready={ready}
           camera={innerCamera}
+          clock={innerClock}
           isLayerDragging={isLayerDragging}
           isLayerDraggable={props.isEditable}
           shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}

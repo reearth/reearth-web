@@ -127,18 +127,24 @@ export default ({
       if (camera) {
         onCameraChange?.(camera);
       }
+      const clock = getClock(cesium?.current?.cesiumElement?.clock);
+      if (clock) {
+        onTick?.(clock);
+      }
     },
     [
       engineAPI,
       onCameraChange,
+      onTick,
       property?.default?.camera,
       property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
-      isEqual(prevDeps[2], nextDeps[2]) &&
-      prevDeps[3] === nextDeps[3],
+      prevDeps[2] === nextDeps[2] &&
+      isEqual(prevDeps[3], nextDeps[3]) &&
+      prevDeps[4] === nextDeps[4],
   );
 
   const handleUnmount = useCallback(() => {
@@ -170,13 +176,16 @@ export default ({
     updateCamera();
   }, [updateCamera]);
 
-  const handleTick = useCallback((cesiumClock: CesiumClock) => {
-    const nextClock = getClock(cesiumClock);
-    if (isEqual(clock, nextClock)) {
-      return;
-    }
-    onTick?.(nextClock);
-  }, []);
+  const handleTick = useCallback(
+    (cesiumClock: CesiumClock) => {
+      const nextClock = getClock(cesiumClock);
+      if (isEqual(clock, nextClock) || !nextClock) {
+        return;
+      }
+      onTick?.(nextClock);
+    },
+    [clock, onTick],
+  );
 
   useEffect(() => {
     if (camera && !emittedCamera.current.includes(camera)) {
