@@ -38,12 +38,17 @@ export type PluginExtensionProps = {
   onUninstall?: (pluginId: string) => void;
 } & SharedExtensionProps;
 
+export type GlobalModalProps = {
+  show?: boolean;
+  onLogOut?: () => void;
+} & SharedExtensionProps;
+
 export type ExtensionProps = {
   "dataset-import": DatasetImportExtensionProps;
   publication: ProjectPublicationExtensionProps;
   "plugin-library": PluginExtensionProps;
   "plugin-installed": PluginExtensionProps;
-  "global-modal": SharedExtensionProps;
+  "global-modal": GlobalModalProps;
 };
 
 export type Extension<T extends ExtensionType = ExtensionType> = {

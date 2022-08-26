@@ -11,7 +11,7 @@ import {
 const extensions = window.REEARTH_CONFIG?.extensions?.globalModal;
 
 const GlobalModal: React.FC = () => {
-  const { getAccessToken } = useAuth();
+  const { getAccessToken, logout } = useAuth();
   const currentLang = useCurrentLang();
   const [currentTheme] = useCurrentTheme();
   const [, setNotification] = useNotification();
@@ -39,6 +39,7 @@ const GlobalModal: React.FC = () => {
           lang={currentLang}
           theme={currentTheme}
           accessToken={accessToken}
+          onLogOut={logout}
           onNotificationChange={handleNotificationChange}
         />;
       })}
