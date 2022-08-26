@@ -8,9 +8,8 @@ import {
   useNotification,
 } from "@reearth/state";
 
-const extensions = window.REEARTH_CONFIG?.extensions?.globalModal;
-
 const GlobalModal: React.FC = () => {
+  const extensions = window.REEARTH_CONFIG?.extensions?.globalModal;
   const { getAccessToken, logout } = useAuth();
   const currentLang = useCurrentLang();
   const [currentTheme] = useCurrentTheme();
@@ -33,16 +32,17 @@ const GlobalModal: React.FC = () => {
 
   return (
     <>
-      {extensions?.map(ext => {
+      {extensions?.map(ext => (
         <ext.component
           key={ext.id}
           lang={currentLang}
           theme={currentTheme}
           accessToken={accessToken}
           onLogOut={logout}
+          show
           onNotificationChange={handleNotificationChange}
-        />;
-      })}
+        />
+      ))}
     </>
   );
 };
