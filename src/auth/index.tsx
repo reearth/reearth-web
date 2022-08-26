@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import GlobalAuthModal from "@reearth/components/organisms/GlobalModal";
+import GlobalModal from "@reearth/components/organisms/GlobalModal";
 
 import { useAuthenticationRequired } from "./hooks";
 
@@ -13,7 +13,7 @@ export const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({
   const [isAuthenticated] = useAuthenticationRequired(); // TODO: show error
   return isAuthenticated && children ? (
     <>
-      <GlobalAuthModal />
+      <GlobalModal />
       {children}
     </>
   ) : null;
