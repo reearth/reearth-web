@@ -16,7 +16,7 @@ const DEFAULT_SPEED = 1;
 
 export const useTimeline = () => {
   const ctx = useContext();
-  const clock = ctx?.reearth.visualizer.clock;
+  const clock = ctx?.reearth.clock;
   const [range, setRange] = useState(() =>
     makeRange(clock?.startTime.getTime(), clock?.stopTime.getTime()),
   );
@@ -48,13 +48,13 @@ export const useTimeline = () => {
   );
 
   const handleOnPlay = useCallback(
-    (isPlaying: boolean) => {
+    (playing: boolean) => {
       if (!clock) {
         return;
       }
 
       // Stop cesium animation
-      clock.isPlaying = isPlaying;
+      clock.playing = playing;
       clock.speed = Math.abs(speed);
       clock.tick();
     },
@@ -62,13 +62,13 @@ export const useTimeline = () => {
   );
 
   const handleOnPlayReversed = useCallback(
-    (isPlaying: boolean) => {
+    (playing: boolean) => {
       if (!clock) {
         return;
       }
 
       // Stop cesium animation
-      clock.isPlaying = isPlaying;
+      clock.playing = playing;
       clock.speed = Math.abs(speed) * -1;
       clock.tick();
     },

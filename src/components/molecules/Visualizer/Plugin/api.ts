@@ -87,6 +87,13 @@ export function exposed({
           postMessage,
           resize,
         },
+        scene: merge(commonReearth.scene, {
+          get overrideProperty() {
+            return (property: any) => {
+              overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+            };
+          },
+        }),
         plugin: {
           get id() {
             return plugin?.id;
@@ -154,8 +161,8 @@ export function commonReearth({
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
-  camera: () => GlobalThis["reearth"]["visualizer"]["camera"]["position"];
-  clock: () => GlobalThis["reearth"]["visualizer"]["clock"];
+  camera: () => GlobalThis["reearth"]["camera"]["position"];
+  clock: () => GlobalThis["reearth"]["clock"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
@@ -193,10 +200,29 @@ export function commonReearth({
       get property() {
         return sceneProperty();
       },
-      get clock() {
-        return clock();
+      overrideProperty: overrideSceneProperty,
+    },
+    get clock() {
+      return clock();
+    },
+    scene: {
+      get property() {
+        return sceneProperty();
       },
       overrideProperty: overrideSceneProperty,
+    },
+    engine: engineName,
+    camera: {
+      flyTo,
+      lookAt,
+      zoomIn,
+      zoomOut,
+      get position() {
+        return camera();
+      },
+      get viewport() {
+        return viewport();
+      },
     },
     layers: {
       get layersInViewport() {

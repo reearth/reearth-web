@@ -335,8 +335,11 @@ export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
     get tick() {
       return () => JulianDate.toDate(clock.tick());
     },
-    get isPlaying() {
+    get playing() {
       return clock.shouldAnimate;
+    },
+    get paused() {
+      return !clock.shouldAnimate;
     },
     get speed() {
       return clock.multiplier;
@@ -355,13 +358,28 @@ export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
     set tick(cb: () => Date) {
       clock["tick"] = () => JulianDate.fromDate(cb());
     },
-    set isPlaying(v: boolean) {
+    set playing(v: boolean) {
       clock["shouldAnimate"] = v;
+    },
+    set paused(v: boolean) {
+      clock["shouldAnimate"] = !v;
     },
     set speed(v: number) {
       clock["multiplier"] = v;
       // Force multiplier
       clock["clockStep"] = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+    },
+
+    // methods
+    get play() {
+      return () => {
+        clock["shouldAnimate"] = true;
+      };
+    },
+    get pause() {
+      return () => {
+        clock["shouldAnimate"] = false;
+      };
     },
   };
 };

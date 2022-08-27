@@ -237,7 +237,7 @@ test("getClock", () => {
   expect(result.current.engineRef.current?.getClock()?.currentTime).toEqual(
     JulianDate.toDate(currentTime),
   );
-  expect(result.current.engineRef.current?.getClock()?.isPlaying).toBeFalsy();
+  expect(result.current.engineRef.current?.getClock()?.playing).toBeFalsy();
   expect(result.current.cesium.current.cesiumElement?.clock?.shouldAnimate).toBeFalsy();
   expect(result.current.engineRef.current?.getClock()?.speed).toBe(1);
   expect(result.current.cesium.current.cesiumElement?.clock?.multiplier).toBe(1);
@@ -256,7 +256,7 @@ test("getClock", () => {
   clock.startTime = JulianDate.toDate(nextStartTime);
   clock.stopTime = JulianDate.toDate(nextStopTime);
   clock.currentTime = JulianDate.toDate(nextCurrentTime);
-  clock.isPlaying = true;
+  clock.playing = true;
   clock.speed = 2;
   expect(result.current.engineRef.current?.getClock()?.startTime).toEqual(
     JulianDate.toDate(nextStartTime),
@@ -267,7 +267,7 @@ test("getClock", () => {
   expect(result.current.engineRef.current?.getClock()?.currentTime).toEqual(
     JulianDate.toDate(nextCurrentTime),
   );
-  expect(result.current.engineRef.current?.getClock()?.isPlaying).toBeTruthy();
+  expect(result.current.engineRef.current?.getClock()?.playing).toBeTruthy();
   expect(result.current.cesium.current.cesiumElement?.clock?.shouldAnimate).toBeTruthy();
   expect(result.current.engineRef.current?.getClock()?.speed).toBe(2);
   expect(result.current.cesium.current.cesiumElement?.clock?.multiplier).toBe(2);

@@ -199,9 +199,8 @@ export function Provider({
         () => (camera ? [camera] : undefined),
         [camera],
       ),
-      tick: useMemo<[clock: Clock] | undefined>(() => {
-        const val = clock;
-        return val ? [val] : undefined;
+      tick: useMemo<[date: Date] | undefined>(() => {
+        return clock ? [clock.currentTime] : undefined;
       }, [clock]),
     },
     emit,
