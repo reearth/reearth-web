@@ -13,7 +13,7 @@ export type Reearth = {
   readonly apiVersion: number;
   readonly visualizer: Visualizer;
   /** Current visualization engine type. Currently only "cesium" is available. */
-  readonly engine: string;
+  readonly engineName: string;
   readonly camera: Camera;
   readonly clock?: Clock;
   readonly ui: UI;

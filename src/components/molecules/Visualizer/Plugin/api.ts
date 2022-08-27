@@ -211,7 +211,7 @@ export function commonReearth({
       },
       overrideProperty: overrideSceneProperty,
     },
-    engine: engineName,
+    engineName,
     camera: {
       flyTo,
       lookAt,
