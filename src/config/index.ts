@@ -23,6 +23,8 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
+  documentationUrl?: string;
+  marketplaceUrl?: string;
   extensionUrls?: string[];
   extensions?: Extensions;
 };
