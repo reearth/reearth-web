@@ -2,6 +2,7 @@ import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
+import { Clock } from "../Plugin/types";
 import type { Component } from "../Primitive";
 
 export type MouseEvent = {
@@ -61,6 +62,7 @@ export type EngineRef = {
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
+  getClock: () => Clock | undefined;
   enableScreenSpaceCameraController: () => void;
   disableScreenSpaceCameraController: () => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");

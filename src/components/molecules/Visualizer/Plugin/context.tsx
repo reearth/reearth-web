@@ -26,6 +26,7 @@ import type {
   LookAtDestination,
   Tag,
   MouseEvent,
+  Clock,
 } from "./types";
 
 export type EngineContext = {
@@ -40,6 +41,7 @@ export type Props = {
   sceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
+  clock: Clock | undefined;
   layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
@@ -83,6 +85,7 @@ export function Provider({
   sceneProperty,
   tags,
   camera,
+  clock,
   layers,
   selectedLayer,
   layerSelectionReason,
@@ -106,7 +109,7 @@ export function Provider({
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () => events<Pick<ReearthEventType, "cameramove" | "select" | keyof MouseEvents>>(),
+    () => events<Pick<ReearthEventType, "cameramove" | "select" | "tick" | keyof MouseEvents>>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -115,6 +118,7 @@ export function Provider({
   const getSceneProperty = useGet(sceneProperty);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
+  const getClock = useGet(clock);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
@@ -139,6 +143,7 @@ export function Provider({
         sceneProperty: getSceneProperty,
         tags: getTags,
         camera: getCamera,
+        clock: getClock,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
@@ -169,6 +174,7 @@ export function Provider({
       getSceneProperty,
       getTags,
       getCamera,
+      getClock,
       getSelectedLayer,
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
@@ -191,7 +197,7 @@ export function Provider({
     ],
   );
 
-  useEmit<Pick<ReearthEventType, "cameramove" | "select" | keyof MouseEvents>>(
+  useEmit<Pick<ReearthEventType, "cameramove" | "select" | "tick" | keyof MouseEvents>>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),
@@ -201,6 +207,9 @@ export function Provider({
         () => (camera ? [camera] : undefined),
         [camera],
       ),
+      tick: useMemo<[date: Date] | undefined>(() => {
+        return clock ? [clock.currentTime] : undefined;
+      }, [clock]),
     },
     emit,
   );
