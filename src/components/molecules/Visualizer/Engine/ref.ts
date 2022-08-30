@@ -65,6 +65,14 @@ export type EngineRef = {
   getClock: () => Clock | undefined;
   enableScreenSpaceCameraController: () => void;
   disableScreenSpaceCameraController: () => void;
+  lookUp: (amount: number) => void;
+  lookRight: (amount: number) => void;
+  moveForward: (amount: number) => void;
+  moveBackward: (amount: number) => void;
+  moveUp: (amount: number) => void;
+  moveDown: (amount: number) => void;
+  moveLeft: (amount: number) => void;
+  moveRight: (amount: number) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;

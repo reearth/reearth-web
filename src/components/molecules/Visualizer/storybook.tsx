@@ -94,6 +94,14 @@ export const context: ProviderProps = {
   onMouseEvent: act("onMouseEvent"),
   enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
   disableScreenSpaceCameraController: act("disableScreenSpaceCameraController"),
+  lookUp: act("lookUp"),
+  lookRight: act("lookRight"),
+  moveForward: act("moveForward"),
+  moveBackward: act("moveBackward"),
+  moveUp: act("moveUp"),
+  moveDown: act("moveDown"),
+  moveLeft: act("moveLeft"),
+  moveRight: act("moveRight"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

@@ -435,6 +435,14 @@ function useProviderProps(
     | "onMouseEvent"
     | "enableScreenSpaceCameraController"
     | "disableScreenSpaceCameraController"
+    | "lookUp"
+    | "lookRight"
+    | "moveForward"
+    | "moveBackward"
+    | "moveUp"
+    | "moveDown"
+    | "moveLeft"
+    | "moveRight"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -532,6 +540,62 @@ function useProviderProps(
     [engineRef],
   );
 
+  const lookUp = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookUp(amount);
+    },
+    [engineRef],
+  );
+
+  const lookRight = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookRight(amount);
+    },
+    [engineRef],
+  );
+
+  const moveForward = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveForward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveBackward = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveBackward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveUp = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveUp(amount);
+    },
+    [engineRef],
+  );
+
+  const moveDown = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveDown(amount);
+    },
+    [engineRef],
+  );
+
+  const moveLeft = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveLeft(amount);
+    },
+    [engineRef],
+  );
+
+  const moveRight = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveRight(amount);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -545,5 +609,13 @@ function useProviderProps(
     onMouseEvent,
     enableScreenSpaceCameraController,
     disableScreenSpaceCameraController,
+    lookUp,
+    lookRight,
+    moveForward,
+    moveBackward,
+    moveUp,
+    moveDown,
+    moveLeft,
+    moveRight,
   };
 }

@@ -157,6 +157,14 @@ export function commonReearth({
   viewport,
   enableScreenSpaceCameraController,
   disableScreenSpaceCameraController,
+  lookUp,
+  lookRight,
+  moveForward,
+  moveBackward,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -183,6 +191,14 @@ export function commonReearth({
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["enableScreenSpaceControl"];
   disableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["disableScreenSpaceControl"];
+  lookUp: GlobalThis["reearth"]["visualizer"]["camera"]["lookUp"];
+  lookRight: GlobalThis["reearth"]["visualizer"]["camera"]["lookRight"];
+  moveForward: GlobalThis["reearth"]["visualizer"]["camera"]["moveForward"];
+  moveBackward: GlobalThis["reearth"]["visualizer"]["camera"]["moveBackward"];
+  moveUp: GlobalThis["reearth"]["visualizer"]["camera"]["moveUp"];
+  moveDown: GlobalThis["reearth"]["visualizer"]["camera"]["moveDown"];
+  moveLeft: GlobalThis["reearth"]["visualizer"]["camera"]["moveLeft"];
+  moveRight: GlobalThis["reearth"]["visualizer"]["camera"]["moveRight"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -202,6 +218,14 @@ export function commonReearth({
         },
         enableScreenSpaceControl: enableScreenSpaceCameraController,
         disableScreenSpaceControl: disableScreenSpaceCameraController,
+        lookUp,
+        lookRight,
+        moveForward,
+        moveBackward,
+        moveUp,
+        moveDown,
+        moveLeft,
+        moveRight,
       },
       get property() {
         return sceneProperty();
@@ -229,6 +253,16 @@ export function commonReearth({
       get viewport() {
         return viewport();
       },
+      enableScreenSpaceControl: enableScreenSpaceCameraController,
+      disableScreenSpaceControl: disableScreenSpaceCameraController,
+      lookUp,
+      lookRight,
+      moveForward,
+      moveBackward,
+      moveUp,
+      moveDown,
+      moveLeft,
+      moveRight,
     },
     layers: {
       get layersInViewport() {

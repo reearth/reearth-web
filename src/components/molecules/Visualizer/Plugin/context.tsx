@@ -62,6 +62,14 @@ export type Props = {
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
   enableScreenSpaceCameraController: () => void;
   disableScreenSpaceCameraController: () => void;
+  lookUp: (amount: number) => void;
+  lookRight: (amount: number) => void;
+  moveForward: (amount: number) => void;
+  moveBackward: (amount: number) => void;
+  moveUp: (amount: number) => void;
+  moveDown: (amount: number) => void;
+  moveLeft: (amount: number) => void;
+  moveRight: (amount: number) => void;
 };
 
 export type Context = {
@@ -106,6 +114,14 @@ export function Provider({
   onMouseEvent,
   enableScreenSpaceCameraController,
   disableScreenSpaceCameraController,
+  lookUp,
+  lookRight,
+  moveForward,
+  moveBackward,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
@@ -162,6 +178,14 @@ export function Provider({
         viewport,
         enableScreenSpaceCameraController,
         disableScreenSpaceCameraController,
+        lookUp,
+        lookRight,
+        moveForward,
+        moveBackward,
+        moveUp,
+        moveDown,
+        moveLeft,
+        moveRight,
       }),
       overrideSceneProperty,
     }),
@@ -194,6 +218,14 @@ export function Provider({
       viewport,
       enableScreenSpaceCameraController,
       disableScreenSpaceCameraController,
+      lookUp,
+      lookRight,
+      moveForward,
+      moveBackward,
+      moveUp,
+      moveDown,
+      moveLeft,
+      moveRight,
     ],
   );
 

@@ -132,6 +132,54 @@ export default function useEngineRef(
         viewer.scene.screenSpaceCameraController.enableTilt = false;
         viewer.scene.screenSpaceCameraController.enableLook = false;
       },
+      lookUp: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.lookUp(amount);
+        console.log("lookup", amount);
+      },
+      lookRight: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.lookRight(amount);
+        console.log("lookright", amount);
+      },
+      moveForward: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.moveForward(amount);
+        console.log("moveForward", amount);
+      },
+      moveBackward: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.moveBackward(amount);
+        console.log("moveBackward", amount);
+      },
+      moveUp: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.moveUp(amount);
+        console.log("moveUp", amount);
+      },
+      moveDown: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.moveDown(amount);
+        console.log("moveDown", amount);
+      },
+      moveLeft: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.moveLeft(amount);
+        console.log("moveLeft", amount);
+      },
+      moveRight: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.moveRight(amount);
+        console.log("moveRight", amount);
+      },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;
       },

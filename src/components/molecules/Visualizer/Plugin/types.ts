@@ -282,6 +282,14 @@ export type Camera = {
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   readonly enableScreenSpaceControl: () => void;
   readonly disableScreenSpaceControl: () => void;
+  readonly lookUp: (amount: number) => void;
+  readonly lookRight: (amount: number) => void;
+  readonly moveForward: (amount: number) => void;
+  readonly moveBackward: (amount: number) => void;
+  readonly moveUp: (amount: number) => void;
+  readonly moveDown: (amount: number) => void;
+  readonly moveLeft: (amount: number) => void;
+  readonly moveRight: (amount: number) => void;
 };
 
 /** Represents the camera position and state */
