@@ -239,6 +239,8 @@ const CurrentTime = styled(Text)`
   color: ${({ theme }) => theme.main.text};
   padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
   margin: ${({ theme }) => `${theme.metrics.s}px 0`};
+  flex-shrink: 0;
+  white-space: pre-line;
 `;
 
 const ScaleBox = styled.div`
