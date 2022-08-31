@@ -155,6 +155,7 @@ export function useAPI({
         "mouseenter",
         "mouseleave",
         "wheel",
+        "tick",
       ]);
     }
 
@@ -239,7 +240,7 @@ export function useAPI({
 
   useEffect(() => {
     event.current?.[1]("update");
-  }, [block, layer, widget, ctx?.reearth.visualizer.property]);
+  }, [block, layer, widget, ctx?.reearth.scene.property]);
 
   return {
     staticExposed,
