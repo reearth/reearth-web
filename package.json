@@ -85,7 +85,7 @@
         "vite": "3.0.3",
         "vite-plugin-cesium": "1.2.22",
         "vitest": "0.19.0",
-        "web-streams-polyfill": "^3.2.1"
+        "web-streams-polyfill": "3.2.1"
     },
     "dependencies": {
         "@apollo/client": "3.6.6",
@@ -135,6 +135,7 @@
         "react-dnd-html5-backend": "16.0.1",
         "react-dom": "18.1.0",
         "react-dropzone": "14.2.1",
+        "react-error-boundary": "3.1.4",
         "react-ga": "3.3.0",
         "react-i18next": "11.17.1",
         "react-inlinesvg": "3.0.0",
