@@ -20,7 +20,7 @@ export function useOverriddenProperty<T extends {}>(
   const { overriddenPropertyCommon, overriddenProperty } = useMemo(() => {
     const { "": overriddenPropertyCommon, ...overriddenProperty } = overriddenProperties;
     return { overriddenPropertyCommon, overriddenProperty };
-  }, []);
+  }, [overriddenProperties]);
 
   const overrideProperty = useCallback((pluginId: string, property: any) => {
     setOverrideProperty(p => (property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId)));

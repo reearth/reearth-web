@@ -2,6 +2,7 @@ extends:
   - reearth
 root: true
 rules:
+  # react-hooks/exhaustive-deps: warn
   import/order:
     - warn
     - pathGroups:
@@ -14,6 +15,10 @@ rules:
         order: asc
         caseInsensitive: true
 overrides:
+  - files:
+      - i18next-parser.config.js
+    extends:
+      - reearth/commonjs
   - files:
       - src/gql/queries/*.ts
       - src/gql/fragments/*.ts
