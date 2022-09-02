@@ -443,6 +443,7 @@ function useProviderProps(
     | "moveDown"
     | "moveLeft"
     | "moveRight"
+    | "setView"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -596,6 +597,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const setView = useCallback(
+    (amount: number) => {
+      engineRef.current?.setView(amount);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -617,5 +625,6 @@ function useProviderProps(
     moveDown,
     moveLeft,
     moveRight,
+    setView,
   };
 }
