@@ -180,6 +180,12 @@ export default function useEngineRef(
         viewer?.scene?.camera.moveRight(amount);
         console.log("moveRight", amount);
       },
+      setView: options => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer?.scene?.camera.setView(options);
+        console.log("setView", options);
+      },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;
       },
