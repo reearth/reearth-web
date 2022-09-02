@@ -2,7 +2,6 @@ extends:
   - reearth
 root: true
 rules:
-  # react-hooks/exhaustive-deps: warn
   import/order:
     - warn
     - pathGroups:
