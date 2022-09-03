@@ -6,7 +6,7 @@ import { Layer } from "./types";
 
 export default function useHooks(layer?: Layer) {
   const atoms = useMemo(() => layerAtom(), []);
-  const features = useAtomValue(atoms.features);
+  const computedLayer = useAtomValue(atoms.getComputedLayer);
   const setLayer = useSetAtom(atoms.writeLayer);
   // const writeFeatures = useSetAtom(atoms.writeFeatures);
 
@@ -26,5 +26,5 @@ export default function useHooks(layer?: Layer) {
     setLayer(layer);
   }, [layer, setLayer]);
 
-  return { features, handleFeatureRequest, handleFeatureFetch, handleFeatureDelete };
+  return { computedLayer, handleFeatureRequest, handleFeatureFetch, handleFeatureDelete };
 }

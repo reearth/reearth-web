@@ -4,6 +4,7 @@ export type Layer = {
   id: string;
   type: "simple";
   data?: Data;
+  properties?: any;
 };
 
 export type TreeLayer = Layer & {

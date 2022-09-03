@@ -8,7 +8,7 @@ export * from "./types";
 
 export type FeatureComponentProps = {
   layer: LayerType;
-  features: Feature[];
+  computedFeatures?: Feature[];
   onFeatureRequest?: (range: DataRange) => Promise<Feature[]>;
   onFeatureFetch?: (features: Feature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
@@ -24,14 +24,14 @@ export type LayerProps = {
 } & CommonProps;
 
 export function Layer({ Feature, layer }: LayerProps): JSX.Element | null {
-  const { features, handleFeatureRequest, handleFeatureFetch, handleFeatureDelete } = useHooks(
+  const { computedLayer, handleFeatureRequest, handleFeatureFetch, handleFeatureDelete } = useHooks(
     Feature ? layer : undefined,
   );
 
-  return layer && features && Feature ? (
+  return layer && computedLayer && Feature ? (
     <Feature
       layer={layer}
-      features={features}
+      computedFeatures={computedLayer.computedFeatures}
       onFeatureRequest={handleFeatureRequest}
       onFeatureFetch={handleFeatureFetch}
       onFeatureDelete={handleFeatureDelete}
