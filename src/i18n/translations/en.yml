@@ -1,6 +1,11 @@
 Continue: Continue
 Cancel: Cancel
 Drop here: Drop here
+compass: compass
+adjust angle: adjust angle
+zoom out: zoom out
+Go to the home position: Go to the home position
+zoom in: zoom in
 Notfound: Notfound
 Published: Published
 Unpublished: Unpublished
@@ -60,10 +65,12 @@ Save: Save
 Select Asset: Select Asset
 Select: Select
 Resource URL: Resource URL
+Your browser is too small: Your browser is too small
+Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
+  Re:Earth needs at least 900px width to be used effectively. Please resize your
+  browser window.
 Account Settings: Account Settings
 Log out: Log out
-Your browser is too small: Your browser is too small
-Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.
 Create New Project: Create New Project
 Create: Create
 Project Name: Project Name
