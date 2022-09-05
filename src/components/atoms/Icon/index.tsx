@@ -65,7 +65,7 @@ const Icon: React.FC<Props> = ({
       role={role}
       color={color}
       size={sizeStr}
-      noTransition={noTransition}
+      notransition={noTransition}
       onClick={onClick}
       {...aria}
     />
@@ -78,13 +78,13 @@ const StyledImg = styled.img<{ size?: string; noTransition?: boolean }>`
   ${({ noTransition }) => !noTransition && "transition: all 0.4s;"}
 `;
 
-const StyledSvg = styled(SVG)<{ color?: string; size?: string; noTransition?: boolean }>`
+const StyledSvg = styled(SVG)<{ color?: string; size?: string; notransition?: boolean }>`
   font-size: 0;
   display: inline-block;
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
-  ${({ noTransition }) => !noTransition && "transition: all 0.4s;"}
+  ${({ notransition }) => !notransition && "transition: all 0.4s;"}
 `;
 
 export default memo(Icon);
