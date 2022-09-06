@@ -519,9 +519,12 @@ function useProviderProps(
     [engineRef],
   );
 
-  const capture = useCallback(() => {
-    return engineRef.current?.capture();
-  }, [engineRef]);
+  const capture = useCallback(
+    (type?: string, encoderOptions?: number) => {
+      return engineRef.current?.capture(type, encoderOptions);
+    },
+    [engineRef],
+  );
 
   return {
     ...props,
