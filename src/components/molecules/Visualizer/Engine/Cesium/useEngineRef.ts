@@ -116,7 +116,7 @@ export default function useEngineRef(
       },
       captureScreen: (type?: string, encoderOptions?: number) => {
         const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed() || !viewer.clock) return;
+        if (!viewer || viewer.isDestroyed()) return;
         viewer.render();
         return viewer.canvas.toDataURL(type, encoderOptions);
       },
