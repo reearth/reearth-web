@@ -22,6 +22,7 @@ export type Feature = {
   id: string;
   geometry: Geometry;
   properties?: any;
+  range?: DataRange;
 };
 
 export type Geometry = GeoJSONGeometry;
@@ -30,4 +31,15 @@ export type DataRange = {
   x: number;
   y: number;
   z: number;
+};
+
+export type ComputedLayerStatus = "fetching" | "ready";
+
+export type ComputedLayer = {
+  id: string;
+  status: ComputedLayerStatus;
+  layer: Layer;
+  originalFeatures: Feature[];
+  features: Feature[];
+  properties?: any;
 };

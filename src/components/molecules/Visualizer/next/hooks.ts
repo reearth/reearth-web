@@ -1,13 +1,13 @@
 import { useSetAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { layerAtom } from "./atoms";
+import { computeAtom } from "./atoms";
 import { Layer } from "./types";
 
 export default function useHooks(layer?: Layer) {
-  const atoms = useMemo(() => layerAtom(), []);
-  const computedLayer = useAtomValue(atoms.getComputedLayer);
-  const setLayer = useSetAtom(atoms.writeLayer);
+  const atoms = useMemo(() => computeAtom(), []);
+  const computedLayer = useAtomValue(atoms.get);
+  const setLayer = useSetAtom(atoms.set);
   // const writeFeatures = useSetAtom(atoms.writeFeatures);
 
   const handleFeatureRequest = useCallback(async () => {
