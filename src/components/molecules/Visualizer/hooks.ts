@@ -431,7 +431,7 @@ function useProviderProps(
     | "layersInViewport"
     | "viewport"
     | "onMouseEvent"
-    | "capture"
+    | "captureScreen"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -519,9 +519,9 @@ function useProviderProps(
     [engineRef],
   );
 
-  const capture = useCallback(
+  const captureScreen = useCallback(
     (type?: string, encoderOptions?: number) => {
-      return engineRef.current?.capture(type, encoderOptions);
+      return engineRef.current?.captureScreen(type, encoderOptions);
     },
     [engineRef],
   );
@@ -537,6 +537,6 @@ function useProviderProps(
     layersInViewport,
     viewport,
     onMouseEvent,
-    capture,
+    captureScreen,
   };
 }
