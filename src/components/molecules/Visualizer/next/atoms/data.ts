@@ -25,6 +25,27 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
     });
   });
 
+  const deleteAll = atom(null, async (get, set, value: { data: Data; features: string[] }) => {
+    const d = dataKey(value.data);
+    Object.entries(
+      groupBy(
+        get(getAll)(value.data)
+          ?.filter(f => f.length)
+          .map(
+            f => [rangeKey(f[0].range), f, f.filter(g => !value.features.includes(g.id))] as const,
+          )
+          .filter(f => f[1].length !== f[2].length),
+        g => g[0],
+      ),
+    ).forEach(([k, f]) => {
+      set(cacheAtoms.set, {
+        key: d,
+        key2: k,
+        value: f.flatMap(g => g[2]),
+      });
+    });
+  });
+
   const setAndFetch = atom(null, async (get, set, value: { data: Data; range?: DataRange }) => {
     const k = dataKey(value.data, value.range);
     const rk = rangeKey(value.range);
@@ -42,6 +63,7 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
     getAll,
     set,
     setAndFetch,
+    deleteAll,
   };
 }
 

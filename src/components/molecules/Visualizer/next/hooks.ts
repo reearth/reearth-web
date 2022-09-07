@@ -1,5 +1,5 @@
 import { useSetAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { computeAtom } from "./atoms";
 import { Layer } from "./types";
@@ -9,14 +9,8 @@ export default function useHooks(layer?: Layer) {
   const computedLayer = useAtomValue(atoms.get);
   const setLayer = useSetAtom(atoms.set);
   const writeFeatures = useSetAtom(atoms.writeFeatures);
-
-  const handleFeatureRequest = useCallback(async () => {
-    throw new Error("todo"); // TODO
-  }, []);
-
-  const handleFeatureDelete = useCallback(() => {
-    throw new Error("todo"); // TODO
-  }, []);
+  const requestFetch = useSetAtom(atoms.requestFetch);
+  const deleteFeatures = useSetAtom(atoms.deleteFeatures);
 
   useEffect(() => {
     setLayer(layer && !layer.hidden ? layer : undefined);
@@ -24,8 +18,8 @@ export default function useHooks(layer?: Layer) {
 
   return {
     computedLayer,
-    handleFeatureRequest,
+    handleFeatureRequest: requestFetch,
     handleFeatureFetch: writeFeatures,
-    handleFeatureDelete,
+    handleFeatureDelete: deleteFeatures,
   };
 }
