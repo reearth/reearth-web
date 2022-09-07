@@ -14,6 +14,7 @@ const data: Data = { type: "geojson", url: "https://example.com/example.geojson"
 const range: DataRange = { x: 0, y: 0, z: 0 };
 const layer: Layer = { id: "xxx", type: "simple", data };
 const features: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] } }];
+const features2: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range }];
 
 test("computeAtom", async () => {
   const { result } = renderHook(() => {
@@ -73,7 +74,7 @@ test("computeAtom", async () => {
 
   // write features
   act(() => {
-    result.current.writeFeatures({ range, features });
+    result.current.writeFeatures(features2);
   });
 
   expect(result.current.result).toEqual({
@@ -81,7 +82,7 @@ test("computeAtom", async () => {
     layer,
     status: "fetching",
     features,
-    originalFeatures: [...features, ...features],
+    originalFeatures: [...features, ...features2],
   });
 
   await waitFor(() =>
@@ -89,8 +90,8 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features: [...features, ...features],
-      originalFeatures: [...features, ...features],
+      features: [...features, ...features2],
+      originalFeatures: [...features, ...features2],
     }),
   );
 

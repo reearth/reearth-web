@@ -12,6 +12,7 @@ import { dataAtom } from "./data";
 const data: Data = { type: "geojson", url: "https://example.com/example.geojson" };
 const range: DataRange = { x: 0, y: 0, z: 0 };
 const features: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] } }];
+const features2: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range }];
 
 test("dataAtom set", () => {
   const { result } = renderHook(() => {
@@ -33,11 +34,11 @@ test("dataAtom set", () => {
   expect(result.current.get(data, range)).toBeUndefined();
 
   act(() => {
-    result.current.set({ data, range, features });
+    result.current.set({ data, features: features2 });
   });
 
-  expect(result.current.get(data, range)).toEqual(features);
-  expect(result.current.getAll(data)).toEqual([features, features]);
+  expect(result.current.get(data, range)).toEqual(features2);
+  expect(result.current.getAll(data)).toEqual([features, features2]);
 });
 
 test("dataAtom setAndFetch", async () => {

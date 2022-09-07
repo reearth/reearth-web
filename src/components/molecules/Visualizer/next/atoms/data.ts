@@ -1,4 +1,5 @@
 import { atom } from "jotai";
+import { groupBy } from "lodash";
 
 import { fetchData } from "../data";
 import type { Feature, Data, DataRange } from "../types";
@@ -14,16 +15,15 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
 
   const getAll = atom(get => (data: Data) => get(cacheAtoms.getAll)(dataKey(data)));
 
-  const set = atom(
-    null,
-    async (_get, set, value: { data: Data; range?: DataRange; features: Feature[] }) => {
+  const set = atom(null, async (_get, set, value: { data: Data; features: Feature[] }) => {
+    Object.entries(groupBy(value.features, f => rangeKey(f.range))).forEach(([k, v]) => {
       set(cacheAtoms.set, {
         key: dataKey(value.data),
-        key2: rangeKey(value.range),
-        value: value.features,
+        key2: k,
+        value: v,
       });
-    },
-  );
+    });
+  });
 
   const setAndFetch = atom(null, async (get, set, value: { data: Data; range?: DataRange }) => {
     const k = dataKey(value.data, value.range);

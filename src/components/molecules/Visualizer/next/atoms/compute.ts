@@ -66,20 +66,16 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
-  const writeFeatures = atom(
-    null,
-    async (get, set, value: { range?: DataRange; features: Feature[] }) => {
-      const currentLayer = get(layer);
-      if (!currentLayer?.data) return;
+  const writeFeatures = atom(null, async (get, set, value: Feature[]) => {
+    const currentLayer = get(layer);
+    if (!currentLayer?.data) return;
 
-      set(dataAtoms.set, {
-        data: currentLayer.data,
-        range: value.range,
-        features: value.features,
-      });
-      await set(compute, undefined);
-    },
-  );
+    set(dataAtoms.set, {
+      data: currentLayer.data,
+      features: value,
+    });
+    await set(compute, undefined);
+  });
 
   return {
     get,
