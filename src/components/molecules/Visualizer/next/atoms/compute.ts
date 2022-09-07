@@ -40,7 +40,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       const allFeatures = getterAll(data);
       if (features) return allFeatures.flat();
 
-      await set(dataAtoms.setAndFetch, { data: data });
+      await set(dataAtoms.fetch, { data: data });
       return getterAll(data).flat();
     };
 
@@ -52,7 +52,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       const c = getter(data, range);
       if (c) return c;
 
-      await set(dataAtoms.setAndFetch, { data, range });
+      await set(dataAtoms.fetch, { data, range });
       return getter(data, range);
     };
 
@@ -70,7 +70,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     const data = get(layer)?.data;
     if (!data) return;
 
-    await set(dataAtoms.setAndFetch, { data, range: value });
+    await set(dataAtoms.fetch, { data, range: value });
   });
 
   const writeFeatures = atom(null, async (get, set, value: Feature[]) => {

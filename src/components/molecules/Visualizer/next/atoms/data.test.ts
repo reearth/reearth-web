@@ -46,20 +46,20 @@ test("dataAtom set", () => {
   expect(result.current.getAll(data)).toEqual([features, features2]);
 });
 
-test("dataAtom setAndFetch", async () => {
+test("dataAtom fetch", async () => {
   const { result } = renderHook(() => {
     const atoms = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
     const get = useAtomValue(atoms.get);
     const getAll = useAtomValue(atoms.getAll);
-    const setAndFetch = useSetAtom(atoms.setAndFetch);
-    return { get, setAndFetch, getAll };
+    const fetch = useSetAtom(atoms.fetch);
+    return { get, fetch, getAll };
   });
 
   expect(result.current.get(data)).toBeUndefined();
   expect(result.current.getAll(data)).toEqual([]);
 
   act(() => {
-    result.current.setAndFetch({ data });
+    result.current.fetch({ data });
   });
 
   await waitFor(() => expect(result.current.get(data)).toEqual(features));

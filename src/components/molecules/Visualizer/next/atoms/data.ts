@@ -46,7 +46,7 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
     });
   });
 
-  const setAndFetch = atom(null, async (get, set, value: { data: Data; range?: DataRange }) => {
+  const fetch = atom(null, async (get, set, value: { data: Data; range?: DataRange }) => {
     const k = dataKey(value.data, value.range);
     const rk = rangeKey(value.range);
     const cached = get(cacheAtoms.get)(k, rk);
@@ -62,7 +62,7 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
     get,
     getAll,
     set,
-    setAndFetch,
+    fetch,
     deleteAll,
   };
 }
