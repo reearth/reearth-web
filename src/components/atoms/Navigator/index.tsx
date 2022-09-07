@@ -56,44 +56,40 @@ const Navigator: React.FC<Props> = memo(function NavigatorPresenter({
     <Container>
       <CompassContainer>
         <Compass ref={compassRef}>
-          <>
-            <CompassIcon onMouseDown={handleOnMouseDownCompass}>
-              <Icon
-                icon="compass"
-                color="#000"
-                aria-label={t("compass")}
-                size={64}
-                style={{ transform: `rotate(${compassDegree}deg)` }}
-              />
-            </CompassIcon>
-            {isMovingAngle && (
-              <CompassFocusIcon
-                style={{
-                  transform: `rotate(${compassFocusAngle.degree}deg)`,
-                }}
-                data-testId="compassFocus">
-                <Icon icon="compassFocus" color="blue" alt="" size={30} />
-              </CompassFocusIcon>
-            )}
-            <AngleIcon onMouseDown={handleOnMouseDownAngle}>
-              <Icon icon="navigatorAngle" aria-label={t("adjust angle")} size={32} />
-            </AngleIcon>
-          </>
+          <CompassIcon onMouseDown={handleOnMouseDownCompass}>
+            <Icon
+              icon="compass"
+              color="#000"
+              aria-label={t("compass")}
+              size={64}
+              style={{ transform: `rotate(${compassDegree}deg)` }}
+            />
+          </CompassIcon>
+          {isMovingAngle && (
+            <CompassFocusIcon
+              style={{
+                transform: `rotate(${compassFocusAngle.degree}deg)`,
+              }}
+              data-testId="compassFocus">
+              <Icon icon="compassFocus" color="blue" alt="" size={30} />
+            </CompassFocusIcon>
+          )}
+          <AngleIcon onMouseDown={handleOnMouseDownAngle}>
+            <Icon icon="navigatorAngle" aria-label={t("adjust angle")} size={32} />
+          </AngleIcon>
         </Compass>
         <Help onClick={onClickHelp}>?</Help>
       </CompassContainer>
       <Tool>
-        <>
-          <ToolIconButton onClick={onZoomOut}>
-            <Icon icon="minus" aria-label={t("zoom out")} size={16} />
-          </ToolIconButton>
-          <ToolIconButton onDoubleClick={onRestoreRotate}>
-            <Icon icon="house" aria-label={t("Go to the home position")} size={16} />
-          </ToolIconButton>
-          <ToolIconButton onClick={onZoomIn}>
-            <Icon icon="plus" aria-label={t("zoom in")} size={16} />
-          </ToolIconButton>
-        </>
+        <ToolIconButton onClick={onZoomOut}>
+          <Icon icon="minus" aria-label={t("zoom out")} size={16} />
+        </ToolIconButton>
+        <ToolIconButton onDoubleClick={onRestoreRotate}>
+          <Icon icon="house" aria-label={t("Go to the home position")} size={16} />
+        </ToolIconButton>
+        <ToolIconButton onClick={onZoomIn}>
+          <Icon icon="plus" aria-label={t("zoom in")} size={16} />
+        </ToolIconButton>
       </Tool>
     </Container>
   );
