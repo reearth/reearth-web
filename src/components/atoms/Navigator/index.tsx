@@ -12,14 +12,14 @@ export type Props = {
   degree: number;
   /**
    * Pass degree of circle as callback arguments.
-   * This event is invoked when outer circle is clicked and mouse move.
-   * If click is dismissed then this event is stopped.
+   * This event is invoked when mouse down on outer circle and mouse move.
+   * When mouse up, this event is stopped.
    */
   onRotate?: (degree: number) => void;
   /**
    * Pass distance of movement as x,y axis(px) and degree of circle as callback arguments.
-   * This event is invoked when inner circle button is clicked and mouse move.
-   * If click is dismissed then this event is stopped.
+   * This event is invoked when inner mouse down on circle button and mouse move.
+   * When mouse up, this event is stopped.
    */
   onOrbit?: (angle: CompassAngle) => void;
   /**
