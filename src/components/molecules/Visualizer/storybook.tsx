@@ -96,6 +96,8 @@ export const context: ProviderProps = {
   disableScreenSpaceCameraController: act("disableScreenSpaceCameraController"),
   lookUp: act("lookUp"),
   lookRight: act("lookRight"),
+  lookHorizontal: act("lookHorizontal"),
+  lookVertical: act("lookVertical"),
   moveForward: act("moveForward"),
   moveBackward: act("moveBackward"),
   moveUp: act("moveUp"),

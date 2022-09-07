@@ -159,6 +159,8 @@ export function commonReearth({
   disableScreenSpaceCameraController,
   lookUp,
   lookRight,
+  lookHorizontal,
+  lookVertical,
   moveForward,
   moveBackward,
   moveUp,
@@ -194,6 +196,8 @@ export function commonReearth({
   disableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["disableScreenSpaceControl"];
   lookUp: GlobalThis["reearth"]["visualizer"]["camera"]["lookUp"];
   lookRight: GlobalThis["reearth"]["visualizer"]["camera"]["lookRight"];
+  lookHorizontal: GlobalThis["reearth"]["visualizer"]["camera"]["lookHorizontal"];
+  lookVertical: GlobalThis["reearth"]["visualizer"]["camera"]["lookVertical"];
   moveForward: GlobalThis["reearth"]["visualizer"]["camera"]["moveForward"];
   moveBackward: GlobalThis["reearth"]["visualizer"]["camera"]["moveBackward"];
   moveUp: GlobalThis["reearth"]["visualizer"]["camera"]["moveUp"];
@@ -222,6 +226,8 @@ export function commonReearth({
         disableScreenSpaceControl: disableScreenSpaceCameraController,
         lookUp,
         lookRight,
+        lookHorizontal,
+        lookVertical,
         moveForward,
         moveBackward,
         moveUp,
@@ -260,6 +266,8 @@ export function commonReearth({
       disableScreenSpaceControl: disableScreenSpaceCameraController,
       lookUp,
       lookRight,
+      lookHorizontal,
+      lookVertical,
       moveForward,
       moveBackward,
       moveUp,

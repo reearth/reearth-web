@@ -64,6 +64,8 @@ export type Props = {
   disableScreenSpaceCameraController: () => void;
   lookUp: (amount: number) => void;
   lookRight: (amount: number) => void;
+  lookHorizontal: (amount: number) => void;
+  lookVertical: (amount: number) => void;
   moveForward: (amount: number) => void;
   moveBackward: (amount: number) => void;
   moveUp: (amount: number) => void;
@@ -117,6 +119,8 @@ export function Provider({
   disableScreenSpaceCameraController,
   lookUp,
   lookRight,
+  lookHorizontal,
+  lookVertical,
   moveForward,
   moveBackward,
   moveUp,
@@ -182,6 +186,8 @@ export function Provider({
         disableScreenSpaceCameraController,
         lookUp,
         lookRight,
+        lookHorizontal,
+        lookVertical,
         moveForward,
         moveBackward,
         moveUp,
@@ -223,6 +229,8 @@ export function Provider({
       disableScreenSpaceCameraController,
       lookUp,
       lookRight,
+      lookHorizontal,
+      lookVertical,
       moveForward,
       moveBackward,
       moveUp,

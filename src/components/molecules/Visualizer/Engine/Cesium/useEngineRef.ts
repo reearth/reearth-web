@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath } from "cesium";
+import { Math as CesiumMath, Cartesian3, Ellipsoid } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
@@ -142,6 +142,27 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         viewer?.scene?.camera.lookRight(amount);
       },
+      lookHorizontal: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const camera = viewer.scene.camera;
+        const ellipsoid = viewer.scene.globe.ellipsoid;
+        const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
+        camera.look(surfaceNormal, amount);
+      },
+      lookVertical: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const camera = viewer.scene.camera;
+        const ellipsoid = viewer.scene.globe.ellipsoid;
+        // const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
+        const surfaceTangent = projectVectorToSurface(camera.right, camera.position, ellipsoid);
+        // const currentAngle = CesiumMath.toDegrees(
+        //   Cartesian3.angleBetween(surfaceNormal, camera.up),
+        // );
+        // const angleAfterLook = rotateVectorAboutAxis(camera.up, surfaceTangent, amount);
+        camera.look(surfaceTangent, amount);
+      },
       moveForward: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
@@ -228,4 +249,15 @@ export default function useEngineRef(
   useImperativeHandle(ref, () => e, [e]);
 
   return e;
+}
+
+function projectVectorToSurface(vector: Cartesian3, position: Cartesian3, ellipsoid: Ellipsoid) {
+  const surfaceNormal = ellipsoid.geodeticSurfaceNormal(position, new Cartesian3());
+  const magnitudeOfProjectionOnSurfaceNormal = Cartesian3.dot(vector, surfaceNormal);
+  const projectionOnSurfaceNormal = Cartesian3.multiplyByScalar(
+    surfaceNormal,
+    magnitudeOfProjectionOnSurfaceNormal,
+    new Cartesian3(),
+  );
+  return Cartesian3.subtract(vector, projectionOnSurfaceNormal, new Cartesian3());
 }

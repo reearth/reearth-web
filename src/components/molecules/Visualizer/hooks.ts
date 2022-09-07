@@ -435,6 +435,8 @@ function useProviderProps(
     | "disableScreenSpaceCameraController"
     | "lookUp"
     | "lookRight"
+    | "lookHorizontal"
+    | "lookVertical"
     | "moveForward"
     | "moveBackward"
     | "moveUp"
@@ -553,6 +555,20 @@ function useProviderProps(
     [engineRef],
   );
 
+  const lookHorizontal = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookHorizontal(amount);
+    },
+    [engineRef],
+  );
+
+  const lookVertical = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookVertical(amount);
+    },
+    [engineRef],
+  );
+
   const moveForward = useCallback(
     (amount: number) => {
       engineRef.current?.moveForward(amount);
@@ -617,6 +633,8 @@ function useProviderProps(
     disableScreenSpaceCameraController,
     lookUp,
     lookRight,
+    lookHorizontal,
+    lookVertical,
     moveForward,
     moveBackward,
     moveUp,
