@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 import { TimeEventHandler } from "@reearth/components/atoms/Timeline/types";
 
@@ -22,6 +22,7 @@ export const useTimeline = () => {
   );
   const [isOpened, setIsOpened] = useState(false);
   const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.currentTime).getTime());
+  const isClockInitialized = useRef(false);
   const clockCurrentTime = clock?.currentTime.getTime();
   const clockStartTime = clock?.startTime.getTime();
   const clockStopTime = clock?.stopTime.getTime();
@@ -87,7 +88,8 @@ export const useTimeline = () => {
 
   // Initialize clock value
   useEffect(() => {
-    if (clock) {
+    if (clock && !isClockInitialized.current) {
+      isClockInitialized.current = true;
       queueMicrotask(() => {
         clock.speed = 1;
         clock.tick();
