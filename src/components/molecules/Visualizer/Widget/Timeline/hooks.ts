@@ -76,15 +76,18 @@ export const useTimeline = () => {
     [clock, speed],
   );
 
-  const handleOnSpeedChange = useCallback((speed: number) => {
-    setSpeed(speed);
-    if (clock) {
-      const absSpeed = Math.abs(speed);
-      // Maybe we need to throttle changing speed.
-      clock.speed = clock.speed > 0 ? absSpeed : absSpeed * -1;
-      clock.tick();
-    }
-  }, []);
+  const handleOnSpeedChange = useCallback(
+    (speed: number) => {
+      setSpeed(speed);
+      if (clock) {
+        const absSpeed = Math.abs(speed);
+        // Maybe we need to throttle changing speed.
+        clock.speed = clock.speed > 0 ? absSpeed : absSpeed * -1;
+        clock.tick();
+      }
+    },
+    [clock],
+  );
 
   // Initialize clock value
   useEffect(() => {
