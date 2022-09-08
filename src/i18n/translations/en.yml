@@ -1,11 +1,11 @@
 Continue: Continue
 Cancel: Cancel
 Drop here: Drop here
-compass: compass
-adjust angle: adjust angle
-zoom out: zoom out
-Go to the home position: Go to the home position
-zoom in: zoom in
+aria-label-compass: compass
+aria-label-adjust-angle: adjust angle
+aria-label-zoom-out: zoom out
+aria-label-Go-to-the-home-position: Go to the home position
+aria-label-zoom-in: zoom in
 Notfound: Notfound
 Published: Published
 Unpublished: Unpublished

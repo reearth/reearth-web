@@ -1,11 +1,11 @@
 Continue: 続ける
 Cancel: キャンセル
 Drop here: ここにドロップ
-compass: コンパス
-adjust angle: 角度を調節する
-zoom out: ズームアウト
-Go to the home position: 元の位置に戻る
-zoom in: ズームイン
+aria-label-compass: コンパス
+aria-label-adjust-angle: 角度を調節する
+aria-label-zoom-out: ズームアウト
+aria-label-Go-to-the-home-position: 元の位置に戻る
+aria-label-zoom-in: ズームイン
 Notfound: ページが見つかりません
 Published: 一般公開
 Unpublished: 非公開
