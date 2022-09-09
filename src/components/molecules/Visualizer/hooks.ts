@@ -442,6 +442,7 @@ function useProviderProps(
     | "moveLeft"
     | "moveRight"
     | "moveOverTerrain"
+    | "flyToGround"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -602,6 +603,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const flyToGround = useCallback(
+    (dest: FlyToDestination, options?: CameraOptions, offset?: number) => {
+      engineRef.current?.flyToGround(dest, options, offset);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -624,5 +632,6 @@ function useProviderProps(
     moveLeft,
     moveRight,
     moveOverTerrain,
+    flyToGround,
   };
 }

@@ -291,6 +291,11 @@ export type Camera = {
   readonly moveLeft: (amount: number) => void;
   readonly moveRight: (amount: number) => void;
   readonly moveOverTerrain: (offset?: number) => void;
+  readonly flyToGround: (
+    destination: FlyToDestination,
+    options?: CameraOptions,
+    offset?: number,
+  ) => void;
 };
 
 /** Represents the camera position and state */

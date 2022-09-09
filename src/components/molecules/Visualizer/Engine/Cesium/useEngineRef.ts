@@ -237,6 +237,21 @@ export default function useEngineRef(
           }
         }
       },
+      flyToGround: async (camera, options, offset = 10) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const cesiumCamera = viewer.scene.camera;
+        const height = await sampleTerrainHeight(viewer.scene, cesiumCamera.position);
+        if (height && height !== 0) {
+          const groundCamera = { ...camera, height: height + offset };
+          cancelCameraFlight.current?.();
+          cancelCameraFlight.current = flyTo(
+            viewer.scene?.camera,
+            { ...getCamera(viewer), ...groundCamera },
+            options,
+          );
+        }
+      },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;
       },

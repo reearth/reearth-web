@@ -19,6 +19,7 @@ import type { CommonReearth } from "./api";
 import { commonReearth } from "./api";
 import type {
   CameraPosition,
+  CameraOptions,
   Layer,
   OverriddenInfobox,
   ReearthEventType,
@@ -71,6 +72,7 @@ export type Props = {
   moveLeft: (amount: number) => void;
   moveRight: (amount: number) => void;
   moveOverTerrain: () => void;
+  flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
 };
 
 export type Context = {
@@ -124,6 +126,7 @@ export function Provider({
   moveLeft,
   moveRight,
   moveOverTerrain,
+  flyToGround,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
@@ -189,6 +192,7 @@ export function Provider({
         moveLeft,
         moveRight,
         moveOverTerrain,
+        flyToGround,
       }),
       overrideSceneProperty,
     }),
@@ -230,6 +234,7 @@ export function Provider({
       moveLeft,
       moveRight,
       moveOverTerrain,
+      flyToGround,
     ],
   );
 
