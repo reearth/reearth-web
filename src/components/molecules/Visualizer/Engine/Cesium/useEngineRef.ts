@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath, Cartesian3, Ellipsoid } from "cesium";
+import { Math as CesiumMath, Cartesian3, Ellipsoid, Quaternion, Matrix3 } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
@@ -155,13 +155,17 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         const camera = viewer.scene.camera;
         const ellipsoid = viewer.scene.globe.ellipsoid;
-        // const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
-        const surfaceTangent = projectVectorToSurface(camera.right, camera.position, ellipsoid);
-        // const currentAngle = CesiumMath.toDegrees(
-        //   Cartesian3.angleBetween(surfaceNormal, camera.up),
-        // );
-        // const angleAfterLook = rotateVectorAboutAxis(camera.up, surfaceTangent, amount);
-        camera.look(surfaceTangent, amount);
+        const lookAxis = projectVectorToSurface(camera.right, camera.position, ellipsoid);
+        const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
+        const currentAngle = CesiumMath.toDegrees(
+          Cartesian3.angleBetween(surfaceNormal, camera.up),
+        );
+        const upAfterLook = rotateVectorAboutAxis(camera.up, lookAxis, amount);
+        const angleAfterLook = CesiumMath.toDegrees(
+          Cartesian3.angleBetween(surfaceNormal, upAfterLook),
+        );
+        const friction = angleAfterLook < currentAngle ? 1 : (90 - currentAngle) / 90;
+        camera.look(lookAxis, amount * friction);
       },
       moveForward: amount => {
         const viewer = cesium.current?.cesiumElement;
@@ -260,4 +264,11 @@ function projectVectorToSurface(vector: Cartesian3, position: Cartesian3, ellips
     new Cartesian3(),
   );
   return Cartesian3.subtract(vector, projectionOnSurfaceNormal, new Cartesian3());
+}
+
+function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotateAmount: number) {
+  const quaternion = Quaternion.fromAxisAngle(rotateAxis, -rotateAmount, new Quaternion());
+  const rotation = Matrix3.fromQuaternion(quaternion, new Matrix3());
+  const rotatedVector = Matrix3.multiplyByVector(rotation, vector, vector.clone());
+  return rotatedVector;
 }
