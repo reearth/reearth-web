@@ -165,6 +165,7 @@ export function commonReearth({
   moveDown,
   moveLeft,
   moveRight,
+  moveOverTerrain,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
@@ -199,6 +200,7 @@ export function commonReearth({
   moveDown: GlobalThis["reearth"]["camera"]["moveDown"];
   moveLeft: GlobalThis["reearth"]["camera"]["moveLeft"];
   moveRight: GlobalThis["reearth"]["camera"]["moveRight"];
+  moveOverTerrain: GlobalThis["reearth"]["camera"]["moveOverTerrain"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -226,6 +228,7 @@ export function commonReearth({
         moveDown,
         moveLeft,
         moveRight,
+        moveOverTerrain,
       },
       get property() {
         return sceneProperty();
@@ -263,6 +266,7 @@ export function commonReearth({
       moveDown,
       moveLeft,
       moveRight,
+      moveOverTerrain,
     },
     layers: {
       get layersInViewport() {

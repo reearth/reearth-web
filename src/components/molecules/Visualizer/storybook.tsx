@@ -102,6 +102,7 @@ export const context: ProviderProps = {
   moveDown: act("moveDown"),
   moveLeft: act("moveLeft"),
   moveRight: act("moveRight"),
+  moveOverTerrain: act("moveOverTerrain"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

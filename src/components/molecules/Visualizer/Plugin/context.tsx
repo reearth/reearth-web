@@ -70,6 +70,7 @@ export type Props = {
   moveDown: (amount: number) => void;
   moveLeft: (amount: number) => void;
   moveRight: (amount: number) => void;
+  moveOverTerrain: () => void;
 };
 
 export type Context = {
@@ -122,6 +123,7 @@ export function Provider({
   moveDown,
   moveLeft,
   moveRight,
+  moveOverTerrain,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
@@ -186,6 +188,7 @@ export function Provider({
         moveDown,
         moveLeft,
         moveRight,
+        moveOverTerrain,
       }),
       overrideSceneProperty,
     }),
@@ -226,6 +229,7 @@ export function Provider({
       moveDown,
       moveLeft,
       moveRight,
+      moveOverTerrain,
     ],
   );
 

@@ -1,5 +1,15 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath, Cartesian3, Ellipsoid, Quaternion, Matrix3 } from "cesium";
+import {
+  Math as CesiumMath,
+  Cartesian3,
+  Ellipsoid,
+  Quaternion,
+  Scene,
+  Matrix3,
+  Cartographic,
+  EllipsoidTerrainProvider,
+  sampleTerrainMostDetailed,
+} from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 
@@ -160,32 +170,72 @@ export default function useEngineRef(
       moveForward: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.moveForward(amount);
+        const direction = projectVectorToSurface(
+          viewer.scene.camera.direction,
+          viewer.scene.camera.position,
+          viewer.scene.globe.ellipsoid,
+        );
+        viewer.scene.camera.move(direction, amount);
       },
       moveBackward: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.moveBackward(amount);
+        const direction = projectVectorToSurface(
+          viewer.scene.camera.direction,
+          viewer.scene.camera.position,
+          viewer.scene.globe.ellipsoid,
+        );
+        viewer.scene.camera.move(direction, -amount);
       },
       moveUp: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.moveUp(amount);
+        const surfaceNormal = viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(
+          viewer.scene.camera.position,
+          new Cartesian3(),
+        );
+        viewer.scene.camera.move(surfaceNormal, amount);
       },
       moveDown: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.moveDown(amount);
+        const surfaceNormal = viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(
+          viewer.scene.camera.position,
+          new Cartesian3(),
+        );
+        viewer.scene.camera.move(surfaceNormal, -amount);
       },
       moveLeft: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.moveLeft(amount);
+        const direction = projectVectorToSurface(
+          viewer.scene.camera.right,
+          viewer.scene.camera.position,
+          viewer.scene.globe.ellipsoid,
+        );
+        viewer.scene.camera.move(direction, -amount);
       },
       moveRight: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.moveRight(amount);
+        const direction = projectVectorToSurface(
+          viewer.scene.camera.right,
+          viewer.scene.camera.position,
+          viewer.scene.globe.ellipsoid,
+        );
+        viewer.scene.camera.move(direction, amount);
+      },
+      moveOverTerrain: async (offset = 10) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const camera = viewer.scene.camera;
+        const height = await sampleTerrainHeight(viewer.scene, camera.position);
+        if (height && height !== 0) {
+          const innerCamera = getCamera(viewer);
+          if (innerCamera && innerCamera?.height < height + offset) {
+            camera.moveUp(height + offset - innerCamera.height);
+          }
+        }
       },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;
@@ -256,4 +306,17 @@ function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotat
   const rotation = Matrix3.fromQuaternion(quaternion, new Matrix3());
   const rotatedVector = Matrix3.multiplyByVector(rotation, vector, vector.clone());
   return rotatedVector;
+}
+
+async function sampleTerrainHeight(
+  scene: Scene,
+  position: Cartesian3,
+): Promise<number | undefined> {
+  const terrainProvider = scene.terrainProvider;
+  if (terrainProvider instanceof EllipsoidTerrainProvider) return 0;
+
+  const [sample] = await sampleTerrainMostDetailed(terrainProvider, [
+    Cartographic.fromCartesian(position, scene.globe.ellipsoid, new Cartographic()),
+  ]);
+  return sample.height;
 }

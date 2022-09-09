@@ -441,6 +441,7 @@ function useProviderProps(
     | "moveDown"
     | "moveLeft"
     | "moveRight"
+    | "moveOverTerrain"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -594,6 +595,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const moveOverTerrain = useCallback(
+    (offset?: number) => {
+      return engineRef.current?.moveOverTerrain(offset);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -615,5 +623,6 @@ function useProviderProps(
     moveDown,
     moveLeft,
     moveRight,
+    moveOverTerrain,
   };
 }
