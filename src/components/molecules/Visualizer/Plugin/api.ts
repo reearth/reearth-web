@@ -189,16 +189,16 @@ export function commonReearth({
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
-  enableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["enableScreenSpaceControl"];
-  disableScreenSpaceCameraController: GlobalThis["reearth"]["visualizer"]["camera"]["disableScreenSpaceControl"];
-  lookHorizontal: GlobalThis["reearth"]["visualizer"]["camera"]["lookHorizontal"];
-  lookVertical: GlobalThis["reearth"]["visualizer"]["camera"]["lookVertical"];
-  moveForward: GlobalThis["reearth"]["visualizer"]["camera"]["moveForward"];
-  moveBackward: GlobalThis["reearth"]["visualizer"]["camera"]["moveBackward"];
-  moveUp: GlobalThis["reearth"]["visualizer"]["camera"]["moveUp"];
-  moveDown: GlobalThis["reearth"]["visualizer"]["camera"]["moveDown"];
-  moveLeft: GlobalThis["reearth"]["visualizer"]["camera"]["moveLeft"];
-  moveRight: GlobalThis["reearth"]["visualizer"]["camera"]["moveRight"];
+  enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
+  disableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["disableScreenSpaceController"];
+  lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
+  lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
+  moveForward: GlobalThis["reearth"]["camera"]["moveForward"];
+  moveBackward: GlobalThis["reearth"]["camera"]["moveBackward"];
+  moveUp: GlobalThis["reearth"]["camera"]["moveUp"];
+  moveDown: GlobalThis["reearth"]["camera"]["moveDown"];
+  moveLeft: GlobalThis["reearth"]["camera"]["moveLeft"];
+  moveRight: GlobalThis["reearth"]["camera"]["moveRight"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -216,8 +216,8 @@ export function commonReearth({
         get viewport() {
           return viewport();
         },
-        enableScreenSpaceControl: enableScreenSpaceCameraController,
-        disableScreenSpaceControl: disableScreenSpaceCameraController,
+        enableScreenSpaceController: enableScreenSpaceCameraController,
+        disableScreenSpaceController: disableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
         moveForward,
@@ -253,8 +253,8 @@ export function commonReearth({
       get viewport() {
         return viewport();
       },
-      enableScreenSpaceControl: enableScreenSpaceCameraController,
-      disableScreenSpaceControl: disableScreenSpaceCameraController,
+      enableScreenSpaceController: enableScreenSpaceCameraController,
+      disableScreenSpaceController: disableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
       moveForward,
