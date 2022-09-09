@@ -187,11 +187,6 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         viewer?.scene?.camera.moveRight(amount);
       },
-      setView: options => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.setView(options);
-      },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;
       },

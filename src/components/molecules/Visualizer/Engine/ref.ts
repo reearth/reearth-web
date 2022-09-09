@@ -73,7 +73,6 @@ export type EngineRef = {
   moveDown: (amount: number) => void;
   moveLeft: (amount: number) => void;
   moveRight: (amount: number) => void;
-  setView: (options: any) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;
