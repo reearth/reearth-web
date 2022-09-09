@@ -94,8 +94,6 @@ export const context: ProviderProps = {
   onMouseEvent: act("onMouseEvent"),
   enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
   disableScreenSpaceCameraController: act("disableScreenSpaceCameraController"),
-  lookUp: act("lookUp"),
-  lookRight: act("lookRight"),
   lookHorizontal: act("lookHorizontal"),
   lookVertical: act("lookVertical"),
   moveForward: act("moveForward"),

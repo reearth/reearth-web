@@ -132,16 +132,6 @@ export default function useEngineRef(
         viewer.scene.screenSpaceCameraController.enableTilt = false;
         viewer.scene.screenSpaceCameraController.enableLook = false;
       },
-      lookUp: amount => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.lookUp(amount);
-      },
-      lookRight: amount => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.lookRight(amount);
-      },
       lookHorizontal: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
