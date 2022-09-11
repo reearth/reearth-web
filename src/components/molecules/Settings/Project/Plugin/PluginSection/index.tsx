@@ -15,7 +15,7 @@ export type PluginItem = PluginItemType;
 export type Props = {
   title?: string;
   loading?: boolean;
-  marketplacePluginIds?:
+  marketplacePlugins?:
     | {
         id: string;
         version: string;
@@ -26,6 +26,8 @@ export type Props = {
     library: Extension<"plugin-library">[] | undefined;
     installed: Extension<"plugin-installed">[] | undefined;
   };
+  currentTheme?: "light" | "dark";
+  currentLang?: string;
   accessToken?: string;
   onInstallByMarketplace: (pluginId: string) => void;
   onInstallFromPublicRepo: (repoUrl: string) => void;
@@ -45,9 +47,11 @@ export type PluginTabs = "Marketplace" | "Public" | "Personal";
 
 const PluginSection: React.FC<Props> = ({
   loading,
-  marketplacePluginIds,
+  marketplacePlugins,
   personalPlugins,
   extensions,
+  currentTheme,
+  currentLang,
   accessToken,
   onInstallByMarketplace,
   onInstallByUploadingZipFile,
@@ -57,7 +61,7 @@ const PluginSection: React.FC<Props> = ({
   const t = useT();
   const { search } = useLocation();
   const queriedPluginId = useMemo(
-    () => new URLSearchParams(search).get("pluginId") ?? undefined,
+    () => new URLSearchParams(search).get("selected") ?? undefined,
     [search],
   );
 
@@ -81,6 +85,8 @@ const PluginSection: React.FC<Props> = ({
                   <ext.component
                     key={ext.id}
                     selectedPluginId={queriedPluginId}
+                    theme={currentTheme}
+                    lang={currentLang}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}
@@ -94,7 +100,9 @@ const PluginSection: React.FC<Props> = ({
                 extensions?.installed?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    installedPlugins={marketplacePluginIds}
+                    installedPlugins={marketplacePlugins}
+                    theme={currentTheme}
+                    lang={currentLang}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}

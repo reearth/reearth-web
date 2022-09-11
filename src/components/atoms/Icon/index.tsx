@@ -17,6 +17,7 @@ export type Props = {
   color?: string;
   style?: CSSProperties;
   role?: AriaRole;
+  notransition?: boolean;
   onClick?: () => void;
 } & AriaAttributes;
 
@@ -28,6 +29,7 @@ const Icon: React.FC<Props> = ({
   color,
   size,
   role,
+  notransition,
   onClick,
   ...props
 }) => {
@@ -48,6 +50,7 @@ const Icon: React.FC<Props> = ({
         style={style}
         role={role}
         size={sizeStr}
+        notransition={notransition}
         onClick={onClick}
         {...aria}
       />
@@ -62,23 +65,27 @@ const Icon: React.FC<Props> = ({
       role={role}
       color={color}
       size={sizeStr}
+      notransition={notransition}
       onClick={onClick}
       {...aria}
     />
   );
 };
 
-const StyledImg = styled.img<{ size?: string }>`
+const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
+  ${({ notransition }) => !notransition && "transition: all 0.4s;"}
 `;
 
-const StyledSvg = styled(SVG)<{ color?: string; size?: string }>`
+const StyledSvg = styled(SVG)<{ color?: string; size?: string; notransition?: boolean }>`
   font-size: 0;
   display: inline-block;
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
+  transition-property: color, background;
+  ${({ notransition }) => (!notransition ? "transition-duration: 0.4s;" : undefined)}
 `;
 
 export default memo(Icon);
