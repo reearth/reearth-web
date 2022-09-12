@@ -18,9 +18,11 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
   const t = useT();
   const {
     currentProject,
-    marketplacePluginIds,
-    personalPlugins,
+    currentTheme,
+    currentLang,
     loading,
+    marketplacePlugins,
+    personalPlugins,
     extensions,
     accessToken,
     handleInstallByMarketplace,
@@ -35,9 +37,11 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       {!currentProject?.isArchived ? (
         <PluginSection
           loading={loading}
-          marketplacePluginIds={marketplacePluginIds}
+          marketplacePlugins={marketplacePlugins}
           personalPlugins={personalPlugins}
           extensions={extensions}
+          currentTheme={currentTheme}
+          currentLang={currentLang}
           accessToken={accessToken}
           onInstallByMarketplace={handleInstallByMarketplace}
           onInstallByUploadingZipFile={handleInstallByUploadingZipFile}
