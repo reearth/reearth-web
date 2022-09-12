@@ -446,16 +446,16 @@ export function attachTag(entity: Entity | undefined, tag: string, value: any) {
   }
 }
 
-export function lookHorizontal(viewer: Viewer, amount: number) {
-  const camera = viewer.scene.camera;
-  const ellipsoid = viewer.scene.globe.ellipsoid;
+export function lookHorizontal(scene: Scene, amount: number) {
+  const camera = scene.camera;
+  const ellipsoid = scene.globe.ellipsoid;
   const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
   camera.look(surfaceNormal, amount);
 }
 
-export function lookVertical(viewer: Viewer, amount: number) {
-  const camera = viewer.scene.camera;
-  const ellipsoid = viewer.scene.globe.ellipsoid;
+export function lookVertical(scene: Scene, amount: number) {
+  const camera = scene.camera;
+  const ellipsoid = scene.globe.ellipsoid;
   const lookAxis = projectVectorToSurface(camera.right, camera.position, ellipsoid);
   const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
   const currentAngle = CesiumMath.toDegrees(Cartesian3.angleBetween(surfaceNormal, camera.up));
@@ -465,56 +465,56 @@ export function lookVertical(viewer: Viewer, amount: number) {
   camera.look(lookAxis, amount * friction);
 }
 
-export function moveForward(viewer: Viewer, amount: number) {
+export function moveForward(scene: Scene, amount: number) {
   const direction = projectVectorToSurface(
-    viewer.scene.camera.direction,
-    viewer.scene.camera.position,
-    viewer.scene.globe.ellipsoid,
+    scene.camera.direction,
+    scene.camera.position,
+    scene.globe.ellipsoid,
   );
-  viewer.scene.camera.move(direction, amount);
+  scene.camera.move(direction, amount);
 }
 
-export function moveBackward(viewer: Viewer, amount: number) {
+export function moveBackward(scene: Scene, amount: number) {
   const direction = projectVectorToSurface(
-    viewer.scene.camera.direction,
-    viewer.scene.camera.position,
-    viewer.scene.globe.ellipsoid,
+    scene.camera.direction,
+    scene.camera.position,
+    scene.globe.ellipsoid,
   );
-  viewer.scene.camera.move(direction, -amount);
+  scene.camera.move(direction, -amount);
 }
 
-export function moveUp(viewer: Viewer, amount: number) {
-  const surfaceNormal = viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(
-    viewer.scene.camera.position,
+export function moveUp(scene: Scene, amount: number) {
+  const surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(
+    scene.camera.position,
     new Cartesian3(),
   );
-  viewer.scene.camera.move(surfaceNormal, amount);
+  scene.camera.move(surfaceNormal, amount);
 }
 
-export function moveDown(viewer: Viewer, amount: number) {
-  const surfaceNormal = viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(
-    viewer.scene.camera.position,
+export function moveDown(scene: Scene, amount: number) {
+  const surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(
+    scene.camera.position,
     new Cartesian3(),
   );
-  viewer.scene.camera.move(surfaceNormal, -amount);
+  scene.camera.move(surfaceNormal, -amount);
 }
 
-export function moveLeft(viewer: Viewer, amount: number) {
+export function moveLeft(scene: Scene, amount: number) {
   const direction = projectVectorToSurface(
-    viewer.scene.camera.right,
-    viewer.scene.camera.position,
-    viewer.scene.globe.ellipsoid,
+    scene.camera.right,
+    scene.camera.position,
+    scene.globe.ellipsoid,
   );
-  viewer.scene.camera.move(direction, -amount);
+  scene.camera.move(direction, -amount);
 }
 
-export function moveRight(viewer: Viewer, amount: number) {
+export function moveRight(scene: Scene, amount: number) {
   const direction = projectVectorToSurface(
-    viewer.scene.camera.right,
-    viewer.scene.camera.position,
-    viewer.scene.globe.ellipsoid,
+    scene.camera.right,
+    scene.camera.position,
+    scene.globe.ellipsoid,
   );
-  viewer.scene.camera.move(direction, amount);
+  scene.camera.move(direction, amount);
 }
 
 export async function moveOverTerrain(viewer: Viewer, offset = 0) {
