@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
 
 import Box from "@reearth/components/atoms/Box";
 import Loading from "@reearth/components/atoms/Loading";
@@ -15,7 +14,7 @@ export type PluginItem = PluginItemType;
 export type Props = {
   title?: string;
   loading?: boolean;
-  marketplacePluginIds?:
+  marketplacePlugins?:
     | {
         id: string;
         version: string;
@@ -47,7 +46,7 @@ export type PluginTabs = "Marketplace" | "Public" | "Personal";
 
 const PluginSection: React.FC<Props> = ({
   loading,
-  marketplacePluginIds,
+  marketplacePlugins,
   personalPlugins,
   extensions,
   currentTheme,
@@ -59,11 +58,6 @@ const PluginSection: React.FC<Props> = ({
   uninstallPlugin,
 }) => {
   const t = useT();
-  const { search } = useLocation();
-  const queriedPluginId = useMemo(
-    () => new URLSearchParams(search).get("selected") ?? undefined,
-    [search],
-  );
 
   const tabHeaders = useMemo(
     () => ({
@@ -84,9 +78,9 @@ const PluginSection: React.FC<Props> = ({
                 extensions?.library?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    selectedPluginId={queriedPluginId}
                     theme={currentTheme}
                     lang={currentLang}
+                    installedPlugins={marketplacePlugins}
                     accessToken={accessToken}
                     onInstall={onInstallByMarketplace}
                     onUninstall={uninstallPlugin}
@@ -100,7 +94,7 @@ const PluginSection: React.FC<Props> = ({
                 extensions?.installed?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    installedPlugins={marketplacePluginIds}
+                    installedPlugins={marketplacePlugins}
                     theme={currentTheme}
                     lang={currentLang}
                     accessToken={accessToken}
