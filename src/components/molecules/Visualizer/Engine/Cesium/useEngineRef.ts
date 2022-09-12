@@ -130,6 +130,12 @@ export default function useEngineRef(
         const clock: Cesium.Clock = viewer.clock;
         return getClock(clock);
       },
+      captureScreen: (type?: string, encoderOptions?: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.render();
+        return viewer.canvas.toDataURL(type, encoderOptions);
+      },
       enableScreenSpaceCameraController: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed() || !viewer.scene) return;

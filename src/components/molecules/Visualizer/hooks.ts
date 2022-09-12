@@ -431,6 +431,7 @@ function useProviderProps(
     | "layersInViewport"
     | "viewport"
     | "onMouseEvent"
+    | "captureScreen"
     | "enableScreenSpaceCameraController"
     | "disableScreenSpaceCameraController"
     | "lookHorizontal"
@@ -530,6 +531,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const captureScreen = useCallback(
+    (type?: string, encoderOptions?: number) => {
+      return engineRef.current?.captureScreen(type, encoderOptions);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     () => engineRef?.current?.enableScreenSpaceCameraController(),
     [engineRef],
@@ -621,6 +629,7 @@ function useProviderProps(
     layersInViewport,
     viewport,
     onMouseEvent,
+    captureScreen,
     enableScreenSpaceCameraController,
     disableScreenSpaceCameraController,
     lookHorizontal,

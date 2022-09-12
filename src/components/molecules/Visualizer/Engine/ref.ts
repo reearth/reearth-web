@@ -63,6 +63,7 @@ export type EngineRef = {
   zoomOut: (amount: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   getClock: () => Clock | undefined;
+  captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   enableScreenSpaceCameraController: () => void;
   disableScreenSpaceCameraController: () => void;
   lookHorizontal: (amount: number) => void;
