@@ -1,5 +1,12 @@
 import { renderHook } from "@testing-library/react";
-import { ClockStep, JulianDate, Viewer as CesiumViewer } from "cesium";
+import {
+  ClockStep,
+  JulianDate,
+  Viewer as CesiumViewer,
+  Cartesian3,
+  Globe,
+  Ellipsoid,
+} from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 import { vi, expect, test } from "vitest";
@@ -274,4 +281,92 @@ test("getClock", () => {
   expect(result.current.cesium.current.cesiumElement?.clock?.clockStep).toBe(
     ClockStep.SYSTEM_CLOCK_MULTIPLIER,
   );
+});
+
+test("move", () => {
+  const mockMove = vi.fn(e => e);
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      cesiumElement: {
+        isDestroyed: () => false,
+        scene: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          camera: {
+            position: new Cartesian3(0, 0, 1),
+            direction: Cartesian3.clone(Cartesian3.UNIT_X),
+            up: Cartesian3.clone(Cartesian3.UNIT_Z),
+            right: Cartesian3.clone(Cartesian3.UNIT_Y),
+            move: mockMove,
+          },
+          globe: new Globe(Ellipsoid.UNIT_SPHERE),
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.moveForward(100);
+  expect(mockMove).toHaveBeenCalledTimes(1);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(1, 0, 0), 100);
+
+  result.current.current?.moveBackward(100);
+  expect(mockMove).toHaveBeenCalledTimes(2);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(1, 0, 0), -100);
+
+  result.current.current?.moveUp(100);
+  expect(mockMove).toHaveBeenCalledTimes(3);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 0, 1), 100);
+
+  result.current.current?.moveDown(100);
+  expect(mockMove).toHaveBeenCalledTimes(4);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 0, 1), -100);
+
+  result.current.current?.moveRight(100);
+  expect(mockMove).toHaveBeenCalledTimes(5);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), 100);
+
+  result.current.current?.moveLeft(100);
+  expect(mockMove).toHaveBeenCalledTimes(6);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), -100);
+});
+
+test("look", () => {
+  const mockLook = vi.fn(e => e);
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      cesiumElement: {
+        isDestroyed: () => false,
+        scene: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          camera: {
+            position: new Cartesian3(0, 0, 1),
+            direction: Cartesian3.clone(Cartesian3.UNIT_X),
+            up: Cartesian3.clone(Cartesian3.UNIT_Z),
+            right: Cartesian3.clone(Cartesian3.UNIT_Y),
+            look: mockLook,
+          },
+          globe: new Globe(Ellipsoid.UNIT_SPHERE),
+        },
+      },
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.lookHorizontal(90);
+  expect(mockLook).toHaveBeenCalledTimes(1);
+  expect(mockLook).toHaveBeenLastCalledWith(new Cartesian3(0, 0, 1), 90);
+
+  result.current.current?.lookVertical(90);
+  expect(mockLook).toHaveBeenCalledTimes(2);
+  expect(mockLook).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), 90);
 });
