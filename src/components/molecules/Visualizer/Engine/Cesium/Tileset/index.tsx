@@ -46,7 +46,7 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
       ? IonResource.fromAssetId(96188)
-      : sourceType === "url" && isVisible
+      : sourceType === "url" && isVisible && tileset
       ? tileset
       : null;
   }, [isVisible, sourceType, tileset]);
