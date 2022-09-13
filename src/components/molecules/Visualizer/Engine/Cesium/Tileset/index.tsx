@@ -1,9 +1,5 @@
-import {
-  Cesium3DTileset as Cesium3DTilesetType,
-  Cesium3DTileStyle,
-  createOsmBuildings,
-} from "cesium";
-import { useCallback, useEffect, useState } from "react";
+import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle, IonResource } from "cesium";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
@@ -13,7 +9,7 @@ export type Props = PrimitiveProps<Property>;
 
 export type Property = {
   default?: {
-    sourceType?: "url" | "OSM";
+    sourceType?: "url" | "osm";
     tileset?: string;
     styleUrl?: string;
     shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
@@ -47,22 +43,18 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
       setStyle(new Cesium3DTileStyle(await res.json()));
     })();
   }, [styleUrl]);
-  console.log(sourceType);
-  useEffect(() => {
-    const osmTile = createOsmBuildings();
-    if (sourceType == "OSM") {
-      viewer?.scene.primitives.add(osmTile);
-    } else viewer?.scene.primitives.remove(osmTile);
-    // } else {
-    //   osmTile = createOsmBuildings();
-    //   viewer?.scene.primitives.remove(createOsmBuildings());
-    // }
-  }, [isVisible, sourceType, viewer?.scene.primitives]);
-
-  return !isVisible || !tileset ? null : (
+  const tilesetUrl = useMemo(() => {
+    return sourceType === "osm" && isVisible
+      ? IonResource.fromAssetId(96188)
+      : sourceType === "url" && isVisible
+      ? tileset
+      : null;
+  }, [isVisible, sourceType, tileset]);
+  console.log(tilesetUrl);
+  return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
     <Cesium3DTileset
       ref={ref}
-      url={tileset}
+      url={tilesetUrl}
       style={style}
       shadows={shadowMode(shadows)}
       onReady={_debugFlight ? t => viewer?.zoomTo(t) : undefined}
