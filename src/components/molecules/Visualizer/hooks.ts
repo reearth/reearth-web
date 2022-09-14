@@ -433,7 +433,6 @@ function useProviderProps(
     | "onMouseEvent"
     | "captureScreen"
     | "enableScreenSpaceCameraController"
-    | "disableScreenSpaceCameraController"
     | "lookHorizontal"
     | "lookVertical"
     | "moveForward"
@@ -539,12 +538,7 @@ function useProviderProps(
   );
 
   const enableScreenSpaceCameraController = useCallback(
-    () => engineRef?.current?.enableScreenSpaceCameraController(),
-    [engineRef],
-  );
-
-  const disableScreenSpaceCameraController = useCallback(
-    () => engineRef?.current?.disableScreenSpaceCameraController(),
+    (enabled: boolean) => engineRef?.current?.enableScreenSpaceCameraController(enabled),
     [engineRef],
   );
 
@@ -631,7 +625,6 @@ function useProviderProps(
     onMouseEvent,
     captureScreen,
     enableScreenSpaceCameraController,
-    disableScreenSpaceCameraController,
     lookHorizontal,
     lookVertical,
     moveForward,

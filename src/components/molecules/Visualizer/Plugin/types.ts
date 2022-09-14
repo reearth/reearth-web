@@ -281,8 +281,7 @@ export type Camera = {
   readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
-  readonly enableScreenSpaceController: () => void;
-  readonly disableScreenSpaceController: () => void;
+  readonly enableScreenSpaceController: (enabled: boolean) => void;
   readonly lookHorizontal: (amount: number) => void;
   readonly lookVertical: (amount: number) => void;
   readonly moveForward: (amount: number) => void;

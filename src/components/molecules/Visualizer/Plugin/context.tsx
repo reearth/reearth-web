@@ -62,8 +62,7 @@ export type Props = {
   viewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
-  enableScreenSpaceCameraController: () => void;
-  disableScreenSpaceCameraController: () => void;
+  enableScreenSpaceCameraController: (enabled: boolean) => void;
   lookHorizontal: (amount: number) => void;
   lookVertical: (amount: number) => void;
   moveForward: (amount: number) => void;
@@ -118,7 +117,6 @@ export function Provider({
   captureScreen,
   onMouseEvent,
   enableScreenSpaceCameraController,
-  disableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
   moveForward,
@@ -185,7 +183,6 @@ export function Provider({
         viewport,
         captureScreen,
         enableScreenSpaceCameraController,
-        disableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
         moveForward,
@@ -228,7 +225,6 @@ export function Provider({
       viewport,
       captureScreen,
       enableScreenSpaceCameraController,
-      disableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
       moveForward,
