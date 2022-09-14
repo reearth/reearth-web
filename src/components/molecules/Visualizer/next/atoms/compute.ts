@@ -22,7 +22,10 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       layer: currentLayer,
       status: get(layerStatus),
       features: get(computedFeatures),
-      originalFeatures: currentLayer.data ? get(dataAtoms.getAll)(currentLayer.data).flat() : [],
+      originalFeatures:
+        currentLayer.type === "simple" && currentLayer.data
+          ? get(dataAtoms.getAll)(currentLayer.data).flat()
+          : [],
     };
   });
 
@@ -30,7 +33,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     const currentLayer = get(layer);
     if (!currentLayer) return;
 
-    if (!currentLayer.data) {
+    if (currentLayer.type !== "simple" || !currentLayer.data) {
       set(layerStatus, "ready");
       return;
     }
@@ -74,15 +77,15 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   });
 
   const requestFetch = atom(null, async (get, set, value: DataRange) => {
-    const data = get(layer)?.data;
-    if (!data) return;
+    const l = get(layer);
+    if (l?.type !== "simple" || !l.data) return;
 
-    await set(dataAtoms.fetch, { data, range: value });
+    await set(dataAtoms.fetch, { data: l.data, range: value });
   });
 
   const writeFeatures = atom(null, async (get, set, value: Feature[]) => {
     const currentLayer = get(layer);
-    if (!currentLayer?.data) return;
+    if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
     set(dataAtoms.set, {
       data: currentLayer.data,
@@ -93,7 +96,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
   const deleteFeatures = atom(null, async (get, set, value: string[]) => {
     const currentLayer = get(layer);
-    if (!currentLayer?.data) return;
+    if (currentLayer?.type !== "simple" || !currentLayer?.data) return;
 
     set(dataAtoms.deleteAll, {
       data: currentLayer.data,

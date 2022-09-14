@@ -2,7 +2,7 @@ import { useSetAtom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 
 import { computeAtom, type Atoms } from "../atoms";
-import { Layer } from "../types";
+import type { Layer } from "../types";
 
 export type { Atoms } from "../atoms";
 

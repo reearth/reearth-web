@@ -24,7 +24,7 @@ export function delayedObject<T>(obj: T, excludedKeys?: string[]): Readonly<T> {
   return res;
 }
 
-export function objectFromGetter<T extends { [K in keyof T]: any }>(
+export function objectFromGetter<T extends {}>(
   keys: (keyof T)[],
   fn: (this: T, key: keyof T) => T[keyof T],
 ): Readonly<T> {

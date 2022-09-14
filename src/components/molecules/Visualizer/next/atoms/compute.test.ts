@@ -5,7 +5,7 @@ import { test, expect, vi } from "vitest";
 
 import { fetchData } from "../data";
 import { EvalContext, evalLayer } from "../evaluator";
-import type { Data, DataRange, Feature, Layer } from "../types";
+import type { Data, DataRange, Feature, Layer, LayerSimple } from "../types";
 
 import { doubleKeyCacheAtom } from "./cache";
 import { computeAtom } from "./compute";
@@ -140,7 +140,7 @@ test("computeAtom", async () => {
 });
 
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({
-  evalLayer: async (layer: Layer, ctx: EvalContext) => {
+  evalLayer: async (layer: LayerSimple, ctx: EvalContext) => {
     if (!layer.data) return [];
     return ctx.getAllFeatures(layer.data);
   },

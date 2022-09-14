@@ -3,17 +3,29 @@ import type { Geometry as GeoJSONGeometry } from "geojson";
 import type { Infobox, Tag } from "../Plugin/types";
 
 // Layer
+// Do not forget to update layerKeys also
 
-export type Layer = {
-  id: string;
+export type Layer = LayerSimple | LayerGroup;
+
+export type LayerSimple = {
   type: "simple";
-  title?: string;
   data?: Data;
-  hidden?: boolean;
   properties?: any;
+} & Partial<LayerAppearanceTypes> &
+  LayerCommon;
+
+export type LayerGroup = {
+  type: "group";
+  children: Layer[];
+} & LayerCommon;
+
+export type LayerCommon = {
+  id: string;
+  title?: string;
+  hidden?: boolean;
   infobox?: Infobox;
   tags?: Tag[];
-} & Partial<LayerAppearanceTypes>;
+};
 
 // Data
 
