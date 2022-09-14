@@ -56,7 +56,7 @@ test("simple", () => {
 });
 
 test("tree", () => {
-  const Feature = vi.fn((_: FeatureComponentProps) => <div>Hello</div>);
+  const Feature = vi.fn((_: FeatureComponentProps) => null);
   const layers: Layer[] = [
     {
       id: "a",
@@ -69,7 +69,6 @@ test("tree", () => {
   ];
   render(<Component layers={layers} Feature={Feature} />);
 
-  expect(screen.getByText("Hello")).toBeVisible();
   expect(Feature).toBeCalledTimes(1);
   expect(Feature.mock.calls[0][0].layer).toEqual({
     id: "b",
@@ -81,25 +80,25 @@ test("tree", () => {
 });
 
 test("ref", async () => {
-  const Feature = vi.fn((_: FeatureComponentProps) => <div>Hello</div>);
-  const layers: LayerSimple[] = [
-    { id: "a", type: "simple", title: "a" },
-    { id: "b", type: "simple" },
-  ];
+  const Feature = vi.fn((_: FeatureComponentProps) => null);
 
   function Comp({ del, update }: { del?: boolean; update?: boolean }) {
     const ref = useRef<Ref>(null);
+    const layerId = useRef("");
     const [s, ss] = useState("");
 
     useEffect(() => {
       if (del) {
-        ref.current?.deleteLayer("a");
+        ref.current?.deleteLayer(layerId.current);
+        ss(ref.current?.findById(layerId.current)?.title ?? "");
       } else if (update) {
-        ref.current?.updateLayer({ id: "a", type: "simple", title: "A" });
+        ref.current?.update({ id: layerId.current, type: "simple", title: "A" });
+        ss(ref.current?.findById(layerId.current)?.title ?? "");
       } else {
-        ref.current?.addLayer(...layers);
+        const newLayer = ref.current?.add({ type: "simple", title: "a" });
+        layerId.current = newLayer?.id ?? "";
+        ss(newLayer?.title ?? "");
       }
-      ss(ref.current?.getLayer("a")?.title ?? "");
     }, [del, update]);
 
     return (
@@ -110,28 +109,21 @@ test("ref", async () => {
     );
   }
 
-  // addLayer should add layers and getLayer should return a lazy layer
+  // add should add layers and getLayer should return a lazy layer
   const { rerender } = render(<Comp />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toHaveTextContent("a"));
 
-  expect(Feature).toBeCalledTimes(2);
+  expect(Feature).toBeCalledTimes(1);
   expect(Feature.mock.calls[0][0].layer).toEqual({
-    id: "a",
+    id: expect.any(String),
     features: [],
-    layer: { id: "a", type: "simple", title: "a" },
-    status: "ready",
-    originalFeatures: [],
-  });
-  expect(Feature.mock.calls[1][0].layer).toEqual({
-    id: "b",
-    features: [],
-    layer: { id: "b", type: "simple" },
+    layer: { id: expect.any(String), type: "simple", title: "a" },
     status: "ready",
     originalFeatures: [],
   });
 
-  // updateLayer should update the layer
+  // update should update the layer
   rerender(<Comp update />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toHaveTextContent("A"));

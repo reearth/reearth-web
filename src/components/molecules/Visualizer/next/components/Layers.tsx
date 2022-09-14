@@ -30,10 +30,21 @@ export type Props = {
 } & CommonProps;
 
 export type Ref = {
-  getLayer: (id: string) => LazyLayer | undefined;
-  addLayer: (...layers: Layer[]) => void;
-  updateLayer: (...layers: Layer[]) => void;
+  findById: (id: string) => LazyLayer | undefined;
+  findByIds: (...ids: string[]) => (LazyLayer | undefined)[];
+  add: (layer: Omit<Layer, "id">) => LazyLayer;
+  update: (...layers: Layer[]) => void;
   deleteLayer: (...ids: string[]) => void;
+  isLayer: (obj: any) => obj is LazyLayer;
+  walk: <T>(
+    fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void,
+  ) => T | undefined;
+  find: (
+    fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
+  ) => LazyLayer | undefined;
+  findAll: (fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) => LazyLayer[];
+  findByTags: (...tagIds: string[]) => LazyLayer[];
+  findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
 };
 
 const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
@@ -45,8 +56,8 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
 
   const [tempLayers, setTempLayers] = useState<Layer[]>([]);
-  const allFLayers = useMemo(
-    (): LayerSimple[] => [...flattenLayers(tempLayers), ...flattenLayers(layers ?? [])],
+  const flattenedLayers = useMemo(
+    (): Layer[] => [...flattenLayers(tempLayers), ...flattenLayers(layers ?? [])],
     [layers, tempLayers],
   );
 
@@ -58,7 +69,7 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
     });
   }, [layerMap]);
 
-  const getLayer = useCallback(
+  const findById = useCallback(
     (id: string): LazyLayer | undefined => {
       const lazyLayer = lazyLayerMap.get(id);
       if (lazyLayer) return lazyLayer;
@@ -74,19 +85,43 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
     [layerMap, lazyLayerMap, lazyLayerPrototype],
   );
 
-  const addLayer = useCallback(
-    (...layers: Layer[]) => {
-      for (const layer of layers) {
-        if (layerMap.has(layer.id)) continue;
-        setTempLayers(layers => [...layers, layer]);
-        layerMap.set(layer.id, layer);
-        atomsMap.set(layer.id, createAtoms());
-      }
+  const findByIds = useCallback(
+    (...ids: string[]): (LazyLayer | undefined)[] => {
+      return ids.map(id => findById(id));
     },
-    [atomsMap, layerMap],
+    [findById],
   );
 
-  const updateLayer = useCallback(
+  const add = useCallback(
+    (layer: Omit<Layer, "id">): LazyLayer => {
+      let id: string;
+      do {
+        id = newId();
+      } while (layerMap.has(id));
+
+      const newLayer = { ...layer, id } as Layer;
+
+      // generate ids for block
+      walkLayers([newLayer], l => {
+        l.infobox?.blocks?.forEach(b => {
+          if (b.id) return;
+          b.id = newId();
+        });
+      });
+
+      setTempLayers(layers => [...layers, newLayer]);
+      layerMap.set(newLayer.id, newLayer);
+      atomsMap.set(newLayer.id, createAtoms());
+
+      const newLazyLayer = findById(newLayer.id);
+      if (!newLazyLayer) throw new Error("layer not found");
+
+      return newLazyLayer;
+    },
+    [atomsMap, findById, layerMap],
+  );
+
+  const update = useCallback(
     (...layers: Layer[]) => {
       for (const layer of layers) {
         if (!layerMap.has(layer.id)) continue;
@@ -114,12 +149,103 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
     [atomsMap, layerMap, lazyLayerMap],
   );
 
-  useImperativeHandle(ref, () => ({
-    getLayer,
-    addLayer,
-    updateLayer,
-    deleteLayer,
-  }));
+  const isLayer = useCallback(
+    (obj: any): obj is LazyLayer => {
+      return typeof obj === "object" && Object.getPrototypeOf(obj) === lazyLayerPrototype;
+    },
+    [lazyLayerPrototype],
+  );
+
+  const walk = useCallback(
+    <T,>(
+      fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void,
+    ): T | undefined => {
+      return walkLayers(layers ?? [], (l, i, p) => {
+        const ll = findById(l.id);
+        if (!ll) return;
+        return fn(
+          ll,
+          i,
+          p.map(l => findById(l.id)).filter((l): l is LazyLayer => !!l),
+        );
+      });
+    },
+    [findById, layers],
+  );
+
+  const find = useCallback(
+    (
+      fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean,
+    ): LazyLayer | undefined => {
+      return walk((...args) => (fn(...args) ? args[0] : undefined));
+    },
+    [walk],
+  );
+
+  const findAll = useCallback(
+    (fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean): LazyLayer[] => {
+      const res: LazyLayer[] = [];
+      walk((...args) => {
+        if (fn(...args)) res.push(args[0]);
+      });
+      return res;
+    },
+    [walk],
+  );
+
+  const findByTags = useCallback(
+    (...tagIds: string[]): LazyLayer[] => {
+      return findAll(
+        l =>
+          !!l.tags?.some(
+            t => tagIds.includes(t.id) || !!t.tags?.some(tt => tagIds.includes(tt.id)),
+          ),
+      );
+    },
+    [findAll],
+  );
+
+  const findByTagLabels = useCallback(
+    (...tagLabels: string[]): LazyLayer[] => {
+      return findAll(
+        l =>
+          !!l.tags?.some(
+            t => tagLabels.includes(t.label) || !!t.tags?.some(tt => tagLabels.includes(tt.label)),
+          ),
+      );
+    },
+    [findAll],
+  );
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      findById,
+      add,
+      update,
+      deleteLayer,
+      findByIds,
+      isLayer,
+      walk,
+      find,
+      findAll,
+      findByTags,
+      findByTagLabels,
+    }),
+    [
+      add,
+      deleteLayer,
+      find,
+      findAll,
+      findByTagLabels,
+      findByTags,
+      findById,
+      findByIds,
+      isLayer,
+      update,
+      walk,
+    ],
+  );
 
   useLayoutEffect(() => {
     const ids = new Set<string>();
@@ -143,7 +269,7 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
 
   return (
     <>
-      {allFLayers?.map(layer => (
+      {flattenedLayers?.map(layer => (
         <LayerComponent
           key={layer.id}
           {...props}
@@ -167,19 +293,39 @@ const layerKeys: (keyof Omit<LazyLayer, "id">)[] = [
   "tags",
   "title",
   "type",
+  "creator",
 ];
 
-function flattenLayers(layers: Layer[]): LayerSimple[] {
-  return layers.flatMap(l => (l.type === "group" ? flattenLayers(l.children) : [l]));
+function flattenLayers(layers: Layer[]): Layer[] {
+  return layers.flatMap(l =>
+    l.type === "group" && Array.isArray(l.children) ? flattenLayers(l.children) : [l],
+  );
 }
 
-function walkLayers(layers: Layer[], cb: (layer: Layer) => void) {
-  layers.forEach(l => {
-    cb(l);
-    if (l.type === "group") {
-      walkLayers(l.children, cb);
+function walkLayers<T>(
+  layers: Layer[],
+  cb: (layer: Layer, i: number, parent: Layer[]) => T | void,
+): T | undefined {
+  for (let i = 0; i < layers.length; i++) {
+    const l = layers[i];
+    const res = cb(l, i, layers);
+    if (typeof res !== "undefined") {
+      return res;
     }
-  });
+    if (l.type === "group" && Array.isArray(l.children)) {
+      const res = walkLayers(l.children, cb);
+      if (typeof res !== "undefined") {
+        return res;
+      }
+    }
+  }
+  return;
+}
+
+function newId(): string {
+  return "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, () =>
+    ((Math.random() * 16) | 0).toString(16),
+  );
 }
 
 export default forwardRef(Layers);

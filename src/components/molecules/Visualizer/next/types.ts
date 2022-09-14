@@ -25,6 +25,7 @@ export type LayerCommon = {
   hidden?: boolean;
   infobox?: Infobox;
   tags?: Tag[];
+  creator?: string;
 };
 
 // Data
