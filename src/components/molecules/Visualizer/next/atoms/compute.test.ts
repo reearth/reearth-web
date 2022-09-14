@@ -29,6 +29,18 @@ test("computeAtom", async () => {
   expect(result.current.result).toBeUndefined();
 
   act(() => {
+    result.current.set({ id: "xxx", type: "simple" });
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer: { id: "xxx", type: "simple" },
+    status: "ready",
+    features: [],
+    originalFeatures: [],
+  });
+
+  act(() => {
     result.current.set(layer);
   });
 

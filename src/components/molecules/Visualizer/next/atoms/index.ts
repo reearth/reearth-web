@@ -1,1 +1,1 @@
-export { computeAtom } from "./compute";
+export { computeAtom, type Atoms } from "./compute";

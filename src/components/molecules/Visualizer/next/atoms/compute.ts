@@ -5,6 +5,8 @@ import type { ComputedLayer, ComputedLayerStatus, Data, DataRange, Feature, Laye
 
 import { dataAtom, globalDataFeaturesCache } from "./data";
 
+export type Atoms = ReturnType<typeof computeAtom>;
+
 export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   const layer = atom<Layer | undefined>(undefined);
   const computedFeatures = atom<Feature[]>([]);
@@ -27,6 +29,11 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   const compute = atom(null, async (get, set, _: any) => {
     const currentLayer = get(layer);
     if (!currentLayer) return;
+
+    if (!currentLayer.data) {
+      set(layerStatus, "ready");
+      return;
+    }
 
     set(layerStatus, "fetching");
 

@@ -1,0 +1,55 @@
+import { ComponentType } from "react";
+
+import type { DataRange, Feature, ComputedLayer, Layer } from "../types";
+
+import useHooks, { type Atoms } from "./hooks";
+
+export * from "../types";
+
+export type FeatureComponentType = ComponentType<FeatureComponentProps>;
+
+export type CommonProps = {
+  isBuilt?: boolean;
+  isEditable?: boolean;
+  isHidden?: boolean;
+  isSelected?: boolean;
+  sceneProperty?: any;
+};
+
+export type FeatureComponentProps = {
+  layer: ComputedLayer;
+  overriddenProperties?: Record<string, any>;
+  onFeatureRequest?: (range: DataRange) => void;
+  onFeatureFetch?: (features: Feature[]) => void;
+  onFeatureDelete?: (features: string[]) => void;
+} & CommonProps;
+
+export type Props = {
+  layer?: Layer;
+  atoms?: Atoms;
+  overriddenProperties?: Record<string, any>;
+  /** Feature component should be injected by a map engine. */
+  Feature?: ComponentType<FeatureComponentProps>;
+} & CommonProps;
+
+export default function LayerComponent({
+  Feature,
+  layer,
+  atoms,
+  ...props
+}: Props): JSX.Element | null {
+  const { computedLayer, handleFeatureDelete, handleFeatureFetch, handleFeatureRequest } = useHooks(
+    Feature ? layer : undefined,
+    atoms,
+  );
+
+  return layer && computedLayer && Feature ? (
+    <Feature
+      layer={computedLayer}
+      onFeatureDelete={handleFeatureDelete}
+      onFeatureFetch={handleFeatureFetch}
+      onFeatureRequest={handleFeatureRequest}
+      {...props}
+    />
+  ) : null;
+}

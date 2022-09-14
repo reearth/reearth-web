@@ -92,6 +92,33 @@ test("dataAtom deleteAll", async () => {
   );
 });
 
+test("dataAtom double fetch", async () => {
+  const { result } = renderHook(() => {
+    const atoms1 = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
+    const atoms2 = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
+    const getAll1 = useAtomValue(atoms1.getAll);
+    const fetch1 = useSetAtom(atoms1.fetch);
+    const getAll2 = useAtomValue(atoms2.getAll);
+    const fetch2 = useSetAtom(atoms2.fetch);
+    return { fetch1, getAll1, fetch2, getAll2 };
+  });
+
+  const { fetchData } = await import("../data");
+
+  expect(result.current.getAll1(data)).toEqual([]);
+  expect(result.current.getAll2(data)).toEqual([]);
+  expect(fetchData).toBeCalledTimes(1);
+
+  act(() => {
+    result.current.fetch1({ data });
+    result.current.fetch2({ data });
+  });
+
+  await waitFor(() => expect(result.current.getAll1(data)).toEqual([features]));
+  await waitFor(() => expect(result.current.getAll2(data)).toEqual([features]));
+  expect(fetchData).toBeCalledTimes(3);
+});
+
 vi.mock("../data", (): { fetchData: typeof fetchData } => ({
-  fetchData: async () => features,
+  fetchData: vi.fn(async () => features),
 }));

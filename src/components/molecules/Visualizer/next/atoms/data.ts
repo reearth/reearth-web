@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { groupBy } from "lodash";
+import { groupBy, remove } from "lodash";
 
 import { fetchData } from "../data";
 import type { Feature, Data, DataRange } from "../types";
@@ -9,6 +9,8 @@ import { doubleKeyCacheAtom } from "./cache";
 export const globalDataFeaturesCache = doubleKeyCacheAtom<string, string, Feature[]>();
 
 export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
+  const fetching = atom<[string, string][]>([]);
+
   const get = atom(
     get => (data: Data, range?: DataRange) => get(cacheAtoms.get)(dataKey(data), rangeKey(range)),
   );
@@ -50,12 +52,16 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
     const k = dataKey(value.data, value.range);
     const rk = rangeKey(value.range);
     const cached = get(cacheAtoms.get)(k, rk);
-    if (cached) return;
+    if (cached || get(fetching).findIndex(e => e[0] === k && e[1] === rk) >= 0) return;
+
+    set(fetching, f => [...f, [k, rk]]);
 
     const data = await fetchData(value.data, value.range);
     if (data) {
       set(cacheAtoms.set, { key: k, key2: rk, value: data });
     }
+
+    set(fetching, f => remove(f, e => e[0] === k && e[1] === rk));
   });
 
   return {
