@@ -52,6 +52,7 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
       ? tileset
       : null;
   }, [isVisible, sourceType, tileset]);
+  
   return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
     <Cesium3DTileset
       ref={ref}
