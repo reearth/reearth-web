@@ -141,15 +141,13 @@ test("requestRender", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         scene: {
           requestRender: mockRequestRender,
         },
         isDestroyed: () => {
           return false;
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -165,11 +163,7 @@ test("zoom", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         scene: {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           camera: {
             zoomIn: mockZoomIn,
             zoomOut: mockZoomOut,
@@ -178,7 +172,7 @@ test("zoom", () => {
         isDestroyed: () => {
           return false;
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -206,8 +200,6 @@ test("getClock", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         clock: {
           startTime,
           stopTime,
@@ -216,8 +208,6 @@ test("getClock", () => {
           shouldAnimate: false,
           multiplier: 1,
           clockStep: ClockStep.SYSTEM_CLOCK,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           // TODO: should test cesium event
           onTick: {
             addEventListener: mockAddEventHandler,
@@ -227,7 +217,7 @@ test("getClock", () => {
         isDestroyed: () => {
           return false;
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
