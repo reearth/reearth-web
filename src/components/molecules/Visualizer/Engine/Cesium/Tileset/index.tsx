@@ -43,6 +43,7 @@ export default function Tileset({ layer }: PrimitiveProps<Property>): JSX.Elemen
       setStyle(new Cesium3DTileStyle(await res.json()));
     })();
   }, [styleUrl]);
+
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
       ? IonResource.fromAssetId(96188)
