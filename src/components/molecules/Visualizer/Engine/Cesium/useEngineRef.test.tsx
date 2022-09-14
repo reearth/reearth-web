@@ -291,12 +291,10 @@ test("captureScreen", () => {
       cesiumElement: {
         render: mockViewerRender,
         isDestroyed: mockViewerIsDestroyed,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         canvas: {
           toDataURL: mockCanvasToDataURL,
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -315,13 +313,9 @@ test("move", () => {
   const mockMove = vi.fn(e => e);
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       cesiumElement: {
         isDestroyed: () => false,
         scene: {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           camera: {
             position: new Cartesian3(0, 0, 1),
             direction: Cartesian3.clone(Cartesian3.UNIT_X),
@@ -331,7 +325,7 @@ test("move", () => {
           },
           globe: new Globe(Ellipsoid.UNIT_SPHERE),
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -367,13 +361,9 @@ test("look", () => {
   const mockLook = vi.fn(e => e);
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       cesiumElement: {
         isDestroyed: () => false,
         scene: {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           camera: {
             position: new Cartesian3(0, 0, 1),
             direction: Cartesian3.clone(Cartesian3.UNIT_X),
@@ -383,7 +373,7 @@ test("look", () => {
           },
           globe: new Globe(Ellipsoid.UNIT_SPHERE),
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
