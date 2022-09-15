@@ -125,15 +125,23 @@ import Sun from "./Icons/sun.svg";
 import CheckCircle2 from "./Icons/checkCircle2.svg";
 import MailCircle from "./Icons/mailCircle.svg";
 import Tag from "./Icons/tag.svg";
+import Resize from "./Icons/resize.svg";
 
 // Plug-ins
 import Plugin from "./Icons/plugin.svg";
 import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
 import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import PrivateGitHubRepo from "./Icons/privateGitHubRepo.svg";
+import Marketplace from "./Icons/marketplace.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
+
+// Timeline
+import Timeline from "./Icons/timeline.svg";
+import PlayRight from "./Icons/play-right.svg";
+import PlayLeft from "./Icons/play-left.svg";
+import Ellipse from "./Icons/ellipse.svg";
 
 export default {
   outline: Layer,
@@ -244,8 +252,14 @@ export default {
   uploadZipPlugin: UploadZipPlugin,
   privateGitHubRepo: PrivateGitHubRepo,
   publicGitHubRepo: PublicGitHubRepo,
+  marketplace: Marketplace,
   menuForDevice: MenuForDevice,
   plugin: Plugin,
   tag: Tag,
+  resize: Resize,
   crosshair: Crosshair,
+  ellipse: Ellipse,
+  playRight: PlayRight,
+  playLeft: PlayLeft,
+  timeline: Timeline,
 };

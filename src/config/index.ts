@@ -1,47 +1,6 @@
 import { Viewer } from "cesium";
 
-export type ExtensionType = "dataset-import" | "publication";
-
-export type SharedExtensionProps = {
-  theme?: string;
-  lang?: string;
-  accessToken?: string;
-  onNotificationChange?: (
-    type: "error" | "warning" | "info" | "success",
-    text: string,
-    heading?: string,
-  ) => void;
-};
-
-export type DatasetImportExtensionProps = {
-  onReturn?: () => void;
-  onUrlChange?: (url: string) => void;
-  url?: string;
-} & SharedExtensionProps;
-
-export type ProjectPublicationExtensionProps = {
-  projectId: string;
-  projectAlias?: string;
-  publishDisabled?: boolean;
-} & SharedExtensionProps;
-
-export type ExtensionProps = {
-  "dataset-import": DatasetImportExtensionProps;
-  publication: ProjectPublicationExtensionProps;
-};
-
-export type Extension<T extends ExtensionType = ExtensionType> = {
-  type: T;
-  id: string;
-  component: React.ComponentType<ExtensionProps[T]>;
-  title?: string;
-  image?: string;
-};
-
-export type Extensions = {
-  publication?: Extension<"publication">[];
-  datasetImport?: Extension<"dataset-import">[];
-};
+import { Extensions, loadExtensions } from "./extensions";
 
 export type Config = {
   version?: string;
@@ -64,6 +23,8 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
+  documentationUrl?: string;
+  marketplaceUrl?: string;
   extensionUrls?: string[];
   extensions?: Extensions;
 };
@@ -100,36 +61,6 @@ export function convertPasswordPolicy(passwordPolicy?: {
       })
       .filter(i => !!i[1]),
   );
-}
-
-// module
-export async function loadExtensions(urls?: string[]): Promise<Extensions | undefined> {
-  if (!urls) return undefined;
-
-  // Entry point for publication extensions is @reearth/components/molecules/Settings/Project/PublishSection/hooks.ts
-  const publication: Extension<"publication">[] = [];
-  // Entry point for dataset import extensions is @reearth/components/molecules/EarthEditor/DatasetPane/DatasetModal/hooks.ts
-  const datasetImport: Extension<"dataset-import">[] = [];
-
-  for (const url of urls) {
-    try {
-      const newExtensions: Extension[] = (await import(/* @vite-ignore */ url)).default;
-      newExtensions.forEach(ext =>
-        ext.type === "dataset-import"
-          ? datasetImport.push(ext as Extension<"dataset-import">)
-          : ext.type === "publication"
-          ? publication.push(ext as Extension<"publication">)
-          : undefined,
-      );
-    } catch (e) {
-      // ignore
-    }
-  }
-
-  return {
-    publication,
-    datasetImport,
-  };
 }
 
 // IIFE

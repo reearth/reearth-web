@@ -156,10 +156,8 @@ export default (teamId?: string) => {
     }
   }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
 
-  const [createNewProject] = useCreateProjectMutation({
-    refetchQueries: ["GetProjects"],
-  });
-  const [createScene] = useCreateSceneMutation();
+  const [createNewProject] = useCreateProjectMutation();
+  const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
   const createProject = useCallback(
     async (data: { name: string; description: string; imageUrl: string | null }) => {
       if (!teamId) return;
@@ -179,26 +177,26 @@ export default (teamId?: string) => {
         });
         setModalShown(false);
         return;
-      }
-      const scene = await createScene({
-        variables: { projectId: project.data.createProject.project.id },
-      });
-      if (scene.errors) {
+      } else {
+        const scene = await createScene({
+          variables: { projectId: project.data.createProject.project.id },
+        });
+        if (scene.errors) {
+          setNotification({
+            type: "error",
+            text: t("Failed to create project."),
+          });
+          setModalShown(false);
+          return;
+        }
         setNotification({
-          type: "error",
-          text: t("Failed to create project."),
+          type: "success",
+          text: t("Successfully created project!"),
         });
         setModalShown(false);
-        return;
       }
-      setNotification({
-        type: "success",
-        text: t("Successfully created project!"),
-      });
-      setModalShown(false);
-      refetch();
     },
-    [createNewProject, createScene, teamId, refetch, t, setNotification],
+    [createNewProject, createScene, teamId, t, setNotification],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);

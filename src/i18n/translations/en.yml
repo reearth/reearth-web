@@ -5,6 +5,11 @@ Notfound: Notfound
 Published: Published
 Unpublished: Unpublished
 not set: not set
+Close timeline: Close timeline
+Playback timeline: Playback timeline
+Play timeline: Play timeline
+ellipse: ellipse
+Open timeline: Open timeline
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
@@ -57,6 +62,8 @@ Select: Select
 Resource URL: Resource URL
 Account Settings: Account Settings
 Log out: Log out
+Your browser is too small: Your browser is too small
+Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.
 Create New Project: Create New Project
 Create: Create
 Project Name: Project Name
@@ -262,9 +269,12 @@ You are uninstalling the selected plugin. The data used by this plugin may also 
 Please be sure before uninstalling.: Please be sure before uninstalling.
 Installed: Installed
 Install: Install
+Plugin Marketplace: Plugin Marketplace
+Public Installed: Public Installed
+Personal Installed: Personal Installed
 Zip file from PC: Zip file from PC
 Public GitHub repository: Public GitHub repository
-Installed plugins: Installed plugins
+Publish your plugin in the Marketplace: Publish your plugin in the Marketplace
 Import GitHub repository: Import GitHub repository
 'Repository url:': 'Repository url:'
 Project Info: Project Info

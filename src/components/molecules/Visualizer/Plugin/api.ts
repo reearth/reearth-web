@@ -87,6 +87,13 @@ export function exposed({
           postMessage,
           resize,
         },
+        scene: merge(commonReearth.scene, {
+          get overrideProperty() {
+            return (property: any) => {
+              overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
+            };
+          },
+        }),
         plugin: {
           get id() {
             return plugin?.id;
@@ -132,6 +139,7 @@ export function commonReearth({
   sceneProperty,
   tags,
   camera,
+  clock,
   selectedLayer,
   layerSelectionReason,
   layerOverriddenInfobox,
@@ -147,13 +155,26 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   viewport,
+  captureScreen,
+  enableScreenSpaceCameraController,
+  lookHorizontal,
+  lookVertical,
+  moveForward,
+  moveBackward,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveOverTerrain,
+  flyToGround,
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
-  camera: () => GlobalThis["reearth"]["visualizer"]["camera"]["position"];
+  camera: () => GlobalThis["reearth"]["camera"]["position"];
+  clock: () => GlobalThis["reearth"]["clock"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
@@ -170,6 +191,18 @@ export function commonReearth({
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
+  captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
+  enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
+  lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
+  lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
+  moveForward: GlobalThis["reearth"]["camera"]["moveForward"];
+  moveBackward: GlobalThis["reearth"]["camera"]["moveBackward"];
+  moveUp: GlobalThis["reearth"]["camera"]["moveUp"];
+  moveDown: GlobalThis["reearth"]["camera"]["moveDown"];
+  moveLeft: GlobalThis["reearth"]["camera"]["moveLeft"];
+  moveRight: GlobalThis["reearth"]["camera"]["moveRight"];
+  moveOverTerrain: GlobalThis["reearth"]["camera"]["moveOverTerrain"];
+  flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -187,11 +220,56 @@ export function commonReearth({
         get viewport() {
           return viewport();
         },
+        enableScreenSpaceController: enableScreenSpaceCameraController,
+        lookHorizontal,
+        lookVertical,
+        moveForward,
+        moveBackward,
+        moveUp,
+        moveDown,
+        moveLeft,
+        moveRight,
+        moveOverTerrain,
+        flyToGround,
       },
       get property() {
         return sceneProperty();
       },
       overrideProperty: overrideSceneProperty,
+    },
+    get clock() {
+      return clock();
+    },
+    scene: {
+      get property() {
+        return sceneProperty();
+      },
+      overrideProperty: overrideSceneProperty,
+      captureScreen,
+    },
+    engineName,
+    camera: {
+      flyTo,
+      lookAt,
+      zoomIn,
+      zoomOut,
+      get position() {
+        return camera();
+      },
+      get viewport() {
+        return viewport();
+      },
+      enableScreenSpaceController: enableScreenSpaceCameraController,
+      lookHorizontal,
+      lookVertical,
+      moveForward,
+      moveBackward,
+      moveUp,
+      moveDown,
+      moveLeft,
+      moveRight,
+      moveOverTerrain,
+      flyToGround,
     },
     layers: {
       get layersInViewport() {

@@ -43,7 +43,7 @@ const Button: React.FC<Props> = ({
 
   const WrappedIcon = icon ? (
     <IconWrapper text={hasText} iconRight={iconRight} large={large}>
-      <Icon icon={icon} size={iSize} />
+      <Icon icon={icon} size={iSize} notransition />
     </IconWrapper>
   ) : null;
 
@@ -123,6 +123,9 @@ const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   display: flex;
   align-items: center;
+  transition-property: color, background;
+  transition-duration: 0.4s;
+
   &:hover {
     background: ${({ buttonType, disabled, theme }) =>
       disabled
