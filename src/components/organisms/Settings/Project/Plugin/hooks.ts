@@ -13,6 +13,14 @@ import {
 import { useLang, useT } from "@reearth/i18n";
 import { useProject, useNotification, useCurrentTheme } from "@reearth/state";
 
+export type Plugin = {
+  fullId: string;
+  id: string;
+  version: string;
+  title?: string;
+  author?: string;
+};
+
 export default (projectId: string) => {
   const t = useT();
   const locale = useLang();
@@ -53,7 +61,7 @@ export default (projectId: string) => {
     () =>
       rawSceneData?.scene?.plugins
         .filter(p => p.plugin && p.plugin?.id !== "reearth")
-        .map(p => {
+        .map((p): Plugin | undefined => {
           if (!p.plugin) return;
           const fullId = p.plugin.id;
           const [id, version] = fullId.split("~", 2);
@@ -64,7 +72,8 @@ export default (projectId: string) => {
             title: p.plugin.name,
             author: p.plugin.author,
           };
-        }) ?? [],
+        })
+        .filter((p): p is Plugin => !!p) ?? [],
     [rawSceneData],
   );
 
