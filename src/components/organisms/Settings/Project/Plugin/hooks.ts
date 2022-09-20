@@ -1,4 +1,4 @@
-import { FetchResult, useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "@reearth/auth";
@@ -9,8 +9,6 @@ import {
   useUninstallPluginMutation,
   useUploadPluginMutation,
   useUpgradePluginMutation,
-  InstallPluginMutation,
-  UpgradePluginMutation,
 } from "@reearth/gql/graphql-client-api";
 import { useLang, useT } from "@reearth/i18n";
 import { useProject, useNotification, useCurrentTheme } from "@reearth/state";
@@ -56,12 +54,15 @@ export default (projectId: string) => {
       rawSceneData?.scene?.plugins
         .filter(p => p.plugin && p.plugin?.id !== "reearth")
         .map(p => {
-          const fullId = p.plugin?.id ?? "";
-          const [id, version] = fullId?.split("~") ?? ["", ""];
+          if (!p.plugin) return;
+          const fullId = p.plugin.id;
+          const [id, version] = fullId.split("~", 2);
           return {
             fullId,
             id,
             version,
+            title: p.plugin.name,
+            author: p.plugin.author,
           };
         }) ?? [],
     [rawSceneData],
@@ -83,27 +84,21 @@ export default (projectId: string) => {
   }, [rawSceneData]);
 
   const handleInstallByMarketplace = useCallback(
-    async (pluginId: string) => {
-      if (!sceneId || !pluginId.includes("~")) return;
+    async (pluginId: string | undefined, oldPluginId?: string) => {
+      if (!sceneId || !pluginId) return;
 
-      const installed = marketplacePlugins.find(p => p.id === pluginId.split("~", 2)[0]);
-      let results:
-        | FetchResult<InstallPluginMutation, Record<string, any>, Record<string, any>>
-        | FetchResult<UpgradePluginMutation, Record<string, any>, Record<string, any>>;
+      const results = await (oldPluginId
+        ? upgradePluginMutation({
+            variables: {
+              sceneId,
+              pluginId: oldPluginId,
+              toPluginId: pluginId,
+            },
+          })
+        : await installPluginMutation({
+            variables: { sceneId, pluginId },
+          }));
 
-      if (installed) {
-        results = await upgradePluginMutation({
-          variables: {
-            sceneId,
-            pluginId: installed.fullId,
-            toPluginId: pluginId,
-          },
-        });
-      } else {
-        results = await installPluginMutation({
-          variables: { sceneId, pluginId },
-        });
-      }
       if (results.errors) {
         setNotification({
           type: "error",
@@ -117,15 +112,7 @@ export default (projectId: string) => {
         await client.resetStore();
       }
     },
-    [
-      client,
-      installPluginMutation,
-      marketplacePlugins,
-      sceneId,
-      setNotification,
-      t,
-      upgradePluginMutation,
-    ],
+    [client, installPluginMutation, sceneId, setNotification, t, upgradePluginMutation],
   );
 
   const handleInstallByUploadingZipFile = useCallback(
