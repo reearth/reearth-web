@@ -8,9 +8,7 @@ import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
-// Components
-
-type Props = {
+export type Props = {
   projectId: string;
 };
 
@@ -25,10 +23,10 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
     personalPlugins,
     extensions,
     accessToken,
-    handleInstallByMarketplace,
-    handleInstallByUploadingZipFile,
-    handleInstallFromPublicRepo,
-    uninstallPlugin,
+    handleInstallPluginByMarketplace,
+    handleInstallPluginFromFile,
+    handleInstallPluginFromPublicRepo,
+    handleUninstallPlugin,
   } = useHooks(projectId);
 
   return (
@@ -43,10 +41,10 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
           currentTheme={currentTheme}
           currentLang={currentLang}
           accessToken={accessToken}
-          onInstallByMarketplace={handleInstallByMarketplace}
-          onInstallByUploadingZipFile={handleInstallByUploadingZipFile}
-          onInstallFromPublicRepo={handleInstallFromPublicRepo}
-          uninstallPlugin={uninstallPlugin}
+          onInstallFromMarketplace={handleInstallPluginByMarketplace}
+          onInstallFromFile={handleInstallPluginFromFile}
+          onInstallFromPublicRepo={handleInstallPluginFromPublicRepo}
+          onUninstall={handleUninstallPlugin}
         />
       ) : (
         <ArchivedMessage />
