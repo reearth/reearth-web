@@ -131,27 +131,26 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    const onScriptsLoaded = () => {
-      // post pending messages
-      if (pendingMesages.current.length) {
-        for (const msg of pendingMesages.current) {
-          win.postMessage(msg, "*");
-        }
-        pendingMesages.current = [];
-      }
-      loaded.current = true;
-      onLoad?.();
-    };
-
     // exec scripts
     const scripts = doc.body.querySelectorAll("script");
     if (scripts) {
-      execScripts(scripts, false)
-        .finally(() => execScripts(scripts, true))
-        .finally(onScriptsLoaded);
-    } else {
-      onScriptsLoaded();
+      execScripts(doc, scripts, false).finally(() => execScripts(doc, scripts, true));
     }
+
+    const links = doc.body.querySelectorAll("link");
+    if (links) {
+      linksToHead(doc, links);
+    }
+
+    // post pending messages
+    if (pendingMesages.current.length) {
+      for (const msg of pendingMesages.current) {
+        win.postMessage(msg, "*");
+      }
+      pendingMesages.current = [];
+    }
+    loaded.current = true;
+    onLoad?.();
   }, [autoResizeMessageKey, html, onLoad, height, width]);
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
@@ -200,7 +199,7 @@ export default function useHook({
   };
 }
 
-function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
+function execScripts(doc: Document, scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
   const isAsync = (script: HTMLScriptElement) =>
     script.getAttribute("type") === "module" ||
     script.getAttribute("async") ||
@@ -209,11 +208,11 @@ function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean)
   return Array.from(scripts)
     .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
     .reduce((chain, oldScript) => {
-      return chain.then(() => runScript(oldScript));
+      return chain.then(() => runScript(doc, oldScript));
     }, Promise.resolve());
 }
 
-function runScript(oldScript: HTMLScriptElement) {
+function runScript(doc: Document, oldScript: HTMLScriptElement) {
   return new Promise<void>((resolve, rejected) => {
     const newScript = document.createElement("script");
     for (const attr of Array.from(oldScript.attributes)) {
@@ -222,9 +221,21 @@ function runScript(oldScript: HTMLScriptElement) {
     newScript.appendChild(document.createTextNode(oldScript.innerText));
     newScript.onload = () => resolve();
     newScript.onerror = () => rejected();
-    oldScript.parentNode?.replaceChild(newScript, oldScript);
+    doc.head.appendChild(newScript);
+    doc.body.removeChild(oldScript);
     if (!newScript.getAttribute("src")) {
       resolve();
     }
   });
+}
+
+function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
+  for (const link of links) {
+    const newLink = document.createElement("link");
+    newLink.rel = link.rel;
+    newLink.href = link.href;
+    newLink.appendChild(document.createTextNode(link.innerText));
+    doc.head.appendChild(newLink);
+    doc.body.removeChild(link);
+  }
 }
