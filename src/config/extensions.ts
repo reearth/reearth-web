@@ -29,12 +29,14 @@ export type ProjectPublicationExtensionProps = {
 } & SharedExtensionProps;
 
 export type PluginExtensionProps = {
-  selectedPluginId?: string;
   installedPlugins?: {
     id: string;
     version: string;
+    title?: string;
+    author?: string;
+    description?: string;
   }[];
-  onInstall?: (pluginId: string) => void;
+  onInstall?: (pluginId: string | undefined, oldPlugin?: string) => void;
   onUninstall?: (pluginId: string) => void;
 } & SharedExtensionProps;
 

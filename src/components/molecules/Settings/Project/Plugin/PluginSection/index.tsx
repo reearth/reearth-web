@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
 
 import Box from "@reearth/components/atoms/Box";
 import Loading from "@reearth/components/atoms/Loading";
@@ -17,8 +16,11 @@ export type Props = {
   loading?: boolean;
   marketplacePlugins?:
     | {
+        fullId: string;
         id: string;
         version: string;
+        title?: string;
+        author?: string;
       }[]
     | undefined;
   personalPlugins?: PluginItem[];
@@ -29,10 +31,10 @@ export type Props = {
   currentTheme?: "light" | "dark";
   currentLang?: string;
   accessToken?: string;
-  onInstallByMarketplace: (pluginId: string) => void;
+  onInstallFromMarketplace: (pluginId: string | undefined, oldPluginId?: string) => void;
   onInstallFromPublicRepo: (repoUrl: string) => void;
-  onInstallByUploadingZipFile: (files: FileList) => void;
-  uninstallPlugin: (pluginId: string) => void;
+  onInstallFromFile: (files: FileList) => void;
+  onUninstall: (pluginId: string) => void;
 };
 
 export type PluginPageMode = "list" | "install-way" | PluginActions;
@@ -53,17 +55,12 @@ const PluginSection: React.FC<Props> = ({
   currentTheme,
   currentLang,
   accessToken,
-  onInstallByMarketplace,
-  onInstallByUploadingZipFile,
+  onInstallFromMarketplace,
+  onInstallFromFile,
   onInstallFromPublicRepo,
-  uninstallPlugin,
+  onUninstall,
 }) => {
   const t = useT();
-  const { search } = useLocation();
-  const queriedPluginId = useMemo(
-    () => new URLSearchParams(search).get("selected") ?? undefined,
-    [search],
-  );
 
   const tabHeaders = useMemo(
     () => ({
@@ -79,23 +76,23 @@ const PluginSection: React.FC<Props> = ({
       <TabSection<PluginTabs> selected="Marketplace" menuAlignment="top" headers={tabHeaders}>
         {{
           Marketplace: (
-            <Box p="2xl">
+            <Box pv="2xl">
               {accessToken &&
                 extensions?.library?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    selectedPluginId={queriedPluginId}
                     theme={currentTheme}
                     lang={currentLang}
+                    installedPlugins={marketplacePlugins}
                     accessToken={accessToken}
-                    onInstall={onInstallByMarketplace}
-                    onUninstall={uninstallPlugin}
+                    onInstall={onInstallFromMarketplace}
+                    onUninstall={onUninstall}
                   />
                 ))}
             </Box>
           ),
           Public: (
-            <Box p="2xl">
+            <Box>
               {accessToken &&
                 extensions?.installed?.map(ext => (
                   <ext.component
@@ -104,8 +101,8 @@ const PluginSection: React.FC<Props> = ({
                     theme={currentTheme}
                     lang={currentLang}
                     accessToken={accessToken}
-                    onInstall={onInstallByMarketplace}
-                    onUninstall={uninstallPlugin}
+                    onInstall={onInstallFromMarketplace}
+                    onUninstall={onUninstall}
                   />
                 ))}
             </Box>
@@ -116,8 +113,8 @@ const PluginSection: React.FC<Props> = ({
             <PluginInstall
               installedPlugins={personalPlugins}
               installFromPublicRepo={onInstallFromPublicRepo}
-              installByUploadingZipFile={onInstallByUploadingZipFile}
-              uninstallPlugin={uninstallPlugin}
+              installByUploadingZipFile={onInstallFromFile}
+              uninstallPlugin={onUninstall}
             />
           ),
         }}

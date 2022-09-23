@@ -1,5 +1,12 @@
 import { renderHook } from "@testing-library/react";
-import { ClockStep, JulianDate, Viewer as CesiumViewer } from "cesium";
+import {
+  ClockStep,
+  JulianDate,
+  Viewer as CesiumViewer,
+  Cartesian3,
+  Globe,
+  Ellipsoid,
+} from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
 import { vi, expect, test } from "vitest";
@@ -8,9 +15,6 @@ import { Clock } from "../../Plugin/types";
 import { EngineRef } from "../ref";
 
 import useEngineRef from "./useEngineRef";
-
-const fn = vi.fn(e => e);
-const props = { x: 1, y: 1 };
 
 test("engine should be cesium", () => {
   const { result } = renderHook(() => {
@@ -23,6 +27,8 @@ test("engine should be cesium", () => {
 });
 
 test("bind mouse events", () => {
+  const mockMouseEventCallback = vi.fn(e => e);
+  const props = { x: 1, y: 1 };
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
     const engineRef = useRef<EngineRef>(null);
@@ -30,104 +36,104 @@ test("bind mouse events", () => {
     return engineRef;
   });
 
-  result.current.current?.onClick(fn);
-  expect(result.current.current?.mouseEventCallbacks.click).toBe(fn);
+  result.current.current?.onClick(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.click).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.click?.(props);
-  expect(fn).toHaveBeenCalledTimes(1);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(1);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onDoubleClick(fn);
-  expect(result.current.current?.mouseEventCallbacks.doubleclick).toBe(fn);
+  result.current.current?.onDoubleClick(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.doubleclick).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.doubleclick?.(props);
-  expect(fn).toHaveBeenCalledTimes(2);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(2);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMouseDown(fn);
-  expect(result.current.current?.mouseEventCallbacks.mousedown).toBe(fn);
+  result.current.current?.onMouseDown(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.mousedown).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.mousedown?.(props);
-  expect(fn).toHaveBeenCalledTimes(3);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(3);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMouseUp(fn);
-  expect(result.current.current?.mouseEventCallbacks.mouseup).toBe(fn);
+  result.current.current?.onMouseUp(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.mouseup).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.mouseup?.(props);
-  expect(fn).toHaveBeenCalledTimes(4);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(4);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onRightClick(fn);
-  expect(result.current.current?.mouseEventCallbacks.rightclick).toBe(fn);
+  result.current.current?.onRightClick(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.rightclick).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.rightclick?.(props);
-  expect(fn).toHaveBeenCalledTimes(5);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(5);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onRightDown(fn);
-  expect(result.current.current?.mouseEventCallbacks.rightdown).toBe(fn);
+  result.current.current?.onRightDown(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.rightdown).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.rightdown?.(props);
-  expect(fn).toHaveBeenCalledTimes(6);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(6);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onRightUp(fn);
-  expect(result.current.current?.mouseEventCallbacks.rightup).toBe(fn);
+  result.current.current?.onRightUp(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.rightup).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.rightup?.(props);
-  expect(fn).toHaveBeenCalledTimes(7);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(7);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMiddleClick(fn);
-  expect(result.current.current?.mouseEventCallbacks.middleclick).toBe(fn);
+  result.current.current?.onMiddleClick(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.middleclick).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.middleclick?.(props);
-  expect(fn).toHaveBeenCalledTimes(8);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(8);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMiddleDown(fn);
-  expect(result.current.current?.mouseEventCallbacks.middledown).toBe(fn);
+  result.current.current?.onMiddleDown(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.middledown).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.middledown?.(props);
-  expect(fn).toHaveBeenCalledTimes(9);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(9);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMiddleUp(fn);
-  expect(result.current.current?.mouseEventCallbacks.middleup).toBe(fn);
+  result.current.current?.onMiddleUp(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.middleup).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.middleup?.(props);
-  expect(fn).toHaveBeenCalledTimes(10);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(10);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMouseMove(fn);
-  expect(result.current.current?.mouseEventCallbacks.mousemove).toBe(fn);
+  result.current.current?.onMouseMove(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.mousemove).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.mousemove?.(props);
-  expect(fn).toHaveBeenCalledTimes(11);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(11);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMouseEnter(fn);
-  expect(result.current.current?.mouseEventCallbacks.mouseenter).toBe(fn);
+  result.current.current?.onMouseEnter(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.mouseenter).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.mouseenter?.(props);
-  expect(fn).toHaveBeenCalledTimes(12);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(12);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onMouseLeave(fn);
-  expect(result.current.current?.mouseEventCallbacks.mouseleave).toBe(fn);
+  result.current.current?.onMouseLeave(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.mouseleave).toBe(mockMouseEventCallback);
 
   result.current.current?.mouseEventCallbacks.mouseleave?.(props);
-  expect(fn).toHaveBeenCalledTimes(13);
-  expect(fn).toHaveBeenCalledWith(props);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(13);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(props);
 
-  result.current.current?.onWheel(fn);
-  expect(result.current.current?.mouseEventCallbacks.wheel).toBe(fn);
+  result.current.current?.onWheel(mockMouseEventCallback);
+  expect(result.current.current?.mouseEventCallbacks.wheel).toBe(mockMouseEventCallback);
 
   const wheelProps = { delta: 1 };
   result.current.current?.mouseEventCallbacks.wheel?.(wheelProps);
-  expect(fn).toHaveBeenCalledTimes(14);
-  expect(fn).toHaveBeenCalledWith(wheelProps);
+  expect(mockMouseEventCallback).toHaveBeenCalledTimes(14);
+  expect(mockMouseEventCallback).toHaveBeenCalledWith(wheelProps);
 });
 
 const mockRequestRender = vi.fn();
@@ -135,15 +141,13 @@ test("requestRender", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         scene: {
           requestRender: mockRequestRender,
         },
         isDestroyed: () => {
           return false;
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -159,11 +163,7 @@ test("zoom", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         scene: {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           camera: {
             zoomIn: mockZoomIn,
             zoomOut: mockZoomOut,
@@ -172,7 +172,7 @@ test("zoom", () => {
         isDestroyed: () => {
           return false;
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -200,8 +200,6 @@ test("getClock", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         clock: {
           startTime,
           stopTime,
@@ -210,8 +208,6 @@ test("getClock", () => {
           shouldAnimate: false,
           multiplier: 1,
           clockStep: ClockStep.SYSTEM_CLOCK,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           // TODO: should test cesium event
           onTick: {
             addEventListener: mockAddEventHandler,
@@ -221,7 +217,7 @@ test("getClock", () => {
         isDestroyed: () => {
           return false;
         },
-      },
+      } as any,
     });
     const engineRef = useRef<EngineRef>(null);
     useEngineRef(engineRef, cesium);
@@ -274,4 +270,111 @@ test("getClock", () => {
   expect(result.current.cesium.current.cesiumElement?.clock?.clockStep).toBe(
     ClockStep.SYSTEM_CLOCK_MULTIPLIER,
   );
+});
+
+test("captureScreen", () => {
+  const mockViewerRender = vi.fn();
+  const mockCanvasToDataURL = vi.fn();
+  const mockViewerIsDestroyed = vi.fn(() => false);
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        render: mockViewerRender,
+        isDestroyed: mockViewerIsDestroyed,
+        canvas: {
+          toDataURL: mockCanvasToDataURL,
+        },
+      } as any,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.captureScreen();
+  expect(mockViewerRender).toHaveBeenCalledTimes(1);
+  expect(mockCanvasToDataURL).toHaveBeenCalledTimes(1);
+
+  result.current.current?.captureScreen("image/jpeg", 0.8);
+  expect(mockCanvasToDataURL).toHaveBeenCalledWith("image/jpeg", 0.8);
+});
+
+test("move", () => {
+  const mockMove = vi.fn(e => e);
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        isDestroyed: () => false,
+        scene: {
+          camera: {
+            position: new Cartesian3(0, 0, 1),
+            direction: Cartesian3.clone(Cartesian3.UNIT_X),
+            up: Cartesian3.clone(Cartesian3.UNIT_Z),
+            right: Cartesian3.clone(Cartesian3.UNIT_Y),
+            move: mockMove,
+          },
+          globe: new Globe(Ellipsoid.UNIT_SPHERE),
+        },
+      } as any,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.moveForward(100);
+  expect(mockMove).toHaveBeenCalledTimes(1);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(1, 0, 0), 100);
+
+  result.current.current?.moveBackward(100);
+  expect(mockMove).toHaveBeenCalledTimes(2);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(1, 0, 0), -100);
+
+  result.current.current?.moveUp(100);
+  expect(mockMove).toHaveBeenCalledTimes(3);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 0, 1), 100);
+
+  result.current.current?.moveDown(100);
+  expect(mockMove).toHaveBeenCalledTimes(4);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 0, 1), -100);
+
+  result.current.current?.moveRight(100);
+  expect(mockMove).toHaveBeenCalledTimes(5);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), 100);
+
+  result.current.current?.moveLeft(100);
+  expect(mockMove).toHaveBeenCalledTimes(6);
+  expect(mockMove).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), -100);
+});
+
+test("look", () => {
+  const mockLook = vi.fn(e => e);
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        isDestroyed: () => false,
+        scene: {
+          camera: {
+            position: new Cartesian3(0, 0, 1),
+            direction: Cartesian3.clone(Cartesian3.UNIT_X),
+            up: Cartesian3.clone(Cartesian3.UNIT_Z),
+            right: Cartesian3.clone(Cartesian3.UNIT_Y),
+            look: mockLook,
+          },
+          globe: new Globe(Ellipsoid.UNIT_SPHERE),
+        },
+      } as any,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  result.current.current?.lookHorizontal(90);
+  expect(mockLook).toHaveBeenCalledTimes(1);
+  expect(mockLook).toHaveBeenLastCalledWith(new Cartesian3(0, 0, 1), 90);
+
+  result.current.current?.lookVertical(90);
+  expect(mockLook).toHaveBeenCalledTimes(2);
+  expect(mockLook).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), 90);
 });
