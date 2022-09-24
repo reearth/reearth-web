@@ -145,6 +145,7 @@ import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
 // Navigator
+import WidgetNavigator from "./Icons/widgetNavigator.svg";
 import NavigatorAngle from "./Icons/navigatorAngle.svg";
 import Compass from "./Icons/compass.svg";
 import CompassFocus from "./Icons/compassFocus.svg";
@@ -274,4 +275,5 @@ export default {
   compass: Compass,
   compassFocus: CompassFocus,
   house: House,
+  navigator: WidgetNavigator,
 };
