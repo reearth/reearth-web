@@ -16,6 +16,11 @@ import { EngineRef } from "../ref";
 
 import useEngineRef from "./useEngineRef";
 
+vi.mock("./common", async () => {
+  const commons: Record<string, any> = await vi.importActual("./common");
+  return { ...commons, zoom: vi.fn() };
+});
+
 test("engine should be cesium", () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -157,17 +162,12 @@ test("requestRender", () => {
   expect(mockRequestRender).toHaveBeenCalledTimes(1);
 });
 
-const mockZoomIn = vi.fn(amount => amount);
-const mockZoomOut = vi.fn(amount => amount);
-test("zoom", () => {
+test("zoom", async () => {
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
         scene: {
-          camera: {
-            zoomIn: mockZoomIn,
-            zoomOut: mockZoomOut,
-          },
+          camera: {},
         },
         isDestroyed: () => {
           return false;
@@ -179,13 +179,29 @@ test("zoom", () => {
     return engineRef;
   });
 
+  const commons = await import("./common");
+
   result.current.current?.zoomIn(10);
-  expect(mockZoomIn).toHaveBeenCalledTimes(1);
-  expect(mockZoomIn).toHaveBeenCalledWith(10);
+  expect(commons.zoom).toHaveBeenCalledTimes(1);
+  expect(commons.zoom).toHaveBeenCalledWith(
+    {
+      camera: {},
+      scene: { camera: {} },
+      relativeAmount: 0.1,
+    },
+    undefined,
+  );
 
   result.current.current?.zoomOut(20);
-  expect(mockZoomOut).toHaveBeenCalledTimes(1);
-  expect(mockZoomOut).toHaveBeenCalledWith(20);
+  expect(commons.zoom).toHaveBeenCalledTimes(2);
+  expect(commons.zoom).toHaveBeenCalledWith(
+    {
+      camera: {},
+      scene: { camera: {} },
+      relativeAmount: 20,
+    },
+    undefined,
+  );
 });
 
 test("getClock", () => {
