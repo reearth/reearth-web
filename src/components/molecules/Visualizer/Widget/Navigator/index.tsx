@@ -3,12 +3,12 @@ import { ComponentProps as WidgetProps } from "@reearth/components/molecules/Vis
 
 import { SceneProperty } from "../../Engine";
 
-import { useNavigator } from "./hooks";
+import useHooks from "./hooks";
 
 export type Props = WidgetProps<SceneProperty>;
 
 const Navigator = ({ sceneProperty }: Props): JSX.Element | null => {
-  const { degree, events } = useNavigator({ sceneProperty });
+  const { degree, events } = useHooks({ sceneProperty });
 
   return <NavigatorUI degree={degree} {...events} />;
 };

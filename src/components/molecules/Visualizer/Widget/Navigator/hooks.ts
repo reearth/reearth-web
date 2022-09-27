@@ -5,7 +5,7 @@ import { degreeToRadian, radianToDegree } from "@reearth/components/atoms/Naviga
 import { SceneProperty } from "../../Engine";
 import { useContext } from "../../Plugin";
 
-export const useNavigator = ({ sceneProperty }: { sceneProperty: SceneProperty }) => {
+export default function ({ sceneProperty }: { sceneProperty: SceneProperty }) {
   const ctx = useContext();
   const camera = ctx?.reearth.camera;
   const [degree, setDegree] = useState(0);
@@ -88,4 +88,4 @@ export const useNavigator = ({ sceneProperty }: { sceneProperty: SceneProperty }
       onZoomOut: handleOnZoomOut,
     },
   };
-};
+}
