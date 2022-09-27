@@ -9,7 +9,7 @@ export const useNavigator = ({ sceneProperty }: { sceneProperty: SceneProperty }
   const ctx = useContext();
   const camera = ctx?.reearth.camera;
   const [degree, setDegree] = useState(0);
-  const [isOpenedHelp, setIsOpenedHelp] = useState(false);
+  const [isHelpOpened, setIsHelpOpened] = useState(false);
   const orbitRadianRef = useRef(0);
   const isMovingOrbit = useRef(false);
   const cameraRotateRight = camera?.rotateRight;
@@ -38,7 +38,7 @@ export const useNavigator = ({ sceneProperty }: { sceneProperty: SceneProperty }
     }
   }, [camera, sceneProperty]);
   const handleOnClickHelp = useCallback(() => {
-    setIsOpenedHelp(prev => !prev);
+    setIsHelpOpened(prev => !prev);
   }, []);
 
   const handleOnZoomIn = useCallback(() => {
@@ -76,7 +76,7 @@ export const useNavigator = ({ sceneProperty }: { sceneProperty: SceneProperty }
 
   return {
     degree,
-    isOpenedHelp, // TODO: This will be used to display help modal.
+    isHelpOpened, // TODO: This will be used to display help modal.
     events: {
       onRotate: handleOnRotate,
       onStartOrbit: handleOnStartOrbit,
