@@ -131,6 +131,11 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
+    const links = doc.body.querySelectorAll("link");
+    if (links) {
+      linksToHead(doc, links);
+    }
+
     const onScriptsLoaded = () => {
       // post pending messages
       if (pendingMesages.current.length) {
@@ -152,21 +157,6 @@ export default function useHook({
     } else {
       onScriptsLoaded();
     }
-
-    const links = doc.body.querySelectorAll("link");
-    if (links) {
-      linksToHead(doc, links);
-    }
-
-    // post pending messages
-    if (pendingMesages.current.length) {
-      for (const msg of pendingMesages.current) {
-        win.postMessage(msg, "*");
-      }
-      pendingMesages.current = [];
-    }
-    loaded.current = true;
-    onLoad?.();
   }, [autoResizeMessageKey, html, onLoad, height, width]);
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
