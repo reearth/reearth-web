@@ -6,10 +6,11 @@ import {
   Cartesian3,
   Globe,
   Ellipsoid,
+  Matrix4,
 } from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
-import { vi, expect, test } from "vitest";
+import { vi, expect, test, afterEach } from "vitest";
 
 import { Clock } from "../../Plugin/types";
 import { EngineRef } from "../ref";
@@ -18,7 +19,15 @@ import useEngineRef from "./useEngineRef";
 
 vi.mock("./common", async () => {
   const commons: Record<string, any> = await vi.importActual("./common");
-  return { ...commons, zoom: vi.fn() };
+  return {
+    ...commons,
+    zoom: vi.fn(),
+    getCenterCamera: vi.fn(({ scene }) => scene?.globe?.pick?.()),
+  };
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
 });
 
 test("engine should be cesium", () => {
@@ -202,6 +211,113 @@ test("zoom", async () => {
     },
     undefined,
   );
+});
+
+test("call orbit when camera focuses on center", async () => {
+  const { result } = renderHook(() => {
+    const cesiumElement = {
+      scene: {
+        camera: { lookAtTransform: vi.fn(), rotateLeft: vi.fn(), rotateUp: vi.fn(), look: vi.fn() },
+        globe: {
+          ellipsoid: new Ellipsoid(),
+          pick: () => new Cartesian3(),
+        },
+      },
+      transform: new Matrix4(),
+      positionWC: new Cartesian3(),
+      isDestroyed: () => {
+        return false;
+      },
+    } as any;
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return [engineRef, cesium] as const;
+  });
+
+  const commons = await import("./common");
+
+  const [engineRef, cesium] = result.current;
+
+  engineRef.current?.orbit(90);
+  expect(commons.getCenterCamera).toHaveBeenCalled();
+  expect(cesium.current.cesiumElement?.scene.camera.rotateLeft).toHaveBeenCalled();
+  expect(cesium.current.cesiumElement?.scene.camera.rotateUp).toHaveBeenCalled();
+  expect(cesium.current.cesiumElement?.scene.camera.lookAtTransform).toHaveBeenCalledTimes(2);
+});
+
+test("call orbit when camera does not focus on center", async () => {
+  const { result } = renderHook(() => {
+    const cesiumElement = {
+      scene: {
+        camera: {
+          lookAtTransform: vi.fn(),
+          rotateLeft: vi.fn(),
+          rotateUp: vi.fn(),
+          look: vi.fn(),
+          positionWC: new Cartesian3(),
+        },
+        globe: {
+          ellipsoid: new Ellipsoid(),
+          pick: () => undefined,
+        },
+      },
+      transform: new Matrix4(),
+      isDestroyed: () => {
+        return false;
+      },
+    } as any;
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return [engineRef, cesium] as const;
+  });
+
+  const commons = await import("./common");
+
+  const [engineRef, cesium] = result.current;
+
+  engineRef.current?.orbit(90);
+  expect(commons.getCenterCamera).toHaveBeenCalled();
+  expect(cesium.current.cesiumElement?.scene.camera.look).toHaveBeenCalledTimes(2);
+  expect(cesium.current.cesiumElement?.scene.camera.lookAtTransform).toHaveBeenCalledTimes(2);
+});
+
+test("rotateRight", async () => {
+  const { result } = renderHook(() => {
+    const cesiumElement = {
+      scene: {
+        camera: {
+          lookAtTransform: vi.fn(),
+          rotateRight: vi.fn(),
+          positionWC: new Cartesian3(),
+        },
+        globe: {
+          ellipsoid: new Ellipsoid(),
+        },
+      },
+      transform: new Matrix4(),
+      isDestroyed: () => {
+        return false;
+      },
+    } as any;
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return [engineRef, cesium] as const;
+  });
+
+  const [engineRef, cesium] = result.current;
+
+  engineRef.current?.rotateRight(90);
+  expect(cesium.current.cesiumElement?.scene.camera.rotateRight).toHaveBeenCalled();
+  expect(cesium.current.cesiumElement?.scene.camera.lookAtTransform).toHaveBeenCalledTimes(2);
 });
 
 test("getClock", () => {
