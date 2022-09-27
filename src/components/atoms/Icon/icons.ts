@@ -271,9 +271,9 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   timeline: Timeline,
+  navigator: WidgetNavigator,
   navigatorAngle: NavigatorAngle,
   compass: Compass,
   compassFocus: CompassFocus,
   house: House,
-  navigator: WidgetNavigator,
 };
