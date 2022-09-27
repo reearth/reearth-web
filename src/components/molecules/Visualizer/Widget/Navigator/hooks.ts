@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
-import { degreeToRadian, radianToDegree } from "@reearth/components/atoms/Navigator/utils";
-
 import { SceneProperty } from "../../Engine";
 import { useContext } from "../../Plugin";
+
+import { degreeToRadian, radianToDegree } from "./NavigatorPresenter/utils";
 
 export default function ({ sceneProperty }: { sceneProperty: SceneProperty }) {
   const ctx = useContext();

@@ -1,9 +1,8 @@
 import { memo } from "react";
 
+import Icon from "@reearth/components/atoms/Icon";
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
-
-import Icon from "../Icon";
 
 import { useNavigator } from "./hooks";
 
@@ -35,7 +34,7 @@ export type Props = {
   onZoomOut?: () => void;
 };
 
-const Navigator: React.FC<Props> = memo(function NavigatorPresenter({
+const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo({
   degree,
   onRotate,
   onStartOrbit,
@@ -174,4 +173,4 @@ const ToolIconButton = styled.button`
   place-items: center;
 `;
 
-export default Navigator;
+export default NavigatorPresenter;
