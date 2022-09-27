@@ -131,10 +131,7 @@ export default function useHook({
 
     doc.body.innerHTML = html;
 
-    const links = doc.body.querySelectorAll("link");
-    if (links) {
-      linksToHead(doc, links);
-    }
+    linksToHead(doc, doc.body.querySelectorAll("link"));
 
     const onScriptsLoaded = () => {
       // post pending messages
@@ -239,7 +236,9 @@ function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
     const newLink = document.createElement("link");
     newLink.rel = link.rel;
     newLink.href = link.href;
-    newLink.appendChild(document.createTextNode(link.innerText));
+    if (link.innerText) {
+      newLink.appendChild(document.createTextNode(link.innerText));
+    }
     doc.head.appendChild(newLink);
     doc.body.removeChild(link);
   }
