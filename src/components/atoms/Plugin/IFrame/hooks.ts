@@ -234,8 +234,9 @@ function runScript(oldScript: HTMLScriptElement) {
 function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
   for (const link of links) {
     const newLink = document.createElement("link");
-    newLink.rel = link.rel;
-    newLink.href = link.href;
+    for (const attr of link.attributes) {
+      newLink.setAttribute(attr.name, attr.value);
+    }
     if (link.innerText) {
       newLink.appendChild(document.createTextNode(link.innerText));
     }
