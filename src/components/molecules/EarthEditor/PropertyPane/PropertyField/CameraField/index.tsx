@@ -265,7 +265,7 @@ const FormGroup = styled.div`
 `;
 
 const FormIcon = styled(Icon)`
-  margin: auto 10px 20px 0;
+  margin: auto 10px 18px 0;
   color: ${props => props.theme.properties.contentsText};
 `;
 
