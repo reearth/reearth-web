@@ -83,14 +83,14 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
         <Help onClick={onClickHelp}>?</Help>
       </CompassContainer>
       <Tool>
-        <ToolIconButton onClick={onZoomOut}>
-          <Icon icon="minus" aria-label={t("aria-label-zoom-out")} size={16} />
+        <ToolIconButton onClick={onZoomIn}>
+          <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
         </ToolIconButton>
         <ToolIconButton onClick={onRestoreRotate}>
           <Icon icon="house" aria-label={t("aria-label-Go-to-the-home-position")} size={16} />
         </ToolIconButton>
-        <ToolIconButton onClick={onZoomIn}>
-          <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
+        <ToolIconButton onClick={onZoomOut}>
+          <Icon icon="minus" aria-label={t("aria-label-zoom-out")} size={16} />
         </ToolIconButton>
       </Tool>
     </Container>
