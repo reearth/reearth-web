@@ -67,7 +67,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
             <StyledIcon
               iconColor={publishedTheme.mainIcon}
               icon="marker"
-              size={24}
+              size={16}
               color={
                 selected?.story.layer === story.layer
                   ? publishedTheme.strongText
