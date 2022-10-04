@@ -96,7 +96,9 @@ const CameraField: React.FC<Props> = ({
       <Popup ref={popper.ref} open={open} style={popper.styles} {...popper.attributes}>
         {!onlyPose && (
           <FormGroup>
-            <FormIcon icon="marker" size={16} />
+            <FormIcon>
+              <Icon icon="marker" size={16} color={theme.properties.contentsText} />
+            </FormIcon>
             <FormFieldGroup>
               <FormFieldRow>
                 <FormWrapper>
@@ -141,7 +143,9 @@ const CameraField: React.FC<Props> = ({
         )}
         {!onlyPosition && (
           <FormGroup>
-            <FormIcon icon="camera" size={16} />
+            <FormIcon>
+              <Icon icon="camera" size={16} color={theme.properties.contentsText} />
+            </FormIcon>
             <FormFieldGroup>
               <FormFieldRow>
                 <FormWrapper>
@@ -265,11 +269,10 @@ const FormGroup = styled.div`
   align-item: center;
 `;
 
-const FormIcon = styled(Icon)`
+const FormIcon = styled.div`
   margin-top: auto;
-  margin-bottom: 25px;
-  width: 14.07%;
-  color: ${props => props.theme.properties.contentsText};
+  margin-bottom: 20px;
+  width: 35.78px;
 `;
 
 const FormButtonGroup = styled.div`
