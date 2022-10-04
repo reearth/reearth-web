@@ -17,12 +17,25 @@ import {
   ShadowMode,
   Entity,
   PropertyBag,
+  Clock as CesiumClock,
+  JulianDate,
+  ClockStep,
+  Ellipsoid,
+  Quaternion,
+  Matrix3,
+  Cartographic,
+  EllipsoidTerrainProvider,
+  sampleTerrainMostDetailed,
+  Ray,
+  IntersectionTests,
 } from "cesium";
-import { useCallback } from "react";
+import { useCallback, MutableRefObject } from "react";
 
 import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
+
+import { CameraOptions, Clock } from "../../Plugin/types";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -296,6 +309,66 @@ export const animateFOV = ({
   return undefined;
 };
 
+/**
+ * Get the center of globe.
+ */
+export const getCenterCamera = ({
+  camera,
+  scene,
+}: {
+  camera: CesiumCamera;
+  scene: Scene;
+}): Cartesian3 | void => {
+  const result = new Cartesian3();
+  const ray = camera.getPickRay(camera.positionWC);
+  if (ray) {
+    ray.origin = camera.positionWC;
+    ray.direction = camera.directionWC;
+    return scene.globe.pick(ray, scene, result);
+  }
+};
+
+export const zoom = (
+  { camera, scene, relativeAmount }: { camera: CesiumCamera; scene: Scene; relativeAmount: number },
+  options?: CameraOptions,
+) => {
+  const center = getCenterCamera({ camera, scene });
+  const target =
+    center ||
+    IntersectionTests.grazingAltitudeLocation(
+      // Get the ray from cartographic to the camera direction
+      new Ray(
+        // Get the cartographic position of camera on 3D space.
+        scene.globe.ellipsoid.cartographicToCartesian(camera.positionCartographic),
+        // Get the camera direction.
+        camera.directionWC,
+      ),
+      scene.globe.ellipsoid,
+    );
+
+  if (!target) {
+    return;
+  }
+
+  const orientation = {
+    heading: camera.heading,
+    pitch: camera.pitch,
+    roll: camera.roll,
+  };
+
+  const cartesian3Scratch = new Cartesian3();
+  const direction = Cartesian3.subtract(camera.position, target, cartesian3Scratch);
+  const movementVector = Cartesian3.multiplyByScalar(direction, relativeAmount, direction);
+  const endPosition = Cartesian3.add(target, movementVector, target);
+
+  camera.flyTo({
+    destination: endPosition,
+    orientation: orientation,
+    duration: options?.duration || 0.5,
+    convert: false,
+  });
+};
+
 export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | undefined => {
   if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene) return undefined;
   const { camera } = viewer;
@@ -312,6 +385,71 @@ export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | u
   const { heading, pitch, roll } = camera;
   const fov = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.fov : 1;
   return { lng, lat, height, heading, pitch, roll, fov };
+};
+
+export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
+  if (!clock) return undefined;
+  return {
+    // Getter
+    get startTime() {
+      return JulianDate.toDate(clock.startTime);
+    },
+    get stopTime() {
+      return JulianDate.toDate(clock.stopTime);
+    },
+    get currentTime() {
+      return JulianDate.toDate(clock.currentTime);
+    },
+    get tick() {
+      return () => JulianDate.toDate(clock.tick());
+    },
+    get playing() {
+      return clock.shouldAnimate;
+    },
+    get paused() {
+      return !clock.shouldAnimate;
+    },
+    get speed() {
+      return clock.multiplier;
+    },
+
+    // Setter
+    set startTime(d: Date) {
+      clock["startTime"] = JulianDate.fromDate(d);
+    },
+    set stopTime(d: Date) {
+      clock["stopTime"] = JulianDate.fromDate(d);
+    },
+    set currentTime(d: Date) {
+      clock["currentTime"] = JulianDate.fromDate(d);
+    },
+    set tick(cb: () => Date) {
+      clock["tick"] = () => JulianDate.fromDate(cb());
+    },
+    set playing(v: boolean) {
+      clock["shouldAnimate"] = v;
+    },
+    set paused(v: boolean) {
+      clock["shouldAnimate"] = !v;
+    },
+    set speed(v: number) {
+      clock["multiplier"] = v;
+      // Force multiplier
+      clock["clockStep"] = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+    },
+
+    // methods
+    get play() {
+      return () => {
+        clock["shouldAnimate"] = true;
+      };
+    },
+    get pause() {
+      return () => {
+        clock["shouldAnimate"] = false;
+      };
+    },
+  };
 };
 
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
@@ -353,7 +491,7 @@ export function isSelectable(e: Entity | undefined): boolean {
 }
 
 export function isDraggable(e: Entity): string | undefined {
-  return e.properties?.getValue(undefined as any)?.[draggableTag];
+  return e.properties?.getValue(new JulianDate())?.[draggableTag];
 }
 
 export function attachTag(entity: Entity | undefined, tag: string, value: any) {
@@ -362,7 +500,152 @@ export function attachTag(entity: Entity | undefined, tag: string, value: any) {
     entity.properties = new PropertyBag({ [tag]: value });
   } else if (typeof value === "undefined") {
     entity.properties?.removeProperty(tag);
+  } else if (entity.properties?.hasProperty(tag)) {
+    entity.properties?.removeProperty(tag);
+    entity.properties?.addProperty(tag, value);
   } else {
     entity.properties?.addProperty(tag, value);
   }
+}
+
+export function lookHorizontal(scene: Scene, amount: number) {
+  const camera = scene.camera;
+  const ellipsoid = scene.globe.ellipsoid;
+  const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
+  camera.look(surfaceNormal, amount);
+}
+
+export function lookVertical(scene: Scene, amount: number) {
+  const camera = scene.camera;
+  const ellipsoid = scene.globe.ellipsoid;
+  const lookAxis = projectVectorToSurface(camera.right, camera.position, ellipsoid);
+  const surfaceNormal = ellipsoid.geodeticSurfaceNormal(camera.position, new Cartesian3());
+  const currentAngle = CesiumMath.toDegrees(Cartesian3.angleBetween(surfaceNormal, camera.up));
+  const upAfterLook = rotateVectorAboutAxis(camera.up, lookAxis, amount);
+  const angleAfterLook = CesiumMath.toDegrees(Cartesian3.angleBetween(surfaceNormal, upAfterLook));
+  const friction = angleAfterLook < currentAngle ? 1 : (90 - currentAngle) / 90;
+  camera.look(lookAxis, amount * friction);
+}
+
+export function moveForward(scene: Scene, amount: number) {
+  const direction = projectVectorToSurface(
+    scene.camera.direction,
+    scene.camera.position,
+    scene.globe.ellipsoid,
+  );
+  scene.camera.move(direction, amount);
+}
+
+export function moveBackward(scene: Scene, amount: number) {
+  const direction = projectVectorToSurface(
+    scene.camera.direction,
+    scene.camera.position,
+    scene.globe.ellipsoid,
+  );
+  scene.camera.move(direction, -amount);
+}
+
+export function moveUp(scene: Scene, amount: number) {
+  const surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(
+    scene.camera.position,
+    new Cartesian3(),
+  );
+  scene.camera.move(surfaceNormal, amount);
+}
+
+export function moveDown(scene: Scene, amount: number) {
+  const surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(
+    scene.camera.position,
+    new Cartesian3(),
+  );
+  scene.camera.move(surfaceNormal, -amount);
+}
+
+export function moveLeft(scene: Scene, amount: number) {
+  const direction = projectVectorToSurface(
+    scene.camera.right,
+    scene.camera.position,
+    scene.globe.ellipsoid,
+  );
+  scene.camera.move(direction, -amount);
+}
+
+export function moveRight(scene: Scene, amount: number) {
+  const direction = projectVectorToSurface(
+    scene.camera.right,
+    scene.camera.position,
+    scene.globe.ellipsoid,
+  );
+  scene.camera.move(direction, amount);
+}
+
+export async function moveOverTerrain(viewer: Viewer, offset = 0) {
+  const camera = viewer.scene.camera;
+  const height = await sampleTerrainHeight(viewer.scene, camera.position);
+  if (height && height !== 0) {
+    const innerCamera = getCamera(viewer);
+    if (innerCamera && innerCamera?.height < height + offset) {
+      camera.moveUp(height + offset - innerCamera.height);
+    }
+  }
+}
+
+export async function flyToGround(
+  viewer: Viewer,
+  cancelCameraFlight: MutableRefObject<(() => void) | undefined>,
+  camera?: {
+    lat?: number;
+    lng?: number;
+    height?: number;
+    heading?: number;
+    pitch?: number;
+    roll?: number;
+    fov?: number;
+  },
+  options?: {
+    duration?: number;
+    easing?: (time: number) => number;
+  },
+  offset = 0,
+) {
+  const height = await sampleTerrainHeight(viewer.scene, viewer.scene.camera.position);
+  const tarHeight = height ? height + offset : offset;
+  const groundCamera = { ...camera, height: tarHeight };
+  cancelCameraFlight.current?.();
+  cancelCameraFlight.current = flyTo(
+    viewer.scene?.camera,
+    { ...getCamera(viewer), ...groundCamera },
+    options,
+  );
+}
+
+function projectVectorToSurface(vector: Cartesian3, position: Cartesian3, ellipsoid: Ellipsoid) {
+  const surfaceNormal = ellipsoid.geodeticSurfaceNormal(position, new Cartesian3());
+  const magnitudeOfProjectionOnSurfaceNormal = Cartesian3.dot(vector, surfaceNormal);
+  const projectionOnSurfaceNormal = Cartesian3.multiplyByScalar(
+    surfaceNormal,
+    magnitudeOfProjectionOnSurfaceNormal,
+    new Cartesian3(),
+  );
+  return Cartesian3.subtract(vector, projectionOnSurfaceNormal, new Cartesian3());
+}
+
+function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotateAmount: number) {
+  const quaternion = Quaternion.fromAxisAngle(rotateAxis, -rotateAmount, new Quaternion());
+  const rotation = Matrix3.fromQuaternion(quaternion, new Matrix3());
+  const rotatedVector = Matrix3.multiplyByVector(rotation, vector, vector.clone());
+  return rotatedVector;
+}
+
+async function sampleTerrainHeight(
+  scene: Scene,
+  position: Cartesian3,
+): Promise<number | undefined> {
+  const terrainProvider = scene.terrainProvider;
+  if (terrainProvider instanceof EllipsoidTerrainProvider) return 0;
+
+  const [sample] = await sampleTerrainMostDetailed(terrainProvider, [
+    Cartographic.fromCartesian(position, scene.globe.ellipsoid, new Cartographic()),
+  ]);
+  return sample.height;
 }

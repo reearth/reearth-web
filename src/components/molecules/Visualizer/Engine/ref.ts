@@ -2,6 +2,7 @@ import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
+import { Clock } from "../Plugin/types";
 import type { Component } from "../Primitive";
 
 export type MouseEvent = {
@@ -59,9 +60,24 @@ export type EngineRef = {
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
-  zoomIn: (amount: number) => void;
-  zoomOut: (amount: number) => void;
+  zoomIn: (amount: number, options?: CameraOptions) => void;
+  zoomOut: (amount: number, options?: CameraOptions) => void;
+  orbit: (radian: number) => void;
+  rotateRight: (radian: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
+  getClock: () => Clock | undefined;
+  captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  enableScreenSpaceCameraController: (enabled: boolean) => void;
+  lookHorizontal: (amount: number) => void;
+  lookVertical: (amount: number) => void;
+  moveForward: (amount: number) => void;
+  moveBackward: (amount: number) => void;
+  moveUp: (amount: number) => void;
+  moveDown: (amount: number) => void;
+  moveLeft: (amount: number) => void;
+  moveRight: (amount: number) => void;
+  moveOverTerrain: (offset?: number) => void;
+  flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;

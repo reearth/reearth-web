@@ -1,36 +1,45 @@
 import { getQuickJS } from "quickjs-emscripten";
 import { Arena } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useRef, useState, useMemo, useImperativeHandle, Ref } from "react";
+import {
+  ForwardedRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import type { Ref as IFrameRef } from "../IFrame";
-
-import { usePostMessage } from "./usePostMessage";
-
-export type IFrameAPI = {
-  render: (
-    html: string,
-    options?: { visible?: boolean; width?: number | string; height?: number | string },
-  ) => void;
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
-  postMessage: (message: any) => void;
-};
-
-export type RefType = {
-  resize: (width: string | number | undefined, height: string | number | undefined) => void;
-  arena: () => Arena | undefined;
-};
+import { IFrameAPI, Ref as IFrameRef } from "./PluginIFrame";
 
 export type Options = {
   src?: string;
   sourceCode?: string;
   skip?: boolean;
-  iframeCanBeVisible?: boolean;
   isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
-  ref?: Ref<RefType>;
+  ref?: ForwardedRef<Ref>;
+  exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
   onError?: (err: any) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
-  exposed?: ((api: IFrameAPI) => { [key: string]: any }) | { [key: string]: any };
+  onMessage?: (msg: any) => void;
+};
+
+export type IFrameType = "main" | "modal" | "popup";
+
+export type API = {
+  main: IFrameAPI;
+  modal: IFrameAPI;
+  popup: IFrameAPI;
+  messages: {
+    on: (e: (msg: any) => void) => void;
+    off: (e: (msg: any) => void) => void;
+    once: (e: (msg: any) => void) => void;
+  };
+};
+
+export type Ref = {
+  arena: () => Arena | undefined;
 };
 
 // restrict any classes
@@ -39,7 +48,8 @@ export const defaultIsMarshalable = (obj: any): boolean => {
     ((typeof obj !== "object" || obj === null) && typeof obj !== "function") ||
     Array.isArray(obj) ||
     Object.getPrototypeOf(obj) === Function.prototype ||
-    Object.getPrototypeOf(obj) === Object.prototype
+    Object.getPrototypeOf(obj) === Object.prototype ||
+    obj instanceof Date
   );
 };
 
@@ -51,26 +61,56 @@ export default function useHook({
   src,
   sourceCode,
   skip,
-  iframeCanBeVisible,
   isMarshalable,
   ref,
+  exposed,
   onPreInit,
   onError = defaultOnError,
   onDispose,
-  exposed,
+  onMessage: rawOnMessage,
 }: Options = {}) {
   const arena = useRef<Arena | undefined>();
   const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
-  const [iFrameLoaded, setIFrameLoaded] = useState(false);
   const [code, setCode] = useState("");
-  const iFrameRef = useRef<IFrameRef>(null);
-  const [[iFrameHtml, iFrameOptions], setIFrameState] = useState<
-    [string, { visible?: boolean; width?: number | string; height?: number | string } | undefined]
-  >(["", undefined]);
-  const postMessage = usePostMessage(iFrameRef, !loaded || !iFrameLoaded);
 
-  const handleIFrameLoad = useCallback(() => setIFrameLoaded(true), []);
+  const mainIFrameRef = useRef<IFrameRef>(null);
+  const modalIFrameRef = useRef<IFrameRef>(null);
+  const popupIFrameRef = useRef<IFrameRef>(null);
+
+  const messageEvents = useMemo(() => new Set<(msg: any) => void>(), []);
+  const messageOnceEvents = useMemo(() => new Set<(msg: any) => void>(), []);
+  const onMessage = useCallback(
+    (e: (msg: any) => void) => {
+      messageEvents.add(e);
+    },
+    [messageEvents],
+  );
+  const offMessage = useCallback(
+    (e: (msg: any) => void) => {
+      messageEvents.delete(e);
+    },
+    [messageEvents],
+  );
+  const onceMessage = useCallback(
+    (e: (msg: any) => void) => {
+      messageOnceEvents.add(e);
+    },
+    [messageOnceEvents],
+  );
+  const handleMessage = useCallback(
+    (msg: any) => {
+      try {
+        messageEvents.forEach(e => e(msg));
+        messageOnceEvents.forEach(e => e(msg));
+      } catch (e) {
+        onError(e);
+      }
+      rawOnMessage?.(msg);
+      messageOnceEvents.clear();
+    },
+    [messageEvents, messageOnceEvents, onError, rawOnMessage],
+  );
 
   const evalCode = useCallback(
     (code: string): any => {
@@ -101,19 +141,6 @@ export default function useHook({
     [onError],
   );
 
-  const iFrameApi = useMemo<IFrameAPI>(
-    () => ({
-      render: (html, { visible = true, ...options } = {}) => {
-        setIFrameState([html, { visible: !!iframeCanBeVisible && !!visible, ...options }]);
-      },
-      resize: (width, height) => {
-        iFrameRef.current?.resize(width, height);
-      },
-      postMessage,
-    }),
-    [iframeCanBeVisible, postMessage],
-  );
-
   useEffect(() => {
     (async () => {
       const code = sourceCode ?? (src ? await (await fetch(src)).text() : "");
@@ -124,6 +151,10 @@ export default function useHook({
   // init and dispose of vm
   useEffect(() => {
     if (skip || !code) return;
+    const { api: mainIFrameApi } = mainIFrameRef.current ?? {};
+    const { api: modalIFrameApi } = modalIFrameRef.current ?? {};
+    const { api: popupIFrameApi } = popupIFrameRef.current ?? {};
+    if (!mainIFrameApi || !modalIFrameApi || !popupIFrameApi) return;
 
     onPreInit?.();
 
@@ -135,7 +166,19 @@ export default function useHook({
           (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
 
-      const e = typeof exposed === "function" ? exposed(iFrameApi) : exposed;
+      const e =
+        typeof exposed === "function"
+          ? exposed({
+              main: mainIFrameApi,
+              modal: modalIFrameApi,
+              popup: popupIFrameApi,
+              messages: {
+                on: onMessage,
+                off: offMessage,
+                once: onceMessage,
+              },
+            })
+          : exposed;
       if (e) {
         arena.current.expose(e);
       }
@@ -144,9 +187,13 @@ export default function useHook({
       setLoaded(true);
     })();
 
+    const iframeRef = mainIFrameRef.current;
+
     return () => {
       onDispose?.();
-      setIFrameState(["", undefined]);
+      messageEvents.clear();
+      messageOnceEvents.clear();
+      iframeRef?.reset();
       setLoaded(false);
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
@@ -162,28 +209,34 @@ export default function useHook({
         }
       }
     };
-  }, [code, evalCode, iFrameApi, isMarshalable, onDispose, onPreInit, skip, exposed]);
-
-  useEffect(() => {
-    if (!loaded) setIFrameLoaded(false);
-  }, [loaded]);
+  }, [
+    code,
+    evalCode,
+    isMarshalable,
+    onDispose,
+    onPreInit,
+    skip,
+    exposed,
+    onMessage,
+    offMessage,
+    onceMessage,
+    messageEvents,
+    messageOnceEvents,
+  ]);
 
   useImperativeHandle(
     ref,
-    (): RefType => ({
-      resize: (width, height) => {
-        iFrameRef.current?.resize(width, height);
-      },
+    (): Ref => ({
       arena: () => arena.current,
     }),
     [],
   );
 
   return {
-    iFrameHtml,
-    iFrameRef,
-    iFrameOptions,
+    mainIFrameRef,
+    modalIFrameRef,
+    popupIFrameRef,
     loaded,
-    handleIFrameLoad,
+    handleMessage,
   };
 }

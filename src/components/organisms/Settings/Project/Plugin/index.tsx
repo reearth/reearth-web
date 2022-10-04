@@ -8,9 +8,7 @@ import { useT } from "@reearth/i18n";
 
 import useHooks from "./hooks";
 
-// Components
-
-type Props = {
+export type Props = {
   projectId: string;
 };
 
@@ -18,15 +16,17 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
   const t = useT();
   const {
     currentProject,
-    marketplacePluginIds,
-    personalPlugins,
+    currentTheme,
+    currentLang,
     loading,
+    marketplacePlugins,
+    personalPlugins,
     extensions,
     accessToken,
-    handleInstallByMarketplace,
-    handleInstallByUploadingZipFile,
-    handleInstallFromPublicRepo,
-    uninstallPlugin,
+    handleInstallPluginByMarketplace,
+    handleInstallPluginFromFile,
+    handleInstallPluginFromPublicRepo,
+    handleUninstallPlugin,
   } = useHooks(projectId);
 
   return (
@@ -35,14 +35,16 @@ const Plugin: React.FC<Props> = ({ projectId }) => {
       {!currentProject?.isArchived ? (
         <PluginSection
           loading={loading}
-          marketplacePluginIds={marketplacePluginIds}
+          marketplacePlugins={marketplacePlugins}
           personalPlugins={personalPlugins}
           extensions={extensions}
+          currentTheme={currentTheme}
+          currentLang={currentLang}
           accessToken={accessToken}
-          onInstallByMarketplace={handleInstallByMarketplace}
-          onInstallByUploadingZipFile={handleInstallByUploadingZipFile}
-          onInstallFromPublicRepo={handleInstallFromPublicRepo}
-          uninstallPlugin={uninstallPlugin}
+          onInstallFromMarketplace={handleInstallPluginByMarketplace}
+          onInstallFromFile={handleInstallPluginFromFile}
+          onInstallFromPublicRepo={handleInstallPluginFromPublicRepo}
+          onUninstall={handleUninstallPlugin}
         />
       ) : (
         <ArchivedMessage />

@@ -23,126 +23,130 @@ export type Props = {
    * These value need to be epoch time.
    */
   range?: { [K in keyof Range]?: Range[K] };
+  speed?: number;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
-  onPlay?: TimeEventHandler;
+  onPlay?: (isPlaying: boolean) => void;
+  onPlayReversed?: (isPlaying: boolean) => void;
   onOpen?: () => void;
   onClose?: () => void;
+  onSpeedChange?: (speed: number) => void;
   isOpened?: boolean;
   sceneProperty?: SceneProperty;
 };
 
-const Timeline: React.FC<Props> = memo(
-  function TimelinePresenter({
+const Timeline: React.FC<Props> = memo(function TimelinePresenter({
+  currentTime,
+  range,
+  speed,
+  onClick,
+  onDrag,
+  onPlay,
+  onPlayReversed,
+  isOpened,
+  onOpen,
+  onClose,
+  onSpeedChange: onSpeedChangeProps,
+  sceneProperty,
+}) {
+  const {
+    startDate,
+    scaleCount,
+    hoursCount,
+    gapHorizontal,
+    scaleInterval,
+    strongScaleHours,
+    currentPosition,
+    events,
+    player: {
+      formattedCurrentTime,
+      isPlaying,
+      isPlayingReversed,
+      toggleIsPlaying,
+      toggleIsPlayingReversed,
+      onSpeedChange,
+    },
+  } = useTimeline({
     currentTime,
     range,
     onClick,
     onDrag,
     onPlay,
-    isOpened,
-    onOpen,
-    onClose,
-    sceneProperty,
-  }) {
-    const {
-      startDate,
-      scaleCount,
-      hoursCount,
-      gapHorizontal,
-      scaleInterval,
-      strongScaleHours,
-      currentPosition,
-      events,
-      player: {
-        playSpeed,
-        onPlaySpeedChange,
-        formattedCurrentTime,
-        isPlaying,
-        isPlayingReversed,
-        toggleIsPlaying,
-        toggleIsPlayingReversed,
-      },
-    } = useTimeline({
-      currentTime,
-      range,
-      onClick,
-      onDrag,
-      onPlay,
-    });
-    const publishedTheme = usePublishTheme(sceneProperty?.theme);
-    const t = useT();
+    onPlayReversed,
+    onSpeedChange: onSpeedChangeProps,
+  });
+  const publishedTheme = usePublishTheme(sceneProperty?.theme);
+  const t = useT();
 
-    return isOpened ? (
-      <Container>
-        <CloseButton publishedTheme={publishedTheme} onClick={onClose}>
-          <Icon alt={t("Close timeline")} icon="cancel" size={16} />
-        </CloseButton>
-        <ToolBox>
-          <li>
-            <PlayButton
-              publishedTheme={publishedTheme}
-              isPlaying={isPlayingReversed}
-              onClick={toggleIsPlayingReversed}>
-              <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
-            </PlayButton>
-          </li>
-          <li>
-            <PlayButton
-              isRight
-              publishedTheme={publishedTheme}
-              isPlaying={isPlaying}
-              onClick={toggleIsPlaying}>
-              <Icon alt={t("Play timeline")} icon="playRight" size={16} />
-            </PlayButton>
-          </li>
-          <li>
-            <InputRangeLabel>
-              <InputRangeLabelText size="xs">{playSpeed}X</InputRangeLabelText>
-              <InputRange
-                publishedTheme={publishedTheme}
-                type="range"
-                max={10000}
-                min={1}
-                value={playSpeed * 10}
-                onChange={onPlaySpeedChange}
-              />
-            </InputRangeLabel>
-          </li>
-        </ToolBox>
-        <CurrentTime size="xs" weight="bold">
-          {formattedCurrentTime}
-        </CurrentTime>
-        {/**
-         * TODO: Support keyboard operation for accessibility
-         * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
-         */}
-        <ScaleBox role="slider" {...events}>
-          <ScaleList
-            start={startDate}
-            scaleCount={scaleCount}
-            hoursCount={hoursCount}
-            gapHorizontal={gapHorizontal}
-            scaleInterval={scaleInterval}
-            strongScaleHours={strongScaleHours}
-          />
-          <IconWrapper
-            data-testid="knob-icon"
+  return isOpened ? (
+    <Container>
+      <CloseButton publishedTheme={publishedTheme} onClick={onClose}>
+        <Icon alt={t("Close timeline")} icon="cancel" size={16} />
+      </CloseButton>
+      <ToolBox>
+        <li>
+          <PlayButton
             publishedTheme={publishedTheme}
-            style={{
-              left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
-            }}>
-            <Icon icon="ellipse" alt={t("ellipse")} size={KNOB_SIZE} />
-          </IconWrapper>
-        </ScaleBox>
-      </Container>
-    ) : (
-      <OpenButton onClick={onOpen}>
-        <Icon alt={t("Open timeline")} icon="timeline" size={24} />
-      </OpenButton>
-    );
-  },
-  (prev, next) => prev.currentTime === next.currentTime && prev.isOpened === next.isOpened,
-);
+            isPlaying={isPlayingReversed}
+            onClick={toggleIsPlayingReversed}>
+            <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
+          </PlayButton>
+        </li>
+        <li>
+          <PlayButton
+            isRight
+            publishedTheme={publishedTheme}
+            isPlaying={isPlaying}
+            onClick={toggleIsPlaying}>
+            <Icon alt={t("Play timeline")} icon="playRight" size={16} />
+          </PlayButton>
+        </li>
+        <li>
+          <InputRangeLabel>
+            <InputRangeLabelText size="xs">{speed}x</InputRangeLabelText>
+            <InputRange
+              publishedTheme={publishedTheme}
+              type="range"
+              max={10000}
+              min={1}
+              value={speed}
+              onChange={onSpeedChange}
+            />
+          </InputRangeLabel>
+        </li>
+      </ToolBox>
+      <CurrentTime size="xs" weight="bold">
+        {formattedCurrentTime}
+      </CurrentTime>
+      {/**
+       * TODO: Support keyboard operation for accessibility
+       * see: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role
+       */}
+      <ScaleBox role="slider" {...events}>
+        <ScaleList
+          start={startDate}
+          scaleCount={scaleCount}
+          hoursCount={hoursCount}
+          gapHorizontal={gapHorizontal}
+          scaleInterval={scaleInterval}
+          strongScaleHours={strongScaleHours}
+        />
+        <IconWrapper
+          data-testid="knob-icon"
+          publishedTheme={publishedTheme}
+          style={{
+            left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
+          }}>
+          <Icon icon="ellipse" alt={t("ellipse")} size={KNOB_SIZE} />
+        </IconWrapper>
+      </ScaleBox>
+    </Container>
+  ) : (
+    <OpenButton onClick={onOpen}>
+      <Icon alt={t("Open timeline")} icon="timeline" size={24} />
+    </OpenButton>
+  );
+});
 
 type StyledColorProps = {
   publishedTheme: PublishTheme | undefined;
@@ -235,6 +239,8 @@ const CurrentTime = styled(Text)`
   color: ${({ theme }) => theme.main.text};
   padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
   margin: ${({ theme }) => `${theme.metrics.s}px 0`};
+  flex-shrink: 0;
+  white-space: pre-line;
 `;
 
 const ScaleBox = styled.div`
@@ -259,7 +265,8 @@ const ScaleBox = styled.div`
     border-radius: 5px;
     background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
   }
-  margin: ${({ theme }) => `${theme.metrics.s}px 0 ${theme.metrics.s}px ${theme.metrics.xs}px`};
+  margin: ${({ theme }) =>
+    `${theme.metrics.s}px ${theme.metrics.m}px ${theme.metrics.s}px ${theme.metrics.xs}px`};
 `;
 
 const IconWrapper = styled.div<StyledColorProps>`

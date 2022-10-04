@@ -8,15 +8,24 @@ import {
   useInstallPluginMutation,
   useUninstallPluginMutation,
   useUploadPluginMutation,
+  useUpgradePluginMutation,
 } from "@reearth/gql/graphql-client-api";
 import { useLang, useT } from "@reearth/i18n";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+import { useProject, useNotification, useCurrentTheme } from "@reearth/state";
+
+export type Plugin = {
+  fullId: string;
+  id: string;
+  version: string;
+  title?: string;
+  author?: string;
+};
 
 export default (projectId: string) => {
   const t = useT();
   const locale = useLang();
+  const [currentTheme] = useCurrentTheme();
   const client = useApolloClient();
-  const [currentTeam] = useTeam();
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
   const { getAccessToken } = useAuth();
@@ -31,6 +40,7 @@ export default (projectId: string) => {
   const [installPluginMutation] = useInstallPluginMutation();
   const [uploadPluginMutation] = useUploadPluginMutation();
   const [uninstallPluginMutation] = useUninstallPluginMutation();
+  const [upgradePluginMutation] = useUpgradePluginMutation();
 
   const extensions = useMemo(
     () => ({
@@ -47,57 +57,73 @@ export default (projectId: string) => {
 
   const sceneId = useMemo(() => rawSceneData?.scene?.id, [rawSceneData]);
 
-  const marketplacePluginIds = useMemo(
+  const marketplacePlugins = useMemo(
     () =>
-      rawSceneData
-        ? rawSceneData?.scene?.plugins
-            .filter(p => p.plugin?.id !== "reearth" && !sceneId)
-            .map<{ id: string; version: string }>(p => {
-              const [id, version] = p.plugin?.id.split("~") ?? ["", ""];
-              return {
-                id,
-                version,
-              };
-            })
-        : [],
-    [],
+      rawSceneData?.scene?.plugins
+        .filter(p => p.plugin && p.plugin?.id !== "reearth" && p.plugin.id.split("~", 3).length < 3)
+        .map((p): Plugin | undefined => {
+          if (!p.plugin) return;
+          const fullId = p.plugin.id;
+          const [id, version] = fullId.split("~", 2);
+          return {
+            fullId,
+            id,
+            version,
+            title: p.plugin.name,
+            author: p.plugin.author,
+          };
+        })
+        .filter((p): p is Plugin => !!p) ?? [],
+    [rawSceneData],
   );
 
   const personalPlugins = useMemo(() => {
-    return rawSceneData
-      ? rawSceneData?.scene?.plugins
-          .filter(p => p.plugin?.id !== "reearth")
-          .map<PluginItem>(p => ({
-            title: p.plugin?.translatedName ?? "",
-            bodyMarkdown: p.plugin?.translatedDescription ?? "",
-            author: p.plugin?.author ?? "",
-            // thumbnailUrl: p.plugin?.thumbnailUrl,
-            isInstalled: true,
-            pluginId: p.plugin?.id ?? "",
-          }))
-      : [];
+    return (
+      rawSceneData?.scene?.plugins
+        .filter(p => p.plugin && p.plugin.id !== "reearth" && p.plugin.id.split("~", 3).length == 3)
+        .map<PluginItem>(p => ({
+          title: p.plugin?.translatedName ?? "",
+          bodyMarkdown: p.plugin?.translatedDescription ?? "",
+          author: p.plugin?.author ?? "",
+          isInstalled: true,
+          pluginId: p.plugin?.id ?? "",
+        })) ?? []
+    );
   }, [rawSceneData]);
 
-  const handleInstallByMarketplace = useCallback(async (pluginId: string) => {
-    if (!sceneId) return;
-    const results = await installPluginMutation({
-      variables: { sceneId, pluginId },
-    });
-    if (results.errors || !results.data?.installPlugin?.scenePlugin) {
-      setNotification({
-        type: "error",
-        text: t("Failed to install plugin."),
-      });
-    } else {
-      setNotification({
-        type: "success",
-        text: t("Successfully installed plugin!"),
-      });
-      await client.resetStore();
-    }
-  }, []);
+  const handleInstallPluginByMarketplace = useCallback(
+    async (pluginId: string | undefined, oldPluginId?: string) => {
+      if (!sceneId || !pluginId) return;
 
-  const handleInstallByUploadingZipFile = useCallback(
+      const results = await (oldPluginId
+        ? upgradePluginMutation({
+            variables: {
+              sceneId,
+              pluginId: oldPluginId,
+              toPluginId: pluginId,
+            },
+          })
+        : installPluginMutation({
+            variables: { sceneId, pluginId },
+          }));
+
+      if (results.errors) {
+        setNotification({
+          type: "error",
+          text: t("Failed to install plugin."),
+        });
+      } else {
+        setNotification({
+          type: "success",
+          text: t("Successfully installed plugin!"),
+        });
+        await client.resetStore();
+      }
+    },
+    [client, installPluginMutation, sceneId, setNotification, t, upgradePluginMutation],
+  );
+
+  const handleInstallPluginFromFile = useCallback(
     async (files: FileList) => {
       if (!sceneId) return;
       const results = await Promise.all(
@@ -121,10 +147,10 @@ export default (projectId: string) => {
         client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
+    [sceneId, uploadPluginMutation, client, setNotification, t],
   );
 
-  const handleInstallFromPublicRepo = useCallback(
+  const handleInstallPluginFromPublicRepo = useCallback(
     async (repoUrl: string) => {
       if (!sceneId) return;
       const results = await uploadPluginMutation({
@@ -143,10 +169,10 @@ export default (projectId: string) => {
         await client.resetStore();
       }
     },
-    [rawSceneData?.scene?.id, uploadPluginMutation, setNotification, t, client],
+    [sceneId, uploadPluginMutation, setNotification, t, client],
   );
 
-  const uninstallPlugin = useCallback(
+  const handleUninstallPlugin = useCallback(
     async (pluginId: string) => {
       const sceneId = rawSceneData?.scene?.id;
       if (!sceneId) return;
@@ -164,7 +190,6 @@ export default (projectId: string) => {
           text: t("Successfully removed plugin."),
         });
         await client.resetStore();
-        // await refetchInstalledPlugins();
       }
     },
     [rawSceneData?.scene?.id, uninstallPluginMutation, setNotification, t, client],
@@ -172,16 +197,17 @@ export default (projectId: string) => {
 
   const loading = sceneLoading;
   return {
-    currentTeam,
     currentProject,
+    currentTheme,
+    currentLang: locale,
     loading,
-    marketplacePluginIds,
+    marketplacePlugins,
     personalPlugins,
     extensions,
     accessToken,
-    handleInstallByMarketplace,
-    handleInstallByUploadingZipFile,
-    handleInstallFromPublicRepo,
-    uninstallPlugin,
+    handleInstallPluginByMarketplace,
+    handleInstallPluginFromFile,
+    handleInstallPluginFromPublicRepo,
+    handleUninstallPlugin,
   };
 };

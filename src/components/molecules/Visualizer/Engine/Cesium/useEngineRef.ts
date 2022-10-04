@@ -8,7 +8,25 @@ import type { MouseEvents, MouseEvent } from "../ref";
 
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
-import { getLocationFromScreenXY, flyTo, lookAt, getCamera } from "./common";
+import {
+  getLocationFromScreenXY,
+  flyTo,
+  lookAt,
+  getCamera,
+  getClock,
+  lookHorizontal,
+  lookVertical,
+  moveForward,
+  moveBackward,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveOverTerrain,
+  flyToGround,
+  getCenterCamera,
+  zoom,
+} from "./common";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -89,15 +107,65 @@ export default function useEngineRef(
             }
           : undefined;
       },
-      zoomIn: amount => {
+      zoomIn: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer.scene?.camera.zoomIn(amount);
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        zoom({ camera, scene, relativeAmount: 1 / amount }, options);
       },
-      zoomOut: amount => {
+      zoomOut: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer?.scene?.camera.zoomOut(amount);
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        zoom({ camera, scene, relativeAmount: amount }, options);
+      },
+      orbit: radian => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+
+        const distance = 0.02;
+        const angle = radian + CesiumMath.PI_OVER_TWO;
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        const oldTransform = Cesium.Matrix4.clone(camera.transform);
+
+        const center = getCenterCamera({ camera, scene });
+        // Get fixed frame from center to globe ellipsoid.
+        const frame = Cesium.Transforms.eastNorthUpToFixedFrame(
+          center || camera.positionWC,
+          scene.globe.ellipsoid,
+        );
+
+        camera.lookAtTransform(frame);
+
+        if (center) {
+          camera.rotateLeft(x);
+          camera.rotateUp(y);
+        } else {
+          camera.look(Cesium.Cartesian3.UNIT_Z, x);
+          camera.look(camera.right, y);
+        }
+        camera.lookAtTransform(oldTransform);
+      },
+      rotateRight: radian => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const camera = scene.camera;
+        const oldTransform = Cesium.Matrix4.clone(camera.transform);
+        const frame = Cesium.Transforms.eastNorthUpToFixedFrame(
+          camera.positionWC,
+          scene.globe.ellipsoid,
+        );
+        camera.lookAtTransform(frame);
+        camera.rotateRight(radian - -camera.heading);
+        camera.lookAtTransform(oldTransform);
       },
       changeSceneMode: (sceneMode, duration = 2) => {
         const viewer = cesium.current?.cesiumElement;
@@ -114,6 +182,78 @@ export default function useEngineRef(
             viewer?.scene?.morphTo3D(duration);
             break;
         }
+      },
+      getClock: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.clock) return;
+        const clock: Cesium.Clock = viewer.clock;
+        return getClock(clock);
+      },
+      captureScreen: (type?: string, encoderOptions?: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.render();
+        return viewer.canvas.toDataURL(type, encoderOptions);
+      },
+      enableScreenSpaceCameraController: (enabled = true) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene) return;
+        const enable = !!enabled;
+        viewer.scene.screenSpaceCameraController.enableRotate = enable;
+        viewer.scene.screenSpaceCameraController.enableTranslate = enable;
+        viewer.scene.screenSpaceCameraController.enableZoom = enable;
+        viewer.scene.screenSpaceCameraController.enableTilt = enable;
+        viewer.scene.screenSpaceCameraController.enableLook = enable;
+      },
+      lookHorizontal: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        lookHorizontal(viewer.scene, amount);
+      },
+      lookVertical: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        lookVertical(viewer.scene, amount);
+      },
+      moveForward: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        moveForward(viewer.scene, amount);
+      },
+      moveBackward: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        moveBackward(viewer.scene, amount);
+      },
+      moveUp: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        moveUp(viewer.scene, amount);
+      },
+      moveDown: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        moveDown(viewer.scene, amount);
+      },
+      moveLeft: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        moveLeft(viewer.scene, amount);
+      },
+      moveRight: amount => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
+        moveRight(viewer.scene, amount);
+      },
+      moveOverTerrain: async offset => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        moveOverTerrain(viewer, offset);
+      },
+      flyToGround: async (camera, options, offset) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        flyToGround(viewer, cancelCameraFlight, camera, options, offset);
       },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;

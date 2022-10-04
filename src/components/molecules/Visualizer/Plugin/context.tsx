@@ -19,6 +19,7 @@ import type { CommonReearth } from "./api";
 import { commonReearth } from "./api";
 import type {
   CameraPosition,
+  CameraOptions,
   Layer,
   OverriddenInfobox,
   ReearthEventType,
@@ -26,6 +27,7 @@ import type {
   LookAtDestination,
   Tag,
   MouseEvent,
+  Clock,
 } from "./types";
 
 export type EngineContext = {
@@ -40,6 +42,7 @@ export type Props = {
   sceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
+  clock: Clock | undefined;
   layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
@@ -55,9 +58,23 @@ export type Props = {
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  rotateRight: (radian: number) => void;
+  orbit: (radian: number) => void;
   layersInViewport: () => Layer[];
   viewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
+  captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  enableScreenSpaceCameraController: (enabled: boolean) => void;
+  lookHorizontal: (amount: number) => void;
+  lookVertical: (amount: number) => void;
+  moveForward: (amount: number) => void;
+  moveBackward: (amount: number) => void;
+  moveUp: (amount: number) => void;
+  moveDown: (amount: number) => void;
+  moveLeft: (amount: number) => void;
+  moveRight: (amount: number) => void;
+  moveOverTerrain: () => void;
+  flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
 };
 
 export type Context = {
@@ -81,6 +98,7 @@ export function Provider({
   sceneProperty,
   tags,
   camera,
+  clock,
   layers,
   selectedLayer,
   layerSelectionReason,
@@ -97,12 +115,26 @@ export function Provider({
   lookAt,
   zoomIn,
   zoomOut,
+  rotateRight,
+  orbit,
   viewport,
+  captureScreen,
   onMouseEvent,
+  enableScreenSpaceCameraController,
+  lookHorizontal,
+  lookVertical,
+  moveForward,
+  moveBackward,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  moveOverTerrain,
+  flyToGround,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () => events<Pick<ReearthEventType, "cameramove" | "select" | keyof MouseEvents>>(),
+    () => events<Pick<ReearthEventType, "cameramove" | "select" | "tick" | keyof MouseEvents>>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -111,6 +143,7 @@ export function Provider({
   const getSceneProperty = useGet(sceneProperty);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
+  const getClock = useGet(clock);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
@@ -135,6 +168,7 @@ export function Provider({
         sceneProperty: getSceneProperty,
         tags: getTags,
         camera: getCamera,
+        clock: getClock,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
@@ -151,6 +185,20 @@ export function Provider({
         zoomIn,
         zoomOut,
         viewport,
+        rotateRight,
+        orbit,
+        captureScreen,
+        enableScreenSpaceCameraController,
+        lookHorizontal,
+        lookVertical,
+        moveForward,
+        moveBackward,
+        moveUp,
+        moveDown,
+        moveLeft,
+        moveRight,
+        moveOverTerrain,
+        flyToGround,
       }),
       overrideSceneProperty,
     }),
@@ -163,6 +211,7 @@ export function Provider({
       getSceneProperty,
       getTags,
       getCamera,
+      getClock,
       getSelectedLayer,
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
@@ -183,7 +232,7 @@ export function Provider({
     ],
   );
 
-  useEmit<Pick<ReearthEventType, "cameramove" | "select" | keyof MouseEvents>>(
+  useEmit<Pick<ReearthEventType, "cameramove" | "select" | "tick" | keyof MouseEvents>>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),
@@ -193,6 +242,9 @@ export function Provider({
         () => (camera ? [camera] : undefined),
         [camera],
       ),
+      tick: useMemo<[date: Date] | undefined>(() => {
+        return clock ? [clock.currentTime] : undefined;
+      }, [clock]),
     },
     emit,
   );

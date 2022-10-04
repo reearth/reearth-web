@@ -1,11 +1,10 @@
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
 
 import Box from "@reearth/components/atoms/Box";
 import Loading from "@reearth/components/atoms/Loading";
 import TabSection from "@reearth/components/atoms/TabSection";
 import { PluginItem as PluginItemType } from "@reearth/components/molecules/Settings/Project/Plugin/PluginAccordion";
-import { Extension } from "@reearth/config";
+import { Extension } from "@reearth/config/extensions";
 import { useT } from "@reearth/i18n";
 
 import PluginInstall from "./PluginInstall";
@@ -15,10 +14,13 @@ export type PluginItem = PluginItemType;
 export type Props = {
   title?: string;
   loading?: boolean;
-  marketplacePluginIds?:
+  marketplacePlugins?:
     | {
+        fullId: string;
         id: string;
         version: string;
+        title?: string;
+        author?: string;
       }[]
     | undefined;
   personalPlugins?: PluginItem[];
@@ -26,11 +28,13 @@ export type Props = {
     library: Extension<"plugin-library">[] | undefined;
     installed: Extension<"plugin-installed">[] | undefined;
   };
+  currentTheme?: "light" | "dark";
+  currentLang?: string;
   accessToken?: string;
-  onInstallByMarketplace: (pluginId: string) => void;
+  onInstallFromMarketplace: (pluginId: string | undefined, oldPluginId?: string) => void;
   onInstallFromPublicRepo: (repoUrl: string) => void;
-  onInstallByUploadingZipFile: (files: FileList) => void;
-  uninstallPlugin: (pluginId: string) => void;
+  onInstallFromFile: (files: FileList) => void;
+  onUninstall: (pluginId: string) => void;
 };
 
 export type PluginPageMode = "list" | "install-way" | PluginActions;
@@ -45,21 +49,18 @@ export type PluginTabs = "Marketplace" | "Public" | "Personal";
 
 const PluginSection: React.FC<Props> = ({
   loading,
-  marketplacePluginIds,
+  marketplacePlugins,
   personalPlugins,
   extensions,
+  currentTheme,
+  currentLang,
   accessToken,
-  onInstallByMarketplace,
-  onInstallByUploadingZipFile,
+  onInstallFromMarketplace,
+  onInstallFromFile,
   onInstallFromPublicRepo,
-  uninstallPlugin,
+  onUninstall,
 }) => {
   const t = useT();
-  const { search } = useLocation();
-  const queriedPluginId = useMemo(
-    () => new URLSearchParams(search).get("pluginId") ?? undefined,
-    [search],
-  );
 
   const tabHeaders = useMemo(
     () => ({
@@ -75,29 +76,33 @@ const PluginSection: React.FC<Props> = ({
       <TabSection<PluginTabs> selected="Marketplace" menuAlignment="top" headers={tabHeaders}>
         {{
           Marketplace: (
-            <Box p="2xl">
+            <Box pv="2xl">
               {accessToken &&
                 extensions?.library?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    selectedPluginId={queriedPluginId}
+                    theme={currentTheme}
+                    lang={currentLang}
+                    installedPlugins={marketplacePlugins}
                     accessToken={accessToken}
-                    onInstall={onInstallByMarketplace}
-                    onUninstall={uninstallPlugin}
+                    onInstall={onInstallFromMarketplace}
+                    onUninstall={onUninstall}
                   />
                 ))}
             </Box>
           ),
           Public: (
-            <Box p="2xl">
+            <Box>
               {accessToken &&
                 extensions?.installed?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    installedPlugins={marketplacePluginIds}
+                    installedPlugins={marketplacePlugins}
+                    theme={currentTheme}
+                    lang={currentLang}
                     accessToken={accessToken}
-                    onInstall={onInstallByMarketplace}
-                    onUninstall={uninstallPlugin}
+                    onInstall={onInstallFromMarketplace}
+                    onUninstall={onUninstall}
                   />
                 ))}
             </Box>
@@ -108,8 +113,8 @@ const PluginSection: React.FC<Props> = ({
             <PluginInstall
               installedPlugins={personalPlugins}
               installFromPublicRepo={onInstallFromPublicRepo}
-              installByUploadingZipFile={onInstallByUploadingZipFile}
-              uninstallPlugin={uninstallPlugin}
+              installByUploadingZipFile={onInstallFromFile}
+              uninstallPlugin={onUninstall}
             />
           ),
         }}

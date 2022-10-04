@@ -34,6 +34,7 @@ const QuickStart: React.FC<Props> = ({
   toggleAssetModal,
   onAssetSelect,
 }) => {
+  const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
   const [projCreateOpen, setProjCreateOpen] = useState(false);
   const [workCreateOpen, setWorkCreateOpen] = useState(false);
@@ -53,15 +54,17 @@ const QuickStart: React.FC<Props> = ({
         <Text size={isSmallWindow ? "m" : "l"} color={theme.main.text} weight="bold">
           {t("Quick Start")}
         </Text>
-        <LongBannerButton
-          align="center"
-          justify="center"
-          onClick={() => window.open("http://docs.reearth.io")}>
-          <MapIcon icon="map" />
-          <Text size="m" weight="bold" customColor>
-            {t("User guide")}
-          </Text>
-        </LongBannerButton>
+        {documentationUrl && (
+          <LongBannerButton
+            align="center"
+            justify="center"
+            onClick={() => window.open(documentationUrl, "_blank", "noopener")}>
+            <MapIcon icon="map" />
+            <Text size="m" weight="bold" customColor>
+              {t("User guide")}
+            </Text>
+          </LongBannerButton>
+        )}
         <Flex justify="space-between">
           <HeroBannerButton
             direction="column"
@@ -130,6 +133,7 @@ const BannerButtonStyles = css`
   margin: 0px;
   border-radius: ${metricsSizes["s"]}px;
   cursor: pointer;
+  transition: all 0.3s;
 `;
 
 const LongBannerButton = styled(Flex)`

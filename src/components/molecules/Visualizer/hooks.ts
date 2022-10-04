@@ -16,7 +16,13 @@ import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
-import type { CameraOptions, FlyToDestination, LookAtDestination, Tag } from "./Plugin/types";
+import type {
+  CameraOptions,
+  Clock,
+  FlyToDestination,
+  LookAtDestination,
+  Tag,
+} from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
 
 export default ({
@@ -30,12 +36,14 @@ export default ({
   selectedBlockId: outerSelectedBlockId,
   zoomedLayerId,
   camera,
+  clock,
   sceneProperty,
   tags,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
   onCameraChange,
+  onTick,
   onLayerDrop,
 }: {
   engineType?: string;
@@ -48,6 +56,7 @@ export default ({
   selectedBlockId?: string;
   zoomedLayerId?: string;
   camera?: Camera;
+  clock?: Clock;
   sceneProperty?: SceneProperty;
   tags?: Tag[];
   onLayerSelect?: (id?: string) => void;
@@ -61,12 +70,11 @@ export default ({
     selectedLayer?: Layer,
   ) => void;
   onCameraChange?: (c: Camera) => void;
+  onTick?: (c: Clock) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
-  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(
-    sceneProperty ?? {},
-  );
+  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -147,6 +155,20 @@ export default ({
     [onCameraChange],
   );
 
+  // clock
+  const [innerClock, setInnerClock] = useState(clock);
+  useEffect(() => {
+    setInnerClock(clock);
+  }, [clock]);
+
+  const updateClock = useCallback(
+    (clock: Clock) => {
+      setInnerClock(clock);
+      onTick?.(clock);
+    },
+    [onTick],
+  );
+
   // dnd
   const [isLayerDragging, setIsLayerDragging] = useState(false);
   const handleLayerDrag = useCallback(() => {
@@ -176,6 +198,7 @@ export default ({
       sceneProperty: overriddenSceneProperty,
       tags,
       camera: innerCamera,
+      clock: innerClock,
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
@@ -218,6 +241,7 @@ export default ({
     isLayerDragging,
     selectedBlockId,
     innerCamera,
+    innerClock,
     infobox,
     overriddenSceneProperty,
     isLayerHidden,
@@ -225,6 +249,7 @@ export default ({
     selectBlock,
     changeBlock,
     updateCamera,
+    updateClock,
     handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
@@ -410,10 +435,24 @@ function useProviderProps(
     | "lookAt"
     | "zoomIn"
     | "zoomOut"
+    | "orbit"
+    | "rotateRight"
     | "layers"
     | "layersInViewport"
     | "viewport"
     | "onMouseEvent"
+    | "captureScreen"
+    | "enableScreenSpaceCameraController"
+    | "lookHorizontal"
+    | "lookVertical"
+    | "moveForward"
+    | "moveBackward"
+    | "moveUp"
+    | "moveDown"
+    | "moveLeft"
+    | "moveRight"
+    | "moveOverTerrain"
+    | "flyToGround"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -494,9 +533,105 @@ function useProviderProps(
     [engineRef],
   );
 
+  const rotateRight = useCallback(
+    (radian: number) => {
+      engineRef.current?.rotateRight(radian);
+    },
+    [engineRef],
+  );
+
+  const orbit = useCallback(
+    (radian: number) => {
+      engineRef.current?.orbit(radian);
+    },
+    [engineRef],
+  );
+
   const onMouseEvent = useCallback(
     (eventType: keyof MouseEventHandles, fn: any) => {
       engineRef.current?.[eventType]?.(fn);
+    },
+    [engineRef],
+  );
+
+  const captureScreen = useCallback(
+    (type?: string, encoderOptions?: number) => {
+      return engineRef.current?.captureScreen(type, encoderOptions);
+    },
+    [engineRef],
+  );
+
+  const enableScreenSpaceCameraController = useCallback(
+    (enabled: boolean) => engineRef?.current?.enableScreenSpaceCameraController(enabled),
+    [engineRef],
+  );
+
+  const lookHorizontal = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookHorizontal(amount);
+    },
+    [engineRef],
+  );
+
+  const lookVertical = useCallback(
+    (amount: number) => {
+      engineRef.current?.lookVertical(amount);
+    },
+    [engineRef],
+  );
+
+  const moveForward = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveForward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveBackward = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveBackward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveUp = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveUp(amount);
+    },
+    [engineRef],
+  );
+
+  const moveDown = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveDown(amount);
+    },
+    [engineRef],
+  );
+
+  const moveLeft = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveLeft(amount);
+    },
+    [engineRef],
+  );
+
+  const moveRight = useCallback(
+    (amount: number) => {
+      engineRef.current?.moveRight(amount);
+    },
+    [engineRef],
+  );
+
+  const moveOverTerrain = useCallback(
+    (offset?: number) => {
+      return engineRef.current?.moveOverTerrain(offset);
+    },
+    [engineRef],
+  );
+
+  const flyToGround = useCallback(
+    (dest: FlyToDestination, options?: CameraOptions, offset?: number) => {
+      engineRef.current?.flyToGround(dest, options, offset);
     },
     [engineRef],
   );
@@ -508,9 +643,23 @@ function useProviderProps(
     lookAt,
     zoomIn,
     zoomOut,
+    orbit,
+    rotateRight,
     layers,
     layersInViewport,
     viewport,
     onMouseEvent,
+    captureScreen,
+    enableScreenSpaceCameraController,
+    lookHorizontal,
+    lookVertical,
+    moveForward,
+    moveBackward,
+    moveUp,
+    moveDown,
+    moveLeft,
+    moveRight,
+    moveOverTerrain,
+    flyToGround,
   };
 }
