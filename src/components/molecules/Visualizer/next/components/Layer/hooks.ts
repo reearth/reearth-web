@@ -1,10 +1,10 @@
 import { useSetAtom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 
-import { computeAtom, type Atoms } from "../atoms";
-import type { Layer } from "../types";
+import { computeAtom, type Atoms } from "../../atoms";
+import type { Layer } from "../../types";
 
-export type { Atoms } from "../atoms";
+export type { Atoms } from "../../atoms";
 
 export const createAtoms = computeAtom;
 

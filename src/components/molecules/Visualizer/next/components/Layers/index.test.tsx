@@ -3,7 +3,7 @@ import { expect, test, vi } from "vitest";
 
 import { render, screen, waitFor } from "@reearth/test/utils";
 
-import Component, { LayerSimple, Layer, FeatureComponentProps, Ref } from "./Layers";
+import Component, { LayerSimple, Layer, FeatureComponentProps, Ref } from ".";
 
 test("simple", () => {
   const Feature = vi.fn((_: FeatureComponentProps) => <div>Hello</div>);

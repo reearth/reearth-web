@@ -1,5 +1,5 @@
 import {
-  forwardRef,
+  ForwardedRef,
   useCallback,
   useImperativeHandle,
   useLayoutEffect,
@@ -9,25 +9,15 @@ import {
 
 import { objectFromGetter } from "@reearth/util/object";
 
-import type { LayerSimple, Layer, LayerGroup } from "../types";
+import { computeAtom, type Atoms } from "../../atoms";
+import type { Layer } from "../../types";
 
-import { createAtoms, type Atoms } from "./hooks";
-import LayerComponent, { type CommonProps, type Props as LayerProps } from "./Layer";
-
-export type { LayerSimple, Layer, CommonProps, FeatureComponentProps } from "./Layer";
-
-// Layer type used for plugin APIs
-export type LazyLayer = { type: LayerSimple["type"] | LayerGroup["type"] } & Omit<
-  LayerSimple,
-  "type"
-> &
-  Omit<LayerGroup, "type">;
-
-export type Props = {
-  layers?: Layer[];
-  overriddenProperties?: Record<string, Record<string, any>>;
-  Feature?: LayerProps["Feature"];
-} & CommonProps;
+/**
+ * Same as a Layer, but all fields except id is lazily evaluated,
+ * in order to reduce unnecessary sending and receiving of data to and from
+ * QuickJS (a plugin runtime) and to improve performance.
+ */
+type LazyLayer = Readonly<Layer> & { __REEARTH_LAZY_LAYER: never };
 
 export type Ref = {
   findById: (id: string) => LazyLayer | undefined;
@@ -47,10 +37,7 @@ export type Ref = {
   findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
 };
 
-const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
-  { layers, overriddenProperties, ...props },
-  ref,
-) => {
+export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: ForwardedRef<Ref> }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const atomsMap = useMemo(() => new Map<string, Atoms>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
@@ -61,8 +48,8 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
     [layers, tempLayers],
   );
 
-  const lazyLayerPrototype = useMemo(() => {
-    return objectFromGetter<Omit<LazyLayer, "id">>(layerKeys, function (key) {
+  const lazyLayerPrototype = useMemo<object>(() => {
+    return objectFromGetter(layerKeys, function (key) {
       const id: string | undefined = (this as any).id;
       if (!id) throw new Error("layer ID is not specified");
       return (layerMap.get(id) as any)?.[key];
@@ -111,7 +98,7 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
 
       setTempLayers(layers => [...layers, newLayer]);
       layerMap.set(newLayer.id, newLayer);
-      atomsMap.set(newLayer.id, createAtoms());
+      atomsMap.set(newLayer.id, computeAtom());
 
       const newLazyLayer = findById(newLayer.id);
       if (!newLazyLayer) throw new Error("layer not found");
@@ -157,9 +144,7 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
   );
 
   const walk = useCallback(
-    <T,>(
-      fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void,
-    ): T | undefined => {
+    <T>(fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void): T | undefined => {
       return walkLayers(layers ?? [], (l, i, p) => {
         const ll = findById(l.id);
         if (!ll) return;
@@ -253,7 +238,7 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
     walkLayers(layers ?? [], l => {
       ids.add(l.id);
       if (!atomsMap.has(l.id)) {
-        atomsMap.set(l.id, createAtoms());
+        atomsMap.set(l.id, computeAtom());
       }
       layerMap.set(l.id, l);
     });
@@ -267,23 +252,13 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
     }
   }, [atomsMap, layers, layerMap, lazyLayerMap]);
 
-  return (
-    <>
-      {flattenedLayers?.map(layer => (
-        <LayerComponent
-          key={layer.id}
-          {...props}
-          layer={layer}
-          atoms={atomsMap.get(layer.id)}
-          overriddenProperties={overriddenProperties?.[layer.id]}
-        />
-      ))}
-    </>
-  );
-};
+  return { atomsMap, flattenedLayers };
+}
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 // Do not forget to update layerKeys when Layer type was updated
-const layerKeys: (keyof Omit<LazyLayer, "id">)[] = [
+export const layerKeys: KeysOfUnion<Layer>[] = [
   "children",
   "data",
   "hidden",
@@ -327,5 +302,3 @@ function newId(): string {
     ((Math.random() * 16) | 0).toString(16),
   );
 }
-
-export default forwardRef(Layers);

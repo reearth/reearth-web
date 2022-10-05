@@ -1,10 +1,10 @@
 import { ComponentType } from "react";
 
-import type { DataRange, Feature, ComputedLayer, Layer } from "../types";
+import type { DataRange, Feature, ComputedLayer, Layer } from "../../types";
 
 import useHooks, { type Atoms } from "./hooks";
 
-export * from "../types";
+export type { Layer, LayerSimple } from "../../types";
 
 export type FeatureComponentType = ComponentType<FeatureComponentProps>;
 

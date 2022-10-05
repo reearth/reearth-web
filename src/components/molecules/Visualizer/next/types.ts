@@ -3,10 +3,10 @@ import type { Geometry as GeoJSONGeometry } from "geojson";
 import type { Infobox, Tag } from "../Plugin/types";
 
 // Layer
-// Do not forget to update layerKeys also
 
 export type Layer = LayerSimple | LayerGroup;
 
+// Do not forget to update layerKeys also
 export type LayerSimple = {
   type: "simple";
   data?: Data;
