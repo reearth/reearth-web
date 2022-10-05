@@ -36,7 +36,8 @@ export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children"> & { children?:
 
 export type Data = {
   type: DataType;
-  url: string;
+  url?: string;
+  value?: any;
 };
 
 export type DataRange = {
