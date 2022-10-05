@@ -6,7 +6,6 @@ import type { Infobox, Tag } from "../Plugin/types";
 
 export type Layer = LayerSimple | LayerGroup;
 
-// Do not forget to update layerKeys also
 export type LayerSimple = {
   type: "simple";
   data?: Data;
@@ -27,6 +26,11 @@ export type LayerCommon = {
   tags?: Tag[];
   creator?: string;
 };
+
+/** Same as a Layer, but its ID is unknown. */
+export type NaiveLayer = NaiveLayerSimple | NaiveLayerGroup;
+export type NaiveLayerSimple = Omit<LayerSimple, "id">;
+export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children"> & { children?: NaiveLayer[] };
 
 // Data
 

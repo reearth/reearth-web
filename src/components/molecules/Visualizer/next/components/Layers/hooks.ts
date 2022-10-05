@@ -6,11 +6,12 @@ import {
   useMemo,
   useState,
 } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { objectFromGetter } from "@reearth/util/object";
 
 import { computeAtom, type Atoms } from "../../atoms";
-import type { Layer } from "../../types";
+import type { Layer, NaiveLayer } from "../../types";
 
 /**
  * Same as a Layer, but all fields except id is lazily evaluated,
@@ -22,7 +23,7 @@ type LazyLayer = Readonly<Layer> & { __REEARTH_LAZY_LAYER: never };
 export type Ref = {
   findById: (id: string) => LazyLayer | undefined;
   findByIds: (...ids: string[]) => (LazyLayer | undefined)[];
-  add: (layer: Omit<Layer, "id">) => LazyLayer;
+  add: (layer: NaiveLayer) => LazyLayer;
   update: (...layers: Layer[]) => void;
   deleteLayer: (...ids: string[]) => void;
   isLayer: (obj: any) => obj is LazyLayer;
@@ -80,19 +81,17 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
   );
 
   const add = useCallback(
-    (layer: Omit<Layer, "id">): LazyLayer => {
-      let id: string;
-      do {
-        id = newId();
-      } while (layerMap.has(id));
+    (layer: NaiveLayer): LazyLayer => {
+      const newLayer = { ...layer, id: uuidv4() } as Layer;
 
-      const newLayer = { ...layer, id } as Layer;
-
-      // generate ids for block
+      // generate ids for layers and blocks
       walkLayers([newLayer], l => {
+        if (!l.id) {
+          l.id = uuidv4();
+        }
         l.infobox?.blocks?.forEach(b => {
           if (b.id) return;
-          b.id = newId();
+          b.id = uuidv4();
         });
       });
 
@@ -295,10 +294,4 @@ function walkLayers<T>(
     }
   }
   return;
-}
-
-function newId(): string {
-  return "_xxxxxxxxxxxxxxxxxxxxxxxxx".replace(/[x]/g, () =>
-    ((Math.random() * 16) | 0).toString(16),
-  );
 }
