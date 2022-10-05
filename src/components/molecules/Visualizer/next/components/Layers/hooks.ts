@@ -18,7 +18,7 @@ import type { Layer, NaiveLayer } from "../../types";
  * in order to reduce unnecessary sending and receiving of data to and from
  * QuickJS (a plugin runtime) and to improve performance.
  */
-type LazyLayer = Readonly<Layer> & { __REEARTH_LAZY_LAYER: never };
+export type LazyLayer = Readonly<Layer> & { __REEARTH_LAZY_LAYER: never };
 
 export type Ref = {
   findById: (id: string) => LazyLayer | undefined;
