@@ -82,7 +82,7 @@ test("tree", () => {
 test("ref", async () => {
   const Feature = vi.fn((_: FeatureComponentProps) => null);
 
-  function Comp({ del, update }: { del?: boolean; update?: boolean }) {
+  function Comp({ del, replace }: { del?: boolean; replace?: boolean }) {
     const ref = useRef<Ref>(null);
     const layerId = useRef("");
     const [s, ss] = useState("");
@@ -91,15 +91,15 @@ test("ref", async () => {
       if (del) {
         ref.current?.deleteLayer(layerId.current);
         ss(ref.current?.findById(layerId.current)?.title ?? "");
-      } else if (update) {
-        ref.current?.update({ id: layerId.current, type: "simple", title: "A" });
+      } else if (replace) {
+        ref.current?.replace({ id: layerId.current, type: "simple", title: "A" });
         ss(ref.current?.findById(layerId.current)?.title ?? "");
       } else {
         const newLayer = ref.current?.add({ type: "simple", title: "a" });
         layerId.current = newLayer?.id ?? "";
         ss(newLayer?.title ?? "");
       }
-    }, [del, update]);
+    }, [del, replace]);
 
     return (
       <>
@@ -124,7 +124,7 @@ test("ref", async () => {
   });
 
   // update should update the layer
-  rerender(<Comp update />);
+  rerender(<Comp replace />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toHaveTextContent("A"));
 

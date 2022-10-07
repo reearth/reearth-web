@@ -1,6 +1,6 @@
 import type { Geometry as GeoJSONGeometry } from "geojson";
 
-import type { Infobox, Tag } from "../Plugin/types";
+import type { Infobox, Block, Tag } from "../Plugin/types";
 
 // Layer
 
@@ -32,8 +32,13 @@ export type LayerCompat = { extensionId?: string; property?: any; propertyId?: s
 
 /** Same as a Layer, but its ID is unknown. */
 export type NaiveLayer = NaiveLayerSimple | NaiveLayerGroup;
-export type NaiveLayerSimple = Omit<LayerSimple, "id">;
-export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children"> & { children?: NaiveLayer[] };
+export type NaiveLayerSimple = Omit<LayerSimple, "id" | "infobox"> & { infobox?: NaiveInfobox };
+export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children" | "infobox"> & {
+  infobox?: NaiveInfobox;
+  children?: NaiveLayer[];
+};
+export type NaiveInfobox = Omit<Infobox, "id" | "blocks"> & { blocks?: NaiveBlock[] };
+export type NaiveBlock<P = any> = Omit<Block<P>, "id">;
 
 // Data
 

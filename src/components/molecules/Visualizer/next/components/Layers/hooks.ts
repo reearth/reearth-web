@@ -1,3 +1,4 @@
+import { merge, omit } from "lodash";
 import {
   ForwardedRef,
   useCallback,
@@ -13,6 +14,8 @@ import { objectFromGetter } from "@reearth/util/object";
 import { computeAtom, type Atoms } from "../../atoms";
 import type { Layer, NaiveLayer } from "../../types";
 
+export type { Layer, NaiveLayer } from "../../types";
+
 /**
  * Same as a Layer, but all fields except id is lazily evaluated,
  * in order to reduce unnecessary sending and receiving of data to and from
@@ -23,8 +26,10 @@ export type LazyLayer = Readonly<Layer> & { __REEARTH_LAZY_LAYER: never };
 export type Ref = {
   findById: (id: string) => LazyLayer | undefined;
   findByIds: (...ids: string[]) => (LazyLayer | undefined)[];
-  add: (layer: NaiveLayer) => LazyLayer;
-  update: (...layers: Layer[]) => void;
+  add: (layer: NaiveLayer) => LazyLayer | undefined;
+  addAll: (...layers: NaiveLayer[]) => (LazyLayer | undefined)[];
+  replace: (...layers: Layer[]) => void;
+  override: (id: string, layer?: Partial<Layer> | null) => void;
   deleteLayer: (...ids: string[]) => void;
   isLayer: (obj: any) => obj is LazyLayer;
   walk: <T>(
@@ -40,14 +45,20 @@ export type Ref = {
 
 export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: ForwardedRef<Ref> }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
+  const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
   const atomsMap = useMemo(() => new Map<string, Atoms>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
 
   const [tempLayers, setTempLayers] = useState<Layer[]>([]);
-  const flattenedLayers = useMemo(
-    (): Layer[] => [...flattenLayers(tempLayers), ...flattenLayers(layers ?? [])],
-    [layers, tempLayers],
-  );
+  const flattenedLayers = useMemo((): Layer[] => {
+    const newLayers = [...flattenLayers(tempLayers), ...flattenLayers(layers ?? [])];
+    // apply overrides
+    return newLayers.map(l => {
+      const ol = overriddenLayers.find(ll => ll.id === l.id);
+      if (!ol) return l;
+      return merge({}, l, ol);
+    });
+  }, [layers, tempLayers, overriddenLayers]);
 
   const lazyLayerPrototype = useMemo<object>(() => {
     return objectFromGetter(layerKeys, function (key) {
@@ -93,8 +104,10 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
   );
 
   const add = useCallback(
-    (layer: NaiveLayer): LazyLayer => {
-      const newLayer = { ...layer, id: uuidv4() } as Layer;
+    (layer: NaiveLayer): LazyLayer | undefined => {
+      if (!isValidLayer(layer)) return;
+
+      const newLayer = { ...layer, id: uuidv4() };
 
       // generate ids for layers and blocks
       walkLayers([newLayer], l => {
@@ -119,32 +132,67 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     [atomsMap, findById, layerMap],
   );
 
-  const update = useCallback(
-    (...layers: Layer[]) => {
-      for (const layer of layers) {
-        if (!layerMap.has(layer.id)) continue;
-        layerMap.set(layer.id, layer);
-        setTempLayers(layers => {
-          const i = layers.findIndex(l => l.id == layer.id);
-          if (i <= 0) return layers;
+  const addAll = useCallback(
+    (...layers: NaiveLayer[]): (LazyLayer | undefined)[] => {
+      return layers.map(l => add(l));
+    },
+    [add],
+  );
 
-          return [...layers.slice(0, i), layer, ...layers.slice(i + 1)];
+  const replace = useCallback(
+    (...layers: Layer[]) => {
+      const validLayers = layers.filter(isValidLayer);
+      setTempLayers(currentLayers => {
+        replaceLayers(currentLayers, l => {
+          const newLayer = validLayers.find(ll => ll.id === l.id);
+          if (newLayer) {
+            const newLayer2 = { ...newLayer };
+            layerMap.set(newLayer.id, newLayer2);
+            return newLayer2;
+          }
+          return;
         });
-      }
+        return [...currentLayers];
+      });
     },
     [layerMap],
   );
 
+  const override = useCallback((id: string, layer?: Partial<Layer> | null) => {
+    if (!layer) {
+      setOverridenLayers(layers => layers.filter(l => l.id !== id));
+    } else if (layer && typeof layer === "object") {
+      setOverridenLayers(layers => {
+        const layer2 = { id, ...omit(layer, "id", "type", "children") };
+        const i = layers.findIndex(l => l.id === id);
+        if (i < 0) return [...layers, layer2];
+        return [...layers.slice(0, i - 1), layer2, ...layers.slice(i + 1)];
+      });
+    }
+  }, []);
+
   const deleteLayer = useCallback(
     (...ids: string[]) => {
-      setTempLayers(layers => layers.filter(l => !ids.includes(l.id)));
-      ids.forEach(id => {
-        layerMap.delete(id);
-        atomsMap.delete(id);
-        lazyLayerMap.delete(id);
+      setTempLayers(layers => {
+        const deleted: Layer[] = [];
+        const newLayers = filterLayers(layers, l => {
+          if (ids.includes(l.id)) {
+            deleted.push(l);
+            return false;
+          }
+          return true;
+        });
+        deleted
+          .map(l => l.id)
+          .forEach(id => {
+            layerMap.delete(id);
+            atomsMap.delete(id);
+            lazyLayerMap.delete(id);
+          });
+        return newLayers;
       });
     },
-    [atomsMap, layerMap, lazyLayerMap],
+    [layerMap, atomsMap, lazyLayerMap],
   );
 
   const isLayer = useCallback(
@@ -218,7 +266,9 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     () => ({
       findById,
       add,
-      update,
+      addAll,
+      replace,
+      override,
       deleteLayer,
       findByIds,
       isLayer,
@@ -229,17 +279,19 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       findByTagLabels,
     }),
     [
-      add,
-      deleteLayer,
-      find,
-      findAll,
-      findByTagLabels,
-      findByTags,
       findById,
+      add,
+      addAll,
+      replace,
+      override,
+      deleteLayer,
       findByIds,
       isLayer,
-      update,
       walk,
+      find,
+      findAll,
+      findByTags,
+      findByTagLabels,
     ],
   );
 
@@ -254,20 +306,21 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       layerMap.set(l.id, l);
     });
 
-    for (const k of atomsMap.keys()) {
-      if (!ids.has(k)) {
-        atomsMap.delete(k);
-        layerMap.delete(k);
-        lazyLayerMap.delete(k);
-      }
-    }
-  }, [atomsMap, layers, layerMap, lazyLayerMap]);
+    const deleted = Array.from(atomsMap.keys()).filter(k => !ids.has(k));
+    deleted.forEach(k => {
+      atomsMap.delete(k);
+      layerMap.delete(k);
+      lazyLayerMap.delete(k);
+    });
+    setOverridenLayers(layers => layers.filter(l => !deleted.includes(l.id)));
+  }, [atomsMap, layers, layerMap, lazyLayerMap, setOverridenLayers]);
 
   return { atomsMap, flattenedLayers };
 }
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Element<T> = T extends (infer E)[] ? E : never;
+
 const legacyLayerKeys = [
   "property",
   "propertyId",
@@ -317,4 +370,42 @@ function walkLayers<T>(
     }
   }
   return;
+}
+
+function replaceLayers(
+  layers: Layer[],
+  cb: (layer: Layer, i: number, parent: Layer[]) => Layer | void,
+): Layer[] {
+  for (let i = 0; i < layers.length; i++) {
+    const l = layers[i];
+    const nl = cb(l, i, layers);
+    if (nl) {
+      layers[i] = nl;
+    }
+    if (l.type === "group" && Array.isArray(l.children)) {
+      l.children = replaceLayers(l.children, cb);
+    }
+  }
+  return layers;
+}
+
+function filterLayers(
+  layers: Layer[],
+  cb: (layer: Layer, i: number, parent: Layer[]) => boolean,
+): Layer[] {
+  const newLayers: Layer[] = [];
+  for (let i = 0; i < layers.length; i++) {
+    const l = layers[i];
+    if (cb(l, i, layers)) {
+      newLayers.push(l);
+    }
+    if (l.type === "group" && Array.isArray(l.children)) {
+      l.children = filterLayers(l.children, cb);
+    }
+  }
+  return newLayers;
+}
+
+function isValidLayer(l: unknown): l is Layer {
+  return !!l && typeof l === "object" && ("type" in l || "extensionId" in l);
 }
