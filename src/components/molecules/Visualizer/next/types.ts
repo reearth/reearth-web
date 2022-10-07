@@ -25,7 +25,10 @@ export type LayerCommon = {
   infobox?: Infobox;
   tags?: Tag[];
   creator?: string;
+  compat?: LayerCompat;
 };
+
+export type LayerCompat = { extensionId?: string; property?: any; propertyId?: string };
 
 /** Same as a Layer, but its ID is unknown. */
 export type NaiveLayer = NaiveLayerSimple | NaiveLayerGroup;
@@ -46,7 +49,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson";
+export type DataType = "geojson" | "3dtiles" | "gltf";
 
 // Feature
 

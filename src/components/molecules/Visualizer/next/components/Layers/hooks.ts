@@ -53,7 +53,19 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     return objectFromGetter(layerKeys, function (key) {
       const id: string | undefined = (this as any).id;
       if (!id) throw new Error("layer ID is not specified");
-      return (layerMap.get(id) as any)?.[key];
+
+      if (key === "pluginId") return "reearth";
+
+      const layer = layerMap.get(id);
+      if (!layer) return undefined;
+
+      if (key === "pluginId") return "reearth";
+      else if (key === "extensionId") return layer.compat?.extensionId;
+      else if (key === "property") return layer.compat?.property;
+      else if (key === "propertyId") return layer.compat?.propertyId;
+      else if (key === "isVisible" || key === "visible") return !layer.hidden;
+
+      return (layer as any)[key];
     });
   }, [layerMap]);
 
@@ -255,9 +267,18 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
 }
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
+type Element<T> = T extends (infer E)[] ? E : never;
+const legacyLayerKeys = [
+  "property",
+  "propertyId",
+  "pluginId",
+  "extensionId",
+  "isVisible",
+  "visible",
+];
 
 // Do not forget to update layerKeys when Layer type was updated
-export const layerKeys: KeysOfUnion<Layer>[] = [
+const layerKeys: (KeysOfUnion<Layer> | Element<typeof legacyLayerKeys>)[] = [
   "children",
   "data",
   "hidden",
@@ -268,6 +289,8 @@ export const layerKeys: KeysOfUnion<Layer>[] = [
   "title",
   "type",
   "creator",
+  // "compat" should not be read from plugins
+  ...legacyLayerKeys,
 ];
 
 function flattenLayers(layers: Layer[]): Layer[] {
