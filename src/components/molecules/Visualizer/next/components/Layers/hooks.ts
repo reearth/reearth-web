@@ -55,9 +55,25 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     const newLayers = [...flattenLayers(tempLayers), ...flattenLayers(layers ?? [])];
     // apply overrides
     return newLayers.map(l => {
-      const ol = overriddenLayers.find(ll => ll.id === l.id);
+      const ol: any = overriddenLayers.find(ll => ll.id === l.id);
       if (!ol) return l;
-      return merge({}, l, ol);
+
+      // prevents unnecessary copying of data value
+      const dataValue = ol.data?.value ?? (l.type === "simple" ? l.data?.value : undefined);
+      const res = merge(
+        {},
+        {
+          ...l,
+          ...(l.type === "simple" && l.data ? { data: omit(l.data, "value") } : {}),
+        },
+        { ...ol, ...(ol.data ? { data: omit(ol.data, "value") } : {}) },
+      );
+
+      if (dataValue && res.data) {
+        res.data.value = dataValue;
+      }
+
+      return res;
     });
   }, [layers, tempLayers, overriddenLayers]);
 

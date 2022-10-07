@@ -363,6 +363,11 @@ test("add, replace, delete", () => {
 });
 
 test("override", () => {
+  const dataValue = {
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [1, 2] },
+    hoge: "foobar", // test
+  };
   const layers: Layer[] = [
     { id: "x", type: "simple", title: "X" },
     {
@@ -373,6 +378,7 @@ test("override", () => {
           id: "y",
           type: "simple",
           title: "Y",
+          data: { type: "geojson", value: dataValue },
           marker: { pointSize: 10, pointColor: "red" },
         },
       ],
@@ -385,12 +391,17 @@ test("override", () => {
     return { ref, flattenedLayers };
   });
 
+  const dataValue2 = {
+    type: "geojson",
+    value: { type: "Feature", geometry: { type: "Point", coordinates: [1, 2] } },
+  };
   result.current.ref.current?.override("y", {
     id: "z", // should be ignored
     ...({
       type: "group", // should be ignored
     } as any),
     title: "Y!",
+    data: { value: dataValue2 },
     marker: { pointSize: 100 },
     tags: [{ id: "t", label: "t" }],
   });
@@ -398,6 +409,7 @@ test("override", () => {
   const l = result.current.flattenedLayers[1];
   if (l.type !== "simple") throw new Error("invalid layer type");
   expect(l.title).toBe("Y!");
+  expect(l.data?.value).toBe(dataValue2);
   expect(l.marker).toEqual({ pointSize: 100, pointColor: "red" });
   expect(l.tags).toEqual([{ id: "t", label: "t" }]);
   expect(result.current.ref.current?.findById("y")?.title).toBe("Y");
@@ -411,6 +423,7 @@ test("override", () => {
   const l2 = result.current.flattenedLayers[1];
   if (l2.type !== "simple") throw new Error("invalid layer type");
   expect(l2.title).toBe("Y!!");
+  expect(l2.data?.value).toBe(dataValue);
   expect(l2.marker).toEqual({ pointSize: 10, pointColor: "blue" });
   expect(l2.tags).toEqual([{ id: "t2", label: "t2" }]);
 
@@ -419,6 +432,7 @@ test("override", () => {
   const l3 = result.current.flattenedLayers[1];
   if (l3.type !== "simple") throw new Error("invalid layer type");
   expect(l3.title).toBe("Y");
+  expect(l3.data?.value).toBe(dataValue);
   expect(l3.marker).toEqual({ pointSize: 10, pointColor: "red" });
   expect(l3.tags).toBeUndefined();
 });
