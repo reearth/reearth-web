@@ -17,7 +17,11 @@ export default function useHooks(layer: Layer | undefined, atoms?: Atoms) {
   const deleteFeatures = useSetAtom(a.deleteFeatures);
 
   useEffect(() => {
-    setLayer(layer && !layer.hidden ? layer : undefined);
+    setLayer(
+      typeof layer?.visible === "undefined" || layer?.type === null || layer?.type
+        ? layer
+        : undefined,
+    );
   }, [layer, setLayer]);
 
   return {

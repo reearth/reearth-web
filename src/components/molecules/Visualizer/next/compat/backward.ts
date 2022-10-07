@@ -15,7 +15,7 @@ function convertLayerCommon(l: Layer): any {
   return omitBy(
     {
       id: l.id,
-      isVisible: !l.hidden,
+      isVisible: l.visible,
       title: l.title,
       creator: l.creator,
       infobox: l.infobox,

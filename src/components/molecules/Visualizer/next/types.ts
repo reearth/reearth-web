@@ -21,7 +21,8 @@ export type LayerGroup = {
 export type LayerCommon = {
   id: string;
   title?: string;
-  hidden?: boolean;
+  /** default is true */
+  visible?: boolean;
   infobox?: Infobox;
   tags?: Tag[];
   creator?: string;

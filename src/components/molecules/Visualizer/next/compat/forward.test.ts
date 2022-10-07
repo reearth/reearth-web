@@ -31,7 +31,7 @@ test("group", () => {
     id: "xxx",
     type: "group",
     title: "title",
-    hidden: false,
+    visible: true,
     compat: {
       property: { a: 1 },
       extensionId: "a",
@@ -79,7 +79,7 @@ test("marker", () => {
         },
       },
     },
-    hidden: false,
+    visible: true,
     marker: {
       pointColor: "red",
     },
@@ -131,7 +131,7 @@ test("polyline", () => {
         },
       },
     },
-    hidden: false,
+    visible: true,
     polyline: {
       strokeColor: "red",
     },
@@ -189,7 +189,7 @@ test("polygon", () => {
         },
       },
     },
-    hidden: false,
+    visible: true,
     polygon: {
       strokeColor: "red",
     },
@@ -253,7 +253,7 @@ test("rect", () => {
         },
       },
     },
-    hidden: false,
+    visible: true,
     polygon: {
       strokeColor: "red",
     },
@@ -295,7 +295,7 @@ test("photooverlay", () => {
   ).toEqual({
     id: "x",
     type: "simple",
-    hidden: false,
+    visible: true,
     legacy_photooverlay: {
       location: { lat: 1, lng: 2 },
       height: 3,
@@ -344,7 +344,7 @@ test("ellipsoid", () => {
         },
       },
     },
-    hidden: false,
+    visible: true,
     ellipsoid: {
       radii: 100,
     },
@@ -383,7 +383,7 @@ test("model", () => {
   ).toEqual({
     id: "x",
     type: "simple",
-    hidden: false,
+    visible: true,
     data: {
       type: "gltf",
       url: "xxx",
@@ -426,7 +426,7 @@ test("3dtiles", () => {
   ).toEqual({
     id: "x",
     type: "simple",
-    hidden: false,
+    visible: true,
     data: {
       type: "3dtiles",
       url: "xxx",
@@ -465,7 +465,7 @@ test("resource", () => {
   ).toEqual({
     id: "x",
     type: "simple",
-    hidden: false,
+    visible: true,
     legacy_resource: {
       url: "xxx",
       hoge: "red",

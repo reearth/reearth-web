@@ -19,7 +19,7 @@ test("group", () => {
           children: [],
         },
       ],
-      hidden: true,
+      visible: true,
       compat: {
         property: { a: 1 },
         propertyId: "p",
@@ -38,11 +38,10 @@ test("group", () => {
         id: "yyy",
         type: "group",
         children: [],
-        isVisible: true,
       },
     ],
-    isVisible: false,
     title: "title",
+    isVisible: true,
     creator: "creator",
     infobox,
     tags,
@@ -58,7 +57,7 @@ test("item", () => {
     convertLayer({
       id: "xxx",
       type: "simple",
-      hidden: true,
+      visible: true,
       compat: {
         property: { a: 1 },
         propertyId: "p",
@@ -72,7 +71,7 @@ test("item", () => {
   ).toEqual({
     id: "xxx",
     type: "item",
-    isVisible: false,
+    isVisible: true,
     title: "title",
     creator: "creator",
     infobox,

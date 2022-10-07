@@ -76,7 +76,7 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       else if (key === "extensionId") return layer.compat?.extensionId;
       else if (key === "property") return layer.compat?.property;
       else if (key === "propertyId") return layer.compat?.propertyId;
-      else if (key === "isVisible" || key === "visible") return !layer.hidden;
+      else if (key === "isVisible") return layer.visible;
 
       return (layer as any)[key];
     });
@@ -360,7 +360,6 @@ const legacyLayerKeys = [
 const layerKeys: (KeysOfUnion<Layer> | Element<typeof legacyLayerKeys>)[] = [
   "children",
   "data",
-  "hidden",
   "infobox",
   "marker",
   "properties",

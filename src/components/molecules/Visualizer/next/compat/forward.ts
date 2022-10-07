@@ -23,7 +23,7 @@ function convertLegacyLayerCommon(l: LegacyLayer): any {
     {
       id: l.id,
       title: l.title,
-      hidden: typeof l.isVisible === "boolean" ? !l.isVisible : undefined,
+      visible: l.isVisible,
       creator: l.creator,
       infobox: l.infobox,
       tags: l.tags,
