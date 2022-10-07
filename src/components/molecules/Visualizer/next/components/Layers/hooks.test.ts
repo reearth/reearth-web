@@ -422,3 +422,93 @@ test("override", () => {
   expect(l3.marker).toEqual({ pointSize: 10, pointColor: "red" });
   expect(l3.tags).toBeUndefined();
 });
+
+test("compat", () => {
+  const { result, rerender } = renderHook(() => {
+    const ref = useRef<Ref>(null);
+    const { flattenedLayers } = useHooks({ ref });
+    return { ref, flattenedLayers };
+  });
+
+  result.current.ref.current?.add({
+    type: "item",
+    title: "X",
+    extensionId: "marker",
+    property: {
+      default: {
+        location: { lat: 1, lng: 2 },
+        pointSize: 10,
+      },
+    },
+  } as any);
+  rerender();
+  const l = result.current.flattenedLayers[0];
+  if (l.type !== "simple") throw new Error("invalid layer type");
+  expect(l.title).toBe("X");
+  expect(l.marker).toEqual({ pointSize: 10 });
+  expect(l.data).toEqual({
+    type: "geojson",
+    value: { type: "Feature", geometry: { type: "Point", coordinates: [2, 1] } },
+  });
+
+  const l2: any = result.current.ref.current?.findById(l.id);
+  expect(l2.marker).toEqual({ pointSize: 10 });
+  expect(l2.pluginId).toBe("reearth");
+  expect(l2.extensionId).toBe("marker");
+  expect(l2.property).toEqual({
+    default: {
+      location: { lat: 1, lng: 2 },
+      pointSize: 10,
+    },
+  });
+
+  result.current.ref.current?.override(l.id, {
+    marker: { pointColor: "blue" },
+  });
+  rerender();
+  const l3 = result.current.flattenedLayers[0];
+  if (l3.type !== "simple") throw new Error("invalid layer type");
+  expect(l3.marker).toEqual({ pointSize: 10, pointColor: "blue" });
+  expect(l3.compat?.property).toEqual({
+    default: {
+      location: { lat: 1, lng: 2 },
+      pointSize: 10,
+    },
+  });
+
+  const l4: any = result.current.ref.current?.findById(l.id);
+  expect(l4.marker).toEqual({ pointSize: 10 });
+  expect(l4.pluginId).toBe("reearth");
+  expect(l4.extensionId).toBe("marker");
+  expect(l4.property).toEqual({
+    default: {
+      location: { lat: 1, lng: 2 },
+      pointSize: 10,
+    },
+  });
+
+  result.current.ref.current?.override(l.id, {
+    property: { default: { pointColor: "yellow" } },
+  } as any);
+  rerender();
+  const l5 = result.current.flattenedLayers[0];
+  if (l5.type !== "simple") throw new Error("invalid layer type");
+  expect(l5.marker).toEqual({ pointSize: 10, pointColor: "yellow" });
+  expect(l5.compat?.property).toEqual({
+    default: {
+      location: { lat: 1, lng: 2 },
+      pointSize: 10,
+    },
+  });
+
+  const l6: any = result.current.ref.current?.findById(l.id);
+  expect(l6.marker).toEqual({ pointSize: 10 });
+  expect(l6.pluginId).toBe("reearth");
+  expect(l6.extensionId).toBe("marker");
+  expect(l6.property).toEqual({
+    default: {
+      location: { lat: 1, lng: 2 },
+      pointSize: 10,
+    },
+  });
+});

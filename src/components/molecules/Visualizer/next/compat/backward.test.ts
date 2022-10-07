@@ -84,6 +84,11 @@ test("item", () => {
   });
 });
 
+test("getCompat", () => {
+  expect(getCompat(undefined)).toBeUndefined();
+  expect(getCompat({ type: "aaa" } as any)).toBeUndefined();
+});
+
 test("marker", () => {
   expect(
     getCompat({

@@ -23,7 +23,7 @@ function convertLegacyLayerCommon(l: LegacyLayer): any {
     {
       id: l.id,
       title: l.title,
-      hidden: !l.isVisible,
+      hidden: typeof l.isVisible === "boolean" ? !l.isVisible : undefined,
       creator: l.creator,
       infobox: l.infobox,
       tags: l.tags,
@@ -179,10 +179,13 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       )
     : undefined;
 
-  return {
-    type: "simple",
-    ...convertLegacyLayerCommon(l),
-    data,
-    ...(appearance && property ? { [appearance]: property } : {}),
-  };
+  return omitBy(
+    {
+      type: "simple",
+      ...convertLegacyLayerCommon(l),
+      data,
+      ...(appearance && property ? { [appearance]: property } : {}),
+    },
+    v => typeof v === "undefined" || v === null,
+  ) as any;
 }

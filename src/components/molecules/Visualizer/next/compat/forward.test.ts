@@ -44,7 +44,6 @@ test("group", () => {
       {
         id: "yyy",
         type: "group",
-        hidden: true,
         children: [],
       },
     ],

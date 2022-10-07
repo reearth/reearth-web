@@ -3,7 +3,7 @@ import { omit, omitBy, pick } from "lodash";
 
 import { getCoord, getCoords, getGeom } from "@reearth/util/geojson";
 
-import type { Layer, LayerCompat, LayerSimple } from "../types";
+import type { Layer, LayerCompat } from "../types";
 
 import type { LegacyLayer } from ".";
 
@@ -47,7 +47,9 @@ function convertLayerItem(l: Layer): LegacyLayer | undefined {
   };
 }
 
-export function getCompat(l: LayerSimple): LayerCompat | undefined {
+export function getCompat(l: Layer | undefined): LayerCompat | undefined {
+  if (!l || typeof l !== "object" || l.type !== "simple") return;
+
   const data: GeoJSON | undefined = l.data?.type === "geojson" ? l.data.value : undefined;
 
   let property: any;

@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { objectFromGetter } from "@reearth/util/object";
 
 import { computeAtom, type Atoms } from "../../atoms";
+import { convertLegacyLayer } from "../../compat";
 import type { Layer, NaiveLayer } from "../../types";
 
 export type { Layer, NaiveLayer } from "../../types";
@@ -70,7 +71,8 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       const layer = layerMap.get(id);
       if (!layer) return undefined;
 
-      if (key === "pluginId") return "reearth";
+      // compat
+      if (key === "pluginId") return layer.compat?.extensionId ? "reearth" : undefined;
       else if (key === "extensionId") return layer.compat?.extensionId;
       else if (key === "property") return layer.compat?.property;
       else if (key === "propertyId") return layer.compat?.propertyId;
@@ -107,7 +109,10 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     (layer: NaiveLayer): LazyLayer | undefined => {
       if (!isValidLayer(layer)) return;
 
-      const newLayer = { ...layer, id: uuidv4() };
+      const rawLayer = compat(layer);
+      if (!rawLayer) return;
+
+      const newLayer = { ...rawLayer, id: uuidv4() };
 
       // generate ids for layers and blocks
       walkLayers([newLayer], l => {
@@ -118,11 +123,11 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
           if (b.id) return;
           b.id = uuidv4();
         });
+        layerMap.set(l.id, l);
+        atomsMap.set(l.id, computeAtom());
       });
 
       setTempLayers(layers => [...layers, newLayer]);
-      layerMap.set(newLayer.id, newLayer);
-      atomsMap.set(newLayer.id, computeAtom());
 
       const newLazyLayer = findById(newLayer.id);
       if (!newLazyLayer) throw new Error("layer not found");
@@ -141,13 +146,17 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
 
   const replace = useCallback(
     (...layers: Layer[]) => {
-      const validLayers = layers.filter(isValidLayer);
+      const validLayers = layers
+        .filter(isValidLayer)
+        .map(compat)
+        .filter((l): l is Layer => !!l);
       setTempLayers(currentLayers => {
         replaceLayers(currentLayers, l => {
           const newLayer = validLayers.find(ll => ll.id === l.id);
           if (newLayer) {
             const newLayer2 = { ...newLayer };
             layerMap.set(newLayer.id, newLayer2);
+
             return newLayer2;
           }
           return;
@@ -158,18 +167,35 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     [layerMap],
   );
 
-  const override = useCallback((id: string, layer?: Partial<Layer> | null) => {
-    if (!layer) {
-      setOverridenLayers(layers => layers.filter(l => l.id !== id));
-    } else if (layer && typeof layer === "object") {
+  const override = useCallback(
+    (id: string, layer?: Partial<Layer> | null) => {
+      if (!layer) {
+        setOverridenLayers(layers => layers.filter(l => l.id !== id));
+        return;
+      }
+
+      const originalLayer = layerMap.get(id);
+      if (!originalLayer) return;
+
+      const rawLayer = compat({
+        ...layer,
+        ...(originalLayer.compat && "property" in layer
+          ? {
+              type: originalLayer.type === "group" ? "group" : "item",
+              extensionId: originalLayer.compat.extensionId,
+            }
+          : {}),
+      });
+      if (!rawLayer) return;
+      const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
       setOverridenLayers(layers => {
-        const layer2 = { id, ...omit(layer, "id", "type", "children") };
         const i = layers.findIndex(l => l.id === id);
         if (i < 0) return [...layers, layer2];
         return [...layers.slice(0, i - 1), layer2, ...layers.slice(i + 1)];
       });
-    }
-  }, []);
+    },
+    [layerMap],
+  );
 
   const deleteLayer = useCallback(
     (...ids: string[]) => {
@@ -408,4 +434,11 @@ function filterLayers(
 
 function isValidLayer(l: unknown): l is Layer {
   return !!l && typeof l === "object" && ("type" in l || "extensionId" in l);
+}
+
+function compat(layer: unknown): Layer | undefined {
+  if (!layer || typeof layer !== "object") return;
+  return "extensionId" in layer || "property" in layer
+    ? convertLegacyLayer(layer as any)
+    : (layer as Layer);
 }
