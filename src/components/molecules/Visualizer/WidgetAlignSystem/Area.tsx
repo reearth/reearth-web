@@ -5,6 +5,7 @@ import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
+import type { PluginModalInfo } from "../Plugin/ModalContainer";
 import W, { WidgetLayout } from "../Widget";
 
 import type { Widget, Alignment, WidgetLayoutConstraint, Location } from "./hooks";
@@ -19,6 +20,9 @@ type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
+  pluginModalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   pluginBaseUrl?: string;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
@@ -31,6 +35,9 @@ export default function Area({
   align,
   widgets,
   pluginProperty,
+  pluginModalContainer,
+  shownPluginModalInfo,
+  showPluginModal,
   layoutConstraint,
   ...props
 }: Props) {
@@ -88,6 +95,9 @@ export default function Area({
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
                     : undefined
                 }
+                pluginModalContainer={pluginModalContainer}
+                shownPluginModalInfo={shownPluginModalInfo}
+                showPluginModal={showPluginModal}
                 layout={layout}
                 extended={extended}
                 editing={editing}

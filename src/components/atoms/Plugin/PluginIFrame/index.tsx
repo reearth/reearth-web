@@ -1,4 +1,4 @@
-import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
+import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode, memo } from "react";
 import { createPortal } from "react-dom";
 
 import IFrame, { AutoResize } from "../IFrame";
@@ -78,4 +78,4 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     : null;
 };
 
-export default forwardRef(PluginIFrame);
+export default memo(forwardRef(PluginIFrame));

@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
+import type { PluginModalInfo } from "../Plugin/ModalContainer";
+
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
@@ -13,6 +15,9 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
+  pluginModalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   pluginBaseUrl?: string;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
 };
@@ -26,6 +31,9 @@ export default function Zone({
   layoutConstraint,
   sceneProperty,
   pluginProperty,
+  pluginModalContainer,
+  shownPluginModalInfo,
+  showPluginModal,
   pluginBaseUrl,
   isEditable,
   isBuilt,
@@ -51,6 +59,9 @@ export default function Zone({
                 layoutConstraint={layoutConstraint}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
+                pluginModalContainer={pluginModalContainer}
+                shownPluginModalInfo={shownPluginModalInfo}
+                showPluginModal={showPluginModal}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}

@@ -109,15 +109,15 @@ export default function useHook({
             const width = ${
               width
                 ? typeof width === "number"
-                  ? width
-                  : width + "px"
+                  ? `"${width}px"`
+                  : `"${width}"`
                 : "html.offsetWidth + horizontalMargin"
             };
             const height = ${
               height
                 ? typeof height === "number"
-                  ? height + "px"
-                  : height
+                  ? `"${height}px"`
+                  : `"${height}px"`
                 : "html.offsetHeight + verticalMargin"
             };
             parent.postMessage({

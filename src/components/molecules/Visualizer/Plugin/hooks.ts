@@ -1,5 +1,5 @@
 import { Options } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
@@ -9,6 +9,7 @@ import { useGet } from "../utils";
 
 import { exposed } from "./api";
 import { useContext } from "./context";
+import type { PluginModalInfo } from "./ModalContainer";
 import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
@@ -20,6 +21,8 @@ export default function ({
   layer,
   widget,
   pluginProperty,
+  shownPluginModalInfo,
+  showPluginModal,
   onRender,
   onResize,
 }: {
@@ -31,6 +34,8 @@ export default function ({
   widget?: Widget;
   block?: Block;
   pluginProperty?: any;
+  shownPluginModalInfo?: PluginModalInfo;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   onRender?: (
     options:
       | {
@@ -46,6 +51,16 @@ export default function ({
     extended: boolean | undefined,
   ) => void;
 }) {
+  const [modalCanBeVisible, setModalCanBeVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    const visible =
+      shownPluginModalInfo?.id === `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`;
+    if (visible !== modalCanBeVisible) {
+      setModalCanBeVisible(visible);
+    }
+  }, [modalCanBeVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id]);
+
   const { staticExposed, isMarshalable, onPreInit, onDispose } =
     useAPI({
       extensionId,
@@ -55,6 +70,8 @@ export default function ({
       layer,
       widget,
       pluginProperty,
+      modalCanBeVisible,
+      showPluginModal,
       onRender,
       onResize,
     }) ?? [];
@@ -75,6 +92,7 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
+    modalCanBeVisible,
     exposed: staticExposed,
     onError,
     onPreInit,
@@ -90,6 +108,8 @@ export function useAPI({
   layer,
   block,
   widget,
+  modalCanBeVisible,
+  showPluginModal,
   onRender,
   onResize,
 }: {
@@ -100,6 +120,8 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
+  modalCanBeVisible?: boolean;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   onRender?: (
     options:
       | {
@@ -166,6 +188,10 @@ export function useAPI({
     event.current?.[1]("close");
     event.current?.[2]?.();
     event.current = undefined;
+    if (modalCanBeVisible) {
+      showPluginModal?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isMarshalable = useCallback(
@@ -175,7 +201,7 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ main: { postMessage, render, resize }, messages }: IFrameAPI) => {
+    return ({ main, modal, messages }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: {
@@ -210,15 +236,37 @@ export function useAPI({
         block: getBlock,
         layer: getLayer,
         widget: getWidget,
-        postMessage,
+        postMessage: main.postMessage,
         render: (html, { extended, ...options } = {}) => {
-          render(html, options);
+          main.render(html, options);
           onRender?.(
             typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
           );
         },
+        renderModal: (html, { ...options } = {}) => {
+          modal.render(html, options);
+          showPluginModal?.({
+            id: `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`,
+            background: options?.background,
+          });
+        },
+        closeModal: () => {
+          showPluginModal?.();
+        },
+        updateModal: (options: {
+          width?: string | number;
+          height?: string | number;
+          background?: string;
+        }) => {
+          modal.resize(options.width, options.height);
+          showPluginModal?.({
+            id: `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`,
+            background: options.background,
+          });
+        },
+        postMessageModal: modal.postMessage,
         resize: (width, height, extended) => {
-          resize(width, height);
+          main.resize(width, height);
           onResize?.(width, height, extended);
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
@@ -231,9 +279,11 @@ export function useAPI({
     extensionType,
     pluginId,
     pluginProperty,
+    widget?.id,
     getBlock,
     getLayer,
     getWidget,
+    showPluginModal,
     onRender,
     onResize,
   ]);

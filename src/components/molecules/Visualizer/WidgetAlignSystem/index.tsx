@@ -4,6 +4,8 @@ import { useMedia } from "react-use";
 
 import { styled } from "@reearth/theme";
 
+import type { PluginModalInfo } from "../Plugin/ModalContainer";
+
 import useHooks from "./hooks";
 import type {
   WidgetAlignSystem as WidgetAlignSystemType,
@@ -34,6 +36,9 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
+  pluginModalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   pluginBaseUrl?: string;
   onWidgetUpdate?: (
     id: string,
@@ -52,10 +57,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
   editing,
   sceneProperty,
   pluginProperty,
+  pluginModalContainer,
+  shownPluginModalInfo,
   pluginBaseUrl,
   isEditable,
   isBuilt,
   layoutConstraint,
+  showPluginModal,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
 }) => {
@@ -78,6 +86,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
+            pluginModalContainer={pluginModalContainer}
+            shownPluginModalInfo={shownPluginModalInfo}
+            showPluginModal={showPluginModal}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
@@ -88,6 +99,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
+                pluginModalContainer={pluginModalContainer}
+                shownPluginModalInfo={shownPluginModalInfo}
+                showPluginModal={showPluginModal}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
@@ -101,6 +115,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
+            pluginModalContainer={pluginModalContainer}
+            shownPluginModalInfo={shownPluginModalInfo}
+            showPluginModal={showPluginModal}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
@@ -110,6 +127,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
               zone={alignSystem?.inner}
               sceneProperty={sceneProperty}
               pluginProperty={pluginProperty}
+              pluginModalContainer={pluginModalContainer}
+              shownPluginModalInfo={shownPluginModalInfo}
+              showPluginModal={showPluginModal}
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}

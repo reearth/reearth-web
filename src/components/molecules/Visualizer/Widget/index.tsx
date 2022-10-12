@@ -6,6 +6,7 @@ import Plugin, {
   WidgetLocation,
   Props as PluginProps,
 } from "../Plugin";
+import type { PluginModalInfo } from "../Plugin/ModalContainer";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 
@@ -21,6 +22,9 @@ export type Props<PP = any, SP = any> = {
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
+  pluginModalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   layout?: WidgetLayout;
   editing?: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
@@ -36,6 +40,9 @@ export default function WidgetComponent<PP = any, SP = any>({
   widget,
   extended,
   pluginBaseUrl,
+  pluginModalContainer,
+  shownPluginModalInfo,
+  showPluginModal,
   layout,
   onExtend,
   editing,
@@ -71,6 +78,12 @@ export default function WidgetComponent<PP = any, SP = any>({
     [widget.id, onExtend],
   );
 
+  const iFrameProps = useMemo(() => {
+    return {
+      style: { pointerEvents: (editing ? "none" : "auto") as any },
+    };
+  }, [editing]);
+
   if (!w) return null;
 
   const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
@@ -96,8 +109,11 @@ export default function WidgetComponent<PP = any, SP = any>({
       visible
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
+      modalContainer={pluginModalContainer}
+      shownPluginModalInfo={shownPluginModalInfo}
+      showPluginModal={showPluginModal}
       widget={w}
-      iFrameProps={{ style: { pointerEvents: editing ? "none" : "auto" } }}
+      iFrameProps={iFrameProps}
       onRender={handleRender}
       onResize={handleResize}
     />

@@ -3,6 +3,7 @@ const zIndexes = {
   hidden: -1,
   form: 100,
   infoBox: 300,
+  pluginModal: 350,
   propertyFieldPopup: 500,
   descriptionBalloon: 550,
   dropDown: 600,

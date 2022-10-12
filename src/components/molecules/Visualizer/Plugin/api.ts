@@ -14,12 +14,16 @@ import type {
   Tag,
 } from "./types";
 
-export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
+export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "modal" | "block" | "layer" | "widget">;
 
 export function exposed({
   render,
   postMessage,
   resize,
+  renderModal,
+  updateModal,
+  closeModal,
+  postMessageModal,
   events,
   commonReearth,
   plugin,
@@ -39,6 +43,17 @@ export function exposed({
   ) => void;
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
+  renderModal: (
+    html: string,
+    options?: {
+      width?: string | number;
+      height?: string | number;
+      background?: string;
+    },
+  ) => void;
+  closeModal: Reearth["modal"]["close"];
+  updateModal: Reearth["modal"]["update"];
+  postMessageModal: Reearth["modal"]["postMessage"];
   events: Events<ReearthEventType>;
   commonReearth: CommonReearth;
   plugin?: Plugin;
@@ -85,6 +100,21 @@ export function exposed({
           },
           postMessage,
           resize,
+        },
+        modal: {
+          show: (
+            html: string,
+            options?:
+              | {
+                  background?: string;
+                }
+              | undefined,
+          ) => {
+            renderModal(html, options);
+          },
+          postMessage: postMessageModal,
+          update: updateModal,
+          close: closeModal,
         },
         scene: merge(commonReearth.scene, {
           get overrideProperty() {

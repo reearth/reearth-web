@@ -16,6 +16,7 @@ import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
+import type { PluginModalInfo } from "./Plugin/ModalContainer";
 import type {
   CameraOptions,
   Clock,
@@ -220,6 +221,9 @@ export default ({
     selectLayer(undefined);
   }, [selectLayer]);
 
+  const [shownPluginModalInfo, showPluginModal] = useState<PluginModalInfo>();
+  const pluginModalContainerRef = useRef<HTMLDivElement>();
+
   return {
     engineRef,
     wrapperRef,
@@ -236,6 +240,9 @@ export default ({
     innerClock,
     infobox,
     overriddenSceneProperty,
+    pluginModalContainerRef,
+    shownPluginModalInfo,
+    showPluginModal,
     isLayerHidden,
     selectLayer,
     selectBlock,

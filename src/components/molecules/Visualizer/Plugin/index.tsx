@@ -1,6 +1,7 @@
 import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
+import type { PluginModalInfo } from "./ModalContainer";
 import type { Layer, Widget, Block } from "./types";
 
 export type {
@@ -23,6 +24,10 @@ export type Props = {
   extensionType?: string;
   autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
+  modalCanBeVisible?: boolean;
+  popupCanBeVisible?: boolean;
+  modalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
   property?: any;
   pluginProperty?: any;
   pluginBaseUrl?: string;
@@ -30,6 +35,7 @@ export type Props = {
   widget?: Widget;
   block?: Block;
   iFrameProps?: PluginProps["iFrameProps"];
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   onClick?: () => void;
   onRender?: (
     options:
@@ -55,28 +61,35 @@ export default function Plugin({
   extensionType,
   autoResize,
   visible,
+  popupCanBeVisible,
+  modalContainer,
+  shownPluginModalInfo,
   pluginBaseUrl = "/plugins",
   layer,
   widget,
   block,
   pluginProperty,
   iFrameProps,
+  showPluginModal,
   onClick,
   onRender,
   onResize,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, onPreInit, onDispose, exposed, onError } = useHooks({
-    pluginId,
-    extensionId,
-    extensionType,
-    pluginBaseUrl,
-    layer,
-    widget,
-    block,
-    pluginProperty,
-    onRender,
-    onResize,
-  });
+  const { skip, src, isMarshalable, modalCanBeVisible, onPreInit, onDispose, exposed, onError } =
+    useHooks({
+      pluginId,
+      extensionId,
+      extensionType,
+      pluginBaseUrl,
+      layer,
+      widget,
+      block,
+      pluginProperty,
+      shownPluginModalInfo,
+      showPluginModal,
+      onRender,
+      onResize,
+    });
 
   return !skip && (src || sourceCode) ? (
     <P
@@ -86,6 +99,9 @@ export default function Plugin({
       autoResize={autoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
+      modalCanBeVisible={modalCanBeVisible}
+      popupCanBeVisible={popupCanBeVisible}
+      modalContainer={modalContainer}
       isMarshalable={isMarshalable}
       exposed={exposed}
       onError={onError}
