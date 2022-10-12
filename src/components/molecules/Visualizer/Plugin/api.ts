@@ -184,6 +184,8 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   viewport,
+  orbit,
+  rotateRight,
   captureScreen,
   enableScreenSpaceCameraController,
   lookHorizontal,
@@ -219,6 +221,8 @@ export function commonReearth({
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
+  rotateRight: GlobalThis["reearth"]["visualizer"]["camera"]["rotateRight"];
+  orbit: GlobalThis["reearth"]["visualizer"]["camera"]["orbit"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -243,6 +247,8 @@ export function commonReearth({
         lookAt,
         zoomIn,
         zoomOut,
+        rotateRight,
+        orbit,
         get position() {
           return camera();
         },
@@ -282,6 +288,8 @@ export function commonReearth({
       lookAt,
       zoomIn,
       zoomOut,
+      rotateRight,
+      orbit,
       get position() {
         return camera();
       },

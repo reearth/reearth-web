@@ -17,7 +17,11 @@ import ModalContainer from "./Plugin/ModalContainer";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
-import { BuiltinWidgets, TIMELINE_BUILTIN_WIDGET_ID } from "./Widget/builtin";
+import {
+  BuiltinWidgets,
+  NAVIGATOR_BUILTIN_WIDGET_ID,
+  TIMELINE_BUILTIN_WIDGET_ID,
+} from "./Widget/builtin";
 import WidgetAlignSystem, {
   Props as WidgetAlignSystemProps,
   WidgetAlignSystem as WidgetAlignSystemType,
@@ -178,7 +182,10 @@ export default function Visualizer({
             clock={innerClock}
             isLayerDragging={isLayerDragging}
             isLayerDraggable={props.isEditable}
-            shouldRender={!!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID]}
+            shouldRender={
+              !!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID] ||
+              !!widgets?.ownBuiltinWidgets?.[NAVIGATOR_BUILTIN_WIDGET_ID]
+            }
             onLayerSelect={selectLayer}
             onCameraChange={updateCamera}
             onTick={updateClock}
