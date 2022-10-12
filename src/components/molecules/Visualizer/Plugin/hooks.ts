@@ -1,5 +1,5 @@
 import { Options } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, MutableRefObject } from "react";
 
 import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
@@ -51,14 +51,12 @@ export default function ({
     extended: boolean | undefined,
   ) => void;
 }) {
-  const [modalCanBeVisible, setModalCanBeVisible] = useState<boolean>(false);
+  const modalCanBeVisible = useRef<boolean>(false);
 
   useEffect(() => {
-    const visible =
+    modalCanBeVisible.current =
       shownPluginModalInfo?.id === `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`;
-    if (visible !== modalCanBeVisible) {
-      setModalCanBeVisible(visible);
-    }
+    // }
   }, [modalCanBeVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id]);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose } =
@@ -92,7 +90,7 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
-    modalCanBeVisible,
+    modalCanBeVisible: modalCanBeVisible.current,
     exposed: staticExposed,
     onError,
     onPreInit,
@@ -120,7 +118,7 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
-  modalCanBeVisible?: boolean;
+  modalCanBeVisible?: MutableRefObject<boolean>;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   onRender?: (
     options:
@@ -188,11 +186,10 @@ export function useAPI({
     event.current?.[1]("close");
     event.current?.[2]?.();
     event.current = undefined;
-    if (modalCanBeVisible) {
+    if (modalCanBeVisible?.current) {
       showPluginModal?.();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [modalCanBeVisible, showPluginModal]);
 
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
