@@ -20,7 +20,7 @@ export default (sceneId?: string) => {
   useEffect(() => {
     setSceneId(sceneId);
     zoomToLayer(undefined);
-  }, [sceneId, setSceneId]);
+  }, [sceneId, setSceneId, zoomToLayer]);
 
   useEffect(() => {
     setRootLayerId(

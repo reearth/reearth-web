@@ -1,7 +1,7 @@
 import * as Cesium from "cesium";
 import { Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
-import type { CesiumComponentRef } from "resium";
+import { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
 import type { MouseEvents, MouseEvent } from "../ref";
@@ -92,7 +92,7 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         const e = viewer.entities.getById(layerId);
         if (!e) return;
-        viewer.zoomTo(e);
+        viewer.flyTo(e);
       },
       getViewport: () => {
         const viewer = cesium.current?.cesiumElement;

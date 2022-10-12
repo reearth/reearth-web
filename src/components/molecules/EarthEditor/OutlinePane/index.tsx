@@ -85,7 +85,7 @@ const OutlinePane: React.FC<Props> = ({
   onLayerImport,
   onLayerGroupCreate,
   onDrop,
-  // onZoomToLayer, // TODO
+  onZoomToLayer, // TODO
   loading,
 }) => {
   const t = useT();
@@ -133,6 +133,7 @@ const OutlinePane: React.FC<Props> = ({
     onDrop,
     onLayerGroupCreate,
     handleShowWarning,
+    onZoomToLayer,
   });
 
   return (
