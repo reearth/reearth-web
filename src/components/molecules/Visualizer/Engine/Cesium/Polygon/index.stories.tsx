@@ -16,26 +16,24 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  layer: {
-    id: "",
-    property: {
-      default: {
-        fill: true,
-        fillColor: "#ffffffaa",
-        stroke: true,
-        strokeColor: "red",
-        strokeWidth: 10,
-        polygon: [
-          [
-            { lat: 35.652832, lng: 139.839478, height: 100 },
-            { lat: 36.652832, lng: 140.039478, height: 100 },
-            { lat: 34.652832, lng: 141.839478, height: 100 },
-          ],
+  id: "",
+  property: {
+    default: {
+      fill: true,
+      fillColor: "#ffffffaa",
+      stroke: true,
+      strokeColor: "red",
+      strokeWidth: 10,
+      polygon: [
+        [
+          { lat: 35.652832, lng: 139.839478, height: 100 },
+          { lat: 36.652832, lng: 140.039478, height: 100 },
+          { lat: 34.652832, lng: 141.839478, height: 100 },
         ],
-      },
+      ],
     },
-    isVisible: true,
   },
+  isVisible: true,
   isBuilt: false,
   isEditable: false,
   isSelected: false,

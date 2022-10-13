@@ -4,28 +4,25 @@ import { RectangleGraphics, Entity } from "resium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Primitive";
+import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 import { heightReference, shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
 export type Property = {
-  default?: {
-    rect?: RectValue;
-    height?: number;
-    extrudedHeight?: number;
-    style?: "color" | "image";
-    fillColor?: string;
-    image?: string;
-    outlineColor?: string;
-    outlineWidth?: number;
-    heightReference?: "none" | "clamp" | "relative";
-    shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
-  };
+  rect?: RectValue;
+  height?: number;
+  extrudedHeight?: number;
+  style?: "color" | "image";
+  fillColor?: string;
+  image?: string;
+  outlineColor?: string;
+  outlineWidth?: number;
+  heightReference?: "none" | "clamp" | "relative";
+  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
-  const { id, isVisible, property } = layer ?? {};
+const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) => {
   const {
     rect,
     image,
@@ -37,7 +34,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     outlineWidth,
     heightReference: hr,
     shadows,
-  } = property?.default ?? {};
+  } = property ?? {};
 
   const coordinates = useMemo(
     () =>

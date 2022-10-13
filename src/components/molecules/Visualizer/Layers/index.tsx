@@ -1,19 +1,17 @@
 import { ComponentType, useMemo, useCallback } from "react";
 
 import { ClusterProperty, ClusterProps } from "../Engine";
-import P from "../Primitive";
 
+import P from "./Primitive";
 import type { LayerStore, Layer } from "./store";
 
-export type { Layer } from "../Primitive";
+export type { Layer } from "./Primitive";
 
 export type Props = {
-  pluginProperty?: { [key: string]: any };
   clusterProperty?: ClusterProperty[];
   sceneProperty?: any;
   isEditable?: boolean;
   isBuilt?: boolean;
-  pluginBaseUrl?: string;
   layers?: LayerStore;
   selectedLayerId?: string;
   overriddenProperties?: { [id in string]: any };
@@ -24,12 +22,10 @@ export type Props = {
 export { LayerStore, empty as emptyLayerStore } from "./store";
 
 export default function Layers({
-  pluginProperty,
   sceneProperty,
   clusterProperty,
   isEditable,
   isBuilt,
-  pluginBaseUrl,
   layers,
   selectedLayerId,
   overriddenProperties,
@@ -54,30 +50,15 @@ export default function Layers({
           key={layer.id}
           layer={layer}
           sceneProperty={sceneProperty}
-          pluginProperty={
-            layer.pluginId && layer.extensionId
-              ? pluginProperty?.[`${layer.pluginId}/${layer.extensionId}`]
-              : undefined
-          }
+          overriddenProperties={overriddenProperties}
           isHidden={isLayerHidden?.(layer.id)}
           isEditable={isEditable}
           isBuilt={isBuilt}
           isSelected={!!selectedLayerId && selectedLayerId === layer.id}
-          pluginBaseUrl={pluginBaseUrl}
-          overriddenProperties={overriddenProperties}
         />
       );
     },
-    [
-      isBuilt,
-      isEditable,
-      isLayerHidden,
-      overriddenProperties,
-      pluginBaseUrl,
-      pluginProperty,
-      sceneProperty,
-      selectedLayerId,
-    ],
+    [isBuilt, isEditable, isLayerHidden, overriddenProperties, sceneProperty, selectedLayerId],
   );
 
   return (

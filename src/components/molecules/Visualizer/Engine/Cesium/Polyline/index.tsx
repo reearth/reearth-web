@@ -6,30 +6,21 @@ import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Primitive";
+import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 import { shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
 export type Property = {
-  default?: {
-    coordinates?: Coordinates;
-    clampToGround?: boolean;
-    strokeColor?: string;
-    strokeWidth?: number;
-    shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
-  };
+  coordinates?: Coordinates;
+  clampToGround?: boolean;
+  strokeColor?: string;
+  strokeWidth?: number;
+  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polyline: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
-  const { id, isVisible, property } = layer ?? {};
-  const {
-    coordinates,
-    clampToGround,
-    strokeColor,
-    strokeWidth = 1,
-    shadows,
-  } = property?.default ?? {};
+const Polyline: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) => {
+  const { coordinates, clampToGround, strokeColor, strokeWidth = 1, shadows } = property ?? {};
 
   const positions = useCustomCompareMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),

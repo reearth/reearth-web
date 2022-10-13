@@ -1,16 +1,14 @@
 import React, { useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
 
-import type { Props as PrimitiveProps } from "../../../Primitive";
+import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 
 export type Props = PrimitiveProps<Property>;
 
 export type Property = {
-  default?: {
-    url?: string;
-    type?: Type | "auto";
-    clampToGround?: boolean;
-  };
+  url?: string;
+  type?: Type | "auto";
+  clampToGround?: boolean;
 };
 
 type Type = "geojson" | "kml" | "czml";
@@ -27,9 +25,8 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-const Resource: React.FC<Props> = ({ layer }) => {
-  const { isVisible, property } = layer ?? {};
-  const { url, type, clampToGround } = property?.default ?? {};
+const Resource: React.FC<Props> = ({ isVisible, property }) => {
+  const { url, type, clampToGround } = property ?? {};
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
     [type, url],

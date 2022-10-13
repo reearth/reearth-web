@@ -20,13 +20,11 @@ const Template: Story<Props> = args => {
 export const Default = Template.bind({});
 Default.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        tileset: `/tileset/tileset.json`,
-      },
+  id: "",
+  isVisible: true,
+  property: {
+    default: {
+      tileset: `/tileset/tileset.json`,
     },
   },
 };

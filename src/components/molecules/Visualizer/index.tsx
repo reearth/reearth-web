@@ -188,10 +188,8 @@ export default function Visualizer({
             <Layers
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
-              pluginProperty={pluginProperty}
               clusterProperty={clusterProperty}
               sceneProperty={overriddenSceneProperty}
-              pluginBaseUrl={pluginBaseUrl}
               selectedLayerId={selectedLayerId}
               layers={layers}
               isLayerHidden={isLayerHidden}

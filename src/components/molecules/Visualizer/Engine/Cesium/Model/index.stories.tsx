@@ -23,17 +23,13 @@ Default.args = {
       animation: true,
     },
   },
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        scale: 1000,
-        heading: 130,
-        model: `/BoxAnimated.glb`,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    scale: 1000,
+    heading: 130,
+    model: `/BoxAnimated.glb`,
   },
 };
 
@@ -42,28 +38,22 @@ Appearance.args = {
   ...Template.args,
   sceneProperty: {
     atmosphere: {
-      enable_shadows: true,
+      shadows: true,
     },
   },
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        scale: 1000,
-        model: `/BoxAnimated.glb`,
-        animation: false,
-      },
-      appearance: {
-        shadows: "enabled",
-        color: "red",
-        colorBlend: "mix",
-        colorBlendAmount: 0.5,
-        silhouette: true,
-        silhouetteColor: "yellow",
-        silhouetteSize: 10,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    scale: 1000,
+    model: `/BoxAnimated.glb`,
+    animation: false,
+    shadows: "enabled",
+    color: "red",
+    colorBlend: "mix",
+    colorBlendAmount: 0.5,
+    silhouette: true,
+    silhouetteColor: "yellow",
+    silhouetteSize: 10,
   },
 };

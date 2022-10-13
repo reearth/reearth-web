@@ -1,4 +1,4 @@
-import type { Component } from "../../Primitive";
+import type { Component } from "../../Layers/Primitive";
 
 import Ellipsoid from "./Ellipsoid";
 import Marker from "./Marker";

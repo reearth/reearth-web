@@ -41,3 +41,12 @@ export function useGet<T>(value: T): () => T {
   ref.current = value;
   return useCallback(() => ref.current, []);
 }
+
+export function compatProperty(property: any): any {
+  if (!property) return undefined;
+  return Object.fromEntries(
+    Object.entries(property).flatMap(([_, v]): [string, any][] =>
+      typeof v === "object" && v && !Array.isArray(v) ? Object.entries(v) : [],
+    ),
+  );
+}

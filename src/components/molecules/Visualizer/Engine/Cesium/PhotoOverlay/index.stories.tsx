@@ -18,21 +18,17 @@ const Template: Story<Props> = args => (
 
 export const Default = Template.bind({});
 Default.args = {
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        photoOverlayImage: `/sample.svg`,
-        camera: {
-          ...location,
-          fov: CesiumMath.toRadians(30),
-          heading: 0,
-          pitch: 0,
-          roll: 0,
-        },
-      },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    photoOverlayImage: `/sample.svg`,
+    camera: {
+      ...location,
+      fov: CesiumMath.toRadians(30),
+      heading: 0,
+      pitch: 0,
+      roll: 0,
     },
   },
   isBuilt: false,
@@ -42,21 +38,17 @@ Default.args = {
 
 export const Selected = Template.bind({});
 Selected.args = {
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        photoOverlayImage: `/sample.svg`,
-        camera: {
-          ...location,
-          fov: CesiumMath.toRadians(30),
-          heading: 0,
-          pitch: 0,
-          roll: 0,
-        },
-      },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    photoOverlayImage: `/sample.svg`,
+    camera: {
+      ...location,
+      fov: CesiumMath.toRadians(30),
+      heading: 0,
+      pitch: 0,
+      roll: 0,
     },
   },
   isBuilt: false,

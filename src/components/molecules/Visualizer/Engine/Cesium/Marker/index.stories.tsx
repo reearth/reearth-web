@@ -18,64 +18,52 @@ const Template: Story<Props> = args => (
 export const Point = Template.bind({});
 Point.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "point",
-        pointColor: "blue",
-        pointSize: 50,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "point",
+    pointColor: "blue",
+    pointSize: 50,
   },
 };
 
 export const PointWithLabelAndExcluded = Template.bind({});
 PointWithLabelAndExcluded.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "point",
-        pointColor: "blue",
-        pointSize: 50,
-        extrude: true,
-        label: true,
-        labelText: "label",
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "point",
+    pointColor: "blue",
+    pointSize: 50,
+    extrude: true,
+    label: true,
+    labelText: "label",
   },
 };
 
 export const PointWithRightLabel = Template.bind({});
 PointWithRightLabel.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "point",
-        label: true,
-        labelText: "label",
-        labelPosition: "left",
-        labelTypography: {
-          fontSize: 15,
-          color: "red",
-          bold: true,
-          italic: true,
-          fontFamily: "serif",
-        },
-      },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "point",
+    label: true,
+    labelText: "label",
+    labelPosition: "left",
+    labelTypography: {
+      fontSize: 15,
+      color: "red",
+      bold: true,
+      italic: true,
+      fontFamily: "serif",
     },
   },
 };
@@ -83,21 +71,17 @@ PointWithRightLabel.args = {
 export const PointWithTopLabel = Template.bind({});
 PointWithTopLabel.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "point",
-        label: true,
-        labelText: "label",
-        labelPosition: "top",
-        labelTypography: {
-          fontFamily: "serif",
-        },
-      },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "point",
+    label: true,
+    labelText: "label",
+    labelPosition: "top",
+    labelTypography: {
+      fontFamily: "serif",
     },
   },
 };
@@ -105,121 +89,97 @@ PointWithTopLabel.args = {
 export const PointWithBottomLabel = Template.bind({});
 PointWithBottomLabel.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "point",
-        label: true,
-        labelText: "label",
-        labelPosition: "bottom",
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "point",
+    label: true,
+    labelText: "label",
+    labelPosition: "bottom",
   },
 };
 
 export const Image = Template.bind({});
 Image.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "image",
-        image: `/sample.svg`,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "image",
+    image: `/sample.svg`,
   },
 };
 
 export const ImageWithShadow = Template.bind({});
 ImageWithShadow.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "image",
-        image: `/sample.png`,
-        imageShadow: true,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "image",
+    image: `/sample.png`,
+    imageShadow: true,
   },
 };
 
 export const ImageWithCropAndShadow = Template.bind({});
 ImageWithCropAndShadow.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "image",
-        image: `/sample.png`,
-        imageCrop: "circle",
-        imageShadow: true,
-        extrude: true,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "image",
+    image: `/sample.png`,
+    imageCrop: "circle",
+    imageShadow: true,
+    extrude: true,
   },
 };
 
 export const ImageWithColor = Template.bind({});
 ImageWithColor.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "image",
-        image: `/sample.png`,
-        imageCrop: "circle",
-        imageShadow: true,
-        extrude: true,
-        imageColor: "red",
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "image",
+    image: `/sample.png`,
+    imageCrop: "circle",
+    imageShadow: true,
+    extrude: true,
+    imageColor: "red",
   },
 };
 
 export const ImageWithRightLabel = Template.bind({});
 ImageWithRightLabel.args = {
   ...Template.args,
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        location,
-        height: location.height,
-        style: "image",
-        image: `/sample.png`,
-        label: true,
-        labelText: "label",
-        labelPosition: "right",
-        labelTypography: {
-          fontSize: 15,
-          color: "red",
-          bold: true,
-          italic: true,
-          fontFamily: "serif",
-        },
-      },
+  id: "",
+  isVisible: true,
+  property: {
+    location,
+    height: location.height,
+    style: "image",
+    image: `/sample.png`,
+    label: true,
+    labelText: "label",
+    labelPosition: "right",
+    labelTypography: {
+      fontSize: 15,
+      color: "red",
+      bold: true,
+      italic: true,
+      fontFamily: "serif",
     },
   },
 };

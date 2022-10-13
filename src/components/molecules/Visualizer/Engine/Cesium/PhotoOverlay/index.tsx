@@ -8,7 +8,7 @@ import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Primitive";
+import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 import { useIcon, ho, vo, heightReference, attachTag, draggableTag } from "../common";
 
 import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
@@ -16,28 +16,30 @@ import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./
 export type Props = PrimitiveProps<Property>;
 
 export type Property = {
-  default?: {
-    location?: LatLng;
-    height?: number;
-    heightReference?: "none" | "clamp" | "relative";
-    camera?: Camera; // You may also update the field name in storytelling widget
-    image?: string;
-    imageSize?: number;
-    imageHorizontalOrigin?: "left" | "center" | "right";
-    imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
-    imageCrop?: "none" | "rounded" | "circle";
-    imageShadow?: boolean;
-    imageShadowColor?: string;
-    imageShadowBlur?: number;
-    imageShadowPositionX?: number;
-    imageShadowPositionY?: number;
-    photoOverlayImage?: string;
-    photoOverlayDescription?: string;
-  };
+  location?: LatLng;
+  height?: number;
+  heightReference?: "none" | "clamp" | "relative";
+  camera?: Camera; // You may also update the field name in storytelling widget
+  image?: string;
+  imageSize?: number;
+  imageHorizontalOrigin?: "left" | "center" | "right";
+  imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
+  imageCrop?: "none" | "rounded" | "circle";
+  imageShadow?: boolean;
+  imageShadowColor?: string;
+  imageShadowBlur?: number;
+  imageShadowPositionX?: number;
+  imageShadowPositionY?: number;
+  photoOverlayImage?: string;
+  photoOverlayDescription?: string;
 };
 
-const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected }) => {
-  const { id, isVisible, property } = layer ?? {};
+const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
+  id,
+  isVisible,
+  property,
+  isSelected,
+}) => {
   const {
     image,
     imageSize,
@@ -55,7 +57,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected })
     camera,
     photoOverlayImage,
     photoOverlayDescription,
-  } = property?.default ?? {};
+  } = property ?? {};
 
   const [canvas] = useIcon({
     image: image || defaultImage,

@@ -21,14 +21,10 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        url: `/sample.geojson`,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    url: `/sample.geojson`,
   },
   isBuilt: false,
   isEditable: false,

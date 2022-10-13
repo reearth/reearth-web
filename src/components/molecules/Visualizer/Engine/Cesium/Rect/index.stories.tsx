@@ -21,18 +21,14 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        rect: { west: 139, east: 140, north: 36, south: 35 },
-        fillColor: "#f00a",
-        extrudedHeight: 10000,
-        outlineColor: "yellow",
-        outlineWidth: 10,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    rect: { west: 139, east: 140, north: 36, south: 35 },
+    fillColor: "#f00a",
+    extrudedHeight: 10000,
+    outlineColor: "yellow",
+    outlineWidth: 10,
   },
   isBuilt: false,
   isEditable: false,
@@ -46,16 +42,12 @@ export const Image: Story<Props> = args => (
 );
 
 Image.args = {
-  layer: {
-    id: "",
-    isVisible: true,
-    property: {
-      default: {
-        rect: { west: 139, east: 140, north: 36, south: 35 },
-        style: "image",
-        image: `/sample.png`,
-      },
-    },
+  id: "",
+  isVisible: true,
+  property: {
+    rect: { west: 139, east: 140, north: 36, south: 35 },
+    style: "image",
+    image: `/sample.png`,
   },
   isBuilt: false,
   isEditable: false,

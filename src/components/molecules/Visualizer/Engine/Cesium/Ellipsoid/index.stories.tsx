@@ -16,16 +16,12 @@ export const Default: Story<Props> = args => (
 );
 
 Default.args = {
-  layer: {
-    id: "",
-    property: {
-      default: {
-        radius: 1000,
-        fillColor: "#f00a",
-        position: location,
-        height: location.height,
-      },
-    },
-    isVisible: true,
+  id: "",
+  property: {
+    radius: 1000,
+    fillColor: "#f00a",
+    position: location,
+    height: location.height,
   },
+  isVisible: true,
 };

@@ -18,7 +18,7 @@ import {
 
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Primitive";
+import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 import {
   useIcon,
   ho,
@@ -34,45 +34,42 @@ import marker from "./marker.svg";
 export type Props = PrimitiveProps<Property>;
 
 type Property = {
-  default?: {
-    location?: { lat: number; lng: number };
-    height?: number;
-    heightReference?: "none" | "clamp" | "relative";
-    style?: "none" | "point" | "image";
-    pointSize?: number;
-    pointColor?: string;
-    pointOutlineColor?: string;
-    pointOutlineWidth?: number;
-    image?: string;
-    imageSize?: number;
-    imageHorizontalOrigin?: "left" | "center" | "right";
-    imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
-    imageColor?: string;
-    imageCrop?: "none" | "rounded" | "circle";
-    imageShadow?: boolean;
-    imageShadowColor?: string;
-    imageShadowBlur?: number;
-    imageShadowPositionX?: number;
-    imageShadowPositionY?: number;
-    label?: boolean;
-    labelText?: string;
-    labelPosition?:
-      | "left"
-      | "right"
-      | "top"
-      | "bottom"
-      | "lefttop"
-      | "leftbottom"
-      | "righttop"
-      | "rightbottom";
-    labelTypography?: Typography;
-    labelBackground?: boolean;
-    extrude?: boolean;
-  };
+  location?: { lat: number; lng: number };
+  height?: number;
+  heightReference?: "none" | "clamp" | "relative";
+  style?: "none" | "point" | "image";
+  pointSize?: number;
+  pointColor?: string;
+  pointOutlineColor?: string;
+  pointOutlineWidth?: number;
+  image?: string;
+  imageSize?: number;
+  imageHorizontalOrigin?: "left" | "center" | "right";
+  imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
+  imageColor?: string;
+  imageCrop?: "none" | "rounded" | "circle";
+  imageShadow?: boolean;
+  imageShadowColor?: string;
+  imageShadowBlur?: number;
+  imageShadowPositionX?: number;
+  imageShadowPositionY?: number;
+  label?: boolean;
+  labelText?: string;
+  labelPosition?:
+    | "left"
+    | "right"
+    | "top"
+    | "bottom"
+    | "lefttop"
+    | "leftbottom"
+    | "righttop"
+    | "rightbottom";
+  labelTypography?: Typography;
+  labelBackground?: boolean;
+  extrude?: boolean;
 };
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
-  const { id, isVisible, property } = layer ?? {};
+const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible }) => {
   const {
     location,
     height = 0,
@@ -99,7 +96,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     imageShadowPositionX: shadowOffsetX,
     imageShadowPositionY: shadowOffsetY,
     heightReference: hr,
-  } = property?.default ?? {};
+  } = property ?? {};
 
   const pos = useMemo(() => {
     return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;

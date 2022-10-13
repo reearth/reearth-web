@@ -2,8 +2,8 @@ import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
+import type { Component } from "../Layers/Primitive";
 import { Clock } from "../Plugin/types";
-import type { Component } from "../Primitive";
 
 export type MouseEvent = {
   x?: number;

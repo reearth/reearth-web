@@ -7,26 +7,23 @@ import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Primitive";
+import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 import { heightReference, shadowMode } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
 export type Property = {
-  default?: {
-    polygon?: PolygonValue;
-    fill?: boolean;
-    fillColor?: string;
-    stroke?: boolean;
-    strokeColor?: string;
-    strokeWidth?: number;
-    heightReference?: "none" | "clamp" | "relative";
-    shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
-  };
+  polygon?: PolygonValue;
+  fill?: boolean;
+  fillColor?: string;
+  stroke?: boolean;
+  strokeColor?: string;
+  strokeWidth?: number;
+  heightReference?: "none" | "clamp" | "relative";
+  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
-  const { id, isVisible, property } = layer ?? {};
+const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) => {
   const {
     polygon,
     fill = true,
@@ -36,7 +33,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     strokeWidth = 1,
     heightReference: hr,
     shadows,
-  } = property?.default ?? {};
+  } = property ?? {};
 
   const hierarchy = useCustomCompareMemo(
     () =>

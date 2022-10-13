@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { expect, test } from "vitest";
 
-import { mergeProperty, useOverriddenProperty, useGet } from "./utils";
+import { mergeProperty, useOverriddenProperty, useGet, compatProperty } from "./utils";
 
 test("mergeProperty", () => {
   const a = { a: { b: { lat: 0, lng: 1 } }, c: [{ d: 1 }, { d: 2 }], d: 1 };
@@ -73,4 +73,16 @@ test("useGet", () => {
   expect(result2.current()).toEqual({ b: 1 });
   rerender2({ b: 2 });
   expect(result2.current()).toEqual({ b: 2 });
+});
+
+test("compatProperty", () => {
+  expect(compatProperty(undefined)).toBeUndefined();
+  expect(
+    compatProperty({
+      default: { a: 1 },
+      foo: { b: 2 },
+      hoge: 1,
+      bar: [{ c: 3 }],
+    }),
+  ).toEqual({ a: 1, b: 2 });
 });
