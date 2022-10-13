@@ -44,7 +44,7 @@ export default function Layers({
   );
 
   const renderLayer = useCallback(
-    (layer: Layer<any, any>) => {
+    (layer: Layer) => {
       return !layer.id || !layer.isVisible || !!layer.children ? null : (
         <P
           key={layer.id}

@@ -10,8 +10,8 @@ import { ModelGraphics, Entity, CesiumComponentRef } from "resium";
 
 import { toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
-import { attachTag, colorBlendMode, draggableTag, heightReference, shadowMode } from "../common";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { attachTag, colorBlendMode, draggableTag, heightReference, shadowMode } from "../../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -37,11 +37,19 @@ export type Property = {
   silhouetteSize?: number; // default: 1
 };
 
-export default function Model({ id, isVisible, property }: PrimitiveProps<Property>) {
+export default function Model({ id, isVisible, property, geometry }: PrimitiveProps<Property>) {
+  const coordinates = useMemo(
+    () =>
+      geometry?.type === "Point"
+        ? geometry.coordinates
+        : property.location
+        ? [property.location.lng, property.location.lat, property.height ?? 0]
+        : undefined,
+    [geometry?.coordinates, geometry?.type, property.height, property.location],
+  );
+
   const {
     model,
-    location,
-    height,
     heightReference: hr,
     heading,
     pitch,
@@ -61,8 +69,10 @@ export default function Model({ id, isVisible, property }: PrimitiveProps<Proper
   } = property ?? {};
 
   const position = useMemo(() => {
-    return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
-  }, [location, height]);
+    return coordinates
+      ? Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2])
+      : undefined;
+  }, [coordinates]);
   const orientation = useMemo(
     () =>
       position

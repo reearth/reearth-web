@@ -7,8 +7,8 @@ import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
-import { heightReference, shadowMode } from "../common";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { heightReference, shadowMode } from "../../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -23,9 +23,18 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) => {
+const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, geometry }) => {
+  const coordiantes = useMemo(
+    () =>
+      geometry?.type === "Polygon"
+        ? geometry.coordinates
+        : property.polygon
+        ? property.polygon.map(p => p.map(q => [q.lng, q.lat, q.height]))
+        : undefined,
+    [geometry?.coordinates, geometry?.type, property.polygon],
+  );
+
   const {
-    polygon,
     fill = true,
     stroke,
     fillColor,
@@ -37,18 +46,15 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }
 
   const hierarchy = useCustomCompareMemo(
     () =>
-      polygon?.[0]
+      coordiantes?.[0]
         ? new PolygonHierarchy(
-            polygon[0].map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
-            polygon
+            coordiantes[0].map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])),
+            coordiantes
               .slice(1)
-              .map(
-                p =>
-                  new PolygonHierarchy(p.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height))),
-              ),
+              .map(p => new PolygonHierarchy(p.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])))),
           )
         : undefined,
-    [polygon ?? []],
+    [coordiantes ?? []],
     isEqual,
   );
 

@@ -23,8 +23,6 @@ Default.args = {
   id: "",
   isVisible: true,
   property: {
-    default: {
-      tileset: `/tileset/tileset.json`,
-    },
+    tileset: `/tileset/tileset.json`,
   },
 };

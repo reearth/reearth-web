@@ -2,8 +2,8 @@ import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle, IonResource 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Cesium3DTileset, CesiumComponentRef } from "resium";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
-import { shadowMode, layerIdField } from "../common";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { shadowMode, layerIdField } from "../../common";
 
 export type Props = PrimitiveProps<Property>;
 

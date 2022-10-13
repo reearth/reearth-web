@@ -3,12 +3,11 @@ import { BoundingSphere, Cartesian3 } from "cesium";
 import { ReactNode } from "react";
 import { CameraFlyTo, CameraFlyToBoundingSphere } from "resium";
 
-import type { SceneProperty } from "..";
-import { Provider } from "../../storybook";
+import CesiumEngine from "..";
+import type { SceneProperty } from "../..";
+import { Provider } from "../../../storybook";
 
-import CesiumEngine from ".";
-
-export type { SceneProperty } from "..";
+export type { SceneProperty } from "../..";
 
 export const location = { lat: 35.652832, lng: 139.839478, height: 1000 };
 

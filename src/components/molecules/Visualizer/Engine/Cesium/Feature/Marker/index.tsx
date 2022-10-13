@@ -18,7 +18,7 @@ import {
 
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import {
   useIcon,
   ho,
@@ -27,7 +27,7 @@ import {
   unselectableTag,
   draggableTag,
   attachTag,
-} from "../common";
+} from "../../common";
 
 import marker from "./marker.svg";
 
@@ -69,10 +69,18 @@ type Property = {
   extrude?: boolean;
 };
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible }) => {
+const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible, geometry }) => {
+  const coordinates = useMemo(
+    () =>
+      geometry?.type === "Point"
+        ? geometry.coordinates
+        : property.location
+        ? [property.location.lng, property.location.lat, property.height ?? 0]
+        : undefined,
+    [geometry?.coordinates, geometry?.type, property.height, property.location],
+  );
+
   const {
-    location,
-    height = 0,
     extrude,
     pointSize = 10,
     style,
@@ -99,17 +107,19 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible })
   } = property ?? {};
 
   const pos = useMemo(() => {
-    return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
-  }, [location, height]);
+    return coordinates
+      ? Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2])
+      : undefined;
+  }, [coordinates]);
 
   const extrudePoints = useMemo(() => {
-    return extrude && location
+    return extrude && coordinates && typeof coordinates[3] === "number"
       ? [
-          Cartesian3.fromDegrees(location.lng, location.lat, height),
-          Cartesian3.fromDegrees(location.lng, location.lat, 0),
+          Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2]),
+          Cartesian3.fromDegrees(coordinates[0], coordinates[1], 0),
         ]
       : undefined;
-  }, [extrude, location, height]);
+  }, [coordinates, extrude]);
 
   const isStyleImage = !style || style === "image";
   const [icon, imgw, imgh] = useIcon({
@@ -144,6 +154,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible })
 
   const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
   useEffect(() => {
+    // TODO
     // draggable
     attachTag(e.current?.cesiumElement, draggableTag, "default.location");
   }, [pos, isVisible]);

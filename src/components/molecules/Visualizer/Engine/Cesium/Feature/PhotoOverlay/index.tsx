@@ -8,8 +8,8 @@ import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
-import { useIcon, ho, vo, heightReference, attachTag, draggableTag } from "../common";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { useIcon, ho, vo, heightReference, attachTag, draggableTag } from "../../common";
 
 import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
 
@@ -38,8 +38,19 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
   id,
   isVisible,
   property,
+  geometry,
   isSelected,
 }) => {
+  const coordinates = useMemo(
+    () =>
+      geometry?.type === "Point"
+        ? geometry.coordinates
+        : property.location
+        ? [property.location.lng, property.location.lat, property.height ?? 0]
+        : undefined,
+    [geometry?.coordinates, geometry?.type, property.height, property.location],
+  );
+
   const {
     image,
     imageSize,
@@ -51,8 +62,6 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
     imageShadowBlur,
     imageShadowPositionX,
     imageShadowPositionY,
-    location,
-    height,
     heightReference: hr,
     camera,
     photoOverlayImage,
@@ -72,9 +81,13 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
 
   const theme = useTheme();
 
-  const pos = useMemo(() => {
-    return location ? Cartesian3.fromDegrees(location.lng, location.lat, height ?? 0) : undefined;
-  }, [location, height]);
+  const pos = useMemo(
+    () =>
+      coordinates
+        ? Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2])
+        : undefined,
+    [coordinates],
+  );
 
   const { photoOverlayImageTransiton, exitPhotoOverlay } = useHooks({
     camera,

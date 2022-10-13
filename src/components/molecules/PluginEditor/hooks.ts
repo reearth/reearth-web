@@ -44,7 +44,7 @@ export default () => {
   const [fileName, setFileName] = useState(defaultFileName);
   const [sourceCode, setSourceCode] = useState<string | undefined>(defaultSourceCode);
 
-  const rootLayer: Layer<any, any> = useMemo(
+  const rootLayer: Layer = useMemo(
     () => ({
       id: "",
       children: [

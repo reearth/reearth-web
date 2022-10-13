@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDelayedCount, Durations } from "@reearth/util/use-delayed-count";
 import { Camera } from "@reearth/util/value";
 
-import { useContext } from "../../../Plugin";
+import { useContext } from "../../../../Plugin";
 
 export type { TransitionStatus } from "@rot1024/use-transition";
 

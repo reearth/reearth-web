@@ -4,8 +4,8 @@ import { RectangleGraphics, Entity } from "resium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
-import { heightReference, shadowMode } from "../common";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { heightReference, shadowMode } from "../../common";
 
 export type Props = PrimitiveProps<Property>;
 

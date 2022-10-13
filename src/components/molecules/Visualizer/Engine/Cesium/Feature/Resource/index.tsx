@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 
 export type Props = PrimitiveProps<Property>;
 

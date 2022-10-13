@@ -6,8 +6,8 @@ import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
-import { shadowMode } from "../common";
+import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { shadowMode } from "../../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -19,11 +19,21 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polyline: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) => {
-  const { coordinates, clampToGround, strokeColor, strokeWidth = 1, shadows } = property ?? {};
+const Polyline: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, geometry }) => {
+  const coordinates = useMemo(
+    () =>
+      geometry?.type === "LineString"
+        ? geometry.coordinates
+        : property.coordinates
+        ? property.coordinates.map(p => [p.lng, p.lat, p.height])
+        : undefined,
+    [geometry?.coordinates, geometry?.type, property.coordinates],
+  );
+
+  const { clampToGround, strokeColor, strokeWidth = 1, shadows } = property ?? {};
 
   const positions = useCustomCompareMemo(
-    () => coordinates?.map(c => Cartesian3.fromDegrees(c.lng, c.lat, c.height)),
+    () => coordinates?.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])),
     [coordinates ?? []],
     isEqual,
   );

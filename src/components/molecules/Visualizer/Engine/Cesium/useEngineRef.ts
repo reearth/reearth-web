@@ -6,7 +6,6 @@ import type { CesiumComponentRef } from "resium";
 import type { Ref as EngineRef } from "..";
 import type { MouseEvents, MouseEvent } from "../ref";
 
-import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
 import {
   getLocationFromScreenXY,
@@ -27,6 +26,7 @@ import {
   getCenterCamera,
   zoom,
 } from "./common";
+import { legacyBuiltin } from "./Feature";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -291,7 +291,7 @@ export default function useEngineRef(
         mouseEventCallbacks.current.wheel = cb;
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
-      builtinPrimitives,
+      builtinPrimitives: legacyBuiltin,
       clusterComponent: Cluster,
     };
   }, [cesium]);
