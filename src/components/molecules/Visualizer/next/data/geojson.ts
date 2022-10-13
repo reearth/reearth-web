@@ -15,10 +15,14 @@ export function processGeoJSON(geojson: GeoJSON, range?: DataRange): Feature[] {
   }
 
   if (geojson.type === "Feature") {
+    const geo = geojson.geometry;
     return [
       {
         id: (geojson.id && String(geojson.id)) || generateRandomString(12),
-        geometry: geojson.geometry,
+        geometry:
+          geo.type === "Point" || geo.type === "LineString" || geo.type === "Polygon"
+            ? geo
+            : undefined,
         properties: geojson.properties,
         range,
       },

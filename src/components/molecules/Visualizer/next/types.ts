@@ -1,4 +1,4 @@
-import type { Geometry as GeoJSONGeometry } from "geojson";
+import type { LineString, Point, Polygon } from "geojson";
 
 import type { Infobox, Block, Tag } from "../Plugin/types";
 
@@ -61,12 +61,12 @@ export type DataType = "geojson" | "3dtiles" | "gltf";
 
 export type Feature = {
   id: string;
-  geometry: Geometry;
+  geometry?: Geometry;
   properties?: any;
   range?: DataRange;
 };
 
-export type Geometry = GeoJSONGeometry;
+export type Geometry = Point | LineString | Polygon;
 
 export type ComputedLayerStatus = "fetching" | "ready";
 
