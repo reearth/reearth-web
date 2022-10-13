@@ -71,6 +71,7 @@ test("findById", () => {
   const layer = ref?.findById("x");
   expect(layer?.id).toBe("x");
   expect(layer?.title).toBe("X");
+  expect(layer?.computed).toBeUndefined();
 });
 
 test("findByIds", () => {

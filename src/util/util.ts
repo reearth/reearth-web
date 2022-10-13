@@ -39,3 +39,5 @@ export const bindFunc3 = <F extends (a: A, b: B, c: C, ...args: any[]) => any, A
   isPresent(f) && isPresent(a) && isPresent(b) && isPresent(c)
     ? (...args: Args3<F>) => f(a, b, c, ...args)
     : undefined;
+
+export type KeysOfUnion<T> = T extends T ? keyof T : never;

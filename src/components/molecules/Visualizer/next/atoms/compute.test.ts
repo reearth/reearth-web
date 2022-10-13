@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { test, expect, vi } from "vitest";
 
@@ -19,17 +19,14 @@ const features2: Feature[] = [{ id: "b", geometry: { type: "Point", coordinates:
 test("computeAtom", async () => {
   const { result } = renderHook(() => {
     const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
-    const result = useAtomValue(atoms.get);
-    const set = useSetAtom(atoms.set);
-    const writeFeatures = useSetAtom(atoms.writeFeatures);
-    const deleteFeatures = useSetAtom(atoms.deleteFeatures);
-    return { result, set, writeFeatures, deleteFeatures };
+    const [result, set] = useAtom(atoms);
+    return { result, set };
   });
 
   expect(result.current.result).toBeUndefined();
 
   act(() => {
-    result.current.set({ id: "xxx", type: "simple" });
+    result.current.set({ type: "setLayer", layer: { id: "xxx", type: "simple" } });
   });
 
   expect(result.current.result).toEqual({
@@ -41,7 +38,7 @@ test("computeAtom", async () => {
   });
 
   act(() => {
-    result.current.set(layer);
+    result.current.set({ type: "setLayer", layer });
   });
 
   expect(result.current.result).toEqual({
@@ -64,7 +61,7 @@ test("computeAtom", async () => {
 
   // reset a layer
   act(() => {
-    result.current.set(layer);
+    result.current.set({ type: "setLayer", layer });
   });
 
   expect(result.current.result).toEqual({
@@ -87,7 +84,7 @@ test("computeAtom", async () => {
 
   // write features
   act(() => {
-    result.current.writeFeatures(features2);
+    result.current.set({ type: "writeFeatures", features: features2 });
   });
 
   expect(result.current.result).toEqual({
@@ -110,7 +107,7 @@ test("computeAtom", async () => {
 
   // delete a feature
   act(() => {
-    result.current.deleteFeatures(["b"]);
+    result.current.set({ type: "deleteFeatures", features: ["b"] });
   });
 
   expect(result.current.result).toEqual({
@@ -133,7 +130,7 @@ test("computeAtom", async () => {
 
   // delete a layer
   act(() => {
-    result.current.set(undefined);
+    result.current.set({ type: "setLayer" });
   });
 
   expect(result.current.result).toBeUndefined();

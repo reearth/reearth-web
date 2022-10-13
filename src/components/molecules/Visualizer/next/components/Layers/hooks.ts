@@ -1,3 +1,4 @@
+import { atom, useAtomValue } from "jotai";
 import { merge, omit } from "lodash";
 import {
   ForwardedRef,
@@ -11,9 +12,11 @@ import { v4 as uuidv4 } from "uuid";
 
 import { objectFromGetter } from "@reearth/util/object";
 
-import { computeAtom, type Atoms } from "../../atoms";
+import { computeAtom, type Atom } from "../../atoms";
 import { convertLegacyLayer } from "../../compat";
-import type { Layer, NaiveLayer } from "../../types";
+import type { ComputedLayer, Layer, NaiveLayer } from "../../types";
+
+import { computedLayerKeys, layerKeys } from "./keys";
 
 export type { Layer, NaiveLayer } from "../../types";
 
@@ -22,7 +25,9 @@ export type { Layer, NaiveLayer } from "../../types";
  * in order to reduce unnecessary sending and receiving of data to and from
  * QuickJS (a plugin runtime) and to improve performance.
  */
-export type LazyLayer = Readonly<Layer> & { __REEARTH_LAZY_LAYER: never };
+export type LazyLayer = Readonly<Layer> & {
+  computed?: Readonly<ComputedLayer>;
+};
 
 export type Ref = {
   findById: (id: string) => LazyLayer | undefined;
@@ -47,7 +52,7 @@ export type Ref = {
 export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: ForwardedRef<Ref> }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
-  const atomsMap = useMemo(() => new Map<string, Atoms>(), []);
+  const atomsMap = useMemo(() => new Map<string, Atom>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
 
   const [tempLayers, setTempLayers] = useState<Layer[]>([]);
@@ -77,12 +82,38 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     });
   }, [layers, tempLayers, overriddenLayers]);
 
+  const getComputedLayer = useAtomValue(
+    useMemo(
+      () =>
+        atom(get => (layerId: string) => {
+          const atoms = atomsMap.get(layerId);
+          if (!atoms) return;
+          const cl = get(atoms);
+          return cl;
+        }),
+      [atomsMap],
+    ),
+  );
+
+  const lazyComputedLayerPrototype = useMemo<object>(() => {
+    return objectFromGetter(
+      // id and layer should not be accessible
+      computedLayerKeys,
+      function (key) {
+        const id: string | undefined = (this as any).id;
+        if (!id || typeof id !== "string") throw new Error("layer ID is not specified");
+
+        const layer = getComputedLayer(id);
+        if (!layer) return undefined;
+        return (layer as any)[key];
+      },
+    );
+  }, [getComputedLayer]);
+
   const lazyLayerPrototype = useMemo<object>(() => {
     return objectFromGetter(layerKeys, function (key) {
       const id: string | undefined = (this as any).id;
-      if (!id) throw new Error("layer ID is not specified");
-
-      if (key === "pluginId") return "reearth";
+      if (!id || typeof id !== "string") throw new Error("layer ID is not specified");
 
       const layer = layerMap.get(id);
       if (!layer) return undefined;
@@ -93,10 +124,18 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       else if (key === "property") return layer.compat?.property;
       else if (key === "propertyId") return layer.compat?.propertyId;
       else if (key === "isVisible") return layer.visible;
+      // computed
+      else if (key === "computed") {
+        const computedLayer = getComputedLayer(layer.id);
+        if (!computedLayer) return undefined;
+        const computed = Object.create(lazyComputedLayerPrototype);
+        computed.id = id;
+        return computed;
+      }
 
       return (layer as any)[key];
     });
-  }, [layerMap]);
+  }, [getComputedLayer, layerMap, lazyComputedLayerPrototype]);
 
   const findById = useCallback(
     (id: string): LazyLayer | undefined => {
@@ -359,33 +398,6 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
 
   return { atomsMap, flattenedLayers };
 }
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-type Element<T> = T extends (infer E)[] ? E : never;
-
-const legacyLayerKeys = [
-  "property",
-  "propertyId",
-  "pluginId",
-  "extensionId",
-  "isVisible",
-  "visible",
-];
-
-// Do not forget to update layerKeys when Layer type was updated
-const layerKeys: (KeysOfUnion<Layer> | Element<typeof legacyLayerKeys>)[] = [
-  "children",
-  "data",
-  "infobox",
-  "marker",
-  "properties",
-  "tags",
-  "title",
-  "type",
-  "creator",
-  // "compat" should not be read from plugins
-  ...legacyLayerKeys,
-];
 
 function flattenLayers(layers: Layer[]): Layer[] {
   return layers.flatMap(l =>

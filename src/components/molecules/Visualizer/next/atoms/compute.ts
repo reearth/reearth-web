@@ -5,7 +5,13 @@ import type { ComputedLayer, ComputedLayerStatus, Data, DataRange, Feature, Laye
 
 import { dataAtom, globalDataFeaturesCache } from "./data";
 
-export type Atoms = ReturnType<typeof computeAtom>;
+export type Atom = ReturnType<typeof computeAtom>;
+
+export type Command =
+  | { type: "setLayer"; layer?: Layer }
+  | { type: "requestFetch"; range: DataRange }
+  | { type: "writeFeatures"; features: Feature[] }
+  | { type: "deleteFeatures"; features: string[] };
 
 export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   const layer = atom<Layer | undefined>(undefined);
@@ -105,11 +111,23 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
-  return {
-    get,
-    set,
-    writeFeatures,
-    requestFetch,
-    deleteFeatures,
-  };
+  return atom<ComputedLayer | undefined, Command>(
+    g => g(get),
+    async (_, s, value) => {
+      switch (value.type) {
+        case "setLayer":
+          await s(set, value.layer);
+          break;
+        case "requestFetch":
+          await s(requestFetch, value.range);
+          break;
+        case "writeFeatures":
+          await s(writeFeatures, value.features);
+          break;
+        case "deleteFeatures":
+          await s(deleteFeatures, value.features);
+          break;
+      }
+    },
+  );
 }

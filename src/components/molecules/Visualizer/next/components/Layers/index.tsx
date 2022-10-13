@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, type ForwardRefRenderFunction } from "react";
 
 import type { Layer } from "../../types";
 import LayerComponent, { type CommonProps, type Props as LayerProps } from "../Layer";
@@ -14,7 +14,7 @@ export type Props = {
   Feature?: LayerProps["Feature"];
 } & CommonProps;
 
-const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
+const Layers: ForwardRefRenderFunction<Ref, Props> = (
   { layers, overriddenProperties, ...props },
   ref,
 ) => {
@@ -22,15 +22,19 @@ const Layers: React.ForwardRefRenderFunction<Ref, Props> = (
 
   return (
     <>
-      {flattenedLayers?.map(layer => (
-        <LayerComponent
-          key={layer.id}
-          {...props}
-          layer={layer}
-          atoms={atomsMap.get(layer.id)}
-          overriddenProperties={overriddenProperties?.[layer.id]}
-        />
-      ))}
+      {flattenedLayers?.map(layer => {
+        const atoms = atomsMap.get(layer.id);
+        if (!atoms) return null;
+        return (
+          <LayerComponent
+            key={layer.id}
+            {...props}
+            layer={layer}
+            atoms={atoms}
+            overriddenProperties={overriddenProperties?.[layer.id]}
+          />
+        );
+      })}
     </>
   );
 };

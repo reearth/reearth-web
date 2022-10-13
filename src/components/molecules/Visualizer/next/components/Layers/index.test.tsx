@@ -133,3 +133,41 @@ test("ref", async () => {
 
   await waitFor(() => expect(screen.getByTestId("layer")).toBeEmptyDOMElement());
 });
+
+test("computed", async () => {
+  const layers: Layer[] = [
+    {
+      id: "x",
+      type: "simple",
+      data: {
+        type: "geojson",
+        value: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [0, 1],
+          },
+        },
+      },
+      marker: {
+        pointColor: "red",
+      },
+    },
+  ];
+
+  const Feature = (_: FeatureComponentProps) => null;
+
+  function Comp({ layers }: { layers?: Layer[] }) {
+    const ref = useRef<Ref>(null);
+    return (
+      <>
+        <Component layers={layers} ref={ref} Feature={Feature} />
+        <p data-testid="layer">{ref.current?.findById("x")?.computed?.id}</p>
+      </>
+    );
+  }
+
+  const { rerender } = render(<Comp layers={layers} />);
+  rerender(<Comp layers={layers} />);
+  await waitFor(() => expect(screen.getByTestId("layer")).toHaveTextContent("x"));
+});

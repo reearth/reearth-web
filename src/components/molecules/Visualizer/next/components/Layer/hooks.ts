@@ -1,22 +1,33 @@
-import { useSetAtom, useAtomValue } from "jotai";
-import { useEffect, useMemo } from "react";
+import { useAtom } from "jotai";
+import { useCallback, useLayoutEffect, useMemo } from "react";
 
-import { computeAtom, type Atoms } from "../../atoms";
-import type { Layer } from "../../types";
+import { computeAtom, type Atom } from "../../atoms";
+import type { DataRange, Feature, Layer } from "../../types";
 
-export type { Atoms } from "../../atoms";
+export type { Atom as Atoms } from "../../atoms";
 
-export const createAtoms = computeAtom;
+export const createAtom = computeAtom;
 
-export default function useHooks(layer: Layer | undefined, atoms?: Atoms) {
-  const a = useMemo(() => atoms ?? createAtoms(), [atoms]);
-  const computedLayer = useAtomValue(a.get);
-  const setLayer = useSetAtom(a.set);
-  const writeFeatures = useSetAtom(a.writeFeatures);
-  const requestFetch = useSetAtom(a.requestFetch);
-  const deleteFeatures = useSetAtom(a.deleteFeatures);
+export default function useHooks(layer: Layer | undefined, atom?: Atom) {
+  const [computedLayer, setters] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
+  const setLayer = useCallback(
+    (layer: Layer | undefined) => setters({ type: "setLayer", layer }),
+    [setters],
+  );
+  const writeFeatures = useCallback(
+    (features: Feature[]) => setters({ type: "writeFeatures", features }),
+    [setters],
+  );
+  const requestFetch = useCallback(
+    (range: DataRange) => setters({ type: "requestFetch", range }),
+    [setters],
+  );
+  const deleteFeatures = useCallback(
+    (features: string[]) => setters({ type: "deleteFeatures", features }),
+    [setters],
+  );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLayer(
       typeof layer?.visible === "undefined" || layer?.type === null || layer?.type
         ? layer
