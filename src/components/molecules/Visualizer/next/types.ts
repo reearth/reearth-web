@@ -95,6 +95,13 @@ export type Expression = {
 
 export type AppearanceTypes = {
   marker: MarkerAppearance;
+  polyline: PolylineAppearance;
+  polygon: PolygonAppearance;
+  model: ModelAppearance;
+  "3dtiles": Cesium3DTilesAppearance;
+  ellipsoid: EllipsoidAppearance;
+  legacy_photooverlay: LegacyPhotooverlayAppearance;
+  legacy_resource: LegacyResourceAppearance;
 };
 
 export type LayerAppearanceTypes = {
@@ -104,4 +111,33 @@ export type LayerAppearanceTypes = {
 export type MarkerAppearance = {
   pointSize?: number;
   pointColor?: string;
+  // TODO
+};
+
+export type PolylineAppearance = {
+  // TODO
+};
+
+export type PolygonAppearance = {
+  // TODO
+};
+
+export type EllipsoidAppearance = {
+  // TODO
+};
+
+export type ModelAppearance = {
+  // TODO
+};
+
+export type Cesium3DTilesAppearance = {
+  // TODO
+};
+
+export type LegacyPhotooverlayAppearance = {
+  // TODO
+};
+
+export type LegacyResourceAppearance = {
+  // TODO
 };

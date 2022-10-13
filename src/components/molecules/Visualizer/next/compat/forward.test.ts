@@ -372,7 +372,7 @@ test("model", () => {
       isVisible: true,
       property: {
         default: {
-          url: "xxx",
+          model: "xxx",
           hoge: "red",
         },
         appearance: {
@@ -397,7 +397,7 @@ test("model", () => {
       propertyId: "p",
       property: {
         default: {
-          url: "xxx",
+          model: "xxx",
           hoge: "red",
         },
         appearance: {
@@ -418,7 +418,7 @@ test("3dtiles", () => {
       isVisible: true,
       property: {
         default: {
-          url: "xxx",
+          tileset: "xxx",
           hoge: "red",
         },
       },
@@ -439,7 +439,7 @@ test("3dtiles", () => {
       propertyId: "p",
       property: {
         default: {
-          url: "xxx",
+          tileset: "xxx",
           hoge: "red",
         },
       },

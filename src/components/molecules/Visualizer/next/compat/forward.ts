@@ -148,20 +148,20 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "model") {
     appearance = "model";
-    legacyPropertyKeys = ["url"];
-    if (l.property?.default?.url) {
+    legacyPropertyKeys = ["model"];
+    if (l.property?.default?.model) {
       data = {
         type: "gltf",
-        url: l.property.default.url,
+        url: l.property.default.model,
       };
     }
   } else if (l.extensionId === "tileset") {
     appearance = "3dtiles";
-    legacyPropertyKeys = ["url"];
-    if (l.property?.default?.url) {
+    legacyPropertyKeys = ["tileset"];
+    if (l.property?.default?.tileset) {
       data = {
         type: "3dtiles",
-        url: l.property.default.url,
+        url: l.property.default.tileset,
       };
     }
   } else if (l.extensionId === "resource") {

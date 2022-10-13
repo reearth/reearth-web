@@ -301,7 +301,7 @@ test("model", () => {
     propertyId: "p",
     property: {
       default: {
-        url: "xxx",
+        model: "xxx",
         hoge: 1,
       },
       appearance: {
@@ -332,7 +332,7 @@ test("3dtiles", () => {
     propertyId: "p",
     property: {
       default: {
-        url: "xxx",
+        tileset: "xxx",
         aaaa: 1,
       },
     },

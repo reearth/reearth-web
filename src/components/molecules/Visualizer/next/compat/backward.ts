@@ -141,7 +141,7 @@ export function getCompat(l: Layer | undefined): LayerCompat | undefined {
         ...m,
         ...((l as any).data?.type === "gltf" && (l as any).data.url
           ? {
-              url: (l as any).data.url,
+              model: (l as any).data.url,
             }
           : {}),
       },
@@ -158,7 +158,7 @@ export function getCompat(l: Layer | undefined): LayerCompat | undefined {
         ...(l as any)["3dtiles"],
         ...((l as any).data?.type === "3dtiles" && (l as any).data.url
           ? {
-              url: (l as any).data.url,
+              tileset: (l as any).data.url,
             }
           : {}),
       },
