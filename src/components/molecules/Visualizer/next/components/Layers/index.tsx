@@ -10,14 +10,11 @@ export type { LazyLayer, Ref } from "./hooks";
 
 export type Props = {
   layers?: Layer[];
-  overriddenProperties?: Record<string, Record<string, any>>;
+  overrides?: Record<string, Record<string, any>>;
   Feature?: LayerProps["Feature"];
 } & CommonProps;
 
-const Layers: ForwardRefRenderFunction<Ref, Props> = (
-  { layers, overriddenProperties, ...props },
-  ref,
-) => {
+const Layers: ForwardRefRenderFunction<Ref, Props> = ({ layers, overrides, ...props }, ref) => {
   const { atomsMap, flattenedLayers } = useHooks({ layers, ref });
 
   return (
@@ -31,7 +28,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
             {...props}
             layer={layer}
             atoms={atoms}
-            overriddenProperties={overriddenProperties?.[layer.id]}
+            overrides={overrides?.[layer.id]}
           />
         );
       })}

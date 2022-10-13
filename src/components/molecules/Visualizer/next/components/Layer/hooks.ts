@@ -8,32 +8,41 @@ export type { Atom as Atoms } from "../../atoms";
 
 export const createAtom = computeAtom;
 
-export default function useHooks(layer: Layer | undefined, atom?: Atom) {
-  const [computedLayer, setters] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
-  const setLayer = useCallback(
-    (layer: Layer | undefined) => setters({ type: "setLayer", layer }),
-    [setters],
-  );
+export default function useHooks(
+  layer: Layer | undefined,
+  atom: Atom | undefined,
+  overrides?: Record<string, any>,
+) {
+  const [computedLayer, set] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
   const writeFeatures = useCallback(
-    (features: Feature[]) => setters({ type: "writeFeatures", features }),
-    [setters],
+    (features: Feature[]) => set({ type: "writeFeatures", features }),
+    [set],
   );
   const requestFetch = useCallback(
-    (range: DataRange) => setters({ type: "requestFetch", range }),
-    [setters],
+    (range: DataRange) => set({ type: "requestFetch", range }),
+    [set],
   );
   const deleteFeatures = useCallback(
-    (features: string[]) => setters({ type: "deleteFeatures", features }),
-    [setters],
+    (features: string[]) => set({ type: "deleteFeatures", features }),
+    [set],
   );
 
   useLayoutEffect(() => {
-    setLayer(
-      typeof layer?.visible === "undefined" || layer?.type === null || layer?.type
-        ? layer
-        : undefined,
-    );
-  }, [layer, setLayer]);
+    set({
+      type: "override",
+      overrides,
+    });
+  }, [set, overrides]);
+
+  useLayoutEffect(() => {
+    set({
+      type: "setLayer",
+      layer:
+        typeof layer?.visible === "undefined" || layer?.type === null || layer?.type
+          ? layer
+          : undefined,
+    });
+  }, [layer, set]);
 
   return {
     computedLayer,

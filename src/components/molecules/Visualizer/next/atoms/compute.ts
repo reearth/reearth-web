@@ -1,9 +1,11 @@
 import { atom } from "jotai";
+import { merge, pick } from "lodash";
 
 import { evalLayer } from "../evaluator";
 import type { ComputedLayer, ComputedLayerStatus, Data, DataRange, Feature, Layer } from "../types";
 
 import { dataAtom, globalDataFeaturesCache } from "./data";
+import { appearanceKeys } from "./keys";
 
 export type Atom = ReturnType<typeof computeAtom>;
 
@@ -11,11 +13,22 @@ export type Command =
   | { type: "setLayer"; layer?: Layer }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
-  | { type: "deleteFeatures"; features: string[] };
+  | { type: "deleteFeatures"; features: string[] }
+  | { type: "override"; overrides?: Record<string, any> };
 
 export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   const layer = atom<Layer | undefined>(undefined);
+  const overrides = atom<Record<string, any> | undefined, Record<string, any> | undefined>(
+    undefined,
+    (_, set, value) => {
+      set(overrides, pick(value, appearanceKeys));
+    },
+  );
+
   const computedFeatures = atom<Feature[]>([]);
+  const finalFeatures = atom(get =>
+    get(computedFeatures).map(f => merge({ ...f }, get(overrides))),
+  );
   const layerStatus = atom<ComputedLayerStatus>("fetching");
   const dataAtoms = dataAtom(cache);
 
@@ -27,7 +40,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       id: currentLayer.id,
       layer: currentLayer,
       status: get(layerStatus),
-      features: get(computedFeatures),
+      features: get(finalFeatures),
       originalFeatures:
         currentLayer.type === "simple" && currentLayer.data
           ? get(dataAtoms.getAll)(currentLayer.data).flat()
@@ -126,6 +139,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           break;
         case "deleteFeatures":
           await s(deleteFeatures, value.features);
+          break;
+        case "override":
+          await s(overrides, value.overrides);
           break;
       }
     },

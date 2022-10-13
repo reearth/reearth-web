@@ -18,7 +18,6 @@ export type CommonProps = {
 
 export type FeatureComponentProps = {
   layer: ComputedLayer;
-  overriddenProperties?: Record<string, any>;
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
@@ -27,7 +26,7 @@ export type FeatureComponentProps = {
 export type Props = {
   layer?: Layer;
   atoms?: Atoms;
-  overriddenProperties?: Record<string, any>;
+  overrides?: Record<string, any>;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;
@@ -36,11 +35,13 @@ export default function LayerComponent({
   Feature,
   layer,
   atoms,
+  overrides,
   ...props
 }: Props): JSX.Element | null {
   const { computedLayer, handleFeatureDelete, handleFeatureFetch, handleFeatureRequest } = useHooks(
     Feature ? layer : undefined,
     atoms,
+    overrides,
   );
 
   return layer && computedLayer && Feature ? (
