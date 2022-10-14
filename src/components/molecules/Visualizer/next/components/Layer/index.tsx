@@ -25,7 +25,7 @@ export type FeatureComponentProps = {
 
 export type Props = {
   layer?: Layer;
-  atoms?: Atoms;
+  atom?: Atoms;
   overrides?: Record<string, any>;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
@@ -34,7 +34,7 @@ export type Props = {
 export default function LayerComponent({
   Feature,
   layer,
-  atoms,
+  atom: atoms,
   overrides,
   ...props
 }: Props): JSX.Element | null {

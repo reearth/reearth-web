@@ -52,7 +52,7 @@ export type Ref = {
 export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: ForwardedRef<Ref> }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
-  const atomsMap = useMemo(() => new Map<string, Atom>(), []);
+  const atomMap = useMemo(() => new Map<string, Atom>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
 
   const [tempLayers, setTempLayers] = useState<Layer[]>([]);
@@ -86,12 +86,12 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     useMemo(
       () =>
         atom(get => (layerId: string) => {
-          const atoms = atomsMap.get(layerId);
+          const atoms = atomMap.get(layerId);
           if (!atoms) return;
           const cl = get(atoms);
           return cl;
         }),
-      [atomsMap],
+      [atomMap],
     ),
   );
 
@@ -179,7 +179,7 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
           b.id = uuidv4();
         });
         layerMap.set(l.id, l);
-        atomsMap.set(l.id, computeAtom());
+        atomMap.set(l.id, computeAtom());
       });
 
       setTempLayers(layers => [...layers, newLayer]);
@@ -189,7 +189,7 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
 
       return newLazyLayer;
     },
-    [atomsMap, findById, layerMap],
+    [atomMap, findById, layerMap],
   );
 
   const addAll = useCallback(
@@ -267,13 +267,13 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
           .map(l => l.id)
           .forEach(id => {
             layerMap.delete(id);
-            atomsMap.delete(id);
+            atomMap.delete(id);
             lazyLayerMap.delete(id);
           });
         return newLayers;
       });
     },
-    [layerMap, atomsMap, lazyLayerMap],
+    [layerMap, atomMap, lazyLayerMap],
   );
 
   const isLayer = useCallback(
@@ -381,22 +381,22 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
 
     walkLayers(layers ?? [], l => {
       ids.add(l.id);
-      if (!atomsMap.has(l.id)) {
-        atomsMap.set(l.id, computeAtom());
+      if (!atomMap.has(l.id)) {
+        atomMap.set(l.id, computeAtom());
       }
       layerMap.set(l.id, l);
     });
 
-    const deleted = Array.from(atomsMap.keys()).filter(k => !ids.has(k));
+    const deleted = Array.from(atomMap.keys()).filter(k => !ids.has(k));
     deleted.forEach(k => {
-      atomsMap.delete(k);
+      atomMap.delete(k);
       layerMap.delete(k);
       lazyLayerMap.delete(k);
     });
     setOverridenLayers(layers => layers.filter(l => !deleted.includes(l.id)));
-  }, [atomsMap, layers, layerMap, lazyLayerMap, setOverridenLayers]);
+  }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers]);
 
-  return { atomsMap, flattenedLayers };
+  return { atomMap, flattenedLayers };
 }
 
 function flattenLayers(layers: Layer[]): Layer[] {

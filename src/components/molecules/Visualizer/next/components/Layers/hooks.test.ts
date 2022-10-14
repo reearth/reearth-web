@@ -30,8 +30,8 @@ test("hooks", () => {
     { id: "y", type: "simple", title: "Y" },
     { id: "w", type: "simple", title: "W" },
   ]);
-  expect(current.atomsMap.get("y")).not.toBeUndefined();
-  expect(current.atomsMap.get("v")).toBeUndefined();
+  expect(current.atomMap.get("y")).not.toBeUndefined();
+  expect(current.atomMap.get("v")).toBeUndefined();
 });
 
 test("isLayer", () => {
