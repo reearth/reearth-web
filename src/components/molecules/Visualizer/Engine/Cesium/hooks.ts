@@ -2,7 +2,7 @@ import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Clock as CesiumClo
 import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
@@ -310,6 +310,9 @@ export default ({
     viewer.scene.requestRender();
   });
 
+  // DnD
+  const [isLayerDragging, setLayerDragging] = useState(false);
+
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed() || !isLayerDraggable) return;
@@ -324,9 +327,11 @@ export default ({
         const pos = convertCartesian3ToPosition(viewer, position);
         if (!pos) return false;
 
+        setLayerDragging(true);
         onLayerDrag?.(e.id, pos);
       },
       onDrop: (e: Entity, position: Cartesian3 | undefined): boolean | void => {
+        setLayerDragging(false);
         if (viewer.isDestroyed()) return;
 
         const tag = getTag(e);
@@ -343,6 +348,7 @@ export default ({
     return () => {
       if (viewer.isDestroyed()) return;
       cesiumDnD.disable();
+      setLayerDragging(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cesium.current?.cesiumElement, isLayerDraggable, onLayerDrag, onLayerDrop]);
@@ -358,13 +364,14 @@ export default ({
     cameraViewBoundaries,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
+    mouseEventHandles,
+    isLayerDragging,
     handleMount,
     handleUnmount,
     handleClick,
     handleCameraChange,
     handleTick,
     handleCameraMoveEnd,
-    mouseEventHandles,
   };
 };
 
