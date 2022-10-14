@@ -8,10 +8,12 @@ export type Props = {
   layers?: Layer[];
   atomMap?: Map<string, Atom>;
   overrides?: Record<string, Record<string, any>>;
+  selectedLayerId?: string;
+  isHidden?: (id: string) => boolean;
   clusters?: Cluster[];
   clusterComponent?: ComponentType<ClusterProps>;
   Feature?: LayerProps["Feature"];
-} & CommonProps;
+} & Omit<CommonProps, "isSelected" | "isHidden">;
 
 export type Cluster = {
   id: string;
@@ -29,6 +31,8 @@ export default function ClusteredLayers({
   clusterComponent,
   layers,
   atomMap,
+  selectedLayerId,
+  isHidden,
   overrides,
   ...props
 }: Props): JSX.Element | null {
@@ -48,10 +52,12 @@ export default function ClusteredLayers({
           layer={layer}
           atom={a}
           overrides={overrides?.[layer.id]}
+          isSelected={!!selectedLayerId && selectedLayerId == layer.id}
+          isHidden={isHidden?.(layer.id)}
         />
       );
     },
-    [atomMap, overrides, props],
+    [atomMap, isHidden, overrides, props, selectedLayerId],
   );
 
   return (
