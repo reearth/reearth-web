@@ -130,13 +130,17 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     );
   }, [isStyleImage, imgw, pointSize, imgh, labelPos]);
 
+  const extrudePointsLineColor = useMemo(() => {
+    return Color.WHITE.withAlpha(0.4);
+  }, []);
+
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
         <EntityExt layerId={layer?.id} featureId={feature?.id} unselectable>
           <PolylineGraphics
             positions={extrudePoints}
-            material={Color.WHITE.withAlpha(0.4)}
+            material={extrudePointsLineColor}
             width={0.5}
           />
         </EntityExt>
