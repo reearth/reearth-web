@@ -58,12 +58,12 @@ const LayerActions: React.FC<Props> = ({
             onLayerRemove?.(selectedLayerId);
           }
         }}>
-        <HelpButton descriptionTitle={t("Delete selected layer.")} balloonDirection="bottom">
+        <HelpButton descriptionTitle={t("Delete Selected Layer")} balloonDirection="bottom">
           <StyledIcon icon="bin" size={16} disabled={!selectedLayerId} />
         </HelpButton>
       </Action>
       <Action disabled={!rootLayerId} onClick={onLayerGroupCreate}>
-        <HelpButton descriptionTitle={t("Create new folder.")} balloonDirection="bottom">
+        <HelpButton descriptionTitle={t("Create New Folder")} balloonDirection="bottom">
           <StyledIcon icon="folderAdd" size={16} />
         </HelpButton>
       </Action>
@@ -79,7 +79,7 @@ const LayerActions: React.FC<Props> = ({
             onZoomToLayer?.(selectedLayerId);
           }
         }}>
-        <HelpButton descriptionTitle={t("Zoom To Layer.")} balloonDirection="bottom">
+        <HelpButton descriptionTitle={t("Zoom To Layer")} balloonDirection="bottom">
           <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
         </HelpButton>
       </Action>

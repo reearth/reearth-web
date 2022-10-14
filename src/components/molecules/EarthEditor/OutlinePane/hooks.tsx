@@ -386,7 +386,7 @@ export default ({
     visibilityShown: true,
     selectedLayerId,
     rootLayerId,
-    onZoomToLayer: onZoomToLayer,
+    onZoomToLayer,
   });
 
   const clusterTreeViewItemOnRename = useCallback(

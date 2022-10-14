@@ -92,7 +92,13 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         const e = viewer.entities.getById(layerId);
         if (!e) return;
-        viewer.flyTo(e);
+        const camera = getCamera(viewer);
+        const offset = new Cesium.HeadingPitchRange(
+          camera?.heading ?? 0,
+          camera?.pitch ?? -90,
+          50000,
+        );
+        viewer.zoomTo(e, offset);
       },
       getViewport: () => {
         const viewer = cesium.current?.cesiumElement;
