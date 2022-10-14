@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath } from "cesium";
+import { Cesium3DTileset, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
@@ -27,6 +27,7 @@ import {
   zoom,
 } from "./common";
 import { legacyBuiltin } from "./Feature";
+import { getTag } from "./Feature/utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -90,15 +91,26 @@ export default function useEngineRef(
       lookAtLayer: layerId => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const e = viewer.entities.getById(layerId);
-        if (!e) return;
+
+        let target: any = viewer.entities.getById(layerId);
+        if (!target) {
+          for (let i = 0; i < viewer.scene.primitives.length; i++) {
+            const p = viewer.scene.primitives.get(i);
+            if (p instanceof Cesium3DTileset && getTag(p)?.layerId === layerId) {
+              target = p;
+              break;
+            }
+          }
+        }
+        if (!target) return;
+
         const camera = getCamera(viewer);
         const offset = new Cesium.HeadingPitchRange(
           camera?.heading ?? 0,
           camera?.pitch ?? -90,
           50000,
         );
-        viewer.zoomTo(e, offset);
+        viewer.zoomTo(target, offset);
       },
       getViewport: () => {
         const viewer = cesium.current?.cesiumElement;
