@@ -129,7 +129,7 @@ export type CameraOptions = {
 };
 
 export type ClusterProps = {
-  property: ClusterProperty;
+  cluster: Cluster;
   children?: ReactNode;
 };
 
@@ -209,15 +209,17 @@ export type SceneProperty = {
   };
 };
 
-export type ClusterProperty = {
+export type Cluster = {
   id: string;
-  default?: {
-    clusterPixelRange: number;
-    clusterMinSize: number;
-    clusterLabelTypography?: Typography;
-    clusterImage?: string;
-    clusterImageHeight?: number;
-    clusterImageWidth?: number;
+  property?: {
+    default?: {
+      clusterPixelRange: number;
+      clusterMinSize: number;
+      clusterLabelTypography?: Typography;
+      clusterImage?: string;
+      clusterImageHeight?: number;
+      clusterImageWidth?: number;
+    };
   };
-  layers?: { layer?: string }[];
+  layers?: string[];
 };

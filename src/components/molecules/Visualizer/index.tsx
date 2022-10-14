@@ -7,7 +7,7 @@ import Loading from "@reearth/components/atoms/Loading";
 import { styled } from "@reearth/theme";
 import { LatLng } from "@reearth/util/value";
 
-import Engine, { Props as EngineProps, SceneProperty, ClusterProperty } from "./Engine";
+import Engine, { Props as EngineProps, SceneProperty, Cluster } from "./Engine";
 import Err from "./Error";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
@@ -26,7 +26,7 @@ import WidgetAlignSystem, {
   WidgetAlignSystem as WidgetAlignSystemType,
 } from "./WidgetAlignSystem";
 
-export type { SceneProperty, ClusterProperty } from "./Engine";
+export type { SceneProperty, Cluster } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
 export type { Layer } from "./Layers";
 export type { Tag } from "./Plugin/types";
@@ -56,7 +56,7 @@ export type Props = {
   sceneProperty?: SceneProperty;
   tags?: Tag[];
   pluginProperty?: { [key: string]: any };
-  clusterProperty?: ClusterProperty[];
+  clusters?: Cluster[];
   selectedLayerId?: string;
   zoomedLayerId?: string;
   selectedBlockId?: string;
@@ -83,7 +83,7 @@ export default function Visualizer({
   tags,
   children,
   pluginProperty,
-  clusterProperty,
+  clusters,
   pluginBaseUrl,
   isPublished,
   selectedLayerId: outerSelectedLayerId,
@@ -185,12 +185,12 @@ export default function Visualizer({
             onLayerDrop={handleLayerDrop}
             {...props}>
             <Layers
+              layers={layers}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
-              clusterProperty={clusterProperty}
+              clusters={clusters}
               sceneProperty={overriddenSceneProperty}
               selectedLayerId={selectedLayerId}
-              layers={layers}
               isLayerHidden={isLayerHidden}
               overriddenProperties={layerOverriddenProperties}
               clusterComponent={engineRef.current?.clusterComponent}

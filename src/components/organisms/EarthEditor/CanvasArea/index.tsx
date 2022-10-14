@@ -20,7 +20,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     zoomedLayerId,
     sceneProperty,
     pluginProperty,
-    clusterProperty,
+    clusters,
     rootLayer,
     widgets,
     tags,
@@ -45,6 +45,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     onFovChange,
     handleDropLayer,
   } = useHooks(isBuilt);
+
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopUp"]>
   >(
@@ -69,7 +70,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       sceneProperty={sceneProperty}
       tags={tags}
       pluginProperty={pluginProperty}
-      clusterProperty={clusterProperty}
+      clusters={clusters}
       camera={camera}
       clock={clock}
       ready={isBuilt || (!!rootLayer && !!widgets)}

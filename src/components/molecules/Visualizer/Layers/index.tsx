@@ -1,6 +1,6 @@
 import { ComponentType, useMemo, useCallback } from "react";
 
-import { ClusterProperty, ClusterProps } from "../Engine";
+import { Cluster, ClusterProps } from "../Engine";
 
 import P from "./Primitive";
 import type { LayerStore, Layer } from "./store";
@@ -8,7 +8,7 @@ import type { LayerStore, Layer } from "./store";
 export type { Layer } from "./Primitive";
 
 export type Props = {
-  clusterProperty?: ClusterProperty[];
+  clusters?: Cluster[];
   sceneProperty?: any;
   isEditable?: boolean;
   isBuilt?: boolean;
@@ -23,7 +23,7 @@ export { LayerStore, empty as emptyLayerStore } from "./store";
 
 export default function Layers({
   sceneProperty,
-  clusterProperty,
+  clusters,
   isEditable,
   isBuilt,
   layers,
@@ -34,13 +34,8 @@ export default function Layers({
 }: Props): JSX.Element | null {
   const Cluster = clusterComponent;
   const clusteredLayers = useMemo<Set<string>>(
-    () =>
-      new Set(
-        clusterProperty?.flatMap(c =>
-          (c.layers ?? []).map(l => l.layer).filter((l): l is string => !!l),
-        ),
-      ),
-    [clusterProperty],
+    () => new Set(clusters?.flatMap(c => (c.layers ?? []).filter((l): l is string => !!l))),
+    [clusters],
   );
 
   const renderLayer = useCallback(
@@ -64,12 +59,12 @@ export default function Layers({
   return (
     <>
       {Cluster &&
-        clusterProperty
+        clusters
           ?.filter(cluster => !!cluster.id)
           .map(cluster => (
-            <Cluster key={cluster.id} property={cluster}>
+            <Cluster key={cluster.id} cluster={cluster}>
               {layers?.flattenLayersRaw
-                ?.filter(layer => cluster?.layers?.some(l => l.layer === layer.id))
+                ?.filter(layer => cluster?.layers?.some(l => l === layer.id))
                 .map(renderLayer)}
             </Cluster>
           ))}

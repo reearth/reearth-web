@@ -1,4 +1,4 @@
-import { mapValues } from "lodash-es";
+import { mapValues } from "lodash";
 import { useState, useMemo, useEffect } from "react";
 
 import type {
@@ -7,7 +7,7 @@ import type {
   Block,
   WidgetAlignSystem,
   Alignment,
-  ClusterProperty,
+  Cluster,
 } from "@reearth/components/molecules/Visualizer";
 
 import { PublishedData, WidgetZone, WidgetSection, WidgetArea, Layer as RawLayer } from "./types";
@@ -22,19 +22,23 @@ export default (alias?: string) => {
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
     {},
   );
-  const clusterProperty = useMemo<ClusterProperty[]>(
-    () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
+
+  const clusters = useMemo<Cluster[]>(
+    () =>
+      data?.clusters
+        .map(a => ({ property: processProperty(a.property), id: a.id }))
+        .map((a): Cluster => ({ ...a, layers: a.property?.layers?.map((l: any) => l.layer) })) ??
+      [],
     [data],
   );
 
-  const rootLayer = useMemo(() => {
-    return {
+  const rootLayer = useMemo(
+    () => ({
       id: "",
       children: data?.layers?.map(processLayer) ?? [],
-    };
-  }, [data]);
-
-  const tags = data?.tags; // Currently no need to convert tags
+    }),
+    [data],
+  );
 
   const widgets = useMemo<
     { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
@@ -171,8 +175,8 @@ export default (alias?: string) => {
     sceneProperty,
     pluginProperty,
     rootLayer,
-    tags,
-    clusterProperty,
+    tags: data?.tags,
+    clusters,
     widgets,
     ready,
     error,

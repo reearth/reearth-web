@@ -6,7 +6,7 @@ import { toCSSFont } from "@reearth/util/value";
 
 import { ClusterProps } from "../ref";
 
-const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
+const Cluster: React.FC<ClusterProps> = ({ cluster, children }) => {
   const {
     clusterPixelRange = 15,
     clusterMinSize = 3,
@@ -23,9 +23,9 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     clusterImage,
     clusterImageWidth,
     clusterImageHeight,
-  } = property?.default ?? {};
+  } = cluster?.property?.default ?? {};
 
-  const cluster = useMemo(() => {
+  const ec = useMemo(() => {
     return new EntityCluster({
       enabled: true,
       pixelRange: 15,
@@ -38,35 +38,31 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
 
   useEffect(() => {
     const isClusterHidden = React.Children.count(children) < clusterMinSize;
-    const removeListener = cluster?.clusterEvent.addEventListener(
-      (_clusteredEntities, clusterParam) => {
-        clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
-        clusterParam.label.horizontalOrigin =
-          clusterLabelTypography.textAlign === "right"
-            ? HorizontalOrigin.LEFT
-            : clusterLabelTypography.textAlign === "left"
-            ? HorizontalOrigin.RIGHT
-            : HorizontalOrigin.CENTER;
-        clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
-        clusterParam.label.fillColor = Color.fromCssColorString(
-          clusterLabelTypography.color ?? "#FFF",
-        );
-        clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
-        clusterParam.billboard.show = true;
-        // Billboard.{image,height,width} should accept undefined
-        (clusterParam.billboard.image as any) = clusterImage;
-        (clusterParam.billboard.height as any) = clusterImageHeight;
-        (clusterParam.billboard.width as any) = clusterImageWidth;
-        // Workaround if minimumClusterSize is larger than number of layers event listner breaks
-        cluster.minimumClusterSize = isClusterHidden
-          ? React.Children.count(children)
-          : clusterMinSize;
-      },
-    );
-    cluster.enabled = !isClusterHidden;
+    const removeListener = ec?.clusterEvent.addEventListener((_clusteredEntities, clusterParam) => {
+      clusterParam.label.font = toCSSFont(clusterLabelTypography, { fontSize: 30 });
+      clusterParam.label.horizontalOrigin =
+        clusterLabelTypography.textAlign === "right"
+          ? HorizontalOrigin.LEFT
+          : clusterLabelTypography.textAlign === "left"
+          ? HorizontalOrigin.RIGHT
+          : HorizontalOrigin.CENTER;
+      clusterParam.label.verticalOrigin = VerticalOrigin.CENTER;
+      clusterParam.label.fillColor = Color.fromCssColorString(
+        clusterLabelTypography.color ?? "#FFF",
+      );
+      clusterParam.label.eyeOffset = new Cartesian3(0, 0, -5);
+      clusterParam.billboard.show = true;
+      // Billboard.{image,height,width} should accept undefined
+      (clusterParam.billboard.image as any) = clusterImage;
+      (clusterParam.billboard.height as any) = clusterImageHeight;
+      (clusterParam.billboard.width as any) = clusterImageWidth;
+      // Workaround if minimumClusterSize is larger than number of layers event listner breaks
+      ec.minimumClusterSize = isClusterHidden ? React.Children.count(children) : clusterMinSize;
+    });
+    ec.enabled = !isClusterHidden;
     // Workaround to re-style components
-    cluster.pixelRange = 0;
-    cluster.pixelRange = clusterPixelRange;
+    ec.pixelRange = 0;
+    ec.pixelRange = clusterPixelRange;
     return () => {
       removeListener();
     };
@@ -79,10 +75,11 @@ const Cluster: React.FC<ClusterProps> = ({ property, children }) => {
     clusterImageWidth,
     children,
     cluster,
+    ec,
   ]);
 
   return cluster ? (
-    <CustomDataSource show clustering={cluster}>
+    <CustomDataSource show clustering={ec}>
       {children}
     </CustomDataSource>
   ) : null;

@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import { ClusterProperty, Layer } from "@reearth/components/molecules/Visualizer";
+import { Cluster, Layer } from "@reearth/components/molecules/Visualizer";
 import {
   Location,
   Alignment,
@@ -116,11 +116,12 @@ export default (isBuilt?: boolean) => {
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
-  const clusterProperty = useMemo<ClusterProperty[]>(
+  const clusters = useMemo<Cluster[]>(
     () =>
       scene?.clusters
-        .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
-        .filter((c): c is ClusterProperty => !!c) ?? [],
+        .map(a => ({ property: convertProperty(a.property), id: a.id }))
+        .map((a): Cluster => ({ ...a, layers: a.property?.layers?.map((l: any) => l.layer) })) ??
+      [],
     [scene?.clusters],
   );
 
@@ -283,7 +284,7 @@ export default (isBuilt?: boolean) => {
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
-    clusterProperty,
+    clusters,
     tags,
     widgets,
     rootLayer,

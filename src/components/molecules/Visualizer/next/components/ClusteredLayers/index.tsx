@@ -15,7 +15,7 @@ export type Props = {
 
 export type Cluster = {
   id: string;
-  property: any;
+  property?: any;
   layers?: string[];
 };
 

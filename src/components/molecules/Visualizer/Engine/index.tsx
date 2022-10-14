@@ -16,7 +16,7 @@ import Cesium from "./Cesium";
 import type { EngineRef, SceneProperty } from "./ref";
 
 export type { OverriddenInfobox, SelectLayerOptions } from "../Plugin/types";
-export type { SceneProperty, ClusterProperty, ClusterProps } from "./ref";
+export type { SceneProperty, Cluster, ClusterProps } from "./ref";
 
 export type EngineProps = {
   className?: string;

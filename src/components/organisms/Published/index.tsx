@@ -9,7 +9,7 @@ export type Props = {
 };
 
 export default function Published({ className, alias }: Props) {
-  const { sceneProperty, pluginProperty, rootLayer, widgets, tags, ready, error, clusterProperty } =
+  const { sceneProperty, pluginProperty, rootLayer, widgets, tags, ready, error, clusters } =
     useHooks(alias);
 
   return error ? (
@@ -23,7 +23,7 @@ export default function Published({ className, alias }: Props) {
       tags={tags}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
-      clusterProperty={clusterProperty}
+      clusters={clusters}
       ready={ready}
       isBuilt
       isPublished
