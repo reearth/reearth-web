@@ -15,8 +15,6 @@ import {
   Viewer,
   HeightReference,
   ShadowMode,
-  Entity,
-  PropertyBag,
   Clock as CesiumClock,
   JulianDate,
   ClockStep,
@@ -482,31 +480,6 @@ export const shadowMode = (
       [key in string]?: ShadowMode;
     }
   )[shadows || ""]);
-
-export const unselectableTag = "reearth_unselectable";
-export const draggableTag = "reearth_draggable";
-
-export function isSelectable(e: Entity | undefined): boolean {
-  return !e?.properties?.hasProperty(unselectableTag);
-}
-
-export function isDraggable(e: Entity): string | undefined {
-  return e.properties?.getValue(new JulianDate())?.[draggableTag];
-}
-
-export function attachTag(entity: Entity | undefined, tag: string, value: any) {
-  if (!entity) return;
-  if (typeof value !== "undefined" && !entity.properties) {
-    entity.properties = new PropertyBag({ [tag]: value });
-  } else if (typeof value === "undefined") {
-    entity.properties?.removeProperty(tag);
-  } else if (entity.properties?.hasProperty(tag)) {
-    entity.properties?.removeProperty(tag);
-    entity.properties?.addProperty(tag, value);
-  } else {
-    entity.properties?.addProperty(tag, value);
-  }
-}
 
 export function lookHorizontal(scene: Scene, amount: number) {
   const camera = scene.camera;

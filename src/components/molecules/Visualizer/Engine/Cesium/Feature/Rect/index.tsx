@@ -1,11 +1,12 @@
 import { Rectangle, Color, ImageMaterialProperty } from "cesium";
 import React, { useMemo } from "react";
-import { RectangleGraphics, Entity } from "resium";
+import { RectangleGraphics } from "resium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { heightReference, shadowMode } from "../../common";
+import { EntityExt } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -22,7 +23,7 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) => {
+const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, layer, feature }) => {
   const {
     rect,
     image,
@@ -77,7 +78,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) =
   );
 
   return !isVisible ? null : (
-    <Entity id={id}>
+    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id}>
       <RectangleGraphics
         height={height}
         extrudedHeight={extrudedHeight}
@@ -90,7 +91,7 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property }) =
         heightReference={heightReference(hr)}
         shadows={shadowMode(shadows)}
       />
-    </Entity>
+    </EntityExt>
   );
 };
 

@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Cartesian3, Entity as CesiumEntity } from "cesium";
-import React, { useEffect, useMemo, useRef } from "react";
-import { Entity, EllipsoidGraphics, CesiumComponentRef } from "resium";
+import { Cartesian3 } from "cesium";
+import React, { useMemo } from "react";
+import { EllipsoidGraphics } from "resium";
 
 import { LatLng, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
-import { attachTag, draggableTag, heightReference, shadowMode } from "../../common";
+import { heightReference, shadowMode } from "../../common";
+import { EntityExt } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -20,7 +21,14 @@ export type Property = {
   fillColor?: string;
 };
 
-const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, geometry }) => {
+const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({
+  id,
+  isVisible,
+  property,
+  geometry,
+  layer,
+  feature,
+}) => {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -49,25 +57,21 @@ const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property
 
   const material = useMemo(() => toColor(fillColor), [fillColor]);
 
-  const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
-  useEffect(() => {
-    attachTag(
-      e.current?.cesiumElement,
-      draggableTag,
-      // TODO: support geometry
-      property.location ? "default.location" : "default.position",
-    );
-  }, [isVisible, pos, property.location]);
-
   return !isVisible || !pos ? null : (
-    <Entity id={id} position={pos} ref={e}>
+    <EntityExt
+      id={id}
+      position={pos}
+      layerId={layer?.id}
+      featureId={feature?.id}
+      draggable
+      legacyLocationPropertyKey="default.position">
       <EllipsoidGraphics
         radii={raddi}
         material={material}
         heightReference={heightReference(hr)}
         shadows={shadowMode(shadows)}
       />
-    </Entity>
+    </EntityExt>
   );
 };
 

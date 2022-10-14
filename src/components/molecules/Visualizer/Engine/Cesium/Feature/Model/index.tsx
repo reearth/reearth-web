@@ -1,17 +1,12 @@
-import {
-  Cartesian3,
-  HeadingPitchRoll,
-  Math as CesiumMath,
-  Transforms,
-  Entity as CesiumEntity,
-} from "cesium";
-import { useEffect, useMemo, useRef } from "react";
-import { ModelGraphics, Entity, CesiumComponentRef } from "resium";
+import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Transforms } from "cesium";
+import { useMemo } from "react";
+import { ModelGraphics } from "resium";
 
 import { toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
-import { attachTag, colorBlendMode, draggableTag, heightReference, shadowMode } from "../../common";
+import { colorBlendMode, heightReference, shadowMode } from "../../common";
+import { EntityExt } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -37,7 +32,14 @@ export type Property = {
   silhouetteSize?: number; // default: 1
 };
 
-export default function Model({ id, isVisible, property, geometry }: PrimitiveProps<Property>) {
+export default function Model({
+  id,
+  isVisible,
+  property,
+  geometry,
+  layer,
+  feature,
+}: PrimitiveProps<Property>) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -91,13 +93,14 @@ export default function Model({ id, isVisible, property, geometry }: PrimitivePr
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
 
-  const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
-  useEffect(() => {
-    attachTag(e.current?.cesiumElement, draggableTag, "default.location");
-  }, [isVisible, model, position]);
-
   return !isVisible || !model || !position ? null : (
-    <Entity id={id} position={position} orientation={orientation as any} ref={e}>
+    <EntityExt
+      id={id}
+      position={position}
+      orientation={orientation as any}
+      layerId={layer?.id}
+      featureId={feature?.id}
+      draggable>
       <ModelGraphics
         uri={model}
         scale={scale}
@@ -113,6 +116,6 @@ export default function Model({ id, isVisible, property, geometry }: PrimitivePr
         maximumScale={maximumScale}
         minimumPixelSize={minimumPixelSize}
       />
-    </Entity>
+    </EntityExt>
   );
 }

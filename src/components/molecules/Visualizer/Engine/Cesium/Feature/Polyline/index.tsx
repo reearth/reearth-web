@@ -1,13 +1,14 @@
 import { Cartesian3 } from "cesium";
 import { isEqual } from "lodash";
 import React, { useMemo } from "react";
-import { PolylineGraphics, Entity } from "resium";
+import { PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { shadowMode } from "../../common";
+import { EntityExt } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -19,7 +20,14 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polyline: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, geometry }) => {
+const Polyline: React.FC<PrimitiveProps<Property>> = ({
+  id,
+  isVisible,
+  property,
+  geometry,
+  layer,
+  feature,
+}) => {
   const coordinates = useMemo(
     () =>
       geometry?.type === "LineString"
@@ -40,7 +48,7 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property,
   const material = useMemo(() => toColor(strokeColor), [strokeColor]);
 
   return !isVisible ? null : (
-    <Entity id={id}>
+    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id}>
       <PolylineGraphics
         positions={positions}
         width={strokeWidth}
@@ -48,7 +56,7 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property,
         clampToGround={clampToGround}
         shadows={shadowMode(shadows)}
       />
-    </Entity>
+    </EntityExt>
   );
 };
 

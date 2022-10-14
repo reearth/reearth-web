@@ -14,14 +14,8 @@ import { Clock } from "../../Plugin/types";
 import { MouseEvent, MouseEvents } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import {
-  getCamera,
-  isDraggable,
-  isSelectable,
-  layerIdField,
-  getLocationFromScreenXY,
-  getClock,
-} from "./common";
+import { getCamera, layerIdField, getLocationFromScreenXY, getClock } from "./common";
+import { getTag } from "./Feature/utils";
 import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
@@ -200,7 +194,11 @@ export default ({
     if (!viewer || viewer.isDestroyed()) return;
 
     const entity = findEntity(viewer, selectedLayerId);
-    if (viewer.selectedEntity === entity || (entity && !isSelectable(entity))) return;
+    if (viewer.selectedEntity === entity) return;
+
+    const tag = getTag(entity);
+    if (tag?.unselectable) return;
+
     viewer.selectedEntity = entity;
   }, [cesium, selectedLayerId]);
 
@@ -266,7 +264,12 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
-      if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
+      if (
+        target &&
+        "id" in target &&
+        target.id instanceof Entity &&
+        !getTag(target.id)?.unselectable
+      ) {
         onLayerSelect?.(target.id.id);
         return;
       }
@@ -307,49 +310,44 @@ export default ({
     viewer.scene.requestRender();
   });
 
-  // enable Drag and Drop Layers
-  const handleLayerDrag = useCallback(
-    (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
-      const viewer = cesium.current?.cesiumElement;
-      if (!viewer || viewer.isDestroyed() || !isSelectable(e) || !isDraggable(e)) return false;
-
-      const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
-      if (!pos) return false;
-
-      onLayerDrag?.(e.id, pos);
-    },
-    [onLayerDrag],
-  );
-
-  const handleLayerDrop = useCallback(
-    (e: Entity, position: Cartesian3 | undefined): boolean | void => {
-      const viewer = cesium.current?.cesiumElement;
-      if (!viewer || viewer.isDestroyed()) return false;
-
-      const key = isDraggable(e);
-      const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
-      onLayerDrop?.(e.id, key || "", pos);
-
-      return false; // let apollo-client handle optimistic updates
-    },
-    [onLayerDrop],
-  );
-
-  const cesiumDnD = useRef<CesiumDnD>();
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed()) return;
-    cesiumDnD.current = new CesiumDnD(viewer, {
-      onDrag: handleLayerDrag,
-      onDrop: handleLayerDrop,
-      dragDelay: 1000,
-      initialDisabled: !isLayerDraggable,
+    if (!viewer || viewer.isDestroyed() || !isLayerDraggable) return;
+
+    const cesiumDnD = new CesiumDnD(viewer, {
+      onDrag: (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+
+        const tag = getTag(e);
+        if (!tag?.draggable || tag.unselectable || !tag.layerId) return false;
+
+        const pos = convertCartesian3ToPosition(viewer, position);
+        if (!pos) return false;
+
+        onLayerDrag?.(e.id, pos);
+      },
+      onDrop: (e: Entity, position: Cartesian3 | undefined): boolean | void => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return false;
+
+        const tag = getTag(e);
+        if (!tag?.draggable || !tag.layerId) return false;
+
+        const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
+        onLayerDrop?.(tag.layerId, tag.legacyLocationPropertyKey || "default.location", pos);
+
+        return false; // let apollo-client handle optimistic updates
+      },
+      dragDelay: 500,
     });
+
     return () => {
       if (!viewer || viewer.isDestroyed()) return;
-      cesiumDnD.current?.disable();
+      cesiumDnD.disable();
     };
-  }, [handleLayerDrag, handleLayerDrop, isLayerDraggable]);
+  }, [isLayerDraggable, onLayerDrag, onLayerDrop]);
+
   const { cameraViewBoundaries, cameraViewOuterBoundaries, cameraViewBoundariesMaterial } =
     useCameraLimiter(cesium, camera, property?.cameraLimiter);
 

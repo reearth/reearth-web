@@ -1,7 +1,7 @@
-import { Cartesian3, Entity as CesiumEntity } from "cesium";
-import React, { useEffect, useMemo, useRef } from "react";
+import { Cartesian3 } from "cesium";
+import React, { useMemo } from "react";
 import nl2br from "react-nl2br";
-import { Entity, BillboardGraphics, CesiumComponentRef } from "resium";
+import { BillboardGraphics } from "resium";
 
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 import Text from "@reearth/components/atoms/Text";
@@ -9,9 +9,10 @@ import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
-import { useIcon, ho, vo, heightReference, attachTag, draggableTag } from "../../common";
+import { heightReference, ho, useIcon, vo } from "../../common";
+import { EntityExt } from "../utils";
 
-import useHooks, { TransitionStatus, photoDuration, photoExitDuration } from "./hooks";
+import useHooks, { photoDuration, photoExitDuration, TransitionStatus } from "./hooks";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -40,6 +41,8 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
   property,
   geometry,
   isSelected,
+  layer,
+  feature,
 }) => {
   const coordinates = useMemo(
     () =>
@@ -94,21 +97,16 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
     isSelected: isSelected && !!photoOverlayImage,
   });
 
-  const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
-  useEffect(() => {
-    attachTag(e.current?.cesiumElement, draggableTag, "default.location");
-  }, [isVisible]);
-
   return !isVisible ? null : (
     <>
-      <Entity id={id} position={pos} ref={e}>
+      <EntityExt id={id} position={pos} layerId={layer?.id} featureId={feature?.id} draggable>
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}
           verticalOrigin={vo(imageVerticalOrigin)}
           heightReference={heightReference(hr)}
         />
-      </Entity>
+      </EntityExt>
       {photoOverlayImageTransiton === "unmounted" ? null : (
         <PhotoWrapper transition={photoOverlayImageTransiton} onClick={exitPhotoOverlay}>
           <Photo src={photoOverlayImage} />

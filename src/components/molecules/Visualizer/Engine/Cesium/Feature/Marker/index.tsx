@@ -1,33 +1,12 @@
-import {
-  Entity as CesiumEntity,
-  Cartesian3,
-  Color,
-  HorizontalOrigin,
-  VerticalOrigin,
-  Cartesian2,
-} from "cesium";
-import React, { useMemo, useRef, useEffect } from "react";
-import {
-  Entity,
-  BillboardGraphics,
-  PointGraphics,
-  LabelGraphics,
-  PolylineGraphics,
-  CesiumComponentRef,
-} from "resium";
+import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from "cesium";
+import React, { useMemo } from "react";
+import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
-import {
-  useIcon,
-  ho,
-  vo,
-  heightReference,
-  unselectableTag,
-  draggableTag,
-  attachTag,
-} from "../../common";
+import { useIcon, ho, vo, heightReference } from "../../common";
+import { EntityExt } from "../utils";
 
 import marker from "./marker.svg";
 
@@ -69,7 +48,14 @@ type Property = {
   extrude?: boolean;
 };
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible, geometry }) => {
+const Marker: React.FC<PrimitiveProps<Property>> = ({
+  property,
+  id,
+  isVisible,
+  geometry,
+  layer,
+  feature,
+}) => {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -152,31 +138,18 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible, g
     );
   }, [isStyleImage, imgw, pointSize, imgh, labelPos]);
 
-  const e = useRef<CesiumComponentRef<CesiumEntity>>(null);
-  useEffect(() => {
-    // TODO
-    // draggable
-    attachTag(e.current?.cesiumElement, draggableTag, "default.location");
-  }, [pos, isVisible]);
-
-  const ep = useRef<CesiumComponentRef<CesiumEntity>>(null);
-  useEffect(() => {
-    // disable selecting polyline
-    attachTag(ep.current?.cesiumElement, unselectableTag, true);
-  }, [pos, isVisible, extrudePoints]);
-
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
-        <Entity ref={ep}>
+        <EntityExt layerId={layer?.id} featureId={feature?.id} unselectable>
           <PolylineGraphics
             positions={extrudePoints}
             material={Color.WHITE.withAlpha(0.4)}
             width={0.5}
           />
-        </Entity>
+        </EntityExt>
       )}
-      <Entity id={id} position={pos} ref={e}>
+      <EntityExt id={id} position={pos} layerId={layer?.id} featureId={feature?.id} draggable>
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}
@@ -218,7 +191,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ property, id, isVisible, g
             heightReference={heightReference(hr)}
           />
         )}
-      </Entity>
+      </EntityExt>
     </>
   );
 };

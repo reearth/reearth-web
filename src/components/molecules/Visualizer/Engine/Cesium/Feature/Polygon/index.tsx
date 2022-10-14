@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { PolygonHierarchy, Cartesian3 } from "cesium";
+import { Cartesian3, PolygonHierarchy } from "cesium";
 import { isEqual } from "lodash";
 import React, { useMemo } from "react";
-import { PolygonGraphics, Entity } from "resium";
+import { PolygonGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { heightReference, shadowMode } from "../../common";
+import { EntityExt } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -23,7 +24,14 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, geometry }) => {
+const Polygon: React.FC<PrimitiveProps<Property>> = ({
+  id,
+  isVisible,
+  property,
+  geometry,
+  layer,
+  feature,
+}) => {
   const coordiantes = useMemo(
     () =>
       geometry?.type === "Polygon"
@@ -65,7 +73,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, 
   const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
 
   return !isVisible ? null : (
-    <Entity id={id}>
+    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id}>
       <PolygonGraphics
         hierarchy={hierarchy}
         fill={fill}
@@ -76,7 +84,7 @@ const Polygon: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, 
         heightReference={heightReference(hr)}
         shadows={shadowMode(shadows)}
       />
-    </Entity>
+    </EntityExt>
   );
 };
 
