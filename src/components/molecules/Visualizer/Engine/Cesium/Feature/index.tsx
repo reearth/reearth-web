@@ -54,7 +54,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   ellipsoid: [Ellipsoid, ellipsoidConfig],
   model: [Model, modelConfig],
   "3dtiles": [Tileset, tilesetConfig],
-  legacy_photooverlay: [PhotoOverlay, photoOverlayConfig],
+  photooverlay: [PhotoOverlay, photoOverlayConfig],
   legacy_resource: [Resource, resourceConfig],
 };
 
