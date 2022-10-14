@@ -1,5 +1,5 @@
 import { Cartesian3 } from "cesium";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import nl2br from "react-nl2br";
 import { BillboardGraphics } from "resium";
 
@@ -8,13 +8,12 @@ import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
 import { Camera, LatLng } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { heightReference, ho, useIcon, vo } from "../../common";
-import { EntityExt } from "../utils";
+import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 import useHooks, { photoDuration, photoExitDuration, TransitionStatus } from "./hooks";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   location?: LatLng;
@@ -35,7 +34,7 @@ export type Property = {
   photoOverlayDescription?: string;
 };
 
-const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
+export default function PhotoOverlay({
   id,
   isVisible,
   property,
@@ -43,7 +42,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
   isSelected,
   layer,
   feature,
-}) => {
+}: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -119,7 +118,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({
       )}
     </>
   );
-};
+}
 
 const PhotoWrapper = styled.div<{ transition: TransitionStatus }>`
   position: absolute;
@@ -152,4 +151,6 @@ const Description = styled(Text)`
   text-align: left;
 `;
 
-export default PhotoOverlay;
+export const config: FeatureComponentConfig = {
+  noFeature: true,
+};

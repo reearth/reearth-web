@@ -1,14 +1,13 @@
 import { Rectangle, Color, ImageMaterialProperty } from "cesium";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { RectangleGraphics } from "resium";
 
 import { Rect as RectValue } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { heightReference, shadowMode } from "../../common";
-import { EntityExt } from "../utils";
+import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   rect?: RectValue;
@@ -23,7 +22,7 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, layer, feature }) => {
+export default function Rect({ id, isVisible, property, layer, feature }: Props) {
   const {
     rect,
     image,
@@ -93,6 +92,6 @@ const Rect: React.FC<PrimitiveProps<Property>> = ({ id, isVisible, property, lay
       />
     </EntityExt>
   );
-};
+}
 
-export default Rect;
+export const config: FeatureComponentConfig = {};

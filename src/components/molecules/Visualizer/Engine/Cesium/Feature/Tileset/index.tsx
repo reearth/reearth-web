@@ -2,11 +2,10 @@ import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle, IonResource 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Cesium3DTileset, CesiumComponentRef } from "resium";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { shadowMode } from "../../common";
-import { attachTag } from "../utils";
+import { attachTag, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   sourceType?: "url" | "osm";
@@ -21,7 +20,7 @@ export default function Tileset({
   property,
   layer,
   feature,
-}: PrimitiveProps<Property>): JSX.Element | null {
+}: Props): JSX.Element | null {
   const { sourceType, tileset, styleUrl, shadows } = property ?? {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
 
@@ -58,3 +57,7 @@ export default function Tileset({
     <Cesium3DTileset ref={ref} url={tilesetUrl} style={style} shadows={shadowMode(shadows)} />
   );
 }
+
+export const config: FeatureComponentConfig = {
+  noFeature: true,
+};

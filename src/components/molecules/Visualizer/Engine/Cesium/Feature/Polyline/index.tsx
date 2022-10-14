@@ -1,16 +1,15 @@
 import { Cartesian3 } from "cesium";
 import { isEqual } from "lodash";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { shadowMode } from "../../common";
-import { EntityExt } from "../utils";
+import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   coordinates?: Coordinates;
@@ -20,14 +19,7 @@ export type Property = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
-const Polyline: React.FC<PrimitiveProps<Property>> = ({
-  id,
-  isVisible,
-  property,
-  geometry,
-  layer,
-  feature,
-}) => {
+export default function Polyline({ id, isVisible, property, geometry, layer, feature }: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "LineString"
@@ -58,6 +50,8 @@ const Polyline: React.FC<PrimitiveProps<Property>> = ({
       />
     </EntityExt>
   );
-};
+}
 
-export default Polyline;
+export const config: FeatureComponentConfig = {
+  noLayer: true,
+};

@@ -1,7 +1,37 @@
 import composeRefs from "@seznam/compose-react-refs";
 import { Cesium3DTileset, Entity as CesiumEntity, PropertyBag } from "cesium";
-import { ComponentProps, ForwardedRef, forwardRef, useLayoutEffect, useRef } from "react";
-import { CesiumComponentRef, Entity } from "resium";
+import {
+  ComponentProps,
+  ComponentType,
+  ForwardedRef,
+  forwardRef,
+  useLayoutEffect,
+  useRef,
+} from "react";
+import { type CesiumComponentRef, Entity } from "resium";
+
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  FeatureComponentProps,
+  Geometry,
+} from "../../../next";
+
+export type FeatureProps<P = any> = {
+  id: string;
+  property: P;
+  isVisible?: boolean;
+  layer?: ComputedLayer;
+  feature?: ComputedFeature;
+  geometry?: Geometry;
+} & Omit<FeatureComponentProps, "layer">;
+
+export type FeatureComponent = ComponentType<FeatureProps>;
+
+export type FeatureComponentConfig = {
+  noLayer?: boolean;
+  noFeature?: boolean;
+};
 
 export type Tag = {
   layerId?: string;

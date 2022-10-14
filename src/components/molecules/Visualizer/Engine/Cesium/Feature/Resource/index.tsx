@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
+import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   url?: string;
@@ -25,7 +25,7 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-const Resource: React.FC<Props> = ({ isVisible, property }) => {
+export default function Resource({ isVisible, property }: Props) {
   const { url, type, clampToGround } = property ?? {};
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
@@ -37,6 +37,6 @@ const Resource: React.FC<Props> = ({ isVisible, property }) => {
   if (!isVisible || !Component || !url) return null;
 
   return <Component data={url} clampToGround={clampToGround} />;
-};
+}
 
-export default Resource;
+export const config: FeatureComponentConfig = {};

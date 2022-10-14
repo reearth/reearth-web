@@ -4,11 +4,10 @@ import { ModelGraphics } from "resium";
 
 import { toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
-import { EntityExt } from "../utils";
+import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   model?: string;
@@ -32,14 +31,7 @@ export type Property = {
   silhouetteSize?: number; // default: 1
 };
 
-export default function Model({
-  id,
-  isVisible,
-  property,
-  geometry,
-  layer,
-  feature,
-}: PrimitiveProps<Property>) {
+export default function Model({ id, isVisible, property, geometry, layer, feature }: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -119,3 +111,7 @@ export default function Model({
     </EntityExt>
   );
 }
+
+export const config: FeatureComponentConfig = {
+  noFeature: true,
+};

@@ -1,18 +1,17 @@
 import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from "cesium";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
 import { Typography, toCSSFont, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { useIcon, ho, vo, heightReference } from "../../common";
-import { EntityExt } from "../utils";
+import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 import marker from "./marker.svg";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
-type Property = {
+export type Property = {
   location?: { lat: number; lng: number };
   height?: number;
   heightReference?: "none" | "clamp" | "relative";
@@ -48,14 +47,7 @@ type Property = {
   extrude?: boolean;
 };
 
-const Marker: React.FC<PrimitiveProps<Property>> = ({
-  property,
-  id,
-  isVisible,
-  geometry,
-  layer,
-  feature,
-}) => {
+export default function Marker({ property, id, isVisible, geometry, layer, feature }: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -194,6 +186,8 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({
       </EntityExt>
     </>
   );
-};
+}
 
-export default Marker;
+export const config: FeatureComponentConfig = {
+  noLayer: true,
+};

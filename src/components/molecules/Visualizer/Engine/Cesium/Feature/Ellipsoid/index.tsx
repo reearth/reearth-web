@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Cartesian3 } from "cesium";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { EllipsoidGraphics } from "resium";
 
 import { LatLng, toColor } from "@reearth/util/value";
 
-import type { Props as PrimitiveProps } from "../../../../Layers/Primitive";
 import { heightReference, shadowMode } from "../../common";
-import { EntityExt } from "../utils";
+import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
-export type Props = PrimitiveProps<Property>;
+export type Props = FeatureProps<Property>;
 
 export type Property = {
   position?: LatLng;
@@ -21,14 +20,7 @@ export type Property = {
   fillColor?: string;
 };
 
-const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({
-  id,
-  isVisible,
-  property,
-  geometry,
-  layer,
-  feature,
-}) => {
+export default function Ellipsoid({ id, isVisible, property, geometry, layer, feature }: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -73,6 +65,8 @@ const Ellipsoid: React.FC<PrimitiveProps<Property>> = ({
       />
     </EntityExt>
   );
-};
+}
 
-export default Ellipsoid;
+export const config: FeatureComponentConfig = {
+  noLayer: true,
+};
