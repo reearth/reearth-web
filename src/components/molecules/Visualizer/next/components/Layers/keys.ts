@@ -1,7 +1,7 @@
 import { KeysOfUnion } from "@reearth/util/util";
 
-import { appearanceKeyObj } from "../../atoms";
 import type { LegacyLayer } from "../../compat";
+import { appearanceKeyObj } from "../../types";
 import type { ComputedLayer, Layer } from "../../types";
 
 import type { LazyLayer } from "./hooks";

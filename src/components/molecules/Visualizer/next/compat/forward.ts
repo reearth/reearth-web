@@ -126,7 +126,24 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       };
     }
   } else if (l.extensionId === "photooverlay") {
-    appearance = "legacy_photooverlay";
+    appearance = "photooverlay";
+    legacyPropertyKeys = ["location", "height"];
+    if (l.property?.default?.location) {
+      data = {
+        type: "geojson",
+        value: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              l.property.default.location.lng,
+              l.property.default.location.lat,
+              ...(l.property.default.height ? [l.property.default.height] : []),
+            ],
+          },
+        } as Feature<Point>,
+      };
+    }
   } else if (l.extensionId === "ellipsoid") {
     appearance = "ellipsoid";
     legacyPropertyKeys = ["position", "height"];
@@ -148,11 +165,21 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "model") {
     appearance = "model";
-    legacyPropertyKeys = ["model"];
-    if (l.property?.default?.model) {
+    legacyPropertyKeys = ["location", "height"];
+    if (l.property?.default?.location) {
       data = {
-        type: "gltf",
-        url: l.property.default.model,
+        type: "geojson",
+        value: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              l.property.default.location.lng,
+              l.property.default.location.lat,
+              ...(typeof l.property.default.height === "number" ? [l.property.default.height] : []),
+            ],
+          },
+        } as Feature<Point>,
       };
     }
   } else if (l.extensionId === "tileset") {

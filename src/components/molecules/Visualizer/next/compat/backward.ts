@@ -98,11 +98,18 @@ export function getCompat(l: Layer | undefined): LayerCompat | undefined {
           : {}),
       },
     };
-  } else if ("legacy_photooverlay" in l) {
+  } else if ("photooverlay" in l) {
+    const coord = getCoord(data);
     extensionId = "photooverlay";
     property = {
       default: {
-        ...(l as any).legacy_photooverlay,
+        ...(l as any).photooverlay,
+        ...(coord && coord.length >= 2
+          ? {
+              location: { lng: coord[0], lat: coord[1] },
+              height: coord[2],
+            }
+          : {}),
       },
     };
   } else if ("ellipsoid" in l) {
@@ -135,13 +142,15 @@ export function getCompat(l: Layer | undefined): LayerCompat | undefined {
       pick((l as any).model, ...appearanceKeys),
       v => typeof v === "undefined" || v === null,
     );
+    const coord = getCoord(data);
     extensionId = "model";
     property = {
       default: {
         ...m,
-        ...((l as any).data?.type === "gltf" && (l as any).data.url
+        ...(coord && coord.length >= 2
           ? {
-              model: (l as any).data.url,
+              location: { lng: coord[0], lat: coord[1] },
+              height: coord[2],
             }
           : {}),
       },

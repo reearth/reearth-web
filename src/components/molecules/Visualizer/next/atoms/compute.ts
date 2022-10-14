@@ -3,9 +3,9 @@ import { merge, pick } from "lodash";
 
 import { evalLayer } from "../evaluator";
 import type { ComputedLayer, ComputedLayerStatus, Data, DataRange, Feature, Layer } from "../types";
+import { appearanceKeys } from "../types";
 
 import { dataAtom, globalDataFeaturesCache } from "./data";
-import { appearanceKeys } from "./keys";
 
 export type Atom = ReturnType<typeof computeAtom>;
 

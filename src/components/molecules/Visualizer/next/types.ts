@@ -55,7 +55,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles" | "gltf";
+export type DataType = "geojson" | "3dtiles";
 
 // Feature
 
@@ -100,7 +100,7 @@ export type AppearanceTypes = {
   model: ModelAppearance;
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
-  legacy_photooverlay: LegacyPhotooverlayAppearance;
+  photooverlay: LegacyPhotooverlayAppearance;
   legacy_resource: LegacyResourceAppearance;
 };
 
@@ -141,3 +141,16 @@ export type LegacyPhotooverlayAppearance = {
 export type LegacyResourceAppearance = {
   // TODO
 };
+
+export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
+  marker: 1,
+  polyline: 1,
+  polygon: 1,
+  ellipsoid: 1,
+  model: 1,
+  "3dtiles": 1,
+  photooverlay: 1,
+  legacy_resource: 1,
+};
+
+export const appearanceKeys = Object.keys(appearanceKeyObj);

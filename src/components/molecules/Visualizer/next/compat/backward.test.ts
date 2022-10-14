@@ -207,7 +207,7 @@ test("polygon", () => {
   });
 });
 
-test("legacy_photooverlay", () => {
+test("photooverlay", () => {
   expect(
     getCompat({
       id: "xxx",
@@ -218,19 +218,17 @@ test("legacy_photooverlay", () => {
           type: "Feature",
           geometry: {
             type: "Point",
-            coordinates: [10, 20, 30], // it should be ignored
+            coordinates: [1, 2, 3],
           },
         },
       },
-      legacy_photooverlay: {
-        location: { lat: 2, lng: 1 },
-        height: 3,
+      photooverlay: {
         aaaa: 1,
       },
       compat: {
         propertyId: "p",
       },
-    } as any),
+    }),
   ).toEqual({
     extensionId: "photooverlay",
     propertyId: "p",
@@ -285,11 +283,17 @@ test("model", () => {
       id: "xxx",
       type: "simple",
       data: {
-        type: "gltf",
-        url: "xxx",
+        type: "geojson",
+        value: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [1, 2, 3],
+          },
+        },
       },
       model: {
-        hoge: 1,
+        model: "xxx",
         color: "red",
       },
       compat: {
@@ -301,8 +305,9 @@ test("model", () => {
     propertyId: "p",
     property: {
       default: {
+        location: { lat: 2, lng: 1 },
+        height: 3,
         model: "xxx",
-        hoge: 1,
       },
       appearance: {
         color: "red",

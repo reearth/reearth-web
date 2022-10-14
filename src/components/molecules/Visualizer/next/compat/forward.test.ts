@@ -296,9 +296,17 @@ test("photooverlay", () => {
     id: "x",
     type: "simple",
     visible: true,
-    legacy_photooverlay: {
-      location: { lat: 1, lng: 2 },
-      height: 3,
+    data: {
+      type: "geojson",
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [2, 1, 3],
+        },
+      },
+    },
+    photooverlay: {
       hoge: "red",
     },
     compat: {
@@ -373,7 +381,8 @@ test("model", () => {
       property: {
         default: {
           model: "xxx",
-          hoge: "red",
+          location: { lat: 1, lng: 2 },
+          height: 3,
         },
         appearance: {
           aaa: 1,
@@ -385,11 +394,17 @@ test("model", () => {
     type: "simple",
     visible: true,
     data: {
-      type: "gltf",
-      url: "xxx",
+      type: "geojson",
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [2, 1, 3],
+        },
+      },
     },
     model: {
-      hoge: "red",
+      model: "xxx",
       aaa: 1,
     },
     compat: {
@@ -398,7 +413,8 @@ test("model", () => {
       property: {
         default: {
           model: "xxx",
-          hoge: "red",
+          location: { lat: 1, lng: 2 },
+          height: 3,
         },
         appearance: {
           aaa: 1,
