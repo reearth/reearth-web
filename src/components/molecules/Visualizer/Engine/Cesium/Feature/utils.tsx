@@ -1,5 +1,5 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { Entity as CesiumEntity, PropertyBag } from "cesium";
+import { Cesium3DTileset, Entity as CesiumEntity, PropertyBag } from "cesium";
 import { ComponentProps, ForwardedRef, forwardRef, useLayoutEffect, useRef } from "react";
 import { CesiumComponentRef, Entity } from "resium";
 
@@ -39,8 +39,14 @@ function EntityExtComponent(
   return <Entity ref={composeRefs(ref, r)} {...props} />;
 }
 
-function attachTag(entity: CesiumEntity | null | undefined, tag: Tag) {
+export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefined, tag: Tag) {
   if (!entity) return;
+
+  if (entity instanceof Cesium3DTileset) {
+    (entity as any)[tagKey] = tag;
+    return;
+  }
+
   if (!entity.properties) {
     entity.properties = new PropertyBag();
   }
@@ -50,12 +56,19 @@ function attachTag(entity: CesiumEntity | null | undefined, tag: Tag) {
   }
 }
 
-export function getTag(entity: CesiumEntity | null | undefined): Tag | undefined {
-  if (!entity?.properties) return;
+export function getTag(entity: CesiumEntity | Cesium3DTileset | null | undefined): Tag | undefined {
+  if (!entity) return;
+
+  if (entity instanceof Cesium3DTileset) {
+    return (entity as any)[tagKey];
+  }
+
+  if (!entity.properties) return;
+
   return Object.fromEntries(
     Object.entries(entity.properties)
       .map(([k, v]): readonly [PropertyKey, any] | null => {
-        if (!tagKeys.includes(k as keyof Tag)) return null;
+        if (!tagKeys.includes(k.replace("reearth_", "") as keyof Tag)) return null;
         return [k.replace("reearth_", ""), v];
       })
       .filter((e): e is readonly [PropertyKey, any] => !!e),
@@ -70,3 +83,5 @@ const tagObj: { [k in keyof Tag]: 1 } = {
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
+
+const tagKey = "__reearth_tag";

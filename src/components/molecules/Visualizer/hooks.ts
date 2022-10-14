@@ -168,13 +168,8 @@ export default ({
   );
 
   // dnd
-  const [isLayerDragging, setIsLayerDragging] = useState(false);
-  const handleLayerDrag = useCallback(() => {
-    setIsLayerDragging(true);
-  }, []);
   const handleLayerDrop = useCallback(
     (id: string, key: string, latlng: LatLng | undefined) => {
-      setIsLayerDragging(false);
       const layer = layers.findById(id);
       if (latlng && layer) onLayerDrop?.(layer, key, latlng);
     },
@@ -230,7 +225,6 @@ export default ({
     layers,
     layerSelectionReason,
     layerOverriddenProperties,
-    isLayerDragging,
     selectedBlockId,
     innerCamera,
     innerClock,
@@ -242,7 +236,6 @@ export default ({
     changeBlock,
     updateCamera,
     updateClock,
-    handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
   };

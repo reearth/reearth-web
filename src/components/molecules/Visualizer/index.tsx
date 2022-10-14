@@ -110,7 +110,6 @@ export default function Visualizer({
     layers,
     layerSelectionReason,
     layerOverriddenProperties,
-    isLayerDragging,
     selectedBlockId,
     innerCamera,
     innerClock,
@@ -122,7 +121,6 @@ export default function Visualizer({
     changeBlock,
     updateCamera,
     updateClock,
-    handleLayerDrag,
     handleLayerDrop,
     handleInfoboxMaskClick,
   } = useHooks({
@@ -173,7 +171,6 @@ export default function Visualizer({
             ready={ready}
             camera={innerCamera}
             clock={innerClock}
-            isLayerDragging={isLayerDragging}
             isLayerDraggable={props.isEditable}
             shouldRender={
               !!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID] ||
@@ -183,7 +180,6 @@ export default function Visualizer({
             onCameraChange={updateCamera}
             onTick={updateClock}
             onLayerDrop={handleLayerDrop}
-            onLayerDrag={handleLayerDrag}
             {...props}>
             <Layers
               isEditable={props.isEditable}

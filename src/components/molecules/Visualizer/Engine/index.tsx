@@ -37,7 +37,6 @@ export type EngineProps = {
   isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
-  isLayerDragging?: boolean;
   shouldRender?: boolean;
 };
 

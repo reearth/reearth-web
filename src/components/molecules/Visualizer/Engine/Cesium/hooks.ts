@@ -14,7 +14,7 @@ import { Clock } from "../../Plugin/types";
 import { MouseEvent, MouseEvents } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import { getCamera, layerIdField, getLocationFromScreenXY, getClock } from "./common";
+import { getCamera, getLocationFromScreenXY, getClock } from "./common";
 import { getTag } from "./Feature/utils";
 import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
@@ -275,7 +275,7 @@ export default ({
       }
 
       if (target && target instanceof Cesium3DTileFeature) {
-        const layerId: string | undefined = (target.primitive as any)?.[layerIdField];
+        const layerId = getTag(target.tileset)?.layerId;
         if (layerId) {
           onLayerSelect?.(layerId, {
             overriddenInfobox: {
@@ -316,8 +316,7 @@ export default ({
 
     const cesiumDnD = new CesiumDnD(viewer, {
       onDrag: (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
+        if (viewer.isDestroyed()) return;
 
         const tag = getTag(e);
         if (!tag?.draggable || tag.unselectable || !tag.layerId) return false;
@@ -328,8 +327,7 @@ export default ({
         onLayerDrag?.(e.id, pos);
       },
       onDrop: (e: Entity, position: Cartesian3 | undefined): boolean | void => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return false;
+        if (viewer.isDestroyed()) return;
 
         const tag = getTag(e);
         if (!tag?.draggable || !tag.layerId) return false;
@@ -343,10 +341,11 @@ export default ({
     });
 
     return () => {
-      if (!viewer || viewer.isDestroyed()) return;
+      if (viewer.isDestroyed()) return;
       cesiumDnD.disable();
     };
-  }, [isLayerDraggable, onLayerDrag, onLayerDrop]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cesium.current?.cesiumElement, isLayerDraggable, onLayerDrag, onLayerDrop]);
 
   const { cameraViewBoundaries, cameraViewOuterBoundaries, cameraViewBoundariesMaterial } =
     useCameraLimiter(cesium, camera, property?.cameraLimiter);
@@ -395,11 +394,11 @@ function findEntity(viewer: CesiumViewer, layerId: string | undefined): Entity |
   return entity;
 }
 
-function getLayerId(target: RootEventTarget) {
+function getLayerId(target: RootEventTarget): string | undefined {
   if (target && "id" in target && target.id instanceof Entity) {
-    return target.id.id;
+    return getTag(target.id)?.layerId;
   } else if (target && target instanceof Cesium3DTileFeature) {
-    return (target.primitive as any)?.[layerIdField];
+    return getTag(target.tileset)?.layerId;
   }
   return undefined;
 }

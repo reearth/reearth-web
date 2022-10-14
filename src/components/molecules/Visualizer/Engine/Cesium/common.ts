@@ -35,8 +35,6 @@ import { Camera } from "@reearth/util/value";
 
 import { CameraOptions, Clock } from "../../Plugin/types";
 
-export const layerIdField = `__reearth_layer_id`;
-
 const defaultImageSize = 50;
 
 export const drawIcon = (
