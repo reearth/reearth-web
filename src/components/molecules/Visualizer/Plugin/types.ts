@@ -309,7 +309,7 @@ export type Popup = {
     width?: number | string;
     height?: number | string;
     position?: PopupPosition;
-    offset?: number;
+    offset?: PopupOffset;
   }) => void;
   readonly close: () => void;
 };
