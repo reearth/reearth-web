@@ -11,8 +11,6 @@ export type Props = {
   isBuilt?: boolean;
 };
 
-// TODO: ErrorBoudaryでエラーハンドリング
-
 const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
   const {
     rootLayerId,
@@ -21,7 +19,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     sceneProperty,
     pluginProperty,
     clusters,
-    rootLayer,
+    layers,
     widgets,
     tags,
     selectedLayerId,
@@ -61,7 +59,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       engine="cesium"
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
-      rootLayer={rootLayer}
+      layers={layers}
       widgets={widgets}
       selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}
@@ -73,7 +71,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       clusters={clusters}
       camera={camera}
       clock={clock}
-      ready={isBuilt || (!!rootLayer && !!widgets)}
+      ready={isBuilt || (!!layers && !!widgets)}
       onLayerSelect={selectLayer}
       widgetAlignEditorActivated={widgetAlignEditorActivated}
       onCameraChange={onCameraChange}

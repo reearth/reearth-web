@@ -1,8 +1,6 @@
 import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 
-import { Provider } from "../storybook";
-
 import Widget, { Props } from ".";
 
 export default {
@@ -11,11 +9,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => (
-  <Provider>
-    <Widget {...args} />
-  </Provider>
-);
+export const Default: Story<Props> = args => <Widget {...args} />;
 
 Default.args = {
   widget: {

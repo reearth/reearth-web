@@ -1,6 +1,7 @@
 import {
   createContext,
   ReactNode,
+  RefObject,
   useCallback,
   useContext as useReactContext,
   useEffect,
@@ -11,8 +12,7 @@ import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
-import type { LayerStore } from "../Layers";
-import type { Component as PrimitiveComponent } from "../Layers/Primitive";
+import { LayersRef } from "../next";
 import { useGet } from "../utils";
 
 import type { CommonReearth } from "./api";
@@ -30,27 +30,18 @@ import type {
   Clock,
 } from "./types";
 
-export type EngineContext = {
-  api?: any;
-  builtinPrimitives?: Record<string, PrimitiveComponent>;
-};
-
 export type Props = {
   children?: ReactNode;
-  engine: EngineContext;
   engineName: string;
   sceneProperty?: any;
   tags?: Tag[];
   camera?: CameraPosition;
   clock: Clock | undefined;
-  layers: LayerStore;
+  layersRef?: RefObject<LayersRef>;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
-  showLayer: (...id: string[]) => void;
-  hideLayer: (...id: string[]) => void;
-  addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
   overrideSceneProperty: (id: string, property: any) => void;
@@ -79,7 +70,6 @@ export type Props = {
 
 export type Context = {
   reearth: CommonReearth;
-  engine: EngineContext;
   overrideSceneProperty: (id: string, property: any) => void;
 };
 
@@ -93,20 +83,16 @@ declare global {
 }
 
 export function Provider({
-  engine: { api, builtinPrimitives },
   engineName,
   sceneProperty,
   tags,
   camera,
   clock,
-  layers,
   selectedLayer,
   layerSelectionReason,
   layerOverridenInfobox,
   layerOverriddenProperties,
-  showLayer,
-  hideLayer,
-  addLayer,
+  layersRef,
   selectLayer,
   overrideLayerProperty,
   overrideSceneProperty,
@@ -139,7 +125,7 @@ export function Provider({
     [engineName],
   );
 
-  const getLayers = useGet(layers);
+  const layers = useCallback(() => layersRef?.current ?? undefined, [layersRef]);
   const getSceneProperty = useGet(sceneProperty);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
@@ -157,14 +143,10 @@ export function Provider({
 
   const value = useMemo<Context>(
     () => ({
-      engine: {
-        api,
-        builtinPrimitives,
-      },
       reearth: commonReearth({
         engineName,
         events: ev,
-        layers: getLayers,
+        layers,
         sceneProperty: getSceneProperty,
         tags: getTags,
         camera: getCamera,
@@ -173,9 +155,6 @@ export function Provider({
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
         layerOverriddenProperties: getLayerOverriddenProperties,
-        showLayer,
-        hideLayer,
-        addLayer,
         selectLayer,
         overrideLayerProperty,
         overrideSceneProperty: overrideScenePropertyCommon,
@@ -203,11 +182,9 @@ export function Provider({
       overrideSceneProperty,
     }),
     [
-      api,
-      builtinPrimitives,
       engineName,
       ev,
-      getLayers,
+      layers,
       getSceneProperty,
       getTags,
       getCamera,
@@ -216,9 +193,6 @@ export function Provider({
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
       getLayerOverriddenProperties,
-      showLayer,
-      hideLayer,
-      addLayer,
       selectLayer,
       overrideLayerProperty,
       overrideScenePropertyCommon,

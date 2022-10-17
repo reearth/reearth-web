@@ -5,7 +5,7 @@ import ClusteredLayers, { type Props as ClusteredLayerProps } from "../Clustered
 import useHooks, { type Ref } from "./hooks";
 
 export type { CommonProps, FeatureComponentProps, Layer, LayerSimple } from "../Layer";
-export type { LazyLayer, Ref } from "./hooks";
+export type { LazyLayer, Ref, NaiveLayer } from "./hooks";
 
 export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   hiddenLayers?: string[];

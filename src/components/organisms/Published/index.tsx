@@ -9,7 +9,7 @@ export type Props = {
 };
 
 export default function Published({ className, alias }: Props) {
-  const { sceneProperty, pluginProperty, rootLayer, widgets, tags, ready, error, clusters } =
+  const { sceneProperty, pluginProperty, layers, widgets, tags, ready, error, clusters } =
     useHooks(alias);
 
   return error ? (
@@ -18,7 +18,7 @@ export default function Published({ className, alias }: Props) {
     <Visualizer
       className={className}
       engine="cesium"
-      rootLayer={rootLayer}
+      layers={layers}
       widgets={widgets}
       tags={tags}
       sceneProperty={sceneProperty}

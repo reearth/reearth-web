@@ -1,7 +1,5 @@
 import { Meta, Story } from "@storybook/react";
 
-import { Provider } from "../storybook";
-
 import Component, { Props } from ".";
 
 export default {
@@ -21,26 +19,4 @@ Default.args = {
   isSelected: false,
   isBuilt: false,
   isEditable: false,
-};
-
-export const Plugin: Story<Props> = args => (
-  <Provider>
-    <div style={{ background: "#fff" }}>
-      <Component {...args} />
-    </div>
-  </Provider>
-);
-Plugin.args = {
-  block: {
-    id: "",
-    pluginId: "plugins",
-    extensionId: "block",
-    property: {
-      location: { lat: 0, lng: 100 },
-    },
-  },
-  isSelected: false,
-  isBuilt: false,
-  isEditable: false,
-  pluginBaseUrl: "",
 };

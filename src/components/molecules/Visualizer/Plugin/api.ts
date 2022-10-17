@@ -1,7 +1,7 @@
 import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
-import type { LayerStore } from "../Layers";
+import { NaiveLayer, LayersRef } from "../next";
 
 import type {
   GlobalThis,
@@ -144,9 +144,6 @@ export function commonReearth({
   layerOverriddenInfobox,
   layerOverriddenProperties,
   selectLayer,
-  showLayer,
-  hideLayer,
-  addLayer,
   overrideLayerProperty,
   overrideSceneProperty,
   flyTo,
@@ -171,7 +168,7 @@ export function commonReearth({
 }: {
   engineName: string;
   events: Events<ReearthEventType>;
-  layers: () => LayerStore;
+  layers: () => LayersRef | undefined;
   sceneProperty: () => any;
   tags: () => Tag[];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
@@ -182,9 +179,6 @@ export function commonReearth({
   layerOverriddenProperties: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
   layersInViewport: () => GlobalThis["reearth"]["layers"]["layersInViewport"];
-  showLayer: GlobalThis["reearth"]["layers"]["show"];
-  hideLayer: GlobalThis["reearth"]["layers"]["hide"];
-  addLayer: GlobalThis["reearth"]["layers"]["add"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
   overrideSceneProperty: GlobalThis["reearth"]["visualizer"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["visualizer"]["camera"]["flyTo"];
@@ -286,10 +280,10 @@ export function commonReearth({
         return selectLayer;
       },
       get show() {
-        return showLayer;
+        return layers()?.show ?? defaultFunc;
       },
       get hide() {
-        return hideLayer;
+        return layers()?.hide ?? defaultFunc;
       },
       get overriddenProperties() {
         return layerOverriddenProperties();
@@ -298,10 +292,10 @@ export function commonReearth({
         return overrideLayerProperty;
       },
       get isLayer() {
-        return layers().isLayer;
+        return layers()?.isLayer ?? defaultIsLayer;
       },
       get layers() {
-        return layers().root.children ?? [];
+        return layers()?.layers() ?? [];
       },
       get tags() {
         return tags();
@@ -316,30 +310,49 @@ export function commonReearth({
         return selectedLayer();
       },
       get findById() {
-        return layers().findById;
+        return layers()?.findById ?? defaultFunc;
       },
       get findByIds() {
-        return layers().findByIds;
+        return layers()?.findByIds ?? defaultEmptyFunc;
       },
       get findByTags() {
-        return layers().findByTags;
+        return layers()?.findByTags ?? defaultEmptyFunc;
       },
       get findByTagLabels() {
-        return layers().findByTagLabels;
+        return layers()?.findByTagLabels ?? defaultEmptyFunc;
       },
       get find() {
-        return layers().find;
+        return layers()?.find ?? defaultFunc;
       },
       get findAll() {
-        return layers().findAll;
+        return layers()?.findAll ?? defaultEmptyFunc;
       },
       get walk() {
-        return layers().walk;
+        return layers()?.walk ?? defaultFunc;
       },
       get add() {
-        return addLayer;
+        return (layer: NaiveLayer, parentId?: string | undefined, creator?: string | undefined) => {
+          return layers()?.add(addLayerCompat(layer, parentId, creator))?.id;
+        };
       },
     },
     ...events,
   };
 }
+
+const defaultIsLayer = (l: Layer): l is Layer => false;
+const defaultFunc = (..._: any[]) => undefined;
+const defaultEmptyFunc = (..._: any[]): any[] => [];
+const addLayerCompat = (
+  layer: NaiveLayer,
+  _parentId?: string | undefined,
+  creator?: string | undefined,
+) => {
+  // parentId is no longer supported
+  return creator
+    ? {
+        ...layer,
+        creator,
+      }
+    : layer;
+};

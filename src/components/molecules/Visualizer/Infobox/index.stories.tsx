@@ -36,10 +36,13 @@ Template.args = {
   ],
   layer: {
     id: "z",
-    property: {
-      default: {
-        title: "Hoge",
-        size: "small",
+    type: "simple",
+    infobox: {
+      property: {
+        default: {
+          title: "Hoge",
+          size: "small",
+        },
       },
     },
   },
@@ -61,11 +64,14 @@ Large.args = {
   ...Template.args,
   layer: {
     id: "z",
-    property: {
-      ...Template.args.layer?.property,
-      default: {
-        ...Template.args.layer?.property?.default,
-        size: "large",
+    type: "simple",
+    infobox: {
+      property: {
+        ...Template.args.layer?.property,
+        default: {
+          ...Template.args.layer?.property?.default,
+          size: "large",
+        },
       },
     },
   },

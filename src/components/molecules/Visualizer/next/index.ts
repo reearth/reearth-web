@@ -1,3 +1,4 @@
-export { Layers, type LayersRef, type LazyLayer, type FeatureComponentProps } from "./components";
+export { Layers } from "./components";
+export type { LayersRef, NaiveLayer, LazyLayer, FeatureComponentProps } from "./components";
 export * from "./types";
 export * from "./compat";

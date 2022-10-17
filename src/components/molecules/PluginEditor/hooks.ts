@@ -2,7 +2,12 @@ import fileDownload from "js-file-download";
 import { useState, useMemo, useCallback } from "react";
 import useFileInput from "use-file-input";
 
-import type { WidgetZone, WidgetSection, Layer } from "@reearth/components/molecules/Visualizer";
+import {
+  type WidgetZone,
+  type WidgetSection,
+  type Layer,
+  convertLegacyLayer,
+} from "@reearth/components/molecules/Visualizer";
 
 export type Position = { section: string; area: string };
 
@@ -44,10 +49,9 @@ export default () => {
   const [fileName, setFileName] = useState(defaultFileName);
   const [sourceCode, setSourceCode] = useState<string | undefined>(defaultSourceCode);
 
-  const rootLayer: Layer = useMemo(
-    () => ({
-      id: "",
-      children: [
+  const rootLayer: Layer[] = useMemo(
+    () =>
+      [
         {
           id: "pluginprimitive",
           pluginId: "reearth",
@@ -89,8 +93,9 @@ export default () => {
               }
             : undefined,
         },
-      ],
-    }),
+      ]
+        .map(convertLegacyLayer)
+        .filter((l): l is Layer => !!l),
     [infoboxSize, mode, showInfobox, executableSourceCode],
   );
 
@@ -179,7 +184,7 @@ export default () => {
 
   return {
     sourceCode,
-    rootLayer,
+    layers: rootLayer,
     currentPosition,
     mode,
     widgets,

@@ -5,7 +5,6 @@ import { CameraFlyTo, CameraFlyToBoundingSphere } from "resium";
 
 import CesiumEngine from "..";
 import type { SceneProperty } from "../..";
-import { Provider } from "../../../storybook";
 
 export type { SceneProperty } from "../..";
 
@@ -19,34 +18,32 @@ export const V: React.FC<{
   property?: SceneProperty;
 }> = ({ children, location: l = location, lookAt, property }) => {
   return (
-    <Provider>
-      <CesiumEngine
-        ready
-        property={{
-          ...property,
-          tiles: property?.tiles ?? [{ id: "default", tile_type: "default" }],
-        }}
-        onLayerSelect={action("Cesium: onLayerSelect")}>
-        {lookAt ? (
-          <CameraFlyToBoundingSphere
-            boundingSphere={
-              new BoundingSphere(
-                Cartesian3.fromDegrees(lookAt.lng, lookAt.lat, lookAt.height),
-                lookAt.range,
-              )
-            }
-            duration={0}
-            once
-          />
-        ) : (
-          <CameraFlyTo
-            destination={Cartesian3.fromDegrees((l ?? location).lng, (l ?? location).lat, 10000)}
-            duration={0}
-            once
-          />
-        )}
-        {children}
-      </CesiumEngine>
-    </Provider>
+    <CesiumEngine
+      ready
+      property={{
+        ...property,
+        tiles: property?.tiles ?? [{ id: "default", tile_type: "default" }],
+      }}
+      onLayerSelect={action("onLayerSelect")}>
+      {lookAt ? (
+        <CameraFlyToBoundingSphere
+          boundingSphere={
+            new BoundingSphere(
+              Cartesian3.fromDegrees(lookAt.lng, lookAt.lat, lookAt.height),
+              lookAt.range,
+            )
+          }
+          duration={0}
+          once
+        />
+      ) : (
+        <CameraFlyTo
+          destination={Cartesian3.fromDegrees((l ?? location).lng, (l ?? location).lat, 10000)}
+          duration={0}
+          once
+        />
+      )}
+      {children}
+    </CesiumEngine>
   );
 };

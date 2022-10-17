@@ -26,7 +26,6 @@ import {
   getCenterCamera,
   zoom,
 } from "./common";
-import { legacyBuiltin } from "./Feature";
 import { getTag } from "./Feature/utils";
 
 export default function useEngineRef(
@@ -50,6 +49,7 @@ export default function useEngineRef(
     mouseleave: undefined,
     wheel: undefined,
   });
+
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -316,7 +316,6 @@ export default function useEngineRef(
         mouseEventCallbacks.current.wheel = cb;
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
-      builtinPrimitives: legacyBuiltin,
       clusterComponent: Cluster,
     };
   }, [cesium]);

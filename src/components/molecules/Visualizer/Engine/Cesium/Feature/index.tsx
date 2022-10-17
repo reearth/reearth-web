@@ -1,6 +1,3 @@
-import type { ComponentType } from "react";
-
-import type { Props as PrimitiveProps } from "../../../Layers/Primitive";
 import type { AppearanceTypes, FeatureComponentProps } from "../../../next";
 
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
@@ -9,7 +6,7 @@ import Model, { config as modelConfig } from "./Model";
 import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
 import Polygon, { config as polygonConfig } from "./Polygon";
 import Polyline, { config as polylineConfig } from "./Polyline";
-import Rect from "./Rect";
+// import Rect from "./Rect";
 import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
 import type { FeatureComponent, FeatureComponentConfig } from "./utils";
@@ -56,16 +53,4 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   "3dtiles": [Tileset, tilesetConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
   legacy_resource: [Resource, resourceConfig],
-};
-
-export const legacyBuiltin: Record<string, ComponentType<PrimitiveProps>> = {
-  marker: Marker,
-  polyline: Polyline,
-  polygon: Polygon,
-  rect: Rect,
-  ellipsoid: Ellipsoid,
-  photooverlay: PhotoOverlay,
-  resource: Resource,
-  model: Model,
-  tileset: Tileset,
 };

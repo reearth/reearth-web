@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import { Cluster, Layer } from "@reearth/components/molecules/Visualizer";
+import { Cluster, Layer, convertLegacyLayer } from "@reearth/components/molecules/Visualizer";
 import {
   Location,
   Alignment,
@@ -104,10 +104,13 @@ export default (isBuilt?: boolean) => {
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
 
-  const rootLayer = useMemo(
+  const layers = useMemo(
     () =>
-      layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
-        ? processLayer(layerData?.node.rootLayer)
+      layerData?.node?.__typename === "Scene" &&
+      layerData.node.rootLayer?.__typename === "LayerGroup"
+        ? layerData.node.rootLayer.layers
+            .map(l => (l ? convertLegacyLayer(processLayer(l)) : undefined))
+            .filter((l): l is Layer => !!l)
         : undefined,
     [layerData],
   );
@@ -208,7 +211,7 @@ export default (isBuilt?: boolean) => {
 
   const handleDropLayer = useCallback(
     async (layer: Layer, propertyKey: string, position: LatLng) => {
-      const propertyId = layer.propertyId;
+      const propertyId = layer.compat?.propertyId;
       if (!propertyId) return;
 
       // propertyKey will be "default.location" for example
@@ -287,7 +290,7 @@ export default (isBuilt?: boolean) => {
     clusters,
     tags,
     widgets,
-    rootLayer,
+    layers,
     blocks,
     isCapturing,
     sceneMode,

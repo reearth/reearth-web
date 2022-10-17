@@ -1,7 +1,5 @@
 import { Meta, Story } from "@storybook/react";
 
-import { Provider } from "../../storybook";
-
 import Component, { Props } from ".";
 
 export default {
@@ -10,10 +8,6 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-const Template: Story<Props> = args => (
-  <Provider>
-    <Component {...args} />
-  </Provider>
-);
+const Template: Story<Props> = args => <Component {...args} />;
 
 export const Default = Template.bind({});

@@ -1,13 +1,15 @@
 import { mapValues } from "lodash";
 import { useState, useMemo, useEffect } from "react";
 
-import type {
+import {
   Layer,
+  LegacyLayer,
   Widget,
   Block,
   WidgetAlignSystem,
   Alignment,
   Cluster,
+  convertLegacyLayer,
 } from "@reearth/components/molecules/Visualizer";
 
 import { PublishedData, WidgetZone, WidgetSection, WidgetArea, Layer as RawLayer } from "./types";
@@ -32,11 +34,12 @@ export default (alias?: string) => {
     [data],
   );
 
-  const rootLayer = useMemo(
-    () => ({
-      id: "",
-      children: data?.layers?.map(processLayer) ?? [],
-    }),
+  const layers = useMemo(
+    () =>
+      data?.layers
+        ?.map(processLayer)
+        .map(convertLegacyLayer)
+        .filter((l): l is Layer => !!l),
     [data],
   );
 
@@ -174,7 +177,7 @@ export default (alias?: string) => {
     alias: actualAlias,
     sceneProperty,
     pluginProperty,
-    rootLayer,
+    layers,
     tags: data?.tags,
     clusters,
     widgets,
@@ -183,7 +186,7 @@ export default (alias?: string) => {
   };
 };
 
-function processLayer(l: RawLayer): Layer {
+function processLayer(l: RawLayer): LegacyLayer {
   return {
     id: l.id,
     title: l.name || "",

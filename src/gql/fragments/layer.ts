@@ -79,6 +79,7 @@ export const LayerSystemFragments = gql`
 export const EarthLayerFragments = gql`
   fragment EarthLayerCommon on Layer {
     id
+    __typename
     name
     isVisible
     pluginId
@@ -135,9 +136,6 @@ export const EarthLayerFragments = gql`
     }
     ... on LayerGroup {
       linkedDatasetSchemaId
-      layers {
-        id
-      }
     }
   }
 

@@ -2,7 +2,6 @@ import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
-import type { Component } from "../Layers/Primitive";
 import { Clock } from "../Plugin/types";
 
 export type MouseEvent = {
@@ -78,9 +77,6 @@ export type EngineRef = {
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
-  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
-  builtinPrimitives?: Record<string, Component>;
-  pluginApi?: any;
   clusterComponent?: ComponentType<ClusterProps>;
   mouseEventCallbacks: MouseEvents;
 };

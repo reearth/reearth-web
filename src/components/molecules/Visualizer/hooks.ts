@@ -1,7 +1,6 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
-import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useReducer } from "react";
+import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from "react";
 import { initialize, pageview } from "react-ga";
-import { useSet } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
@@ -14,7 +13,7 @@ import type {
 } from "./Engine";
 import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
-import { LayerStore, Layer } from "./Layers";
+import { Layer, LayersRef } from "./next";
 import type { ProviderProps } from "./Plugin";
 import type {
   CameraOptions,
@@ -31,7 +30,6 @@ export default ({
   isEditable,
   isBuilt,
   isPublished,
-  rootLayer,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
   zoomedLayerId,
@@ -51,7 +49,6 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
-  rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
   zoomedLayerId?: string;
@@ -101,20 +98,14 @@ export default ({
 
   const {
     selectedLayer,
-    selectedLayerId,
     layerOverriddenProperties,
     layerSelectionReason,
     layerOverridenInfobox,
     infobox,
-    layers,
+    layersRef,
     selectLayer,
-    hideLayers,
-    isLayerHidden,
-    showLayers,
-    addLayer,
     overrideLayerProperty,
   } = useLayers({
-    rootLayer,
     selected: outerSelectedLayerId,
     onSelect: onLayerSelect,
   });
@@ -172,10 +163,11 @@ export default ({
   // dnd
   const handleLayerDrop = useCallback(
     (id: string, key: string, latlng: LatLng | undefined) => {
-      const layer = layers.findById(id);
+      if (!layersRef.current) return;
+      const layer = layersRef.current.findById(id);
       if (latlng && layer) onLayerDrop?.(layer, key, latlng);
     },
-    [onLayerDrop, layers],
+    [layersRef, onLayerDrop],
   );
 
   // GA
@@ -198,15 +190,12 @@ export default ({
       layerSelectionReason,
       layerOverridenInfobox,
       layerOverriddenProperties,
-      showLayer: showLayers,
-      hideLayer: hideLayers,
-      addLayer,
       selectLayer,
       overrideLayerProperty,
       overrideSceneProperty,
     },
     engineRef,
-    layers,
+    layersRef,
   );
 
   useEffect(() => {
@@ -226,11 +215,10 @@ export default ({
   return {
     engineRef,
     wrapperRef,
+    layersRef,
     isDroppable,
     providerProps,
-    selectedLayerId,
     selectedLayer,
-    layers,
     layerSelectionReason,
     layerOverriddenProperties,
     selectedBlockId,
@@ -238,7 +226,6 @@ export default ({
     innerClock,
     infobox,
     overriddenSceneProperty,
-    isLayerHidden,
     selectLayer,
     selectBlock,
     changeBlock,
@@ -250,49 +237,28 @@ export default ({
 };
 
 function useLayers({
-  rootLayer,
-  selected: outerSelectedPrimitiveId,
+  selected: outerSelectedLayerId,
   onSelect,
 }: {
-  rootLayer?: Layer;
   selected?: string;
   onSelect?: (id?: string, options?: SelectLayerOptions) => void;
 }) {
-  const [selectedLayerId, innerSelectLayer] = useState<string | undefined>();
+  const layersRef = useRef<LayersRef>(null);
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
   const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
-  const [layers] = useState<LayerStore>(() => new LayerStore(rootLayer));
-  const updateReducer = useCallback((num: number): number => (num + 1) % 1_000_000, []);
-  const [layersRenderKey, forceUpdate] = useReducer(updateReducer, 0);
-
-  useEffect(() => {
-    layers.setRootLayer(rootLayer);
-    forceUpdate();
-  }, [layers, rootLayer]);
-
-  const selectedLayer = useMemo(
-    () => (selectedLayerId ? layers?.findById(selectedLayerId) : undefined),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedLayerId, layers, layersRenderKey],
-  );
+  const [selectedLayer, setSelectedLayer] = useState<Layer>();
 
   const selectLayer = useCallback(
     (id?: string, { reason, overriddenInfobox }: SelectLayerOptions = {}) => {
-      innerSelectLayer(id);
-      onSelect?.(id && !!layers.findById(id) ? id : undefined);
+      if (!layersRef.current) return;
+
+      const selected = id ? layersRef.current.findById(id) : undefined;
+      setSelectedLayer(selected);
+      onSelect?.(id && !!selected ? id : undefined);
       setSelectionReason(reason);
       setPrimitiveOverridenInfobox(overriddenInfobox);
     },
-    [onSelect, layers],
-  );
-
-  const addLayer = useCallback(
-    (layer: Layer, parentId?: string, creator?: string) => {
-      const id = layers.add(layer, parentId, creator);
-      forceUpdate();
-      return id;
-    },
-    [layers],
+    [onSelect, layersRef],
   );
 
   const blocks = useMemo(
@@ -318,29 +284,10 @@ function useLayers({
     [selectedLayer, layerOverridenInfobox, blocks],
   );
 
-  const [, { add: hideLayer, remove: showLayer, has: isLayerHidden }] = useSet<string>();
-  const showLayers = useCallback(
-    (...ids: string[]) => {
-      for (const id of ids) {
-        showLayer(id);
-      }
-    },
-    [showLayer],
-  );
-  const hideLayers = useCallback(
-    (...ids: string[]) => {
-      for (const id of ids) {
-        hideLayer(id);
-      }
-    },
-    [hideLayer],
-  );
-
   useEffect(() => {
-    innerSelectLayer(outerSelectedPrimitiveId);
     setSelectionReason(undefined);
     setPrimitiveOverridenInfobox(undefined);
-  }, [outerSelectedPrimitiveId]);
+  }, [outerSelectedLayerId]);
 
   const [layerOverriddenProperties, setLayeroverriddenProperties] = useState<{
     [id in string]: any;
@@ -361,18 +308,13 @@ function useLayers({
   }, []);
 
   return {
-    layers,
+    layersRef,
     selectedLayer,
-    selectedLayerId,
     layerSelectionReason,
     layerOverridenInfobox,
     layerOverriddenProperties,
     infobox,
-    isLayerHidden,
     selectLayer,
-    showLayers,
-    hideLayers,
-    addLayer,
     overrideLayerProperty,
   };
 }
@@ -448,29 +390,8 @@ function useProviderProps(
     | "flyToGround"
   >,
   engineRef: RefObject<EngineRef>,
-  layers: LayerStore,
+  layersRef: RefObject<LayersRef>,
 ): ProviderProps {
-  const isMarshalable = useCallback(
-    (obj: any): boolean | "json" => {
-      const im = engineRef.current?.isMarshalable ?? false;
-      return typeof im === "function" ? im(obj) : im;
-    },
-    [engineRef],
-  );
-
-  const engine = useMemo(
-    () => ({
-      get api() {
-        return engineRef.current?.pluginApi;
-      },
-      isMarshalable,
-      get builtinPrimitives() {
-        return engineRef.current?.builtinPrimitives;
-      },
-    }),
-    [engineRef, isMarshalable],
-  );
-
   const flyTo = useCallback(
     (dest: FlyToDestination, options?: CameraOptions) => {
       engineRef.current?.flyTo(dest, options);
@@ -491,26 +412,28 @@ function useProviderProps(
 
   const layersInViewport = useCallback(() => {
     const rect = engineRef.current?.getViewport();
-    return layers.findAll(
-      layer =>
-        rect &&
-        layer.property?.default?.location &&
-        typeof layer.property.default.location.lng === "number" &&
-        typeof layer.property.default.location.lat === "number" &&
-        Rectangle.contains(
-          new Rectangle(
-            CesiumMath.toRadians(rect.west),
-            CesiumMath.toRadians(rect.south),
-            CesiumMath.toRadians(rect.east),
-            CesiumMath.toRadians(rect.north),
+    return (
+      layersRef.current?.findAll(
+        layer =>
+          rect &&
+          layer.property?.default?.location &&
+          typeof layer.property.default.location.lng === "number" &&
+          typeof layer.property.default.location.lat === "number" &&
+          Rectangle.contains(
+            new Rectangle(
+              CesiumMath.toRadians(rect.west),
+              CesiumMath.toRadians(rect.south),
+              CesiumMath.toRadians(rect.east),
+              CesiumMath.toRadians(rect.north),
+            ),
+            Cartographic.fromDegrees(
+              layer.property.default.location.lng,
+              layer.property.default.location.lat,
+            ),
           ),
-          Cartographic.fromDegrees(
-            layer.property.default.location.lng,
-            layer.property.default.location.lat,
-          ),
-        ),
+      ) ?? []
     );
-  }, [engineRef, layers]);
+  }, [engineRef, layersRef]);
 
   const zoomIn = useCallback(
     (amount: number) => {
@@ -631,14 +554,13 @@ function useProviderProps(
 
   return {
     ...props,
-    engine,
+    layersRef,
     flyTo,
     lookAt,
     zoomIn,
     zoomOut,
     orbit,
     rotateRight,
-    layers,
     layersInViewport,
     viewport,
     onMouseEvent,

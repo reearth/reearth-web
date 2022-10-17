@@ -1,6 +1,7 @@
 import { Item } from "@reearth/components/atoms/ContentPicker";
 import {
   Layer,
+  LegacyLayer,
   Widget,
   Block,
   WidgetAlignSystem,
@@ -28,7 +29,6 @@ import {
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
-  EarthLayer5Fragment,
 } from "@reearth/gql";
 import { valueFromGQL } from "@reearth/util/value";
 
@@ -37,7 +37,15 @@ type BlockType = Item & {
   extensionId: string;
 };
 
-type P = { [key in string]: any };
+type LG = Extract<EarthLayerFragment, { __typename: "LayerGroup" }>;
+type LI = Exclude<EarthLayerFragment, { __typename: "LayerGroup" }>;
+type L =
+  | (Omit<LG, "layers"> & {
+      layers?: (L | null | undefined)[];
+    })
+  | LI;
+
+type P = Record<string, any>;
 
 const processPropertyGroup = (p?: PropertyItemFragmentFragment | null): P | P[] | undefined => {
   if (!p) return;
@@ -136,7 +144,7 @@ const processMergedInfobox = (
   };
 };
 
-export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
+export const processLayer = (layer: L | undefined): LegacyLayer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -154,9 +162,7 @@ export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers
-            ?.map(l => processLayer((l as EarthLayer5Fragment) ?? undefined))
-            .filter((l): l is Layer => !!l)
+        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
         : undefined,
   };
 };

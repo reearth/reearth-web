@@ -1,21 +1,15 @@
 import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 
-import { Provider } from "../../storybook";
-
-import Menu, { Props } from ".";
+import Component, { Props } from ".";
 
 export default {
   title: "molecules/Visualizer/Widget/Menu",
-  component: Menu,
+  component: Component,
   parameters: { actions: { argTypesRegex: "^on.*" } },
 } as Meta;
 
-export const Default: Story<Props> = args => (
-  <Provider>
-    <Menu {...args} />
-  </Provider>
-);
+export const Default: Story<Props> = args => <Component {...args} />;
 
 Default.args = {
   widget: {

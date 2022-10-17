@@ -1,3 +1,5 @@
+import { LazyLayer as NextLayer, NaiveLayer } from "../next";
+
 export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
@@ -111,7 +113,7 @@ export type Layers = {
   ) => T | undefined;
   readonly isLayer: (obj: any) => obj is Layer;
   readonly overrideProperty: (id: string, property: any) => void;
-  readonly add: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
+  readonly add: (layer: NaiveLayer, parentId?: string, creator?: string) => string | undefined;
 };
 
 export type SelectLayerOptions = {
@@ -125,20 +127,7 @@ export type OverriddenInfobox = {
 };
 
 /** Layer is acutually displayed data on the map in which layers are flattened. All properties are stored with all dataset links, etc. resolved. */
-export type Layer<P = any, IBP = any> = {
-  id: string;
-  type?: string;
-  pluginId?: string;
-  extensionId?: string;
-  title?: string;
-  property?: P;
-  infobox?: Infobox<IBP>;
-  isVisible?: boolean;
-  propertyId?: string;
-  tags?: Tag[];
-  readonly children?: Layer[];
-  creator?: string;
-};
+export type Layer = NextLayer;
 
 export type LegacyLayer<P = any, IBP = any> = {
   id: string;

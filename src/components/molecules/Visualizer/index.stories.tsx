@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 
 import type { WidgetAlignSystem } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 
-import Component, { Widget, Props, Layer } from ".";
+import Component, { Widget, Props, Layer, convertLegacyLayer } from ".";
 
 export default {
   title: "molecules/Visualizer",
@@ -89,7 +89,9 @@ const layers: Layer[] = [
       },
     },
   },
-];
+]
+  .map(convertLegacyLayer)
+  .filter((l): l is Layer => !!l);
 
 const widgets: { floatingWidgets: Widget[]; alignSystem?: WidgetAlignSystem } = {
   floatingWidgets: [
@@ -223,7 +225,7 @@ export const Default = Template.bind({});
 Default.args = {
   engine: "cesium",
   rootLayerId: "root",
-  rootLayer: { id: "", children: layers },
+  layers,
   widgets,
   sceneProperty: {
     tiles: [{ id: "default", tile_type: "default" }],

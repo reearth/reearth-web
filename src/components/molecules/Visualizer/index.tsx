@@ -11,7 +11,7 @@ import Engine, { Props as EngineProps, SceneProperty, Cluster } from "./Engine";
 import Err from "./Error";
 import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
-import Layers, { LayerStore, Layer } from "./Layers";
+import { Layer, Layers } from "./next";
 import { Provider } from "./Plugin";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
@@ -26,9 +26,9 @@ import WidgetAlignSystem, {
   WidgetAlignSystem as WidgetAlignSystemType,
 } from "./WidgetAlignSystem";
 
+export type { Layer, LegacyLayer } from "./next";
 export type { SceneProperty, Cluster } from "./Engine";
 export type { InfoboxProperty, Block } from "./Infobox";
-export type { Layer } from "./Layers";
 export type { Tag } from "./Plugin/types";
 export type {
   Widget,
@@ -41,12 +41,12 @@ export type {
   WidgetZone,
   WidgetLayoutConstraint,
 } from "./WidgetAlignSystem";
-export { LayerStore };
+export { convertLegacyLayer } from "./next";
 
 export type Props = {
   children?: ReactNode;
   rootLayerId?: string;
-  rootLayer?: Layer;
+  layers?: Layer[];
   widgets?: {
     floatingWidgets?: Widget[];
     alignSystem?: WidgetAlignSystemType;
@@ -55,6 +55,7 @@ export type Props = {
   };
   sceneProperty?: SceneProperty;
   tags?: Tag[];
+  hiddenLayers?: string[];
   pluginProperty?: { [key: string]: any };
   clusters?: Cluster[];
   selectedLayerId?: string;
@@ -77,10 +78,11 @@ export type Props = {
 export default function Visualizer({
   ready,
   rootLayerId,
-  rootLayer,
+  layers,
   widgets,
   sceneProperty,
   tags,
+  hiddenLayers,
   children,
   pluginProperty,
   clusters,
@@ -105,11 +107,10 @@ export default function Visualizer({
   const {
     engineRef,
     wrapperRef,
+    layersRef,
     isDroppable,
     providerProps,
-    selectedLayerId,
     selectedLayer,
-    layers,
     layerSelectionReason,
     layerOverriddenProperties,
     selectedBlockId,
@@ -117,7 +118,6 @@ export default function Visualizer({
     innerClock,
     infobox,
     overriddenSceneProperty,
-    isLayerHidden,
     selectLayer,
     selectBlock,
     changeBlock,
@@ -131,7 +131,6 @@ export default function Visualizer({
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
     isPublished,
-    rootLayer,
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
     zoomedLayerId,
@@ -185,14 +184,15 @@ export default function Visualizer({
             onLayerDrop={handleLayerDrop}
             {...props}>
             <Layers
+              ref={layersRef}
               layers={layers}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
               clusters={clusters}
               sceneProperty={overriddenSceneProperty}
-              selectedLayerId={selectedLayerId}
-              isLayerHidden={isLayerHidden}
-              overriddenProperties={layerOverriddenProperties}
+              selectedLayerId={selectedLayer?.id}
+              hiddenLayers={hiddenLayers}
+              overrides={layerOverriddenProperties}
               clusterComponent={engineRef.current?.clusterComponent}
             />
             {ready &&
