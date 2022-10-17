@@ -12,18 +12,26 @@ import type {
   Reearth,
   Plugin,
   Tag,
+  PopupPosition,
 } from "./types";
 
-export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "modal" | "block" | "layer" | "widget">;
+export type CommonReearth = Omit<
+  Reearth,
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
+>;
 
 export function exposed({
   render,
   postMessage,
   resize,
   renderModal,
-  updateModal,
   closeModal,
+  updateModal,
   postMessageModal,
+  renderPopup,
+  closePopup,
+  updatePopup,
+  postMessagePopup,
   events,
   commonReearth,
   plugin,
@@ -54,6 +62,10 @@ export function exposed({
   closeModal: Reearth["modal"]["close"];
   updateModal: Reearth["modal"]["update"];
   postMessageModal: Reearth["modal"]["postMessage"];
+  renderPopup: Reearth["popup"]["show"];
+  closePopup: Reearth["popup"]["close"];
+  updatePopup: Reearth["popup"]["update"];
+  postMessagePopup: Reearth["popup"]["postMessage"];
   events: Events<ReearthEventType>;
   commonReearth: CommonReearth;
   plugin?: Plugin;
@@ -115,6 +127,22 @@ export function exposed({
           postMessage: postMessageModal,
           update: updateModal,
           close: closeModal,
+        },
+        popup: {
+          show: (
+            html: string,
+            options:
+              | {
+                  position?: PopupPosition;
+                  offset?: number;
+                }
+              | undefined,
+          ) => {
+            renderPopup(html, options);
+          },
+          postMessage: postMessagePopup,
+          update: updatePopup,
+          close: closePopup,
         },
         scene: merge(commonReearth.scene, {
           get overrideProperty() {

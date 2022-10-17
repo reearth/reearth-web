@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
 import type { PluginModalInfo } from "../Plugin/ModalContainer";
+import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
@@ -18,6 +19,9 @@ export type Props = {
   pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   pluginBaseUrl?: string;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
 };
@@ -34,6 +38,9 @@ export default function Zone({
   pluginModalContainer,
   shownPluginModalInfo,
   showPluginModal,
+  pluginPopupContainer,
+  shownPluginPopupInfo,
+  showPluginPopup,
   pluginBaseUrl,
   isEditable,
   isBuilt,
@@ -62,6 +69,9 @@ export default function Zone({
                 pluginModalContainer={pluginModalContainer}
                 shownPluginModalInfo={shownPluginModalInfo}
                 showPluginModal={showPluginModal}
+                pluginPopupContainer={pluginPopupContainer}
+                shownPluginPopupInfo={shownPluginPopupInfo}
+                showPluginPopup={showPluginPopup}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}

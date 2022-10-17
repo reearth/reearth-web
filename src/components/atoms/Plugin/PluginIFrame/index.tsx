@@ -1,4 +1,5 @@
 import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode, memo } from "react";
+import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 
 import IFrame, { AutoResize } from "../IFrame";
@@ -19,6 +20,7 @@ export type Props = {
   renderPlaceholder?: ReactNode;
   useContainer?: boolean;
   container?: HTMLElement | DocumentFragment;
+  externalRef?: RefObject<HTMLIFrameElement>;
   onRender?: (type: string) => void;
   onClick?: () => void;
   onMessage?: (message: any) => void;
@@ -36,6 +38,7 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     renderPlaceholder,
     useContainer,
     container,
+    externalRef,
     onRender,
     onClick,
     onMessage,
@@ -58,6 +61,7 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
           iFrameProps={iFrameProps}
           html={html}
           autoResize={autoResize}
+          externalRef={externalRef}
           onMessage={onMessage}
           onClick={onClick}
           onLoad={handleLoad}

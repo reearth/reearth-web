@@ -5,6 +5,7 @@ import { useMedia } from "react-use";
 import { styled } from "@reearth/theme";
 
 import type { PluginModalInfo } from "../Plugin/ModalContainer";
+import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 
 import useHooks from "./hooks";
 import type {
@@ -39,6 +40,9 @@ export type Props = {
   pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   pluginBaseUrl?: string;
   onWidgetUpdate?: (
     id: string,
@@ -59,11 +63,14 @@ const WidgetAlignSystem: React.FC<Props> = ({
   pluginProperty,
   pluginModalContainer,
   shownPluginModalInfo,
+  pluginPopupContainer,
+  shownPluginPopupInfo,
   pluginBaseUrl,
   isEditable,
   isBuilt,
   layoutConstraint,
   showPluginModal,
+  showPluginPopup,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
 }) => {
@@ -89,6 +96,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginModalContainer={pluginModalContainer}
             shownPluginModalInfo={shownPluginModalInfo}
             showPluginModal={showPluginModal}
+            pluginPopupContainer={pluginPopupContainer}
+            shownPluginPopupInfo={shownPluginPopupInfo}
+            showPluginPopup={showPluginPopup}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
@@ -102,6 +112,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 pluginModalContainer={pluginModalContainer}
                 shownPluginModalInfo={shownPluginModalInfo}
                 showPluginModal={showPluginModal}
+                pluginPopupContainer={pluginPopupContainer}
+                shownPluginPopupInfo={shownPluginPopupInfo}
+                showPluginPopup={showPluginPopup}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
@@ -118,6 +131,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
             pluginModalContainer={pluginModalContainer}
             shownPluginModalInfo={shownPluginModalInfo}
             showPluginModal={showPluginModal}
+            pluginPopupContainer={pluginPopupContainer}
+            shownPluginPopupInfo={shownPluginPopupInfo}
+            showPluginPopup={showPluginPopup}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
@@ -130,6 +146,9 @@ const WidgetAlignSystem: React.FC<Props> = ({
               pluginModalContainer={pluginModalContainer}
               shownPluginModalInfo={shownPluginModalInfo}
               showPluginModal={showPluginModal}
+              pluginPopupContainer={pluginPopupContainer}
+              shownPluginPopupInfo={shownPluginPopupInfo}
+              showPluginPopup={showPluginPopup}
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}

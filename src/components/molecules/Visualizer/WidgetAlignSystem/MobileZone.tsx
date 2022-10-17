@@ -6,6 +6,7 @@ import Slide from "@reearth/components/atoms/Slide";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
 import type { PluginModalInfo } from "../Plugin/ModalContainer";
+import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
@@ -22,6 +23,9 @@ export type Props = {
   pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   pluginBaseUrl?: string;
 };
 
@@ -37,6 +41,9 @@ export default function MobileZone({
   pluginModalContainer,
   shownPluginModalInfo,
   showPluginModal,
+  pluginPopupContainer,
+  shownPluginPopupInfo,
+  showPluginPopup,
   pluginBaseUrl,
   isEditable,
   isBuilt,
@@ -73,6 +80,9 @@ export default function MobileZone({
                   pluginModalContainer={pluginModalContainer}
                   shownPluginModalInfo={shownPluginModalInfo}
                   showPluginModal={showPluginModal}
+                  pluginPopupContainer={pluginPopupContainer}
+                  shownPluginPopupInfo={shownPluginPopupInfo}
+                  showPluginPopup={showPluginPopup}
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}

@@ -1,5 +1,6 @@
 import { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef, MutableRefObject } from "react";
+import type { RefObject } from "react";
 
 import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
 import { defaultIsMarshalable } from "@reearth/components/atoms/Plugin";
@@ -10,6 +11,7 @@ import { useGet } from "../utils";
 import { exposed } from "./api";
 import { useContext } from "./context";
 import type { PluginModalInfo } from "./ModalContainer";
+import type { PluginPopupInfo } from "./PopupContainer";
 import type { Layer, Widget, Block, GlobalThis, ReearthEventType } from "./types";
 
 export default function ({
@@ -23,6 +25,8 @@ export default function ({
   pluginProperty,
   shownPluginModalInfo,
   showPluginModal,
+  shownPluginPopupInfo,
+  showPluginPopup,
   onRender,
   onResize,
 }: {
@@ -36,6 +40,8 @@ export default function ({
   pluginProperty?: any;
   shownPluginModalInfo?: PluginModalInfo;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  showPluginPopup?: (modalInfo?: PluginModalInfo) => void;
   onRender?: (
     options:
       | {
@@ -52,12 +58,16 @@ export default function ({
   ) => void;
 }) {
   const modalCanBeVisible = useRef<boolean>(false);
+  const popupCanBeVisible = useRef<boolean>(false);
+  const externalRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    modalCanBeVisible.current =
-      shownPluginModalInfo?.id === `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`;
-    // }
+    modalCanBeVisible.current = shownPluginModalInfo?.id === widget?.id;
   }, [modalCanBeVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id]);
+
+  useEffect(() => {
+    popupCanBeVisible.current = shownPluginPopupInfo?.id === widget?.id;
+  }, [popupCanBeVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id]);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose } =
     useAPI({
@@ -69,7 +79,10 @@ export default function ({
       widget,
       pluginProperty,
       modalCanBeVisible,
+      popupCanBeVisible,
+      externalRef,
       showPluginModal,
+      showPluginPopup,
       onRender,
       onResize,
     }) ?? [];
@@ -91,6 +104,8 @@ export default function ({
     src,
     isMarshalable,
     modalCanBeVisible: modalCanBeVisible.current,
+    popupCanBeVisible: popupCanBeVisible.current,
+    externalRef,
     exposed: staticExposed,
     onError,
     onPreInit,
@@ -107,7 +122,10 @@ export function useAPI({
   block,
   widget,
   modalCanBeVisible,
+  popupCanBeVisible,
+  externalRef,
   showPluginModal,
+  showPluginPopup,
   onRender,
   onResize,
 }: {
@@ -119,7 +137,10 @@ export function useAPI({
   block: Block | undefined;
   widget: Widget | undefined;
   modalCanBeVisible?: MutableRefObject<boolean>;
+  popupCanBeVisible?: MutableRefObject<boolean>;
+  externalRef: RefObject<HTMLIFrameElement> | undefined;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   onRender?: (
     options:
       | {
@@ -189,7 +210,10 @@ export function useAPI({
     if (modalCanBeVisible?.current) {
       showPluginModal?.();
     }
-  }, [modalCanBeVisible, showPluginModal]);
+    if (popupCanBeVisible?.current) {
+      showPluginPopup?.();
+    }
+  }, [modalCanBeVisible, showPluginModal, popupCanBeVisible, showPluginPopup]);
 
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
@@ -198,7 +222,7 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ main, modal, messages }: IFrameAPI) => {
+    return ({ main, modal, popup, messages }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: {
@@ -243,25 +267,56 @@ export function useAPI({
         renderModal: (html, { ...options } = {}) => {
           modal.render(html, options);
           showPluginModal?.({
-            id: `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`,
+            id: widget?.id,
             background: options?.background,
           });
         },
         closeModal: () => {
           showPluginModal?.();
         },
-        updateModal: (options: {
-          width?: string | number;
-          height?: string | number;
-          background?: string;
-        }) => {
+        updateModal: options => {
           modal.resize(options.width, options.height);
           showPluginModal?.({
-            id: `${pluginId ?? ""}/${extensionId ?? ""}/${widget?.id ?? ""}`,
+            id: widget?.id,
             background: options.background,
           });
         },
         postMessageModal: modal.postMessage,
+        renderPopup: (html, { ...options } = {}) => {
+          let rendered = false;
+          popup.render(html, {
+            ...options,
+            onAutoResized: () => {
+              if (!rendered) {
+                showPluginPopup?.({
+                  id: widget?.id,
+                  ref: externalRef,
+                  ...options,
+                });
+                rendered = true;
+              }
+            },
+          });
+          showPluginPopup?.({
+            id: widget?.id,
+            ref: externalRef,
+            ...options,
+          });
+        },
+        closePopup: () => {
+          showPluginPopup?.();
+        },
+        updatePopup: options => {
+          if (options.width !== undefined || options.height !== undefined) {
+            popup.resize(options.width, options.height);
+          }
+          showPluginPopup?.({
+            id: widget?.id,
+            ...options,
+            ref: externalRef,
+          });
+        },
+        postMessagePopup: popup.postMessage,
         resize: (width, height, extended) => {
           main.resize(width, height);
           onResize?.(width, height, extended);
@@ -277,10 +332,12 @@ export function useAPI({
     pluginId,
     pluginProperty,
     widget?.id,
+    externalRef,
     getBlock,
     getLayer,
     getWidget,
     showPluginModal,
+    showPluginPopup,
     onRender,
     onResize,
   ]);

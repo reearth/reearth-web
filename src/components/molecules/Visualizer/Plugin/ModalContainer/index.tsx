@@ -41,7 +41,7 @@ const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
         background={shownPluginModalInfo?.background}
         onClick={closePopup}
       />
-      <Wrapper visible={!!shownPluginModalInfo?.id} ref={innerRef}></Wrapper>
+      <Wrapper visible={!!shownPluginModalInfo?.id} ref={innerRef} />
     </>
   );
 };

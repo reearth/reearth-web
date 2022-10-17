@@ -7,6 +7,7 @@ import Plugin, {
   Props as PluginProps,
 } from "../Plugin";
 import type { PluginModalInfo } from "../Plugin/ModalContainer";
+import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 
@@ -25,6 +26,9 @@ export type Props<PP = any, SP = any> = {
   pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   layout?: WidgetLayout;
   editing?: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
@@ -43,6 +47,9 @@ export default function WidgetComponent<PP = any, SP = any>({
   pluginModalContainer,
   shownPluginModalInfo,
   showPluginModal,
+  pluginPopupContainer,
+  shownPluginPopupInfo,
+  showPluginPopup,
   layout,
   onExtend,
   editing,
@@ -112,6 +119,9 @@ export default function WidgetComponent<PP = any, SP = any>({
       modalContainer={pluginModalContainer}
       shownPluginModalInfo={shownPluginModalInfo}
       showPluginModal={showPluginModal}
+      popupContainer={pluginPopupContainer}
+      shownPluginPopupInfo={shownPluginPopupInfo}
+      showPluginPopup={showPluginPopup}
       widget={w}
       iFrameProps={iFrameProps}
       onRender={handleRender}

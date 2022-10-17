@@ -17,6 +17,7 @@ import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
 import type { PluginModalInfo } from "./Plugin/ModalContainer";
+import type { PluginPopupInfo } from "./Plugin/PopupContainer";
 import type {
   CameraOptions,
   Clock,
@@ -224,6 +225,9 @@ export default ({
   const [shownPluginModalInfo, showPluginModal] = useState<PluginModalInfo>();
   const pluginModalContainerRef = useRef<HTMLDivElement>();
 
+  const [shownPluginPopupInfo, showPluginPopup] = useState<PluginPopupInfo>();
+  const pluginPopupContainerRef = useRef<HTMLDivElement>();
+
   return {
     engineRef,
     wrapperRef,
@@ -242,7 +246,10 @@ export default ({
     overriddenSceneProperty,
     pluginModalContainerRef,
     shownPluginModalInfo,
+    pluginPopupContainerRef,
+    shownPluginPopupInfo,
     showPluginModal,
+    showPluginPopup,
     isLayerHidden,
     selectLayer,
     selectBlock,

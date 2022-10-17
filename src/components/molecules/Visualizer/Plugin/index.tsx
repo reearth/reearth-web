@@ -2,6 +2,7 @@ import P, { Props as PluginProps } from "@reearth/components/atoms/Plugin";
 
 import useHooks from "./hooks";
 import type { PluginModalInfo } from "./ModalContainer";
+import type { PluginPopupInfo } from "./PopupContainer";
 import type { Layer, Widget, Block } from "./types";
 
 export type {
@@ -28,6 +29,8 @@ export type Props = {
   popupCanBeVisible?: boolean;
   modalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
+  popupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
   property?: any;
   pluginProperty?: any;
   pluginBaseUrl?: string;
@@ -36,6 +39,7 @@ export type Props = {
   block?: Block;
   iFrameProps?: PluginProps["iFrameProps"];
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   onClick?: () => void;
   onRender?: (
     options:
@@ -61,9 +65,10 @@ export default function Plugin({
   extensionType,
   autoResize,
   visible,
-  popupCanBeVisible,
   modalContainer,
   shownPluginModalInfo,
+  popupContainer,
+  shownPluginPopupInfo,
   pluginBaseUrl = "/plugins",
   layer,
   widget,
@@ -71,25 +76,38 @@ export default function Plugin({
   pluginProperty,
   iFrameProps,
   showPluginModal,
+  showPluginPopup,
   onClick,
   onRender,
   onResize,
 }: Props): JSX.Element | null {
-  const { skip, src, isMarshalable, modalCanBeVisible, onPreInit, onDispose, exposed, onError } =
-    useHooks({
-      pluginId,
-      extensionId,
-      extensionType,
-      pluginBaseUrl,
-      layer,
-      widget,
-      block,
-      pluginProperty,
-      shownPluginModalInfo,
-      showPluginModal,
-      onRender,
-      onResize,
-    });
+  const {
+    skip,
+    src,
+    isMarshalable,
+    modalCanBeVisible,
+    popupCanBeVisible,
+    externalRef,
+    onPreInit,
+    onDispose,
+    exposed,
+    onError,
+  } = useHooks({
+    pluginId,
+    extensionId,
+    extensionType,
+    pluginBaseUrl,
+    layer,
+    widget,
+    block,
+    pluginProperty,
+    shownPluginModalInfo,
+    shownPluginPopupInfo,
+    showPluginModal,
+    showPluginPopup,
+    onRender,
+    onResize,
+  });
 
   return !skip && (src || sourceCode) ? (
     <P
@@ -102,6 +120,8 @@ export default function Plugin({
       modalCanBeVisible={modalCanBeVisible}
       popupCanBeVisible={popupCanBeVisible}
       modalContainer={modalContainer}
+      popupContainer={popupContainer}
+      externalRef={externalRef}
       isMarshalable={isMarshalable}
       exposed={exposed}
       onError={onError}

@@ -1,4 +1,5 @@
 import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode } from "react";
+import type { RefObject } from "react";
 
 import useHook, { defaultIsMarshalable, IFrameType, API, Ref } from "./hooks";
 import PluginIFrame, { AutoResize } from "./PluginIFrame";
@@ -21,6 +22,7 @@ export type Props = {
   popupContainer?: HTMLElement | DocumentFragment;
   modalCanBeVisible?: boolean;
   popupCanBeVisible?: boolean;
+  externalRef?: RefObject<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
   onMessage?: (message: any) => void;
@@ -46,6 +48,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
     isMarshalable,
     modalContainer,
     popupContainer,
+    externalRef,
     exposed,
     onPreInit,
     onError,
@@ -81,6 +84,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         iFrameProps={iFrameProps}
         autoResize={autoResize}
         renderPlaceholder={renderPlaceholder}
+        externalRef={externalRef}
         onClick={onClick}
         onRender={onRender as (type: string) => void}
         onMessage={handleMessage}

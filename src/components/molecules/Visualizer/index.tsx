@@ -14,6 +14,7 @@ import Infobox, { Props as InfoboxProps } from "./Infobox";
 import Layers, { LayerStore, Layer } from "./Layers";
 import { Provider } from "./Plugin";
 import ModalContainer from "./Plugin/ModalContainer";
+import PopupContainer from "./Plugin/PopupContainer";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
@@ -119,7 +120,10 @@ export default function Visualizer({
     overriddenSceneProperty,
     pluginModalContainerRef,
     shownPluginModalInfo,
+    pluginPopupContainerRef,
+    shownPluginPopupInfo,
     showPluginModal,
+    showPluginPopup,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -166,6 +170,9 @@ export default function Visualizer({
               pluginModalContainer={pluginModalContainerRef.current}
               shownPluginModalInfo={shownPluginModalInfo}
               showPluginModal={showPluginModal}
+              pluginPopupContainer={pluginPopupContainerRef.current}
+              shownPluginPopupInfo={shownPluginPopupInfo}
+              showPluginPopup={showPluginPopup}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
               pluginBaseUrl={pluginBaseUrl}
@@ -219,6 +226,9 @@ export default function Visualizer({
                   pluginModalContainer={pluginModalContainerRef.current}
                   shownPluginModalInfo={shownPluginModalInfo}
                   showPluginModal={showPluginModal}
+                  pluginPopupContainer={pluginPopupContainerRef.current}
+                  shownPluginPopupInfo={shownPluginPopupInfo}
+                  showPluginPopup={showPluginPopup}
                   isEditable={props.isEditable}
                   isBuilt={props.isBuilt}
                   pluginBaseUrl={pluginBaseUrl}
@@ -231,6 +241,10 @@ export default function Visualizer({
                 shownPluginModalInfo={shownPluginModalInfo}
                 showPluginModal={showPluginModal}
                 ref={pluginModalContainerRef}
+              />
+              <PopupContainer
+                shownPluginPopupInfo={shownPluginPopupInfo}
+                ref={pluginPopupContainerRef}
               />
               <Infobox
                 title={infobox?.title}
