@@ -27,6 +27,12 @@ export type { Layer, NaiveLayer } from "../../types";
  */
 export type LazyLayer = Readonly<Layer> & {
   computed?: Readonly<ComputedLayer>;
+  // compat
+  pluginId?: string;
+  extensionId?: string;
+  property?: any;
+  propertyId?: string;
+  isVisible?: boolean;
 };
 
 export type Ref = {
@@ -38,6 +44,7 @@ export type Ref = {
   override: (id: string, layer?: Partial<Layer> | null) => void;
   deleteLayer: (...ids: string[]) => void;
   isLayer: (obj: any) => obj is LazyLayer;
+  layers: () => LazyLayer[];
   walk: <T>(
     fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void,
   ) => T | undefined;
@@ -283,6 +290,10 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     [lazyLayerPrototype],
   );
 
+  const rootLayers = useCallback(() => {
+    return layers?.map(l => findById(l.id)).filter((l): l is LazyLayer => !!l) ?? [];
+  }, [findById, layers]);
+
   const walk = useCallback(
     <T>(fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void): T | undefined => {
       return walkLayers(layers ?? [], (l, i, p) => {
@@ -353,6 +364,7 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       deleteLayer,
       findByIds,
       isLayer,
+      layers: rootLayers,
       walk,
       find,
       findAll,
@@ -368,6 +380,7 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       deleteLayer,
       findByIds,
       isLayer,
+      rootLayers,
       walk,
       find,
       findAll,

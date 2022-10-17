@@ -54,6 +54,28 @@ test("isLayer", () => {
   expect(ref?.isLayer(layer)).toBe(true);
 });
 
+test("layers", () => {
+  const layers: Layer[] = [
+    { id: "x", type: "simple" },
+    { id: "y", type: "group", children: [{ id: "z", type: "simple" }] },
+  ];
+
+  const {
+    result: {
+      current: { current: ref },
+    },
+  } = renderHook(() => {
+    const ref = useRef<Ref>(null);
+    const _ = useHooks({ layers, ref });
+    return ref;
+  });
+
+  const res = ref?.layers();
+  expect(res).toHaveLength(2);
+  expect(res?.[0].id).toBe("x");
+  expect(res?.[1].id).toBe("y");
+});
+
 test("findById", () => {
   const layers: Layer[] = [{ id: "x", type: "simple", title: "X" }];
 

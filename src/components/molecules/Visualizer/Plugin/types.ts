@@ -136,7 +136,22 @@ export type Layer<P = any, IBP = any> = {
   isVisible?: boolean;
   propertyId?: string;
   tags?: Tag[];
-  readonly children?: Layer<P, IBP>[];
+  readonly children?: Layer[];
+  creator?: string;
+};
+
+export type LegacyLayer<P = any, IBP = any> = {
+  id: string;
+  type?: string;
+  pluginId?: string;
+  extensionId?: string;
+  title?: string;
+  property?: P;
+  infobox?: Infobox<IBP>;
+  isVisible?: boolean;
+  propertyId?: string;
+  tags?: Tag[];
+  readonly children?: Layer[];
   creator?: string;
 };
 
