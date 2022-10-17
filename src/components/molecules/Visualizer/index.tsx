@@ -60,6 +60,7 @@ export type Props = {
   pluginProperty?: { [key: string]: any };
   clusterProperty?: ClusterProperty[];
   selectedLayerId?: string;
+  zoomedLayerId?: string;
   selectedBlockId?: string;
   pluginBaseUrl?: string;
   isPublished?: boolean;
@@ -89,6 +90,7 @@ export default function Visualizer({
   isPublished,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
+  zoomedLayerId,
   widgetAlignEditorActivated,
   onLayerSelect,
   onWidgetUpdate,
@@ -142,6 +144,7 @@ export default function Visualizer({
     rootLayer,
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,
+    zoomedLayerId,
     camera: props.camera,
     clock: props.clock,
     sceneProperty,
