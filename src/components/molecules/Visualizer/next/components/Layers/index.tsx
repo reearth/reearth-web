@@ -7,12 +7,16 @@ import useHooks, { type Ref } from "./hooks";
 export type { CommonProps, FeatureComponentProps, Layer, LayerSimple } from "../Layer";
 export type { LazyLayer, Ref } from "./hooks";
 
-export type Props = Omit<ClusteredLayerProps, "atomMap">;
+export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
+  hiddenLayers?: string[];
+};
 
-const Layers: ForwardRefRenderFunction<Ref, Props> = ({ layers, ...props }, ref) => {
-  const { atomMap, flattenedLayers } = useHooks({ layers, ref });
+const Layers: ForwardRefRenderFunction<Ref, Props> = ({ layers, hiddenLayers, ...props }, ref) => {
+  const { atomMap, flattenedLayers, isHidden } = useHooks({ layers, ref, hiddenLayers });
 
-  return <ClusteredLayers layers={flattenedLayers} atomMap={atomMap} {...props} />;
+  return (
+    <ClusteredLayers {...props} layers={flattenedLayers} atomMap={atomMap} isHidden={isHidden} />
+  );
 };
 
 export default forwardRef(Layers);

@@ -17,7 +17,7 @@ test("simple", () => {
   expect(screen.getAllByText("Hello")).toHaveLength(2);
   expect(Feature).toBeCalledTimes(2);
   expect(Feature.mock.calls[0][0]).toEqual({
-    isHidden: undefined,
+    isHidden: false,
     isSelected: false,
     layer: {
       id: "a",
@@ -31,7 +31,7 @@ test("simple", () => {
     onFeatureRequest: expect.any(Function),
   });
   expect(Feature.mock.calls[1][0]).toEqual({
-    isHidden: undefined,
+    isHidden: false,
     isSelected: false,
     layer: {
       id: "b",

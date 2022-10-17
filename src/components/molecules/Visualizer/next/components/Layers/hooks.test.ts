@@ -460,6 +460,50 @@ test("override", () => {
   expect(l3.tags).toBeUndefined();
 });
 
+test("hide and show", () => {
+  const layers: Layer[] = [
+    { id: "x", type: "simple", title: "X" },
+    { id: "y", type: "simple", title: "Y" },
+  ];
+
+  const { result, rerender } = renderHook(
+    ({ hiddenLayers }: { hiddenLayers: string[] }) => {
+      const ref = useRef<Ref>(null);
+      const { isHidden } = useHooks({ layers, ref, hiddenLayers });
+      return { ref, isHidden };
+    },
+    {
+      initialProps: { hiddenLayers: ["y"] },
+    },
+  );
+
+  expect(result.current.isHidden("x")).toBe(false);
+  expect(result.current.isHidden("y")).toBe(true);
+
+  result.current.ref.current?.hide("x");
+  rerender({ hiddenLayers: ["y"] });
+
+  expect(result.current.isHidden("x")).toBe(true);
+  expect(result.current.isHidden("y")).toBe(true);
+
+  rerender({ hiddenLayers: ["x"] });
+
+  expect(result.current.isHidden("x")).toBe(true);
+  expect(result.current.isHidden("y")).toBe(false);
+
+  result.current.ref.current?.show("x");
+  result.current.ref.current?.show("y");
+  rerender({ hiddenLayers: ["x"] });
+
+  expect(result.current.isHidden("x")).toBe(true);
+  expect(result.current.isHidden("y")).toBe(false);
+
+  rerender({ hiddenLayers: [] });
+
+  expect(result.current.isHidden("x")).toBe(false);
+  expect(result.current.isHidden("y")).toBe(false);
+});
+
 test("compat", () => {
   const { result, rerender } = renderHook(() => {
     const ref = useRef<Ref>(null);

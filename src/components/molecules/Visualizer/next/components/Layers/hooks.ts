@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
 
 import { objectFromGetter } from "@reearth/util/object";
@@ -54,13 +55,29 @@ export type Ref = {
   findAll: (fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) => LazyLayer[];
   findByTags: (...tagIds: string[]) => LazyLayer[];
   findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
+  hide: (...layers: string[]) => void;
+  show: (...layers: string[]) => void;
 };
 
-export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: ForwardedRef<Ref> }) {
+export default function useHooks({
+  layers,
+  ref,
+  hiddenLayers,
+}: {
+  layers?: Layer[];
+  ref?: ForwardedRef<Ref>;
+  hiddenLayers?: string[];
+}) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
   const atomMap = useMemo(() => new Map<string, Atom>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
+
+  const [hiddenLayerIds, { add: hideLayer, remove: showLayer }] = useSet<string>();
+  const isHidden = useCallback(
+    (id: string) => hiddenLayerIds.has(id) || !!hiddenLayers?.includes(id),
+    [hiddenLayerIds, hiddenLayers],
+  );
 
   const [tempLayers, setTempLayers] = useState<Layer[]>([]);
   const flattenedLayers = useMemo((): Layer[] => {
@@ -87,7 +104,7 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
 
       return res;
     });
-  }, [layers, tempLayers, overriddenLayers]);
+  }, [tempLayers, layers, overriddenLayers]);
 
   const getComputedLayer = useAtomValue(
     useMemo(
@@ -276,11 +293,12 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
             layerMap.delete(id);
             atomMap.delete(id);
             lazyLayerMap.delete(id);
+            showLayer(id);
           });
         return newLayers;
       });
     },
-    [layerMap, atomMap, lazyLayerMap],
+    [layerMap, atomMap, lazyLayerMap, showLayer],
   );
 
   const isLayer = useCallback(
@@ -353,6 +371,24 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
     [findAll],
   );
 
+  const hideLayers = useCallback(
+    (...layers: string[]) => {
+      for (const l of layers) {
+        hideLayer(l);
+      }
+    },
+    [hideLayer],
+  );
+
+  const showLayers = useCallback(
+    (...layers: string[]) => {
+      for (const l of layers) {
+        showLayer(l);
+      }
+    },
+    [showLayer],
+  );
+
   useImperativeHandle(
     ref,
     () => ({
@@ -370,6 +406,8 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       findAll,
       findByTags,
       findByTagLabels,
+      hide: hideLayers,
+      show: showLayers,
     }),
     [
       findById,
@@ -386,6 +424,8 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       findAll,
       findByTags,
       findByTagLabels,
+      hideLayers,
+      showLayers,
     ],
   );
 
@@ -405,11 +445,12 @@ export default function useHooks({ layers, ref }: { layers?: Layer[]; ref?: Forw
       atomMap.delete(k);
       layerMap.delete(k);
       lazyLayerMap.delete(k);
+      showLayer(k);
     });
     setOverridenLayers(layers => layers.filter(l => !deleted.includes(l.id)));
-  }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers]);
+  }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
 
-  return { atomMap, flattenedLayers };
+  return { atomMap, flattenedLayers, isHidden };
 }
 
 function flattenLayers(layers: Layer[]): Layer[] {
