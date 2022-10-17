@@ -24,6 +24,7 @@ test("group", () => {
         {
           id: "yyy",
           type: "group",
+          children: [],
         },
       ],
     }),

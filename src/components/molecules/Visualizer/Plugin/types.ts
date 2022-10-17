@@ -151,7 +151,7 @@ export type LegacyLayer<P = any, IBP = any> = {
   isVisible?: boolean;
   propertyId?: string;
   tags?: Tag[];
-  readonly children?: Layer[];
+  readonly children?: LegacyLayer[];
   creator?: string;
 };
 
