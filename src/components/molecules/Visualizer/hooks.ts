@@ -3,6 +3,8 @@ import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useReduce
 import { initialize, pageview } from "react-ga";
 import { useSet } from "react-use";
 
+// eslint-disable-next-line no-restricted-imports
+import { useZoomedLayerId } from "@reearth/state";
 import { useDrop, DropOptions } from "@reearth/util/use-dnd";
 import { Camera, LatLng, ValueTypes, ValueType } from "@reearth/util/value";
 
@@ -75,6 +77,7 @@ export default ({
 }) => {
   const engineRef = useRef<EngineRef>(null);
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
+  const [, zoomToLayer] = useZoomedLayerId();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { ref: dropRef, isDroppable } = useDrop(
@@ -225,8 +228,9 @@ export default ({
   useEffect(() => {
     if (zoomedLayerId) {
       engineRef.current?.lookAtLayer(zoomedLayerId);
+      zoomToLayer(undefined);
     }
-  }, [zoomedLayerId]);
+  }, [zoomedLayerId, zoomToLayer]);
 
   return {
     engineRef,
