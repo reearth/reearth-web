@@ -137,7 +137,7 @@ export type SceneProperty = {
   default?: {
     camera?: Camera;
     terrain?: boolean;
-    terrainType?: "cesium" | "arcgis"; // default: cesium
+    terrainType?: "cesium" | "arcgis" | "url"; // default: cesium
     terrainExaggeration?: number; // default: 1
     terrainExaggerationRelativeHeight?: number; // default: 0
     depthTestAgainstTerrain?: boolean;
@@ -169,7 +169,7 @@ export type SceneProperty = {
   }[];
   terrain?: {
     terrain?: boolean;
-    terrainType?: "cesium" | "arcgis"; // default: cesium
+    terrainType?: "cesium" | "arcgis" | "url"; // default: cesium
     terrainExaggeration?: number; // default: 1
     terrainExaggerationRelativeHeight?: number; // default: 0
     depthTestAgainstTerrain?: boolean;
