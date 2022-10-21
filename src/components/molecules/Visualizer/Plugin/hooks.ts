@@ -62,12 +62,12 @@ export default function ({
   const externalRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    modalCanBeVisible.current = shownPluginModalInfo?.id === widget?.id;
-  }, [modalCanBeVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id]);
+    modalCanBeVisible.current = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
+  }, [modalCanBeVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id, block?.id]);
 
   useEffect(() => {
-    popupCanBeVisible.current = shownPluginPopupInfo?.id === widget?.id;
-  }, [popupCanBeVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id]);
+    popupCanBeVisible.current = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
+  }, [popupCanBeVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id, block?.id]);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose } =
     useAPI({
@@ -267,7 +267,7 @@ export function useAPI({
         renderModal: (html, { ...options } = {}) => {
           modal.render(html, options);
           showPluginModal?.({
-            id: widget?.id,
+            id: widget?.id ?? block?.id,
             background: options?.background,
           });
         },
@@ -277,7 +277,7 @@ export function useAPI({
         updateModal: options => {
           modal.resize(options.width, options.height);
           showPluginModal?.({
-            id: widget?.id,
+            id: widget?.id ?? block?.id,
             background: options.background,
           });
         },
@@ -289,7 +289,7 @@ export function useAPI({
             onAutoResized: () => {
               if (!rendered) {
                 showPluginPopup?.({
-                  id: widget?.id,
+                  id: widget?.id ?? block?.id,
                   ref: externalRef,
                   ...options,
                 });
@@ -298,7 +298,7 @@ export function useAPI({
             },
           });
           showPluginPopup?.({
-            id: widget?.id,
+            id: widget?.id ?? block?.id,
             ref: externalRef,
             ...options,
           });
@@ -311,7 +311,7 @@ export function useAPI({
             popup.resize(options.width, options.height);
           }
           showPluginPopup?.({
-            id: widget?.id,
+            id: widget?.id ?? block?.id,
             ...options,
             ref: externalRef,
           });
@@ -332,6 +332,7 @@ export function useAPI({
     pluginId,
     pluginProperty,
     widget?.id,
+    block?.id,
     externalRef,
     getBlock,
     getLayer,

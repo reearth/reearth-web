@@ -4,7 +4,7 @@ import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
 import Plugin from "../Plugin";
-import type { Block, Layer, InfoboxProperty } from "../Plugin";
+import type { Block, Layer, InfoboxProperty, CommonProps as PluginCommonProps } from "../Plugin";
 
 import builtin from "./builtin";
 
@@ -26,7 +26,7 @@ export type Props<BP = any, PP = any> = {
     value: ValueTypes[T],
     type: T,
   ) => void;
-};
+} & PluginCommonProps;
 
 export type Component<BP = any, PP = any> = ComponentType<Props<BP, PP>>;
 
@@ -53,6 +53,12 @@ export default function BlockComponent<P = any, PP = any>({
         visible
         property={props.pluginProperty}
         pluginProperty={props.pluginProperty}
+        pluginModalContainer={props.pluginModalContainer}
+        shownPluginModalInfo={props.shownPluginModalInfo}
+        showPluginModal={props.showPluginModal}
+        pluginPopupContainer={props.pluginPopupContainer}
+        shownPluginPopupInfo={props.shownPluginPopupInfo}
+        showPluginPopup={props.showPluginPopup}
         layer={props.layer}
         block={props.block}
         onClick={props.onClick}

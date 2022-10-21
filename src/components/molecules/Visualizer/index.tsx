@@ -268,6 +268,12 @@ export default function Visualizer({
                 renderInsertionPopUp={renderInfoboxInsertionPopUp}
                 pluginBaseUrl={pluginBaseUrl}
                 onMaskClick={handleInfoboxMaskClick}
+                pluginModalContainer={pluginModalContainerRef.current}
+                shownPluginModalInfo={shownPluginModalInfo}
+                showPluginModal={showPluginModal}
+                pluginPopupContainer={pluginPopupContainerRef.current}
+                shownPluginPopupInfo={shownPluginPopupInfo}
+                showPluginPopup={showPluginPopup}
               />
             </>
           )}
