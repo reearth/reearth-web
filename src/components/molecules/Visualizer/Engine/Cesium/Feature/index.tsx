@@ -11,6 +11,8 @@ import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
 import type { FeatureComponent, FeatureComponentConfig } from "./utils";
 
+export * from "./utils";
+
 export default function Feature({ layer, ...props }: FeatureComponentProps): JSX.Element | null {
   return (
     <>

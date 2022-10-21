@@ -194,6 +194,7 @@ export default function Visualizer({
               hiddenLayers={hiddenLayers}
               overrides={layerOverriddenProperties}
               clusterComponent={engineRef.current?.clusterComponent}
+              Feature={engineRef.current?.featureComponent}
             />
             {ready &&
               widgets?.floatingWidgets?.map(widget => (

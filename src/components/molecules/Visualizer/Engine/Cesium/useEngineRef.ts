@@ -26,7 +26,7 @@ import {
   getCenterCamera,
   zoom,
 } from "./common";
-import { getTag } from "./Feature/utils";
+import Feature, { getTag } from "./Feature";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -317,6 +317,7 @@ export default function useEngineRef(
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
       clusterComponent: Cluster,
+      featureComponent: Feature,
     };
   }, [cesium]);
 

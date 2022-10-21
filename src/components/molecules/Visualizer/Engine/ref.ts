@@ -2,6 +2,7 @@ import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
+import { FeatureComponentProps } from "../next";
 import { Clock } from "../Plugin/types";
 
 export type MouseEvent = {
@@ -77,6 +78,7 @@ export type EngineRef = {
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
+  featureComponent?: ComponentType<FeatureComponentProps>;
   clusterComponent?: ComponentType<ClusterProps>;
   mouseEventCallbacks: MouseEvents;
 };
