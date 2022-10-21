@@ -11,7 +11,6 @@ test("group", () => {
   expect(
     convertLegacyLayer({
       id: "xxx",
-      type: "group",
       isVisible: true,
       title: "title",
       creator: "aaa",
@@ -55,7 +54,6 @@ test("marker", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "marker",
       propertyId: "p",
       isVisible: true,
@@ -102,7 +100,6 @@ test("polyline", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "polyline",
       propertyId: "p",
       isVisible: true,
@@ -156,7 +153,6 @@ test("polygon", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "polygon",
       propertyId: "p",
       isVisible: true,
@@ -216,7 +212,6 @@ test("rect", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "rect",
       propertyId: "p",
       isVisible: true,
@@ -281,7 +276,6 @@ test("photooverlay", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "photooverlay",
       propertyId: "p",
       isVisible: true,
@@ -328,7 +322,6 @@ test("ellipsoid", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "ellipsoid",
       propertyId: "p",
       isVisible: true,
@@ -375,7 +368,6 @@ test("model", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "model",
       propertyId: "p",
       isVisible: true,
@@ -429,7 +421,6 @@ test("3dtiles", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "tileset",
       propertyId: "p",
       isVisible: true,
@@ -468,7 +459,6 @@ test("resource", () => {
   expect(
     convertLegacyLayer({
       id: "x",
-      type: "item",
       extensionId: "resource",
       propertyId: "p",
       isVisible: true,

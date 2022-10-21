@@ -31,8 +31,8 @@ function convertLayerCommon(l: Layer): any {
 
 function convertLayerGroup(l: Layer): LegacyLayer | undefined {
   if (l.type !== "group") return;
+
   return {
-    type: "group",
     ...convertLayerCommon(l),
     children: l.children?.map(convertLayer).filter((l): l is LegacyLayer => !!l) ?? [],
   };
@@ -41,10 +41,7 @@ function convertLayerGroup(l: Layer): LegacyLayer | undefined {
 function convertLayerItem(l: Layer): LegacyLayer | undefined {
   if (l.type !== "simple") return;
 
-  return {
-    type: "item",
-    ...convertLayerCommon(l),
-  };
+  return convertLayerCommon(l);
 }
 
 export function getCompat(l: Layer | undefined): LayerCompat | undefined {

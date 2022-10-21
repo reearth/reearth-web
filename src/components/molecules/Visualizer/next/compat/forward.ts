@@ -34,7 +34,8 @@ function convertLegacyLayerCommon(l: LegacyLayer): any {
 }
 
 function convertLegacyLayerGroup(l: LegacyLayer): LayerGroup | undefined {
-  if (l.type !== "group") return;
+  if (!Array.isArray(l.children)) return;
+
   return {
     type: "group",
     ...convertLegacyLayerCommon(l),
@@ -43,7 +44,7 @@ function convertLegacyLayerGroup(l: LegacyLayer): LayerGroup | undefined {
 }
 
 function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
-  if (l.type !== "item") return;
+  if (Array.isArray(l.children)) return;
 
   let appearance: string | undefined;
   let data: Data | undefined;

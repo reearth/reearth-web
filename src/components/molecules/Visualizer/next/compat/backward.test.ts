@@ -32,11 +32,9 @@ test("group", () => {
     }),
   ).toEqual({
     id: "xxx",
-    type: "group",
     children: [
       {
         id: "yyy",
-        type: "group",
         children: [],
       },
     ],
@@ -70,7 +68,6 @@ test("item", () => {
     }),
   ).toEqual({
     id: "xxx",
-    type: "item",
     isVisible: true,
     title: "title",
     creator: "creator",

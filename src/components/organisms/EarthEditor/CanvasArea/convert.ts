@@ -162,7 +162,7 @@ export const processLayer = (layer: L | undefined): LegacyLayer | undefined => {
     tags: processLayerTags(layer.tags),
     children:
       layer.__typename === "LayerGroup"
-        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l)
+        ? layer.layers?.map(l => processLayer(l ?? undefined)).filter((l): l is Layer => !!l) ?? []
         : undefined,
   };
 };
