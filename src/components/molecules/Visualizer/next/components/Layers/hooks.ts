@@ -6,6 +6,7 @@ import {
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useSet } from "react-use";
@@ -13,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { objectFromGetter } from "@reearth/util/object";
 
+import { useGet } from "../../../utils";
 import { computeAtom, type Atom } from "../../atoms";
 import { convertLegacyLayer } from "../../compat";
 import type { ComputedLayer, Layer, NaiveLayer } from "../../types";
@@ -79,9 +81,11 @@ export default function useHooks({
     [hiddenLayerIds, hiddenLayers],
   );
 
+  const layersRef = useGet(layers);
   const [tempLayers, setTempLayers] = useState<Layer[]>([]);
+  const tempLayersRef = useRef<Layer[]>([]);
   const flattenedLayers = useMemo((): Layer[] => {
-    const newLayers = [...flattenLayers(tempLayers), ...flattenLayers(layers ?? [])];
+    const newLayers = [...flattenLayers(layers ?? []), ...flattenLayers(tempLayers)];
     // apply overrides
     return newLayers.map(l => {
       const ol: any = overriddenLayers.find(ll => ll.id === l.id);
@@ -206,6 +210,7 @@ export default function useHooks({
         atomMap.set(l.id, computeAtom());
       });
 
+      tempLayersRef.current = [...tempLayersRef.current, newLayer];
       setTempLayers(layers => [...layers, newLayer]);
 
       const newLazyLayer = findById(newLayer.id);
@@ -231,12 +236,12 @@ export default function useHooks({
         .filter((l): l is Layer => !!l);
       setTempLayers(currentLayers => {
         replaceLayers(currentLayers, l => {
-          const newLayer = validLayers.find(ll => ll.id === l.id);
-          if (newLayer) {
-            const newLayer2 = { ...newLayer };
-            layerMap.set(newLayer.id, newLayer2);
-
-            return newLayer2;
+          const i = validLayers.findIndex(ll => ll.id === l.id);
+          if (i >= 0) {
+            const newLayer = { ...validLayers[i] };
+            tempLayersRef.current[i] = newLayer;
+            layerMap.set(newLayer.id, newLayer);
+            return newLayer;
           }
           return;
         });
@@ -295,6 +300,9 @@ export default function useHooks({
             lazyLayerMap.delete(id);
             showLayer(id);
           });
+        tempLayersRef.current = tempLayersRef.current.filter(
+          l => !deleted.find(ll => ll.id === l.id),
+        );
         return newLayers;
       });
     },
@@ -309,12 +317,14 @@ export default function useHooks({
   );
 
   const rootLayers = useCallback(() => {
-    return layers?.map(l => findById(l.id)).filter((l): l is LazyLayer => !!l) ?? [];
-  }, [findById, layers]);
+    return [...(layersRef() ?? []), ...tempLayersRef.current]
+      .map(l => findById(l.id))
+      .filter((l): l is LazyLayer => !!l);
+  }, [findById, layersRef]);
 
   const walk = useCallback(
     <T>(fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void): T | undefined => {
-      return walkLayers(layers ?? [], (l, i, p) => {
+      return walkLayers(layersRef() ?? [], (l, i, p) => {
         const ll = findById(l.id);
         if (!ll) return;
         return fn(
@@ -324,7 +334,7 @@ export default function useHooks({
         );
       });
     },
-    [findById, layers],
+    [findById, layersRef],
   );
 
   const find = useCallback(
