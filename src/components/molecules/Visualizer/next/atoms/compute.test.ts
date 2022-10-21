@@ -165,8 +165,8 @@ test("computeAtom", async () => {
 
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({
   evalLayer: async (layer: LayerSimple, ctx: EvalContext) => {
-    if (!layer.data) return [];
-    return ctx.getAllFeatures(layer.data);
+    if (!layer.data) return { layer: {}, features: undefined };
+    return { layer: {}, features: await ctx.getAllFeatures(layer.data) };
   },
 }));
 

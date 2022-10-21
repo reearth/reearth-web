@@ -1,8 +1,16 @@
 import { atom } from "jotai";
 import { merge, pick } from "lodash";
 
-import { evalLayer } from "../evaluator";
-import type { ComputedLayer, ComputedLayerStatus, Data, DataRange, Feature, Layer } from "../types";
+import { evalLayer, EvalResult } from "../evaluator";
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  ComputedLayerStatus,
+  Data,
+  DataRange,
+  Feature,
+  Layer,
+} from "../types";
 import { appearanceKeys } from "../types";
 
 import { dataAtom, globalDataFeaturesCache } from "./data";
@@ -25,9 +33,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     },
   );
 
-  const computedFeatures = atom<Feature[]>([]);
+  const computedResult = atom<EvalResult | undefined>(undefined);
   const finalFeatures = atom(get =>
-    get(computedFeatures).map(f => merge({ ...f }, get(overrides))),
+    get(computedResult)?.features?.map((f): ComputedFeature => merge({ ...f }, get(overrides))),
   );
   const layerStatus = atom<ComputedLayerStatus>("fetching");
   const dataAtoms = dataAtom(cache);
@@ -40,11 +48,12 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       id: currentLayer.id,
       layer: currentLayer,
       status: get(layerStatus),
-      features: get(finalFeatures),
+      features: get(finalFeatures) ?? [],
       originalFeatures:
         currentLayer.type === "simple" && currentLayer.data
           ? get(dataAtoms.getAll)(currentLayer.data).flat()
           : [],
+      ...get(computedResult)?.layer,
     };
   });
 
@@ -87,7 +96,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
     const result = await evalLayer(currentLayer, { getFeatures, getAllFeatures });
     set(layerStatus, "ready");
-    set(computedFeatures, result ?? []);
+    set(computedResult, result);
   });
 
   const set = atom(null, async (_get, set, value: Layer | undefined) => {
