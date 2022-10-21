@@ -35,8 +35,6 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  pluginProperty?: { [key: string]: any };
-  pluginBaseUrl?: string;
   onWidgetUpdate?: (
     id: string,
     update: {

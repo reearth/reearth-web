@@ -18,6 +18,8 @@ export { Provider, useContext } from "./context";
 export type { Props as ProviderProps, Context } from "./context";
 
 export type CommonProps = {
+  pluginProperty?: any;
+  pluginBaseUrl?: string;
   pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
   pluginPopupContainer?: HTMLElement | DocumentFragment;
@@ -35,8 +37,6 @@ export type Props = {
   autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
   property?: any;
-  pluginProperty?: any;
-  pluginBaseUrl?: string;
   layer?: Layer;
   widget?: Widget;
   block?: Block;

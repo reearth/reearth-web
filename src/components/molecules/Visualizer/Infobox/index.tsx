@@ -30,8 +30,6 @@ export type Props = {
   isBuilt?: boolean;
   selectedBlockId?: string;
   visible?: boolean;
-  pluginBaseUrl?: string;
-  pluginProperty?: { [key: string]: any };
   onMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(

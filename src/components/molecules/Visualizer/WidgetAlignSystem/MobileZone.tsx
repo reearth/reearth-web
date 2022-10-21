@@ -18,8 +18,6 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  pluginProperty?: { [key: string]: any };
-  pluginBaseUrl?: string;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;

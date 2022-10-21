@@ -21,7 +21,6 @@ export type Props<PP = any, SP = any> = {
   extended?: boolean;
   sceneProperty?: SP;
   pluginProperty?: PP;
-  pluginBaseUrl?: string;
   layout?: WidgetLayout;
   editing?: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;

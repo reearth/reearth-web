@@ -10,15 +10,13 @@ import builtin from "./builtin";
 
 export type { Block, Layer } from "../Plugin";
 
-export type Props<BP = any, PP = any> = {
+export type Props<BP = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
   layer?: Layer;
   block?: Block<BP>;
   infoboxProperty?: InfoboxProperty;
-  pluginProperty?: PP;
-  pluginBaseUrl?: string;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,
@@ -28,12 +26,12 @@ export type Props<BP = any, PP = any> = {
   ) => void;
 } & PluginCommonProps;
 
-export type Component<BP = any, PP = any> = ComponentType<Props<BP, PP>>;
+export type Component<BP = any> = ComponentType<Props<BP>>;
 
-export default function BlockComponent<P = any, PP = any>({
+export default function BlockComponent<P = any>({
   pluginBaseUrl,
   ...props
-}: Props<P, PP>): JSX.Element | null {
+}: Props<P>): JSX.Element | null {
   const Builtin =
     props.block?.pluginId && props.block.extensionId
       ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]

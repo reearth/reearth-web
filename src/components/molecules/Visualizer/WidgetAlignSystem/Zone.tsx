@@ -14,8 +14,6 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  pluginProperty?: { [key: string]: any };
-  pluginBaseUrl?: string;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
 } & PluginCommonProps;
 
