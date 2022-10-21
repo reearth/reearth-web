@@ -52,10 +52,10 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     () =>
       geometry?.type === "Point"
         ? geometry.coordinates
-        : property.location
+        : property?.location
         ? [property.location.lng, property.location.lat, property.height ?? 0]
         : undefined,
-    [geometry?.coordinates, geometry?.type, property.height, property.location],
+    [geometry?.coordinates, geometry?.type, property?.height, property?.location],
   );
 
   const {

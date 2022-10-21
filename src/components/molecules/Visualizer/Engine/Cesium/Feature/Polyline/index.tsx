@@ -24,10 +24,10 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     () =>
       geometry?.type === "LineString"
         ? geometry.coordinates
-        : property.coordinates
+        : property?.coordinates
         ? property.coordinates.map(p => [p.lng, p.lat, p.height])
         : undefined,
-    [geometry?.coordinates, geometry?.type, property.coordinates],
+    [geometry?.coordinates, geometry?.type, property?.coordinates],
   );
 
   const { clampToGround, strokeColor, strokeWidth = 1, shadows } = property ?? {};

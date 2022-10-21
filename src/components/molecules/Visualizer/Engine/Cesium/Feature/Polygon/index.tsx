@@ -28,10 +28,10 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     () =>
       geometry?.type === "Polygon"
         ? geometry.coordinates
-        : property.polygon
+        : property?.polygon
         ? property.polygon.map(p => p.map(q => [q.lng, q.lat, q.height]))
         : undefined,
-    [geometry?.coordinates, geometry?.type, property.polygon],
+    [geometry?.coordinates, geometry?.type, property?.polygon],
   );
 
   const {

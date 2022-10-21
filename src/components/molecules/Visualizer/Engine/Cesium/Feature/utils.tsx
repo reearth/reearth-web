@@ -19,7 +19,7 @@ import type {
 
 export type FeatureProps<P = any> = {
   id: string;
-  property: P;
+  property?: P;
   isVisible?: boolean;
   layer?: ComputedLayer;
   feature?: ComputedFeature;
