@@ -13,7 +13,11 @@ import type { FeatureComponent, FeatureComponentConfig } from "./utils";
 
 export * from "./utils";
 
-export default function Feature({ layer, ...props }: FeatureComponentProps): JSX.Element | null {
+export default function Feature({
+  layer,
+  isHidden,
+  ...props
+}: FeatureComponentProps): JSX.Element | null {
   return (
     <>
       {[undefined, ...layer.features].flatMap(f =>
@@ -38,6 +42,7 @@ export default function Feature({ layer, ...props }: FeatureComponentProps): JSX
               geometry={f?.geometry}
               feature={f}
               layer={layer}
+              isVisible={layer.layer.visible && !isHidden}
             />
           );
         }),
