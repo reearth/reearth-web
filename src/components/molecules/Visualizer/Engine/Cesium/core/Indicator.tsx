@@ -39,6 +39,7 @@ export default function Indicator({ className, property }: Props): JSX.Element |
     if (!viewer) return;
     const handleTick = () => {
       if (viewer.isDestroyed()) return;
+
       const selected = viewer.selectedEntity;
       if (
         !selected ||
@@ -58,6 +59,7 @@ export default function Indicator({ className, property }: Props): JSX.Element |
         true,
         boundingSphere,
       );
+
       // https://github.com/CesiumGS/cesium/blob/main/Source/DataSources/BoundingSphereState.js#L24
       if (state !== 2 /* BoundingSphereState.FAILED */) {
         position = boundingSphere.center;
@@ -65,12 +67,11 @@ export default function Indicator({ className, property }: Props): JSX.Element |
         position = selected.position.getValue(viewer.clock.currentTime, position);
       }
 
+      setIsVisible(!!position);
       if (position) {
         const pos = SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, position);
         setPos(pos);
         setIsVisible(true);
-      } else {
-        setIsVisible(false);
       }
     };
 

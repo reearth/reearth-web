@@ -264,14 +264,12 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
-      if (
-        target &&
-        "id" in target &&
-        target.id instanceof Entity &&
-        !getTag(target.id)?.unselectable
-      ) {
-        onLayerSelect?.(target.id.id);
-        return;
+      if (target && "id" in target && target.id instanceof Entity) {
+        const tag = getTag(target.id);
+        if (tag?.layerId && !tag.unselectable) {
+          onLayerSelect?.(tag.layerId);
+          return;
+        }
       }
 
       if (target && target instanceof Cesium3DTileFeature) {
@@ -385,20 +383,25 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
 }
 
 function findEntity(viewer: CesiumViewer, layerId: string | undefined): Entity | undefined {
-  let entity: Entity | undefined;
-  if (layerId) {
-    entity = viewer.entities.getById(layerId);
-    if (!entity) {
-      for (let i = 0; i < viewer.dataSources.length; i++) {
-        const e = viewer.dataSources.get(i).entities.getById(layerId);
-        if (e) {
-          entity = e;
-          break;
-        }
+  if (!layerId) return;
+
+  let entity = viewer.entities.getById(layerId);
+  if (entity) return entity;
+
+  entity = viewer.entities.values.find(e => getTag(e)?.layerId === layerId);
+  if (entity) return entity;
+
+  for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
+    for (let i = 0; i < ds.length; i++) {
+      const entities = ds.get(i).entities.values;
+      const e = entities.find(e => getTag(e)?.layerId === layerId);
+      if (e) {
+        return e;
       }
     }
   }
-  return entity;
+
+  return;
 }
 
 function getLayerId(target: RootEventTarget): string | undefined {

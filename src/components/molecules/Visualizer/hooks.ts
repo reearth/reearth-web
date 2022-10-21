@@ -244,7 +244,7 @@ function useLayers({
 }) {
   const layersRef = useRef<LayersRef>(null);
   const [layerSelectionReason, setSelectionReason] = useState<string | undefined>();
-  const [layerOverridenInfobox, setPrimitiveOverridenInfobox] = useState<OverriddenInfobox>();
+  const [layerOverridenInfobox, setOverridenInfobox] = useState<OverriddenInfobox>();
   const [selectedLayer, setSelectedLayer] = useState<Layer>();
 
   const selectLayer = useCallback(
@@ -255,7 +255,7 @@ function useLayers({
       setSelectedLayer(selected);
       onSelect?.(id && !!selected ? id : undefined);
       setSelectionReason(reason);
-      setPrimitiveOverridenInfobox(overriddenInfobox);
+      setOverridenInfobox(overriddenInfobox);
     },
     [onSelect, layersRef],
   );
@@ -285,7 +285,7 @@ function useLayers({
 
   useEffect(() => {
     setSelectionReason(undefined);
-    setPrimitiveOverridenInfobox(undefined);
+    setOverridenInfobox(undefined);
   }, [outerSelectedLayerId]);
 
   const [layerOverriddenProperties, setLayeroverriddenProperties] = useState<{
