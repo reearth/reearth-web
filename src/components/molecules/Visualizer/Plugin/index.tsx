@@ -17,6 +17,15 @@ export type {
 export { Provider, useContext } from "./context";
 export type { Props as ProviderProps, Context } from "./context";
 
+export type CommonProps = {
+  pluginModalContainer?: HTMLElement | DocumentFragment;
+  shownPluginModalInfo?: PluginModalInfo;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  shownPluginPopupInfo?: PluginPopupInfo;
+  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
+};
+
 export type Props = {
   className?: string;
   sourceCode?: string;
@@ -25,12 +34,6 @@ export type Props = {
   extensionType?: string;
   autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
-  modalCanBeVisible?: boolean;
-  popupCanBeVisible?: boolean;
-  modalContainer?: HTMLElement | DocumentFragment;
-  shownPluginModalInfo?: PluginModalInfo;
-  popupContainer?: HTMLElement | DocumentFragment;
-  shownPluginPopupInfo?: PluginPopupInfo;
   property?: any;
   pluginProperty?: any;
   pluginBaseUrl?: string;
@@ -38,8 +41,6 @@ export type Props = {
   widget?: Widget;
   block?: Block;
   iFrameProps?: PluginProps["iFrameProps"];
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   onClick?: () => void;
   onRender?: (
     options:
@@ -55,7 +56,7 @@ export type Props = {
     height: string | number | undefined,
     extended: boolean | undefined,
   ) => void;
-};
+} & CommonProps;
 
 export default function Plugin({
   className,
@@ -65,9 +66,9 @@ export default function Plugin({
   extensionType,
   autoResize,
   visible,
-  modalContainer,
+  pluginModalContainer,
   shownPluginModalInfo,
-  popupContainer,
+  pluginPopupContainer,
   shownPluginPopupInfo,
   pluginBaseUrl = "/plugins",
   layer,
@@ -119,8 +120,8 @@ export default function Plugin({
       canBeVisible={visible}
       modalCanBeVisible={modalCanBeVisible}
       popupCanBeVisible={popupCanBeVisible}
-      modalContainer={modalContainer}
-      popupContainer={popupContainer}
+      modalContainer={pluginModalContainer}
+      popupContainer={pluginPopupContainer}
       externalRef={externalRef}
       isMarshalable={isMarshalable}
       exposed={exposed}

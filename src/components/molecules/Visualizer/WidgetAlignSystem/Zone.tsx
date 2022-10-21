@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
-import type { PluginModalInfo } from "../Plugin/ModalContainer";
-import type { PluginPopupInfo } from "../Plugin/PopupContainer";
+import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
@@ -16,15 +15,9 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
-  pluginModalContainer?: HTMLElement | DocumentFragment;
-  shownPluginModalInfo?: PluginModalInfo;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  pluginPopupContainer?: HTMLElement | DocumentFragment;
-  shownPluginPopupInfo?: PluginPopupInfo;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   pluginBaseUrl?: string;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
-};
+} & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
@@ -35,16 +28,11 @@ export default function Zone({
   layoutConstraint,
   sceneProperty,
   pluginProperty,
-  pluginModalContainer,
-  shownPluginModalInfo,
-  showPluginModal,
-  pluginPopupContainer,
-  shownPluginPopupInfo,
-  showPluginPopup,
   pluginBaseUrl,
   isEditable,
   isBuilt,
   children,
+  ...props
 }: Props) {
   return (
     <>
@@ -66,12 +54,12 @@ export default function Zone({
                 layoutConstraint={layoutConstraint}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
-                pluginModalContainer={pluginModalContainer}
-                shownPluginModalInfo={shownPluginModalInfo}
-                showPluginModal={showPluginModal}
-                pluginPopupContainer={pluginPopupContainer}
-                shownPluginPopupInfo={shownPluginPopupInfo}
-                showPluginPopup={showPluginPopup}
+                pluginModalContainer={props.pluginModalContainer}
+                shownPluginModalInfo={props.shownPluginModalInfo}
+                showPluginModal={props.showPluginModal}
+                pluginPopupContainer={props.pluginPopupContainer}
+                shownPluginPopupInfo={props.shownPluginPopupInfo}
+                showPluginPopup={props.showPluginPopup}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}

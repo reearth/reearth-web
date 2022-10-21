@@ -4,8 +4,7 @@ import { useMedia } from "react-use";
 
 import { styled } from "@reearth/theme";
 
-import type { PluginModalInfo } from "../Plugin/ModalContainer";
-import type { PluginPopupInfo } from "../Plugin/PopupContainer";
+import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import useHooks from "./hooks";
 import type {
@@ -37,12 +36,6 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
-  pluginModalContainer?: HTMLElement | DocumentFragment;
-  shownPluginModalInfo?: PluginModalInfo;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  pluginPopupContainer?: HTMLElement | DocumentFragment;
-  shownPluginPopupInfo?: PluginPopupInfo;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   pluginBaseUrl?: string;
   onWidgetUpdate?: (
     id: string,
@@ -54,25 +47,20 @@ export type Props = {
   ) => void;
   onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
-};
+} & PluginCommonProps;
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
   editing,
   sceneProperty,
   pluginProperty,
-  pluginModalContainer,
-  shownPluginModalInfo,
-  pluginPopupContainer,
-  shownPluginPopupInfo,
   pluginBaseUrl,
   isEditable,
   isBuilt,
   layoutConstraint,
-  showPluginModal,
-  showPluginPopup,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
+  ...props
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
     onWidgetUpdate,
@@ -93,12 +81,12 @@ const WidgetAlignSystem: React.FC<Props> = ({
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
-            pluginModalContainer={pluginModalContainer}
-            shownPluginModalInfo={shownPluginModalInfo}
-            showPluginModal={showPluginModal}
-            pluginPopupContainer={pluginPopupContainer}
-            shownPluginPopupInfo={shownPluginPopupInfo}
-            showPluginPopup={showPluginPopup}
+            pluginModalContainer={props.pluginModalContainer}
+            shownPluginModalInfo={props.shownPluginModalInfo}
+            showPluginModal={props.showPluginModal}
+            pluginPopupContainer={props.pluginPopupContainer}
+            shownPluginPopupInfo={props.shownPluginPopupInfo}
+            showPluginPopup={props.showPluginPopup}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
@@ -109,12 +97,12 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
-                pluginModalContainer={pluginModalContainer}
-                shownPluginModalInfo={shownPluginModalInfo}
-                showPluginModal={showPluginModal}
-                pluginPopupContainer={pluginPopupContainer}
-                shownPluginPopupInfo={shownPluginPopupInfo}
-                showPluginPopup={showPluginPopup}
+                pluginModalContainer={props.pluginModalContainer}
+                shownPluginModalInfo={props.shownPluginModalInfo}
+                showPluginModal={props.showPluginModal}
+                pluginPopupContainer={props.pluginPopupContainer}
+                shownPluginPopupInfo={props.shownPluginPopupInfo}
+                showPluginPopup={props.showPluginPopup}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
@@ -128,12 +116,12 @@ const WidgetAlignSystem: React.FC<Props> = ({
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
-            pluginModalContainer={pluginModalContainer}
-            shownPluginModalInfo={shownPluginModalInfo}
-            showPluginModal={showPluginModal}
-            pluginPopupContainer={pluginPopupContainer}
-            shownPluginPopupInfo={shownPluginPopupInfo}
-            showPluginPopup={showPluginPopup}
+            pluginModalContainer={props.pluginModalContainer}
+            shownPluginModalInfo={props.shownPluginModalInfo}
+            showPluginModal={props.showPluginModal}
+            pluginPopupContainer={props.pluginPopupContainer}
+            shownPluginPopupInfo={props.shownPluginPopupInfo}
+            showPluginPopup={props.showPluginPopup}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
@@ -143,12 +131,12 @@ const WidgetAlignSystem: React.FC<Props> = ({
               zone={alignSystem?.inner}
               sceneProperty={sceneProperty}
               pluginProperty={pluginProperty}
-              pluginModalContainer={pluginModalContainer}
-              shownPluginModalInfo={shownPluginModalInfo}
-              showPluginModal={showPluginModal}
-              pluginPopupContainer={pluginPopupContainer}
-              shownPluginPopupInfo={shownPluginPopupInfo}
-              showPluginPopup={showPluginPopup}
+              pluginModalContainer={props.pluginModalContainer}
+              shownPluginModalInfo={props.shownPluginModalInfo}
+              showPluginModal={props.showPluginModal}
+              pluginPopupContainer={props.pluginPopupContainer}
+              shownPluginPopupInfo={props.shownPluginPopupInfo}
+              showPluginPopup={props.showPluginPopup}
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}

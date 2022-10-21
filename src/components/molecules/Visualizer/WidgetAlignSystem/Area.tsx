@@ -5,8 +5,7 @@ import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
-import type { PluginModalInfo } from "../Plugin/ModalContainer";
-import type { PluginPopupInfo } from "../Plugin/PopupContainer";
+import type { CommonProps as PluginCommonProps } from "../Plugin";
 import W, { WidgetLayout } from "../Widget";
 
 import type { Widget, Alignment, WidgetLayoutConstraint, Location } from "./hooks";
@@ -21,16 +20,10 @@ type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   pluginProperty?: { [key: string]: any };
-  pluginModalContainer?: HTMLElement | DocumentFragment;
-  shownPluginModalInfo?: PluginModalInfo;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  pluginPopupContainer?: HTMLElement | DocumentFragment;
-  shownPluginPopupInfo?: PluginPopupInfo;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   pluginBaseUrl?: string;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
-};
+} & PluginCommonProps;
 
 export default function Area({
   zone,
@@ -39,12 +32,6 @@ export default function Area({
   align,
   widgets,
   pluginProperty,
-  pluginModalContainer,
-  shownPluginModalInfo,
-  showPluginModal,
-  pluginPopupContainer,
-  shownPluginPopupInfo,
-  showPluginPopup,
   layoutConstraint,
   ...props
 }: Props) {
@@ -102,12 +89,12 @@ export default function Area({
                     ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
                     : undefined
                 }
-                pluginModalContainer={pluginModalContainer}
-                shownPluginModalInfo={shownPluginModalInfo}
-                showPluginModal={showPluginModal}
-                pluginPopupContainer={pluginPopupContainer}
-                shownPluginPopupInfo={shownPluginPopupInfo}
-                showPluginPopup={showPluginPopup}
+                pluginModalContainer={props.pluginModalContainer}
+                shownPluginModalInfo={props.shownPluginModalInfo}
+                showPluginModal={props.showPluginModal}
+                pluginPopupContainer={props.pluginPopupContainer}
+                shownPluginPopupInfo={props.shownPluginPopupInfo}
+                showPluginPopup={props.showPluginPopup}
                 layout={layout}
                 extended={extended}
                 editing={editing}

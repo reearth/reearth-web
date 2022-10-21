@@ -5,9 +5,8 @@ import Plugin, {
   WidgetLayout,
   WidgetLocation,
   Props as PluginProps,
+  CommonProps as PluginCommonProps,
 } from "../Plugin";
-import type { PluginModalInfo } from "../Plugin/ModalContainer";
-import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 
@@ -23,16 +22,10 @@ export type Props<PP = any, SP = any> = {
   sceneProperty?: SP;
   pluginProperty?: PP;
   pluginBaseUrl?: string;
-  pluginModalContainer?: HTMLElement | DocumentFragment;
-  shownPluginModalInfo?: PluginModalInfo;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  pluginPopupContainer?: HTMLElement | DocumentFragment;
-  shownPluginPopupInfo?: PluginPopupInfo;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
   layout?: WidgetLayout;
   editing?: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-};
+} & PluginCommonProps;
 
 export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {
   widget: RawWidget;
@@ -44,12 +37,6 @@ export default function WidgetComponent<PP = any, SP = any>({
   widget,
   extended,
   pluginBaseUrl,
-  pluginModalContainer,
-  shownPluginModalInfo,
-  showPluginModal,
-  pluginPopupContainer,
-  shownPluginPopupInfo,
-  showPluginPopup,
   layout,
   onExtend,
   editing,
@@ -116,12 +103,12 @@ export default function WidgetComponent<PP = any, SP = any>({
       visible
       pluginBaseUrl={pluginBaseUrl}
       property={props.pluginProperty}
-      modalContainer={pluginModalContainer}
-      shownPluginModalInfo={shownPluginModalInfo}
-      showPluginModal={showPluginModal}
-      popupContainer={pluginPopupContainer}
-      shownPluginPopupInfo={shownPluginPopupInfo}
-      showPluginPopup={showPluginPopup}
+      pluginModalContainer={props.pluginModalContainer}
+      shownPluginModalInfo={props.shownPluginModalInfo}
+      showPluginModal={props.showPluginModal}
+      pluginPopupContainer={props.pluginPopupContainer}
+      shownPluginPopupInfo={props.shownPluginPopupInfo}
+      showPluginPopup={props.showPluginPopup}
       widget={w}
       iFrameProps={iFrameProps}
       onRender={handleRender}
