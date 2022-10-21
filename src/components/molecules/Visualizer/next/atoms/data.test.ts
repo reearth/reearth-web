@@ -20,6 +20,8 @@ const features3: Feature[] = [
 ];
 
 test("dataAtom set", () => {
+  const layerId = "x";
+
   const { result } = renderHook(() => {
     const atoms = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
     const get = useAtomValue(atoms.get);
@@ -28,25 +30,27 @@ test("dataAtom set", () => {
     return { get, set, getAll };
   });
 
-  expect(result.current.get(data)).toBeUndefined();
+  expect(result.current.get(layerId, data)).toBeUndefined();
 
   act(() => {
-    result.current.set({ data, features });
+    result.current.set({ layerId, data, features });
   });
 
-  expect(result.current.get(data)).toEqual(features);
-  expect(result.current.getAll(data)).toEqual([features]);
-  expect(result.current.get(data, range)).toBeUndefined();
+  expect(result.current.get(layerId, data)).toEqual(features);
+  expect(result.current.getAll(layerId, data)).toEqual([features]);
+  expect(result.current.get(layerId, data, range)).toBeUndefined();
 
   act(() => {
-    result.current.set({ data, features: features2 });
+    result.current.set({ layerId, data, features: features2 });
   });
 
-  expect(result.current.get(data, range)).toEqual(features2);
-  expect(result.current.getAll(data)).toEqual([features, features2]);
+  expect(result.current.get(layerId, data, range)).toEqual(features2);
+  expect(result.current.getAll(layerId, data)).toEqual([features, features2]);
 });
 
 test("dataAtom fetch", async () => {
+  const layerId = "x";
+
   const { result } = renderHook(() => {
     const atoms = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
     const get = useAtomValue(atoms.get);
@@ -55,19 +59,21 @@ test("dataAtom fetch", async () => {
     return { get, fetch, getAll };
   });
 
-  expect(result.current.get(data)).toBeUndefined();
-  expect(result.current.getAll(data)).toEqual([]);
+  expect(result.current.get(layerId, data)).toBeUndefined();
+  expect(result.current.getAll(layerId, data)).toEqual([]);
 
   act(() => {
-    result.current.fetch({ data });
+    result.current.fetch({ layerId, data });
   });
 
-  await waitFor(() => expect(result.current.get(data)).toEqual(features));
-  expect(result.current.get(data, range)).toBeUndefined();
-  expect(result.current.getAll(data)).toEqual([features]);
+  await waitFor(() => expect(result.current.get(layerId, data)).toEqual(features));
+  expect(result.current.get(layerId, data, range)).toBeUndefined();
+  expect(result.current.getAll(layerId, data)).toEqual([features]);
 });
 
 test("dataAtom deleteAll", async () => {
+  const layerId = "x";
+
   const { result } = renderHook(() => {
     const atoms = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
     const get = useAtomValue(atoms.get);
@@ -78,21 +84,23 @@ test("dataAtom deleteAll", async () => {
   });
 
   act(() => {
-    result.current.set({ data, features: features3 });
+    result.current.set({ layerId, data, features: features3 });
   });
 
-  await waitFor(() => expect(result.current.get(data, range)).toEqual(features3));
+  await waitFor(() => expect(result.current.get(layerId, data, range)).toEqual(features3));
 
   act(() => {
-    result.current.deleteAll({ data, features: ["b"] });
+    result.current.deleteAll({ layerId, data, features: ["b"] });
   });
 
   await waitFor(() =>
-    expect(result.current.get(data, range)).toEqual([features3[0], features3[2]]),
+    expect(result.current.get(layerId, data, range)).toEqual([features3[0], features3[2]]),
   );
 });
 
 test("dataAtom double fetch", async () => {
+  const layerId = "x";
+
   const { result } = renderHook(() => {
     const atoms1 = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
     const atoms2 = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
@@ -105,20 +113,64 @@ test("dataAtom double fetch", async () => {
 
   const { fetchData } = await import("../data");
 
-  expect(result.current.getAll1(data)).toEqual([]);
-  expect(result.current.getAll2(data)).toEqual([]);
+  expect(result.current.getAll1(layerId, data)).toEqual([]);
+  expect(result.current.getAll2(layerId, data)).toEqual([]);
   expect(fetchData).toBeCalledTimes(1);
 
   act(() => {
-    result.current.fetch1({ data });
-    result.current.fetch2({ data });
+    result.current.fetch1({ layerId, data });
+    result.current.fetch2({ layerId, data });
   });
 
-  await waitFor(() => expect(result.current.getAll1(data)).toEqual([features]));
-  await waitFor(() => expect(result.current.getAll2(data)).toEqual([features]));
+  await waitFor(() => expect(result.current.getAll1(layerId, data)).toEqual([features]));
+  await waitFor(() => expect(result.current.getAll2(layerId, data)).toEqual([features]));
   expect(fetchData).toBeCalledTimes(3);
 });
 
+test("data.value is present", async () => {
+  const layerId = "x";
+  const data1: Data = {
+    type: "geojson",
+    value: { id: "f", type: "Feature", geometry: { type: "Point", coordinates: [1, 2] } },
+  };
+  const data2: Data = {
+    type: "geojson",
+    value: { id: "g", type: "Feature", geometry: { type: "Point", coordinates: [2, 3] } },
+  };
+
+  const { result } = renderHook(() => {
+    const atoms = useMemo(() => dataAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
+    const getAll = useAtomValue(atoms.getAll);
+    const fetch = useSetAtom(atoms.fetch);
+    return { fetch, getAll };
+  });
+
+  expect(result.current.getAll(layerId, data1)).toEqual([]);
+
+  act(() => {
+    result.current.fetch({ layerId, data: data1 });
+  });
+
+  await waitFor(() =>
+    expect(result.current.getAll(layerId, data1)).toEqual([
+      [{ id: "f", geometry: { type: "Point", coordinates: [1, 2] } }],
+    ]),
+  );
+
+  act(() => {
+    console.log("ACT");
+    result.current.fetch({ layerId, data: data2 });
+  });
+
+  await waitFor(() =>
+    expect(result.current.getAll(layerId, data1)).toEqual([
+      [{ id: "g", geometry: { type: "Point", coordinates: [2, 3] } }],
+    ]),
+  );
+});
+
 vi.mock("../data", (): { fetchData: typeof fetchData } => ({
-  fetchData: vi.fn(async () => features),
+  fetchData: vi.fn(async data =>
+    data.value ? [{ id: data.value.id, geometry: data.value.geometry }] : features,
+  ),
 }));
