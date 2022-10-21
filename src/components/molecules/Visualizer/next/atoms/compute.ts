@@ -51,7 +51,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       features: get(finalFeatures) ?? [],
       originalFeatures:
         currentLayer.type === "simple" && currentLayer.data
-          ? get(dataAtoms.getAll)(currentLayer.id, currentLayer.data).flat()
+          ? get(dataAtoms.getAll)(currentLayer.id, currentLayer.data)?.flat() ?? []
           : [],
       ...get(computedResult)?.layer,
     };
@@ -74,14 +74,16 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     // It retrieves all features for the layer stored in the cache,
     // but attempts to retrieve data from the network if the main feature is not yet in the cache.
     const getAllFeatures = async (data: Data) => {
-      const getter = get(dataAtoms.get);
       const getterAll = get(dataAtoms.getAll);
-      const features = getter(layerId, data);
-      const allFeatures = getterAll(layerId, data);
-      if (features) return allFeatures.flat();
+
+      // Ignore cache if data is embedded
+      if (!data.value) {
+        const allFeatures = getterAll(layerId, data);
+        if (allFeatures) return allFeatures.flat();
+      }
 
       await set(dataAtoms.fetch, { data, layerId });
-      return getterAll(layerId, data).flat();
+      return getterAll(layerId, data)?.flat() ?? [];
     };
 
     // Used for a flow layer.
@@ -89,8 +91,12 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     // If it is not stored in the cache, it attempts to retrieve the data from the network.
     const getFeatures = async (data: Data, range?: DataRange) => {
       const getter = get(dataAtoms.get);
-      const c = getter(layerId, data, range);
-      if (c) return c;
+
+      // Ignore cache if data is embedded
+      if (!data.value) {
+        const c = getter(layerId, data, range);
+        if (c) return c;
+      }
 
       await set(dataAtoms.fetch, { data, range, layerId });
       return getter(layerId, data, range);

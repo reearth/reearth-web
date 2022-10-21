@@ -25,7 +25,7 @@ export function doubleKeyCacheAtom<K, L, T>() {
 
   const getAll = atom(get => (key: K) => {
     const m = get(map)?.get(key);
-    if (!m) return [];
+    if (!m) return undefined;
 
     const res: T[] = [];
     for (const k of m.keys()) {
