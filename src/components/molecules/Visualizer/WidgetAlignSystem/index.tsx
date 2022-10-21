@@ -81,32 +81,22 @@ const WidgetAlignSystem: React.FC<Props> = ({
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
-            pluginModalContainer={props.pluginModalContainer}
-            shownPluginModalInfo={props.shownPluginModalInfo}
-            showPluginModal={props.showPluginModal}
-            pluginPopupContainer={props.pluginPopupContainer}
-            shownPluginPopupInfo={props.shownPluginPopupInfo}
-            showPluginPopup={props.showPluginPopup}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}>
+            layoutConstraint={layoutConstraint}
+            {...props}>
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
-                pluginModalContainer={props.pluginModalContainer}
-                shownPluginModalInfo={props.shownPluginModalInfo}
-                showPluginModal={props.showPluginModal}
-                pluginPopupContainer={props.pluginPopupContainer}
-                shownPluginPopupInfo={props.shownPluginPopupInfo}
-                showPluginPopup={props.showPluginPopup}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
                 layoutConstraint={layoutConstraint}
+                {...props}
               />
             )}
           </MobileZone>
@@ -116,31 +106,21 @@ const WidgetAlignSystem: React.FC<Props> = ({
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
-            pluginModalContainer={props.pluginModalContainer}
-            shownPluginModalInfo={props.shownPluginModalInfo}
-            showPluginModal={props.showPluginModal}
-            pluginPopupContainer={props.pluginPopupContainer}
-            shownPluginPopupInfo={props.shownPluginPopupInfo}
-            showPluginPopup={props.showPluginPopup}
             pluginBaseUrl={pluginBaseUrl}
             isEditable={isEditable}
             isBuilt={isBuilt}
-            layoutConstraint={layoutConstraint}>
+            layoutConstraint={layoutConstraint}
+            {...props}>
             <ZoneComponent
               zoneName="inner"
               zone={alignSystem?.inner}
               sceneProperty={sceneProperty}
               pluginProperty={pluginProperty}
-              pluginModalContainer={props.pluginModalContainer}
-              shownPluginModalInfo={props.shownPluginModalInfo}
-              showPluginModal={props.showPluginModal}
-              pluginPopupContainer={props.pluginPopupContainer}
-              shownPluginPopupInfo={props.shownPluginPopupInfo}
-              showPluginPopup={props.showPluginPopup}
               pluginBaseUrl={pluginBaseUrl}
               isEditable={isEditable}
               isBuilt={isBuilt}
               layoutConstraint={layoutConstraint}
+              {...props}
             />
           </ZoneComponent>
         )}

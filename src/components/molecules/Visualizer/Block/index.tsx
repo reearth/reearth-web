@@ -53,15 +53,15 @@ export default function BlockComponent<P = any, PP = any>({
         visible
         property={props.pluginProperty}
         pluginProperty={props.pluginProperty}
+        layer={props.layer}
+        block={props.block}
+        onClick={props.onClick}
         pluginModalContainer={props.pluginModalContainer}
         shownPluginModalInfo={props.shownPluginModalInfo}
         showPluginModal={props.showPluginModal}
         pluginPopupContainer={props.pluginPopupContainer}
         shownPluginPopupInfo={props.shownPluginPopupInfo}
         showPluginPopup={props.showPluginPopup}
-        layer={props.layer}
-        block={props.block}
-        onClick={props.onClick}
       />
     </Wrapper>
   );

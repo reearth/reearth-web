@@ -54,15 +54,10 @@ export default function Zone({
                 layoutConstraint={layoutConstraint}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
-                pluginModalContainer={props.pluginModalContainer}
-                shownPluginModalInfo={props.shownPluginModalInfo}
-                showPluginModal={props.showPluginModal}
-                pluginPopupContainer={props.pluginPopupContainer}
-                shownPluginPopupInfo={props.shownPluginPopupInfo}
-                showPluginPopup={props.showPluginPopup}
                 pluginBaseUrl={pluginBaseUrl}
                 isEditable={isEditable}
                 isBuilt={isBuilt}
+                {...props}
               />
             ),
           )}

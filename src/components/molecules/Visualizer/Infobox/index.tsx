@@ -138,12 +138,7 @@ const Infobox: React.FC<Props> = ({
             }}
             layer={layer}
             pluginBaseUrl={pluginBaseUrl}
-            pluginModalContainer={props.pluginModalContainer}
-            shownPluginModalInfo={props.shownPluginModalInfo}
-            showPluginModal={props.showPluginModal}
-            pluginPopupContainer={props.pluginPopupContainer}
-            shownPluginPopupInfo={props.shownPluginPopupInfo}
-            showPluginPopup={props.showPluginPopup}
+            {...props}
           />
         </Field>
       ))}

@@ -37,6 +37,7 @@ export default function WidgetComponent<PP = any, SP = any>({
   widget,
   extended,
   pluginBaseUrl,
+  pluginProperty,
   layout,
   onExtend,
   editing,
@@ -102,17 +103,12 @@ export default function WidgetComponent<PP = any, SP = any>({
       extensionType="widget"
       visible
       pluginBaseUrl={pluginBaseUrl}
-      property={props.pluginProperty}
-      pluginModalContainer={props.pluginModalContainer}
-      shownPluginModalInfo={props.shownPluginModalInfo}
-      showPluginModal={props.showPluginModal}
-      pluginPopupContainer={props.pluginPopupContainer}
-      shownPluginPopupInfo={props.shownPluginPopupInfo}
-      showPluginPopup={props.showPluginPopup}
+      property={pluginProperty}
       widget={w}
       iFrameProps={iFrameProps}
       onRender={handleRender}
       onResize={handleResize}
+      {...props}
     />
   );
 }
