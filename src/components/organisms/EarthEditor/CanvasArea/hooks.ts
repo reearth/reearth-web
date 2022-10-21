@@ -210,8 +210,9 @@ export default (isBuilt?: boolean) => {
   }, [isBuilt, title]);
 
   const handleDropLayer = useCallback(
-    async (layer: Layer, propertyKey: string, position: LatLng) => {
-      const propertyId = layer.compat?.propertyId;
+    async (id: string, propertyKey: string, position: LatLng) => {
+      const layer = findLayer(layers, l => l.id === id);
+      const propertyId = layer?.compat?.propertyId;
       if (!propertyId) return;
 
       // propertyKey will be "default.location" for example
@@ -230,7 +231,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [updatePropertyValue],
+    [layers, updatePropertyValue],
   );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
@@ -312,3 +313,14 @@ export default (isBuilt?: boolean) => {
     handleDropLayer,
   };
 };
+
+function findLayer(layers: Layer[] | undefined, cb: (l: Layer) => boolean): Layer | undefined {
+  for (const l of layers ?? []) {
+    if (cb(l)) return l;
+    if (l.type === "group") {
+      const layer = findLayer(l.children, cb);
+      if (layer) return layer;
+    }
+  }
+  return;
+}

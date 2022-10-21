@@ -340,7 +340,7 @@ export default ({
         const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
         onLayerDrop?.(tag.layerId, tag.legacyLocationPropertyKey || "default.location", pos);
 
-        return false; // let apollo-client handle optimistic updates
+        // return false; // TODO: let apollo-client handle optimistic updates
       },
       dragDelay: 500,
     });

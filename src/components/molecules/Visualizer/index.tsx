@@ -68,7 +68,7 @@ export type Props = {
   onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
   renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
   onLayerSelect?: (id?: string) => void;
-  onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
+  onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
 } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
   Pick<
     InfoboxProps,

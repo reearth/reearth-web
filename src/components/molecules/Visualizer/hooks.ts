@@ -68,7 +68,7 @@ export default ({
   ) => void;
   onCameraChange?: (c: Camera) => void;
   onTick?: (c: Clock) => void;
-  onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
+  onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
@@ -164,8 +164,7 @@ export default ({
   const handleLayerDrop = useCallback(
     (id: string, key: string, latlng: LatLng | undefined) => {
       if (!layersRef.current) return;
-      const layer = layersRef.current.findById(id);
-      if (latlng && layer) onLayerDrop?.(layer, key, latlng);
+      if (latlng) onLayerDrop?.(id, key, latlng);
     },
     [layersRef, onLayerDrop],
   );
