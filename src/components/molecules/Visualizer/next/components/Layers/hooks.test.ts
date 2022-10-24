@@ -342,6 +342,9 @@ test("add, replace, delete", () => {
   rerender();
 
   expect(result.current.flattenedLayers).toEqual([
+    { id: "x", type: "simple", title: "X" },
+    { id: "y", type: "simple", title: "Y" },
+    { id: "w", type: "simple", title: "W" },
     {
       id: l.children[0].children[0].id,
       type: "simple",
@@ -350,9 +353,6 @@ test("add, replace, delete", () => {
         blocks: [{ id: l.children[0].children[0].infobox?.blocks?.[0].id, extensionId: "a" }],
       },
     },
-    { id: "x", type: "simple", title: "X" },
-    { id: "y", type: "simple", title: "Y" },
-    { id: "w", type: "simple", title: "W" },
   ]);
 
   result.current.ref.current?.replace({
@@ -364,14 +364,14 @@ test("add, replace, delete", () => {
   rerender();
 
   expect(result.current.flattenedLayers).toEqual([
+    { id: "x", type: "simple", title: "X" },
+    { id: "y", type: "simple", title: "Y" },
+    { id: "w", type: "simple", title: "W" },
     {
       id: l.children[0].children[0].id,
       type: "simple",
       title: "A!",
     },
-    { id: "x", type: "simple", title: "X" },
-    { id: "y", type: "simple", title: "Y" },
-    { id: "w", type: "simple", title: "W" },
   ]);
 
   result.current.ref.current?.deleteLayer(l.children[0].id, "w");
