@@ -39,7 +39,7 @@ const PopupContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
 
   useEffect(() => {
     if (!shownPluginPopupInfo?.ref?.current || !innerRef.current) return;
-    const cleanup = autoUpdate(shownPluginPopupInfo?.ref?.current, innerRef.current, () => {
+    return autoUpdate(shownPluginPopupInfo?.ref?.current, innerRef.current, () => {
       if (!shownPluginPopupInfo?.ref?.current || !innerRef.current) return;
       computePosition(shownPluginPopupInfo?.ref?.current, innerRef.current, {
         placement: shownPluginPopupInfo.position ?? "bottom-start",
@@ -51,7 +51,6 @@ const PopupContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
         }
       });
     });
-    return cleanup;
   }, [shownPluginPopupInfo]);
 
   return <Wrapper visible={!!shownPluginPopupInfo?.id} ref={innerRef} />;
