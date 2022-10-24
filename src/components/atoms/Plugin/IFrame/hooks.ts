@@ -120,7 +120,7 @@ export default function useHook({
               height
                 ? typeof height === "number"
                   ? `"${height}px"`
-                  : `"${height}px"`
+                  : `"${height}"`
                 : "html.offsetHeight + verticalMargin"
             };
             parent.postMessage({
