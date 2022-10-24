@@ -18,7 +18,6 @@ export type Props = {
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   renderPlaceholder?: ReactNode;
-  useContainer?: boolean;
   container?: HTMLElement | DocumentFragment;
   externalRef?: RefObject<HTMLIFrameElement>;
   onRender?: (type: string) => void;
@@ -36,7 +35,6 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     autoResize,
     iFrameProps,
     renderPlaceholder,
-    useContainer,
     container,
     externalRef,
     onRender,
@@ -73,13 +71,7 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     </>
   );
 
-  return enabled
-    ? container
-      ? useContainer
-        ? createPortal(children, container)
-        : null
-      : children
-    : null;
+  return enabled ? (container ? createPortal(children, container) : children) : null;
 };
 
 export default memo(forwardRef(PluginIFrame));

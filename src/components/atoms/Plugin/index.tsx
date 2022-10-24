@@ -93,7 +93,6 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         type="modal"
         ref={modalIFrameRef}
         container={modalContainer}
-        useContainer
         visible
         enabled={modalCanBeVisible}
         ready={loaded}
@@ -105,7 +104,6 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         type="popup"
         ref={popupIFrameRef}
         container={popupContainer}
-        useContainer
         visible
         enabled={popupCanBeVisible}
         ready={loaded}
