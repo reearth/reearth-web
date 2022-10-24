@@ -26,7 +26,7 @@ const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
 
   useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
 
-  const closePopup = useCallback(() => {
+  const handleModalClose = useCallback(() => {
     showPluginModal?.();
   }, [showPluginModal]);
 
@@ -39,7 +39,7 @@ const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
           shownPluginModalInfo?.background !== "none"
         }
         background={shownPluginModalInfo?.background}
-        onClick={closePopup}
+        onClick={handleModalClose}
       />
       <Wrapper visible={!!shownPluginModalInfo?.id} ref={innerRef} />
     </>
