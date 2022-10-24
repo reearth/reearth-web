@@ -24,8 +24,8 @@ export type CommonProps = {
   shownPluginModalInfo?: PluginModalInfo;
   pluginPopupContainer?: HTMLElement | DocumentFragment;
   shownPluginPopupInfo?: PluginPopupInfo;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
+  onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
+  onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
 };
 
 export type Props = {
@@ -76,8 +76,8 @@ export default function Plugin({
   block,
   pluginProperty,
   iFrameProps,
-  showPluginModal,
-  showPluginPopup,
+  onPluginModalShow,
+  onPluginPopupShow,
   onClick,
   onRender,
   onResize,
@@ -104,8 +104,8 @@ export default function Plugin({
     pluginProperty,
     shownPluginModalInfo,
     shownPluginPopupInfo,
-    showPluginModal,
-    showPluginPopup,
+    onPluginModalShow,
+    onPluginPopupShow,
     onRender,
     onResize,
   });

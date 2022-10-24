@@ -56,10 +56,10 @@ export default function BlockComponent<P = any>({
         onClick={props.onClick}
         pluginModalContainer={props.pluginModalContainer}
         shownPluginModalInfo={props.shownPluginModalInfo}
-        showPluginModal={props.showPluginModal}
+        onPluginModalShow={props.onPluginModalShow}
         pluginPopupContainer={props.pluginPopupContainer}
         shownPluginPopupInfo={props.shownPluginPopupInfo}
-        showPluginPopup={props.showPluginPopup}
+        onPluginPopupShow={props.onPluginPopupShow}
       />
     </Wrapper>
   );

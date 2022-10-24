@@ -14,12 +14,12 @@ export type PluginModalInfo = {
 };
 
 type Props = {
-  showPluginModal: (modalInfo?: PluginModalInfo) => void;
+  onPluginModalShow: (modalInfo?: PluginModalInfo) => void;
   shownPluginModalInfo?: PluginModalInfo;
 };
 
 const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props> = (
-  { showPluginModal, shownPluginModalInfo },
+  { onPluginModalShow, shownPluginModalInfo },
   ref,
 ) => {
   const innerRef = useRef<HTMLDivElement>(null);
@@ -27,8 +27,8 @@ const ModalContainer: ForwardRefRenderFunction<HTMLDivElement | undefined, Props
   useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
 
   const handleModalClose = useCallback(() => {
-    showPluginModal?.();
-  }, [showPluginModal]);
+    onPluginModalShow?.();
+  }, [onPluginModalShow]);
 
   return (
     <>

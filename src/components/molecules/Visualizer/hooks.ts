@@ -230,10 +230,10 @@ export default ({
     }
   }, [zoomedLayerId]);
 
-  const [shownPluginModalInfo, showPluginModal] = useState<PluginModalInfo>();
+  const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
   const pluginModalContainerRef = useRef<HTMLDivElement>();
 
-  const [shownPluginPopupInfo, showPluginPopup] = useState<PluginPopupInfo>();
+  const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
   const pluginPopupContainerRef = useRef<HTMLDivElement>();
 
   return {
@@ -256,8 +256,8 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
-    showPluginModal,
-    showPluginPopup,
+    onPluginModalShow,
+    onPluginPopupShow,
     isLayerHidden,
     selectLayer,
     selectBlock,

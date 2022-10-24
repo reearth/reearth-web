@@ -24,9 +24,9 @@ export default function ({
   widget,
   pluginProperty,
   shownPluginModalInfo,
-  showPluginModal,
+  onPluginModalShow,
   shownPluginPopupInfo,
-  showPluginPopup,
+  onPluginPopupShow,
   onRender,
   onResize,
 }: {
@@ -39,9 +39,9 @@ export default function ({
   block?: Block;
   pluginProperty?: any;
   shownPluginModalInfo?: PluginModalInfo;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
+  onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   shownPluginPopupInfo?: PluginPopupInfo;
-  showPluginPopup?: (modalInfo?: PluginModalInfo) => void;
+  onPluginPopupShow?: (modalInfo?: PluginModalInfo) => void;
   onRender?: (
     options:
       | {
@@ -81,8 +81,8 @@ export default function ({
       modalVisible,
       popupVisible,
       externalRef,
-      showPluginModal,
-      showPluginPopup,
+      onPluginModalShow,
+      onPluginPopupShow,
       onRender,
       onResize,
     }) ?? [];
@@ -124,8 +124,8 @@ export function useAPI({
   modalVisible,
   popupVisible,
   externalRef,
-  showPluginModal,
-  showPluginPopup,
+  onPluginModalShow,
+  onPluginPopupShow,
   onRender,
   onResize,
 }: {
@@ -139,8 +139,8 @@ export function useAPI({
   modalVisible?: MutableRefObject<boolean>;
   popupVisible?: MutableRefObject<boolean>;
   externalRef: RefObject<HTMLIFrameElement> | undefined;
-  showPluginModal?: (modalInfo?: PluginModalInfo) => void;
-  showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
+  onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
+  onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
   onRender?: (
     options:
       | {
@@ -208,12 +208,12 @@ export function useAPI({
     event.current?.[2]?.();
     event.current = undefined;
     if (modalVisible?.current) {
-      showPluginModal?.();
+      onPluginModalShow?.();
     }
     if (popupVisible?.current) {
-      showPluginPopup?.();
+      onPluginPopupShow?.();
     }
-  }, [modalVisible, showPluginModal, popupVisible, showPluginPopup]);
+  }, [modalVisible, onPluginModalShow, popupVisible, onPluginPopupShow]);
 
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
@@ -266,17 +266,17 @@ export function useAPI({
         },
         renderModal: (html, { ...options } = {}) => {
           modal.render(html, options);
-          showPluginModal?.({
+          onPluginModalShow?.({
             id: widget?.id ?? block?.id,
             background: options?.background,
           });
         },
         closeModal: () => {
-          showPluginModal?.();
+          onPluginModalShow?.();
         },
         updateModal: options => {
           modal.resize(options.width, options.height);
-          showPluginModal?.({
+          onPluginModalShow?.({
             id: widget?.id ?? block?.id,
             background: options.background,
           });
@@ -288,7 +288,7 @@ export function useAPI({
             ...options,
             onAutoResized: () => {
               if (!rendered) {
-                showPluginPopup?.({
+                onPluginPopupShow?.({
                   id: widget?.id ?? block?.id,
                   ref: externalRef,
                   ...options,
@@ -297,20 +297,20 @@ export function useAPI({
               }
             },
           });
-          showPluginPopup?.({
+          onPluginPopupShow?.({
             id: widget?.id ?? block?.id,
             ref: externalRef,
             ...options,
           });
         },
         closePopup: () => {
-          showPluginPopup?.();
+          onPluginPopupShow?.();
         },
         updatePopup: options => {
           if (options.width !== undefined || options.height !== undefined) {
             popup.resize(options.width, options.height);
           }
-          showPluginPopup?.({
+          onPluginPopupShow?.({
             id: widget?.id ?? block?.id,
             ...options,
             ref: externalRef,
@@ -337,8 +337,8 @@ export function useAPI({
     getBlock,
     getLayer,
     getWidget,
-    showPluginModal,
-    showPluginPopup,
+    onPluginModalShow,
+    onPluginPopupShow,
     onRender,
     onResize,
   ]);

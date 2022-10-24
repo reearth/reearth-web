@@ -124,8 +124,8 @@ export default function Visualizer({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
-    showPluginModal,
-    showPluginPopup,
+    onPluginModalShow,
+    onPluginPopupShow,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -172,10 +172,10 @@ export default function Visualizer({
               pluginProperty={pluginProperty}
               pluginModalContainer={pluginModalContainerRef.current}
               shownPluginModalInfo={shownPluginModalInfo}
-              showPluginModal={showPluginModal}
+              onPluginModalShow={onPluginModalShow}
               pluginPopupContainer={pluginPopupContainerRef.current}
               shownPluginPopupInfo={shownPluginPopupInfo}
-              showPluginPopup={showPluginPopup}
+              onPluginPopupShow={onPluginPopupShow}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
               pluginBaseUrl={pluginBaseUrl}
@@ -228,10 +228,10 @@ export default function Visualizer({
                   }
                   pluginModalContainer={pluginModalContainerRef.current}
                   shownPluginModalInfo={shownPluginModalInfo}
-                  showPluginModal={showPluginModal}
+                  onPluginModalShow={onPluginModalShow}
                   pluginPopupContainer={pluginPopupContainerRef.current}
                   shownPluginPopupInfo={shownPluginPopupInfo}
-                  showPluginPopup={showPluginPopup}
+                  onPluginPopupShow={onPluginPopupShow}
                   isEditable={props.isEditable}
                   isBuilt={props.isBuilt}
                   pluginBaseUrl={pluginBaseUrl}
@@ -242,7 +242,7 @@ export default function Visualizer({
             <>
               <ModalContainer
                 shownPluginModalInfo={shownPluginModalInfo}
-                showPluginModal={showPluginModal}
+                onPluginModalShow={onPluginModalShow}
                 ref={pluginModalContainerRef}
               />
               <PopupContainer
@@ -270,10 +270,10 @@ export default function Visualizer({
                 onMaskClick={handleInfoboxMaskClick}
                 pluginModalContainer={pluginModalContainerRef.current}
                 shownPluginModalInfo={shownPluginModalInfo}
-                showPluginModal={showPluginModal}
+                onPluginModalShow={onPluginModalShow}
                 pluginPopupContainer={pluginPopupContainerRef.current}
                 shownPluginPopupInfo={shownPluginPopupInfo}
-                showPluginPopup={showPluginPopup}
+                onPluginPopupShow={onPluginPopupShow}
               />
             </>
           )}
