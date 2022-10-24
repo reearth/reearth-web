@@ -57,17 +57,17 @@ export default function ({
     extended: boolean | undefined,
   ) => void;
 }) {
-  const modalCanBeVisible = useRef<boolean>(false);
-  const popupCanBeVisible = useRef<boolean>(false);
+  const modalVisible = useRef<boolean>(false);
+  const popupVisible = useRef<boolean>(false);
   const externalRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    modalCanBeVisible.current = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
-  }, [modalCanBeVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id, block?.id]);
+    modalVisible.current = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
+  }, [modalVisible, shownPluginModalInfo, pluginId, extensionId, widget?.id, block?.id]);
 
   useEffect(() => {
-    popupCanBeVisible.current = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
-  }, [popupCanBeVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id, block?.id]);
+    popupVisible.current = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
+  }, [popupVisible, shownPluginPopupInfo, pluginId, extensionId, widget?.id, block?.id]);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose } =
     useAPI({
@@ -78,8 +78,8 @@ export default function ({
       layer,
       widget,
       pluginProperty,
-      modalCanBeVisible,
-      popupCanBeVisible,
+      modalVisible,
+      popupVisible,
       externalRef,
       showPluginModal,
       showPluginPopup,
@@ -103,8 +103,8 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
-    modalCanBeVisible: modalCanBeVisible.current,
-    popupCanBeVisible: popupCanBeVisible.current,
+    modalVisible: modalVisible.current,
+    popupVisible: popupVisible.current,
     externalRef,
     exposed: staticExposed,
     onError,
@@ -121,8 +121,8 @@ export function useAPI({
   layer,
   block,
   widget,
-  modalCanBeVisible,
-  popupCanBeVisible,
+  modalVisible,
+  popupVisible,
   externalRef,
   showPluginModal,
   showPluginPopup,
@@ -136,8 +136,8 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
-  modalCanBeVisible?: MutableRefObject<boolean>;
-  popupCanBeVisible?: MutableRefObject<boolean>;
+  modalVisible?: MutableRefObject<boolean>;
+  popupVisible?: MutableRefObject<boolean>;
   externalRef: RefObject<HTMLIFrameElement> | undefined;
   showPluginModal?: (modalInfo?: PluginModalInfo) => void;
   showPluginPopup?: (popupInfo?: PluginPopupInfo) => void;
@@ -207,13 +207,13 @@ export function useAPI({
     event.current?.[1]("close");
     event.current?.[2]?.();
     event.current = undefined;
-    if (modalCanBeVisible?.current) {
+    if (modalVisible?.current) {
       showPluginModal?.();
     }
-    if (popupCanBeVisible?.current) {
+    if (popupVisible?.current) {
       showPluginPopup?.();
     }
-  }, [modalCanBeVisible, showPluginModal, popupCanBeVisible, showPluginPopup]);
+  }, [modalVisible, showPluginModal, popupVisible, showPluginPopup]);
 
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),

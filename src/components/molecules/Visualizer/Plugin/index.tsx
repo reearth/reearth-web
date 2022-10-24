@@ -86,8 +86,8 @@ export default function Plugin({
     skip,
     src,
     isMarshalable,
-    modalCanBeVisible,
-    popupCanBeVisible,
+    modalVisible,
+    popupVisible,
     externalRef,
     onPreInit,
     onDispose,
@@ -118,8 +118,8 @@ export default function Plugin({
       autoResize={autoResize}
       iFrameProps={iFrameProps}
       canBeVisible={visible}
-      modalCanBeVisible={modalCanBeVisible}
-      popupCanBeVisible={popupCanBeVisible}
+      modalVisible={modalVisible}
+      popupVisible={popupVisible}
       modalContainer={pluginModalContainer}
       popupContainer={pluginPopupContainer}
       externalRef={externalRef}

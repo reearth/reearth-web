@@ -20,8 +20,8 @@ export type Props = {
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   modalContainer?: HTMLElement | DocumentFragment;
   popupContainer?: HTMLElement | DocumentFragment;
-  modalCanBeVisible?: boolean;
-  popupCanBeVisible?: boolean;
+  modalVisible?: boolean;
+  popupVisible?: boolean;
   externalRef?: RefObject<HTMLIFrameElement>;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   exposed?: ((api: API) => { [key: string]: any }) | { [key: string]: any };
@@ -37,8 +37,8 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
   {
     className,
     canBeVisible,
-    modalCanBeVisible,
-    popupCanBeVisible,
+    modalVisible,
+    popupVisible,
     skip,
     src,
     sourceCode,
@@ -94,7 +94,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         ref={modalIFrameRef}
         container={modalContainer}
         visible
-        enabled={modalCanBeVisible}
+        enabled={modalVisible}
         ready={loaded}
         autoResize="both"
         onRender={onRender as (type: string) => void}
@@ -105,7 +105,7 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         ref={popupIFrameRef}
         container={popupContainer}
         visible
-        enabled={popupCanBeVisible}
+        enabled={popupVisible}
         ready={loaded}
         autoResize="both"
         onRender={onRender as (type: string) => void}
