@@ -16,6 +16,8 @@ import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
+import type { PluginModalInfo } from "./Plugin/ModalContainer";
+import type { PluginPopupInfo } from "./Plugin/PopupContainer";
 import type {
   CameraOptions,
   Clock,
@@ -231,6 +233,12 @@ export default ({
     }
   }, [zoomedLayerId, onZoomToLayer]);
 
+  const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
+  const pluginModalContainerRef = useRef<HTMLDivElement>();
+
+  const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
+  const pluginPopupContainerRef = useRef<HTMLDivElement>();
+
   return {
     engineRef,
     wrapperRef,
@@ -247,6 +255,12 @@ export default ({
     innerClock,
     infobox,
     overriddenSceneProperty,
+    pluginModalContainerRef,
+    shownPluginModalInfo,
+    pluginPopupContainerRef,
+    shownPluginPopupInfo,
+    onPluginModalShow,
+    onPluginPopupShow,
     isLayerHidden,
     selectLayer,
     selectBlock,
