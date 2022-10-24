@@ -13,6 +13,8 @@ import useHooks from "./hooks";
 import Infobox, { Props as InfoboxProps } from "./Infobox";
 import { Layer, Layers } from "./next";
 import { Provider } from "./Plugin";
+import ModalContainer from "./Plugin/ModalContainer";
+import PopupContainer from "./Plugin/PopupContainer";
 import type { Tag } from "./Plugin/types";
 import W from "./Widget";
 import type { Widget } from "./Widget";
@@ -69,6 +71,7 @@ export type Props = {
   renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
   onLayerSelect?: (id?: string) => void;
   onLayerDrop?: (id: string, key: string, latlng: LatLng) => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
   Pick<
     InfoboxProps,
@@ -102,6 +105,7 @@ export default function Visualizer({
   onBlockInsert,
   onBlockSelect,
   onLayerDrop,
+  onZoomToLayer,
   ...props
 }: Props): JSX.Element {
   const {
@@ -118,6 +122,12 @@ export default function Visualizer({
     innerClock,
     infobox,
     overriddenSceneProperty,
+    pluginModalContainerRef,
+    shownPluginModalInfo,
+    pluginPopupContainerRef,
+    shownPluginPopupInfo,
+    onPluginModalShow,
+    onPluginPopupShow,
     selectLayer,
     selectBlock,
     changeBlock,
@@ -144,6 +154,7 @@ export default function Visualizer({
     onCameraChange: props.onCameraChange,
     onTick: props.onTick,
     onLayerDrop,
+    onZoomToLayer,
   });
 
   return (
@@ -159,6 +170,12 @@ export default function Visualizer({
               onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
               sceneProperty={overriddenSceneProperty}
               pluginProperty={pluginProperty}
+              pluginModalContainer={pluginModalContainerRef.current}
+              shownPluginModalInfo={shownPluginModalInfo}
+              onPluginModalShow={onPluginModalShow}
+              pluginPopupContainer={pluginPopupContainerRef.current}
+              shownPluginPopupInfo={shownPluginPopupInfo}
+              onPluginPopupShow={onPluginPopupShow}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
               pluginBaseUrl={pluginBaseUrl}
@@ -207,6 +224,12 @@ export default function Visualizer({
                       ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
                       : undefined
                   }
+                  pluginModalContainer={pluginModalContainerRef.current}
+                  shownPluginModalInfo={shownPluginModalInfo}
+                  onPluginModalShow={onPluginModalShow}
+                  pluginPopupContainer={pluginPopupContainerRef.current}
+                  shownPluginPopupInfo={shownPluginPopupInfo}
+                  onPluginPopupShow={onPluginPopupShow}
                   isEditable={props.isEditable}
                   isBuilt={props.isBuilt}
                   pluginBaseUrl={pluginBaseUrl}
@@ -214,26 +237,43 @@ export default function Visualizer({
               ))}
           </Engine>
           {ready && (
-            <Infobox
-              title={infobox?.title}
-              infoboxKey={infobox?.infoboxKey}
-              visible={!!infobox?.visible}
-              sceneProperty={overriddenSceneProperty}
-              blocks={infobox?.blocks}
-              layer={infobox?.layer}
-              selectedBlockId={selectedBlockId}
-              pluginProperty={pluginProperty}
-              isBuilt={props.isBuilt}
-              isEditable={props.isEditable && !!infobox?.isEditable}
-              onBlockChange={changeBlock}
-              onBlockDelete={onBlockDelete}
-              onBlockMove={onBlockMove}
-              onBlockInsert={onBlockInsert}
-              onBlockSelect={selectBlock}
-              renderInsertionPopUp={renderInfoboxInsertionPopUp}
-              pluginBaseUrl={pluginBaseUrl}
-              onMaskClick={handleInfoboxMaskClick}
-            />
+            <>
+              <ModalContainer
+                shownPluginModalInfo={shownPluginModalInfo}
+                onPluginModalShow={onPluginModalShow}
+                ref={pluginModalContainerRef}
+              />
+              <PopupContainer
+                shownPluginPopupInfo={shownPluginPopupInfo}
+                ref={pluginPopupContainerRef}
+              />
+              <Infobox
+                title={infobox?.title}
+                infoboxKey={infobox?.infoboxKey}
+                visible={!!infobox?.visible}
+                sceneProperty={overriddenSceneProperty}
+                blocks={infobox?.blocks}
+                layer={infobox?.layer}
+                selectedBlockId={selectedBlockId}
+                pluginProperty={pluginProperty}
+                isBuilt={props.isBuilt}
+                isEditable={props.isEditable && !!infobox?.isEditable}
+                onBlockChange={changeBlock}
+                onBlockDelete={onBlockDelete}
+                onBlockMove={onBlockMove}
+                onBlockInsert={onBlockInsert}
+                onBlockSelect={selectBlock}
+                renderInsertionPopUp={renderInfoboxInsertionPopUp}
+                pluginBaseUrl={pluginBaseUrl}
+                onMaskClick={handleInfoboxMaskClick}
+                pluginModalContainer={pluginModalContainerRef.current}
+                shownPluginModalInfo={shownPluginModalInfo}
+                onPluginModalShow={onPluginModalShow}
+                pluginPopupContainer={pluginPopupContainerRef.current}
+                shownPluginPopupInfo={shownPluginPopupInfo}
+                onPluginPopupShow={onPluginPopupShow}
+              />
+            </>
           )}
           {children}
           {!ready && (

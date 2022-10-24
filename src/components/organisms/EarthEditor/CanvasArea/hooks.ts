@@ -53,7 +53,7 @@ export default (isBuilt?: boolean) => {
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
-  const [zoomedLayerId] = useZoomedLayerId();
+  const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
@@ -311,6 +311,7 @@ export default (isBuilt?: boolean) => {
     onTick,
     onFovChange,
     handleDropLayer,
+    zoomToLayer,
   };
 };
 

@@ -42,6 +42,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     onTick,
     onFovChange,
     handleDropLayer,
+    zoomToLayer,
   } = useHooks(isBuilt);
 
   const renderInfoboxInsertionPopUp = useCallback<
@@ -85,7 +86,8 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onBlockInsert={onBlockInsert}
       renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
       onLayerDrop={handleDropLayer}
-      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}>
+      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}
+      onZoomToLayer={zoomToLayer}>
       <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}
