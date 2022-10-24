@@ -1,3 +1,4 @@
+import type * as CSS from "csstype";
 import { ComponentType, useCallback, useMemo } from "react";
 
 import Plugin, {
@@ -72,11 +73,19 @@ export default function WidgetComponent<PP = any, SP = any>({
     [widget.id, onExtend],
   );
 
-  const iFrameProps = useMemo(() => {
-    return {
-      style: { pointerEvents: (editing ? "none" : "auto") as any },
-    };
-  }, [editing]);
+  const iFrameProps = useMemo<{ style: CSS.Properties }>(
+    () => ({
+      style: { pointerEvents: editing ? "none" : "auto" },
+    }),
+    [editing],
+  );
+
+  const BuiltinStyle = useMemo<CSS.Properties>(
+    () => ({
+      pointerEvents: editing ? "none" : "auto",
+    }),
+    [editing],
+  );
 
   if (!w) return null;
 
@@ -90,7 +99,7 @@ export default function WidgetComponent<PP = any, SP = any>({
     : "both";
 
   return Builtin ? (
-    <div style={{ pointerEvents: editing ? "none" : "auto" }}>
+    <div style={BuiltinStyle}>
       <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
     </div>
   ) : (
