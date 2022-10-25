@@ -19,18 +19,17 @@ export const terrainProviders: {
     | ((terrainProperty: TerrainProperty) => TerrainProvider | null);
 } = {
   // TEST
-  cesium: () => new GsiTerrainProvider(),
-  // cesium: () =>
-  //   // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
-  //   new CesiumTerrainProvider({
-  //     url: IonResource.fromAssetId(1, { accessToken: Ion.defaultAccessToken }),
-  //     requestVertexNormals: false,
-  //     requestWaterMask: false,
-  //   }),
+  // cesium: () => new GsiTerrainProvider(),
+  // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
+  cesium: new CesiumTerrainProvider({
+    url: IonResource.fromAssetId(1, { accessToken: Ion.defaultAccessToken }),
+    requestVertexNormals: false,
+    requestWaterMask: false,
+  }),
   arcgis: new ArcGISTiledElevationTerrainProvider({
     url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
   }),
-  gsi: () => new GsiTerrainProvider(),
+  gsi: new GsiTerrainProvider(),
   cesiumion: ({ terrainCesiumAccessToken, terrainCesiumIonResource, terrainCesiumIonUrl }) =>
     terrainCesiumIonResource
       ? new CesiumTerrainProvider({
