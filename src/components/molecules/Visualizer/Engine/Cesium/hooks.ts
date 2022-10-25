@@ -11,7 +11,7 @@ import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 import { Clock } from "../../Plugin/types";
-import { MouseEvent, MouseEvents } from "../ref";
+import { MouseEvent, MouseEvents, TerrainProperty } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import {
@@ -22,7 +22,7 @@ import {
   getLocationFromScreenXY,
   getClock,
 } from "./common";
-import terrain from "./terrain";
+import { terrainProviders, defaultTerrainProvider } from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
@@ -63,7 +63,7 @@ export default ({
 
   // terrain
   const terrainProperty = useMemo(
-    () => ({
+    (): TerrainProperty => ({
       terrain: property?.terrain?.terrain || property?.default?.terrain,
       terrainType: property?.terrain?.terrainType || property?.default?.terrainType,
       terrainExaggeration:
@@ -90,11 +90,12 @@ export default ({
 
   const terrainProvider = useMemo((): TerrainProvider | undefined => {
     const provider = terrainProperty.terrain
-      ? terrainProperty.terrainType
-        ? terrain[terrainProperty.terrainType] || terrain.default
-        : terrain.cesium
-      : terrain.default;
-    return typeof provider === "function" ? provider() : provider;
+      ? terrainProviders[terrainProperty.terrainType || "cesium"]
+      : undefined;
+    return (
+      (typeof provider === "function" ? provider(terrainProperty) : provider) ??
+      defaultTerrainProvider
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cesiumIonAccessToken, terrainProperty.terrain, terrainProperty.terrainType]);
 

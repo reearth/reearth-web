@@ -133,20 +133,27 @@ export type ClusterProps = {
   children?: ReactNode;
 };
 
+export type TerrainProperty = {
+  terrain?: boolean;
+  terrainType?: "cesium" | "arcgis" | "gsi" | "cesiumion"; // default: cesium
+  terrainExaggeration?: number; // default: 1
+  terrainExaggerationRelativeHeight?: number; // default: 0
+  depthTestAgainstTerrain?: boolean;
+  terrainCesiumIonResource?: string;
+  terrainCesiumAccessToken?: string;
+  terrainCesiumIonUrl?: string;
+  terrainUrl?: string;
+};
+
 export type SceneProperty = {
   default?: {
     camera?: Camera;
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis" | "url"; // default: cesium
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
     allowEnterGround?: boolean;
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
     sceneMode?: SceneMode; // default: scene3d
-  };
+  } & TerrainProperty;
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;
     cameraLimitterShowHelper?: boolean;
@@ -167,13 +174,7 @@ export type SceneProperty = {
     tile_minLevel?: number;
     tile_opacity?: number;
   }[];
-  terrain?: {
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis" | "url"; // default: cesium
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
-  };
+  terrain?: TerrainProperty;
   atmosphere?: {
     enable_sun?: boolean;
     enable_lighting?: boolean;
