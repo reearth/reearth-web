@@ -1,8 +1,8 @@
 import { expect, test } from "./utils";
 
 test("dasboard can be logged in", async ({ page, reearth }) => {
-  const { userName, teamId, token } = await reearth.initUser();
-  await reearth.gotoAndLogin(`/dashboard/${teamId}`, token);
+  await reearth.initUser();
+  await reearth.goto(`/dashboard/${reearth.teamId}`);
 
-  await expect(page.getByText(`${userName}'s workspace`)).toBeVisible();
+  await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
 });

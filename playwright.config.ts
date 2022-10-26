@@ -9,6 +9,8 @@ const config: PlaywrightTestConfig = {
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },
+  testDir: "e2e",
+  globalSetup: "./e2e/utils/setup.ts",
   reporter: process.env.CI ? "github" : "list",
 };
 
