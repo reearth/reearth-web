@@ -1,3 +1,7 @@
+import { type APIRequestContext, request, test as base, type Page } from "@playwright/test";
+
+export { expect } from "@playwright/test";
+
 export const config = {
   api: process.env["REEARTH_WEB_API"],
   userId: process.env["REEARTH_WEB_E2E_USER_ID"],
@@ -10,33 +14,65 @@ export const config = {
   signUpSecret: process.env["REEARTH_WEB_E2E_SIGNUP_SECRET"],
 };
 
-export async function initUser(token?: string): Promise<{
+export type Reearth = {
+  initUser: () => Promise<{
+    token: string;
+    userId: string;
+    teamId: string;
+    userName: string;
+  }>;
+  login: () => Promise<string>;
+  gotoAndLogin: (
+    url: string,
+    token: string,
+    options?: Parameters<Page["goto"]>[1],
+  ) => ReturnType<Page["goto"]>;
+};
+
+export const test = base.extend<{
+  reearth: Reearth;
+}>({
+  reearth: async ({ page, request }, use) => {
+    use({
+      initUser: (token?: string) => initUser(token, request),
+      login: () => login(request),
+      gotoAndLogin: async (url, token, options) => {
+        const res = await page.goto(url, options);
+        await page.evaluate(`window.REEARTH_E2E_ACCESS_TOKEN = ${JSON.stringify(token)};`);
+        return res;
+      },
+    });
+  },
+});
+
+export async function initUser(
+  token?: string,
+  ctx?: APIRequestContext,
+): Promise<{
   token: string;
   userId: string;
   teamId: string;
   userName: string;
 }> {
   const { userName, userId, teamId, api, signUpSecret } = config;
-  console.log(
-    "initUser: config: ",
-    JSON.stringify({
-      userName,
-      userId,
-      teamId,
-      api,
-      signUpSecret: signUpSecret ? "***" : "",
-    }),
-  );
 
   if (!userName || !userId || !teamId || !api) {
-    throw new Error(`either userName, userId, teamId and api are missing`);
+    throw new Error(
+      `either userName, userId, teamId and api are missing: ${JSON.stringify({
+        userName,
+        userId,
+        teamId,
+        api,
+        signUpSecret: signUpSecret ? "***" : "",
+      })}`,
+    );
   }
 
   token = token || (await login());
+  ctx = ctx || (await request.newContext());
 
-  const resp = await fetch(api + "/api/graphql", {
-    method: "POST",
-    body: JSON.stringify({
+  const resp = await ctx.post(api + "/graphql", {
+    data: {
       query: `mutation($userId: ID!, $teamId: ID!, $lang: Lang, $secret: String) {
         deleteMe(input: { userId: $userId }) { userId }
         signup(input: { lang: $lang, userId: $userId, teamId: $teamId, secret: $secret }) { user { id } }
@@ -47,59 +83,73 @@ export async function initUser(token?: string): Promise<{
         secret: signUpSecret,
         lang: "en",
       },
-    }),
+    },
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
   const body = await resp.json();
-  if (!resp.ok || body.error || body.errors) {
-    throw new Error(`failed to init an user: ${JSON.stringify(body)}`);
+  if (!resp.ok() || body.error || body.errors) {
+    throw new Error(
+      `failed to init an user: ${JSON.stringify(body)} with ${JSON.stringify({
+        userName,
+        userId,
+        teamId,
+        api,
+        signUpSecret: signUpSecret ? "***" : "",
+      })}`,
+    );
   }
 
   return {
     token,
     userName,
-    userId,
+    userId: body.data.signup.user.id,
     teamId,
   };
 }
 
-export async function login(): Promise<string> {
+export async function login(ctx?: APIRequestContext): Promise<string> {
   const { authUrl, userName, password, authAudience, authClientId } = config;
-  console.log(
-    "login: config: ",
-    JSON.stringify({
-      authUrl,
-      userName,
-      password: password ? "***" : "",
-      authAudience,
-      authClientId,
-    }),
-  );
 
   if (!authUrl || !userName || !password || !authAudience || !authClientId) {
     throw new Error(
-      "either authUrl, userName, password, authAudience and authClientId are missing",
+      `either authUrl, userName, password, authAudience and authClientId are missing: ${JSON.stringify(
+        {
+          authUrl,
+          userName,
+          password: password ? "***" : "",
+          authAudience,
+          authClientId,
+        },
+      )}`,
     );
   }
 
-  const resp = await fetch(`${oauthDomain(authUrl)}/oauth/token`, {
-    method: "POST",
-    body: JSON.stringify({
+  ctx = ctx || (await request.newContext());
+  const resp = await ctx.post(`${oauthDomain(authUrl)}/oauth/token`, {
+    data: {
       username: userName,
       password,
       audience: authAudience,
       client_id: authClientId,
       grant_type: "password",
       scope: "openid profile email",
-    }),
+    },
   });
 
   const body = (await resp.json()) as { access_token?: string };
   if (!body.access_token) {
-    throw new Error(`access token is missing: ${JSON.stringify(body)}`);
+    throw new Error(
+      `access token is missing: ${JSON.stringify(body)} with ${JSON.stringify({
+        authUrl,
+        userName,
+        password: password ? "***" : "",
+        authAudience,
+        authClientId,
+      })}`,
+    );
   }
 
   return body.access_token;

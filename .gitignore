@@ -8,6 +8,7 @@ node_modules
 /storybook-static
 __screenshots__
 /playwright-report
+/test-results
 /.env*
 /reearth-config.json
 .idea/*
