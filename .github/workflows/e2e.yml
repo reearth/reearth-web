@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * 1-5'
-  pull_request: # DEBUG
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
