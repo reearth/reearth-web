@@ -12,14 +12,26 @@ import type {
   Reearth,
   Plugin,
   Tag,
+  PopupPosition,
 } from "./types";
 
-export type CommonReearth = Omit<Reearth, "plugin" | "ui" | "block" | "layer" | "widget">;
+export type CommonReearth = Omit<
+  Reearth,
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
+>;
 
 export function exposed({
   render,
   postMessage,
   resize,
+  renderModal,
+  closeModal,
+  updateModal,
+  postMessageModal,
+  renderPopup,
+  closePopup,
+  updatePopup,
+  postMessagePopup,
   events,
   commonReearth,
   plugin,
@@ -39,6 +51,21 @@ export function exposed({
   ) => void;
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
+  renderModal: (
+    html: string,
+    options?: {
+      width?: string | number;
+      height?: string | number;
+      background?: string;
+    },
+  ) => void;
+  closeModal: Reearth["modal"]["close"];
+  updateModal: Reearth["modal"]["update"];
+  postMessageModal: Reearth["modal"]["postMessage"];
+  renderPopup: Reearth["popup"]["show"];
+  closePopup: Reearth["popup"]["close"];
+  updatePopup: Reearth["popup"]["update"];
+  postMessagePopup: Reearth["popup"]["postMessage"];
   events: Events<ReearthEventType>;
   commonReearth: CommonReearth;
   plugin?: Plugin;
@@ -85,6 +112,37 @@ export function exposed({
           },
           postMessage,
           resize,
+        },
+        modal: {
+          show: (
+            html: string,
+            options?:
+              | {
+                  background?: string;
+                }
+              | undefined,
+          ) => {
+            renderModal(html, options);
+          },
+          postMessage: postMessageModal,
+          update: updateModal,
+          close: closeModal,
+        },
+        popup: {
+          show: (
+            html: string,
+            options:
+              | {
+                  position?: PopupPosition;
+                  offset?: number;
+                }
+              | undefined,
+          ) => {
+            renderPopup(html, options);
+          },
+          postMessage: postMessagePopup,
+          update: updatePopup,
+          close: closePopup,
         },
         scene: merge(commonReearth.scene, {
           get overrideProperty() {
@@ -154,6 +212,8 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   viewport,
+  orbit,
+  rotateRight,
   captureScreen,
   enableScreenSpaceCameraController,
   lookHorizontal,
@@ -189,6 +249,8 @@ export function commonReearth({
   lookAt: GlobalThis["reearth"]["visualizer"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["visualizer"]["camera"]["zoomIn"];
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
+  rotateRight: GlobalThis["reearth"]["visualizer"]["camera"]["rotateRight"];
+  orbit: GlobalThis["reearth"]["visualizer"]["camera"]["orbit"];
   viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -213,6 +275,8 @@ export function commonReearth({
         lookAt,
         zoomIn,
         zoomOut,
+        rotateRight,
+        orbit,
         get position() {
           return camera();
         },
@@ -252,6 +316,8 @@ export function commonReearth({
       lookAt,
       zoomIn,
       zoomOut,
+      rotateRight,
+      orbit,
       get position() {
         return camera();
       },

@@ -59,8 +59,11 @@ export type EngineRef = {
   getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
-  zoomIn: (amount: number) => void;
-  zoomOut: (amount: number) => void;
+  lookAtLayer: (layerId: string) => void;
+  zoomIn: (amount: number, options?: CameraOptions) => void;
+  zoomOut: (amount: number, options?: CameraOptions) => void;
+  orbit: (radian: number) => void;
+  rotateRight: (radian: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   getClock: () => Clock | undefined;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
@@ -138,6 +141,7 @@ export type SceneProperty = {
     terrainExaggeration?: number; // default: 1
     terrainExaggerationRelativeHeight?: number; // default: 0
     depthTestAgainstTerrain?: boolean;
+    allowEnterGround?: boolean;
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;

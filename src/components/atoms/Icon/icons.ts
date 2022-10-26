@@ -89,6 +89,7 @@ import Upload from "./Icons/upload.svg";
 import Logout from "./Icons/logoutIcon.svg";
 import FolderAdd from "./Icons/folderAddIcon.svg";
 import Folder from "./Icons/folderIcon.svg";
+import Minus from "./Icons/minus.svg";
 import Plus from "./Icons/plus.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Edit from "./Icons/editIcon.svg";
@@ -104,6 +105,7 @@ import Install from "./Icons/install.svg";
 import CopyCode from "./Icons/copyCode.svg";
 import FieldClear from "./Icons/fieldClear.svg";
 import FieldLinked from "./Icons/fieldLinked.svg";
+import ZoomToLayer from "./Icons/zoomToLayer.svg";
 
 // Misc
 import Logo from "./Icons/reearthLogo.svg";
@@ -142,6 +144,13 @@ import Timeline from "./Icons/timeline.svg";
 import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
+
+// Navigator
+import WidgetNavigator from "./Icons/widgetNavigator.svg";
+import NavigatorAngle from "./Icons/navigatorAngle.svg";
+import Compass from "./Icons/compass.svg";
+import CompassFocus from "./Icons/compassFocus.svg";
+import House from "./Icons/house.svg";
 
 export default {
   outline: Layer,
@@ -223,6 +232,7 @@ export default {
   dl: InfoTable,
   checkCircle: CheckCircle,
   check: CheckMark,
+  minus: Minus,
   plus: Plus,
   plusSquare: PlusSquare,
   cancel: Cancel,
@@ -262,4 +272,10 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   timeline: Timeline,
+  navigator: WidgetNavigator,
+  navigatorAngle: NavigatorAngle,
+  compass: Compass,
+  compassFocus: CompassFocus,
+  house: House,
+  zoomToLayer: ZoomToLayer,
 };

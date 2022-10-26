@@ -16,6 +16,8 @@ import type { MouseEventHandles } from "./Engine/ref";
 import type { Props as InfoboxProps, Block } from "./Infobox";
 import { LayerStore, Layer } from "./Layers";
 import type { ProviderProps } from "./Plugin";
+import type { PluginModalInfo } from "./Plugin/ModalContainer";
+import type { PluginPopupInfo } from "./Plugin/PopupContainer";
 import type {
   CameraOptions,
   Clock,
@@ -34,6 +36,7 @@ export default ({
   rootLayer,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
+  zoomedLayerId,
   camera,
   clock,
   sceneProperty,
@@ -44,6 +47,7 @@ export default ({
   onCameraChange,
   onTick,
   onLayerDrop,
+  onZoomToLayer,
 }: {
   engineType?: string;
   rootLayerId?: string;
@@ -53,6 +57,7 @@ export default ({
   rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
+  zoomedLayerId?: string;
   camera?: Camera;
   clock?: Clock;
   sceneProperty?: SceneProperty;
@@ -70,6 +75,7 @@ export default ({
   onCameraChange?: (c: Camera) => void;
   onTick?: (c: Clock) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 }) => {
   const engineRef = useRef<EngineRef>(null);
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
@@ -220,6 +226,19 @@ export default ({
     selectLayer(undefined);
   }, [selectLayer]);
 
+  useEffect(() => {
+    if (zoomedLayerId) {
+      engineRef.current?.lookAtLayer(zoomedLayerId);
+      onZoomToLayer?.(undefined);
+    }
+  }, [zoomedLayerId, onZoomToLayer]);
+
+  const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
+  const pluginModalContainerRef = useRef<HTMLDivElement>();
+
+  const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
+  const pluginPopupContainerRef = useRef<HTMLDivElement>();
+
   return {
     engineRef,
     wrapperRef,
@@ -236,6 +255,12 @@ export default ({
     innerClock,
     infobox,
     overriddenSceneProperty,
+    pluginModalContainerRef,
+    shownPluginModalInfo,
+    pluginPopupContainerRef,
+    shownPluginPopupInfo,
+    onPluginModalShow,
+    onPluginPopupShow,
     isLayerHidden,
     selectLayer,
     selectBlock,
@@ -427,6 +452,8 @@ function useProviderProps(
     | "lookAt"
     | "zoomIn"
     | "zoomOut"
+    | "orbit"
+    | "rotateRight"
     | "layers"
     | "layersInViewport"
     | "viewport"
@@ -519,6 +546,20 @@ function useProviderProps(
   const zoomOut = useCallback(
     (amount: number) => {
       engineRef.current?.zoomOut(amount);
+    },
+    [engineRef],
+  );
+
+  const rotateRight = useCallback(
+    (radian: number) => {
+      engineRef.current?.rotateRight(radian);
+    },
+    [engineRef],
+  );
+
+  const orbit = useCallback(
+    (radian: number) => {
+      engineRef.current?.orbit(radian);
     },
     [engineRef],
   );
@@ -619,6 +660,8 @@ function useProviderProps(
     lookAt,
     zoomIn,
     zoomOut,
+    orbit,
+    rotateRight,
     layers,
     layersInViewport,
     viewport,

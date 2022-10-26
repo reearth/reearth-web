@@ -58,6 +58,8 @@ export type Props = {
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
+  rotateRight: (radian: number) => void;
+  orbit: (radian: number) => void;
   layersInViewport: () => Layer[];
   viewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
@@ -113,6 +115,8 @@ export function Provider({
   lookAt,
   zoomIn,
   zoomOut,
+  rotateRight,
+  orbit,
   viewport,
   captureScreen,
   onMouseEvent,
@@ -181,6 +185,8 @@ export function Provider({
         zoomIn,
         zoomOut,
         viewport,
+        rotateRight,
+        orbit,
         captureScreen,
         enableScreenSpaceCameraController,
         lookHorizontal,
@@ -212,10 +218,9 @@ export function Provider({
       getLayerOverriddenProperties,
       showLayer,
       hideLayer,
-      selectLayer,
       addLayer,
+      selectLayer,
       overrideLayerProperty,
-      overrideSceneProperty,
       overrideScenePropertyCommon,
       layersInViewport,
       flyTo,
@@ -223,6 +228,8 @@ export function Provider({
       zoomIn,
       zoomOut,
       viewport,
+      rotateRight,
+      orbit,
       captureScreen,
       enableScreenSpaceCameraController,
       lookHorizontal,
@@ -235,6 +242,7 @@ export function Provider({
       moveRight,
       moveOverTerrain,
       flyToGround,
+      overrideSceneProperty,
     ],
   );
 

@@ -17,6 +17,8 @@ export type Reearth = {
   readonly camera: Camera;
   readonly clock?: Clock;
   readonly ui: UI;
+  readonly modal: Modal;
+  readonly popup: Popup;
   readonly plugin: Plugin;
   readonly layers: Layers;
   readonly layer?: Layer;
@@ -252,6 +254,66 @@ export type UI = {
   ) => void;
 };
 
+export type Modal = {
+  readonly show: (
+    html: string,
+    options?: {
+      width?: number | string;
+      height?: number | string;
+      background?: string;
+    },
+  ) => void;
+  readonly postMessage: (message: any) => void;
+  readonly update: (options: {
+    width?: number | string;
+    height?: number | string;
+    background?: string;
+  }) => void;
+  readonly close: () => void;
+};
+
+export type PopupPosition =
+  | "top"
+  | "top-start"
+  | "top-end"
+  | "right"
+  | "right-start"
+  | "right-end"
+  | "bottom"
+  | "bottom-start"
+  | "bottom-end"
+  | "left"
+  | "left-start"
+  | "left-end";
+
+export type PopupOffset =
+  | number
+  | {
+      mainAxis?: number;
+      crossAxis?: number;
+      alignmentAxis?: number | null;
+    };
+
+export type Popup = {
+  readonly show: (
+    html: string,
+    options?: {
+      width?: number | string;
+      height?: number | string;
+      position?: PopupPosition;
+      offset?: PopupOffset;
+    },
+  ) => void;
+  readonly postMessage: (message: any) => void;
+  readonly update: (options: {
+    width?: number | string;
+    height?: number | string;
+    position?: PopupPosition;
+    offset?: PopupOffset;
+  }) => void;
+  readonly close: () => void;
+};
+
 /** Deprecated. */
 export type Visualizer = {
   /** use `reearth.engine` instead. */
@@ -275,12 +337,16 @@ export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
-  readonly zoomIn: (amount: number) => void;
-  readonly zoomOut: (amount: number) => void;
+  readonly zoomIn: (amount: number, options?: CameraOptions) => void;
+  readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
   readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  /** Rotate the camera around the center of earth. */
+  readonly rotateRight: (radian: number) => void;
+  /** Move the angle of camera around the center of earth. */
+  readonly orbit: (radian: number) => void;
   readonly enableScreenSpaceController: (enabled: boolean) => void;
   readonly lookHorizontal: (amount: number) => void;
   readonly lookVertical: (amount: number) => void;
