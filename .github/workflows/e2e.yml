@@ -27,6 +27,8 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: install
         run: yarn install
+      - name: install playwright dependencies
+        run: yarn run playwright install
       - name: E2E test
         run: yarn run e2e
         env:
