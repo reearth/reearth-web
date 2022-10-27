@@ -197,6 +197,7 @@ export default ({
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer) return;
+
     viewer.scene.useWebVR = true;
   });
 
