@@ -46,6 +46,37 @@ export type Rect = {
   north: number;
 };
 
+export type Plane = {
+  normal: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  distance: number;
+};
+
+export type ClippingPlaneCollection = {
+  planes?: Plane[];
+  dimensions?: {
+    /**
+     * x-axis
+     */
+    width?: number;
+    /**
+     * y-axis
+     */
+    length?: number;
+    /**
+     * z-axis
+     */
+    height?: number;
+  };
+  heading?: number;
+  pitch?: number;
+  roll?: number;
+  height?: number;
+} & LatLng;
+
 // Don't forget adding a new field to valueTypeMapper also!
 export type ValueTypes = {
   string: string;
