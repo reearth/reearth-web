@@ -194,6 +194,13 @@ export default ({
     }
   }, [camera, engineAPI]);
 
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    // (viewer as any).vrButton = true;
+    viewer.scene.useWebVR = true;
+  });
+
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
