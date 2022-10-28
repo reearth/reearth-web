@@ -1,7 +1,7 @@
 import * as Cesium from "cesium";
 import { Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
-import type { CesiumComponentRef } from "resium";
+import { CesiumComponentRef } from "resium";
 
 import type { Ref as EngineRef } from "..";
 import type { MouseEvents, MouseEvent } from "../ref";
@@ -90,6 +90,24 @@ export default function useEngineRef(
           { ...getCamera(viewer), ...camera },
           options,
         );
+      },
+      lookAtLayer: layerId => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const e = viewer.entities.getById(layerId);
+        if (!e) return;
+        const entityPos = e.position?.getValue(viewer.clock.currentTime);
+        if (!entityPos) return;
+        const cameraPos = viewer.camera.positionWC;
+        const distance = Cesium.Cartesian3.distance(entityPos, cameraPos);
+        if (Math.round(distance * 1000) / 1000 === 5000) return;
+        const camera = getCamera(viewer);
+        const offset = new Cesium.HeadingPitchRange(
+          camera?.heading ?? 0,
+          camera?.pitch ?? -90,
+          5000,
+        );
+        viewer.zoomTo(e, offset);
       },
       getViewport: () => {
         const viewer = cesium.current?.cesiumElement;
