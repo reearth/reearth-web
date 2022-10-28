@@ -139,8 +139,8 @@ export type TerrainProperty = {
   terrainExaggeration?: number; // default: 1
   terrainExaggerationRelativeHeight?: number; // default: 0
   depthTestAgainstTerrain?: boolean;
-  terrainCesiumIonResource?: string;
-  terrainCesiumAccessToken?: string;
+  terrainCesiumIonAsset?: string;
+  terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
 };

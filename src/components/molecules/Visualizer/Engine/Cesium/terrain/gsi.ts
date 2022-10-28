@@ -16,8 +16,7 @@ import {
   Credit,
   TileAvailability,
 } from "cesium";
-import type { NdArray } from "ndarray";
-import ndarray from "ndarray";
+import ndarray, { type NdArray } from "ndarray";
 
 export const defaultTerrainProvider = new EllipsoidTerrainProvider();
 
