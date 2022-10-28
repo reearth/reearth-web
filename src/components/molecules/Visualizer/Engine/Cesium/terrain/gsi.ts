@@ -68,14 +68,7 @@ export default class GsiTerrainProvider implements TerrainProvider {
     const url = `https://cyberjapandata.gsi.go.jp/xyz/dem_png/${z}/${x}/${y}.png`;
 
     try {
-      const pxArray = await this.getTilePixels(url);
-      const pixelData = pxArray.data;
-      const pixels = ndarray(
-        new Uint8Array(pixelData),
-        [this.tileSize, this.tileSize, 4],
-        [4, 4 * this.tileSize, 1],
-        0,
-      );
+      const pixels = await this.getTilePixels(url);
       const terrain = GsiTerrainProvider.gsiTerrainToGrid(pixels);
 
       // set up mesh generator for a certain 2^k+1 grid size
@@ -233,16 +226,23 @@ export default class GsiTerrainProvider implements TerrainProvider {
     return ctx;
   }
 
-  getPixels(img: HTMLImageElement | HTMLCanvasElement): ImageData {
+  getPixels(img: HTMLImageElement | HTMLCanvasElement): NdArray<Uint8Array> {
     const canvasRef = this.getCanvas();
     const { context } = canvasRef;
     //context.scale(1, -1);
     // Chrome appears to vertically flip the image for reasons that are unclear
     // We can make it work in Chrome by drawing the image upside-down at this step.
     context.drawImage(img, 0, 0, this.tileSize, this.tileSize);
-    const pixels = context.getImageData(0, 0, this.tileSize, this.tileSize);
+    const pxArray = context.getImageData(0, 0, this.tileSize, this.tileSize);
     context.clearRect(0, 0, this.tileSize, this.tileSize);
     this.contextQueue.push(canvasRef);
+    const pixelData = pxArray.data;
+    const pixels = ndarray(
+      new Uint8Array(pixelData),
+      [this.tileSize, this.tileSize, 4],
+      [4, 4 * this.tileSize, 1],
+      0,
+    );
     return pixels;
   }
 
