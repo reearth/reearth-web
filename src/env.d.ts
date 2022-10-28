@@ -33,6 +33,9 @@ declare module "@mapbox/martini" {
   export class Tile {
     constructor(terrain: ArrayLike<number>, martini: Martini);
     update(): void;
-    getMesh(maxError = 0): { vertices: Uint16Array; triangles: Uint32Array };
+    getMesh(maxError = 0): {
+      vertices: Uint16Array;
+      triangles: Uint32Array;
+    };
   }
 }
