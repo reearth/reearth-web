@@ -1,6 +1,5 @@
 import Martini from "@mapbox/martini";
 import {
-  EllipsoidTerrainProvider,
   Cartographic,
   Rectangle,
   Ellipsoid,
@@ -18,12 +17,10 @@ import {
 } from "cesium";
 import ndarray, { type NdArray } from "ndarray";
 
-export const defaultTerrainProvider = new EllipsoidTerrainProvider();
-
-interface CanvasRef {
+type CanvasRef = {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
-}
+};
 
 // github.com/Kanahiro/cesium-gsi-terrain (MIT license, modified)
 // https://github.com/Kanahiro/cesium-gsi-terrain/blob/master/src/terrain-provider.ts
@@ -34,7 +31,7 @@ export default class GsiTerrainProvider implements TerrainProvider {
   tilingScheme: TerrainProvider["tilingScheme"];
   availability: TileAvailability;
   ellipsoid: Ellipsoid;
-  contextQueue: CanvasRef[];
+  contextQueue: CanvasRef[] = [];
 
   hasWaterMask = false;
   hasVertexNormals = false;
@@ -56,11 +53,10 @@ export default class GsiTerrainProvider implements TerrainProvider {
       ellipsoid: this.ellipsoid,
     });
     this.availability = new TileAvailability(this.tilingScheme, 14);
-    this.contextQueue = [];
   }
 
-  getTileDataAvailable(x: number, y: number, z: number) {
-    return z <= 14;
+  getTileDataAvailable(_x: number, _y: number, level: number) {
+    return level <= 14;
   }
 
   async loadTileDataAvailability() {
