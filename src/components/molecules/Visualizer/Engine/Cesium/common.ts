@@ -28,6 +28,7 @@ import {
   sampleTerrainMostDetailed,
   Ray,
   IntersectionTests,
+  Transforms,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -276,6 +277,12 @@ export const lookAt = (
     cancelFov?.();
     cesiumCamera?.cancelFlight();
   };
+};
+
+export const lookAtWithoutAnime = (scene: Scene) => {
+  const camera = scene.camera;
+  const frame = Transforms.eastNorthUpToFixedFrame(camera.positionWC, scene.globe.ellipsoid);
+  camera.lookAtTransform(frame);
 };
 
 export const animateFOV = ({
