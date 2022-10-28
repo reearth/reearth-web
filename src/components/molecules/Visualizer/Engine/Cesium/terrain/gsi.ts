@@ -88,13 +88,11 @@ export default class GsiTerrainProvider implements TerrainProvider {
       const tile = this.martini.createTile(terrain);
 
       // get a mesh (vertices and triangles indices) for a 10m error
-      // console.log(`Error level: ${err}`);
       const mesh = tile.getMesh(err);
 
       return this.createQuantizedMeshData(x, y, z, tile, mesh);
     } catch (err) {
       // We fall back to a heightmap
-      console.log("Something went wrong");
       const v = Math.max(32 - 4 * z, 4);
       return GsiTerrainProvider.emptyHeightmap(v);
     }
