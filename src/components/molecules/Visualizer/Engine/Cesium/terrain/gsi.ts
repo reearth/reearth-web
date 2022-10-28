@@ -16,10 +16,15 @@ import {
   Credit,
   TileAvailability,
 } from "cesium";
-import getPixels from "get-pixels";
 import type { NdArray } from "ndarray";
+import ndarray from "ndarray";
 
 export const defaultTerrainProvider = new EllipsoidTerrainProvider();
+
+interface CanvasRef {
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+}
 
 // github.com/Kanahiro/cesium-gsi-terrain (MIT license, modified)
 // https://github.com/Kanahiro/cesium-gsi-terrain/blob/master/src/terrain-provider.ts
@@ -30,6 +35,7 @@ export default class GsiTerrainProvider implements TerrainProvider {
   tilingScheme: TerrainProvider["tilingScheme"];
   availability: TileAvailability;
   ellipsoid: Ellipsoid;
+  contextQueue: CanvasRef[];
 
   hasWaterMask = false;
   hasVertexNormals = false;
@@ -51,6 +57,7 @@ export default class GsiTerrainProvider implements TerrainProvider {
       ellipsoid: this.ellipsoid,
     });
     this.availability = new TileAvailability(this.tilingScheme, 14);
+    this.contextQueue = [];
   }
 
   getTileDataAvailable(x: number, y: number, z: number) {
@@ -66,8 +73,15 @@ export default class GsiTerrainProvider implements TerrainProvider {
     const url = `https://cyberjapandata.gsi.go.jp/xyz/dem_png/${z}/${x}/${y}.png`;
 
     try {
-      const pxArray = await GsiTerrainProvider.getPixels(url);
-      const terrain = GsiTerrainProvider.gsiTerrainToGrid(pxArray);
+      const pxArray = await this.getTilePixels(url);
+      const pixelData = pxArray.data;
+      const pixels = ndarray(
+        new Uint8Array(pixelData),
+        [this.tileSize, this.tileSize, 4],
+        [4, 4 * this.tileSize, 1],
+        0,
+      );
+      const terrain = GsiTerrainProvider.gsiTerrainToGrid(pixels);
 
       // set up mesh generator for a certain 2^k+1 grid size
       // generate RTIN hierarchy from terrain data (an array of size^2 length)
@@ -80,6 +94,7 @@ export default class GsiTerrainProvider implements TerrainProvider {
       return this.createQuantizedMeshData(x, y, z, tile, mesh);
     } catch (err) {
       // We fall back to a heightmap
+      console.log("Something went wrong");
       const v = Math.max(32 - 4 * z, 4);
       return GsiTerrainProvider.emptyHeightmap(v);
     }
@@ -200,14 +215,48 @@ export default class GsiTerrainProvider implements TerrainProvider {
     return levelZeroMaximumGeometricError / (1 << level);
   }
 
-  static async getPixels(url: string, type = ""): Promise<NdArray<Uint8Array>> {
-    return new Promise((resolve, reject) => {
-      getPixels(url, type, (err, array) => {
-        if (err != null) reject(err);
-        resolve(array);
-      });
+  loadImage: (url: string) => Promise<HTMLImageElement> = url =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.addEventListener("load", () => resolve(img));
+      img.addEventListener("error", err => reject(err));
+      img.crossOrigin = "anonymous";
+      img.src = url;
     });
+
+  getCanvas(): CanvasRef {
+    let ctx = this.contextQueue.pop();
+    if (ctx == null) {
+      const canvas = document.createElement("canvas");
+      canvas.width = this.tileSize;
+      canvas.height = this.tileSize;
+      const context = canvas.getContext("2d");
+
+      if (!context || !(context instanceof CanvasRenderingContext2D)) {
+        throw new Error("Failed to get 2D context");
+      }
+      ctx = { canvas, context };
+    }
+    return ctx;
   }
+
+  getPixels(img: HTMLImageElement | HTMLCanvasElement): ImageData {
+    const canvasRef = this.getCanvas();
+    const { context } = canvasRef;
+    //context.scale(1, -1);
+    // Chrome appears to vertically flip the image for reasons that are unclear
+    // We can make it work in Chrome by drawing the image upside-down at this step.
+    context.drawImage(img, 0, 0, this.tileSize, this.tileSize);
+    const pixels = context.getImageData(0, 0, this.tileSize, this.tileSize);
+    context.clearRect(0, 0, this.tileSize, this.tileSize);
+    this.contextQueue.push(canvasRef);
+    return pixels;
+  }
+
+  getTilePixels = async (url: string) => {
+    const img = await this.loadImage(url);
+    return this.getPixels(img);
+  };
 
   static emptyHeightmap64 = this.emptyHeightmap(64);
 
