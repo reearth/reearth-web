@@ -161,6 +161,6 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
   );
 });
 
-const _debugFlight = true;
+const _debugFlight = false;
 
 export default Tileset;
