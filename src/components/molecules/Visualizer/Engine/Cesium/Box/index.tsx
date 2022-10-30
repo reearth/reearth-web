@@ -37,13 +37,6 @@ export type Property = {
       y: number;
       z: number;
     };
-    /**
-     * Position on screen like mouse position.
-     */
-    screen?: {
-      x: number;
-      y: number;
-    };
   } & BoxStyle<string>;
 };
 
