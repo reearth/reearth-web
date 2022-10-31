@@ -197,6 +197,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  viewport,
   selectedLayer,
   layerSelectionReason,
   layerOverriddenInfobox,
@@ -211,7 +212,7 @@ export function commonReearth({
   lookAt,
   zoomIn,
   zoomOut,
-  viewport,
+  cameraViewport,
   orbit,
   rotateRight,
   captureScreen,
@@ -234,6 +235,7 @@ export function commonReearth({
   tags: () => Tag[];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  viewport: () => GlobalThis["reearth"]["viewport"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
@@ -251,7 +253,7 @@ export function commonReearth({
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   rotateRight: GlobalThis["reearth"]["visualizer"]["camera"]["rotateRight"];
   orbit: GlobalThis["reearth"]["visualizer"]["camera"]["orbit"];
-  viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
+  cameraViewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
@@ -281,7 +283,7 @@ export function commonReearth({
           return camera();
         },
         get viewport() {
-          return viewport();
+          return cameraViewport();
         },
         enableScreenSpaceController: enableScreenSpaceCameraController,
         lookHorizontal,
@@ -310,6 +312,9 @@ export function commonReearth({
       overrideProperty: overrideSceneProperty,
       captureScreen,
     },
+    get viewport() {
+      return viewport();
+    },
     engineName,
     camera: {
       flyTo,
@@ -322,7 +327,7 @@ export function commonReearth({
         return camera();
       },
       get viewport() {
-        return viewport();
+        return cameraViewport();
       },
       enableScreenSpaceController: enableScreenSpaceCameraController,
       lookHorizontal,

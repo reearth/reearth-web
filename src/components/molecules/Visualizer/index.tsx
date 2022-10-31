@@ -126,6 +126,7 @@ export default function Visualizer({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    isMobile,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -181,6 +182,7 @@ export default function Visualizer({
               onPluginPopupShow={onPluginPopupShow}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
+              isMobile={isMobile}
               pluginBaseUrl={pluginBaseUrl}
               layoutConstraint={widgets.layoutConstraint}
             />

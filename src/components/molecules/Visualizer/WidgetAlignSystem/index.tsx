@@ -1,6 +1,5 @@
 import React from "react";
 import { GridWrapper } from "react-align";
-import { useMedia } from "react-use";
 
 import { styled } from "@reearth/theme";
 
@@ -34,6 +33,7 @@ export type Props = {
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isEditable?: boolean;
   isBuilt?: boolean;
+  isMobile?: boolean;
   sceneProperty?: any;
   onWidgetUpdate?: (
     id: string,
@@ -55,6 +55,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  isMobile,
   layoutConstraint,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
@@ -64,7 +65,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
   });
-  const isSmallWindow = useMedia("(max-width: 768px)");
 
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
@@ -73,7 +73,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         onMove={handleMove}
         onAlignChange={handleAlignmentChange}
         onExtend={handleExtend}>
-        {isSmallWindow ? (
+        {isMobile ? (
           <MobileZone
             zoneName="outer"
             zone={alignSystem?.outer}

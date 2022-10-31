@@ -24,6 +24,7 @@ import type {
   FlyToDestination,
   LookAtDestination,
   Tag,
+  Viewport,
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
 
@@ -102,6 +103,45 @@ export default ({
     ),
   );
   dropRef(wrapperRef);
+
+  const [viewport, setViewport] = useState<Viewport>();
+
+  const viewportResizeObserver = useMemo(
+    () =>
+      new ResizeObserver(entries => {
+        const [entry] = entries;
+        let width: number | undefined;
+        let height: number | undefined;
+
+        if (entry.contentBoxSize) {
+          // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
+          const contentBoxSize = Array.isArray(entry.contentBoxSize)
+            ? entry.contentBoxSize[0]
+            : entry.contentBoxSize;
+          width = contentBoxSize.inlineSize;
+          height = contentBoxSize.blockSize;
+        } else if (entry.contentRect) {
+          width = entry.contentRect.width;
+          height = entry.contentRect.height;
+        }
+
+        setViewport({
+          width,
+          height,
+          isMobile: width === undefined ? undefined : width <= 768,
+        });
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    if (wrapperRef.current) {
+      viewportResizeObserver.observe(wrapperRef.current);
+    }
+    return () => {
+      viewportResizeObserver.disconnect();
+    };
+  }, [viewportResizeObserver]);
 
   const {
     selectedLayer,
@@ -207,6 +247,7 @@ export default ({
       layerSelectionReason,
       layerOverridenInfobox,
       layerOverriddenProperties,
+      viewport,
       showLayer: showLayers,
       hideLayer: hideLayers,
       addLayer,
@@ -259,6 +300,7 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    isMobile: viewport?.isMobile,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -456,7 +498,7 @@ function useProviderProps(
     | "rotateRight"
     | "layers"
     | "layersInViewport"
-    | "viewport"
+    | "cameraViewport"
     | "onMouseEvent"
     | "captureScreen"
     | "enableScreenSpaceCameraController"
@@ -509,7 +551,7 @@ function useProviderProps(
     [engineRef],
   );
 
-  const viewport = useCallback(() => {
+  const cameraViewport = useCallback(() => {
     return engineRef.current?.getViewport();
   }, [engineRef]);
 
@@ -664,7 +706,7 @@ function useProviderProps(
     rotateRight,
     layers,
     layersInViewport,
-    viewport,
+    cameraViewport,
     onMouseEvent,
     captureScreen,
     enableScreenSpaceCameraController,

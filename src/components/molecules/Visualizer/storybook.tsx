@@ -92,7 +92,7 @@ export const context: ProviderProps = {
   overrideLayerProperty: act("overrideLayerProperty"),
   overrideSceneProperty: act("overrideSceneProperty"),
   layersInViewport: act("layersInViewport"),
-  viewport: act("viewport"),
+  cameraViewport: act("cameraViewport"),
   onMouseEvent: act("onMouseEvent"),
   captureScreen: act("captureScreen"),
   enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
