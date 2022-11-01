@@ -25,12 +25,12 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
     () =>
       geometry?.type === "Point"
         ? geometry.coordinates
-        : property.position
+        : property?.position
         ? [property.position.lng, property.position.lat, property.height ?? 0]
-        : property.location
+        : property?.location
         ? [property.location.lng, property.location.lat, property.height ?? 0]
         : undefined,
-    [geometry?.coordinates, geometry?.type, property.height, property.location],
+    [geometry?.coordinates, geometry?.type, property?.height, property?.location],
   );
 
   const { heightReference: hr, shadows, radius = 1000, fillColor } = property ?? {};

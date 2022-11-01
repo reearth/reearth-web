@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Cesium3DTileset, Math as CesiumMath } from "cesium";
+import { Cesium3DTileset, Entity, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
@@ -92,7 +92,7 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
 
-        let target: any = viewer.entities.getById(layerId);
+        let target: Entity | Cesium3DTileset | undefined = viewer.entities.getById(layerId);
         if (!target) {
           for (let i = 0; i < viewer.scene.primitives.length; i++) {
             const p = viewer.scene.primitives.get(i);
@@ -104,11 +104,19 @@ export default function useEngineRef(
         }
         if (!target) return;
 
+        const entityPos =
+          target instanceof Entity && target.position?.getValue(viewer.clock.currentTime);
+        if (entityPos) {
+          const cameraPos = viewer.camera.positionWC;
+          const distance = Cesium.Cartesian3.distance(entityPos, cameraPos);
+          if (Math.round(distance * 1000) / 1000 === 5000) return;
+        }
+
         const camera = getCamera(viewer);
         const offset = new Cesium.HeadingPitchRange(
           camera?.heading ?? 0,
           camera?.pitch ?? -90,
-          50000,
+          5000,
         );
         viewer.zoomTo(target, offset);
       },
