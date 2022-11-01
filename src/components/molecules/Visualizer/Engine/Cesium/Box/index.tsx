@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Axis,
   CallbackProperty,
@@ -81,7 +80,7 @@ const Side: FC<{
         new CesiumPlane(Cartesian3.UNIT_Z, 0),
       );
       return [plane, dimension];
-    }, [trs.scale]);
+    }, [trs, normalAxis, planeLocal]);
 
     return (
       <Entity id={id} position={cbRef}>
@@ -141,7 +140,7 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
   const [trs] = useState(() => updateTrs(new TranslationRotationScale(), property));
   useEffect(() => {
     updateTrs(trs, property);
-  }, [property?.default?.position, property?.default?.location, property?.default?.height, property?.default?.dimensions, property?.default?.dimensions?.y, property?.default?.dimensions?.z]);
+  }, [property, trs]);
 
   const style: BoxStyle<Color> = useMemo(
     () => ({
@@ -151,7 +150,7 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
       fill,
       outline,
     }),
-    [fillColor, outlineColor, outlineWidth, fill],
+    [fillColor, outlineColor, outlineWidth, fill, outline],
   );
 
   return !isVisible ? null : (
