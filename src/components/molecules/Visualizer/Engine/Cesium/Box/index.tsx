@@ -62,42 +62,39 @@ const Side: FC<{
   planeLocal: CesiumPlane;
   trs: TranslationRotationScale;
   style: BoxStyle<Color>;
-}> = memo(
-  function SidePresenter({ id, planeLocal, style, trs }) {
-    const normalAxis = planeLocal.normal.x ? Axis.X : planeLocal.normal.y ? Axis.Y : Axis.Z;
-    const cbRef = useMemo(
-      () => new CallbackProperty(() => trs.translation, false) as unknown as PositionProperty,
-      [trs],
+}> = memo(function SidePresenter({ id, planeLocal, style, trs }) {
+  const normalAxis = planeLocal.normal.x ? Axis.X : planeLocal.normal.y ? Axis.Y : Axis.Z;
+  const cbRef = useMemo(
+    () => new CallbackProperty(() => trs.translation, false) as unknown as PositionProperty,
+    [trs],
+  );
+  const [plane, dimension] = useMemo(() => {
+    const dimension = new Cartesian3();
+    setPlaneDimensions(trs.scale, normalAxis, dimension);
+    const scratchScaleMatrix = new Matrix4();
+    const scaleMatrix = Matrix4.fromScale(trs.scale, scratchScaleMatrix);
+    const plane = CesiumPlane.transform(
+      planeLocal,
+      scaleMatrix,
+      new CesiumPlane(Cartesian3.UNIT_Z, 0),
     );
-    const [plane, dimension] = useMemo(() => {
-      const dimension = new Cartesian3();
-      setPlaneDimensions(trs.scale, normalAxis, dimension);
-      const scratchScaleMatrix = new Matrix4();
-      const scaleMatrix = Matrix4.fromScale(trs.scale, scratchScaleMatrix);
-      const plane = CesiumPlane.transform(
-        planeLocal,
-        scaleMatrix,
-        new CesiumPlane(Cartesian3.UNIT_Z, 0),
-      );
-      return [plane, dimension];
-    }, [trs, normalAxis, planeLocal]);
+    return [plane, dimension];
+  }, [trs, normalAxis, planeLocal]);
 
-    return (
-      <Entity id={id} position={cbRef}>
-        <PlaneGraphics
-          plane={plane}
-          dimensions={dimension}
-          fill={style.fill}
-          outline={style.outline}
-          material={style.fillColor}
-          outlineColor={style.outlineColor}
-          outlineWidth={style.outlineWidth}
-        />
-      </Entity>
-    );
-  },
-  () => true,
-);
+  return (
+    <Entity id={id} position={cbRef}>
+      <PlaneGraphics
+        plane={plane}
+        dimensions={dimension}
+        fill={style.fill}
+        outline={style.outline}
+        material={style.fillColor}
+        outlineColor={style.outlineColor}
+        outlineWidth={style.outlineWidth}
+      />
+    </Entity>
+  );
+});
 
 // The 6 box sides defined as planes in local coordinate space.
 // ref: https://github.com/TerriaJS/terriajs/blob/cad62a45cbee98c7561625458bec3a48510f6cbc/lib/Models/BoxDrawing.ts#L161-L169
