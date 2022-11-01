@@ -279,7 +279,7 @@ export const lookAt = (
   };
 };
 
-export const lookAtWithoutAnime = (scene: Scene) => {
+export const lookAtWithoutAnimation = (scene: Scene) => {
   const camera = scene.camera;
   const frame = Transforms.eastNorthUpToFixedFrame(camera.positionWC, scene.globe.ellipsoid);
   camera.lookAtTransform(frame);
