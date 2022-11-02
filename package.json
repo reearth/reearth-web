@@ -80,7 +80,7 @@
         "typescript-styled-plugin": "0.18.2",
         "vite": "3.2.2",
         "vite-plugin-cesium": "1.2.22",
-        "vitest": "0.24.4",
+        "vitest": "0.24.5",
         "web-streams-polyfill": "3.2.1"
     },
     "dependencies": {
@@ -105,7 +105,7 @@
         "apollo-upload-client": "17.0.0",
         "array-move": "4.0.0",
         "axios": "0.27.2",
-        "cesium": "1.98.1",
+        "cesium": "1.99.0",
         "cesium-dnd": "1.1.0",
         "core-js": "3.26.0",
         "crypto-js": "4.1.1",

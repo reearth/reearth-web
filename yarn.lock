@@ -5739,10 +5739,10 @@ cesium-dnd@1.1.0:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.1.0.tgz#30c7232eec9f84ad0d4f2c959cbd61ac29028086"
   integrity sha512-Peo0bGIg5eOO/BrVDCovkPhQnWW3GBAjVnghh5NVmavDZjqS+A5R4Yj3IOG9tmYNSdtunsDqj5yxnMxQWx/KAA==
 
-cesium@1.98.1:
-  version "1.98.1"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.98.1.tgz#683cf96574f7c850decf9920500b9cd9d7c3784f"
-  integrity sha512-qMtsZaTftsniWu+gJRThkxHuR8T/y59VMUB0zu5tUpTRWk/cYI5+0zbohMBUWV3JNdb9MiCqlYcIqLwMfN1h4w==
+cesium@1.99.0:
+  version "1.99.0"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.99.0.tgz#5d978749834bc0c539219fe97d20735d2e67ff06"
+  integrity sha512-bVN7Bskd9PVhQe9Ak9DEr7wEckbCJc0UPq58MKWGWAkQfiYob8odh6luqY5Yz26trr3tWwni1xWjsCe94y37jw==
   dependencies:
     "@tweenjs/tween.js" "^18.6.4"
     "@zip.js/zip.js" "2.4.x"
@@ -16195,23 +16195,6 @@ vite@3.2.2, vite@^3.0.0:
     rollup "^2.79.1"
   optionalDependencies:
     fsevents "~2.3.2"
-
-vitest@0.24.4:
-  version "0.24.4"
-  resolved "https://registry.yarnpkg.com/vitest/-/vitest-0.24.4.tgz#ec6d876a000d9942b0bc0bbc54d54da38a879720"
-  integrity sha512-4ratHSyVEJPtBLV00uhL4Wj3Pmandc9rsxUkE0q9peNOfaOgGF4lEepdkaXGRi9AGFKr1GRVtjGOJ6Fp2lCpEg==
-  dependencies:
-    "@types/chai" "^4.3.3"
-    "@types/chai-subset" "^1.3.3"
-    "@types/node" "*"
-    chai "^4.3.6"
-    debug "^4.3.4"
-    local-pkg "^0.4.2"
-    strip-literal "^0.4.2"
-    tinybench "^2.3.1"
-    tinypool "^0.3.0"
-    tinyspy "^1.0.2"
-    vite "^3.0.0"
 
 vitest@0.24.5:
   version "0.24.5"
