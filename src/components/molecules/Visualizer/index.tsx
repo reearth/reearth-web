@@ -280,6 +280,7 @@ export default function Visualizer({
                 pluginPopupContainer={pluginPopupContainerRef.current}
                 shownPluginPopupInfo={shownPluginPopupInfo}
                 onPluginPopupShow={onPluginPopupShow}
+                viewport={viewport}
               />
             </>
           )}
