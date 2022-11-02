@@ -1,6 +1,7 @@
 import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
+import { VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 
 import type {
@@ -13,12 +14,15 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
+  Viewport,
 } from "./types";
 
 export type CommonReearth = Omit<
   Reearth,
-  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
->;
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget" | "viewport"
+> & {
+  viewport: VisualizerViewport;
+};
 
 export function exposed({
   render,
@@ -89,6 +93,7 @@ export function exposed({
             };
           },
         }),
+        viewport: commonReearth.viewport as Viewport,
         layers: merge(commonReearth.layers, {
           get add() {
             return (layer: Layer, parentId?: string) =>
@@ -233,9 +238,9 @@ export function commonReearth({
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
+  viewport: () => VisualizerViewport;
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
-  viewport: () => GlobalThis["reearth"]["viewport"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];

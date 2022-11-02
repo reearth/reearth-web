@@ -24,9 +24,14 @@ import type {
   FlyToDestination,
   LookAtDestination,
   Tag,
-  Viewport,
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
+
+export type VisualizerViewport = {
+  width?: number;
+  height?: number;
+  isMobile: boolean;
+};
 
 export default ({
   engineType,
@@ -105,38 +110,37 @@ export default ({
   dropRef(wrapperRef);
 
   const viewportMobileMaxWidth = 768;
-  const defaultViewport = useMemo(
-    () => ({
-      width: 1080,
-      height: 720,
-      isMobile: false,
-    }),
-    [],
-  );
-  const [viewport, setViewport] = useState<Viewport>(defaultViewport);
+  const [viewport, setViewport] = useState<VisualizerViewport>({ isMobile: false });
 
   const viewportResizeObserver = useMemo(
     () =>
       new ResizeObserver(entries => {
         const [entry] = entries;
-        const vp = { ...defaultViewport };
+        let width: number | undefined;
+        let height: number | undefined;
 
         if (entry.contentBoxSize) {
           // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
           const contentBoxSize = Array.isArray(entry.contentBoxSize)
             ? entry.contentBoxSize[0]
             : entry.contentBoxSize;
-          vp.width = contentBoxSize.inlineSize;
-          vp.height = contentBoxSize.blockSize;
+          width = contentBoxSize.inlineSize;
+          height = contentBoxSize.blockSize;
         } else if (entry.contentRect) {
-          vp.width = entry.contentRect.width;
-          vp.height = entry.contentRect.height;
+          width = entry.contentRect.width;
+          height = entry.contentRect.height;
+        } else {
+          width = wrapperRef.current?.clientWidth;
+          height = wrapperRef.current?.clientHeight;
         }
-        vp.isMobile = vp.width <= viewportMobileMaxWidth;
 
-        setViewport(vp);
+        setViewport({
+          width,
+          height,
+          isMobile: width === undefined ? false : width <= viewportMobileMaxWidth,
+        });
       }),
-    [defaultViewport],
+    [],
   );
 
   useEffect(() => {
@@ -305,7 +309,7 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
-    isMobile: viewport.isMobile,
+    viewport,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,

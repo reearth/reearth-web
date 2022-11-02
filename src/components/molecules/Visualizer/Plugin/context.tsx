@@ -11,6 +11,7 @@ import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
+import { VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 import { useGet } from "../utils";
@@ -49,7 +50,7 @@ export type Props = {
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
-  viewport: Viewport;
+  viewport: VisualizerViewport;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -269,7 +270,7 @@ export function Provider({
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
       resize: useMemo<[viewport: Viewport] | undefined>(
-        () => (viewport ? [viewport] : undefined),
+        () => (viewport ? [viewport as Viewport] : undefined),
         [viewport],
       ),
     },
