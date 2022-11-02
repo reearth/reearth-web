@@ -104,34 +104,39 @@ export default ({
   );
   dropRef(wrapperRef);
 
-  const [viewport, setViewport] = useState<Viewport>();
+  const viewportMobileMaxWidth = 768;
+  const defaultViewport = useMemo(
+    () => ({
+      width: 1080,
+      height: 720,
+      isMobile: false,
+    }),
+    [],
+  );
+  const [viewport, setViewport] = useState<Viewport>(defaultViewport);
 
   const viewportResizeObserver = useMemo(
     () =>
       new ResizeObserver(entries => {
         const [entry] = entries;
-        let width: number | undefined;
-        let height: number | undefined;
+        const vp = { ...defaultViewport };
 
         if (entry.contentBoxSize) {
           // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
           const contentBoxSize = Array.isArray(entry.contentBoxSize)
             ? entry.contentBoxSize[0]
             : entry.contentBoxSize;
-          width = contentBoxSize.inlineSize;
-          height = contentBoxSize.blockSize;
+          vp.width = contentBoxSize.inlineSize;
+          vp.height = contentBoxSize.blockSize;
         } else if (entry.contentRect) {
-          width = entry.contentRect.width;
-          height = entry.contentRect.height;
+          vp.width = entry.contentRect.width;
+          vp.height = entry.contentRect.height;
         }
+        vp.isMobile = vp.width <= viewportMobileMaxWidth;
 
-        setViewport({
-          width,
-          height,
-          isMobile: width === undefined ? undefined : width <= 768,
-        });
+        setViewport(vp);
       }),
-    [],
+    [defaultViewport],
   );
 
   useEffect(() => {
@@ -300,7 +305,7 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
-    isMobile: viewport?.isMobile,
+    isMobile: viewport.isMobile,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,

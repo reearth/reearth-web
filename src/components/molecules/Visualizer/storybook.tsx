@@ -82,6 +82,11 @@ export const context: ProviderProps = {
     pause: () => {},
     tick: () => new Date("2022-06-03"),
   },
+  viewport: {
+    width: 1280,
+    height: 720,
+    isMobile: false,
+  },
   layers: new LayerStore({ id: "", children: layers }),
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),

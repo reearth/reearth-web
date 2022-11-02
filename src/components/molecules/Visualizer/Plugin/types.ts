@@ -25,7 +25,7 @@ export type Reearth = {
   readonly widget?: Widget;
   readonly block?: Block;
   readonly scene: Scene;
-  readonly viewport?: Viewport;
+  readonly viewport: Viewport;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -329,9 +329,9 @@ export type Visualizer = {
 };
 
 export type Viewport = {
-  readonly width?: number;
-  readonly height?: number;
-  readonly isMobile?: boolean;
+  readonly width: number;
+  readonly height: number;
+  readonly isMobile: boolean;
 };
 
 type Rect = {
