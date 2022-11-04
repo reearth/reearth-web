@@ -55,7 +55,7 @@ export type Plane = {
   distance: number;
 };
 
-export type ClippingPlaneCollection = {
+export type EXPERIMENTAL_clipping = {
   planes?: Plane[];
   dimensions?: {
     /**

@@ -13,7 +13,7 @@ import ClippingPlane from "cesium/Source/Scene/ClippingPlane";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
-import { ClippingPlaneCollection, toColor } from "@reearth/util/value";
+import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode, layerIdField } from "../common";
@@ -28,14 +28,14 @@ export type Property = {
     shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
     edgeWidth?: number;
     edgeColor?: string;
-    clippingPlaneCollection?: ClippingPlaneCollection;
+    experimental_clipping?: EXPERIMENTAL_clipping;
   };
 };
 
 const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ layer }) {
   const { viewer } = useCesium();
   const { isVisible, property } = layer ?? {};
-  const { sourceType, tileset, styleUrl, shadows, edgeColor, edgeWidth, clippingPlaneCollection } =
+  const { sourceType, tileset, styleUrl, shadows, edgeColor, edgeWidth, experimental_clipping } =
     (property as Property | undefined)?.default ?? {};
   const {
     dimensions: planeDimensions,
@@ -46,7 +46,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     roll,
     pitch,
     planes: _planes,
-  } = clippingPlaneCollection || {};
+  } = experimental_clipping || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
