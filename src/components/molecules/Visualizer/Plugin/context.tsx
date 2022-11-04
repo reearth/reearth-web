@@ -50,7 +50,7 @@ export type Props = {
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
-  viewport: VisualizerViewport;
+  viewport?: VisualizerViewport;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -151,7 +151,7 @@ export function Provider({
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
-  const getViewport = useGet(viewport);
+  const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);

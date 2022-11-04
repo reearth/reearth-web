@@ -19,10 +19,8 @@ import type {
 
 export type CommonReearth = Omit<
   Reearth,
-  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget" | "viewport"
-> & {
-  viewport: VisualizerViewport;
-};
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
+>;
 
 export function exposed({
   render,
@@ -318,7 +316,7 @@ export function commonReearth({
       captureScreen,
     },
     get viewport() {
-      return viewport();
+      return viewport?.();
     },
     engineName,
     camera: {

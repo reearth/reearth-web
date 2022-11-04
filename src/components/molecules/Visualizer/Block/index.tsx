@@ -18,7 +18,7 @@ export type Props<BP = any> = {
   layer?: Layer;
   block?: Block<BP>;
   infoboxProperty?: InfoboxProperty;
-  viewport: Viewport;
+  viewport?: Viewport;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,

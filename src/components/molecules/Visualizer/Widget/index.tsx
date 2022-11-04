@@ -25,7 +25,7 @@ export type Props<PP = any, SP = any> = {
   pluginProperty?: PP;
   layout?: WidgetLayout;
   editing?: boolean;
-  viewport: Viewport;
+  viewport?: Viewport;
   onExtend?: (id: string, extended: boolean | undefined) => void;
 } & PluginCommonProps;
 

@@ -20,7 +20,7 @@ type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  viewport: Viewport;
+  viewport?: Viewport;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;

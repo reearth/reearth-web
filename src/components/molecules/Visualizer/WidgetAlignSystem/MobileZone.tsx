@@ -19,7 +19,7 @@ export type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
-  viewport: Viewport;
+  viewport?: Viewport;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;

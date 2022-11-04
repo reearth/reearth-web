@@ -34,7 +34,7 @@ export type Props = {
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isEditable?: boolean;
   isBuilt?: boolean;
-  viewport: Viewport;
+  viewport?: Viewport;
   sceneProperty?: any;
   onWidgetUpdate?: (
     id: string,

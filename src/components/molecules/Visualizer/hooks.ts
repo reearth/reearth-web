@@ -27,13 +27,11 @@ import type {
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
 
-export type Viewport =
-  | {
-      width: number;
-      height: number;
-      isMobile: boolean;
-    }
-  | undefined;
+export type Viewport = {
+  width: number;
+  height: number;
+  isMobile: boolean;
+};
 
 export default ({
   engineType,
@@ -112,7 +110,7 @@ export default ({
   dropRef(wrapperRef);
 
   const viewportMobileMaxWidth = 768;
-  const [viewport, setViewport] = useState<Viewport>(undefined);
+  const [viewport, setViewport] = useState<Viewport>();
 
   useEffect(() => {
     const viewportResizeObserver = new ResizeObserver(entries => {
