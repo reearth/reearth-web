@@ -13,6 +13,7 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
+  SetUIPositionOptions,
 } from "./types";
 
 export type CommonReearth = Omit<
@@ -39,6 +40,7 @@ export function exposed({
   block,
   widget,
   overrideSceneProperty,
+  overrideWidgetPosition,
 }: {
   render: (
     html: string,
@@ -73,6 +75,7 @@ export function exposed({
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
+  overrideWidgetPosition?: (widgetId: string, options: SetUIPositionOptions) => void;
 }): GlobalThis {
   return merge({
     console: {
@@ -112,6 +115,11 @@ export function exposed({
           },
           postMessage,
           resize,
+          setPosition: (options: SetUIPositionOptions) => {
+            const widgetId = widget?.()?.id;
+            if (!widgetId) return;
+            overrideWidgetPosition?.(widgetId, options);
+          },
         },
         modal: {
           show: (

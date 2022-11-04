@@ -322,11 +322,13 @@ export function useAPI({
           onResize?.(width, height, extended);
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
+        overrideWidgetPosition: ctx.overrideWidgetPosition,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.overrideSceneProperty,
+    ctx?.overrideWidgetPosition,
     extensionId,
     extensionType,
     pluginId,

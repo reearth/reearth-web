@@ -252,6 +252,14 @@ export type UI = {
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
     extended?: boolean | undefined,
   ) => void;
+  readonly setPosition: (options: SetUIPositionOptions) => void;
+};
+
+export type SetUIPositionOptions = {
+  zone: "outer" | "inner";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  method?: "insert" | "append";
 };
 
 export type Modal = {

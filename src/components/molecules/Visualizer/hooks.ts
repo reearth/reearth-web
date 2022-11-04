@@ -23,9 +23,17 @@ import type {
   Clock,
   FlyToDestination,
   LookAtDestination,
+  SetUIPositionOptions,
   Tag,
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
+import type {
+  Widget,
+  WidgetAlignSystem,
+  WidgetSection,
+  WidgetZone,
+  WidgetArea,
+} from "./WidgetAlignSystem";
 
 export default ({
   engineType,
@@ -41,6 +49,7 @@ export default ({
   clock,
   sceneProperty,
   tags,
+  alignSystem,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
@@ -62,6 +71,7 @@ export default ({
   clock?: Clock;
   sceneProperty?: SceneProperty;
   tags?: Tag[];
+  alignSystem?: WidgetAlignSystem;
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends keyof ValueTypes>(
@@ -196,6 +206,91 @@ export default ({
     pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
+  const [overriddenAlignSystem, setOverrideAlignSystem] = useState<WidgetAlignSystem | undefined>(
+    alignSystem,
+  );
+
+  const overrideWidgetPosition = useCallback(
+    (widgetId: string, options: SetUIPositionOptions) => {
+      if (
+        !widgetId ||
+        !["outer", "inner"].includes(options.zone) ||
+        !["left", "center", "right"].includes(options.section) ||
+        !["top", "middle", "bottom"].includes(options.area) ||
+        !alignSystem ||
+        (options.section === "center" && options.area === "middle")
+      )
+        return;
+
+      let tarWidget: Widget | undefined;
+      Object.keys(alignSystem).forEach(zoneName => {
+        const zone = alignSystem[zoneName as keyof WidgetAlignSystem];
+        if (zone) {
+          Object.keys(zone).forEach(sectionName => {
+            const section = zone[sectionName as keyof WidgetZone];
+            if (section) {
+              Object.keys(section).forEach(areaName => {
+                const area = section[areaName as keyof WidgetSection];
+                if (!tarWidget && area?.widgets) {
+                  let tarIndex;
+                  for (let i = 0, len = area.widgets.length; i < len; i += 1) {
+                    if (area.widgets[i].id === widgetId) {
+                      tarIndex = i;
+                      break;
+                    }
+                  }
+                  if (tarIndex !== undefined) {
+                    [tarWidget] = area.widgets.splice(tarIndex, 1);
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+
+      if (!tarWidget) return;
+
+      if (!alignSystem[options.zone]) {
+        alignSystem[options.zone] = {
+          left: undefined,
+          center: undefined,
+          right: undefined,
+        };
+      }
+
+      const tarZone = alignSystem[options.zone] as WidgetZone;
+      if (!tarZone[options.section]) {
+        tarZone[options.section] = {
+          top: undefined,
+          middle: undefined,
+          bottom: undefined,
+        };
+      }
+
+      const tarSection = tarZone[options.section] as WidgetSection;
+      if (!tarSection[options.area]) {
+        tarSection[options.area] = {
+          align: "start",
+          widgets: [],
+        };
+      }
+
+      const tarArea = tarSection[options.area] as WidgetArea;
+      if (!tarArea.widgets) tarArea.widgets = [];
+      if (options.method === "insert") {
+        tarArea.widgets.unshift(tarWidget);
+      } else {
+        tarArea.widgets.push(tarWidget);
+      }
+    },
+    [alignSystem],
+  );
+
+  useEffect(() => {
+    setOverrideAlignSystem(alignSystem);
+  }, [alignSystem]);
+
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
@@ -213,6 +308,7 @@ export default ({
       selectLayer,
       overrideLayerProperty,
       overrideSceneProperty,
+      overrideWidgetPosition,
     },
     engineRef,
     layers,
@@ -259,6 +355,7 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    overriddenAlignSystem,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,

@@ -126,6 +126,7 @@ export default function Visualizer({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    overriddenAlignSystem,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -151,6 +152,7 @@ export default function Visualizer({
     clock: props.clock,
     sceneProperty,
     tags,
+    alignSystem: widgets?.alignSystem,
     onLayerSelect,
     onBlockSelect,
     onBlockChange,
@@ -167,7 +169,7 @@ export default function Visualizer({
           {isDroppable && <DropHolder />}
           {ready && widgets?.alignSystem && (
             <WidgetAlignSystem
-              alignSystem={widgets.alignSystem}
+              alignSystem={overriddenAlignSystem}
               editing={widgetAlignEditorActivated}
               onWidgetUpdate={onWidgetUpdate}
               onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
