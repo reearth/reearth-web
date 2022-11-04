@@ -12,8 +12,6 @@ import {
 import { useMemo, FC, memo } from "react";
 import { Entity, PlaneGraphics } from "resium";
 
-import { BoxStyle } from ".";
-
 // ref: https://github.com/TerriaJS/terriajs/blob/cad62a45cbee98c7561625458bec3a48510f6cbc/lib/Models/BoxDrawing.ts#L1446-L1461
 function setPlaneDimensions(
   boxDimensions: Cartesian3,
@@ -36,7 +34,13 @@ export const Side: FC<{
   id: string;
   planeLocal: CesiumPlane;
   trs: TranslationRotationScale;
-  style: BoxStyle<Color>;
+  style: {
+    fillColor?: Color;
+    outlineColor?: Color;
+    outlineWidth?: number;
+    fill?: boolean;
+    outline?: boolean;
+  };
 }> = memo(function SidePresenter({ id, planeLocal, style, trs }) {
   const normalAxis = planeLocal.normal.x ? Axis.X : planeLocal.normal.y ? Axis.Y : Axis.Z;
   const cbRef = useMemo(

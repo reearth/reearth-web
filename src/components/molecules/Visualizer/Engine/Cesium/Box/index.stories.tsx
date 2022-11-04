@@ -22,12 +22,9 @@ Default.args = {
       default: {
         fillColor: "rgba(0, 0, 0, 0.5)",
         location,
-        height: location.height,
-        dimensions: {
-          x: 1000,
-          y: 1000,
-          z: 1000,
-        },
+        width: 1000,
+        length: 1000,
+        height: 1000,
       },
     },
     isVisible: true,

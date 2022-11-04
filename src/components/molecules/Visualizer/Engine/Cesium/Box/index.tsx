@@ -1,7 +1,7 @@
-import { Cartesian3, Color, Plane as CesiumPlane, TranslationRotationScale } from "cesium";
+import { Cartesian3, Plane as CesiumPlane, TranslationRotationScale } from "cesium";
 import React, { useMemo, useEffect, memo, useState } from "react";
 
-import { LatLng, toColor } from "@reearth/util/value";
+import { LatLngHeight, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 
@@ -9,25 +9,21 @@ import { Side } from "./Side";
 
 export type Props = PrimitiveProps<Property>;
 
-export type BoxStyle<C = Color | string> = {
-  fillColor?: C;
-  outlineColor?: C;
-  outlineWidth?: number;
-  fill?: boolean;
-  outline?: boolean;
-};
-
 export type Property = {
   default?: {
-    position?: LatLng;
-    location?: LatLng;
+    location?: LatLngHeight;
     height?: number;
-    dimensions?: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  } & BoxStyle<string>;
+    width?: number;
+    length?: number;
+    heading?: number;
+    pitch?: number;
+    roll?: number;
+    fillColor?: string;
+    outlineColor?: string;
+    outlineWidth?: number;
+    fill?: boolean;
+    outline?: boolean;
+  };
 };
 
 // The 6 box sides defined as planes in local coordinate space.
@@ -46,9 +42,9 @@ const SIDE_PLANES: readonly CesiumPlane[] = [
 const SIDE_PLANE_NAMES = ["bottom", "top", "front", "back", "left", "right"];
 
 const updateTrs = (trs: TranslationRotationScale, property: Property | undefined) => {
-  const { position, location, height, dimensions } = property?.default ?? {};
+  const { location, height, width, length } = property?.default ?? {};
 
-  const pos = position || location;
+  const pos = location;
   const translation = pos ? Cartesian3.fromDegrees(pos.lng, pos.lat, height ?? 0) : undefined;
   if (translation) {
     Cartesian3.clone(translation, trs.translation);
@@ -56,10 +52,7 @@ const updateTrs = (trs: TranslationRotationScale, property: Property | undefined
 
   // Quaternion.clone(trs.rotation, this.trs.rotation);
 
-  Cartesian3.clone(
-    new Cartesian3(dimensions?.x || 100, dimensions?.y || 100, dimensions?.z || 100),
-    trs.scale,
-  );
+  Cartesian3.clone(new Cartesian3(width || 100, length || 100, height || 100), trs.scale);
 
   return trs;
 };
@@ -73,7 +66,7 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
     updateTrs(trs, property);
   }, [property, trs]);
 
-  const style: BoxStyle<Color> = useMemo(
+  const style = useMemo(
     () => ({
       fillColor: toColor(fillColor),
       outlineColor: toColor(outlineColor),
