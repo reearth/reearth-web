@@ -3,7 +3,7 @@ import { GridWrapper } from "react-align";
 
 import { styled } from "@reearth/theme";
 
-import { VisualizerViewport } from "../hooks";
+import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import useHooks from "./hooks";
@@ -34,7 +34,7 @@ export type Props = {
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isEditable?: boolean;
   isBuilt?: boolean;
-  viewport: VisualizerViewport;
+  viewport: Viewport;
   sceneProperty?: any;
   onWidgetUpdate?: (
     id: string,
@@ -73,7 +73,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         onMove={handleMove}
         onAlignChange={handleAlignmentChange}
         onExtend={handleExtend}>
-        {props.viewport.isMobile ? (
+        {props.viewport?.isMobile ? (
           <MobileZone
             zoneName="outer"
             zone={alignSystem?.outer}

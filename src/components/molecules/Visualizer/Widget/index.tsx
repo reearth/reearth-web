@@ -1,7 +1,7 @@
 import type * as CSS from "csstype";
 import { ComponentType, useCallback, useMemo } from "react";
 
-import { VisualizerViewport } from "../hooks";
+import { Viewport } from "../hooks";
 import Plugin, {
   Widget as RawWidget,
   WidgetLayout,
@@ -25,7 +25,7 @@ export type Props<PP = any, SP = any> = {
   pluginProperty?: PP;
   layout?: WidgetLayout;
   editing?: boolean;
-  viewport: VisualizerViewport;
+  viewport: Viewport;
   onExtend?: (id: string, extended: boolean | undefined) => void;
 } & PluginCommonProps;
 
@@ -101,7 +101,7 @@ export default function WidgetComponent<PP = any, SP = any>({
     ? "height-only"
     : "both";
 
-  return viewport.width && viewport.height ? (
+  return viewport ? (
     Builtin ? (
       <div style={BuiltinStyle}>
         <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />

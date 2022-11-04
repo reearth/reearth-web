@@ -3,7 +3,7 @@ import { ComponentType } from "react";
 import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
-import { VisualizerViewport } from "../hooks";
+import { Viewport } from "../hooks";
 import Plugin from "../Plugin";
 import type { Block, Layer, InfoboxProperty, CommonProps as PluginCommonProps } from "../Plugin";
 
@@ -18,7 +18,7 @@ export type Props<BP = any> = {
   layer?: Layer;
   block?: Block<BP>;
   infoboxProperty?: InfoboxProperty;
-  viewport: VisualizerViewport;
+  viewport: Viewport;
   onClick?: () => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,
@@ -39,7 +39,7 @@ export default function BlockComponent<P = any>({
       ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
       : undefined;
 
-  return props.viewport.width && props.viewport.height ? (
+  return props.viewport ? (
     Builtin ? (
       <Builtin {...props} />
     ) : (

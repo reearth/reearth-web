@@ -9,7 +9,7 @@ import { ValueTypes, ValueType } from "@reearth/util/value";
 
 import PluginBlock, { Layer, Block } from "../Block";
 import type { SceneProperty } from "../Engine";
-import { VisualizerViewport } from "../hooks";
+import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Field from "./Field";
@@ -31,7 +31,7 @@ export type Props = {
   isBuilt?: boolean;
   selectedBlockId?: string;
   visible?: boolean;
-  viewport: VisualizerViewport;
+  viewport: Viewport;
   onMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(

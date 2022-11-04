@@ -27,11 +27,13 @@ import type {
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
 
-export type VisualizerViewport = {
-  width?: number;
-  height?: number;
-  isMobile: boolean;
-};
+export type Viewport =
+  | {
+      width: number;
+      height: number;
+      isMobile: boolean;
+    }
+  | undefined;
 
 export default ({
   engineType,
@@ -110,47 +112,48 @@ export default ({
   dropRef(wrapperRef);
 
   const viewportMobileMaxWidth = 768;
-  const [viewport, setViewport] = useState<VisualizerViewport>({ isMobile: false });
-
-  const viewportResizeObserver = useMemo(
-    () =>
-      new ResizeObserver(entries => {
-        const [entry] = entries;
-        let width: number | undefined;
-        let height: number | undefined;
-
-        if (entry.contentBoxSize) {
-          // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
-          const contentBoxSize = Array.isArray(entry.contentBoxSize)
-            ? entry.contentBoxSize[0]
-            : entry.contentBoxSize;
-          width = contentBoxSize.inlineSize;
-          height = contentBoxSize.blockSize;
-        } else if (entry.contentRect) {
-          width = entry.contentRect.width;
-          height = entry.contentRect.height;
-        } else {
-          width = wrapperRef.current?.clientWidth;
-          height = wrapperRef.current?.clientHeight;
-        }
-
-        setViewport({
-          width,
-          height,
-          isMobile: width === undefined ? false : width <= viewportMobileMaxWidth,
-        });
-      }),
-    [],
-  );
+  const [viewport, setViewport] = useState<Viewport>(undefined);
 
   useEffect(() => {
+    const viewportResizeObserver = new ResizeObserver(entries => {
+      const [entry] = entries;
+      let width: number | undefined;
+      let height: number | undefined;
+
+      if (entry.contentBoxSize) {
+        // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
+        const contentBoxSize = Array.isArray(entry.contentBoxSize)
+          ? entry.contentBoxSize[0]
+          : entry.contentBoxSize;
+        width = contentBoxSize.inlineSize;
+        height = contentBoxSize.blockSize;
+      } else if (entry.contentRect) {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+      } else {
+        width = wrapperRef.current?.clientWidth;
+        height = wrapperRef.current?.clientHeight;
+      }
+
+      setViewport(
+        width && height
+          ? {
+              width,
+              height,
+              isMobile: width <= viewportMobileMaxWidth,
+            }
+          : undefined,
+      );
+    });
+
     if (wrapperRef.current) {
       viewportResizeObserver.observe(wrapperRef.current);
     }
+
     return () => {
       viewportResizeObserver.disconnect();
     };
-  }, [viewportResizeObserver]);
+  }, []);
 
   const {
     selectedLayer,

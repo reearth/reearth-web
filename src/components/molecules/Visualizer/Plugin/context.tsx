@@ -11,7 +11,7 @@ import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
-import { VisualizerViewport } from "../hooks";
+import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 import { useGet } from "../utils";
@@ -270,7 +270,7 @@ export function Provider({
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
       resize: useMemo<[viewport: Viewport] | undefined>(
-        () => (viewport ? [viewport as Viewport] : undefined),
+        () => (viewport ? [viewport] : undefined),
         [viewport],
       ),
     },
