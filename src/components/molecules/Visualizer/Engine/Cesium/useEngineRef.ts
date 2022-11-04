@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath } from "cesium";
+import { Math as CesiumMath, Cartesian2, EllipsoidGeodesic } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
@@ -265,6 +265,33 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         flyToGround(viewer, cancelCameraFlight, camera, options, offset);
+      },
+      getPixelDistance: (sample = "bottom") => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = cesium.current?.cesiumElement?.scene;
+        const camera = scene?.camera;
+        if (!scene || !camera) return;
+
+        const width = scene.canvas.clientWidth;
+        const height = scene.canvas.clientHeight;
+
+        const sampleHeight = sample === "top" ? 0 : sample === "center" ? height / 2 : height - 1;
+        const left = scene.camera.getPickRay(new Cartesian2((width / 2) | 0, sampleHeight));
+        const right = scene.camera.getPickRay(new Cartesian2((1 + width / 2) | 0, sampleHeight));
+
+        if (!left || !right) return;
+        const globe = scene.globe;
+        const leftPosition = globe.pick(left, scene);
+        const rightPosition = globe.pick(right, scene);
+
+        if (!leftPosition || !rightPosition) return;
+        const leftCartographic = globe.ellipsoid.cartesianToCartographic(leftPosition);
+        const rightCartographic = globe.ellipsoid.cartesianToCartographic(rightPosition);
+
+        const geodesic = new EllipsoidGeodesic();
+        geodesic.setEndPoints(leftCartographic, rightCartographic);
+        return geodesic.surfaceDistance;
       },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;

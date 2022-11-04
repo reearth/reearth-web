@@ -23,6 +23,7 @@ import type {
   Clock,
   FlyToDestination,
   LookAtDestination,
+  PixelDistanceSamplePosition,
   Tag,
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
@@ -470,6 +471,7 @@ function useProviderProps(
     | "moveRight"
     | "moveOverTerrain"
     | "flyToGround"
+    | "getPixelDistance"
   >,
   engineRef: RefObject<EngineRef>,
   layers: LayerStore,
@@ -653,6 +655,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const getPixelDistance = useCallback(
+    (sample?: PixelDistanceSamplePosition) => {
+      return engineRef.current?.getPixelDistance(sample);
+    },
+    [engineRef],
+  );
+
   return {
     ...props,
     engine,
@@ -678,5 +687,6 @@ function useProviderProps(
     moveRight,
     moveOverTerrain,
     flyToGround,
+    getPixelDistance,
   };
 }

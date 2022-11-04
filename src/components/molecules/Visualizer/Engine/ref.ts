@@ -2,7 +2,7 @@ import { ComponentType, ReactNode } from "react";
 
 import { LatLngHeight, Camera, Typography, Rect } from "@reearth/util/value";
 
-import { Clock } from "../Plugin/types";
+import { Clock, PixelDistanceSamplePosition } from "../Plugin/types";
 import type { Component } from "../Primitive";
 
 export type MouseEvent = {
@@ -78,6 +78,7 @@ export type EngineRef = {
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
+  getPixelDistance: (sample?: PixelDistanceSamplePosition) => number | undefined;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;

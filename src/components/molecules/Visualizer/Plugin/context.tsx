@@ -28,6 +28,7 @@ import type {
   Tag,
   MouseEvent,
   Clock,
+  PixelDistanceSamplePosition,
 } from "./types";
 
 export type EngineContext = {
@@ -75,6 +76,7 @@ export type Props = {
   moveRight: (amount: number) => void;
   moveOverTerrain: () => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
+  getPixelDistance: (sample?: PixelDistanceSamplePosition) => number | undefined;
 };
 
 export type Context = {
@@ -131,6 +133,7 @@ export function Provider({
   moveRight,
   moveOverTerrain,
   flyToGround,
+  getPixelDistance,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
@@ -199,6 +202,7 @@ export function Provider({
         moveRight,
         moveOverTerrain,
         flyToGround,
+        getPixelDistance,
       }),
       overrideSceneProperty,
     }),
@@ -242,6 +246,7 @@ export function Provider({
       moveRight,
       moveOverTerrain,
       flyToGround,
+      getPixelDistance,
       overrideSceneProperty,
     ],
   );
