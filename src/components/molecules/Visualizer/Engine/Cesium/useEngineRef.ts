@@ -276,7 +276,7 @@ export default function useEngineRef(
         const width = scene.canvas.clientWidth;
         const height = scene.canvas.clientHeight;
 
-        const sampleHeight = sample === "top" ? 0 : sample === "center" ? height / 2 : height - 1;
+        const sampleHeight = sample === "top" ? 0 : sample === "middle" ? height / 2 : height - 1;
         const left = scene.camera.getPickRay(new Cartesian2((width / 2) | 0, sampleHeight));
         const right = scene.camera.getPickRay(new Cartesian2((1 + width / 2) | 0, sampleHeight));
 
