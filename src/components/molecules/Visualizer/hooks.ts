@@ -283,6 +283,8 @@ export default ({
       } else {
         tarArea.widgets.push(tarWidget);
       }
+
+      setOverrideAlignSystem({ ...alignSystem });
     },
     [alignSystem],
   );
