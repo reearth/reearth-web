@@ -44,8 +44,9 @@ const SIDE_PLANE_NAMES = ["bottom", "top", "front", "back", "left", "right"];
 const updateTrs = (trs: TranslationRotationScale, property: Property | undefined) => {
   const { location, height, width, length } = property?.default ?? {};
 
-  const pos = location;
-  const translation = pos ? Cartesian3.fromDegrees(pos.lng, pos.lat, height ?? 0) : undefined;
+  const translation = location
+    ? Cartesian3.fromDegrees(location.lng, location.lat, location.height ?? 0)
+    : undefined;
   if (translation) {
     Cartesian3.clone(translation, trs.translation);
   }

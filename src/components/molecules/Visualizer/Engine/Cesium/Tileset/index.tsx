@@ -38,10 +38,10 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
   const { sourceType, tileset, styleUrl, shadows, edgeColor, edgeWidth, experimental_clipping } =
     (property as Property | undefined)?.default ?? {};
   const {
-    dimensions: planeDimensions,
-    lat,
-    lng,
+    width,
     height,
+    length,
+    location,
     heading,
     roll,
     pitch,
@@ -103,13 +103,13 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         tilesetRef.current.boundingSphere.center.clone(),
       );
 
-      const dimensions = new Cartesian3(
-        planeDimensions?.width || 100,
-        planeDimensions?.length || 100,
-        planeDimensions?.height || 100,
-      );
+      const dimensions = new Cartesian3(width || 100, length || 100, height || 100);
 
-      const position = Cartesian3.fromDegrees(lng || 0, lat || 0, height);
+      const position = Cartesian3.fromDegrees(
+        location?.lng || 0,
+        location?.lat || 0,
+        location?.height,
+      );
 
       const hpr =
         heading && pitch && roll ? HeadingPitchRoll.fromDegrees(heading, pitch, roll) : undefined;
@@ -127,7 +127,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     };
 
     prepareClippingPlanes();
-  }, [planeDimensions?.width, planeDimensions?.length, planeDimensions?.height, lng, lat, height, heading, pitch, roll, clippingPlanes.modelMatrix]);
+  }, [width, length, height, location?.lng, location?.lat, location?.height, heading, pitch, roll, clippingPlanes.modelMatrix]);
 
   useEffect(() => {
     if (!styleUrl) {
@@ -161,6 +161,6 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
   );
 });
 
-const _debugFlight = false;
+const _debugFlight = true;
 
 export default Tileset;
