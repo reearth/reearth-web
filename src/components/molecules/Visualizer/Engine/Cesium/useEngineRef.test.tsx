@@ -7,6 +7,7 @@ import {
   Globe,
   Ellipsoid,
   Matrix4,
+  Cartographic,
 } from "cesium";
 import { useRef } from "react";
 import type { CesiumComponentRef } from "resium";
@@ -509,4 +510,48 @@ test("look", () => {
   result.current.current?.lookVertical(90);
   expect(mockLook).toHaveBeenCalledTimes(2);
   expect(mockLook).toHaveBeenLastCalledWith(new Cartesian3(0, 1, 0), 90);
+});
+
+test("get pixel distance", () => {
+  const mockGetPickRay = vi.fn(e => {
+    if (e.x === 960) return "pickRayLeft";
+    return "pickRayRight";
+  });
+  const mockPick = vi.fn(e => {
+    if (e === "pickRayLeft") return "leftPosition";
+    return "rightPosition";
+  });
+  const mockCartesianToCartographic = vi.fn(e => {
+    if (e === "leftPosition") return new Cartographic(0, 0, 0);
+    return new Cartographic(Math.PI / 180, 0, 0);
+  });
+  const { result } = renderHook(() => {
+    const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
+      cesiumElement: {
+        isDestroyed: () => false,
+        scene: {
+          camera: {
+            getPickRay: mockGetPickRay,
+          },
+          canvas: {
+            clientWidth: 1920,
+            clientHeight: 1080,
+          },
+          globe: {
+            pick: mockPick,
+            ellipsoid: {
+              cartesianToCartographic: mockCartesianToCartographic,
+            },
+          },
+        },
+      } as any,
+    });
+    const engineRef = useRef<EngineRef>(null);
+    useEngineRef(engineRef, cesium);
+    return engineRef;
+  });
+
+  const distance = result.current.current?.getPixelDistance();
+  // The surface destance with 1 degree in lngtitude on earth around equator is about 111 km.
+  expect(distance).toBeCloseTo(111319, 0);
 });
