@@ -210,17 +210,18 @@ export default ({
     alignSystem,
   );
 
-  const overrideWidgetPosition = useCallback(
-    (widgetId: string, options: SetUIPositionOptions) => {
-      if (
-        !widgetId ||
-        !["outer", "inner"].includes(options.zone) ||
-        !["left", "center", "right"].includes(options.section) ||
-        !["top", "middle", "bottom"].includes(options.area) ||
-        !alignSystem ||
-        (options.section === "center" && options.area === "middle")
-      )
-        return;
+  const overrideWidgetPosition = useCallback((widgetId: string, options: SetUIPositionOptions) => {
+    if (
+      !widgetId ||
+      !["outer", "inner"].includes(options.zone) ||
+      !["left", "center", "right"].includes(options.section) ||
+      !["top", "middle", "bottom"].includes(options.area) ||
+      (options.section === "center" && options.area === "middle")
+    )
+      return;
+
+    setOverrideAlignSystem(alignSystem => {
+      if (!alignSystem) return alignSystem;
 
       let tarWidget: Widget | undefined;
       Object.keys(alignSystem).forEach(zoneName => {
@@ -249,7 +250,7 @@ export default ({
         }
       });
 
-      if (!tarWidget) return;
+      if (!tarWidget) return alignSystem;
 
       if (!alignSystem[options.zone]) {
         alignSystem[options.zone] = {
@@ -284,10 +285,9 @@ export default ({
         tarArea.widgets.push(tarWidget);
       }
 
-      setOverrideAlignSystem({ ...alignSystem });
-    },
-    [alignSystem],
-  );
+      return { ...alignSystem };
+    });
+  }, []);
 
   useEffect(() => {
     setOverrideAlignSystem(alignSystem);
