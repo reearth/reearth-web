@@ -251,6 +251,7 @@ export default ({
     {
       engineName: engineType || "",
       sceneProperty: overriddenSceneProperty,
+      isPublished: isPublished ?? false,
       tags,
       camera: innerCamera,
       clock: innerClock,
