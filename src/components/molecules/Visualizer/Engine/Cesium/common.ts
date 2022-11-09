@@ -28,6 +28,7 @@ import {
   sampleTerrainMostDetailed,
   Ray,
   IntersectionTests,
+  EllipsoidGeodesic,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -631,6 +632,32 @@ export async function flyToGround(
     { ...getCamera(viewer), ...groundCamera },
     options,
   );
+}
+
+export function getPixelDistance(viewer: Viewer, sample = "bottom") {
+  const scene = viewer.scene;
+  const camera = scene?.camera;
+  if (!scene || !camera) return;
+
+  const width = scene.canvas.clientWidth;
+  const height = scene.canvas.clientHeight;
+
+  const sampleHeight = sample === "top" ? 0 : sample === "middle" ? height / 2 : height - 1;
+  const left = scene.camera.getPickRay(new Cartesian2((width / 2) | 0, sampleHeight));
+  const right = scene.camera.getPickRay(new Cartesian2((1 + width / 2) | 0, sampleHeight));
+
+  if (!left || !right) return;
+  const globe = scene.globe;
+  const leftPosition = globe.pick(left, scene);
+  const rightPosition = globe.pick(right, scene);
+
+  if (!leftPosition || !rightPosition) return;
+  const leftCartographic = globe.ellipsoid.cartesianToCartographic(leftPosition);
+  const rightCartographic = globe.ellipsoid.cartesianToCartographic(rightPosition);
+
+  const geodesic = new EllipsoidGeodesic();
+  geodesic.setEndPoints(leftCartographic, rightCartographic);
+  return geodesic.surfaceDistance;
 }
 
 function projectVectorToSurface(vector: Cartesian3, position: Cartesian3, ellipsoid: Ellipsoid) {
