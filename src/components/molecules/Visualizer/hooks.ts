@@ -512,6 +512,7 @@ function useProviderProps(
     | "cameraViewport"
     | "onMouseEvent"
     | "captureScreen"
+    | "getLocationFromScreenPosition"
     | "enableScreenSpaceCameraController"
     | "lookHorizontal"
     | "lookVertical"
@@ -631,6 +632,13 @@ function useProviderProps(
     [engineRef],
   );
 
+  const getLocationFromScreenPosition = useCallback(
+    (x: number, y: number, withTerrain?: boolean) => {
+      return engineRef.current?.getLocationFromScreenXY(x, y, withTerrain);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.current?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -720,6 +728,7 @@ function useProviderProps(
     cameraViewport,
     onMouseEvent,
     captureScreen,
+    getLocationFromScreenPosition,
     enableScreenSpaceCameraController,
     lookHorizontal,
     lookVertical,

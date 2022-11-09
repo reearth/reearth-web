@@ -62,10 +62,10 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getCamera(viewer);
       },
-      getLocationFromScreenXY: (x, y) => {
+      getLocationFromScreenXY: (x, y, withTerrain) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return getLocationFromScreenXY(viewer.scene, x, y);
+        return getLocationFromScreenXY(viewer.scene, x, y, withTerrain);
       },
       flyTo: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
