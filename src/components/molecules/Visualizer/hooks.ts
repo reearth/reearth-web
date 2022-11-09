@@ -28,6 +28,14 @@ import type {
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
 
+export type Viewport = {
+  width: number;
+  height: number;
+  isMobile: boolean;
+};
+
+const viewportMobileMaxWidth = 768;
+
 export default ({
   engineType,
   rootLayerId,
@@ -103,6 +111,49 @@ export default ({
     ),
   );
   dropRef(wrapperRef);
+
+  const [viewport, setViewport] = useState<Viewport>();
+
+  useEffect(() => {
+    const viewportResizeObserver = new ResizeObserver(entries => {
+      const [entry] = entries;
+      let width: number | undefined;
+      let height: number | undefined;
+
+      if (entry.contentBoxSize) {
+        // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
+        const contentBoxSize = Array.isArray(entry.contentBoxSize)
+          ? entry.contentBoxSize[0]
+          : entry.contentBoxSize;
+        width = contentBoxSize.inlineSize;
+        height = contentBoxSize.blockSize;
+      } else if (entry.contentRect) {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+      } else {
+        width = wrapperRef.current?.clientWidth;
+        height = wrapperRef.current?.clientHeight;
+      }
+
+      setViewport(
+        width && height
+          ? {
+              width,
+              height,
+              isMobile: width <= viewportMobileMaxWidth,
+            }
+          : undefined,
+      );
+    });
+
+    if (wrapperRef.current) {
+      viewportResizeObserver.observe(wrapperRef.current);
+    }
+
+    return () => {
+      viewportResizeObserver.disconnect();
+    };
+  }, []);
 
   const {
     selectedLayer,
@@ -208,6 +259,7 @@ export default ({
       layerSelectionReason,
       layerOverridenInfobox,
       layerOverriddenProperties,
+      viewport,
       showLayer: showLayers,
       hideLayer: hideLayers,
       addLayer,
@@ -260,6 +312,7 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    viewport,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -457,7 +510,7 @@ function useProviderProps(
     | "rotateRight"
     | "layers"
     | "layersInViewport"
-    | "viewport"
+    | "cameraViewport"
     | "onMouseEvent"
     | "captureScreen"
     | "enableScreenSpaceCameraController"
@@ -511,7 +564,7 @@ function useProviderProps(
     [engineRef],
   );
 
-  const viewport = useCallback(() => {
+  const cameraViewport = useCallback(() => {
     return engineRef.current?.getViewport();
   }, [engineRef]);
 
@@ -673,7 +726,7 @@ function useProviderProps(
     rotateRight,
     layers,
     layersInViewport,
-    viewport,
+    cameraViewport,
     onMouseEvent,
     captureScreen,
     enableScreenSpaceCameraController,

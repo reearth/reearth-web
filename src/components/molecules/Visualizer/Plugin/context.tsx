@@ -11,6 +11,7 @@ import events from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
+import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
 import { useGet } from "../utils";
@@ -28,6 +29,7 @@ import type {
   Tag,
   MouseEvent,
   Clock,
+  Viewport,
   PixelDistanceSamplePosition,
 } from "./types";
 
@@ -49,6 +51,7 @@ export type Props = {
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
+  viewport?: VisualizerViewport;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -62,7 +65,7 @@ export type Props = {
   rotateRight: (radian: number) => void;
   orbit: (radian: number) => void;
   layersInViewport: () => Layer[];
-  viewport: () => Rect | undefined;
+  cameraViewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   enableScreenSpaceCameraController: (enabled: boolean) => void;
@@ -106,6 +109,7 @@ export function Provider({
   layerSelectionReason,
   layerOverridenInfobox,
   layerOverriddenProperties,
+  viewport,
   showLayer,
   hideLayer,
   addLayer,
@@ -119,7 +123,7 @@ export function Provider({
   zoomOut,
   rotateRight,
   orbit,
-  viewport,
+  cameraViewport,
   captureScreen,
   onMouseEvent,
   enableScreenSpaceCameraController,
@@ -137,7 +141,10 @@ export function Provider({
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () => events<Pick<ReearthEventType, "cameramove" | "select" | "tick" | keyof MouseEvents>>(),
+    () =>
+      events<
+        Pick<ReearthEventType, "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents>
+      >(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -147,6 +154,7 @@ export function Provider({
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
+  const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const getLayerOverriddenInfobox = useGet(layerOverridenInfobox);
@@ -172,6 +180,7 @@ export function Provider({
         tags: getTags,
         camera: getCamera,
         clock: getClock,
+        viewport: getViewport,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenInfobox: getLayerOverriddenInfobox,
@@ -187,7 +196,7 @@ export function Provider({
         lookAt,
         zoomIn,
         zoomOut,
-        viewport,
+        cameraViewport,
         rotateRight,
         orbit,
         captureScreen,
@@ -216,6 +225,7 @@ export function Provider({
       getTags,
       getCamera,
       getClock,
+      getViewport,
       getSelectedLayer,
       getLayerSelectionReason,
       getLayerOverriddenInfobox,
@@ -231,7 +241,7 @@ export function Provider({
       lookAt,
       zoomIn,
       zoomOut,
-      viewport,
+      cameraViewport,
       rotateRight,
       orbit,
       captureScreen,
@@ -251,7 +261,7 @@ export function Provider({
     ],
   );
 
-  useEmit<Pick<ReearthEventType, "cameramove" | "select" | "tick" | keyof MouseEvents>>(
+  useEmit<Pick<ReearthEventType, "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents>>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),
@@ -264,6 +274,10 @@ export function Provider({
       tick: useMemo<[date: Date] | undefined>(() => {
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
+      resize: useMemo<[viewport: Viewport] | undefined>(
+        () => (viewport ? [viewport] : undefined),
+        [viewport],
+      ),
     },
     emit,
   );
