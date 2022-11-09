@@ -33,6 +33,8 @@ export type Viewport = {
   isMobile: boolean;
 };
 
+const viewportMobileMaxWidth = 768;
+
 export default ({
   engineType,
   rootLayerId,
@@ -109,7 +111,6 @@ export default ({
   );
   dropRef(wrapperRef);
 
-  const viewportMobileMaxWidth = 768;
   const [viewport, setViewport] = useState<Viewport>();
 
   useEffect(() => {
