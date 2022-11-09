@@ -76,7 +76,7 @@ export type Props = {
   moveRight: (amount: number) => void;
   moveOverTerrain: () => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
-  getPixelDistance: (sample?: PixelDistanceSamplePosition) => number | undefined;
+  getPixelDistance: (verticalPosition?: PixelDistanceSamplePosition) => number | undefined;
 };
 
 export type Context = {

@@ -267,10 +267,10 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         flyToGround(viewer, cancelCameraFlight, camera, options, offset);
       },
-      getPixelDistance: sample => {
+      getPixelDistance: verticalPosition => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return getPixelDistance(viewer, sample);
+        return getPixelDistance(viewer.scene, verticalPosition);
       },
       onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
         mouseEventCallbacks.current.click = cb;

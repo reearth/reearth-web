@@ -656,8 +656,8 @@ function useProviderProps(
   );
 
   const getPixelDistance = useCallback(
-    (sample?: PixelDistanceSamplePosition) => {
-      return engineRef.current?.getPixelDistance(sample);
+    (verticalPosition?: PixelDistanceSamplePosition) => {
+      return engineRef.current?.getPixelDistance(verticalPosition);
     },
     [engineRef],
   );

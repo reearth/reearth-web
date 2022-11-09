@@ -78,7 +78,7 @@ export type EngineRef = {
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
-  getPixelDistance: (sample?: PixelDistanceSamplePosition) => number | undefined;
+  getPixelDistance: (verticalPosition?: PixelDistanceSamplePosition) => number | undefined;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;

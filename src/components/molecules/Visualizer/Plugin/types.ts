@@ -362,7 +362,7 @@ export type Camera = {
     options?: CameraOptions,
     offset?: number,
   ) => void;
-  readonly getPixelDistance: (sample?: PixelDistanceSamplePosition) => number | undefined;
+  readonly getPixelDistance: (verticalPosition?: PixelDistanceSamplePosition) => number | undefined;
 };
 
 export type PixelDistanceSamplePosition = "top" | "middle" | "bottom";
