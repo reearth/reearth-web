@@ -4,9 +4,12 @@ import Icon from "@reearth/components/atoms/Icon";
 import { useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
+import { SceneMode } from "../../../Engine/ref";
+
 import { useNavigator } from "./hooks";
 
 export type Props = {
+  sceneMode?: SceneMode;
   degree: number;
   /**
    * Pass degree of circle as callback arguments.
@@ -35,6 +38,7 @@ export type Props = {
 };
 
 const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo({
+  sceneMode,
   degree,
   onRotate,
   onStartOrbit,
@@ -45,6 +49,8 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
   onZoomIn,
   onZoomOut,
 }) {
+  const t = useT();
+
   const {
     compassRef,
     compassDegree,
@@ -53,35 +59,38 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
     handleOnMouseDownAngle,
     handleOnMouseDownCompass,
   } = useNavigator({ degree, onRotate, onStartOrbit, onEndOrbit, onMoveOrbit });
-  const t = useT();
+  console.log(sceneMode, "scelkjasdf");
+
   return (
     <Container>
-      <CompassContainer>
-        <Compass ref={compassRef}>
-          <CompassIcon onMouseDown={handleOnMouseDownCompass}>
-            <Icon
-              icon="compass"
-              color="#000"
-              aria-label={t("aria-label-compass")}
-              size={64}
-              style={{ transform: `rotate(${compassDegree}deg)` }}
-            />
-          </CompassIcon>
-          {isMovingAngle && (
-            <CompassFocusIcon
-              style={{
-                transform: `rotate(${compassFocusDegree}deg)`,
-              }}
-              data-testId="compassFocus">
-              <Icon icon="compassFocus" color="blue" alt="" size={30} />
-            </CompassFocusIcon>
-          )}
-          <AngleIcon onMouseDown={handleOnMouseDownAngle}>
-            <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
-          </AngleIcon>
-        </Compass>
-        <Help onClick={onClickHelp}>?</Help>
-      </CompassContainer>
+      {sceneMode !== "2d" && (
+        <CompassContainer>
+          <Compass ref={compassRef}>
+            <CompassIcon onMouseDown={handleOnMouseDownCompass}>
+              <Icon
+                icon="compass"
+                color="#000"
+                aria-label={t("aria-label-compass")}
+                size={64}
+                style={{ transform: `rotate(${compassDegree}deg)` }}
+              />
+            </CompassIcon>
+            {isMovingAngle && (
+              <CompassFocusIcon
+                style={{
+                  transform: `rotate(${compassFocusDegree}deg)`,
+                }}
+                data-testId="compassFocus">
+                <Icon icon="compassFocus" color="blue" alt="" size={30} />
+              </CompassFocusIcon>
+            )}
+            <AngleIcon onMouseDown={handleOnMouseDownAngle}>
+              <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
+            </AngleIcon>
+          </Compass>
+          {onClickHelp && <Help onClick={onClickHelp}>?</Help>}
+        </CompassContainer>
+      )}
       <Tool>
         <ToolIconButton onClick={onZoomIn}>
           <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
@@ -101,7 +110,6 @@ const Container = styled.div`
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  padding-left: 32px;
 `;
 
 const CompassContainer = styled.div`

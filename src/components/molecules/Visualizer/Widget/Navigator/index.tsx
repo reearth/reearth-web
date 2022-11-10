@@ -8,9 +8,9 @@ import NavigatorPresenter from "./NavigatorPresenter";
 export type Props = WidgetProps<SceneProperty>;
 
 const Navigator = ({ sceneProperty }: Props): JSX.Element | null => {
-  const { degree, events } = useHooks({ sceneProperty });
+  const { sceneMode, degree, events } = useHooks({ sceneProperty });
 
-  return <NavigatorPresenter degree={degree} {...events} />;
+  return <NavigatorPresenter sceneMode={sceneMode} degree={degree} {...events} />;
 };
 
 export default Navigator;
