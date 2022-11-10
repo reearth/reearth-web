@@ -7,7 +7,7 @@ import { EPOCH_SEC, STRONG_SCALE_WIDTH, NORMAL_SCALE_WIDTH, PADDING_HORIZONTAL }
 import { formatDateForTimeline } from "./utils";
 
 type Props = {
-  publishedTheme: PublishTheme;
+  publishedTheme?: PublishTheme;
   gapHorizontal: number;
 } & ScaleListInnerProps;
 
