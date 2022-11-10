@@ -2,7 +2,7 @@ import { memo } from "react";
 
 import Icon from "@reearth/components/atoms/Icon";
 import { useT } from "@reearth/i18n";
-import { styled } from "@reearth/theme";
+import { PublishTheme, styled } from "@reearth/theme";
 
 import { SceneMode } from "../../../Engine/ref";
 
@@ -10,6 +10,7 @@ import { useNavigator } from "./hooks";
 
 export type Props = {
   sceneMode?: SceneMode;
+  publishedTheme?: PublishTheme;
   degree: number;
   /**
    * Pass degree of circle as callback arguments.
@@ -39,6 +40,7 @@ export type Props = {
 
 const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo({
   sceneMode,
+  publishedTheme,
   degree,
   onRotate,
   onStartOrbit,
@@ -59,17 +61,15 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
     handleOnMouseDownAngle,
     handleOnMouseDownCompass,
   } = useNavigator({ degree, onRotate, onStartOrbit, onEndOrbit, onMoveOrbit });
-  console.log(sceneMode, "scelkjasdf");
 
   return (
     <Container>
       {sceneMode !== "2d" && (
         <CompassContainer>
           <Compass ref={compassRef}>
-            <CompassIcon onMouseDown={handleOnMouseDownCompass}>
+            <CompassIcon onMouseDown={handleOnMouseDownCompass} publishedTheme={publishedTheme}>
               <Icon
                 icon="compass"
-                color="#000"
                 aria-label={t("aria-label-compass")}
                 size={64}
                 style={{ transform: `rotate(${compassDegree}deg)` }}
@@ -81,24 +81,24 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
                   transform: `rotate(${compassFocusDegree}deg)`,
                 }}
                 data-testId="compassFocus">
-                <Icon icon="compassFocus" color="blue" alt="" size={30} />
+                <Icon icon="compassFocus" color={publishedTheme?.select} alt="" size={30} />
               </CompassFocusIcon>
             )}
-            <AngleIcon onMouseDown={handleOnMouseDownAngle}>
+            <AngleIcon onMouseDown={handleOnMouseDownAngle} publishedTheme={publishedTheme}>
               <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
             </AngleIcon>
           </Compass>
           {onClickHelp && <Help onClick={onClickHelp}>?</Help>}
         </CompassContainer>
       )}
-      <Tool>
-        <ToolIconButton onClick={onZoomIn}>
+      <Tool publishedTheme={publishedTheme}>
+        <ToolIconButton onClick={onZoomIn} publishedTheme={publishedTheme}>
           <Icon icon="plus" aria-label={t("aria-label-zoom-in")} size={16} />
         </ToolIconButton>
-        <ToolIconButton onClick={onRestoreRotate}>
+        <ToolIconButton onClick={onRestoreRotate} publishedTheme={publishedTheme}>
           <Icon icon="house" aria-label={t("aria-label-Go-to-the-home-position")} size={16} />
         </ToolIconButton>
-        <ToolIconButton onClick={onZoomOut}>
+        <ToolIconButton onClick={onZoomOut} publishedTheme={publishedTheme}>
           <Icon icon="minus" aria-label={t("aria-label-zoom-out")} size={16} />
         </ToolIconButton>
       </Tool>
@@ -139,12 +139,19 @@ const Compass = styled.div`
   z-index: 1;
 `;
 
-const CompassIcon = styled.div`
+const CompassIcon = styled.div<{ publishedTheme?: PublishTheme }>`
   position: absolute;
   top: 0;
   left: 0;
   width: 64px;
   height: 64px;
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  & path {
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  }
+  & circle {
+    stroke: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+  }
 `;
 
 const CompassFocusIcon = styled.div`
@@ -156,25 +163,30 @@ const CompassFocusIcon = styled.div`
   height: 64px;
 `;
 
-const AngleIcon = styled.div`
-  color: ${({ theme }) => theme.main.weak};
+const AngleIcon = styled.div<{ publishedTheme?: PublishTheme }>`
+  & circle {
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
+  }
+  & g {
+    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
+  }
   display: inline-block;
   height: 32px;
   width: 32px;
   z-index: 1;
 `;
 
-const Tool = styled.div`
+const Tool = styled.div<{ publishedTheme?: PublishTheme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #fff;
+  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.main.deepBg};
   border-radius: 16px;
   margin-top: 8px;
 `;
 
-const ToolIconButton = styled.button`
-  color: #4a4a4a;
+const ToolIconButton = styled.button<{ publishedTheme?: PublishTheme }>`
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.main.text};
   height: 32px;
   width: 32px;
   display: grid;
