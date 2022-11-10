@@ -76,7 +76,7 @@ const ScaleContainer = styled.div`
   ::after {
     content: "";
     display: block;
-    padding-right: ${PADDING_HORIZONTAL}px;
+    padding-right: 1px;
     height: 1px;
   }
 `;

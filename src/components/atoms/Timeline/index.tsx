@@ -257,29 +257,32 @@ const CurrentTime = styled(Text)<StyledColorProps>`
 `;
 
 const ScaleBox = styled.div`
-  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.colors.publish.dark.icon.weak}`};
+  border: ${({ theme }) => `${BORDER_WIDTH}px solid ${theme.main.weak}`};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
-  overflow-x: auto;
+  overflow-x: overlay;
   overflow-y: hidden;
   width: 100%;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  ::-webkit-scrollbar {
-    height: 5px;
+  transition: -webkit-scrollbar 1s;
+  :hover::-webkit-scrollbar {
+    height: 2px;
   }
   ::-webkit-scrollbar-track {
     background-color: transparent;
+    background-color: red;
+    display: none;
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: ${({ theme }) => theme.colors.publish.dark.icon.main};
   }
   margin: ${({ theme }) =>
-    `${theme.metrics.s}px ${theme.metrics.m}px ${theme.metrics.s}px ${theme.metrics.xs}px`};
+    `${theme.metrics.xs}px ${theme.metrics.s}px ${theme.metrics.xs}px ${theme.metrics.xs}px`};
 `;
 
 const IconWrapper = styled.div<StyledColorProps>`
