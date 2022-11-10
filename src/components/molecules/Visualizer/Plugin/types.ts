@@ -93,7 +93,7 @@ export type Scene = {
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
-  readonly getLocationFromScreenPosition: (
+  readonly getLocationFromScreen: (
     x: number,
     y: number,
     withTerrain?: boolean,

@@ -540,11 +540,11 @@ test("get location from screen xy", () => {
     return engineRef;
   });
 
-  const location = result.current.current?.getLocationFromScreenXY(0, 0);
+  const location = result.current.current?.getLocationFromScreen(0, 0);
   expect(location?.lng).toBeCloseTo(137, 0);
   expect(location?.lat).toBeCloseTo(40, 0);
   expect(location?.height).toBeCloseTo(0, 0);
-  const location2 = result.current.current?.getLocationFromScreenXY(0, 0, true);
+  const location2 = result.current.current?.getLocationFromScreen(0, 0, true);
   expect(location2?.lng).toBeCloseTo(110, 0);
   expect(location2?.lat).toBeCloseTo(20, 0);
   expect(location2?.height).toBeCloseTo(10000, 0);
