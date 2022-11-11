@@ -197,7 +197,7 @@ export function commonReearth({
   layersInViewport,
   layers,
   sceneProperty,
-  isPublished,
+  isInEditor,
   tags,
   camera,
   clock,
@@ -261,7 +261,7 @@ export function commonReearth({
   cameraViewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
-  isPublished: () => GlobalThis["reearth"]["scene"]["public"];
+  isInEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
   lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
@@ -313,8 +313,8 @@ export function commonReearth({
       return clock();
     },
     scene: {
-      get public() {
-        return isPublished();
+      get inEditor() {
+        return isInEditor();
       },
       get property() {
         return sceneProperty();

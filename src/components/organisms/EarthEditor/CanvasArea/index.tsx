@@ -9,11 +9,12 @@ import useHooks from "./hooks";
 export type Props = {
   className?: string;
   isBuilt?: boolean;
+  isInEditor?: boolean;
 };
 
 // TODO: ErrorBoudaryでエラーハンドリング
 
-const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
+const CanvasArea: React.FC<Props> = ({ className, isBuilt, isInEditor }) => {
   const {
     rootLayerId,
     selectedBlockId,
@@ -61,6 +62,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       engine="cesium"
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
+      isInEditor={isInEditor !== false}
       rootLayer={rootLayer}
       widgets={widgets}
       selectedLayerId={selectedLayerId}
