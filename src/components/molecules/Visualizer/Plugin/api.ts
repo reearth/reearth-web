@@ -24,6 +24,7 @@ export type CommonReearth = Omit<
 
 export function exposed({
   render,
+  closeUI,
   postMessage,
   resize,
   renderModal,
@@ -51,6 +52,7 @@ export function exposed({
       extended?: boolean;
     },
   ) => void;
+  closeUI: Reearth["ui"]["close"];
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
   renderModal: (
@@ -115,6 +117,7 @@ export function exposed({
           },
           postMessage,
           resize,
+          close: closeUI,
         },
         modal: {
           show: (
