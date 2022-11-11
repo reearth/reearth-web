@@ -153,7 +153,7 @@ export function Provider({
 
   const getLayers = useGet(layers);
   const getSceneProperty = useGet(sceneProperty);
-  const getIsInEditor = useGet(inEditor);
+  const getInEditor = useGet(inEditor);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
@@ -180,7 +180,7 @@ export function Provider({
         events: ev,
         layers: getLayers,
         sceneProperty: getSceneProperty,
-        inEditor: getIsInEditor,
+        inEditor: getInEditor,
         tags: getTags,
         camera: getCamera,
         clock: getClock,
@@ -226,7 +226,7 @@ export function Provider({
       ev,
       getLayers,
       getSceneProperty,
-      getIsInEditor,
+      getInEditor,
       getTags,
       getCamera,
       getClock,
