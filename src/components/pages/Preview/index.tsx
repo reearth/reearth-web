@@ -24,7 +24,7 @@ const PreviewPage: React.FC<Props> = () => {
     <ThemeProvider>
       <DndProvider>
         <AuthenticationRequiredPage>
-          <CanvasArea isBuilt inEditor={false} />
+          <CanvasArea isBuilt />
         </AuthenticationRequiredPage>
       </DndProvider>
     </ThemeProvider>

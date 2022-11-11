@@ -62,7 +62,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
       engine="cesium"
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
-      inEditor={inEditor !== false}
+      inEditor={!!inEditor}
       rootLayer={rootLayer}
       widgets={widgets}
       selectedLayerId={selectedLayerId}
