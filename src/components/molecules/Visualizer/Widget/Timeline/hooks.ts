@@ -27,7 +27,7 @@ export const useTimeline = ({
   const [range, setRange] = useState(() =>
     makeRange(clock?.startTime.getTime(), clock?.stopTime.getTime()),
   );
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(true);
   const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.currentTime).getTime());
   const isClockInitialized = useRef(false);
   const clockCurrentTime = clock?.currentTime.getTime();
