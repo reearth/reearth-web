@@ -64,9 +64,7 @@ export default function ({
   const externalRef = useRef<HTMLIFrameElement>(null);
 
   const [uiVisible, setUIVisible] = useState<boolean>(!!visible);
-
   const onUIShow = useCallback((visible: boolean) => {
-    console.log("reearth set ui visible", visible);
     setUIVisible(visible);
   }, []);
 
