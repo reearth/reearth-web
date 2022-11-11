@@ -30,6 +30,7 @@ import type {
   MouseEvent,
   Clock,
   Viewport,
+  LatLngHeight,
 } from "./types";
 
 export type EngineContext = {
@@ -68,6 +69,7 @@ export type Props = {
   cameraViewport: () => Rect | undefined;
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   enableScreenSpaceCameraController: (enabled: boolean) => void;
   lookHorizontal: (amount: number) => void;
   lookVertical: (amount: number) => void;
@@ -125,6 +127,7 @@ export function Provider({
   orbit,
   cameraViewport,
   captureScreen,
+  getLocationFromScreen,
   onMouseEvent,
   enableScreenSpaceCameraController,
   lookHorizontal,
@@ -201,6 +204,7 @@ export function Provider({
         rotateRight,
         orbit,
         captureScreen,
+        getLocationFromScreen,
         enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -246,6 +250,7 @@ export function Provider({
       rotateRight,
       orbit,
       captureScreen,
+      getLocationFromScreen,
       enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
