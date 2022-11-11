@@ -64,7 +64,7 @@ export type Props = {
   selectedBlockId?: string;
   pluginBaseUrl?: string;
   isPublished?: boolean;
-  isInEditor?: boolean;
+  inEditor?: boolean;
   widgetAlignEditorActivated?: boolean;
   onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
   onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
@@ -90,7 +90,7 @@ export default function Visualizer({
   clusterProperty,
   pluginBaseUrl,
   isPublished,
-  isInEditor,
+  inEditor,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
   zoomedLayerId,
@@ -146,7 +146,7 @@ export default function Visualizer({
     isEditable: props.isEditable,
     isBuilt: props.isBuilt,
     isPublished,
-    isInEditor,
+    inEditor,
     rootLayer,
     selectedLayerId: outerSelectedLayerId,
     selectedBlockId: outerSelectedBlockId,

@@ -58,7 +58,7 @@ export function Provider({ children }: { children?: ReactNode }) {
 export const context: ProviderProps = {
   engineName: "cesium",
   engine: {},
-  isInEditor: false,
+  inEditor: false,
   hideLayer: act("layers.hide"),
   showLayer: act("layers.show"),
   selectLayer: act("layers.select"),

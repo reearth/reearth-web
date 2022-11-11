@@ -43,7 +43,7 @@ export type Props = {
   engine: EngineContext;
   engineName: string;
   sceneProperty?: any;
-  isInEditor: boolean;
+  inEditor: boolean;
   tags?: Tag[];
   camera?: CameraPosition;
   clock: Clock | undefined;
@@ -102,7 +102,7 @@ export function Provider({
   engine: { api, builtinPrimitives },
   engineName,
   sceneProperty,
-  isInEditor,
+  inEditor,
   tags,
   camera,
   clock,
@@ -153,7 +153,7 @@ export function Provider({
 
   const getLayers = useGet(layers);
   const getSceneProperty = useGet(sceneProperty);
-  const getIsInEditor = useGet(isInEditor);
+  const getIsInEditor = useGet(inEditor);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
@@ -180,7 +180,7 @@ export function Provider({
         events: ev,
         layers: getLayers,
         sceneProperty: getSceneProperty,
-        isInEditor: getIsInEditor,
+        inEditor: getIsInEditor,
         tags: getTags,
         camera: getCamera,
         clock: getClock,
