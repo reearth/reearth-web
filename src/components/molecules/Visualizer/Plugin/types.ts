@@ -25,6 +25,7 @@ export type Reearth = {
   readonly widget?: Widget;
   readonly block?: Block;
   readonly scene: Scene;
+  readonly viewport: Viewport;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -70,6 +71,9 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
+  resize: [props: Viewport];
+  modalclose: [];
+  popupclose: [];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -80,11 +84,22 @@ export type Plugin = {
   readonly property?: any;
 };
 
+export type LatLngHeight = {
+  lat: number;
+  lng: number;
+  height: number;
+};
+
 export type Scene = {
   /** Current scene property */
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  readonly getLocationFromScreen: (
+    x: number,
+    y: number,
+    withTerrain?: boolean,
+  ) => LatLngHeight | undefined;
 };
 
 /** You can operate and get data about layers. */
@@ -324,6 +339,12 @@ export type Visualizer = {
   readonly property?: any;
   /** use `reearth.scene.overrideProperty` instead. */
   readonly overrideProperty: (property: any) => void;
+};
+
+export type Viewport = {
+  readonly width: number;
+  readonly height: number;
+  readonly isMobile: boolean;
 };
 
 type Rect = {

@@ -152,7 +152,7 @@ export const vo = (
     [""]: undefined,
   }[o || ""]);
 
-export const getLocationFromScreenXY = (
+export const getLocationFromScreen = (
   scene: Scene | undefined | null,
   x: number,
   y: number,
