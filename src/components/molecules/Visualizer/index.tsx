@@ -127,6 +127,7 @@ export default function Visualizer({
     pluginPopupContainerRef,
     shownPluginPopupInfo,
     overriddenAlignSystem,
+    viewport,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -183,6 +184,7 @@ export default function Visualizer({
               onPluginPopupShow={onPluginPopupShow}
               isEditable={props.isEditable}
               isBuilt={props.isBuilt}
+              viewport={viewport}
               pluginBaseUrl={pluginBaseUrl}
               layoutConstraint={widgets.layoutConstraint}
             />
@@ -240,6 +242,7 @@ export default function Visualizer({
                   isEditable={props.isEditable}
                   isBuilt={props.isBuilt}
                   pluginBaseUrl={pluginBaseUrl}
+                  viewport={viewport}
                 />
               ))}
           </Engine>
@@ -279,6 +282,7 @@ export default function Visualizer({
                 pluginPopupContainer={pluginPopupContainerRef.current}
                 shownPluginPopupInfo={shownPluginPopupInfo}
                 onPluginPopupShow={onPluginPopupShow}
+                viewport={viewport}
               />
             </>
           )}

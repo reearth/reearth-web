@@ -35,6 +35,14 @@ import type {
   WidgetArea,
 } from "./WidgetAlignSystem";
 
+export type Viewport = {
+  width: number;
+  height: number;
+  isMobile: boolean;
+};
+
+const viewportMobileMaxWidth = 768;
+
 export default ({
   engineType,
   rootLayerId,
@@ -98,7 +106,7 @@ export default ({
         drop(_item, context) {
           if (!rootLayerId || !isEditable) return;
           const loc = context.position
-            ? engineRef.current?.getLocationFromScreenXY(context.position.x, context.position.y)
+            ? engineRef.current?.getLocationFromScreen(context.position.x, context.position.y)
             : undefined;
           return {
             type: "earth",
@@ -112,6 +120,49 @@ export default ({
     ),
   );
   dropRef(wrapperRef);
+
+  const [viewport, setViewport] = useState<Viewport>();
+
+  useEffect(() => {
+    const viewportResizeObserver = new ResizeObserver(entries => {
+      const [entry] = entries;
+      let width: number | undefined;
+      let height: number | undefined;
+
+      if (entry.contentBoxSize) {
+        // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
+        const contentBoxSize = Array.isArray(entry.contentBoxSize)
+          ? entry.contentBoxSize[0]
+          : entry.contentBoxSize;
+        width = contentBoxSize.inlineSize;
+        height = contentBoxSize.blockSize;
+      } else if (entry.contentRect) {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+      } else {
+        width = wrapperRef.current?.clientWidth;
+        height = wrapperRef.current?.clientHeight;
+      }
+
+      setViewport(
+        width && height
+          ? {
+              width,
+              height,
+              isMobile: width <= viewportMobileMaxWidth,
+            }
+          : undefined,
+      );
+    });
+
+    if (wrapperRef.current) {
+      viewportResizeObserver.observe(wrapperRef.current);
+    }
+
+    return () => {
+      viewportResizeObserver.disconnect();
+    };
+  }, []);
 
   const {
     selectedLayer,
@@ -304,6 +355,7 @@ export default ({
       layerSelectionReason,
       layerOverridenInfobox,
       layerOverriddenProperties,
+      viewport,
       showLayer: showLayers,
       hideLayer: hideLayers,
       addLayer,
@@ -357,6 +409,7 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    viewport,
     overriddenAlignSystem,
     onPluginModalShow,
     onPluginPopupShow,
@@ -555,9 +608,10 @@ function useProviderProps(
     | "rotateRight"
     | "layers"
     | "layersInViewport"
-    | "viewport"
+    | "cameraViewport"
     | "onMouseEvent"
     | "captureScreen"
+    | "getLocationFromScreen"
     | "enableScreenSpaceCameraController"
     | "lookHorizontal"
     | "lookVertical"
@@ -608,7 +662,7 @@ function useProviderProps(
     [engineRef],
   );
 
-  const viewport = useCallback(() => {
+  const cameraViewport = useCallback(() => {
     return engineRef.current?.getViewport();
   }, [engineRef]);
 
@@ -673,6 +727,13 @@ function useProviderProps(
   const captureScreen = useCallback(
     (type?: string, encoderOptions?: number) => {
       return engineRef.current?.captureScreen(type, encoderOptions);
+    },
+    [engineRef],
+  );
+
+  const getLocationFromScreen = useCallback(
+    (x: number, y: number, withTerrain?: boolean) => {
+      return engineRef.current?.getLocationFromScreen(x, y, withTerrain);
     },
     [engineRef],
   );
@@ -763,9 +824,10 @@ function useProviderProps(
     rotateRight,
     layers,
     layersInViewport,
-    viewport,
+    cameraViewport,
     onMouseEvent,
     captureScreen,
+    getLocationFromScreen,
     enableScreenSpaceCameraController,
     lookHorizontal,
     lookVertical,
