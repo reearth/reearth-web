@@ -597,7 +597,7 @@ export function moveRight(scene: Scene, amount: number) {
 export async function moveOverTerrain(viewer: Viewer, offset = 0) {
   const camera = getCamera(viewer);
   if (camera?.lng === undefined || camera?.lat === undefined) return;
-  const height = await sampleTerrainHeight(viewer.scene, camera?.lng, camera?.lat);
+  const height = await sampleTerrainHeight(viewer.scene, camera.lng, camera.lat);
   if (height && height !== 0) {
     const innerCamera = getCamera(viewer);
     if (innerCamera && innerCamera?.height < height + offset) {
