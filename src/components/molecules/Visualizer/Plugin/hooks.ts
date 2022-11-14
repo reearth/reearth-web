@@ -63,10 +63,7 @@ export default function ({
   const popupVisible = useRef<boolean>(false);
   const externalRef = useRef<HTMLIFrameElement>(null);
 
-  const [uiVisible, setUIVisible] = useState<boolean>(!!visible);
-  const onUIShow = useCallback((visible: boolean) => {
-    setUIVisible(visible);
-  }, []);
+  const [uiVisible, onUIShow] = useState<boolean>(!!visible);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
     useAPI({
