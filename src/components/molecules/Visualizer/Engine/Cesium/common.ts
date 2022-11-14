@@ -619,11 +619,10 @@ export async function flyToGround(
   if (camera.lng === undefined || camera.lat === undefined) return;
   const height = await sampleTerrainHeight(viewer.scene, camera.lng, camera.lat);
   const tarHeight = height ? height + offset : offset;
-  const groundCamera = { ...camera, height: tarHeight };
   cancelCameraFlight.current?.();
   cancelCameraFlight.current = flyTo(
     viewer.scene?.camera,
-    { ...getCamera(viewer), ...groundCamera },
+    { ...getCamera(viewer), ...camera, height: tarHeight },
     options,
   );
 }
