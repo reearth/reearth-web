@@ -62,6 +62,10 @@ export default function useIFrame({
   );
 
   useEffect(() => {
+    setIFrameState(state => [state[0], { ...state[1], visible: !!iframeCanBeVisible }]);
+  }, [iframeCanBeVisible]);
+
+  useEffect(() => {
     if (!ready) setIFrameLoaded(false);
   }, [ready]);
 

@@ -78,8 +78,8 @@ const Plugin: ForwardRefRenderFunction<Ref, Props> = (
         type="main"
         ref={mainIFrameRef}
         ready={loaded}
-        visible
-        enabled={uiVisible}
+        visible={uiVisible}
+        enabled
         className={className}
         iFrameProps={iFrameProps}
         autoResize={autoResize}
