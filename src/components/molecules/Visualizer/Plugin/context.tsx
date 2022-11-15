@@ -7,7 +7,7 @@ import {
   useMemo,
 } from "react";
 
-import events from "@reearth/util/event";
+import events, { EventEmitter } from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
@@ -82,10 +82,16 @@ export type Props = {
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
 };
 
+type SelectedRearthEventType = Pick<
+  ReearthEventType,
+  "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "boxscale" | "boxrotate"
+>;
+
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
   overrideSceneProperty: (id: string, property: any) => void;
+  emit: EventEmitter<SelectedRearthEventType>;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -141,10 +147,7 @@ export function Provider({
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () =>
-      events<
-        Pick<ReearthEventType, "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents>
-      >(),
+    () => events<SelectedRearthEventType>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -214,6 +217,7 @@ export function Provider({
         flyToGround,
       }),
       overrideSceneProperty,
+      emit,
     }),
     [
       api,
@@ -258,10 +262,11 @@ export function Provider({
       moveOverTerrain,
       flyToGround,
       overrideSceneProperty,
+      emit,
     ],
   );
 
-  useEmit<Pick<ReearthEventType, "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents>>(
+  useEmit<SelectedRearthEventType>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),
