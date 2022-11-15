@@ -1,0 +1,152 @@
+import {
+  Axis,
+  Cartesian2,
+  Cartesian3,
+  Cartographic,
+  HeadingPitchRoll,
+  Matrix3,
+  Matrix4,
+  Quaternion,
+  Ray,
+  Scene,
+  Transforms,
+  TranslationRotationScale,
+} from "cesium";
+
+import { Property } from ".";
+
+const translationWithClamping = (
+  trs: TranslationRotationScale,
+  keepBoxAboveGround: boolean,
+  terrainHeightEstimate: number,
+) => {
+  if (keepBoxAboveGround) {
+    const cartographic = Cartographic.fromCartesian(trs.translation, undefined, new Cartographic());
+    const boxBottomHeight = cartographic.height - trs.scale.z / 2;
+    const floorHeight = terrainHeightEstimate;
+    if (boxBottomHeight < floorHeight) {
+      cartographic.height += floorHeight - boxBottomHeight;
+      Cartographic.toCartesian(cartographic, undefined, trs.translation);
+    }
+  }
+};
+
+export const updateTrs = (
+  trs: TranslationRotationScale,
+  property: Property | undefined,
+  terrainHeightEstimation: number,
+) => {
+  const { location, height, width, length, heading, pitch, roll, keepBoxAboveGround } =
+    property?.default ?? {};
+
+  const translation = location
+    ? Cartesian3.fromDegrees(location.lng, location.lat, location.height ?? 0)
+    : undefined;
+  if (translation) {
+    Cartesian3.clone(translation, trs.translation);
+  }
+  if (keepBoxAboveGround) {
+    translationWithClamping(trs, keepBoxAboveGround, terrainHeightEstimation);
+  }
+
+  const rotation =
+    heading && pitch && roll
+      ? Matrix3.fromHeadingPitchRoll(new HeadingPitchRoll(heading, pitch, roll))
+      : Matrix3.getRotation(
+          Matrix4.getMatrix3(Transforms.eastNorthUpToFixedFrame(trs.translation), new Matrix3()),
+          new Matrix3(),
+        );
+  Quaternion.clone(Quaternion.fromRotationMatrix(rotation), trs.rotation);
+
+  Cartesian3.clone(new Cartesian3(width || 100, length || 100, height || 100), trs.scale);
+
+  return trs;
+};
+
+function screenProjectVector(
+  scene: Scene,
+  position: Cartesian3,
+  direction: Cartesian3,
+  length: number,
+  result: Cartesian2,
+): Cartesian2 {
+  const ray = new Ray();
+  ray.origin = position;
+  ray.direction = direction;
+  const nearPoint2d = scene.cartesianToCanvasCoordinates(Ray.getPoint(ray, 0), new Cartesian2());
+
+  const farPoint2d = scene.cartesianToCanvasCoordinates(
+    Ray.getPoint(ray, length),
+    new Cartesian2(),
+  );
+  const screenVector2d = Cartesian2.subtract(farPoint2d, nearPoint2d, result);
+  return screenVector2d;
+}
+
+const dotProductMousePosition = (
+  scene: Scene,
+  mouseMove: {
+    startPosition: Cartesian2;
+    endPosition: Cartesian2;
+  },
+  position: Cartesian3,
+  direction: Cartesian3,
+) => {
+  const mouseVector2d = Cartesian2.subtract(
+    mouseMove.endPosition,
+    mouseMove.startPosition,
+    new Cartesian2(),
+  );
+
+  // Project the vector of unit length to the screen
+  const screenVector2d = screenProjectVector(scene, position, direction, 1, new Cartesian2());
+  const screenNormal2d = Cartesian2.normalize(screenVector2d, new Cartesian2());
+
+  const pixelsPerStep = Cartesian2.magnitude(screenVector2d);
+  const moveAmountPixels = Cartesian2.dot(mouseVector2d, screenNormal2d);
+
+  return {
+    pixelsPerStep,
+    moveAmountPixels,
+  };
+};
+
+export const computeMoveAmount = (
+  scene: Scene,
+  mouseMove: {
+    startPosition: Cartesian2;
+    endPosition: Cartesian2;
+  },
+  position: Cartesian3,
+  direction: Cartesian3,
+  length: number,
+) => {
+  const { moveAmountPixels, pixelsPerStep } = dotProductMousePosition(
+    scene,
+    mouseMove,
+    position,
+    direction,
+  );
+  const moveAmount = moveAmountPixels / pixelsPerStep;
+  const scaleAmount = moveAmount / length;
+  const pixelLengthAfterScaling = pixelsPerStep * length + pixelsPerStep * length * scaleAmount;
+  return { pixelLengthAfterScaling, scaleAmount };
+};
+
+// ref: https://github.com/TerriaJS/terriajs/blob/cad62a45cbee98c7561625458bec3a48510f6cbc/lib/Models/BoxDrawing.ts#L1446-L1461
+export function setPlaneDimensions(
+  boxDimensions: Cartesian3,
+  planeNormalAxis: Axis,
+  planeDimensions: Cartesian2,
+) {
+  if (planeNormalAxis === Axis.X) {
+    planeDimensions.x = boxDimensions.y;
+    planeDimensions.y = boxDimensions.z;
+  } else if (planeNormalAxis === Axis.Y) {
+    planeDimensions.x = boxDimensions.x;
+    planeDimensions.y = boxDimensions.z;
+  } else if (planeNormalAxis === Axis.Z) {
+    planeDimensions.x = boxDimensions.x;
+    planeDimensions.y = boxDimensions.y;
+  }
+}

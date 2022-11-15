@@ -82,6 +82,7 @@ export type EXPERIMENTAL_clipping = {
   heading?: number;
   pitch?: number;
   roll?: number;
+  keepAboveGround?: boolean;
 };
 
 // Don't forget adding a new field to valueTypeMapper also!

@@ -1,5 +1,6 @@
 import {
   Cartesian3,
+  Cartographic,
   Cesium3DTileset as Cesium3DTilesetType,
   Cesium3DTileStyle,
   ClippingPlaneCollection as CesiumClippingPlaneCollection,
@@ -16,7 +17,7 @@ import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { shadowMode, layerIdField } from "../common";
+import { shadowMode, layerIdField, sampleTerrainHeight } from "../common";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -30,6 +31,22 @@ export type Property = {
     edgeColor?: string;
     experimental_clipping?: EXPERIMENTAL_clipping;
   };
+};
+
+const translationWithClamping = (
+  trs: { translation: Cartesian3; scale: Cartesian3 },
+  keepAboveGround: boolean,
+  terrainHeightEstimate: number,
+) => {
+  if (keepAboveGround) {
+    const cartographic = Cartographic.fromCartesian(trs.translation, undefined, new Cartographic());
+    const boxBottomHeight = cartographic.height - trs.scale.z / 2;
+    const floorHeight = terrainHeightEstimate;
+    if (boxBottomHeight < floorHeight) {
+      cartographic.height += floorHeight - boxBottomHeight;
+      Cartographic.toCartesian(cartographic, undefined, trs.translation);
+    }
+  }
 };
 
 const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ layer }) {
@@ -46,6 +63,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     roll,
     pitch,
     planes: _planes,
+    keepAboveGround,
   } = experimental_clipping || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const prevPlanes = useRef(_planes);
@@ -91,6 +109,25 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     [layer?.id],
   );
 
+  const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
+  const isProgressSamplingTerrainHeight = useRef(false);
+  const updateTerrainHeight = useCallback(
+    (translation: Cartesian3) => {
+      if (isProgressSamplingTerrainHeight.current) {
+        return;
+      }
+
+      isProgressSamplingTerrainHeight.current = true;
+      if (keepAboveGround) {
+        sampleTerrainHeight(viewer.scene, translation).then(v => {
+          setTerrainHeightEstimate(v ?? 0);
+          isProgressSamplingTerrainHeight.current = false;
+        });
+      }
+    },
+    [keepAboveGround, viewer],
+  );
+
   useEffect(() => {
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
@@ -111,8 +148,15 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         location?.height,
       );
 
-      const hpr =
-        heading && pitch && roll ? HeadingPitchRoll.fromDegrees(heading, pitch, roll) : undefined;
+      if (keepAboveGround) {
+        translationWithClamping(
+          { translation: position, scale: dimensions },
+          keepAboveGround,
+          terrainHeightEstimate,
+        );
+      }
+
+      const hpr = heading && pitch && roll ? new HeadingPitchRoll(heading, pitch, roll) : undefined;
       const boxTransform = Matrix4.multiply(
         hpr
           ? Matrix4.fromRotationTranslation(Matrix3.fromHeadingPitchRoll(hpr), position)
@@ -126,8 +170,11 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
+    if (keepAboveGround) {
+      updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
+    }
     prepareClippingPlanes();
-  }, [width, length, height, location?.lng, location?.lat, location?.height, heading, pitch, roll, clippingPlanes.modelMatrix]);
+  }, [width, length, height, location?.lng, location?.lat, location?.height, heading, pitch, roll, clippingPlanes.modelMatrix, updateTerrainHeight, keepAboveGround, terrainHeightEstimate]);
 
   useEffect(() => {
     if (!styleUrl) {
