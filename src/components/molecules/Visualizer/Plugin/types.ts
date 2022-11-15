@@ -1,3 +1,5 @@
+import { LatLngHeight } from "@reearth/util/value";
+
 export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
@@ -54,6 +56,8 @@ export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: CameraPosition];
+  boxscale: [box: { width: number; length: number; height: number; location: LatLngHeight }];
+  boxrotate: [rotation: { heading: number; pitch: number; roll: number }];
   select: [layerId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];
