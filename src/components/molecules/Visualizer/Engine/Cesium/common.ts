@@ -687,7 +687,7 @@ function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotat
   return rotatedVector;
 }
 
-async function sampleTerrainHeight(
+export async function sampleTerrainHeight(
   scene: Scene,
   position: Cartesian3,
 ): Promise<number | undefined> {
