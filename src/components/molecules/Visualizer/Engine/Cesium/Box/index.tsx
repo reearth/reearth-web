@@ -50,7 +50,7 @@ export type Property = {
     axisLineWidth?: number;
     keepBoxAboveGround?: boolean;
     cursor?: string;
-    activeBox: boolean;
+    activeBox?: boolean;
     activeScalePointIndex?: number; // 0 ~ 11
     activeEdgeIndex?: number; // 0 ~ 11
   };

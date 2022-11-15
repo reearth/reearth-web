@@ -1,5 +1,3 @@
-import { LatLngHeight } from "@reearth/util/value";
-
 export type GlobalThis = {
   Cesium?: Cesium;
   reearth: Reearth;
