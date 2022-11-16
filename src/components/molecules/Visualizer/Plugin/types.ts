@@ -92,6 +92,7 @@ export type LatLngHeight = {
 
 export type Scene = {
   /** Current scene property */
+  readonly inEditor: boolean;
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
@@ -467,6 +468,7 @@ export type CameraOptions = {
   duration?: number;
   /** Easing function. */
   easing?: (time: number) => number;
+  animation?: boolean;
 };
 
 /** Cesium API: available only when the plugin is a primitive */
