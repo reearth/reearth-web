@@ -62,7 +62,7 @@ export default function useIFrame({
   );
 
   useEffect(() => {
-    setIFrameState(state => [state[0], { ...state[1], visible: !!iframeCanBeVisible }]);
+    setIFrameState(([html, options]) => [html, { ...options, visible: !!iframeCanBeVisible }]);
   }, [iframeCanBeVisible]);
 
   useEffect(() => {

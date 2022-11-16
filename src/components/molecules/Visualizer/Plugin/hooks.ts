@@ -63,7 +63,7 @@ export default function ({
   const popupVisible = useRef<boolean>(false);
   const externalRef = useRef<HTMLIFrameElement>(null);
 
-  const [uiVisible, onUIShow] = useState<boolean>(!!visible);
+  const [uiVisible, setUIVisibility] = useState<boolean>(!!visible);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
     useAPI({
@@ -79,7 +79,7 @@ export default function ({
       externalRef,
       onPluginModalShow,
       onPluginPopupShow,
-      onUIShow,
+      setUIVisibility,
       onRender,
       onResize,
     }) ?? [];
@@ -160,7 +160,7 @@ export function useAPI({
   externalRef,
   onPluginModalShow,
   onPluginPopupShow,
-  onUIShow,
+  setUIVisibility,
   onRender,
   onResize,
 }: {
@@ -176,7 +176,7 @@ export function useAPI({
   externalRef: RefObject<HTMLIFrameElement> | undefined;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
-  onUIShow: (visible: boolean) => void;
+  setUIVisibility: (visible: boolean) => void;
   onRender?: (
     options:
       | {
@@ -302,10 +302,10 @@ export function useAPI({
           onRender?.(
             typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
           );
-          onUIShow(true);
+          setUIVisibility(true);
         },
         closeUI: () => {
-          onUIShow(false);
+          setUIVisibility(false);
         },
         renderModal: (html, { ...options } = {}) => {
           modal.render(html, options);
@@ -382,7 +382,7 @@ export function useAPI({
     getWidget,
     onPluginModalShow,
     onPluginPopupShow,
-    onUIShow,
+    setUIVisibility,
     onRender,
     onResize,
   ]);
