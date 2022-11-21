@@ -96,7 +96,7 @@ const dotMousePosition = (
   };
 };
 
-export const computeMoveAmount = (
+export const computeMouseMoveAmount = (
   scene: Scene,
   mouseMove: {
     startPosition: Cartesian2;

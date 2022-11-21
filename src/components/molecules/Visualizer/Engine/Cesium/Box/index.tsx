@@ -20,7 +20,7 @@ import { BOX_EDGES, SCALE_POINTS, SIDE_PLANES, SIDE_PLANE_NAMES } from "./consta
 import { Edge, EdgeEventCallback } from "./Edge";
 import { PointEventCallback, ScalePoints } from "./ScalePoints";
 import { Side } from "./Side";
-import { computeMoveAmount, updateTrs } from "./utils";
+import { computeMouseMoveAmount, updateTrs } from "./utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -168,7 +168,7 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
       const length = Cartesian3.magnitude(axisVector);
       const scaleDirection = Cartesian3.normalize(axisVector, new Cartesian3());
 
-      const { scaleAmount, pixelLengthAfterScaling } = computeMoveAmount(
+      const { scaleAmount, pixelLengthAfterScaling } = computeMouseMoveAmount(
         viewer.scene,
         {
           startPosition: prevMousePosition2dForPoint.current,
