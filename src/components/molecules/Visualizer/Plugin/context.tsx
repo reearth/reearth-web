@@ -43,6 +43,7 @@ export type Props = {
   engine: EngineContext;
   engineName: string;
   sceneProperty?: any;
+  inEditor: boolean;
   tags?: Tag[];
   camera?: CameraPosition;
   clock: Clock | undefined;
@@ -107,6 +108,7 @@ export function Provider({
   engine: { api, builtinPrimitives },
   engineName,
   sceneProperty,
+  inEditor,
   tags,
   camera,
   clock,
@@ -154,6 +156,7 @@ export function Provider({
 
   const getLayers = useGet(layers);
   const getSceneProperty = useGet(sceneProperty);
+  const getInEditor = useGet(inEditor);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
@@ -180,6 +183,7 @@ export function Provider({
         events: ev,
         layers: getLayers,
         sceneProperty: getSceneProperty,
+        inEditor: getInEditor,
         tags: getTags,
         camera: getCamera,
         clock: getClock,
@@ -226,6 +230,7 @@ export function Provider({
       ev,
       getLayers,
       getSceneProperty,
+      getInEditor,
       getTags,
       getCamera,
       getClock,

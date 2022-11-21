@@ -14,7 +14,6 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
-  Viewport,
 } from "./types";
 
 export type CommonReearth = Omit<
@@ -24,6 +23,7 @@ export type CommonReearth = Omit<
 
 export function exposed({
   render,
+  closeUI,
   postMessage,
   resize,
   renderModal,
@@ -51,6 +51,7 @@ export function exposed({
       extended?: boolean;
     },
   ) => void;
+  closeUI: Reearth["ui"]["close"];
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
   renderModal: (
@@ -91,7 +92,6 @@ export function exposed({
             };
           },
         }),
-        viewport: commonReearth.viewport as Viewport,
         layers: merge(commonReearth.layers, {
           get add() {
             return (layer: Layer, parentId?: string) =>
@@ -115,6 +115,7 @@ export function exposed({
           },
           postMessage,
           resize,
+          close: closeUI,
         },
         modal: {
           show: (
@@ -197,6 +198,7 @@ export function commonReearth({
   layersInViewport,
   layers,
   sceneProperty,
+  inEditor,
   tags,
   camera,
   clock,
@@ -260,6 +262,7 @@ export function commonReearth({
   cameraViewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
+  inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
   lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
@@ -311,6 +314,9 @@ export function commonReearth({
       return clock();
     },
     scene: {
+      get inEditor() {
+        return inEditor();
+      },
       get property() {
         return sceneProperty();
       },
@@ -319,7 +325,7 @@ export function commonReearth({
       getLocationFromScreen,
     },
     get viewport() {
-      return viewport?.();
+      return viewport();
     },
     engineName,
     camera: {

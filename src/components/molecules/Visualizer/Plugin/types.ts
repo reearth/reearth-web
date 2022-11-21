@@ -94,6 +94,7 @@ export type LatLngHeight = {
 
 export type Scene = {
   /** Current scene property */
+  readonly inEditor: boolean;
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
@@ -269,6 +270,7 @@ export type UI = {
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
     extended?: boolean | undefined,
   ) => void;
+  readonly close: () => void;
 };
 
 export type Modal = {
