@@ -95,18 +95,18 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
   );
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
-  const isProgressSamplingTerrainHeight = useRef(false);
+  const inProgressSamplingTerrainHeight = useRef(false);
   const updateTerrainHeight = useCallback(
     (translation: Cartesian3) => {
-      if (isProgressSamplingTerrainHeight.current) {
+      if (inProgressSamplingTerrainHeight.current) {
         return;
       }
 
-      isProgressSamplingTerrainHeight.current = true;
+      inProgressSamplingTerrainHeight.current = true;
       if (keepAboveGround) {
         sampleTerrainHeight(viewer.scene, translation).then(v => {
           setTerrainHeightEstimate(v ?? 0);
-          isProgressSamplingTerrainHeight.current = false;
+          inProgressSamplingTerrainHeight.current = false;
         });
       }
     },

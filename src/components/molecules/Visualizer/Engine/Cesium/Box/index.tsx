@@ -91,17 +91,17 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
     updateTrs(new TranslationRotationScale(), property, terrainHeightEstimate),
   );
 
-  const isProgressSamplingTerrainHeight = useRef(false);
+  const inProgressSamplingTerrainHeight = useRef(false);
   const updateTerrainHeight = useCallback(() => {
-    if (isProgressSamplingTerrainHeight.current) {
+    if (inProgressSamplingTerrainHeight.current) {
       return;
     }
 
-    isProgressSamplingTerrainHeight.current = true;
+    inProgressSamplingTerrainHeight.current = true;
     if (keepBoxAboveGround) {
       sampleTerrainHeight(viewer.scene, trs.translation).then(v => {
         setTerrainHeightEstimate(v ?? 0);
-        isProgressSamplingTerrainHeight.current = false;
+        inProgressSamplingTerrainHeight.current = false;
       });
     }
   }, [keepBoxAboveGround, viewer, trs]);
