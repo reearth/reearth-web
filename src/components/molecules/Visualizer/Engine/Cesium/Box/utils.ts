@@ -2,7 +2,6 @@ import {
   Axis,
   Cartesian2,
   Cartesian3,
-  Cartographic,
   HeadingPitchRoll,
   Matrix3,
   Matrix4,
@@ -13,23 +12,9 @@ import {
   TranslationRotationScale,
 } from "cesium";
 
-import { Property } from ".";
+import { translationWithClamping } from "../utils";
 
-const translationWithClamping = (
-  trs: TranslationRotationScale,
-  keepBoxAboveGround: boolean,
-  terrainHeightEstimate: number,
-) => {
-  if (keepBoxAboveGround) {
-    const cartographic = Cartographic.fromCartesian(trs.translation, undefined, new Cartographic());
-    const boxBottomHeight = cartographic.height - trs.scale.z / 2;
-    const floorHeight = terrainHeightEstimate;
-    if (boxBottomHeight < floorHeight) {
-      cartographic.height += floorHeight - boxBottomHeight;
-      Cartographic.toCartesian(cartographic, undefined, trs.translation);
-    }
-  }
-};
+import { Property } from ".";
 
 export const updateTrs = (
   trs: TranslationRotationScale,

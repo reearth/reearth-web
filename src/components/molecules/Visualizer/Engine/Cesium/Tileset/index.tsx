@@ -1,6 +1,5 @@
 import {
   Cartesian3,
-  Cartographic,
   Cesium3DTileset as Cesium3DTilesetType,
   Cesium3DTileStyle,
   ClippingPlaneCollection as CesiumClippingPlaneCollection,
@@ -9,6 +8,7 @@ import {
   Matrix3,
   Matrix4,
   Transforms,
+  TranslationRotationScale,
 } from "cesium";
 import ClippingPlane from "cesium/Source/Scene/ClippingPlane";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -18,6 +18,7 @@ import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
 
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode, layerIdField, sampleTerrainHeight } from "../common";
+import { translationWithClamping } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
 
@@ -31,22 +32,6 @@ export type Property = {
     edgeColor?: string;
     experimental_clipping?: EXPERIMENTAL_clipping;
   };
-};
-
-const translationWithClamping = (
-  trs: { translation: Cartesian3; scale: Cartesian3 },
-  keepAboveGround: boolean,
-  terrainHeightEstimate: number,
-) => {
-  if (keepAboveGround) {
-    const cartographic = Cartographic.fromCartesian(trs.translation, undefined, new Cartographic());
-    const boxBottomHeight = cartographic.height - trs.scale.z / 2;
-    const floorHeight = terrainHeightEstimate;
-    if (boxBottomHeight < floorHeight) {
-      cartographic.height += floorHeight - boxBottomHeight;
-      Cartographic.toCartesian(cartographic, undefined, trs.translation);
-    }
-  }
 };
 
 const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ layer }) {
@@ -150,7 +135,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
 
       if (keepAboveGround) {
         translationWithClamping(
-          { translation: position, scale: dimensions },
+          new TranslationRotationScale(position, undefined, dimensions),
           keepAboveGround,
           terrainHeightEstimate,
         );
