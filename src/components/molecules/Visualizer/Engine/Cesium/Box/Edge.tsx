@@ -1,18 +1,10 @@
-import {
-  ArcType,
-  CallbackProperty,
-  Cartesian3,
-  Color,
-  ColorMaterialProperty,
-  Matrix4,
-  TranslationRotationScale,
-} from "cesium";
-import { FC, memo, useCallback, useEffect, useRef, useState } from "react";
+import { ArcType, Cartesian3, Color, TranslationRotationScale } from "cesium";
+import { FC, memo } from "react";
 import { Entity, PolylineGraphics } from "resium";
 
 import { EventCallback } from "@reearth/util/event";
 
-import { useContext } from "../../../Plugin";
+import { useHooks } from "./hooks/edge";
 
 export type EdgeEventCallback = EventCallback<
   [
@@ -54,67 +46,18 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   onMouseMove,
   onMouseUp,
 }) {
-  const ctx = useContext();
-  const [cbp] = useState(
-    () =>
-      new CallbackProperty(() => {
-        const position1 = new Cartesian3();
-        const position2 = new Cartesian3();
-        const matrix = Matrix4.fromTranslationRotationScale(trs);
-        Matrix4.multiplyByPoint(matrix, edge.start, position1);
-        Matrix4.multiplyByPoint(matrix, edge.end, position2);
-        return [position1, position2];
-      }, false),
-  );
-
-  const isEdgeHovered = useRef(false);
-  const [outlineColor] = useState(
-    () =>
-      new ColorMaterialProperty(
-        new CallbackProperty(
-          () => (isEdgeHovered.current ? hoverColor ?? fillColor : fillColor),
-          false,
-        ),
-      ),
-  );
-  useEffect(() => {
-    isEdgeHovered.current = isHovered;
-  }, [isHovered]);
-
-  const handleMouseDown: EventCallback = useCallback(
-    e => {
-      if (e.layerId !== id) {
-        return;
-      }
-      onMouseDown?.(e, { index });
-    },
-    [onMouseDown, id, index],
-  );
-
-  const handleMouseMove: EventCallback = useCallback(
-    e => {
-      onMouseMove?.(e, { index });
-    },
-    [onMouseMove, index],
-  );
-
-  const handleMouseUp: EventCallback = useCallback(
-    e => {
-      onMouseUp?.(e, { index });
-    },
-    [onMouseUp, index],
-  );
-
-  useEffect(() => {
-    ctx?.reearth.on("mousedown", handleMouseDown);
-    ctx?.reearth.on("mousemove", handleMouseMove);
-    ctx?.reearth.on("mouseup", handleMouseUp);
-    return () => {
-      ctx?.reearth.off("mousedown", handleMouseDown);
-      ctx?.reearth.off("mousemove", handleMouseMove);
-      ctx?.reearth.off("mouseup", handleMouseUp);
-    };
-  }, [ctx, handleMouseDown, handleMouseMove, handleMouseUp]);
+  const { cbp, outlineColor } = useHooks({
+    id,
+    index,
+    edge,
+    isHovered,
+    fillColor,
+    trs,
+    hoverColor,
+    onMouseDown,
+    onMouseMove,
+    onMouseUp,
+  });
 
   return (
     <Entity id={id}>

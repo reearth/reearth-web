@@ -1,17 +1,8 @@
-import {
-  Axis,
-  CallbackProperty,
-  Cartesian3,
-  Color,
-  Matrix4,
-  Plane as CesiumPlane,
-  PositionProperty,
-  TranslationRotationScale,
-} from "cesium";
-import { useMemo, FC, memo, useRef, useState, useEffect } from "react";
+import { Color, Plane as CesiumPlane, TranslationRotationScale } from "cesium";
+import { FC, memo } from "react";
 import { Entity, PlaneGraphics } from "resium";
 
-import { setPlaneDimensions } from "./utils";
+import { useHooks } from "./hooks/side";
 
 export const Side: FC<{
   id: string;
@@ -32,42 +23,13 @@ export const Side: FC<{
   activeOutlineColor,
   trs,
 }) {
-  const cbRef = useMemo(
-    () => new CallbackProperty(() => trs.translation, false) as unknown as PositionProperty,
-    [trs],
-  );
-  const [plane, dimension, orientation] = useMemo(() => {
-    return [
-      new CallbackProperty(() => {
-        const scratchScaleMatrix = new Matrix4();
-        const scaleMatrix = Matrix4.fromScale(trs.scale, scratchScaleMatrix);
-        return CesiumPlane.transform(
-          planeLocal,
-          scaleMatrix,
-          new CesiumPlane(Cartesian3.UNIT_Z, 0),
-        );
-      }, false),
-      new CallbackProperty(() => {
-        const normalAxis = planeLocal.normal.x ? Axis.X : planeLocal.normal.y ? Axis.Y : Axis.Z;
-        const dimension = new Cartesian3();
-        setPlaneDimensions(trs.scale, normalAxis, dimension);
-        return dimension;
-      }, false),
-      new CallbackProperty(() => trs.rotation, false),
-    ];
-  }, [trs, planeLocal]);
-
-  const isActiveRef = useRef(false);
-  const [outlineColorCb] = useState(
-    () =>
-      new CallbackProperty(
-        () => (isActiveRef.current ? activeOutlineColor ?? outlineColor : outlineColor),
-        false,
-      ),
-  );
-  useEffect(() => {
-    isActiveRef.current = isActive;
-  }, [isActive]);
+  const { cbRef, plane, dimension, orientation, outlineColorCb } = useHooks({
+    planeLocal,
+    isActive,
+    outlineColor,
+    activeOutlineColor,
+    trs,
+  });
 
   return (
     <Entity id={id} position={cbRef} orientation={orientation}>
