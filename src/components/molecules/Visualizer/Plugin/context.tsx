@@ -82,7 +82,7 @@ export type Props = {
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
 };
 
-type SelectedRearthEventType = Pick<
+type SelectedReearthEventType = Pick<
   ReearthEventType,
   "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "boxscale" | "boxrotate"
 >;
@@ -91,7 +91,7 @@ export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
   overrideSceneProperty: (id: string, property: any) => void;
-  emit: EventEmitter<SelectedRearthEventType>;
+  emit: EventEmitter<SelectedReearthEventType>;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -147,7 +147,7 @@ export function Provider({
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () => events<SelectedRearthEventType>(),
+    () => events<SelectedReearthEventType>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -266,7 +266,7 @@ export function Provider({
     ],
   );
 
-  useEmit<SelectedRearthEventType>(
+  useEmit<SelectedReearthEventType>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),
