@@ -92,7 +92,7 @@ const dotMousePosition = (
 
   return {
     pixelsPerStep,
-    moveAmountPixels,
+    moveAmount: moveAmountPixels / pixelsPerStep,
   };
 };
 
@@ -106,13 +106,7 @@ export const computeMoveAmount = (
   direction: Cartesian3,
   length: number,
 ) => {
-  const { moveAmountPixels, pixelsPerStep } = dotMousePosition(
-    scene,
-    mouseMove,
-    position,
-    direction,
-  );
-  const moveAmount = moveAmountPixels / pixelsPerStep;
+  const { moveAmount, pixelsPerStep } = dotMousePosition(scene, mouseMove, position, direction);
   const scaleAmount = moveAmount / length;
   const pixelLengthAfterScaling = pixelsPerStep * length + pixelsPerStep * length * scaleAmount;
   return { pixelLengthAfterScaling, scaleAmount };
