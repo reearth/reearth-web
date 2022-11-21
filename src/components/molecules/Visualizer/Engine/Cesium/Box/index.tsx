@@ -12,6 +12,7 @@ import { useCesium } from "resium";
 
 import { LatLngHeight, toColor } from "@reearth/util/value";
 
+import { SceneProperty } from "../..";
 import { useContext } from "../../../Plugin";
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { sampleTerrainHeight } from "../common";
@@ -48,7 +49,7 @@ export type Property = {
     pointOutlineWidth?: number;
     axisLineColor?: string;
     axisLineWidth?: number;
-    keepBoxAboveGround?: boolean;
+    allowEnterGround?: boolean;
     cursor?: string;
     activeBox?: boolean;
     activeScalePointIndex?: number; // 0 ~ 11
@@ -56,7 +57,10 @@ export type Property = {
   };
 };
 
-const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ layer }) {
+const Box: React.FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function BoxPresenter({
+  layer,
+  sceneProperty,
+}) {
   const { viewer } = useCesium();
   const ctx = useContext();
   const { id, isVisible, property } = layer ?? {};
@@ -77,7 +81,6 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
     pointOutlineWidth,
     axisLineColor,
     axisLineWidth,
-    keepBoxAboveGround,
     scalePoint = true,
     axisLine = true,
     cursor,
@@ -85,10 +88,11 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
     activeEdgeIndex,
     activeScalePointIndex,
   } = property?.default ?? {};
+  const { allowEnterGround } = sceneProperty?.default || {};
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
   const [trs] = useState(() =>
-    updateTrs(new TranslationRotationScale(), property, terrainHeightEstimate),
+    updateTrs(new TranslationRotationScale(), property, terrainHeightEstimate, allowEnterGround),
   );
 
   const inProgressSamplingTerrainHeight = useRef(false);
@@ -97,21 +101,21 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
       return;
     }
 
-    if (keepBoxAboveGround) {
+    if (allowEnterGround) {
       inProgressSamplingTerrainHeight.current = true;
       sampleTerrainHeight(viewer.scene, trs.translation).then(v => {
         setTerrainHeightEstimate(v ?? 0);
         inProgressSamplingTerrainHeight.current = false;
       });
     }
-  }, [keepBoxAboveGround, viewer, trs]);
+  }, [allowEnterGround, viewer, trs]);
 
   useEffect(() => {
-    updateTrs(trs, property, terrainHeightEstimate);
-    if (keepBoxAboveGround) {
+    updateTrs(trs, property, terrainHeightEstimate, allowEnterGround);
+    if (allowEnterGround) {
       updateTerrainHeight();
     }
-  }, [property, trs, viewer, terrainHeightEstimate, updateTerrainHeight, keepBoxAboveGround]);
+  }, [property, trs, viewer, terrainHeightEstimate, updateTerrainHeight, allowEnterGround]);
 
   const style = useMemo(
     () => ({
@@ -225,7 +229,7 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
       // Prevent scaling in Z axis if it will result in the box going underground.
       const isDraggingBottomScalePoint = axisLocal.z < 0;
       const isUpscaling = scaleAmount > 0;
-      if (keepBoxAboveGround && isUpscaling && isDraggingBottomScalePoint) {
+      if (allowEnterGround && isUpscaling && isDraggingBottomScalePoint) {
         const boxCenterHeight = Cartographic.fromCartesian(
           trs.translation,
           undefined,
@@ -259,7 +263,7 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
         },
       });
     },
-    [trs, viewer, keepBoxAboveGround, ctx],
+    [trs, viewer, allowEnterGround, ctx],
   );
   const handlePointMouseUp: PointEventCallback = useCallback(() => {
     currentPointIndex.current = undefined;

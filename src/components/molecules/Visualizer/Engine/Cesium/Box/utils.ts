@@ -20,9 +20,9 @@ export const updateTrs = (
   trs: TranslationRotationScale,
   property: Property | undefined,
   terrainHeightEstimation: number,
+  allowEnterGround?: boolean,
 ) => {
-  const { location, height, width, length, heading, pitch, roll, keepBoxAboveGround } =
-    property?.default ?? {};
+  const { location, height, width, length, heading, pitch, roll } = property?.default ?? {};
 
   const translation = location
     ? Cartesian3.fromDegrees(location.lng, location.lat, location.height ?? 0)
@@ -30,8 +30,8 @@ export const updateTrs = (
   if (translation) {
     Cartesian3.clone(translation, trs.translation);
   }
-  if (keepBoxAboveGround) {
-    translationWithClamping(trs, keepBoxAboveGround, terrainHeightEstimation);
+  if (!allowEnterGround) {
+    translationWithClamping(trs, !!allowEnterGround, terrainHeightEstimation);
   }
 
   const rotation =

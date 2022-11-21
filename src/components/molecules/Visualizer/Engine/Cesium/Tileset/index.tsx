@@ -16,6 +16,7 @@ import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
 
 import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
 
+import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode, layerIdField, sampleTerrainHeight } from "../common";
 import { translationWithClamping } from "../utils";
@@ -34,7 +35,10 @@ export type Property = {
   };
 };
 
-const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ layer }) {
+const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function TilesetPresenter({
+  layer,
+  sceneProperty,
+}) {
   const { viewer } = useCesium();
   const { isVisible, property } = layer ?? {};
   const { sourceType, tileset, styleUrl, shadows, edgeColor, edgeWidth, experimental_clipping } =
@@ -48,8 +52,8 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
     roll,
     pitch,
     planes: _planes,
-    keepAboveGround,
   } = experimental_clipping || {};
+  const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -102,7 +106,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         return;
       }
 
-      if (keepAboveGround) {
+      if (!allowEnterGround) {
         inProgressSamplingTerrainHeight.current = true;
         sampleTerrainHeight(viewer.scene, translation).then(v => {
           setTerrainHeightEstimate(v ?? 0);
@@ -110,7 +114,7 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         });
       }
     },
-    [keepAboveGround, viewer],
+    [allowEnterGround, viewer],
   );
 
   useEffect(() => {
@@ -133,10 +137,10 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         location?.height,
       );
 
-      if (keepAboveGround) {
+      if (!allowEnterGround) {
         translationWithClamping(
           new TranslationRotationScale(position, undefined, dimensions),
-          keepAboveGround,
+          !!allowEnterGround,
           terrainHeightEstimate,
         );
       }
@@ -155,11 +159,25 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
-    if (keepAboveGround) {
+    if (!allowEnterGround) {
       updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
     }
     prepareClippingPlanes();
-  }, [width, length, height, location?.lng, location?.lat, location?.height, heading, pitch, roll, clippingPlanes.modelMatrix, updateTerrainHeight, keepAboveGround, terrainHeightEstimate]);
+  }, [
+    width,
+    length,
+    height,
+    location?.lng,
+    location?.lat,
+    location?.height,
+    heading,
+    pitch,
+    roll,
+    clippingPlanes.modelMatrix,
+    updateTerrainHeight,
+    allowEnterGround,
+    terrainHeightEstimate,
+  ]);
 
   useEffect(() => {
     if (!styleUrl) {

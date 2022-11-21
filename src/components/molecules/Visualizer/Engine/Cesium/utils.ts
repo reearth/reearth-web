@@ -22,10 +22,10 @@ export const convertCartesian3ToPosition = (
 
 export const translationWithClamping = (
   trs: TranslationRotationScale,
-  keepBoxAboveGround: boolean,
+  allowEnterGround: boolean,
   terrainHeightEstimate: number,
 ) => {
-  if (keepBoxAboveGround) {
+  if (!allowEnterGround) {
     const cartographic = Cartographic.fromCartesian(trs.translation, undefined, new Cartographic());
     const boxBottomHeight = cartographic.height - trs.scale.z / 2;
     const floorHeight = terrainHeightEstimate;
