@@ -1,5 +1,6 @@
 import {
   Cartesian3,
+  Cartographic,
   Cesium3DTileset as Cesium3DTilesetType,
   Cesium3DTileStyle,
   ClippingPlaneCollection as CesiumClippingPlaneCollection,
@@ -9,6 +10,7 @@ import {
   Matrix4,
   Transforms,
   TranslationRotationScale,
+  Math as CesiumMath,
 } from "cesium";
 import ClippingPlane from "cesium/Source/Scene/ClippingPlane";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -108,7 +110,15 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
 
       if (!allowEnterGround) {
         inProgressSamplingTerrainHeight.current = true;
-        sampleTerrainHeight(viewer.scene, translation).then(v => {
+        const cart = Cartographic.fromCartesian(translation);
+        const [lng, lat] = [
+          CesiumMath.toDegrees(cart?.longitude || 0),
+          CesiumMath.toDegrees(cart?.latitude || 0),
+        ];
+        if (!lng || !lat) {
+          return;
+        }
+        sampleTerrainHeight(viewer.scene, lng, lat).then(v => {
           setTerrainHeightEstimate(v ?? 0);
           inProgressSamplingTerrainHeight.current = false;
         });

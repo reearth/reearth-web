@@ -57,7 +57,15 @@ export const useHooks = ({
 
     if (!allowEnterGround) {
       inProgressSamplingTerrainHeight.current = true;
-      sampleTerrainHeight(viewer.scene, trs.translation).then(v => {
+      const cart = Cartographic.fromCartesian(trs.translation);
+      const [lng, lat] = [
+        CesiumMath.toDegrees(cart?.longitude || 0),
+        CesiumMath.toDegrees(cart?.latitude || 0),
+      ];
+      if (!lng || !lat) {
+        return;
+      }
+      sampleTerrainHeight(viewer.scene, lng, lat).then(v => {
         setTerrainHeightEstimate(v ?? 0);
         inProgressSamplingTerrainHeight.current = false;
       });
