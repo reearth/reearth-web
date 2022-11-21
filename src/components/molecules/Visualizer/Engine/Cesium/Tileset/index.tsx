@@ -102,8 +102,8 @@ const Tileset: FC<PrimitiveProps<Property>> = memo(function TilesetPresenter({ l
         return;
       }
 
-      inProgressSamplingTerrainHeight.current = true;
       if (keepAboveGround) {
+        inProgressSamplingTerrainHeight.current = true;
         sampleTerrainHeight(viewer.scene, translation).then(v => {
           setTerrainHeightEstimate(v ?? 0);
           inProgressSamplingTerrainHeight.current = false;

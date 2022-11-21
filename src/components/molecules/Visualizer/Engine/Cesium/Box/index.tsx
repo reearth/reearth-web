@@ -97,8 +97,8 @@ const Box: React.FC<PrimitiveProps<Property>> = memo(function BoxPresenter({ lay
       return;
     }
 
-    inProgressSamplingTerrainHeight.current = true;
     if (keepBoxAboveGround) {
+      inProgressSamplingTerrainHeight.current = true;
       sampleTerrainHeight(viewer.scene, trs.translation).then(v => {
         setTerrainHeightEstimate(v ?? 0);
         inProgressSamplingTerrainHeight.current = false;
