@@ -221,6 +221,6 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
   );
 });
 
-const _debugFlight = true;
+const _debugFlight = false;
 
 export default Tileset;
