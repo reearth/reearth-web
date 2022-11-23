@@ -214,7 +214,7 @@ export default (teamId?: string) => {
     [assetModalOpened, setOpenAssets],
   );
 
-  const onAssetSelect = useCallback((asset?: string) => {
+  const handleAssetSelect = useCallback((asset?: string) => {
     selectAsset(asset);
   }, []);
 
@@ -239,7 +239,7 @@ export default (teamId?: string) => {
     handleModalOpen,
     handleModalClose,
     handleAssetModalToggle,
-    onAssetSelect,
+    handleAssetSelect,
     handleGetMoreProjects,
   };
 };
