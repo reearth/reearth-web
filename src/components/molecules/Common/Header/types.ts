@@ -5,6 +5,11 @@ export type User = {
 export type Team = {
   id?: string;
   name?: string;
+  members?: Array<any>;
+  policy?: {
+    id: string;
+    name: string;
+  } | null;
 };
 
 export type Project = {

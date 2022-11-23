@@ -176,7 +176,6 @@ const HeroBannerButton = styled(Flex)`
   z-index: ${({ theme }) => theme.zIndexes.base};
   overflow: hidden;
 
-  color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
   padding: 120px auto;
   width: 48%;
   height: 114px;
@@ -196,7 +195,11 @@ const HeroBannerButton = styled(Flex)`
     z-index: ${({ theme }) => theme.zIndexes.hidden};
   }
 
-  &:hover: :before {
+  :hover {
+    color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
+  }
+
+  &:hover:before {
     transform: translateY(-50%);
   }
   @media only screen and (max-width: 1024px) {

@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -12,29 +11,24 @@ export type { User, Team, Project } from "./types";
 
 export interface Props {
   className?: string;
-  children?: ReactNode;
   user?: User;
   currentTeam?: Team;
   currentProject?: Project;
-  sceneId?: string;
-  teams: Team[];
+  teams?: Team[];
   icon?: React.ReactNode;
   center?: React.ReactNode;
   right?: React.ReactNode;
-  onBack?: () => void;
-  onForward?: () => void;
+  modalShown?: boolean;
+  dashboard?: boolean;
   onSignOut?: () => void;
   onCreateTeam?: (data: { name: string }) => Promise<void>;
   onChangeTeam?: (teamId: string) => void;
-  modalShown?: boolean;
   openModal?: () => void;
   onModalClose?: (r?: boolean) => void;
-  dashboard?: boolean;
 }
 
 const Header: React.FC<Props> = ({
   className,
-  onSignOut,
   user,
   currentTeam,
   currentProject,
@@ -42,12 +36,13 @@ const Header: React.FC<Props> = ({
   center,
   icon,
   right,
+  modalShown,
+  dashboard,
+  onSignOut,
   onCreateTeam,
   onChangeTeam,
-  modalShown,
   openModal,
   onModalClose,
-  dashboard,
 }) => {
   return (
     <Wrapper className={className}>

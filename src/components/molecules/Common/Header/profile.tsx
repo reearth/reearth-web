@@ -20,7 +20,7 @@ export interface LoginProps {
   currentProject: Project;
 }
 export interface Props {
-  teams: Team[];
+  teams?: Team[];
   onSignOut: () => void;
   onChangeTeam?: (teamId: string) => void;
   openModal?: () => void;

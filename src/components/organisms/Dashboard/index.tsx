@@ -22,17 +22,18 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     projects,
     projectLoading,
     hasMoreProjects,
-    createProject,
-    teams = [],
+    teams,
     currentTeam,
-    createTeam,
-    changeTeam,
+    isPersonal,
     modalShown,
-    openModal,
-    handleModalClose,
     selectedAsset,
     assetModalOpened,
-    toggleAssetModal,
+    handleProjectCreate,
+    handleTeamCreate,
+    handleTeamChange,
+    handleModalOpen,
+    handleModalClose,
+    handleAssetModalToggle,
     onAssetSelect,
     handleGetMoreProjects,
   } = useHooks(teamId);
@@ -45,10 +46,10 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
           teams={teams}
           currentTeam={currentTeam}
           onSignOut={logout}
-          onCreateTeam={createTeam}
-          onChangeTeam={changeTeam}
+          onCreateTeam={handleTeamCreate}
+          onChangeTeam={handleTeamChange}
           modalShown={modalShown}
-          openModal={openModal}
+          openModal={handleModalOpen}
           onModalClose={handleModalClose}
           dashboard
         />
@@ -56,20 +57,20 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
       onGetMoreProjects={handleGetMoreProjects}
       isLoading={projectLoading}
       hasMoreProjects={hasMoreProjects}>
-      <Workspace team={currentTeam} />
+      <Workspace team={currentTeam} isPersonal={isPersonal} />
       <QuickStart
-        onCreateTeam={createTeam}
-        onCreateProject={createProject}
+        onCreateTeam={handleTeamCreate}
+        onCreateProject={handleProjectCreate}
         selectedAsset={selectedAsset}
         onAssetSelect={onAssetSelect}
-        toggleAssetModal={toggleAssetModal}
+        toggleAssetModal={handleAssetModalToggle}
         assetModal={
           <AssetModal
             teamId={teamId}
             initialAssetUrl={selectedAsset}
             isOpen={assetModalOpened}
             onSelect={onAssetSelect}
-            toggleAssetModal={toggleAssetModal}
+            toggleAssetModal={handleAssetModalToggle}
           />
         }
       />

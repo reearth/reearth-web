@@ -15,6 +15,10 @@ export type Team = {
   id?: string;
   name?: string;
   members?: Member[];
+  policy?: {
+    id: string;
+    name: string;
+  };
 };
 
 export type Status = StatusType;
@@ -27,4 +31,5 @@ export type Project = {
   isArchived?: boolean;
   description: string;
   sceneId?: string;
+  updatedAt?: string;
 };

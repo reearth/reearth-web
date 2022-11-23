@@ -82,6 +82,7 @@ New Workspace: New Workspace
 Create New Workspace: Create New Workspace
 Workspace Name: Workspace Name
 Plugin Marketplace: Plugin Marketplace
+timeSince: 'Edited {{timeSince}}'
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
   You have no projects in your workspace. Click the button above in the Quick
   Start to create a project now!

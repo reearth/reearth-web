@@ -23,6 +23,7 @@ export type Selected =
   | { type: "cluster"; clusterId: string }
   | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }
   | { type: "dataset"; datasetSchemaId: string };
+
 const selected = atom<Selected | undefined>(undefined);
 export const useSelected = () => useAtom(selected);
 
@@ -45,6 +46,18 @@ export type SceneMode = "3d" | "2d" | "columbus";
 const sceneMode = atom<SceneMode>("3d");
 export const useSceneMode = () => useAtom(sceneMode);
 
+export type Policy = {
+  id: string;
+  name: string;
+  projectCount?: number | null;
+  memberCount?: number | null;
+  publishedProjectCount?: number | null;
+  layerCount?: number | null;
+  assetStorageSize?: number | null;
+  datasetSchemaCount?: number | null;
+  datasetCount?: number | null;
+};
+
 export type Team = {
   id: string;
   name: string;
@@ -52,7 +65,10 @@ export type Team = {
   assets?: any;
   projects?: any;
   personal?: boolean;
+  policyId?: string | null;
+  policy?: Policy | null;
 };
+
 const team = atom<Team | undefined>(undefined);
 export const useTeam = () => useAtom(team);
 
@@ -62,6 +78,7 @@ export type Project = {
   sceneId?: string;
   isArchived?: boolean;
 };
+
 const project = atom<Project | undefined>(undefined);
 export const useProject = () => useAtom(project);
 
@@ -72,6 +89,7 @@ export type Notification = {
   heading?: string;
   text: string;
 };
+
 const notification = atom<Notification | undefined>(undefined);
 export const useNotification = () => useAtom(notification);
 

@@ -76,6 +76,7 @@ New Workspace: 新規ワークスペース
 Create New Workspace: 新規ワークスペース作成
 Workspace Name: ワークスペース名
 Plugin Marketplace: プラグインマーケットプレイス
+timeSince: '{{timeSince}}に変更'
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: ワークスペースにプロジェクトがありません。クイックスタート内の「新規プロジェクト作成」ボタンをクリックして、プロジェクトを作成してください。
 Quick Start: クイックスタート
 User guide: ユーザーガイド

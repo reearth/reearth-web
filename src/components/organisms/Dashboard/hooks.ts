@@ -29,7 +29,7 @@ export default (teamId?: string) => {
 
   const { data, refetch } = useGetMeQuery();
   const [modalShown, setModalShown] = useState(false);
-  const openModal = useCallback(() => setModalShown(true), []);
+  const handleModalOpen = useCallback(() => setModalShown(true), []);
   const t = useT();
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ export default (teamId?: string) => {
     }
   }, [currentTeam, team, setCurrentTeam, personal]);
 
-  const changeTeam = useCallback(
+  const handleTeamChange = useCallback(
     (teamId: string) => {
       const team = teams?.find(team => team.id === teamId);
       if (team) {
@@ -70,7 +70,7 @@ export default (teamId?: string) => {
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
-  const createTeam = useCallback(
+  const handleTeamCreate = useCallback(
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
@@ -131,6 +131,7 @@ export default (teamId?: string) => {
               status: toPublishmentStatus(project.publishmentStatus),
               isArchived: project.isArchived,
               sceneId: project.scene?.id,
+              updatedAt: project.updatedAt.toString(),
             }
           : undefined,
       )
@@ -158,7 +159,7 @@ export default (teamId?: string) => {
 
   const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
-  const createProject = useCallback(
+  const handleProjectCreate = useCallback(
     async (data: { name: string; description: string; imageUrl: string | null }) => {
       if (!teamId) return;
       const project = await createNewProject({
@@ -202,7 +203,7 @@ export default (teamId?: string) => {
   const [assetModalOpened, setOpenAssets] = useState(false);
   const [selectedAsset, selectAsset] = useState<string | undefined>(undefined);
 
-  const toggleAssetModal = useCallback(
+  const handleAssetModalToggle = useCallback(
     (b?: boolean) => {
       if (!b) {
         setOpenAssets(!assetModalOpened);
@@ -226,17 +227,18 @@ export default (teamId?: string) => {
     projects,
     projectLoading: loading ?? isRefetchingProjects,
     hasMoreProjects,
-    createProject,
     teams,
     currentTeam: team as Team,
-    createTeam,
-    changeTeam,
+    isPersonal: personal,
     modalShown,
-    openModal,
-    handleModalClose,
     selectedAsset,
     assetModalOpened,
-    toggleAssetModal,
+    handleProjectCreate,
+    handleTeamCreate,
+    handleTeamChange,
+    handleModalOpen,
+    handleModalClose,
+    handleAssetModalToggle,
     onAssetSelect,
     handleGetMoreProjects,
   };
