@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 import { useT } from "@reearth/i18n";
 import { useError, useNotification, Notification } from "@reearth/state";
 
-export const notificationTimeout = 5000;
+const notificationTimeout = 5000;
 
 export default () => {
   const t = useT();
@@ -11,32 +11,45 @@ export default () => {
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
 
-  const errorMessage = t("Error");
-  const warningMessage = t("Warning");
-  const noticeMessage = t("Notice");
+  const errorHeading = t("Error");
+  const warningHeading = t("Warning");
+  const noticeHeading = t("Notice");
 
-  const notificationHeading =
-    notification?.type === "error"
-      ? errorMessage
-      : notification?.type === "warning"
-      ? warningMessage
-      : noticeMessage;
+  const notificationHeading = useMemo(
+    () =>
+      notification?.type === "error"
+        ? errorHeading
+        : notification?.type === "warning"
+        ? warningHeading
+        : noticeHeading,
+    [notification?.type, errorHeading, warningHeading, noticeHeading],
+  );
 
   const resetNotification = useCallback(() => setNotification(undefined), [setNotification]);
 
-  const setModal = (show: boolean) => {
+  const setModal = useCallback((show: boolean) => {
     changeVisibility(show);
-  };
+  }, []);
 
   useEffect(() => {
     if (!error) return;
-    setNotification({
-      type: "error",
-      heading: errorMessage,
-      text: t("Something went wrong. Please try again later."),
-    });
+    if (error.includes("policy violation")) {
+      setNotification({
+        type: "info",
+        heading: noticeHeading,
+        text: t(
+          `Your workspace has reached its limit for this action. Please check reearth.io for details.`,
+        ),
+      });
+    } else {
+      setNotification({
+        type: "error",
+        heading: errorHeading,
+        text: t("Something went wrong. Please try again later."),
+      });
+    }
     setError(undefined);
-  }, [error, setError, errorMessage, setNotification, t]);
+  }, [error, setError, errorHeading, noticeHeading, setNotification, t]);
 
   useEffect(() => {
     if (!notification) return;
@@ -52,12 +65,12 @@ export default () => {
 
   return {
     visible,
-    setModal,
     notification: {
       type: notification?.type,
       heading: notificationHeading,
       text: notification?.text,
     } as Notification,
+    setModal,
     resetNotification,
   };
 };
