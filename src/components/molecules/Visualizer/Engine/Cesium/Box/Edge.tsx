@@ -10,6 +10,7 @@ export type EdgeEventCallback = EventCallback<
   [
     event: any,
     edgeEvent: {
+      layerId: string;
       index: number;
     },
   ]

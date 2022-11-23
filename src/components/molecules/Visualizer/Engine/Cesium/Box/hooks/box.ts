@@ -119,7 +119,7 @@ export const useHooks = ({
   }, []);
   const prevMousePosition2dForPoint = useRef<Cartesian2>();
   const handlePointMouseMove: PointEventCallback = useCallback(
-    (e, { position, oppositePosition, pointLocal, index }) => {
+    (e, { position, oppositePosition, pointLocal, index, layerId }) => {
       if (currentPointIndex.current !== index || !position || !oppositePosition || !pointLocal) {
         return;
       }
@@ -214,14 +214,17 @@ export const useHooks = ({
         nextTranslation,
       ) as Cartographic;
 
-      ctx?.emit("boxscale", {
-        width: nextScale.x,
-        length: nextScale.y,
-        height: nextScale.z,
-        location: {
-          lat: CesiumMath.toDegrees(cartographic?.latitude),
-          lng: CesiumMath.toDegrees(cartographic?.longitude),
-          height: cartographic?.height,
+      ctx?.emit("layeredit", {
+        layerId,
+        scale: {
+          width: nextScale.x,
+          length: nextScale.y,
+          height: nextScale.z,
+          location: {
+            lat: CesiumMath.toDegrees(cartographic?.latitude),
+            lng: CesiumMath.toDegrees(cartographic?.longitude),
+            height: cartographic?.height,
+          },
         },
       });
     },
@@ -239,7 +242,7 @@ export const useHooks = ({
   }, []);
   const prevMouseXAxisForEdge = useRef<number>();
   const handleEdgeMouseMove: EdgeEventCallback = useCallback(
-    (e, { index }) => {
+    (e, { index, layerId }) => {
       if (currentEdgeIndex.current !== index) {
         return;
       }
@@ -262,10 +265,13 @@ export const useHooks = ({
 
       const { heading, pitch, roll } = HeadingPitchRoll.fromQuaternion(nextRotation);
 
-      ctx?.emit("boxrotate", {
-        heading,
-        pitch,
-        roll,
+      ctx?.emit("layeredit", {
+        layerId,
+        rotation: {
+          heading,
+          pitch,
+          roll,
+        },
       });
     },
     [trs, ctx],

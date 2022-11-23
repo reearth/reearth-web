@@ -16,6 +16,7 @@ export type PointEventCallback = EventCallback<
     event: any,
     pointEvent: {
       index: number;
+      layerId: string;
       opposite: boolean;
       position?: Cartesian3;
       oppositePosition?: Cartesian3;

@@ -71,23 +71,23 @@ export const useHooks = ({
       if (e.layerId !== id) {
         return;
       }
-      onMouseDown?.(e, { index });
+      onMouseDown?.(e, { layerId: id, index });
     },
     [onMouseDown, id, index],
   );
 
   const handleMouseMove: EventCallback = useCallback(
     e => {
-      onMouseMove?.(e, { index });
+      onMouseMove?.(e, { layerId: id, index });
     },
-    [onMouseMove, index],
+    [onMouseMove, index, id],
   );
 
   const handleMouseUp: EventCallback = useCallback(
     e => {
-      onMouseUp?.(e, { index });
+      onMouseUp?.(e, { layerId: id, index });
     },
-    [onMouseUp, index],
+    [onMouseUp, index, id],
   );
 
   useEffect(() => {

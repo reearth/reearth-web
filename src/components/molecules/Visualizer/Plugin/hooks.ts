@@ -236,8 +236,7 @@ export function useAPI({
         "wheel",
         "tick",
         "resize",
-        "boxscale",
-        "boxrotate",
+        "layeredit",
       ]);
     }
 

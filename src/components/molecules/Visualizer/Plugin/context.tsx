@@ -85,7 +85,7 @@ export type Props = {
 
 type SelectedReearthEventType = Pick<
   ReearthEventType,
-  "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "boxscale" | "boxrotate"
+  "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "layeredit"
 >;
 
 export type Context = {

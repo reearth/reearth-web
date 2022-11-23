@@ -43,6 +43,9 @@ export const useHooks = ({
   onPointMouseMove?: PointEventCallback;
   onPointMouseUp?: PointEventCallback;
 }) => {
+  const layerId = `${id}-${index}`;
+  const oppositeLayerId = `${id}-opposite-${index}`;
+
   const ctx = useContext();
 
   const [entitiesPosition] = useState(() => {
@@ -100,19 +103,21 @@ export const useHooks = ({
   const isOppositePointClicked = useRef(false);
   const handlePointMouseDown: EventCallback = useCallback(
     e => {
-      isOppositePointClicked.current = e.layerId === `${id}-opposite-${index}`;
-      if (e.layerId === `${id}-${index}` || e.layerId === `${id}-opposite-${index}`) {
+      isOppositePointClicked.current = e.layerId === oppositeLayerId;
+      if (e.layerId === layerId || e.layerId === oppositeLayerId) {
         onPointMouseDown?.(e, {
+          layerId: isOppositePointClicked.current ? oppositeLayerId : layerId,
           index,
           opposite: isOppositePointClicked.current,
         });
       }
     },
-    [onPointMouseDown, index, id],
+    [onPointMouseDown, index, layerId, oppositeLayerId],
   );
   const handlePointMouseMove: EventCallback = useCallback(
     e => {
       onPointMouseMove?.(e, {
+        layerId: isOppositePointClicked.current ? oppositeLayerId : layerId,
         index,
         opposite: isOppositePointClicked.current,
         position: isOppositePointClicked.current
@@ -124,16 +129,17 @@ export const useHooks = ({
         pointLocal: isOppositePointClicked ? scalePoint.oppositePoint : scalePoint.point,
       });
     },
-    [onPointMouseMove, index, entitiesPosition, scalePoint],
+    [onPointMouseMove, index, entitiesPosition, scalePoint, layerId, oppositeLayerId],
   );
   const handlePointMouseUp: EventCallback = useCallback(
     e => {
       onPointMouseUp?.(e, {
+        layerId: isOppositePointClicked.current ? oppositeLayerId : layerId,
         index,
         opposite: isOppositePointClicked.current,
       });
     },
-    [onPointMouseUp, index],
+    [onPointMouseUp, index, layerId, oppositeLayerId],
   );
 
   useEffect(() => {
