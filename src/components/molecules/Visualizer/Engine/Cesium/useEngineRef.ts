@@ -125,26 +125,13 @@ export default function useEngineRef(
       zoomIn: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        const camera = scene.camera;
         const relativeAmount = 1 / amount;
-        if (scene.mode === Cesium.SceneMode.SCENE2D) {
-          camera.zoomIn(camera.positionCartographic.height * (1 - relativeAmount));
-        } else {
-          zoom({ camera, scene, relativeAmount }, options);
-        }
+        zoom({ viewer, relativeAmount }, options);
       },
       zoomOut: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        if (scene.mode === Cesium.SceneMode.SCENE2D) {
-          const relativeAmount = 1 / amount;
-          camera.zoomOut(camera.positionCartographic.height * (1 - relativeAmount));
-        } else {
-          zoom({ camera, scene, relativeAmount: amount }, options);
-        }
+        zoom({ viewer, relativeAmount: amount }, options);
       },
       orbit: radian => {
         const viewer = cesium.current?.cesiumElement;
@@ -169,7 +156,7 @@ export default function useEngineRef(
 
         camera.lookAtTransform(frame);
 
-        if (viewer.scene.mode === Cesium.SceneMode.SCENE2D) {
+        if (viewer.scene.mode !== Cesium.SceneMode.SCENE3D) {
           camera.move(
             new Cesium.Cartesian3(x, y, 0),
             (Math.max(scene.canvas.clientWidth, scene.canvas.clientHeight) / 100) *
@@ -195,7 +182,7 @@ export default function useEngineRef(
           camera.positionWC,
           scene.globe.ellipsoid,
         );
-        if (viewer.scene.mode === Cesium.SceneMode.SCENE2D) {
+        if (viewer.scene.mode !== Cesium.SceneMode.SCENE3D) {
           camera.twistRight(radian - -camera.heading);
           camera.twistLeft(radian - -camera.heading);
         } else {
