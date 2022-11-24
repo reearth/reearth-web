@@ -1,14 +1,15 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
 import Avatar from "@reearth/components/atoms/Avatar";
+import Button from "@reearth/components/atoms/Button";
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
-import HelpButton from "@reearth/components/atoms/HelpButton";
 import Icon from "@reearth/components/atoms/Icon";
+import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
-import { Team as TeamType } from "@reearth/components/molecules/Dashboard/types";
+import { Workspace as WorkspaceType } from "@reearth/components/molecules/Dashboard/types";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme, metrics } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -17,21 +18,27 @@ import { Member } from "./types";
 
 export type Props = {
   className?: string;
-  team?: TeamType;
+  workspace?: WorkspaceType;
   isPersonal?: boolean;
 };
 
-const Workspace: React.FC<Props> = ({ className, team, isPersonal }) => {
+const Workspace: React.FC<Props> = ({ className, workspace, isPersonal }) => {
   const theme = useTheme();
   const t = useT();
   const isSmallWindow = useMedia("(max-width: 1024px)");
 
-  const { name, members, policy } = team ?? {};
+  const [policyModalOpen, setPolicyModal] = useState(false);
 
-  const teamLength = useMemo(() => team?.members?.length ?? 0, [team?.members]);
-  const excessMembers = useMemo(() => teamLength - 5 ?? 0, [teamLength]);
+  const { name, members, policy } = workspace ?? {};
+
+  const workspaceMemberCount = useMemo(() => workspace?.members?.length ?? 0, [workspace?.members]);
+  const excessMembers = useMemo(() => workspaceMemberCount - 5 ?? 0, [workspaceMemberCount]);
 
   const shownMembers: Member[] | undefined = useMemo(() => members?.slice(0, 5), [members]);
+
+  const handlePolicyModalOpen = useCallback(() => setPolicyModal(true), []);
+
+  const handlePolicyModalClose = useCallback(() => setPolicyModal(false), []);
 
   return (
     <StyledDashboardBlock className={className} grow={5}>
@@ -42,21 +49,34 @@ const Workspace: React.FC<Props> = ({ className, team, isPersonal }) => {
             {isPersonal && t("'s workspace")}
           </Text>
           {policy?.name && (
-            <HelpButton
-              balloonDirection="right-start"
-              descriptionTitle={policy.name}
-              description={t(
-                `Your workspace is currently a ${policy.name} workspace. If you would like to know the details of your plan, or change your plan, please click this button.
-                `,
-              )}
-              mouseEnterDelay={250}>
+            <>
               <PolicyText
                 size={isSmallWindow ? "xs" : "m"}
                 weight="bold"
-                smallWindow={isSmallWindow}>
+                smallWindow={isSmallWindow}
+                onClick={handlePolicyModalOpen}>
                 {policy.name}
               </PolicyText>
-            </HelpButton>
+              <Modal
+                title={t("Check your plan")}
+                size="sm"
+                isVisible={policyModalOpen}
+                button1={
+                  <Button large onClick={handlePolicyModalClose}>
+                    {t("OK")}
+                  </Button>
+                }
+                onClose={handlePolicyModalClose}>
+                <Text size="m">
+                  {t(`Your workspace is currently a ${policy.name} workspace. If you would like to know the
+               details of your plan, or change your plan, please click `)}
+                  <PolicyLink href="https://www.reearth.io/policy" target="_blank">
+                    {t("here")}
+                  </PolicyLink>
+                  .
+                </Text>
+              </Modal>
+            </>
           )}
         </WorkspaceHeader>
         <Flex>
@@ -66,7 +86,7 @@ const Workspace: React.FC<Props> = ({ className, team, isPersonal }) => {
             ))}
             {excessMembers > 0 && <Avatar innerText={excessMembers} />}
           </Flex>
-          <StyledLink to={`/settings/workspaces/${team?.id}`}>
+          <StyledLink to={`/settings/workspaces/${workspace?.id}`}>
             <StyledIcon icon="settings" />
           </StyledLink>
         </Flex>
@@ -83,6 +103,15 @@ const StyledDashboardBlock = styled(DashboardBlock)`
 `;
 
 const WorkspaceHeader = styled(Flex)``;
+
+const PolicyLink = styled.a`
+  text-decoration: underline;
+  color: ${({ theme }) => theme.main.accent};
+
+  :hover {
+    color: ${({ theme }) => theme.main.select};
+  }
+`;
 
 const PolicyText = styled(Text)<{ smallWindow?: boolean }>`
   background: #2b2a2f;

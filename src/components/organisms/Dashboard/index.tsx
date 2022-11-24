@@ -58,7 +58,7 @@ const Dashboard: React.FC<Props> = ({ workspaceId }) => {
       isLoading={projectLoading}
       hasMoreProjects={hasMoreProjects}
       onGetMoreProjects={handleGetMoreProjects}>
-      <Workspace team={currentWorkspace} isPersonal={isPersonal} />
+      <Workspace workspace={currentWorkspace} isPersonal={isPersonal} />
       <QuickStart
         selectedAsset={selectedAsset}
         onWorkspaceCreate={handleWorkspaceCreate}
