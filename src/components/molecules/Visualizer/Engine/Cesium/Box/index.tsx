@@ -74,6 +74,8 @@ const Box: React.FC<PrimitiveProps<Property, any, SceneProperty>> = memo(functio
     handleEdgeMouseUp,
   } = useHooks({ layer, sceneProperty });
 
+  const scalePointDimension = ((width + height + length) / 3) * 0.05;
+
   return !isVisible ? null : (
     <>
       {SIDE_PLANES.map((plane, i) => (
@@ -124,7 +126,11 @@ const Box: React.FC<PrimitiveProps<Property, any, SceneProperty>> = memo(functio
             pointOutlineWidth={pointOutlineWidth}
             axisLineColor={scalePointStyle.axisLineColor}
             axisLineWidth={axisLineWidth}
-            dimensions={{ width: width * 0.05, height: height * 0.05, length: length * 0.05 }}
+            dimensions={{
+              width: scalePointDimension,
+              height: scalePointDimension,
+              length: scalePointDimension,
+            }}
             visiblePoint={scalePoint}
             visibleAxisLine={axisLine && activeScalePointIndex === i}
             onPointMouseDown={handlePointMouseDown}
