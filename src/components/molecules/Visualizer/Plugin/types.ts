@@ -53,7 +53,7 @@ export type MouseEvent = {
 export type LayerEditEvent = {
   layerId: string | undefined;
   scale?: { width: number; length: number; height: number; location: LatLngHeight };
-  rotation?: { heading: number; pitch: number; roll: number };
+  rotate?: { heading: number; pitch: number; roll: number };
 };
 
 export type ReearthEventType = {

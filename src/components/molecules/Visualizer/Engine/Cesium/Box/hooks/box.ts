@@ -267,7 +267,7 @@ export const useHooks = ({
 
       ctx?.emit("layeredit", {
         layerId,
-        rotation: {
+        rotate: {
           heading,
           pitch,
           roll,
