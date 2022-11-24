@@ -11,7 +11,7 @@ export type Member = {
   };
 };
 
-export type Team = {
+export type Workspace = {
   id?: string;
   name?: string;
   members?: Member[];

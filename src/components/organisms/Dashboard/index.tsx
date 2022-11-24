@@ -11,10 +11,10 @@ import AssetModal from "@reearth/components/organisms/Common/AssetModal";
 import useHooks from "./hooks";
 
 export type Props = {
-  teamId?: string;
+  workspaceId?: string;
 };
 
-const Dashboard: React.FC<Props> = ({ teamId }) => {
+const Dashboard: React.FC<Props> = ({ workspaceId }) => {
   const { logout } = useAuth();
 
   const {
@@ -22,33 +22,34 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
     projects,
     projectLoading,
     hasMoreProjects,
-    teams,
-    currentTeam,
+    workspaces,
+    currentWorkspace,
     isPersonal,
     modalShown,
     selectedAsset,
     assetModalOpened,
     handleProjectCreate,
-    handleTeamCreate,
-    handleTeamChange,
+    handleWorkspaceCreate,
+    handleWorkspaceChange,
     handleModalOpen,
     handleModalClose,
     handleAssetModalToggle,
     handleAssetSelect,
     handleGetMoreProjects,
-  } = useHooks(teamId);
+  } = useHooks(workspaceId);
 
   return (
     <MoleculeDashboard
       header={
         <MoleculeHeader
           user={user}
-          teams={teams}
-          currentTeam={currentTeam}
+          workspaces={workspaces}
+          currentWorkspace={currentWorkspace}
+          personalWorkspace={isPersonal}
           modalShown={modalShown}
           onSignOut={logout}
-          onCreateTeam={handleTeamCreate}
-          onChangeTeam={handleTeamChange}
+          onWorkspaceCreate={handleWorkspaceCreate}
+          onWorkspaceChange={handleWorkspaceChange}
           openModal={handleModalOpen}
           onModalClose={handleModalClose}
           dashboard
@@ -57,16 +58,16 @@ const Dashboard: React.FC<Props> = ({ teamId }) => {
       isLoading={projectLoading}
       hasMoreProjects={hasMoreProjects}
       onGetMoreProjects={handleGetMoreProjects}>
-      <Workspace team={currentTeam} isPersonal={isPersonal} />
+      <Workspace team={currentWorkspace} isPersonal={isPersonal} />
       <QuickStart
         selectedAsset={selectedAsset}
-        onCreateTeam={handleTeamCreate}
-        onCreateProject={handleProjectCreate}
+        onWorkspaceCreate={handleWorkspaceCreate}
+        onProjectCreate={handleProjectCreate}
         onAssetSelect={handleAssetSelect}
         toggleAssetModal={handleAssetModalToggle}
         assetModal={
           <AssetModal
-            teamId={teamId}
+            teamId={workspaceId}
             initialAssetUrl={selectedAsset}
             isOpen={assetModalOpened}
             onSelect={handleAssetSelect}

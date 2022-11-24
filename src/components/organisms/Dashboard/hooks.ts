@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import type { User } from "@reearth/components/molecules/Common/Header";
-import type { Project, Team } from "@reearth/components/molecules/Dashboard";
+import type { Project, Workspace } from "@reearth/components/molecules/Dashboard";
 import {
   useGetMeQuery,
   useGetProjectsQuery,
@@ -21,7 +21,7 @@ export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][num
 
 const projectsPerPage = 9;
 
-export default (teamId?: string) => {
+export default (workspaceId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
@@ -44,33 +44,33 @@ export default (teamId?: string) => {
     name: data?.me?.name || "",
   };
 
-  const teams = data?.me?.teams;
-  const team = teams?.find(team => team.id === teamId);
-  const personal = teamId === data?.me?.myTeam.id;
+  const workspaces = data?.me?.teams;
+  const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
+  const personal = workspaceId === data?.me?.myTeam.id;
   const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
-    if (team?.id && team.id !== currentTeam?.id) {
+    if (workspace?.id && workspace.id !== currentTeam?.id) {
       setCurrentTeam({
         personal,
-        ...team,
+        ...workspace,
       });
     }
-  }, [currentTeam, team, setCurrentTeam, personal]);
+  }, [currentTeam, workspace, setCurrentTeam, personal]);
 
-  const handleTeamChange = useCallback(
-    (teamId: string) => {
-      const team = teams?.find(team => team.id === teamId);
-      if (team) {
-        setCurrentTeam(team);
-        navigate(`/dashboard/${teamId}`);
+  const handleWorkspaceChange = useCallback(
+    (workspaceId: string) => {
+      const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
+      if (workspace) {
+        setCurrentTeam(workspace);
+        navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [teams, setCurrentTeam, navigate],
+    [workspaces, setCurrentTeam, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
-  const handleTeamCreate = useCallback(
+  const handleWorkspaceCreate = useCallback(
     async (data: { name: string }) => {
       const results = await createTeamMutation({
         variables: { name: data.name },
@@ -112,8 +112,8 @@ export default (teamId?: string) => {
     fetchMore,
     networkStatus,
   } = useGetProjectsQuery({
-    variables: { teamId: teamId ?? "", last: projectsPerPage },
-    skip: !teamId,
+    variables: { teamId: workspaceId ?? "", last: projectsPerPage },
+    skip: !workspaceId,
     notifyOnNetworkStatusChange: true,
   });
 
@@ -161,10 +161,10 @@ export default (teamId?: string) => {
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
   const handleProjectCreate = useCallback(
     async (data: { name: string; description: string; imageUrl: string | null }) => {
-      if (!teamId) return;
+      if (!workspaceId) return;
       const project = await createNewProject({
         variables: {
-          teamId,
+          teamId: workspaceId,
           visualizer: Visualizer.Cesium,
           name: data.name,
           description: data.description,
@@ -197,7 +197,7 @@ export default (teamId?: string) => {
         setModalShown(false);
       }
     },
-    [createNewProject, createScene, teamId, t, setNotification],
+    [workspaceId, createNewProject, createScene, t, setNotification],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);
@@ -227,15 +227,15 @@ export default (teamId?: string) => {
     projects,
     projectLoading: loading ?? isRefetchingProjects,
     hasMoreProjects,
-    teams,
-    currentTeam: team as Team,
+    workspaces,
+    currentWorkspace: workspace as Workspace,
     isPersonal: personal,
     modalShown,
     selectedAsset,
     assetModalOpened,
     handleProjectCreate,
-    handleTeamCreate,
-    handleTeamChange,
+    handleWorkspaceCreate,
+    handleWorkspaceChange,
     handleModalOpen,
     handleModalClose,
     handleAssetModalToggle,

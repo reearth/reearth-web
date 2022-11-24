@@ -2,7 +2,7 @@ export type User = {
   name: string;
 };
 
-export type Team = {
+export type Workspace = {
   id?: string;
   name?: string;
   members?: Array<any>;

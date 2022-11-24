@@ -13,15 +13,15 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 export interface Props {
   className?: string;
-  onCreateTeam?: (data: { name: string }) => Promise<void>;
-  onCreateProject?: (data: {
+  assetModal?: React.ReactNode;
+  selectedAsset?: string;
+  onWorkspaceCreate?: (data: { name: string }) => Promise<void>;
+  onProjectCreate?: (data: {
     name: string;
     description: string;
     imageUrl: string;
   }) => Promise<void>;
-  assetModal?: React.ReactNode;
   toggleAssetModal?: () => void;
-  selectedAsset?: string;
   onAssetSelect?: (asset?: string) => void;
 }
 
@@ -29,8 +29,8 @@ const QuickStart: React.FC<Props> = ({
   className,
   assetModal,
   selectedAsset,
-  onCreateTeam,
-  onCreateProject,
+  onWorkspaceCreate,
+  onProjectCreate,
   toggleAssetModal,
   onAssetSelect,
 }) => {
@@ -91,7 +91,7 @@ const QuickStart: React.FC<Props> = ({
       <ProjectCreationModal
         open={projCreateOpen}
         onClose={handleProjModalClose}
-        onSubmit={onCreateProject}
+        onSubmit={onProjectCreate}
         toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}
         assetModal={assetModal}
@@ -99,7 +99,7 @@ const QuickStart: React.FC<Props> = ({
       <WorkspaceCreationModal
         open={workCreateOpen}
         onClose={() => setWorkCreateOpen(false)}
-        onSubmit={onCreateTeam}
+        onSubmit={onWorkspaceCreate}
       />
     </StyledDashboardBlock>
   );

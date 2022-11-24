@@ -5,24 +5,24 @@ import WorkspaceCreationModal from "@reearth/components/molecules/Common/Workspa
 import { styled, metrics, css } from "@reearth/theme";
 
 import Profile from "./profile";
-import type { User, Team, Project } from "./types";
+import type { User, Workspace } from "./types";
 
-export type { User, Team, Project } from "./types";
+export type { User, Workspace } from "./types";
 
 export interface Props {
   className?: string;
   user?: User;
-  currentTeam?: Team;
-  currentProject?: Project;
-  teams?: Team[];
+  currentWorkspace?: Workspace;
+  personalWorkspace?: boolean;
+  workspaces?: Workspace[];
   icon?: React.ReactNode;
   center?: React.ReactNode;
   right?: React.ReactNode;
   modalShown?: boolean;
   dashboard?: boolean;
   onSignOut?: () => void;
-  onCreateTeam?: (data: { name: string }) => Promise<void>;
-  onChangeTeam?: (teamId: string) => void;
+  onWorkspaceCreate?: (data: { name: string }) => Promise<void>;
+  onWorkspaceChange?: (workspaceId: string) => void;
   openModal?: () => void;
   onModalClose?: (r?: boolean) => void;
 }
@@ -30,17 +30,17 @@ export interface Props {
 const Header: React.FC<Props> = ({
   className,
   user,
-  currentTeam,
-  currentProject,
-  teams,
+  currentWorkspace,
+  personalWorkspace,
+  workspaces,
   center,
   icon,
   right,
   modalShown,
   dashboard,
   onSignOut,
-  onCreateTeam,
-  onChangeTeam,
+  onWorkspaceCreate,
+  onWorkspaceChange,
   openModal,
   onModalClose,
 }) => {
@@ -48,25 +48,25 @@ const Header: React.FC<Props> = ({
     <Wrapper className={className}>
       <Content>
         <LeftArea>
-          <StyledLink to={`/dashboard/${currentTeam?.id}`}>
+          <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
             {!dashboard && <StyledIcon icon="dashboard" size={24} />}
           </StyledLink>
           {icon}
-          {onSignOut && onChangeTeam && (
+          {onSignOut && onWorkspaceChange && (
             <>
               <Profile
                 user={user}
-                currentTeam={currentTeam}
-                currentProject={currentProject}
-                teams={teams}
+                currentWorkspace={currentWorkspace}
+                personalWorkspace={personalWorkspace}
+                workspaces={workspaces}
                 onSignOut={onSignOut}
-                onChangeTeam={onChangeTeam}
+                onWorkspaceChange={onWorkspaceChange}
                 openModal={openModal}
               />
               <WorkspaceCreationModal
                 open={modalShown}
                 onClose={onModalClose}
-                onSubmit={onCreateTeam}
+                onSubmit={onWorkspaceCreate}
               />
             </>
           )}

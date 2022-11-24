@@ -13,22 +13,27 @@ import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
-  currentTeam: Team;
-  teams: Team[];
-  onChangeTeam?: (teamId: string) => void;
+  currentWorkspace: Team;
+  workspaces: Team[];
+  onWorkspaceChange?: (workspaceId: string) => void;
   openModal?: () => void;
 };
 
-const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal }) => {
+const WorkspaceMenu: React.FC<Props> = ({
+  currentWorkspace,
+  workspaces,
+  onWorkspaceChange,
+  openModal,
+}) => {
   const t = useT();
   const dropDownRef = useRef<DropDownRef>(null);
 
-  const handleTeamChange = useCallback(
+  const handleWorkspaceChange = useCallback(
     (t: string) => {
       dropDownRef.current?.close();
-      onChangeTeam?.(t);
+      onWorkspaceChange?.(t);
     },
-    [onChangeTeam],
+    [onWorkspaceChange],
   );
 
   const label = <MenuListItemLabel text={t("Workspaces")} />;
@@ -38,8 +43,10 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
     <Dropdown label={label} direction="right" hasIcon>
       <DropdownInner>
         <MenuList>
-          {teams.map(team => (
-            <MenuListItem key={team.id} onClick={() => team.id && handleTeamChange(team.id)}>
+          {workspaces.map(workspace => (
+            <MenuListItem
+              key={workspace.id}
+              onClick={() => workspace.id && handleWorkspaceChange(workspace.id)}>
               <TeamStatus align="center" justify="space-between">
                 <Text
                   size="m"
@@ -51,9 +58,9 @@ const TeamMenu: React.FC<Props> = ({ currentTeam, teams, onChangeTeam, openModal
                     minWidth: 0,
                     flex: 1,
                   }}>
-                  {team.name}
+                  {workspace.name}
                 </Text>
-                {team.id === currentTeam.id && <TeamStatusIcon isActive />}
+                {workspace.id === currentWorkspace.id && <TeamStatusIcon isActive />}
               </TeamStatus>
             </MenuListItem>
           ))}
@@ -93,4 +100,4 @@ const TeamStatusIcon = styled.div<{ isActive: boolean }>`
   background-color: ${({ theme }) => theme.main.highlighted};
 `;
 
-export default TeamMenu;
+export default WorkspaceMenu;
