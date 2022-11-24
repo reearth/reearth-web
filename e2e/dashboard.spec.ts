@@ -20,5 +20,5 @@ test("can create a project", async ({ page, reearth }) => {
   await page.getByRole("button", { name: "Create" }).click();
 
   await expect(page.getByText("Test")).toBeVisible();
-  await expect(page.getByText("test description2")).toBeVisible();
+  await expect(page.getByText("test description")).toBeVisible();
 });
