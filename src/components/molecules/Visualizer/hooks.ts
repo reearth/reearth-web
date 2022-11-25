@@ -23,7 +23,7 @@ import type {
   Clock,
   FlyToDestination,
   LookAtDestination,
-  SetUIPositionOptions,
+  WidgetLocationOptions,
   Tag,
 } from "./Plugin/types";
 import { useOverriddenProperty } from "./utils";
@@ -263,7 +263,7 @@ export default ({
     alignSystem,
   );
 
-  const overrideWidgetPosition = useCallback((widgetId: string, options: SetUIPositionOptions) => {
+  const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (
       !widgetId ||
       !["outer", "inner"].includes(options.zone) ||
@@ -369,7 +369,7 @@ export default ({
       selectLayer,
       overrideLayerProperty,
       overrideSceneProperty,
-      overrideWidgetPosition,
+      moveWidget,
     },
     engineRef,
     layers,
