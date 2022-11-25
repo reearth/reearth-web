@@ -74,9 +74,7 @@ export const useHooks = ({
 
   useEffect(() => {
     updateTrs(trs, property, terrainHeightEstimate, allowEnterGround);
-    if (!allowEnterGround) {
-      updateTerrainHeight();
-    }
+    updateTerrainHeight();
   }, [property, trs, viewer, terrainHeightEstimate, updateTerrainHeight, allowEnterGround]);
 
   const style = useMemo(
