@@ -14,7 +14,6 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
-  Viewport,
   SetUIPositionOptions,
 } from "./types";
 
@@ -25,6 +24,7 @@ export type CommonReearth = Omit<
 
 export function exposed({
   render,
+  closeUI,
   postMessage,
   resize,
   renderModal,
@@ -53,6 +53,7 @@ export function exposed({
       extended?: boolean;
     },
   ) => void;
+  closeUI: Reearth["ui"]["close"];
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
   renderModal: (
@@ -94,7 +95,6 @@ export function exposed({
             };
           },
         }),
-        viewport: commonReearth.viewport as Viewport,
         layers: merge(commonReearth.layers, {
           get add() {
             return (layer: Layer, parentId?: string) =>
@@ -123,6 +123,7 @@ export function exposed({
             if (!widgetId) return;
             overrideWidgetPosition?.(widgetId, options);
           },
+          close: closeUI,
         },
         modal: {
           show: (
@@ -332,7 +333,7 @@ export function commonReearth({
       getLocationFromScreen,
     },
     get viewport() {
-      return viewport?.();
+      return viewport();
     },
     engineName,
     camera: {

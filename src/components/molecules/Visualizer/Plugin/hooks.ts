@@ -1,5 +1,5 @@
 import { Options } from "quickjs-emscripten-sync";
-import { useCallback, useEffect, useMemo, useRef, MutableRefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 
 import type { API as IFrameAPI } from "@reearth/components/atoms/Plugin";
@@ -19,6 +19,7 @@ export default function ({
   extensionId,
   pluginBaseUrl,
   extensionType,
+  visible,
   block,
   layer,
   widget,
@@ -34,6 +35,7 @@ export default function ({
   extensionId?: string;
   pluginBaseUrl?: string;
   extensionType?: string;
+  visible?: boolean;
   layer?: Layer;
   widget?: Widget;
   block?: Block;
@@ -57,9 +59,11 @@ export default function ({
     extended: boolean | undefined,
   ) => void;
 }) {
-  const modalVisible = useRef<boolean>(false);
-  const popupVisible = useRef<boolean>(false);
   const externalRef = useRef<HTMLIFrameElement>(null);
+
+  const [uiVisible, setUIVisibility] = useState<boolean>(!!visible);
+  const [modalVisible, setModalVisibility] = useState<boolean>(false);
+  const [popupVisible, setPopupVisibility] = useState<boolean>(false);
 
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
     useAPI({
@@ -75,15 +79,16 @@ export default function ({
       externalRef,
       onPluginModalShow,
       onPluginPopupShow,
+      setUIVisibility,
       onRender,
       onResize,
     }) ?? [];
 
   useEffect(() => {
     const visible = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
-    if (modalVisible.current !== visible) {
-      modalVisible.current = visible;
-      if (!modalVisible.current) {
+    if (modalVisible !== visible) {
+      setModalVisibility(visible);
+      if (!visible) {
         onModalClose();
       }
     }
@@ -99,9 +104,9 @@ export default function ({
 
   useEffect(() => {
     const visible = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
-    if (popupVisible.current !== visible) {
-      popupVisible.current = visible;
-      if (!popupVisible.current) {
+    if (popupVisible !== visible) {
+      setPopupVisibility(visible);
+      if (!visible) {
         onPopupClose();
       }
     }
@@ -131,8 +136,9 @@ export default function ({
     skip: !staticExposed,
     src,
     isMarshalable,
-    modalVisible: modalVisible.current,
-    popupVisible: popupVisible.current,
+    uiVisible,
+    modalVisible,
+    popupVisible,
     externalRef,
     exposed: staticExposed,
     onError,
@@ -154,6 +160,7 @@ export function useAPI({
   externalRef,
   onPluginModalShow,
   onPluginPopupShow,
+  setUIVisibility,
   onRender,
   onResize,
 }: {
@@ -164,11 +171,12 @@ export function useAPI({
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
-  modalVisible?: MutableRefObject<boolean>;
-  popupVisible?: MutableRefObject<boolean>;
+  modalVisible?: boolean;
+  popupVisible?: boolean;
   externalRef: RefObject<HTMLIFrameElement> | undefined;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
+  setUIVisibility: (visible: boolean) => void;
   onRender?: (
     options:
       | {
@@ -238,13 +246,14 @@ export function useAPI({
     event.current?.[1]("close");
     event.current?.[2]?.();
     event.current = undefined;
-    if (modalVisible?.current) {
+    if (modalVisible) {
       onPluginModalShow?.();
     }
-    if (popupVisible?.current) {
+    if (popupVisible) {
       onPluginPopupShow?.();
     }
-  }, [modalVisible, onPluginModalShow, popupVisible, onPluginPopupShow]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onPluginModalShow, onPluginPopupShow]);
 
   const isMarshalable = useCallback(
     (target: any) => defaultIsMarshalable(target) || !!ctx?.reearth.layers.isLayer(target),
@@ -294,6 +303,10 @@ export function useAPI({
           onRender?.(
             typeof extended !== "undefined" || options ? { extended, ...options } : undefined,
           );
+          setUIVisibility(true);
+        },
+        closeUI: () => {
+          setUIVisibility(false);
         },
         renderModal: (html, { ...options } = {}) => {
           modal.render(html, options);
@@ -372,6 +385,7 @@ export function useAPI({
     getWidget,
     onPluginModalShow,
     onPluginPopupShow,
+    setUIVisibility,
     onRender,
     onResize,
   ]);
