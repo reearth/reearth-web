@@ -16,7 +16,6 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
 
   const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (
-      !widgetId ||
       !["outer", "inner"].includes(options.zone) ||
       !["left", "center", "right"].includes(options.section) ||
       !["top", "middle", "bottom"].includes(options.area) ||
@@ -24,7 +23,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
     )
       return;
 
-    let tarWidget: Widget | undefined;
+    let widget: Widget | undefined;
 
     setOverrideAlignSystem(alignSystem => {
       if (!alignSystem) return alignSystem;
@@ -36,10 +35,10 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
             if (section) {
               Object.keys(section).forEach(areaName => {
                 const area = section[areaName as keyof WidgetSection];
-                if (!tarWidget && area?.widgets) {
-                  const tarIndex = area.widgets.findIndex(w => w.id === widgetId);
-                  if (tarIndex !== -1) {
-                    [tarWidget] = area.widgets.splice(tarIndex, 1);
+                if (!widget && area?.widgets) {
+                  const sourceIndex = area.widgets.findIndex(w => w.id === widgetId);
+                  if (sourceIndex !== -1) {
+                    [widget] = area.widgets.splice(sourceIndex, 1);
                   }
                 }
               });
@@ -52,7 +51,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
 
     setTimeout(() => {
       setOverrideAlignSystem(alignSystem => {
-        if (!alignSystem || !tarWidget) return alignSystem;
+        if (!alignSystem || !widget) return alignSystem;
         if (!alignSystem[options.zone]) {
           alignSystem[options.zone] = {
             left: undefined,
@@ -61,29 +60,29 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
           };
         }
 
-        const tarZone = alignSystem[options.zone] as WidgetZone;
-        if (!tarZone[options.section]) {
-          tarZone[options.section] = {
+        const targetZone = alignSystem[options.zone] as WidgetZone;
+        if (!targetZone[options.section]) {
+          targetZone[options.section] = {
             top: undefined,
             middle: undefined,
             bottom: undefined,
           };
         }
 
-        const tarSection = tarZone[options.section] as WidgetSection;
-        if (!tarSection[options.area]) {
-          tarSection[options.area] = {
+        const targetSection = targetZone[options.section] as WidgetSection;
+        if (!targetSection[options.area]) {
+          targetSection[options.area] = {
             align: "start",
             widgets: [],
           };
         }
 
-        const tarArea = tarSection[options.area] as WidgetArea;
-        if (!tarArea.widgets) tarArea.widgets = [];
+        const targetArea = targetSection[options.area] as WidgetArea;
+        if (!targetArea.widgets) targetArea.widgets = [];
         if (options.method === "insert") {
-          tarArea.widgets.unshift(tarWidget);
+          targetArea.widgets.unshift(widget);
         } else {
-          tarArea.widgets.push(tarWidget);
+          targetArea.widgets.push(widget);
         }
 
         return { ...alignSystem };
