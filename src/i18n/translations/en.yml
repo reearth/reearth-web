@@ -76,13 +76,13 @@ Datasets: Datasets
 Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
+Create New Workspace: Create New Workspace
+Workspace Name: Workspace Name
 Workspaces: Workspaces
 Manage Workspaces: Manage Workspaces
 New Workspace: New Workspace
-Create New Workspace: Create New Workspace
-Workspace Name: Workspace Name
 Plugin Marketplace: Plugin Marketplace
-timeSince: 'Edited {{timeSince}}'
+timeSince: Edited {{timeSince}}
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
   You have no projects in your workspace. Click the button above in the Quick
   Start to create a project now!
@@ -91,11 +91,13 @@ User guide: User guide
 New project: New project
 New workspace: New workspace
 '''s workspace': '''s workspace'
+Check your plan: ''
+OK: OK
+here: ''
 Layer style: Layer style
 import: import
 Data: Data
 Import to scene: Import to scene
-OK: OK
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
   You are deleting a dataset. Layers that are linked to this dataset might show
   errors.
@@ -356,6 +358,7 @@ Same label tag already exist. Please type different label.: Same label tag alrea
 Tag group has tags, you need to remove all tags under the tag group: Tag group has tags, you need to remove all tags under the tag group
 Error: Error
 Warning: Warning
+Your workspace has reached its limit for this action. Please check reearth.io for details.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Failed to update account name.: Failed to update account name.
 Failed to update password.: Failed to update password.
