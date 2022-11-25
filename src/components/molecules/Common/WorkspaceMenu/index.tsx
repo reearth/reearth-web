@@ -3,7 +3,7 @@ import React, { useCallback, useRef } from "react";
 import Dropdown, { Ref as DropDownRef } from "@reearth/components/atoms/Dropdown";
 import Flex from "@reearth/components/atoms/Flex";
 import Text from "@reearth/components/atoms/Text";
-import { Team } from "@reearth/components/molecules/Common/Header";
+import { Workspace } from "@reearth/components/molecules/Common/Header";
 import {
   MenuListItemLabel,
   MenuList,
@@ -13,8 +13,8 @@ import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
 type Props = {
-  currentWorkspace: Team;
-  workspaces: Team[];
+  currentWorkspace: Workspace;
+  workspaces: Workspace[];
   onWorkspaceChange?: (workspaceId: string) => void;
   openModal?: () => void;
 };
