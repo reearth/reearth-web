@@ -5,13 +5,14 @@ import WorkspaceCreationModal from "@reearth/components/molecules/Common/Workspa
 import { styled, metrics, css } from "@reearth/theme";
 
 import Profile from "./profile";
-import type { User, Workspace } from "./types";
+import type { User, Workspace, Project } from "./types";
 
-export type { User, Workspace } from "./types";
+export type { User, Workspace, Project } from "./types";
 
 export interface Props {
   className?: string;
   user?: User;
+  currentProject?: Project;
   currentWorkspace?: Workspace;
   personalWorkspace?: boolean;
   workspaces?: Workspace[];
