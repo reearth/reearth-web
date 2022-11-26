@@ -694,3 +694,15 @@ export async function sampleTerrainHeight(
   ]);
   return sample.height;
 }
+
+export async function sampleTerrainHeightFromCartesian(scene: Scene, translation: Cartesian3) {
+  const cart = Cartographic.fromCartesian(translation);
+  const [lng, lat] = [
+    CesiumMath.toDegrees(cart?.longitude || 0),
+    CesiumMath.toDegrees(cart?.latitude || 0),
+  ];
+  if (!lng || !lat) {
+    return;
+  }
+  return await sampleTerrainHeight(scene, lng, lat);
+}

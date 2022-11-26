@@ -16,7 +16,7 @@ import { toColor } from "@reearth/util/value";
 import { Property } from "..";
 import { SceneProperty } from "../../..";
 import type { Props as PrimitiveProps } from "../../../../Primitive";
-import { sampleTerrainHeight } from "../../common";
+import { sampleTerrainHeightFromCartesian } from "../../common";
 import { EdgeEventCallback } from "../Edge";
 import { PointEventCallback } from "../ScalePoints";
 import { computeMouseMoveAmount, updateTrs } from "../utils";
@@ -57,15 +57,7 @@ export const useHooks = ({
 
     if (!allowEnterGround) {
       inProgressSamplingTerrainHeight.current = true;
-      const cart = Cartographic.fromCartesian(trs.translation);
-      const [lng, lat] = [
-        CesiumMath.toDegrees(cart?.longitude || 0),
-        CesiumMath.toDegrees(cart?.latitude || 0),
-      ];
-      if (!lng || !lat) {
-        return;
-      }
-      sampleTerrainHeight(viewer.scene, lng, lat).then(v => {
+      sampleTerrainHeightFromCartesian(viewer.scene, trs.translation).then(v => {
         setTerrainHeightEstimate(v ?? 0);
         inProgressSamplingTerrainHeight.current = false;
       });

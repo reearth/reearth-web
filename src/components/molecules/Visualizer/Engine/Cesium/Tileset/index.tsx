@@ -1,6 +1,5 @@
 import {
   Cartesian3,
-  Cartographic,
   Cesium3DTileset as Cesium3DTilesetType,
   Cesium3DTileStyle,
   ClippingPlaneCollection as CesiumClippingPlaneCollection,
@@ -10,7 +9,6 @@ import {
   Matrix4,
   Transforms,
   TranslationRotationScale,
-  Math as CesiumMath,
 } from "cesium";
 import ClippingPlane from "cesium/Source/Scene/ClippingPlane";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
@@ -20,7 +18,7 @@ import { EXPERIMENTAL_clipping, toColor } from "@reearth/util/value";
 
 import { SceneProperty } from "../..";
 import type { Props as PrimitiveProps } from "../../../Primitive";
-import { shadowMode, layerIdField, sampleTerrainHeight } from "../common";
+import { shadowMode, layerIdField, sampleTerrainHeightFromCartesian } from "../common";
 import { translationWithClamping } from "../utils";
 
 export type Props = PrimitiveProps<Property>;
@@ -110,15 +108,7 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
 
       if (!allowEnterGround) {
         inProgressSamplingTerrainHeight.current = true;
-        const cart = Cartographic.fromCartesian(translation);
-        const [lng, lat] = [
-          CesiumMath.toDegrees(cart?.longitude || 0),
-          CesiumMath.toDegrees(cart?.latitude || 0),
-        ];
-        if (!lng || !lat) {
-          return;
-        }
-        sampleTerrainHeight(viewer.scene, lng, lat).then(v => {
+        sampleTerrainHeightFromCartesian(viewer.scene, translation).then(v => {
           setTerrainHeightEstimate(v ?? 0);
           inProgressSamplingTerrainHeight.current = false;
         });
