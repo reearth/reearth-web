@@ -4,7 +4,7 @@ import { Clock } from "@reearth/components/molecules/Visualizer/Plugin/types";
 import { Camera } from "@reearth/util/value";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
-const error = atom<string | undefined>(undefined);
+const error = atom<{ type?: string; message?: string } | undefined>(undefined);
 export const useError = () => useAtom(error);
 
 const sceneId = atom<string | undefined>(undefined);
@@ -88,6 +88,7 @@ export type Notification = {
   type: NotificationType;
   heading?: string;
   text: string;
+  duration?: number | "persistent";
 };
 
 const notification = atom<Notification | undefined>(undefined);

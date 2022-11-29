@@ -358,6 +358,10 @@ Same label tag already exist. Please type different label.: Same label tag alrea
 Tag group has tags, you need to remove all tags under the tag group: Tag group has tags, you need to remove all tags under the tag group
 Error: Error
 Warning: Warning
+Your workspace has reached its limit for layers. Please check reearth.io for details.: ''
+Your workspace has reached its limit for assets. Please check reearth.io for details.: ''
+Your workspace has reached its limit for dataset. Please check reearth.io for details.: ''
+Your workspace has reached its limit for projects. Please check reearth.io for details.: ''
 Your workspace has reached its limit for this action. Please check reearth.io for details.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Failed to update account name.: Failed to update account name.

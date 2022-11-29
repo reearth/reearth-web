@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 
-import { useT } from "@reearth/i18n";
+import { useT, useLang } from "@reearth/i18n";
 import { useError, useNotification, Notification } from "@reearth/state";
 
-const notificationTimeout = 5000;
+export type PolicyItems = "layer" | "asset" | "dataset" | "project";
+
+const policyItems: PolicyItems[] = ["layer", "asset", "dataset", "project"];
 
 export default () => {
   const t = useT();
+  const currentLanguage = useLang();
   const [error, setError] = useError();
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
@@ -33,13 +36,34 @@ export default () => {
 
   useEffect(() => {
     if (!error) return;
-    if (error.includes("policy violation")) {
+    if (error.message?.includes("policy violation") && error.message) {
+      const limitedItem = policyItems.find(i => error.message?.toLowerCase().includes(i));
+      const message =
+        limitedItem === "layer"
+          ? t(
+              "Your workspace has reached its limit for layers. Please check reearth.io for details.",
+            )
+          : limitedItem === "asset"
+          ? t(
+              "Your workspace has reached its limit for assets. Please check reearth.io for details.",
+            )
+          : limitedItem === "dataset"
+          ? t(
+              "Your workspace has reached its limit for dataset. Please check reearth.io for details.",
+            )
+          : limitedItem === "project"
+          ? t(
+              "Your workspace has reached its limit for projects. Please check reearth.io for details.",
+            )
+          : t(
+              "Your workspace has reached its limit for this action. Please check reearth.io for details.",
+            );
+
       setNotification({
         type: "info",
         heading: noticeHeading,
-        text: t(
-          `Your workspace has reached its limit for this action. Please check reearth.io for details.`,
-        ),
+        text: message,
+        duration: "persistent",
       });
     } else {
       setNotification({
@@ -49,10 +73,16 @@ export default () => {
       });
     }
     setError(undefined);
-  }, [error, setError, errorHeading, noticeHeading, setNotification, t]);
+  }, [error, currentLanguage, setError, errorHeading, noticeHeading, setNotification, t]);
 
   useEffect(() => {
     if (!notification) return;
+    if (notification.duration === "persistent") return;
+
+    let notificationTimeout = 5000;
+    if (notification.duration) {
+      notificationTimeout = notification.duration;
+    }
     const timerID = setTimeout(() => {
       changeVisibility(false);
     }, notificationTimeout);
