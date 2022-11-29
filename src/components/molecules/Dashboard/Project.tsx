@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
@@ -26,9 +26,10 @@ const Project: React.FC<Props> = ({ className, project }) => {
 
   const isSmallWindow = useMedia("(max-width: 1024px)");
   const [isHovered, setHover] = useState(false);
-  const { name, description, image, status, id, sceneId, updatedAt } = project;
+  const { name, description, image, status, id, sceneId } = project;
 
-  const timeSinceLastEdit = useMemo(() => dayjs(updatedAt).fromNow(), [updatedAt]);
+  // const timeSinceLastEdit = useMemo(() => dayjs(updatedAt).fromNow(), [updatedAt]);
+  const timeSinceLastEdit = undefined; // Once backend is implemented, remove this line and uncomment above timeSinceLastEdit
 
   const onPreviewOpen = useCallback(() => {
     window.open(`${location.origin}/edit/${sceneId}/preview`);
@@ -62,7 +63,9 @@ const Project: React.FC<Props> = ({ className, project }) => {
           </Actions>
           <Flex gap={36}>
             <PublicationStatus status={status} color={theme.dashboard.publicationStatus} />
-            <Text size="xs">{t("timeSince", { timeSince: timeSinceLastEdit })}</Text>
+            {timeSinceLastEdit && (
+              <Text size="xs">{t("timeSince", { timeSince: timeSinceLastEdit })}</Text>
+            )}
           </Flex>
         </Content>
       </Block>
