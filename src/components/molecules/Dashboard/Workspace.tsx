@@ -70,7 +70,7 @@ const Workspace: React.FC<Props> = ({ className, workspace, isPersonal }) => {
                 <Text size="m">
                   {t(`Your workspace is currently a ${policy.name} workspace. If you would like to know the
                details of your plan, or change your plan, please click `)}
-                  <PolicyLink href="https://www.reearth.io/policy" target="_blank">
+                  <PolicyLink href="https://reearth.io/service/cloud" target="_blank">
                     {t("here")}
                   </PolicyLink>
                   .
