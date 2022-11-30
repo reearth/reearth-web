@@ -240,6 +240,7 @@ export function useAPI({
         "wheel",
         "tick",
         "resize",
+        "layeredit",
       ]);
     }
 
