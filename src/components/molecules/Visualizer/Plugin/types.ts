@@ -20,6 +20,7 @@ export type Reearth = {
   readonly modal: Modal;
   readonly popup: Popup;
   readonly plugin: Plugin;
+  readonly plugins: Plugins;
   readonly layers: Layers;
   readonly layer?: Layer;
   readonly widget?: Widget;
@@ -50,6 +51,11 @@ export type MouseEvent = {
   delta?: number;
 };
 
+export type PluginMessage = {
+  data: any;
+  sender: string;
+};
+
 export type ReearthEventType = {
   update: [];
   close: [];
@@ -74,6 +80,7 @@ export type ReearthEventType = {
   resize: [props: Viewport];
   modalclose: [];
   popupclose: [];
+  pluginmessage: [props: PluginMessage];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -82,6 +89,19 @@ export type Plugin = {
   readonly extensionId: string;
   readonly extensionType: string;
   readonly property?: any;
+};
+
+export type PluginExtensionInstance = {
+  readonly id: string;
+  readonly pluginId: string;
+  readonly name: string;
+  readonly extensionId: string;
+  readonly extensionType: "widget" | "block";
+};
+
+export type Plugins = {
+  readonly instances: PluginExtensionInstance[];
+  readonly postMessage?: (id: string, message: any) => void;
 };
 
 export type LatLngHeight = {

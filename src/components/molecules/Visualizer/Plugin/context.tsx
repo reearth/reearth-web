@@ -14,6 +14,7 @@ import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
+import { PluginInstances } from "../usePluginInstances";
 import { useGet } from "../utils";
 
 import type { CommonReearth } from "./api";
@@ -48,6 +49,7 @@ export type Props = {
   tags?: Tag[];
   camera?: CameraPosition;
   clock: Clock | undefined;
+  pluginInstances: PluginInstances;
   layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
@@ -88,6 +90,7 @@ export type Props = {
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
+  pluginInstances: PluginInstances;
   overrideSceneProperty: (id: string, property: any) => void;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
 };
@@ -109,6 +112,7 @@ export function Provider({
   tags,
   camera,
   clock,
+  pluginInstances,
   layers,
   selectedLayer,
   layerSelectionReason,
@@ -161,6 +165,7 @@ export function Provider({
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
+  const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
@@ -188,6 +193,7 @@ export function Provider({
         tags: getTags,
         camera: getCamera,
         clock: getClock,
+        pluginInstances: getPluginInstances,
         viewport: getViewport,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
@@ -223,6 +229,7 @@ export function Provider({
       }),
       overrideSceneProperty,
       moveWidget,
+      pluginInstances,
     }),
     [
       api,
@@ -235,6 +242,7 @@ export function Provider({
       getTags,
       getCamera,
       getClock,
+      getPluginInstances,
       getViewport,
       getSelectedLayer,
       getLayerSelectionReason,
@@ -269,6 +277,7 @@ export function Provider({
       flyToGround,
       overrideSceneProperty,
       moveWidget,
+      pluginInstances,
     ],
   );
 
