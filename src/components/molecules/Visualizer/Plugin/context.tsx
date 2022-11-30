@@ -31,6 +31,7 @@ import type {
   Clock,
   Viewport,
   LatLngHeight,
+  WidgetLocationOptions,
 } from "./types";
 
 export type EngineContext = {
@@ -81,6 +82,7 @@ export type Props = {
   moveRight: (amount: number) => void;
   moveOverTerrain: () => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
+  moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
 };
 
 type SelectedReearthEventType = Pick<
@@ -93,6 +95,7 @@ export type Context = {
   engine: EngineContext;
   overrideSceneProperty: (id: string, property: any) => void;
   emit: EventEmitter<SelectedReearthEventType>;
+  moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -146,6 +149,7 @@ export function Provider({
   moveRight,
   moveOverTerrain,
   flyToGround,
+  moveWidget,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
@@ -222,6 +226,7 @@ export function Provider({
       }),
       overrideSceneProperty,
       emit,
+      moveWidget,
     }),
     [
       api,
@@ -268,6 +273,7 @@ export function Provider({
       flyToGround,
       overrideSceneProperty,
       emit,
+      moveWidget,
     ],
   );
 
