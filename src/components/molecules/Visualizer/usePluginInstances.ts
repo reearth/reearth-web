@@ -111,6 +111,8 @@ function getExtensionInstanceName(pluginId: string) {
   const segments = pluginId.split("~");
   if (segments.length === 3) {
     return segments[1];
+  } else if (segments.length === 2) {
+    return segments[0];
   }
   return pluginId;
 }
