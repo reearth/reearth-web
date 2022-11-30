@@ -3,12 +3,11 @@ import { Link } from "react-router-dom";
 import { useMedia } from "react-use";
 
 import Avatar from "@reearth/components/atoms/Avatar";
-import Button from "@reearth/components/atoms/Button";
 import DashboardBlock from "@reearth/components/atoms/DashboardBlock";
 import Flex from "@reearth/components/atoms/Flex";
 import Icon from "@reearth/components/atoms/Icon";
-import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import Policy from "@reearth/components/molecules/Common/Policy";
 import { Workspace as WorkspaceType } from "@reearth/components/molecules/Dashboard/types";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme, metrics } from "@reearth/theme";
@@ -48,35 +47,13 @@ const Workspace: React.FC<Props> = ({ className, workspace, isPersonal }) => {
             {name}
             {isPersonal && t("'s workspace")}
           </Text>
-          {policy?.name && (
-            <>
-              <PolicyText
-                size={isSmallWindow ? "xs" : "m"}
-                weight="bold"
-                smallWindow={isSmallWindow}
-                onClick={handlePolicyModalOpen}>
-                {policy.name}
-              </PolicyText>
-              <Modal
-                title={t("Check your plan")}
-                size="sm"
-                isVisible={policyModalOpen}
-                button1={
-                  <Button large onClick={handlePolicyModalClose}>
-                    {t("OK")}
-                  </Button>
-                }
-                onClose={handlePolicyModalClose}>
-                <Text size="m">
-                  {t(`Your workspace is currently a ${policy.name} workspace. If you would like to know the
-               details of your plan, or change your plan, please click `)}
-                  <PolicyLink href="https://reearth.io/service/cloud" target="_blank">
-                    {t("here")}
-                  </PolicyLink>
-                  .
-                </Text>
-              </Modal>
-            </>
+          {policy && (
+            <Policy
+              policy={policy}
+              modalOpen={policyModalOpen}
+              onModalOpen={handlePolicyModalOpen}
+              onModalClose={handlePolicyModalClose}
+            />
           )}
         </WorkspaceHeader>
         <Flex>
@@ -103,28 +80,6 @@ const StyledDashboardBlock = styled(DashboardBlock)`
 `;
 
 const WorkspaceHeader = styled(Flex)``;
-
-const PolicyLink = styled.a`
-  text-decoration: underline;
-  color: ${({ theme }) => theme.main.accent};
-
-  :hover {
-    color: ${({ theme }) => theme.main.select};
-  }
-`;
-
-const PolicyText = styled(Text)<{ smallWindow?: boolean }>`
-  background: #2b2a2f;
-  padding: ${({ smallWindow }) => (smallWindow ? "2px 10px" : "4px 20px")};
-  border-radius: 12px;
-  user-select: none;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  :hover {
-    background: #3f3d45;
-  }
-`;
 
 const Content = styled(Flex)`
   letter-spacing: 1px;

@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
 
-import Button from "@reearth/components/atoms/Button";
 import Flex from "@reearth/components/atoms/Flex";
-import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
+import Policy from "@reearth/components/molecules/Common/Policy";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 import { metricsSizes } from "@reearth/theme/metrics";
@@ -42,31 +41,13 @@ const SettingsHeader: React.FC<Props> = ({ title, currentWorkspace, currentProje
           {currentProject} {currentProject && title && " / "}
           {title}
         </Text>
-        {policy?.name && !currentProject && !title && (
-          <>
-            <PolicyText size="m" weight="bold" onClick={handlePolicyModalOpen}>
-              {policy.name}
-            </PolicyText>
-            <Modal
-              title={t("Check your plan")}
-              size="sm"
-              isVisible={policyModalOpen}
-              button1={
-                <Button large onClick={handlePolicyModalClose}>
-                  {t("OK")}
-                </Button>
-              }
-              onClose={handlePolicyModalClose}>
-              <Text size="m">
-                {t(`Your workspace is currently a ${policy.name} workspace. If you would like to know the
-               details of your plan, or change your plan, please click `)}
-                <PolicyLink href="https://reearth.io/service/cloud" target="_blank">
-                  {t("here")}
-                </PolicyLink>
-                .
-              </Text>
-            </Modal>
-          </>
+        {policy && !currentProject && !title && (
+          <Policy
+            policy={policy}
+            modalOpen={policyModalOpen}
+            onModalOpen={handlePolicyModalOpen}
+            onModalClose={handlePolicyModalClose}
+          />
         )}
       </Flex>
       {currentWorkspace?.personal && (
@@ -82,26 +63,4 @@ export default SettingsHeader;
 
 const Wrapper = styled.div`
   padding: ${metricsSizes["l"]}px 0;
-`;
-
-const PolicyText = styled(Text)`
-  background: #2b2a2f;
-  padding: 4px 20px;
-  border-radius: 12px;
-  user-select: none;
-  transition: background 0.2s;
-  cursor: pointer;
-
-  :hover {
-    background: #3f3d45;
-  }
-`;
-
-const PolicyLink = styled.a`
-  text-decoration: underline;
-  color: ${({ theme }) => theme.main.accent};
-
-  :hover {
-    color: ${({ theme }) => theme.main.select};
-  }
 `;
