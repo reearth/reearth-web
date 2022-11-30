@@ -89,6 +89,12 @@ export const context: ProviderProps = {
     isMobile: false,
   },
   layers: new LayerStore({ id: "", children: layers }),
+  pluginInstances: {
+    meta: [],
+    postMessage: () => {},
+    addPluginMessageSender: () => {},
+    removePluginMessageSender: () => {},
+  },
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
   zoomIn: act("zoomIn"),
