@@ -66,6 +66,8 @@ Re:Earth needs at least 900px width to be used effectively. Please resize your b
   browser window.
 Account Settings: Account Settings
 Log out: Log out
+OK: OK
+Click here for more details.: ''
 Create New Project: Create New Project
 Create: Create
 Project Name: Project Name
@@ -91,9 +93,6 @@ User guide: User guide
 New project: New project
 New workspace: New workspace
 '''s workspace': '''s workspace'
-Check your plan: ''
-OK: OK
-here: ''
 Layer style: Layer style
 import: import
 Data: Data

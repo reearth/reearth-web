@@ -1,7 +1,9 @@
+import { useMemo } from "react";
+
 import Button from "@reearth/components/atoms/Button";
 import Modal from "@reearth/components/atoms/Modal";
 import Text from "@reearth/components/atoms/Text";
-import { useT } from "@reearth/i18n";
+import { useLang, useT } from "@reearth/i18n";
 import { styled } from "@reearth/theme";
 
 export type Props = {
@@ -14,49 +16,85 @@ export type Props = {
   onModalClose?: () => void;
 };
 
-const PolicyModal: React.FC<Props> = ({ policy, modalOpen, onModalOpen, onModalClose }) => {
+const Policy: React.FC<Props> = ({ policy, modalOpen, onModalOpen, onModalClose }) => {
   const t = useT();
-  return (
+  const currentLanguage = useLang();
+  const policyModalConfig = window.REEARTH_CONFIG?.policy;
+
+  const policyUrl = useMemo(
+    () =>
+      typeof policyModalConfig?.url === "string"
+        ? policyModalConfig?.url
+        : policyModalConfig?.url?.[currentLanguage ?? "en"],
+    [currentLanguage, policyModalConfig],
+  );
+  const policyTitle = useMemo(
+    () =>
+      typeof policyModalConfig?.modalTitle === "string"
+        ? policyModalConfig?.modalTitle
+        : policyModalConfig?.modalTitle?.[currentLanguage ?? "en"],
+    [currentLanguage, policyModalConfig],
+  );
+  const policyDescription = useMemo(
+    () =>
+      typeof policyModalConfig?.modalDescription === "string"
+        ? policyModalConfig?.modalDescription
+        : policyModalConfig?.modalDescription?.[currentLanguage ?? "en"],
+    [currentLanguage, policyModalConfig],
+  );
+
+  return policy ? (
     <>
-      <PolicyText size="m" weight="bold" onClick={onModalOpen}>
+      <PolicyText
+        size="m"
+        weight="bold"
+        clickable={!!policyModalConfig}
+        onClick={policyModalConfig && onModalOpen}>
         {policy.name}
       </PolicyText>
-      <Modal
-        title={t("Check your plan")}
-        size="sm"
-        isVisible={modalOpen}
-        button1={
-          <Button large onClick={onModalClose}>
-            {t("OK")}
-          </Button>
-        }
-        onClose={onModalClose}>
-        <Text size="m">
-          {t(`Your workspace is currently a ${policy.name} workspace. If you would like to know the
-         details of your plan, or change your plan, please click `)}
-          <PolicyLink href="https://reearth.io/service/cloud" target="_blank">
-            {t("here")}
-          </PolicyLink>
-          .
-        </Text>
-      </Modal>
+      {policyModalConfig && (
+        <Modal
+          title={policyTitle}
+          size="sm"
+          isVisible={modalOpen}
+          button1={
+            <Button large onClick={onModalClose}>
+              {t("OK")}
+            </Button>
+          }
+          onClose={onModalClose}>
+          <Text size="m">{policyDescription}</Text>
+          <br />
+          {policyUrl && (
+            <Text size="m">
+              <PolicyLink href={policyUrl} target="_blank">
+                {t("Click here for more details.")}
+              </PolicyLink>
+            </Text>
+          )}
+        </Modal>
+      )}
     </>
-  );
+  ) : null;
 };
 
-export default PolicyModal;
+export default Policy;
 
-const PolicyText = styled(Text)`
+const PolicyText = styled(Text)<{ clickable?: boolean }>`
   background: #2b2a2f;
   padding: 4px 20px;
   border-radius: 12px;
   user-select: none;
   transition: background 0.2s;
+  ${({ clickable }) =>
+    clickable &&
+    `
   cursor: pointer;
-
+  
   :hover {
     background: #3f3d45;
   }
+  `}
 `;
 
 const PolicyLink = styled.a`

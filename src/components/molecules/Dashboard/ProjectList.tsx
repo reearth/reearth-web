@@ -15,7 +15,6 @@ export interface Props {
 const ProjectList: React.FC<Props> = ({ className, projects }) => {
   const t = useT();
 
-  console.log("projects: ", projects);
   return (
     <StyledDashboardBlock className={className}>
       {projects?.length ? (

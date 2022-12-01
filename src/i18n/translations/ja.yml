@@ -60,6 +60,8 @@ Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
 Account Settings: アカウント設定
 Log out: ログアウト
+OK: 確認
+Click here for more details.: ''
 Create New Project: 新規プロジェクト作成
 Create: 作成
 Project Name: プロジェクト名
@@ -83,9 +85,6 @@ User guide: ユーザーガイド
 New project: 新規プロジェクト作成
 New workspace: 新規ワークスペース作成
 '''s workspace': ' のワークスペース'
-Check your plan: ''
-OK: 確認
-here: ''
 Layer style: レイヤータイプ
 import: インポート
 Data: データ

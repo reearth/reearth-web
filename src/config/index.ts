@@ -23,6 +23,11 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
+  policy?: {
+    modalTitle: Record<string, string> | string;
+    modalDescription: Record<string, string> | string;
+    url?: Record<string, string> | string;
+  };
   documentationUrl?: string;
   marketplaceUrl?: string;
   extensionUrls?: string[];
