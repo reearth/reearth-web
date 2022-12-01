@@ -27,6 +27,14 @@ export type Config = {
     modalTitle: Record<string, string> | string;
     modalDescription: Record<string, string> | string;
     url?: Record<string, string> | string;
+    limitNotifications?: {
+      asset?: Record<string, string> | string;
+      project?: Record<string, string> | string;
+      dataset?: Record<string, string> | string;
+      member?: Record<string, string> | string;
+      layer?: Record<string, string> | string;
+      published?: Record<string, string> | string;
+    };
   };
   documentationUrl?: string;
   marketplaceUrl?: string;

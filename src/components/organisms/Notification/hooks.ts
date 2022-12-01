@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useT, useLang } from "@reearth/i18n";
 import { useError, useNotification, Notification } from "@reearth/state";
 
-export type PolicyItems = "layer" | "asset" | "dataset" | "project";
+export type PolicyItems = "layer" | "asset" | "dataset" | "project" | "published" | "member";
 
-const policyItems: PolicyItems[] = ["layer", "asset", "dataset", "project"];
+const policyItems: PolicyItems[] = ["layer", "asset", "dataset", "project", "published", "member"];
 
 export default () => {
   const t = useT();
@@ -13,6 +13,8 @@ export default () => {
   const [error, setError] = useError();
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
+
+  const policyLimitNotifications = window.REEARTH_CONFIG?.policy?.limitNotifications;
 
   const errorHeading = t("Error");
   const warningHeading = t("Warning");
@@ -38,26 +40,15 @@ export default () => {
     if (!error) return;
     if (error.message?.includes("policy violation") && error.message) {
       const limitedItem = policyItems.find(i => error.message?.toLowerCase().includes(i));
-      const message =
-        limitedItem === "layer"
-          ? t(
-              "Your workspace has reached its limit for layers. Please check reearth.io for details.",
-            )
-          : limitedItem === "asset"
-          ? t(
-              "Your workspace has reached its limit for assets. Please check reearth.io for details.",
-            )
-          : limitedItem === "dataset"
-          ? t(
-              "Your workspace has reached its limit for dataset. Please check reearth.io for details.",
-            )
-          : limitedItem === "project"
-          ? t(
-              "Your workspace has reached its limit for projects. Please check reearth.io for details.",
-            )
-          : t(
-              "Your workspace has reached its limit for this action. Please check reearth.io for details.",
-            );
+      const policyItem =
+        limitedItem && policyLimitNotifications ? policyLimitNotifications[limitedItem] : undefined;
+      const message = policyItem
+        ? typeof policyItem === "string"
+          ? policyItem
+          : policyItem[currentLanguage]
+        : t(
+            "You have reached a policy limit. Please contact an administrator of your Re:Earth system.",
+          );
 
       setNotification({
         type: "info",
@@ -73,7 +64,16 @@ export default () => {
       });
     }
     setError(undefined);
-  }, [error, currentLanguage, setError, errorHeading, noticeHeading, setNotification, t]);
+  }, [
+    error,
+    currentLanguage,
+    policyLimitNotifications,
+    errorHeading,
+    noticeHeading,
+    setError,
+    setNotification,
+    t,
+  ]);
 
   useEffect(() => {
     if (!notification) return;

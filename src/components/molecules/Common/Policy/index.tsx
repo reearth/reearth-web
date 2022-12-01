@@ -25,21 +25,21 @@ const Policy: React.FC<Props> = ({ policy, modalOpen, onModalOpen, onModalClose 
     () =>
       typeof policyModalConfig?.url === "string"
         ? policyModalConfig?.url
-        : policyModalConfig?.url?.[currentLanguage ?? "en"],
+        : policyModalConfig?.url?.[currentLanguage],
     [currentLanguage, policyModalConfig],
   );
   const policyTitle = useMemo(
     () =>
       typeof policyModalConfig?.modalTitle === "string"
         ? policyModalConfig?.modalTitle
-        : policyModalConfig?.modalTitle?.[currentLanguage ?? "en"],
+        : policyModalConfig?.modalTitle?.[currentLanguage],
     [currentLanguage, policyModalConfig],
   );
   const policyDescription = useMemo(
     () =>
       typeof policyModalConfig?.modalDescription === "string"
         ? policyModalConfig?.modalDescription
-        : policyModalConfig?.modalDescription?.[currentLanguage ?? "en"],
+        : policyModalConfig?.modalDescription?.[currentLanguage],
     [currentLanguage, policyModalConfig],
   );
 
