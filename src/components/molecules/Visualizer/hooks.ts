@@ -25,7 +25,17 @@ import type {
   LookAtDestination,
   Tag,
 } from "./Plugin/types";
+import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import { useOverriddenProperty } from "./utils";
+import type { WidgetAlignSystem } from "./WidgetAlignSystem";
+
+export type Viewport = {
+  width: number;
+  height: number;
+  isMobile: boolean;
+};
+
+const viewportMobileMaxWidth = 768;
 
 export default ({
   engineType,
@@ -33,6 +43,7 @@ export default ({
   isEditable,
   isBuilt,
   isPublished,
+  inEditor,
   rootLayer,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
@@ -41,6 +52,7 @@ export default ({
   clock,
   sceneProperty,
   tags,
+  alignSystem,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
@@ -54,6 +66,7 @@ export default ({
   isEditable?: boolean;
   isBuilt?: boolean;
   isPublished?: boolean;
+  inEditor?: boolean;
   rootLayer?: Layer;
   selectedLayerId?: string;
   selectedBlockId?: string;
@@ -62,6 +75,7 @@ export default ({
   clock?: Clock;
   sceneProperty?: SceneProperty;
   tags?: Tag[];
+  alignSystem?: WidgetAlignSystem;
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends keyof ValueTypes>(
@@ -88,7 +102,7 @@ export default ({
         drop(_item, context) {
           if (!rootLayerId || !isEditable) return;
           const loc = context.position
-            ? engineRef.current?.getLocationFromScreenXY(context.position.x, context.position.y)
+            ? engineRef.current?.getLocationFromScreen(context.position.x, context.position.y)
             : undefined;
           return {
             type: "earth",
@@ -102,6 +116,49 @@ export default ({
     ),
   );
   dropRef(wrapperRef);
+
+  const [viewport, setViewport] = useState<Viewport>();
+
+  useEffect(() => {
+    const viewportResizeObserver = new ResizeObserver(entries => {
+      const [entry] = entries;
+      let width: number | undefined;
+      let height: number | undefined;
+
+      if (entry.contentBoxSize) {
+        // Firefox(v69-91) implements `contentBoxSize` as a single content rect, rather than an array
+        const contentBoxSize = Array.isArray(entry.contentBoxSize)
+          ? entry.contentBoxSize[0]
+          : entry.contentBoxSize;
+        width = contentBoxSize.inlineSize;
+        height = contentBoxSize.blockSize;
+      } else if (entry.contentRect) {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+      } else {
+        width = wrapperRef.current?.clientWidth;
+        height = wrapperRef.current?.clientHeight;
+      }
+
+      setViewport(
+        width && height
+          ? {
+              width,
+              height,
+              isMobile: width <= viewportMobileMaxWidth,
+            }
+          : undefined,
+      );
+    });
+
+    if (wrapperRef.current) {
+      viewportResizeObserver.observe(wrapperRef.current);
+    }
+
+    return () => {
+      viewportResizeObserver.disconnect();
+    };
+  }, []);
 
   const {
     selectedLayer,
@@ -196,10 +253,15 @@ export default ({
     pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
+  const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
+    alignSystem,
+  });
+
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
       sceneProperty: overriddenSceneProperty,
+      inEditor: !!inEditor,
       tags,
       camera: innerCamera,
       clock: innerClock,
@@ -207,12 +269,14 @@ export default ({
       layerSelectionReason,
       layerOverridenInfobox,
       layerOverriddenProperties,
+      viewport,
       showLayer: showLayers,
       hideLayer: hideLayers,
       addLayer,
       selectLayer,
       overrideLayerProperty,
       overrideSceneProperty,
+      moveWidget,
     },
     engineRef,
     layers,
@@ -259,6 +323,8 @@ export default ({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    viewport,
+    overriddenAlignSystem,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -456,9 +522,10 @@ function useProviderProps(
     | "rotateRight"
     | "layers"
     | "layersInViewport"
-    | "viewport"
+    | "cameraViewport"
     | "onMouseEvent"
     | "captureScreen"
+    | "getLocationFromScreen"
     | "enableScreenSpaceCameraController"
     | "lookHorizontal"
     | "lookVertical"
@@ -509,7 +576,7 @@ function useProviderProps(
     [engineRef],
   );
 
-  const viewport = useCallback(() => {
+  const cameraViewport = useCallback(() => {
     return engineRef.current?.getViewport();
   }, [engineRef]);
 
@@ -574,6 +641,13 @@ function useProviderProps(
   const captureScreen = useCallback(
     (type?: string, encoderOptions?: number) => {
       return engineRef.current?.captureScreen(type, encoderOptions);
+    },
+    [engineRef],
+  );
+
+  const getLocationFromScreen = useCallback(
+    (x: number, y: number, withTerrain?: boolean) => {
+      return engineRef.current?.getLocationFromScreen(x, y, withTerrain);
     },
     [engineRef],
   );
@@ -664,9 +738,10 @@ function useProviderProps(
     rotateRight,
     layers,
     layersInViewport,
-    viewport,
+    cameraViewport,
     onMouseEvent,
     captureScreen,
+    getLocationFromScreen,
     enableScreenSpaceCameraController,
     lookHorizontal,
     lookVertical,

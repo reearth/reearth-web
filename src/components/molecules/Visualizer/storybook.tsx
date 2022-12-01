@@ -58,6 +58,7 @@ export function Provider({ children }: { children?: ReactNode }) {
 export const context: ProviderProps = {
   engineName: "cesium",
   engine: {},
+  inEditor: false,
   hideLayer: act("layers.hide"),
   showLayer: act("layers.show"),
   selectLayer: act("layers.select"),
@@ -82,6 +83,11 @@ export const context: ProviderProps = {
     pause: () => {},
     tick: () => new Date("2022-06-03"),
   },
+  viewport: {
+    width: 1280,
+    height: 720,
+    isMobile: false,
+  },
   layers: new LayerStore({ id: "", children: layers }),
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
@@ -92,9 +98,10 @@ export const context: ProviderProps = {
   overrideLayerProperty: act("overrideLayerProperty"),
   overrideSceneProperty: act("overrideSceneProperty"),
   layersInViewport: act("layersInViewport"),
-  viewport: act("viewport"),
+  cameraViewport: act("cameraViewport"),
   onMouseEvent: act("onMouseEvent"),
   captureScreen: act("captureScreen"),
+  getLocationFromScreen: act("getLocationFromScreen"),
   enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
   lookHorizontal: act("lookHorizontal"),
   lookVertical: act("lookVertical"),
@@ -106,6 +113,7 @@ export const context: ProviderProps = {
   moveRight: act("moveRight"),
   moveOverTerrain: act("moveOverTerrain"),
   flyToGround: act("flyToGround"),
+  moveWidget: act("moveWidget"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

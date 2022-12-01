@@ -56,7 +56,7 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
-  getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
+  getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
@@ -126,6 +126,7 @@ export type CameraOptions = {
   /** Seconds */
   duration?: number;
   easing?: (time: number) => number;
+  withoutAnimation?: boolean;
 };
 
 export type ClusterProps = {
