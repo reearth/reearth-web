@@ -13,10 +13,6 @@ export type Props = {
   inEditor?: boolean;
 };
 
-const engineMeta = {
-  cesiumIonDefaultAccessToken: config()?.cesiumIonAccessToken,
-};
-
 const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
   const {
     rootLayerId,
@@ -35,6 +31,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
     camera,
     clock,
     widgetAlignEditorActivated,
+    engineMeta,
     selectLayer,
     selectBlock,
     onBlockChange,

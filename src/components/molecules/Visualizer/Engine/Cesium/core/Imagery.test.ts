@@ -37,7 +37,7 @@ test("useImageryProviders", () => {
   expect(result.current.providers["1"][2]).not.toBe(prevImageryProvider);
   expect(result.current.updated).toBe(true);
   expect(provider).toBeCalledTimes(2);
-  expect(provider).toBeCalledWith("a");
+  expect(provider).toBeCalledWith({ url: "a" });
   const prevImageryProvider2 = result.current.providers["1"][2];
 
   // add a tile with URL

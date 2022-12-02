@@ -9,13 +9,18 @@ export type Props = {
   alias?: string;
 };
 
-const engineMeta = {
-  cesiumIonDefaultAccessToken: config()?.cesiumIonAccessToken,
-};
-
 export default function Published({ className, alias }: Props) {
-  const { sceneProperty, pluginProperty, rootLayer, widgets, tags, ready, error, clusterProperty } =
-    useHooks(alias);
+  const {
+    sceneProperty,
+    pluginProperty,
+    rootLayer,
+    widgets,
+    tags,
+    ready,
+    error,
+    clusterProperty,
+    engineMeta,
+  } = useHooks(alias);
 
   return error ? (
     <Error />
