@@ -3,7 +3,6 @@ import {
   EllipsoidTerrainProvider,
   IonResource,
   CesiumTerrainProvider,
-  Ion,
   TerrainProvider,
 } from "cesium";
 
@@ -22,7 +21,7 @@ export const terrainProviders: {
     // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
     new CesiumTerrainProvider({
       url: IonResource.fromAssetId(1, {
-        accessToken: terrainCesiumIonAccessToken || Ion.defaultAccessToken,
+        accessToken: terrainCesiumIonAccessToken,
       }),
       requestVertexNormals: false,
       requestWaterMask: false,
@@ -38,7 +37,7 @@ export const terrainProviders: {
           url:
             terrainCesiumIonUrl ||
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
-              accessToken: terrainCesiumIonAccessToken || Ion.defaultAccessToken,
+              accessToken: terrainCesiumIonAccessToken,
             }),
           requestVertexNormals: true,
         })
