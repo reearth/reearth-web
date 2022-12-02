@@ -1,5 +1,5 @@
 import { Color, Entity, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock, Ion } from "cesium";
-import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
+import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -11,7 +11,7 @@ import { Camera, LatLng } from "@reearth/util/value";
 
 import type { SelectLayerOptions, Ref as EngineRef, SceneProperty } from "..";
 import { Clock } from "../../Plugin/types";
-import { MouseEvent, MouseEvents, TerrainProperty } from "../ref";
+import { MouseEvent, MouseEvents } from "../ref";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import {
@@ -22,7 +22,6 @@ import {
   getLocationFromScreen,
   getClock,
 } from "./common";
-import { terrainProviders, defaultTerrainProvider } from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
@@ -62,54 +61,6 @@ export default ({
 
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
-
-  // terrain
-  const terrainProperty = useMemo(
-    (): TerrainProperty => ({
-      terrain: property?.terrain?.terrain || property?.default?.terrain,
-      terrainType: property?.terrain?.terrainType || property?.default?.terrainType,
-      terrainExaggeration:
-        property?.terrain?.terrainExaggeration || property?.default?.terrainExaggeration,
-      terrainExaggerationRelativeHeight:
-        property?.terrain?.terrainExaggerationRelativeHeight ||
-        property?.default?.terrainExaggerationRelativeHeight,
-      depthTestAgainstTerrain:
-        property?.terrain?.depthTestAgainstTerrain || property?.default?.depthTestAgainstTerrain,
-      terrainCesiumIonAccessToken:
-        property?.terrain?.terrainCesiumIonAccessToken ||
-        property?.default?.terrainCesiumIonAccessToken ||
-        cesiumIonAccessToken,
-      terrainCesiumIonAsset:
-        property?.terrain?.terrainCesiumIonAsset || property?.default?.terrainCesiumIonAsset,
-      terrainCesiumIonUrl:
-        property?.terrain?.terrainCesiumIonUrl || property?.default?.terrainCesiumIonUrl,
-      terrainUrl: property?.terrain?.terrainUrl || property?.default?.terrainUrl,
-    }),
-    [
-      cesiumIonAccessToken,
-      property?.default?.terrain,
-      property?.default?.terrainType,
-      property?.default?.terrainExaggeration,
-      property?.default?.terrainExaggerationRelativeHeight,
-      property?.default?.depthTestAgainstTerrain,
-      property?.terrain?.terrain,
-      property?.terrain?.terrainType,
-      property?.terrain?.terrainExaggeration,
-      property?.terrain?.terrainExaggerationRelativeHeight,
-      property?.terrain?.depthTestAgainstTerrain,
-    ],
-  );
-
-  const terrainProvider = useMemo((): TerrainProvider | undefined => {
-    const provider = terrainProperty.terrain
-      ? terrainProviders[terrainProperty.terrainType || "cesium"]
-      : undefined;
-    return (
-      (typeof provider === "function" ? provider(terrainProperty) : provider) ??
-      defaultTerrainProvider
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [terrainProperty.terrain, terrainProperty.terrainType]);
 
   const backgroundColor = useMemo(
     () =>
@@ -369,8 +320,6 @@ export default ({
     useCameraLimiter(cesium, camera, property?.cameraLimiter);
 
   return {
-    terrainProvider,
-    terrainProperty,
     backgroundColor,
     cesium,
     cameraViewBoundaries,
