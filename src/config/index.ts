@@ -14,6 +14,7 @@ export type Config = {
   googleClientId?: string;
   sentryDsn?: string;
   sentryEnv?: string;
+  cesiumIonAccessToken?: string;
   passwordPolicy?: {
     tooShort?: RegExp;
     tooLong?: RegExp;
@@ -23,11 +24,25 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
+  policy?: {
+    modalTitle: Record<string, string> | string;
+    modalDescription: Record<string, string> | string;
+    url?: Record<string, string> | string;
+    limitNotifications?: {
+      asset?: Record<string, string> | string;
+      project?: Record<string, string> | string;
+      dataset?: Record<string, string> | string;
+      member?: Record<string, string> | string;
+      layer?: Record<string, string> | string;
+      published?: Record<string, string> | string;
+    };
+  };
   documentationUrl?: string;
   marketplaceUrl?: string;
   extensionUrls?: string[];
   extensions?: Extensions;
 };
+
 declare global {
   interface Window {
     REEARTH_CONFIG?: Config;
@@ -82,21 +97,23 @@ export function convertPasswordPolicy(passwordPolicy?: {
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
-  window.REEARTH_CONFIG = {
+  const config = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
 
-  if (window.REEARTH_CONFIG?.passwordPolicy) {
-    window.REEARTH_CONFIG.passwordPolicy = convertPasswordPolicy(
-      window.REEARTH_CONFIG.passwordPolicy as { [key: string]: string },
+  if (config?.passwordPolicy) {
+    config.passwordPolicy = convertPasswordPolicy(
+      config.passwordPolicy as { [key: string]: string },
     );
   }
 
-  if (window.REEARTH_CONFIG?.extensionUrls) {
-    const extensions = await loadExtensions(window.REEARTH_CONFIG.extensionUrls);
-    window.REEARTH_CONFIG.extensions = extensions;
+  if (config?.extensionUrls) {
+    const extensions = await loadExtensions(config.extensionUrls);
+    config.extensions = extensions;
   }
+
+  window.REEARTH_CONFIG = config;
 }
 
 export function config(): Config | undefined {

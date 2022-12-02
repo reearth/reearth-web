@@ -5,6 +5,7 @@ import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
+import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 import W, { WidgetLayout } from "../Widget";
 
@@ -19,6 +20,7 @@ type Props = {
   isEditable?: boolean;
   isBuilt?: boolean;
   sceneProperty?: any;
+  viewport?: Viewport;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;
@@ -49,9 +51,17 @@ export default function Area({
       id={`${zone}/${section}/${area}`}
       vertical={area === "middle"}
       stretch={area === "middle"}
-      // reverse={area !== "middle" && section === "right"}
-      end={section === "right" || area === "bottom"}
-      align={(area === "middle" || section === "center") && widgets?.length ? align : undefined}
+      bottom={(section === "right" && area !== "top") || area === "bottom"}
+      realignable={(area === "middle" || section === "center") && !!widgets?.length}
+      align={
+        widgets?.length
+          ? area === "middle" || section === "center"
+            ? align
+            : section === "right"
+            ? "end"
+            : undefined
+          : undefined
+      }
       style={{ flexWrap: "wrap", pointerEvents: "none" }}
       editorStyle={{
         flexWrap: "wrap",

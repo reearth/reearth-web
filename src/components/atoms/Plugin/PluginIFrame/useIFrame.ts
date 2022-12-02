@@ -20,10 +20,12 @@ export type IFrameAPI = {
 
 export default function useIFrame({
   ready,
+  enabled,
   visible: iframeCanBeVisible,
   onRender,
 }: {
   ready?: boolean;
+  enabled?: boolean;
   visible?: boolean;
   onRender?: () => void;
 }) {
@@ -62,8 +64,12 @@ export default function useIFrame({
   );
 
   useEffect(() => {
-    if (!ready) setIFrameLoaded(false);
-  }, [ready]);
+    setIFrameState(([html, options]) => [html, { ...options, visible: !!iframeCanBeVisible }]);
+  }, [iframeCanBeVisible]);
+
+  useEffect(() => {
+    if (!ready || !enabled) setIFrameLoaded(false);
+  }, [ready, enabled]);
 
   return {
     ref,

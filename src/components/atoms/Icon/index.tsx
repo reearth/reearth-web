@@ -15,9 +15,11 @@ export type Props = {
   size?: string | number;
   alt?: string;
   color?: string;
+  stroke?: string;
   style?: CSSProperties;
   role?: AriaRole;
   notransition?: boolean;
+  transitionDuration?: string;
   onClick?: () => void;
 } & AriaAttributes;
 
@@ -27,9 +29,11 @@ const Icon: React.FC<Props> = ({
   alt,
   style,
   color,
+  stroke,
   size,
   role,
   notransition,
+  transitionDuration,
   onClick,
   ...props
 }) => {
@@ -61,12 +65,19 @@ const Icon: React.FC<Props> = ({
     <StyledSvg
       className={className}
       src={src}
-      style={style}
       role={role}
       color={color}
+      stroke={stroke}
       size={sizeStr}
-      notransition={notransition}
       onClick={onClick}
+      style={{
+        ...style,
+        // To prevent annoying errors from being output to the console, specify transitions without Emotion.
+        transitionDuration:
+          !notransition && !style?.transitionDuration
+            ? transitionDuration || "0.3s"
+            : style?.transitionDuration,
+      }}
       {...aria}
     />
   );
@@ -75,17 +86,21 @@ const Icon: React.FC<Props> = ({
 const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
-  ${({ notransition }) => !notransition && "transition: all 0.4s;"}
+  ${({ notransition }) => !notransition && "transition: all 0.3s;"}
 `;
 
-const StyledSvg = styled(SVG)<{ color?: string; size?: string; notransition?: boolean }>`
+const StyledSvg = styled(SVG)<{
+  color?: string;
+  stroke?: string;
+  size?: string;
+}>`
   font-size: 0;
   display: inline-block;
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
+  ${({ stroke }) => `stroke: ${stroke};`}
   transition-property: color, background;
-  ${({ notransition }) => (!notransition ? "transition-duration: 0.4s;" : undefined)}
 `;
 
 export default memo(Icon);
