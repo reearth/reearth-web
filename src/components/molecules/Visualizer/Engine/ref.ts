@@ -136,7 +136,7 @@ export type ClusterProps = {
 
 export type TerrainProperty = {
   terrain?: boolean;
-  terrainType?: "cesium" | "arcgis" | "gsi" | "cesiumion"; // default: cesium
+  terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
   terrainExaggeration?: number; // default: 1
   terrainExaggerationRelativeHeight?: number; // default: 0
   depthTestAgainstTerrain?: boolean;

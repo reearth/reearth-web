@@ -8,8 +8,6 @@ import {
 
 import { TerrainProperty } from "../../ref";
 
-import GsiTerrainProvider from "./gsi";
-
 export const defaultTerrainProvider = new EllipsoidTerrainProvider();
 
 export const terrainProviders: {
@@ -30,7 +28,6 @@ export const terrainProviders: {
     new ArcGISTiledElevationTerrainProvider({
       url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
     }),
-  gsi: () => new GsiTerrainProvider(),
   cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
     terrainCesiumIonAsset
       ? new CesiumTerrainProvider({
