@@ -12,7 +12,7 @@ test("useImageryProviders", () => {
       useImageryProviders({
         tiles,
         presets,
-        cesiumIonAccessToken: cesiumIonAccessToken,
+        cesiumIonAccessToken,
       }),
     { initialProps: { tiles: [{ id: "1", tile_type: "default" }] } },
   );

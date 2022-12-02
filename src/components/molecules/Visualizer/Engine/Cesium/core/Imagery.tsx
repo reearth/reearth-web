@@ -79,7 +79,7 @@ export function useImageryProviders({
   const newTile = useCallback(
     (t: Tile) =>
       t.tile_url && t.tile_type
-        ? presets[t.tile_type]({ url: t.tile_url, cesiumIonAccessToken: cesiumIonAccessToken })
+        ? presets[t.tile_type]({ url: t.tile_url, cesiumIonAccessToken })
         : presets[t.tile_type || "default"](),
     [presets, cesiumIonAccessToken],
   );

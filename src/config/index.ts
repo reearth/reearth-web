@@ -14,7 +14,7 @@ export type Config = {
   googleClientId?: string;
   sentryDsn?: string;
   sentryEnv?: string;
-  cesiumIonAccessToken?: string | undefined;
+  cesiumIonAccessToken?: string;
   passwordPolicy?: {
     tooShort?: RegExp;
     tooLong?: RegExp;
@@ -101,7 +101,6 @@ export default async function loadConfig() {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
-  window.REEARTH_CONFIG = config;
 
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
@@ -113,6 +112,8 @@ export default async function loadConfig() {
     const extensions = await loadExtensions(config.extensionUrls);
     config.extensions = extensions;
   }
+
+  window.REEARTH_CONFIG = config;
 }
 
 export function config(): Config | undefined {
