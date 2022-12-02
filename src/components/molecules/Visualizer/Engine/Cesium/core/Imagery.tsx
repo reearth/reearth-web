@@ -70,15 +70,18 @@ export function useImageryProviders({
   tiles?: Tile[];
   cesiumIonAccessToken?: string;
   presets: {
-    [key: string]: (url?: string) => ImageryProvider | null;
+    [key: string]: (opts?: {
+      url?: string;
+      cesiumIonAccessToken?: string;
+    }) => ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
     (t: Tile) =>
       t.tile_url && t.tile_type
-        ? presets[t.tile_type](t.tile_url)
+        ? presets[t.tile_type]({ url: t.tile_url, cesiumIonAccessToken: cesiumIonAccessToken })
         : presets[t.tile_type || "default"](),
-    [presets],
+    [presets, cesiumIonAccessToken],
   );
 
   const prevCesiumIonAccessToken = useRef(cesiumIonAccessToken);

@@ -1,11 +1,16 @@
 import Error from "@reearth/components/molecules/Published/Error";
 import Visualizer from "@reearth/components/molecules/Visualizer";
+import { config } from "@reearth/config";
 
 import useHooks from "./hooks";
 
 export type Props = {
   className?: string;
   alias?: string;
+};
+
+const engineMeta = {
+  cesiumIonDefaultAccessToken: config()?.cesiumIonAccessToken,
 };
 
 export default function Published({ className, alias }: Props) {
@@ -27,7 +32,8 @@ export default function Published({ className, alias }: Props) {
       ready={ready}
       isBuilt
       isPublished
-      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}
+      pluginBaseUrl={config()?.plugins}
+      engineMeta={engineMeta}
     />
   );
 }
