@@ -66,9 +66,9 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
       data-testid="iframe"
       src={dataUrlHtml}
       key={html}
-      onLoad={onIFrameLoad}
       ref={composeRefs(iFrameRef, externalRef)}
       className={className}
+      onLoad={onIFrameLoad}
       sandbox="allow-scripts"
       {...props}
     />
