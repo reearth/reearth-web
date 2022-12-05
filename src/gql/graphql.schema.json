@@ -9631,6 +9631,46 @@
             "deprecationReason": null
           },
           {
+            "name": "datasetCount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "datasetSchemaCount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "layerCount",
             "description": null,
             "args": [],
@@ -9650,6 +9690,22 @@
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -18600,7 +18656,7 @@
     "directives": [
       {
         "name": "deprecated",
-        "description": "Marks an element of a GraphQL schema as no longer supported.",
+        "description": "The @deprecated built-in directive is used within the type system definition language to indicate deprecated portions of a GraphQL service's schema, such as deprecated fields on a type, arguments on a field, input fields on an input type, or values of an enum type.",
         "isRepeatable": false,
         "locations": [
           "ARGUMENT_DEFINITION",
@@ -18611,7 +18667,7 @@
         "args": [
           {
             "name": "reason",
-            "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https://commonmark.org/).",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -18707,7 +18763,7 @@
       },
       {
         "name": "include",
-        "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
+        "description": "The @include directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional inclusion during execution as described by the if argument.",
         "isRepeatable": false,
         "locations": [
           "FIELD",
@@ -18717,7 +18773,7 @@
         "args": [
           {
             "name": "if",
-            "description": "Included when true.",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -18735,7 +18791,7 @@
       },
       {
         "name": "skip",
-        "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
+        "description": "The @skip directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional exclusion during execution as described by the if argument.",
         "isRepeatable": false,
         "locations": [
           "FIELD",
@@ -18745,7 +18801,7 @@
         "args": [
           {
             "name": "if",
-            "description": "Skipped when true.",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -18763,7 +18819,7 @@
       },
       {
         "name": "specifiedBy",
-        "description": "Exposes a URL that specifies the behavior of this scalar.",
+        "description": "The @specifiedBy built-in directive is used within the type system definition language to provide a scalar specification URL for specifying the behavior of custom scalar types.",
         "isRepeatable": false,
         "locations": [
           "SCALAR"
@@ -18771,7 +18827,7 @@
         "args": [
           {
             "name": "url",
-            "description": "The URL that specifies the behavior of this scalar.",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,

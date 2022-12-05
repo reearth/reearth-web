@@ -1,6 +1,7 @@
 import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
+import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 
 import type {
@@ -13,6 +14,7 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
+  WidgetLocationOptions,
 } from "./types";
 
 export type CommonReearth = Omit<
@@ -22,6 +24,7 @@ export type CommonReearth = Omit<
 
 export function exposed({
   render,
+  closeUI,
   postMessage,
   resize,
   renderModal,
@@ -39,6 +42,7 @@ export function exposed({
   block,
   widget,
   overrideSceneProperty,
+  moveWidget,
 }: {
   render: (
     html: string,
@@ -49,6 +53,7 @@ export function exposed({
       extended?: boolean;
     },
   ) => void;
+  closeUI: Reearth["ui"]["close"];
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
   renderModal: (
@@ -73,6 +78,7 @@ export function exposed({
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
+  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
 }): GlobalThis {
   return merge({
     console: {
@@ -112,6 +118,7 @@ export function exposed({
           },
           postMessage,
           resize,
+          close: closeUI,
         },
         modal: {
           show: (
@@ -180,7 +187,14 @@ export function exposed({
       plugin?.extensionType === "widget"
         ? {
             get widget() {
-              return widget?.();
+              return {
+                ...widget?.(),
+                moveTo: (options: WidgetLocationOptions) => {
+                  const widgetId = widget?.()?.id;
+                  if (!widgetId) return;
+                  moveWidget?.(widgetId, options);
+                },
+              };
             },
           }
         : {},
@@ -194,9 +208,11 @@ export function commonReearth({
   layersInViewport,
   layers,
   sceneProperty,
+  inEditor,
   tags,
   camera,
   clock,
+  viewport,
   selectedLayer,
   layerSelectionReason,
   layerOverriddenInfobox,
@@ -211,10 +227,11 @@ export function commonReearth({
   lookAt,
   zoomIn,
   zoomOut,
-  viewport,
+  cameraViewport,
   orbit,
   rotateRight,
   captureScreen,
+  getLocationFromScreen,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -232,6 +249,7 @@ export function commonReearth({
   layers: () => LayerStore;
   sceneProperty: () => any;
   tags: () => Tag[];
+  viewport: () => VisualizerViewport;
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
@@ -251,8 +269,10 @@ export function commonReearth({
   zoomOut: GlobalThis["reearth"]["visualizer"]["camera"]["zoomOut"];
   rotateRight: GlobalThis["reearth"]["visualizer"]["camera"]["rotateRight"];
   orbit: GlobalThis["reearth"]["visualizer"]["camera"]["orbit"];
-  viewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
+  cameraViewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
+  getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
+  inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
   lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
@@ -281,7 +301,7 @@ export function commonReearth({
           return camera();
         },
         get viewport() {
-          return viewport();
+          return cameraViewport();
         },
         enableScreenSpaceController: enableScreenSpaceCameraController,
         lookHorizontal,
@@ -304,11 +324,18 @@ export function commonReearth({
       return clock();
     },
     scene: {
+      get inEditor() {
+        return inEditor();
+      },
       get property() {
         return sceneProperty();
       },
       overrideProperty: overrideSceneProperty,
       captureScreen,
+      getLocationFromScreen,
+    },
+    get viewport() {
+      return viewport();
     },
     engineName,
     camera: {
@@ -322,7 +349,7 @@ export function commonReearth({
         return camera();
       },
       get viewport() {
-        return viewport();
+        return cameraViewport();
       },
       enableScreenSpaceController: enableScreenSpaceCameraController,
       lookHorizontal,

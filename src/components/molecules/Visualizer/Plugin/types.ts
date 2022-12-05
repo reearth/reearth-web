@@ -25,6 +25,7 @@ export type Reearth = {
   readonly widget?: Widget;
   readonly block?: Block;
   readonly scene: Scene;
+  readonly viewport: Viewport;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -49,10 +50,17 @@ export type MouseEvent = {
   delta?: number;
 };
 
+export type LayerEditEvent = {
+  layerId: string | undefined;
+  scale?: { width: number; length: number; height: number; location: LatLngHeight };
+  rotate?: { heading: number; pitch: number; roll: number };
+};
+
 export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: CameraPosition];
+  layeredit: [e: LayerEditEvent];
   select: [layerId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];
@@ -70,6 +78,9 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
+  resize: [props: Viewport];
+  modalclose: [];
+  popupclose: [];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -80,11 +91,23 @@ export type Plugin = {
   readonly property?: any;
 };
 
+export type LatLngHeight = {
+  lat: number;
+  lng: number;
+  height: number;
+};
+
 export type Scene = {
   /** Current scene property */
+  readonly inEditor: boolean;
   readonly property?: any;
   readonly overrideProperty: (property: any) => void;
   readonly captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
+  readonly getLocationFromScreen: (
+    x: number,
+    y: number,
+    withTerrain?: boolean,
+  ) => LatLngHeight | undefined;
 };
 
 /** You can operate and get data about layers. */
@@ -192,6 +215,7 @@ export type Widget<P = any> = {
     vertically: boolean;
   };
   layout?: WidgetLayout;
+  moveTo?: (options: WidgetLocationOptions) => void;
 };
 
 export type WidgetLayout = {
@@ -206,6 +230,10 @@ export type WidgetLocation = {
 };
 
 export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetLocationOptions = WidgetLocation & {
+  method?: "insert" | "append";
+};
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */
 export type UI = {
@@ -252,6 +280,7 @@ export type UI = {
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
     extended?: boolean | undefined,
   ) => void;
+  readonly close: () => void;
 };
 
 export type Modal = {
@@ -324,6 +353,12 @@ export type Visualizer = {
   readonly property?: any;
   /** use `reearth.scene.overrideProperty` instead. */
   readonly overrideProperty: (property: any) => void;
+};
+
+export type Viewport = {
+  readonly width: number;
+  readonly height: number;
+  readonly isMobile: boolean;
 };
 
 type Rect = {
@@ -438,6 +473,7 @@ export type CameraOptions = {
   duration?: number;
   /** Easing function. */
   easing?: (time: number) => number;
+  animation?: boolean;
 };
 
 /** Cesium API: available only when the plugin is a primitive */

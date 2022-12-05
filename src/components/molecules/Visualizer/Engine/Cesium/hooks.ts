@@ -1,5 +1,5 @@
-import { Color, Entity, Ion, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock } from "cesium";
-import type { Viewer as CesiumViewer, TerrainProvider } from "cesium";
+import { Color, Entity, Cesium3DTileFeature, Cartesian3, Clock as CesiumClock, Ion } from "cesium";
+import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -19,14 +19,11 @@ import {
   isDraggable,
   isSelectable,
   layerIdField,
-  getLocationFromScreenXY,
+  getLocationFromScreen,
   getClock,
 } from "./common";
-import terrain from "./terrain";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
-
-const cesiumIonDefaultAccessToken = Ion.defaultAccessToken;
 
 export default ({
   ref,
@@ -34,10 +31,11 @@ export default ({
   camera,
   clock,
   selectedLayerId,
+  isLayerDraggable,
+  meta,
   onLayerSelect,
   onCameraChange,
   onTick,
-  isLayerDraggable,
   onLayerDrag,
   onLayerDrop,
 }: {
@@ -46,57 +44,23 @@ export default ({
   camera?: Camera;
   clock?: Clock;
   selectedLayerId?: string;
+  isLayerDraggable?: boolean;
+  meta?: Record<string, unknown>;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Clock) => void;
-  isLayerDraggable?: boolean;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
-  const cesiumIonAccessToken = property?.default?.ion;
-  // Ensure to set Cesium Ion access token before the first rendering
-  Ion.defaultAccessToken = cesiumIonAccessToken || cesiumIonDefaultAccessToken;
+  const cesiumIonDefaultAccessToken =
+    typeof meta?.cesiumIonAccessToken === "string"
+      ? meta.cesiumIonAccessToken
+      : Ion.defaultAccessToken;
+  const cesiumIonAccessToken = property?.default?.ion || cesiumIonDefaultAccessToken;
 
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
-
-  // terrain
-  const terrainProperty = useMemo(
-    () => ({
-      terrain: property?.terrain?.terrain || property?.default?.terrain,
-      terrainType: property?.terrain?.terrainType || property?.default?.terrainType,
-      terrainExaggeration:
-        property?.terrain?.terrainExaggeration || property?.default?.terrainExaggeration,
-      terrainExaggerationRelativeHeight:
-        property?.terrain?.terrainExaggerationRelativeHeight ||
-        property?.default?.terrainExaggerationRelativeHeight,
-      depthTestAgainstTerrain:
-        property?.terrain?.depthTestAgainstTerrain || property?.default?.depthTestAgainstTerrain,
-    }),
-    [
-      property?.default?.terrain,
-      property?.default?.terrainType,
-      property?.default?.terrainExaggeration,
-      property?.default?.terrainExaggerationRelativeHeight,
-      property?.default?.depthTestAgainstTerrain,
-      property?.terrain?.terrain,
-      property?.terrain?.terrainType,
-      property?.terrain?.terrainExaggeration,
-      property?.terrain?.terrainExaggerationRelativeHeight,
-      property?.terrain?.depthTestAgainstTerrain,
-    ],
-  );
-
-  const terrainProvider = useMemo((): TerrainProvider | undefined => {
-    const provider = terrainProperty.terrain
-      ? terrainProperty.terrainType
-        ? terrain[terrainProperty.terrainType] || terrain.default
-        : terrain.cesium
-      : terrain.default;
-    return typeof provider === "function" ? provider() : provider;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cesiumIonAccessToken, terrainProperty.terrain, terrainProperty.terrainType]);
 
   const backgroundColor = useMemo(
     () =>
@@ -214,7 +178,7 @@ export default ({
           x: position?.x,
           y: position?.y,
           ...(position
-            ? getLocationFromScreenXY(viewer.scene, position.x, position.y, true) ?? {}
+            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
             : {}),
         };
         const layerId = getLayerId(target);
@@ -356,20 +320,19 @@ export default ({
     useCameraLimiter(cesium, camera, property?.cameraLimiter);
 
   return {
-    terrainProvider,
-    terrainProperty,
     backgroundColor,
     cesium,
     cameraViewBoundaries,
     cameraViewOuterBoundaries,
     cameraViewBoundariesMaterial,
+    cesiumIonAccessToken,
+    mouseEventHandles,
     handleMount,
     handleUnmount,
     handleClick,
     handleCameraChange,
     handleTick,
     handleCameraMoveEnd,
-    mouseEventHandles,
   };
 };
 

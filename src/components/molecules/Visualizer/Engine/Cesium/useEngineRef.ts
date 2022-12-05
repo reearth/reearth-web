@@ -9,7 +9,7 @@ import type { MouseEvents, MouseEvent } from "../ref";
 import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
 import {
-  getLocationFromScreenXY,
+  getLocationFromScreen,
   flyTo,
   lookAt,
   getCamera,
@@ -26,6 +26,7 @@ import {
   flyToGround,
   getCenterCamera,
   zoom,
+  lookAtWithoutAnimation,
 } from "./common";
 
 export default function useEngineRef(
@@ -62,10 +63,10 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getCamera(viewer);
       },
-      getLocationFromScreenXY: (x, y) => {
+      getLocationFromScreen: (x, y, withTerrain) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return getLocationFromScreenXY(viewer.scene, x, y);
+        return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
       flyTo: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
@@ -80,6 +81,9 @@ export default function useEngineRef(
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
+        if (options?.withoutAnimation) {
+          return lookAtWithoutAnimation(viewer.scene, { ...getCamera(viewer), ...camera });
+        }
         cancelCameraFlight.current?.();
         cancelCameraFlight.current = lookAt(
           viewer.scene?.camera,
@@ -92,11 +96,16 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         const e = viewer.entities.getById(layerId);
         if (!e) return;
+        const entityPos = e.position?.getValue(viewer.clock.currentTime);
+        if (!entityPos) return;
+        const cameraPos = viewer.camera.positionWC;
+        const distance = Cesium.Cartesian3.distance(entityPos, cameraPos);
+        if (Math.round(distance * 1000) / 1000 === 5000) return;
         const camera = getCamera(viewer);
         const offset = new Cesium.HeadingPitchRange(
           camera?.heading ?? 0,
           camera?.pitch ?? -90,
-          50000,
+          5000,
         );
         viewer.zoomTo(e, offset);
       },

@@ -28,6 +28,7 @@ import {
   sampleTerrainMostDetailed,
   Ray,
   IntersectionTests,
+  Matrix4,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -36,6 +37,7 @@ import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
 
 import { CameraOptions, Clock } from "../../Plugin/types";
+import { FlyToDestination } from "../ref";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -151,7 +153,7 @@ export const vo = (
     [""]: undefined,
   }[o || ""]);
 
-export const getLocationFromScreenXY = (
+export const getLocationFromScreen = (
   scene: Scene | undefined | null,
   x: number,
   y: number,
@@ -290,6 +292,41 @@ export const lookAt = (
     cancelFov?.();
     cesiumCamera?.cancelFlight();
   };
+};
+
+export const lookAtWithoutAnimation = (
+  scene: Scene,
+  camera?: {
+    /** degrees */
+    lat?: number;
+    /** degrees */
+    lng?: number;
+    /** meters */
+    height?: number;
+    /** radians */
+    heading?: number;
+    /** radians */
+    pitch?: number;
+    /** radians */
+    range?: number;
+    /** Field of view expressed in radians */
+    fov?: number;
+  },
+) => {
+  if (!camera) {
+    return;
+  }
+
+  const position =
+    typeof camera.lat === "number" &&
+    typeof camera.lng === "number" &&
+    typeof camera.height === "number"
+      ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
+      : undefined;
+
+  if (position) {
+    scene.camera.lookAtTransform(Matrix4.fromTranslation(position));
+  }
 };
 
 export const animateFOV = ({
@@ -594,12 +631,13 @@ export function moveRight(scene: Scene, amount: number) {
 }
 
 export async function moveOverTerrain(viewer: Viewer, offset = 0) {
-  const camera = viewer.scene.camera;
-  const height = await sampleTerrainHeight(viewer.scene, camera.position);
+  const camera = getCamera(viewer);
+  if (camera?.lng === undefined || camera?.lat === undefined) return;
+  const height = await sampleTerrainHeight(viewer.scene, camera.lng, camera.lat);
   if (height && height !== 0) {
     const innerCamera = getCamera(viewer);
     if (innerCamera && innerCamera?.height < height + offset) {
-      camera.moveUp(height + offset - innerCamera.height);
+      viewer.scene.camera.moveUp(height + offset - innerCamera.height);
     }
   }
 }
@@ -607,28 +645,20 @@ export async function moveOverTerrain(viewer: Viewer, offset = 0) {
 export async function flyToGround(
   viewer: Viewer,
   cancelCameraFlight: MutableRefObject<(() => void) | undefined>,
-  camera?: {
-    lat?: number;
-    lng?: number;
-    height?: number;
-    heading?: number;
-    pitch?: number;
-    roll?: number;
-    fov?: number;
-  },
+  camera: FlyToDestination,
   options?: {
     duration?: number;
     easing?: (time: number) => number;
   },
   offset = 0,
 ) {
-  const height = await sampleTerrainHeight(viewer.scene, viewer.scene.camera.position);
+  if (camera.lng === undefined || camera.lat === undefined) return;
+  const height = await sampleTerrainHeight(viewer.scene, camera.lng, camera.lat);
   const tarHeight = height ? height + offset : offset;
-  const groundCamera = { ...camera, height: tarHeight };
   cancelCameraFlight.current?.();
   cancelCameraFlight.current = flyTo(
     viewer.scene?.camera,
-    { ...getCamera(viewer), ...groundCamera },
+    { ...getCamera(viewer), ...camera, height: tarHeight },
     options,
   );
 }
@@ -651,15 +681,28 @@ function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotat
   return rotatedVector;
 }
 
-async function sampleTerrainHeight(
+export async function sampleTerrainHeight(
   scene: Scene,
-  position: Cartesian3,
+  lng: number,
+  lat: number,
 ): Promise<number | undefined> {
   const terrainProvider = scene.terrainProvider;
   if (terrainProvider instanceof EllipsoidTerrainProvider) return 0;
 
   const [sample] = await sampleTerrainMostDetailed(terrainProvider, [
-    Cartographic.fromCartesian(position, scene.globe.ellipsoid, new Cartographic()),
+    Cartographic.fromDegrees(lng, lat),
   ]);
   return sample.height;
+}
+
+export async function sampleTerrainHeightFromCartesian(scene: Scene, translation: Cartesian3) {
+  const cart = Cartographic.fromCartesian(translation);
+  const [lng, lat] = [
+    CesiumMath.toDegrees(cart?.longitude || 0),
+    CesiumMath.toDegrees(cart?.latitude || 0),
+  ];
+  if (!lng || !lat) {
+    return;
+  }
+  return await sampleTerrainHeight(scene, lng, lat);
 }

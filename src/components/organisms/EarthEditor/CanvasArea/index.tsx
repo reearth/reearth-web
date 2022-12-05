@@ -3,17 +3,17 @@ import React, { useCallback } from "react";
 import ContentPicker from "@reearth/components/atoms/ContentPicker";
 import FovSlider from "@reearth/components/molecules/EarthEditor/FovSlider";
 import Visualizer, { Props as VisualizerProps } from "@reearth/components/molecules/Visualizer";
+import { config } from "@reearth/config";
 
 import useHooks from "./hooks";
 
 export type Props = {
   className?: string;
   isBuilt?: boolean;
+  inEditor?: boolean;
 };
 
-// TODO: ErrorBoudaryでエラーハンドリング
-
-const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
+const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
   const {
     rootLayerId,
     selectedBlockId,
@@ -31,6 +31,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
     camera,
     clock,
     widgetAlignEditorActivated,
+    engineMeta,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -61,6 +62,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       engine="cesium"
       isEditable={!isBuilt}
       isBuilt={!!isBuilt}
+      inEditor={!!inEditor}
       rootLayer={rootLayer}
       widgets={widgets}
       selectedLayerId={selectedLayerId}
@@ -74,8 +76,10 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       camera={camera}
       clock={clock}
       ready={isBuilt || (!!rootLayer && !!widgets)}
-      onLayerSelect={selectLayer}
+      pluginBaseUrl={config()?.plugins}
       widgetAlignEditorActivated={widgetAlignEditorActivated}
+      engineMeta={engineMeta}
+      onLayerSelect={selectLayer}
       onCameraChange={onCameraChange}
       onTick={onTick}
       onWidgetUpdate={onWidgetUpdate}
@@ -85,10 +89,9 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt }) => {
       onBlockMove={onBlockMove}
       onBlockDelete={onBlockRemove}
       onBlockInsert={onBlockInsert}
-      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}
       onLayerDrop={handleDropLayer}
-      pluginBaseUrl={window.REEARTH_CONFIG?.plugins}
-      onZoomToLayer={zoomToLayer}>
+      onZoomToLayer={zoomToLayer}
+      renderInfoboxInsertionPopUp={renderInfoboxInsertionPopUp}>
       <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}

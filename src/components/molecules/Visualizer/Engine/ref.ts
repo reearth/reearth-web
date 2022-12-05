@@ -56,7 +56,7 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
-  getLocationFromScreenXY: (x: number, y: number) => LatLngHeight | undefined;
+  getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
@@ -126,6 +126,7 @@ export type CameraOptions = {
   /** Seconds */
   duration?: number;
   easing?: (time: number) => number;
+  withoutAnimation?: boolean;
 };
 
 export type ClusterProps = {
@@ -133,20 +134,27 @@ export type ClusterProps = {
   children?: ReactNode;
 };
 
+export type TerrainProperty = {
+  terrain?: boolean;
+  terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
+  terrainExaggeration?: number; // default: 1
+  terrainExaggerationRelativeHeight?: number; // default: 0
+  depthTestAgainstTerrain?: boolean;
+  terrainCesiumIonAsset?: string;
+  terrainCesiumIonAccessToken?: string;
+  terrainCesiumIonUrl?: string;
+  terrainUrl?: string;
+};
+
 export type SceneProperty = {
   default?: {
     camera?: Camera;
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis"; // default: cesium
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
     allowEnterGround?: boolean;
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
     sceneMode?: SceneMode; // default: scene3d
-  };
+  } & TerrainProperty;
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;
     cameraLimitterShowHelper?: boolean;
@@ -167,13 +175,7 @@ export type SceneProperty = {
     tile_minLevel?: number;
     tile_opacity?: number;
   }[];
-  terrain?: {
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis"; // default: cesium
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
-  };
+  terrain?: TerrainProperty;
   atmosphere?: {
     enable_sun?: boolean;
     enable_lighting?: boolean;
