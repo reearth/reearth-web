@@ -14,6 +14,7 @@ export type Config = {
   googleClientId?: string;
   sentryDsn?: string;
   sentryEnv?: string;
+  cesiumIonAccessToken?: string;
   passwordPolicy?: {
     tooShort?: RegExp;
     tooLong?: RegExp;
@@ -23,11 +24,25 @@ export type Config = {
     highSecurity?: RegExp;
   };
   ip?: string;
+  policy?: {
+    modalTitle: Record<string, string> | string;
+    modalDescription: Record<string, string> | string;
+    url?: Record<string, string> | string;
+    limitNotifications?: {
+      asset?: Record<string, string> | string;
+      createProject?: Record<string, string> | string;
+      dataset?: Record<string, string> | string;
+      member?: Record<string, string> | string;
+      layer?: Record<string, string> | string;
+      publishProject?: Record<string, string> | string;
+    };
+  };
   documentationUrl?: string;
   marketplaceUrl?: string;
   extensionUrls?: string[];
   extensions?: Extensions;
 };
+
 declare global {
   interface Window {
     REEARTH_CONFIG?: Config;
@@ -43,6 +58,46 @@ export const defaultConfig: Config = {
   auth0Audience: "http://localhost:8080",
   auth0Domain: "http://localhost:8080",
   auth0ClientId: "reearth-authsrv-client-default",
+  policy: {
+    modalTitle: {
+      en: "Re:Earth Cloud",
+      ja: "Re:Earth Cloud",
+    },
+    modalDescription: {
+      en: "This is your currently subscribed to plan. If this plan stops meeting your needs, Re:Earth has other plans available. ",
+      ja: "日本語版にほなsdflkjlksdjf",
+    },
+    url: {
+      en: "https://reearth.io/service/cloud",
+      ja: "https://reearth.io/ja/service/cloud",
+    },
+    limitNotifications: {
+      asset: {
+        en: "Your workspace has reached its plan's limit for assets. Please check reearth.io/service/cloud for details.",
+        ja: "",
+      },
+      createProject: {
+        en: "Your workspace has reached its plan's limit for projects. Please check reearth.io/service/cloud for details.",
+        ja: "",
+      },
+      dataset: {
+        en: "Your workspace has reached its plan's limit for dataset. Please check reearth.io/service/cloud for details.",
+        ja: "",
+      },
+      member: {
+        en: "Your workspace has reached its plan's limit for new members. Please check reearth.io/service/cloud for details.",
+        ja: "",
+      },
+      layer: {
+        en: "Your workspace has reached its plan's limit for layers. Please check reearth.io/service/cloud for details.",
+        ja: "",
+      },
+      publishProject: {
+        en: "Your workspace has reached its plan's limit for publishing projects. Please check reearth.io/service/cloud for details.",
+        ja: "",
+      },
+    },
+  },
 };
 
 export function convertPasswordPolicy(passwordPolicy?: {
@@ -82,21 +137,23 @@ export function convertPasswordPolicy(passwordPolicy?: {
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
-  window.REEARTH_CONFIG = {
+  const config = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
 
-  if (window.REEARTH_CONFIG?.passwordPolicy) {
-    window.REEARTH_CONFIG.passwordPolicy = convertPasswordPolicy(
-      window.REEARTH_CONFIG.passwordPolicy as { [key: string]: string },
+  if (config?.passwordPolicy) {
+    config.passwordPolicy = convertPasswordPolicy(
+      config.passwordPolicy as { [key: string]: string },
     );
   }
 
-  if (window.REEARTH_CONFIG?.extensionUrls) {
-    const extensions = await loadExtensions(window.REEARTH_CONFIG.extensionUrls);
-    window.REEARTH_CONFIG.extensions = extensions;
+  if (config?.extensionUrls) {
+    const extensions = await loadExtensions(config.extensionUrls);
+    config.extensions = extensions;
   }
+
+  window.REEARTH_CONFIG = config;
 }
 
 export function config(): Config | undefined {
