@@ -145,7 +145,6 @@ export default function useHook({
           const st = win.getComputedStyle(html, "");
           horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
           verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
-          const scrollbarW = win.innerWidth - html.offsetWidth;
           const width = html.offsetWidth + horizontalMargin;
           const height = html.offsetHeight + verticalMargin;
           if(parent){
@@ -186,46 +185,3 @@ export default function useHook({
     dataUrlHtml,
   };
 }
-
-// function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
-//   const isAsync = (script: HTMLScriptElement) =>
-//     script.getAttribute("type") === "module" ||
-//     script.getAttribute("async") ||
-//     script.getAttribute("defer");
-
-//   return Array.from(scripts)
-//     .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
-//     .reduce((chain, oldScript) => {
-//       return chain.then(() => runScript(oldScript));
-//     }, Promise.resolve());
-// }
-
-// function runScript(oldScript: HTMLScriptElement) {
-//   return new Promise<void>((resolve, rejected) => {
-//     const newScript = document.createElement("script");
-//     for (const attr of Array.from(oldScript.attributes)) {
-//       newScript.setAttribute(attr.name, attr.value);
-//     }
-//     newScript.appendChild(document.createTextNode(oldScript.innerText));
-//     newScript.onload = () => resolve();
-//     newScript.onerror = () => rejected();
-//     oldScript.parentNode?.replaceChild(newScript, oldScript);
-//     if (!newScript.getAttribute("src")) {
-//       resolve();
-//     }
-//   });
-// }
-
-// function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
-//   for (const link of links) {
-//     const newLink = document.createElement("link");
-//     for (const attr of link.attributes) {
-//       newLink.setAttribute(attr.name, attr.value);
-//     }
-//     if (link.innerText) {
-//       newLink.appendChild(document.createTextNode(link.innerText));
-//     }
-//     doc.head.appendChild(newLink);
-//     doc.body.removeChild(link);
-//   }
-// }
