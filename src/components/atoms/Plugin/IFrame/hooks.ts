@@ -47,6 +47,7 @@ export default function useHook({
   ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
+  dataUrlHtml: string;
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
@@ -91,73 +92,9 @@ export default function useHook({
   }, [autoResize, autoResizeMessageKey, onMessage, onAutoResized]);
 
   const onIframeLoad = useCallback(() => {
-    const win = iFrameRef.current?.contentWindow;
-    const doc = iFrameRef.current?.contentDocument;
-    if (!win || !doc?.body || !html) return;
-
-    // inject auto-resizing code
-    if (!doc.head.querySelector("script[id=_reearth_resize]")) {
-      const resize = document.createElement("script");
-      resize.id = "_reearth_resize";
-      // To include margin, getComputedStyle should be used.
-      resize.textContent = `
-        if ("ResizeObserver" in window) {
-          new window.ResizeObserver(entries => {
-            const win = document.defaultView;
-            const html = document.body.parentElement;
-            const st = win.getComputedStyle(html, "");
-            horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
-            verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
-            const scrollbarW = win.innerWidth - html.offsetWidth;
-            const width = ${
-              width
-                ? typeof width === "number"
-                  ? `"${width}px"`
-                  : `"${width}"`
-                : "html.offsetWidth + horizontalMargin"
-            };
-            const height = ${
-              height
-                ? typeof height === "number"
-                  ? `"${height}px"`
-                  : `"${height}"`
-                : "html.offsetHeight + verticalMargin"
-            };
-            parent.postMessage({
-              [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
-            })
-          }).observe(document.body.parentElement);
-        }
-      `;
-      doc.head.appendChild(resize);
-    }
-
-    doc.body.innerHTML = html;
-
-    linksToHead(doc, doc.body.querySelectorAll("link"));
-
-    const onScriptsLoaded = () => {
-      // post pending messages
-      if (pendingMesages.current.length) {
-        for (const msg of pendingMesages.current) {
-          win.postMessage(msg, "*");
-        }
-        pendingMesages.current = [];
-      }
-      loaded.current = true;
-      onLoad?.();
-    };
-
-    // exec scripts
-    const scripts = doc.body.querySelectorAll("script");
-    if (scripts) {
-      execScripts(scripts, false)
-        .finally(() => execScripts(scripts, true))
-        .finally(onScriptsLoaded);
-    } else {
-      onScriptsLoaded();
-    }
-  }, [autoResizeMessageKey, html, onLoad, height, width]);
+    loaded.current = true;
+    onLoad?.();
+  }, [onLoad]);
 
   const props = useMemo<IframeHTMLAttributes<HTMLIFrameElement>>(
     () => ({
@@ -198,52 +135,97 @@ export default function useHook({
     setIFrameSize(w && h ? [w, h] : undefined);
   }, [width, height]);
 
+  const autoResizeScript = useMemo(() => {
+    return `<script id="_reearth_resize">
+      let inited = false;
+      if ("ResizeObserver" in window) {         
+        new window.ResizeObserver(entries => {
+          const win = document.defaultView;
+          const html = document.body.parentElement;
+          const st = win.getComputedStyle(html, "");
+          horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
+          verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
+          const scrollbarW = win.innerWidth - html.offsetWidth;
+          const width = html.offsetWidth + horizontalMargin;
+          const height = html.offsetHeight + verticalMargin;
+          if(parent){
+            parent.postMessage({
+              [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
+            }, "*")
+          }
+        }).observe(document.body.parentElement);
+      }
+    </script>`;
+  }, [autoResizeMessageKey]);
+
+  const dataUrlHtml = useMemo(() => {
+    const base64Html = btoa(
+      html
+        ? `
+          <html>
+            <head>
+              <style>
+                html,body{height: min-content;}
+              </style>
+            </head>
+            <body>
+              ${html}
+              ${autoResizeScript}
+            </body>
+          </html>
+        `
+        : "",
+    );
+    return `data:text/html;base64,${base64Html}`;
+  }, [html, autoResizeScript]);
+
   return {
     ref: iFrameRef,
     props,
     onLoad: onIframeLoad,
+    dataUrlHtml,
   };
 }
 
-function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
-  const isAsync = (script: HTMLScriptElement) =>
-    script.getAttribute("type") === "module" ||
-    script.getAttribute("async") ||
-    script.getAttribute("defer");
+// function execScripts(scripts: Iterable<HTMLScriptElement>, asyncScript: boolean) {
+//   const isAsync = (script: HTMLScriptElement) =>
+//     script.getAttribute("type") === "module" ||
+//     script.getAttribute("async") ||
+//     script.getAttribute("defer");
 
-  return Array.from(scripts)
-    .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
-    .reduce((chain, oldScript) => {
-      return chain.then(() => runScript(oldScript));
-    }, Promise.resolve());
-}
+//   return Array.from(scripts)
+//     .filter(script => (asyncScript ? isAsync(script) : !isAsync(script)))
+//     .reduce((chain, oldScript) => {
+//       return chain.then(() => runScript(oldScript));
+//     }, Promise.resolve());
+// }
 
-function runScript(oldScript: HTMLScriptElement) {
-  return new Promise<void>((resolve, rejected) => {
-    const newScript = document.createElement("script");
-    for (const attr of Array.from(oldScript.attributes)) {
-      newScript.setAttribute(attr.name, attr.value);
-    }
-    newScript.appendChild(document.createTextNode(oldScript.innerText));
-    newScript.onload = () => resolve();
-    newScript.onerror = () => rejected();
-    oldScript.parentNode?.replaceChild(newScript, oldScript);
-    if (!newScript.getAttribute("src")) {
-      resolve();
-    }
-  });
-}
+// function runScript(oldScript: HTMLScriptElement) {
+//   return new Promise<void>((resolve, rejected) => {
+//     const newScript = document.createElement("script");
+//     for (const attr of Array.from(oldScript.attributes)) {
+//       newScript.setAttribute(attr.name, attr.value);
+//     }
+//     newScript.appendChild(document.createTextNode(oldScript.innerText));
+//     newScript.onload = () => resolve();
+//     newScript.onerror = () => rejected();
+//     oldScript.parentNode?.replaceChild(newScript, oldScript);
+//     if (!newScript.getAttribute("src")) {
+//       resolve();
+//     }
+//   });
+// }
 
-function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
-  for (const link of links) {
-    const newLink = document.createElement("link");
-    for (const attr of link.attributes) {
-      newLink.setAttribute(attr.name, attr.value);
-    }
-    if (link.innerText) {
-      newLink.appendChild(document.createTextNode(link.innerText));
-    }
-    doc.head.appendChild(newLink);
-    doc.body.removeChild(link);
-  }
-}
+// function linksToHead(doc: Document, links: NodeListOf<HTMLLinkElement>) {
+//   for (const link of links) {
+//     const newLink = document.createElement("link");
+//     for (const attr of link.attributes) {
+//       newLink.setAttribute(attr.name, attr.value);
+//     }
+//     if (link.innerText) {
+//       newLink.appendChild(document.createTextNode(link.innerText));
+//     }
+//     doc.head.appendChild(newLink);
+//     doc.body.removeChild(link);
+//   }
+// }
