@@ -159,8 +159,10 @@ export default function useHook({
 
   const dataUrlHtml = useMemo(() => {
     const base64Html = btoa(
-      html
-        ? `
+      unescapeForbtoa(
+        encodeURIComponent(
+          html
+            ? `
           <html>
             <head>
               <style>
@@ -173,7 +175,9 @@ export default function useHook({
             </body>
           </html>
         `
-        : "",
+            : "",
+        ),
+      ),
     );
     return `data:text/html;base64,${base64Html}`;
   }, [html, autoResizeScript]);
@@ -184,4 +188,10 @@ export default function useHook({
     onLoad: onIframeLoad,
     dataUrlHtml,
   };
+}
+
+function unescapeForbtoa(str: string) {
+  return str.replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode(parseInt("0x" + p1));
+  });
 }
