@@ -2262,9 +2262,9 @@
     "@types/gapi.client.discovery" "*"
 
 "@maxim_mazurok/gapi.client.sheets-v4@latest":
-  version "0.0.20221031"
-  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.sheets-v4/-/gapi.client.sheets-v4-0.0.20221031.tgz#f586b972a7897afadf6f8b49c0336f0c944a6a1f"
-  integrity sha512-BxEMZ7l0C7csdKLmSSRwk9SyM8PaSQirrgEYTya34pWRKAfYgdrUpA2NnN4iSXbdWluohuBcBcZj920FSqy0WQ==
+  version "0.0.20221115"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.sheets-v4/-/gapi.client.sheets-v4-0.0.20221115.tgz#5bd60c2dfb780167dbe5d0ee690f7139e1854aa9"
+  integrity sha512-xMLfeiYJx3HWBybGDSlU/RHShY/0oXaoI5qLmchOJBRslEYbLFF2o7TJgR5JWTuG7mj3n+QtjZhV7FGoyU5/og==
   dependencies:
     "@types/gapi.client" "*"
     "@types/gapi.client.discovery" "*"
@@ -6695,6 +6695,11 @@ date-fns@2.29.3:
   version "2.29.3"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
   integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
+
+dayjs@^1.11.6:
+  version "1.11.6"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.6.tgz#2e79a226314ec3ec904e3ee1dd5a4f5e5b1c7afb"
+  integrity sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==
 
 de-indent@^1.0.2:
   version "1.0.2"
@@ -13335,10 +13340,10 @@ react-accessible-accordion@5.0.0:
   resolved "https://registry.yarnpkg.com/react-accessible-accordion/-/react-accessible-accordion-5.0.0.tgz#5b61d06aec38906a99f977c10324d9bddec0f64c"
   integrity sha512-MT2obYpTgLIIfPr9d7hEyvPB5rg8uJcHpgA83JSRlEUHvzH48+8HJPvzSs+nM+XprTugDgLfhozO5qyJpBvYRQ==
 
-react-align@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.2.0.tgz#b6b9c8dfe7c63b870d6467c1d7a3e0bfca10872a"
-  integrity sha512-7I5+w+YN3yfirAYaa4vOKHmheU5FWJ2eEvCM4ciea5jKpi305SDSb8DUwdeP8Yh4EJzNX4ImsZOM/myaVRz3mQ==
+react-align@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.2.2.tgz#d245c0bde883da805f76c19c13ac1c67941a2b97"
+  integrity sha512-cESpOZ/j7SmGvL94SLpX5d3a4Sdewxoh1IgjbTLe7kiwiPr/gGeK17coc6Mnl32rGk+oQaqUdNk5YSZbo1R8kQ==
 
 react-beautiful-dnd@13.1.1:
   version "13.1.1"
