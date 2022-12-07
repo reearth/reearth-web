@@ -207,7 +207,7 @@ export function useAPI({
   const event =
     useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
 
-  const pluginMessageSenders = useCallback((msg: any) => {
+  const pluginMessageSender = useCallback((msg: any) => {
     event.current?.[1]("pluginmessage", msg);
   }, []);
 
@@ -248,7 +248,7 @@ export function useAPI({
 
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
-      ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSenders);
+      ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
     }
   }, [
     ctx?.reearth.on,
@@ -257,7 +257,7 @@ export function useAPI({
     ctx?.pluginInstances,
     widget?.id,
     block?.id,
-    pluginMessageSenders,
+    pluginMessageSender,
   ]);
 
   const onDispose = useCallback(() => {
