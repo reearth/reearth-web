@@ -85,7 +85,16 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
       postMessage: (id: string, msg: any, sender: string) => {
         const msgSender = pluginMessageSenders.current?.get(id);
         if (!msgSender) return;
-        msgSender({ data: msg, sender });
+        new Promise<void>((resolve, reject) => {
+          try {
+            msgSender({ data: msg, sender });
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
+        }).catch(err => {
+          console.error(`plugin postMessage error (${sender} -> ${id})`, err);
+        });
       },
       addPluginMessageSender: (id: string, msgSender: (msg: string) => void) => {
         pluginMessageSenders.current?.set(id, msgSender);
