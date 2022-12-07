@@ -79,7 +79,7 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
 
-  return useMemo(() => {
+  const pluginInstances = useMemo(() => {
     return {
       meta: pluginInstancesMeta,
       postMessage: (id: string, msg: any, sender: string) => {
@@ -95,6 +95,8 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
       },
     };
   }, [pluginInstancesMeta]);
+
+  return pluginInstances;
 };
 
 function getExtensionInstanceName(pluginId: string) {
