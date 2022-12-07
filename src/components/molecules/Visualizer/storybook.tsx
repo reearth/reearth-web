@@ -90,7 +90,9 @@ export const context: ProviderProps = {
   },
   layers: new LayerStore({ id: "", children: layers }),
   pluginInstances: {
-    meta: [],
+    meta: {
+      current: [],
+    },
     postMessage: () => {},
     addPluginMessageSender: () => {},
     removePluginMessageSender: () => {},

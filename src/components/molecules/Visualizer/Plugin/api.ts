@@ -446,7 +446,7 @@ export function commonReearth({
     },
     plugins: {
       get instances() {
-        return pluginInstances().meta;
+        return pluginInstances().meta.current;
       },
     },
     ...events,

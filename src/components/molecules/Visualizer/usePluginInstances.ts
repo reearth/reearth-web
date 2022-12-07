@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, MutableRefObject } from "react";
 
 import type { Block } from "./Block";
 import type { PluginExtensionInstance } from "./Plugin/types";
@@ -11,14 +11,14 @@ export type Props = {
 };
 
 export type PluginInstances = {
-  meta: PluginExtensionInstance[];
+  meta: MutableRefObject<PluginExtensionInstance[]>;
   postMessage: (id: string, msg: any, sender: string) => void;
   addPluginMessageSender: (id: string, msgSender: (msg: string) => void) => void;
   removePluginMessageSender: (id: string) => void;
 };
 
 export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
-  const [pluginInstancesMeta, setPluginInstancesMeta] = useState<PluginExtensionInstance[]>([]);
+  const pluginInstancesMeta = useRef<PluginExtensionInstance[]>([]);
 
   useEffect(() => {
     const instances: PluginExtensionInstance[] = [];
@@ -74,35 +74,27 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
       });
     }
 
-    setPluginInstancesMeta(instances);
+    pluginInstancesMeta.current = instances;
   }, [alignSystem, floatingWidgets, blocks]);
 
   const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(new Map());
 
-  const addPluginMessageSender = useCallback((id: string, msgSender: (msg: string) => void) => {
-    pluginMessageSenders.current?.set(id, msgSender);
-  }, []);
-
-  const removePluginMessageSender = useCallback((id: string) => {
-    pluginMessageSenders.current?.delete(id);
-  }, []);
-
-  const pluginPostMessage = useCallback((id: string, msg: any, sender: string) => {
-    const msgSender = pluginMessageSenders.current?.get(id);
-    if (!msgSender) return;
-    msgSender({ data: msg, sender });
-  }, []);
-
-  const pluginInstances = useMemo(() => {
+  return useMemo(() => {
     return {
       meta: pluginInstancesMeta,
-      postMessage: pluginPostMessage,
-      addPluginMessageSender,
-      removePluginMessageSender,
+      postMessage: (id: string, msg: any, sender: string) => {
+        const msgSender = pluginMessageSenders.current?.get(id);
+        if (!msgSender) return;
+        msgSender({ data: msg, sender });
+      },
+      addPluginMessageSender: (id: string, msgSender: (msg: string) => void) => {
+        pluginMessageSenders.current?.set(id, msgSender);
+      },
+      removePluginMessageSender: (id: string) => {
+        pluginMessageSenders.current?.delete(id);
+      },
     };
-  }, [pluginInstancesMeta, pluginPostMessage, addPluginMessageSender, removePluginMessageSender]);
-
-  return pluginInstances;
+  }, [pluginInstancesMeta]);
 };
 
 function getExtensionInstanceName(pluginId: string) {
