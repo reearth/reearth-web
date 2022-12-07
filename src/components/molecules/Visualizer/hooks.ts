@@ -263,7 +263,7 @@ export default ({
   const { pluginInstances } = usePluginInstances({
     alignSystem,
     floatingWidgets,
-    blocks: infobox?.blocks ?? selectedLayer?.infobox?.blocks,
+    blocks: selectedLayer?.infobox?.blocks,
   });
 
   const providerProps: ProviderProps = useProviderProps(
