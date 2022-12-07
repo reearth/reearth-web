@@ -102,9 +102,7 @@ export default ({ alignSystem, floatingWidgets, blocks }: Props) => {
     };
   }, [pluginInstancesMeta, pluginPostMessage, addPluginMessageSender, removePluginMessageSender]);
 
-  return {
-    pluginInstances,
-  };
+  return pluginInstances;
 };
 
 function getExtensionInstanceName(pluginId: string) {

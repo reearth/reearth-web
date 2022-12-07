@@ -3,7 +3,7 @@ import { merge } from "@reearth/util/object";
 
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
-import { PluginInstances } from "../usePluginInstances";
+import type { PluginInstances } from "../usePluginInstances";
 
 import type {
   GlobalThis,

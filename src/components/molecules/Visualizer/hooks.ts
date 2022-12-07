@@ -260,7 +260,7 @@ export default ({
     alignSystem,
   });
 
-  const { pluginInstances } = usePluginInstances({
+  const pluginInstances = usePluginInstances({
     alignSystem,
     floatingWidgets,
     blocks: selectedLayer?.infobox?.blocks,
