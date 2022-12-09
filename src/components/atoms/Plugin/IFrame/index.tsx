@@ -69,7 +69,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
       ref={composeRefs(iFrameRef, externalRef)}
       className={className}
       onLoad={onIFrameLoad}
-      sandbox="allow-scripts"
+      sandbox="allow-scripts allow-downloads"
       {...props}
     />
   ) : null;
