@@ -1,6 +1,6 @@
 import { ComponentType, useMemo, useCallback, ReactNode } from "react";
 
-import type { Layer, Atom } from "../../mantle";
+import type { Layer, Atom, Typography } from "../../mantle";
 import LayerComponent, { type CommonProps, type Props as LayerProps } from "../Layer";
 
 export type Props = {
@@ -10,20 +10,35 @@ export type Props = {
   selectedLayerId?: string;
   isHidden?: (id: string) => boolean;
   clusters?: Cluster[];
-  clusterComponent?: ComponentType<ClusterProps>;
+  clusterComponent?: ClusterComponentType;
   Feature?: LayerProps["Feature"];
 } & Omit<CommonProps, "isSelected" | "isHidden">;
 
 export type Cluster = {
   id: string;
-  property?: any;
+  property?: ClusterProperty;
   layers?: string[];
 };
 
-export type ClusterProps = {
+export type ClusterComponentProps = {
   cluster: Cluster;
+  property?: ClusterProperty;
   children?: ReactNode;
 };
+
+export type ClusterProperty = {
+  default?: {
+    clusterPixelRange: number;
+    clusterMinSize: number;
+    clusterLabelTypography?: Typography;
+    clusterImage?: string;
+    clusterImageHeight?: number;
+    clusterImageWidth?: number;
+  };
+  layers?: { layer?: string }[];
+};
+
+export type ClusterComponentType = ComponentType<ClusterComponentProps>;
 
 export default function ClusteredLayers({
   clusters,

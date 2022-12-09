@@ -2,6 +2,8 @@ import type { LineString, Point, Polygon } from "geojson";
 
 import type { Infobox, Block, Tag } from "../compat/types";
 
+export * from "./value";
+
 // Layer
 
 export type Layer = LayerSimple | LayerGroup;
@@ -100,7 +102,7 @@ export type AppearanceTypes = {
   model: ModelAppearance;
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
-  photooverlay: LegacyPhotooverlayAppearance;
+  // photooverlay: LegacyPhotooverlayAppearance;
   legacy_resource: LegacyResourceAppearance;
 };
 
@@ -134,9 +136,8 @@ export type Cesium3DTilesAppearance = {
   // TODO
 };
 
-export type LegacyPhotooverlayAppearance = {
-  // TODO
-};
+// export type LegacyPhotooverlayAppearance = {
+// };
 
 export type LegacyResourceAppearance = {
   // TODO
@@ -149,7 +150,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   ellipsoid: 1,
   model: 1,
   "3dtiles": 1,
-  photooverlay: 1,
+  // photooverlay: 1,
   legacy_resource: 1,
 };
 
