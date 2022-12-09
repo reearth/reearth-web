@@ -14,6 +14,7 @@ reearth.ui.show(\`
     }
     #wrapper {
       background: #232226;
+      height: 100%;
       color: white;
       border: 3px dotted red;
       border-radius: 5px;
