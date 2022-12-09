@@ -6,8 +6,8 @@ import { BillboardGraphics } from "resium";
 import defaultImage from "@reearth/components/atoms/Icon/Icons/primPhotoIcon.svg";
 import Text from "@reearth/components/atoms/Text";
 import { styled, useTheme } from "@reearth/theme";
-import { Camera, LatLng } from "@reearth/util/value";
 
+import type { LegacyPhotooverlayAppearance } from "../../..";
 import { heightReference, ho, useIcon, vo } from "../../common";
 import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
@@ -15,24 +15,7 @@ import useHooks, { photoDuration, photoExitDuration, TransitionStatus } from "./
 
 export type Props = FeatureProps<Property>;
 
-export type Property = {
-  location?: LatLng;
-  height?: number;
-  heightReference?: "none" | "clamp" | "relative";
-  camera?: Camera; // You may also update the field name in storytelling widget
-  image?: string;
-  imageSize?: number;
-  imageHorizontalOrigin?: "left" | "center" | "right";
-  imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
-  imageCrop?: "none" | "rounded" | "circle";
-  imageShadow?: boolean;
-  imageShadowColor?: string;
-  imageShadowBlur?: number;
-  imageShadowPositionX?: number;
-  imageShadowPositionY?: number;
-  photoOverlayImage?: string;
-  photoOverlayDescription?: string;
-};
+export type Property = LegacyPhotooverlayAppearance;
 
 export default function PhotoOverlay({
   id,

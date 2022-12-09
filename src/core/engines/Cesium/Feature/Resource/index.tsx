@@ -1,19 +1,12 @@
 import { useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
 
+import type { LegacyResourceAppearance } from "../../..";
 import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
-
-export type Property = {
-  url?: string;
-  type?: Type | "auto";
-  clampToGround?: boolean;
-};
-
-type Type = "geojson" | "kml" | "czml";
-
-const types: Record<string, Type> = {
+export type Property = LegacyResourceAppearance;
+const types: Record<string, "geojson" | "kml" | "czml"> = {
   kml: "kml",
   geojson: "geojson",
   czml: "czml",

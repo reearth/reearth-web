@@ -21,3 +21,13 @@ export type {
   FlyToDestination,
   TerrainProperty,
 } from "../Map";
+export type {
+  Cesium3DTilesAppearance,
+  EllipsoidAppearance,
+  PolygonAppearance,
+  PolylineAppearance,
+  MarkerAppearance,
+  ModelAppearance,
+  LegacyPhotooverlayAppearance,
+  LegacyResourceAppearance,
+} from "../mantle";

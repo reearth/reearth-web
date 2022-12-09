@@ -4,31 +4,15 @@ import { ModelGraphics } from "resium";
 
 import { toColor } from "@reearth/util/value";
 
+import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
 
-export type Property = {
-  model?: string;
+export type Property = ModelAppearance & {
   location?: { lat: number; lng: number };
   height?: number;
-  heightReference?: "none" | "clamp" | "relative";
-  heading?: number;
-  pitch?: number;
-  roll?: number;
-  scale?: number;
-  maximumScale?: number;
-  minimumPixelSize?: number;
-  animation?: boolean; // default: true
-  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
-  colorBlend?: "none" | "highlight" | "replace" | "mix";
-  color?: string;
-  colorBlendAmount?: number;
-  lightColor?: string;
-  silhouette?: boolean;
-  silhouetteColor?: string;
-  silhouetteSize?: number; // default: 1
 };
 
 export default function Model({ id, isVisible, property, geometry, layer, feature }: Props) {

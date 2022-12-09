@@ -5,19 +5,17 @@ import { EllipsoidGraphics } from "resium";
 
 import { LatLng, toColor } from "@reearth/util/value";
 
+import type { EllipsoidAppearance } from "../../..";
 import { heightReference, shadowMode } from "../../common";
 import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
 
-export type Property = {
+export type Property = EllipsoidAppearance & {
+  // compat
   position?: LatLng;
   location?: LatLng;
   height?: number;
-  heightReference?: "none" | "clamp" | "relative";
-  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
-  radius?: number;
-  fillColor?: string;
 };
 
 export default function Ellipsoid({ id, isVisible, property, geometry, layer, feature }: Props) {

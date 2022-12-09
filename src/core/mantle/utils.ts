@@ -31,3 +31,12 @@ function wrap<T>(f: (d: any) => T): (d: any) => T | undefined {
     }
   };
 }
+
+/**
+ * Often we want to make an array of keys of an object type,
+ * but if we just specify the key names directly, we may forget to change the array if the object type is changed.
+ * With this function, the compiler checks the object keys for completeness, so the array of keys is always up to date.
+ */
+export function objKeys<T extends string | number | symbol>(obj: { [k in T]: 1 }): T[] {
+  return Object.keys(obj) as T[];
+}

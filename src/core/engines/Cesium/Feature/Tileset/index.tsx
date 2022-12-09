@@ -2,17 +2,13 @@ import { Cesium3DTileset as Cesium3DTilesetType, Cesium3DTileStyle, IonResource 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Cesium3DTileset, CesiumComponentRef } from "resium";
 
+import type { Cesium3DTilesAppearance } from "../../..";
 import { shadowMode } from "../../common";
 import { attachTag, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
 
-export type Property = {
-  sourceType?: "url" | "osm";
-  tileset?: string;
-  styleUrl?: string;
-  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
-};
+export type Property = Cesium3DTilesAppearance;
 
 export default function Tileset({
   id,

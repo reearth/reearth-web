@@ -2,6 +2,9 @@ import type { LineString, Point, Polygon } from "geojson";
 
 import type { Infobox, Block, Tag } from "../compat/types";
 
+import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
+
+export * from "./appearance";
 export * from "./value";
 
 // Layer
@@ -84,73 +87,3 @@ export type ComputedLayer = {
 } & Partial<AppearanceTypes>;
 
 export type ComputedFeature = Feature & Partial<AppearanceTypes>;
-
-// Appearance
-
-export type LayerAppearance<T> = {
-  [K in keyof T]?: T[K] | Expression;
-};
-
-export type Expression = {
-  conditions: [string, string][];
-};
-
-export type AppearanceTypes = {
-  marker: MarkerAppearance;
-  polyline: PolylineAppearance;
-  polygon: PolygonAppearance;
-  model: ModelAppearance;
-  "3dtiles": Cesium3DTilesAppearance;
-  ellipsoid: EllipsoidAppearance;
-  photooverlay: LegacyPhotooverlayAppearance;
-  legacy_resource: LegacyResourceAppearance;
-};
-
-export type LayerAppearanceTypes = {
-  [K in keyof AppearanceTypes]: LayerAppearance<AppearanceTypes[K]>;
-};
-
-export type MarkerAppearance = {
-  pointSize?: number;
-  pointColor?: string;
-  // TODO
-};
-
-export type PolylineAppearance = {
-  // TODO
-};
-
-export type PolygonAppearance = {
-  // TODO
-};
-
-export type EllipsoidAppearance = {
-  // TODO
-};
-
-export type ModelAppearance = {
-  // TODO
-};
-
-export type Cesium3DTilesAppearance = {
-  // TODO
-};
-
-export type LegacyPhotooverlayAppearance = {};
-
-export type LegacyResourceAppearance = {
-  // TODO
-};
-
-export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
-  marker: 1,
-  polyline: 1,
-  polygon: 1,
-  ellipsoid: 1,
-  model: 1,
-  "3dtiles": 1,
-  photooverlay: 1,
-  legacy_resource: 1,
-};
-
-export const appearanceKeys = Object.keys(appearanceKeyObj);

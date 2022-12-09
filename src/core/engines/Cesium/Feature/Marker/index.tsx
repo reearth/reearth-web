@@ -2,49 +2,20 @@ import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from 
 import { useMemo } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
-import { Typography, toCSSFont, toColor } from "@reearth/util/value";
+import { toCSSFont } from "@reearth/util/value";
 
-import { useIcon, ho, vo, heightReference } from "../../common";
+import type { MarkerAppearance } from "../../..";
+import { useIcon, ho, vo, heightReference, toColor } from "../../common";
 import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 import marker from "./marker.svg";
 
 export type Props = FeatureProps<Property>;
 
-export type Property = {
+export type Property = MarkerAppearance & {
+  // compat
   location?: { lat: number; lng: number };
   height?: number;
-  heightReference?: "none" | "clamp" | "relative";
-  style?: "none" | "point" | "image";
-  pointSize?: number;
-  pointColor?: string;
-  pointOutlineColor?: string;
-  pointOutlineWidth?: number;
-  image?: string;
-  imageSize?: number;
-  imageHorizontalOrigin?: "left" | "center" | "right";
-  imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
-  imageColor?: string;
-  imageCrop?: "none" | "rounded" | "circle";
-  imageShadow?: boolean;
-  imageShadowColor?: string;
-  imageShadowBlur?: number;
-  imageShadowPositionX?: number;
-  imageShadowPositionY?: number;
-  label?: boolean;
-  labelText?: string;
-  labelPosition?:
-    | "left"
-    | "right"
-    | "top"
-    | "bottom"
-    | "lefttop"
-    | "leftbottom"
-    | "righttop"
-    | "rightbottom";
-  labelTypography?: Typography;
-  labelBackground?: boolean;
-  extrude?: boolean;
 };
 
 export default function Marker({ property, id, isVisible, geometry, layer, feature }: Props) {

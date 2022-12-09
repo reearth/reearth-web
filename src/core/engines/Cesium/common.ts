@@ -28,6 +28,7 @@ import {
   Ray,
   IntersectionTests,
   Matrix4,
+  Color,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -659,3 +660,14 @@ export async function sampleTerrainHeightFromCartesian(scene: Scene, translation
   }
   return await sampleTerrainHeight(scene, lng, lat);
 }
+
+export const toColor = (c?: string) => {
+  if (!c || typeof c !== "string") return undefined;
+
+  // support alpha
+  const m = c.match(/^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/);
+  if (!m) return Color.fromCssColorString(c);
+
+  const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
+  return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
+};

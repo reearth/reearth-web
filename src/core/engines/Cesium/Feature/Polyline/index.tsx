@@ -6,17 +6,14 @@ import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/util/value";
 
+import type { PolylineAppearance } from "../../..";
 import { shadowMode } from "../../common";
 import { EntityExt, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
 
-export type Property = {
+export type Property = PolylineAppearance & {
   coordinates?: Coordinates;
-  clampToGround?: boolean;
-  strokeColor?: string;
-  strokeWidth?: number;
-  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
 };
 
 export default function Polyline({ id, isVisible, property, geometry, layer, feature }: Props) {
