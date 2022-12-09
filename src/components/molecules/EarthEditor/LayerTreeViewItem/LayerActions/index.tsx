@@ -15,7 +15,6 @@ export type Props = {
   onLayerGroupCreate?: () => void;
   onLayerImport?: (file: File, format: Format) => void;
   onZoomToLayer?: (layerId: string) => void;
-  isGroup?: boolean;
 };
 
 const LayerActions: React.FC<Props> = ({
@@ -25,7 +24,6 @@ const LayerActions: React.FC<Props> = ({
   onLayerImport,
   onLayerGroupCreate,
   onZoomToLayer,
-  isGroup,
 }) => {
   const t = useT();
   const importLayer = useFileInput(
@@ -47,7 +45,6 @@ const LayerActions: React.FC<Props> = ({
     },
     { accept: ".kml,.czml,.geojson,.shp,.zip,.json" },
   );
-  console.log(isGroup);
 
   return (
     <ActionWrapper
@@ -83,7 +80,7 @@ const LayerActions: React.FC<Props> = ({
           }
         }}>
         <HelpButton descriptionTitle={t("Zoom To Layer")} balloonDirection="bottom">
-          <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId || isGroup} />
+          <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
         </HelpButton>
       </Action>
     </ActionWrapper>

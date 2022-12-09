@@ -131,7 +131,6 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
   const [handleClick, handleDoubleClick] = useDoubleClick(onClick, startEditing);
 
   const theme = useTheme();
-  console.log("group:" + group);
   return (
     <Wrapper
       ref={ref}
@@ -248,7 +247,6 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
                   onLayerRemove={onRemove}
                   onLayerGroupCreate={onGroupCreate}
                   onZoomToLayer={onZoomToLayer}
-                  isGroup={group}
                 />
               )}
             </LayerActionsWrapper>
