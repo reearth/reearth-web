@@ -47,7 +47,7 @@ export default function useHook({
   ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
-  dataUrlHtml: string;
+  srcDoc: string;
 } {
   const loaded = useRef(false);
   const iFrameRef = useRef<HTMLIFrameElement>(null);
@@ -157,41 +157,14 @@ export default function useHook({
     </script>`;
   }, [autoResizeMessageKey]);
 
-  const dataUrlHtml = useMemo(() => {
-    const base64Html = btoa(
-      unescapeForbtoa(
-        encodeURIComponent(
-          html
-            ? `
-          <html>
-            <head>
-              <style>
-                html,body{height: min-content;}
-              </style>
-            </head>
-            <body>
-              ${html}
-              ${autoResizeScript}
-            </body>
-          </html>
-        `
-            : "",
-        ),
-      ),
-    );
-    return `data:text/html;base64,${base64Html}`;
+  const srcDoc = useMemo(() => {
+    return html ? `${html}${autoResizeScript}` : "";
   }, [html, autoResizeScript]);
 
   return {
     ref: iFrameRef,
     props,
     onLoad: onIframeLoad,
-    dataUrlHtml,
+    srcDoc,
   };
-}
-
-function unescapeForbtoa(str: string) {
-  return str.replace(/%([0-9A-F]{2})/g, (match, p1) => {
-    return String.fromCharCode(parseInt("0x" + p1));
-  });
 }

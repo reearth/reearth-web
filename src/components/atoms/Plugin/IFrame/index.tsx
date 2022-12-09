@@ -44,7 +44,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
     ref: iFrameRef,
     props,
     onLoad: onIFrameLoad,
-    dataUrlHtml,
+    srcDoc,
   } = useHook({
     width,
     height,
@@ -64,7 +64,7 @@ const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
       frameBorder="no"
       scrolling={autoResize ? undefined : "no"}
       data-testid="iframe"
-      src={dataUrlHtml}
+      srcDoc={srcDoc}
       key={html}
       ref={composeRefs(iFrameRef, externalRef)}
       className={className}
