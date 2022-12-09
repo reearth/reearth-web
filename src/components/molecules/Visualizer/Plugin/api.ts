@@ -231,6 +231,7 @@ export function commonReearth({
   orbit,
   rotateRight,
   captureScreen,
+  getCurrentLocation,
   getLocationFromScreen,
   enableScreenSpaceCameraController,
   lookHorizontal,
@@ -272,6 +273,8 @@ export function commonReearth({
   cameraViewport: () => GlobalThis["reearth"]["visualizer"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
+  getCurrentLocation: GlobalThis["reearth"]["scene"]["getCurrentLocation"];
+
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
@@ -333,6 +336,7 @@ export function commonReearth({
       overrideProperty: overrideSceneProperty,
       captureScreen,
       getLocationFromScreen,
+      getCurrentLocation,
     },
     get viewport() {
       return viewport();

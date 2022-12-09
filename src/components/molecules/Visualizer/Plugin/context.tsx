@@ -71,6 +71,7 @@ export type Props = {
   onMouseEvent: (type: keyof MouseEventHandles, fn: any) => void;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
+  getCurrentLocation: () => LatLngHeight | undefined;
   enableScreenSpaceCameraController: (enabled: boolean) => void;
   lookHorizontal: (amount: number) => void;
   lookVertical: (amount: number) => void;
@@ -137,6 +138,7 @@ export function Provider({
   cameraViewport,
   captureScreen,
   getLocationFromScreen,
+  getCurrentLocation,
   onMouseEvent,
   enableScreenSpaceCameraController,
   lookHorizontal,
@@ -212,6 +214,7 @@ export function Provider({
         orbit,
         captureScreen,
         getLocationFromScreen,
+        getCurrentLocation,
         enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -260,6 +263,7 @@ export function Provider({
       orbit,
       captureScreen,
       getLocationFromScreen,
+      getCurrentLocation,
       enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,

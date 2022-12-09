@@ -10,6 +10,7 @@ import builtinPrimitives from "./builtin";
 import Cluster from "./Cluster";
 import {
   getLocationFromScreen,
+  getCurrentLocation,
   flyTo,
   lookAt,
   getCamera,
@@ -62,6 +63,9 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         return getCamera(viewer);
+      },
+      getCurrentLocation: () => {
+        return getCurrentLocation();
       },
       getLocationFromScreen: (x, y, withTerrain) => {
         const viewer = cesium.current?.cesiumElement;

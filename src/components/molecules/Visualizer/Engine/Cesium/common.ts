@@ -32,6 +32,7 @@ import {
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
+import { useGeolocation } from "@reearth/util/geolocation";
 import { useCanvas, useImage } from "@reearth/util/image";
 import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
@@ -153,6 +154,33 @@ export const vo = (
     [""]: undefined,
   }[o || ""]);
 
+// export const getCurrentLocation = () => {
+//   let myLocation;
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(function (position) {
+//       if (!position) return undefined;
+//       myLocation = {
+//         lat: position.coords.latitude,
+//         lng: position.coords.longitude,
+//         height: position.coords.altitude ?? 5000,
+//       };
+//       return myLocation;
+//     });
+//   }
+//   if (myLocation !== undefined) return myLocation;
+//   return undefined;
+// };
+
+export const getCurrentLocation = () => {
+  const currentLocation = useGeolocation;
+  if (currentLocation?.()?.lat == undefined && currentLocation?.()?.lng == undefined)
+    return undefined;
+  return {
+    lat: currentLocation?.()?.lat ?? 0,
+    lng: currentLocation?.()?.lng ?? 0,
+    height: currentLocation?.()?.height ?? 5000,
+  };
+};
 export const getLocationFromScreen = (
   scene: Scene | undefined | null,
   x: number,
