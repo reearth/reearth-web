@@ -27,7 +27,7 @@ import {
   getLocationFromScreen,
   getClock,
 } from "./common";
-import { getTag } from "./Feature/utils";
+import { getTag, type Context as FeatureContext } from "./Feature";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
 
@@ -36,6 +36,7 @@ export default ({
   property,
   camera,
   selectedLayerId,
+  selectionReason,
   isLayerDraggable,
   meta,
   onLayerSelect,
@@ -48,6 +49,7 @@ export default ({
   property?: SceneProperty;
   camera?: Camera;
   selectedLayerId?: string;
+  selectionReason?: string;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
   onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
@@ -316,6 +318,15 @@ export default ({
   const { cameraViewBoundaries, cameraViewOuterBoundaries, cameraViewBoundariesMaterial } =
     useCameraLimiter(cesium, camera, property?.cameraLimiter);
 
+  const context = useMemo<FeatureContext>(
+    () => ({
+      selectionReason,
+      flyTo: engineAPI.flyTo,
+      getCamera: engineAPI.getCamera,
+    }),
+    [selectionReason, engineAPI],
+  );
+
   return {
     backgroundColor,
     cesium,
@@ -329,6 +340,7 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
+    context,
   };
 };
 

@@ -3,7 +3,7 @@ import type { AppearanceTypes, FeatureComponentProps } from "../..";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
 import Marker, { config as markerConfig } from "./Marker";
 import Model, { config as modelConfig } from "./Model";
-// import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
+import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
 import Polygon, { config as polygonConfig } from "./Polygon";
 import Polyline, { config as polylineConfig } from "./Polyline";
 import Resource, { config as resourceConfig } from "./Resource";
@@ -11,6 +11,8 @@ import Tileset, { config as tilesetConfig } from "./Tileset";
 import type { FeatureComponent, FeatureComponentConfig } from "./utils";
 
 export * from "./utils";
+export { context, type Context } from "./context";
+export { getTag } from "./utils";
 
 const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureComponentConfig]> = {
   marker: [Marker, markerConfig],
@@ -19,7 +21,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   ellipsoid: [Ellipsoid, ellipsoidConfig],
   model: [Model, modelConfig],
   "3dtiles": [Tileset, tilesetConfig],
-  // photooverlay: [PhotoOverlay, photoOverlayConfig],
+  photooverlay: [PhotoOverlay, photoOverlayConfig],
   legacy_resource: [Resource, resourceConfig],
 };
 

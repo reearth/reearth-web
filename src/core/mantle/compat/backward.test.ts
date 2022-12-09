@@ -203,40 +203,40 @@ test("polygon", () => {
   });
 });
 
-// test("photooverlay", () => {
-//   expect(
-//     getCompat({
-//       id: "xxx",
-//       type: "simple",
-//       data: {
-//         type: "geojson",
-//         value: {
-//           type: "Feature",
-//           geometry: {
-//             type: "Point",
-//             coordinates: [1, 2, 3],
-//           },
-//         },
-//       },
-//       photooverlay: {
-//         aaaa: 1,
-//       },
-//       compat: {
-//         propertyId: "p",
-//       },
-//     }),
-//   ).toEqual({
-//     extensionId: "photooverlay",
-//     propertyId: "p",
-//     property: {
-//       default: {
-//         location: { lat: 2, lng: 1 },
-//         height: 3,
-//         aaaa: 1,
-//       },
-//     },
-//   });
-// });
+test("photooverlay", () => {
+  expect(
+    getCompat({
+      id: "xxx",
+      type: "simple",
+      data: {
+        type: "geojson",
+        value: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [1, 2, 3],
+          },
+        },
+      },
+      photooverlay: {
+        aaaa: 1,
+      },
+      compat: {
+        propertyId: "p",
+      },
+    }),
+  ).toEqual({
+    extensionId: "photooverlay",
+    propertyId: "p",
+    property: {
+      default: {
+        location: { lat: 2, lng: 1 },
+        height: 3,
+        aaaa: 1,
+      },
+    },
+  });
+});
 
 test("ellipsoid", () => {
   expect(

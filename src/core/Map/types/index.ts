@@ -71,6 +71,7 @@ export type EngineProps = {
   children?: ReactNode;
   ready?: boolean;
   selectedLayerId?: string;
+  selectionReason?: string;
   layerSelectionReason?: string;
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
