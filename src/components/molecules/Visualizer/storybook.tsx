@@ -102,6 +102,7 @@ export const context: ProviderProps = {
   onMouseEvent: act("onMouseEvent"),
   captureScreen: act("captureScreen"),
   getLocationFromScreen: act("getLocationFromScreen"),
+  getCurrentLocation: act("getCurrentLocation"),
   enableScreenSpaceCameraController: act("enableScreenSpaceCameraController"),
   lookHorizontal: act("lookHorizontal"),
   lookVertical: act("lookVertical"),
