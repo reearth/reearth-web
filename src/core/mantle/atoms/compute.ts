@@ -8,6 +8,7 @@ import type {
   ComputedLayerStatus,
   Data,
   DataRange,
+  DataType,
   Feature,
   Layer,
 } from "../types";
@@ -22,9 +23,16 @@ export type Command =
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
   | { type: "deleteFeatures"; features: string[] }
-  | { type: "override"; overrides?: Record<string, any> };
+  | { type: "override"; overrides?: Record<string, any> }
+  | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] };
 
 export function computeAtom(cache?: typeof globalDataFeaturesCache) {
+  const delegatedDataTypes = atom<DataType[]>([]);
+  const updateDelegatedDataTypes = atom(null, async (_, set, value: DataType[]) => {
+    set(delegatedDataTypes, value);
+    await set(compute, undefined);
+  });
+
   const layer = atom<Layer | undefined>(undefined);
   const overrides = atom<Record<string, any> | undefined, Record<string, any> | undefined>(
     undefined,
@@ -61,7 +69,11 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     const currentLayer = get(layer);
     if (!currentLayer) return;
 
-    if (currentLayer.type !== "simple" || !currentLayer.data) {
+    if (
+      currentLayer.type !== "simple" ||
+      !currentLayer.data ||
+      get(delegatedDataTypes).includes(currentLayer.data.type)
+    ) {
       set(layerStatus, "ready");
       return;
     }
@@ -161,6 +173,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           break;
         case "override":
           await s(overrides, value.overrides);
+          break;
+        case "updateDelegatedDataTypes":
+          await s(updateDelegatedDataTypes, value.delegatedDataTypes);
           break;
       }
     },

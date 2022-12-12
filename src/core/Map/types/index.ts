@@ -6,7 +6,7 @@ import type {
   CSSProperties,
 } from "react";
 
-import type { LatLngHeight, Camera, Rect, LatLng } from "../../mantle";
+import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
 import type { FeatureComponentType, ClusterComponentType } from "../Layers";
 
 export type {
@@ -275,4 +275,5 @@ export type Engine = {
   component: EngineComponent;
   featureComponent: FeatureComponentType;
   clusterComponent: ClusterComponentType;
+  delegatedDataTypes?: DataType[];
 };

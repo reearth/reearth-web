@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 
-import { computeAtom, type Atom } from "../../mantle";
+import { computeAtom, DataType, type Atom } from "../../mantle";
 import type { DataRange, Feature, Layer } from "../../mantle";
 
 export type { Atom as Atoms } from "../../mantle";
@@ -12,6 +12,7 @@ export default function useHooks(
   layer: Layer | undefined,
   atom: Atom | undefined,
   overrides?: Record<string, any>,
+  delegatedDataTypes?: DataType[],
 ) {
   const [computedLayer, set] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
   const writeFeatures = useCallback(
@@ -26,6 +27,10 @@ export default function useHooks(
     (features: string[]) => set({ type: "deleteFeatures", features }),
     [set],
   );
+
+  useLayoutEffect(() => {
+    set({ type: "updateDelegatedDataTypes", delegatedDataTypes: delegatedDataTypes ?? [] });
+  }, [delegatedDataTypes, set]);
 
   useLayoutEffect(() => {
     set({

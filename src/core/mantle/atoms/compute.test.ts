@@ -43,9 +43,35 @@ test("computeAtom", async () => {
     originalFeatures: [],
   });
 
-  // set a layer
+  // set a layer with delegatedDataTypes
+  act(() => {
+    result.current.set({ type: "updateDelegatedDataTypes", delegatedDataTypes: ["geojson"] });
+  });
+
   act(() => {
     result.current.set({ type: "setLayer", layer });
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer,
+    status: "ready",
+    features: [],
+    originalFeatures: [],
+  }),
+    await waitFor(() =>
+      expect(result.current.result).toEqual({
+        id: "xxx",
+        layer,
+        status: "ready",
+        features: [],
+        originalFeatures: [],
+      }),
+    );
+
+  // delete delegatedDataTypes
+  act(() => {
+    result.current.set({ type: "updateDelegatedDataTypes", delegatedDataTypes: [] });
   });
 
   expect(result.current.result).toEqual({

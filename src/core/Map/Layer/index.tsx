@@ -1,6 +1,6 @@
 import { ComponentType } from "react";
 
-import type { DataRange, Feature, ComputedLayer, Layer } from "../../mantle";
+import type { DataRange, Feature, ComputedLayer, Layer, DataType } from "../../mantle";
 
 import useHooks, { type Atoms } from "./hooks";
 
@@ -27,6 +27,7 @@ export type Props = {
   layer?: Layer;
   atom?: Atoms;
   overrides?: Record<string, any>;
+  delegatedDataTypes?: DataType[];
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;
@@ -36,12 +37,14 @@ export default function LayerComponent({
   layer,
   atom: atoms,
   overrides,
+  delegatedDataTypes,
   ...props
 }: Props): JSX.Element | null {
   const { computedLayer, handleFeatureDelete, handleFeatureFetch, handleFeatureRequest } = useHooks(
     Feature ? layer : undefined,
     atoms,
     overrides,
+    delegatedDataTypes,
   );
 
   return layer && computedLayer && Feature ? (

@@ -59,6 +59,7 @@ function Map(
         selectedLayerId={selectedLayerId}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
+        delegatedDataTypes={currentEngine.delegatedDataTypes}
       />
     </Engine>
   ) : null;
