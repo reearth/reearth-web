@@ -232,7 +232,7 @@ test("photooverlay", () => {
       default: {
         location: { lat: 2, lng: 1 },
         height: 3,
-        aaaa: 1,
+        imageSize: 1,
       },
     },
   });
