@@ -368,12 +368,14 @@ export function useAPI({
         },
         overrideSceneProperty: ctx.overrideSceneProperty,
         moveWidget: ctx.moveWidget,
+        clientStorage: ctx.clientStorage,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.overrideSceneProperty,
     ctx?.moveWidget,
+    ctx?.clientStorage,
     extensionId,
     extensionType,
     pluginId,

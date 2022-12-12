@@ -19,7 +19,7 @@ import type {
 
 export type CommonReearth = Omit<
   Reearth,
-  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget" | "clientStorage"
 >;
 
 export function exposed({
@@ -43,6 +43,7 @@ export function exposed({
   widget,
   overrideSceneProperty,
   moveWidget,
+  clientStorage,
 }: {
   render: (
     html: string,
@@ -79,6 +80,12 @@ export function exposed({
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
+  clientStorage: {
+    getAsync: (pluginId: string, key: string) => Promise<any | undefined>;
+    setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
+    deleteAsync: (pluginId: string, key: string) => Promise<void>;
+    keysAsync: (pluginId: string) => Promise<string[]>;
+  };
 }): GlobalThis {
   return merge({
     console: {
@@ -170,6 +177,41 @@ export function exposed({
           },
           get property() {
             return plugin?.property;
+          },
+        },
+        clientStorage: {
+          get getAsync() {
+            return (key: string) => {
+              return clientStorage.getAsync(plugin?.id ?? "", key);
+            };
+          },
+          get setAsync() {
+            return (key: string, value: any) => {
+              return clientStorage.setAsync(plugin?.id ?? "", key, value);
+            };
+          },
+          get deleteAsync() {
+            return (key: string) => {
+              return clientStorage.deleteAsync(plugin?.id ?? "", key);
+            };
+          },
+          keysAsync(cb: (keys: string[]) => void) {
+            const p = clientStorage.keysAsync(plugin?.id ?? "");
+            p.then(v => cb(v));
+            // console.log(p);
+            return p;
+          },
+          get testPromise() {
+            return () => {
+              const promise = new Promise(resolve => {
+                setTimeout(() => {
+                  console.log("test promise resolved");
+                  resolve("hoge");
+                }, 2000);
+              });
+              console.log("test promise API called. Return promise", promise);
+              return promise;
+            };
           },
         },
         ...events,

@@ -54,6 +54,13 @@ export type Props = {
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
   viewport?: VisualizerViewport;
+  clientStorage: {
+    getAsync: (pluginId: string, key: string) => Promise<any | undefined>;
+    setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
+    deleteAsync: (pluginId: string, key: string) => Promise<void>;
+    keysAsync: (pluginId: string) => Promise<string[]>;
+    dropStore: (pluginId: string) => Promise<void>;
+  };
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -93,6 +100,13 @@ type SelectedReearthEventType = Pick<
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
+  clientStorage: {
+    getAsync: (pluginId: string, key: string) => Promise<any | undefined>;
+    setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
+    deleteAsync: (pluginId: string, key: string) => Promise<void>;
+    keysAsync: (pluginId: string) => Promise<string[]>;
+    dropStore: (pluginId: string) => Promise<void>;
+  };
   overrideSceneProperty: (id: string, property: any) => void;
   emit: EventEmitter<SelectedReearthEventType>;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
@@ -121,6 +135,7 @@ export function Provider({
   layerOverridenInfobox,
   layerOverriddenProperties,
   viewport,
+  clientStorage,
   showLayer,
   hideLayer,
   addLayer,
@@ -227,12 +242,14 @@ export function Provider({
       overrideSceneProperty,
       emit,
       moveWidget,
+      clientStorage,
     }),
     [
       api,
       builtinPrimitives,
       engineName,
       ev,
+      clientStorage,
       getLayers,
       getSceneProperty,
       getInEditor,

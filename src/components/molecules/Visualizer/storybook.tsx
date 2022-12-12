@@ -89,6 +89,17 @@ export const context: ProviderProps = {
     isMobile: false,
   },
   layers: new LayerStore({ id: "", children: layers }),
+  clientStorage: {
+    getAsync: act("clientStorage.getAsync"),
+    setAsync: act("clientStorage.setAsync"),
+    deleteAsync: act("clientStorage.deleteAsync"),
+    keysAsync: act("clientStorage.keysAsync"),
+    dropStore: () => {
+      return new Promise<void>(resolve => {
+        resolve();
+      });
+    },
+  },
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
   zoomIn: act("zoomIn"),

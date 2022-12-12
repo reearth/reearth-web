@@ -122,6 +122,7 @@
         "jotai": "1.9.1",
         "js-file-download": "0.4.12",
         "leaflet": "1.9.2",
+        "localforage": "1.10.0",
         "lodash-es": "4.17.21",
         "mini-svg-data-uri": "1.4.4",
         "parse-domain": "7.0.1",
