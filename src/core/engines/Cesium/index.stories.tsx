@@ -28,8 +28,7 @@ Default.args = {
         value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
       },
       marker: {
-        pointColor: "#fff",
-        pointSize: 30,
+        imageColor: "#fff",
       },
     },
   ],

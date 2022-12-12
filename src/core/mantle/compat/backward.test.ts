@@ -219,7 +219,7 @@ test("photooverlay", () => {
         },
       },
       photooverlay: {
-        aaaa: 1,
+        imageSize: 1,
       },
       compat: {
         propertyId: "p",
