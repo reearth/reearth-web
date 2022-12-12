@@ -1,14 +1,30 @@
 import TimelineUI from "@reearth/components/atoms/Timeline";
-import { ComponentProps as WidgetProps } from "@reearth/components/molecules/Visualizer/Widget";
-import { styled, usePublishTheme } from "@reearth/theme";
+import { styled } from "@reearth/theme";
+
+import type { ComponentProps as WidgetProps } from "..";
 
 import { useTimeline } from "./hooks";
 
-export type Props = WidgetProps;
+export type Props = WidgetProps<Property>;
 
-const Timeline = ({ widget, sceneProperty, onExtend }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events } = useTimeline({ widget, onExtend });
-  const theme = usePublishTheme(sceneProperty?.theme);
+export type Property = {};
+
+const Timeline = ({
+  widget,
+  theme,
+  onExtend,
+  context: { clock, onPlay, onPause, onSpeedChange, onTimeChange, onTick } = {},
+}: Props): JSX.Element | null => {
+  const { isOpened, currentTime, range, speed, events } = useTimeline({
+    widgetId: widget.id,
+    clock,
+    onPlay,
+    onPause,
+    onSpeedChange,
+    onTimeChange,
+    onTick,
+    onExtend,
+  });
 
   return (
     <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>

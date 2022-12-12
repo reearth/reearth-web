@@ -1,3 +1,5 @@
+export type { Camera, FlyToDestination, LookAtDestination, Theme, Clock } from "../types";
+
 export type Widget<P = any> = {
   id: string;
   pluginId?: string;
@@ -9,7 +11,6 @@ export type Widget<P = any> = {
     vertically: boolean;
   };
   layout?: WidgetLayout;
-  moveTo?: (options: WidgetLocationOptions) => void;
 };
 
 export type WidgetLayout = {
