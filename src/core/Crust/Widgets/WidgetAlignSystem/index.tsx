@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { GridWrapper } from "react-align";
 
 import { styled } from "@reearth/theme";
@@ -11,7 +11,7 @@ import type {
   Location,
   WidgetLayoutConstraint,
   Theme,
-  WidgetComponent,
+  WidgetProps,
 } from "./types";
 import ZoneComponent from "./Zone";
 
@@ -20,14 +20,13 @@ export type {
   WidgetLayout,
   Location,
   Alignment,
-  Widget,
   WidgetArea,
   WidgetSection,
   WidgetZone,
   WidgetLayoutConstraint,
   Theme,
-  WidgetComponent,
   WidgetProps,
+  InternalWidget,
 } from "./types";
 
 export type Props = {
@@ -36,8 +35,8 @@ export type Props = {
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isMobile?: boolean;
   theme?: Theme;
-  widgetComponent?: WidgetComponent;
-  onWidgetUpdate?: (
+  renderWidget?: (props: WidgetProps) => ReactNode;
+  onWidgetLayoutUpdate?: (
     id: string,
     update: {
       location?: Location;
@@ -45,7 +44,7 @@ export type Props = {
       index?: number;
     },
   ) => void;
-  onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
+  onAlignmentUpdate?: (location: Location, align: Alignment) => void;
 };
 
 const WidgetAlignSystem: React.FC<Props> = ({
@@ -54,13 +53,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
   isMobile,
   layoutConstraint,
   theme,
-  widgetComponent,
-  onWidgetUpdate,
-  onWidgetAlignSystemUpdate,
+  renderWidget,
+  onWidgetLayoutUpdate: onWidgetLayoutUpdate,
+  onAlignmentUpdate: onAlignmentUpdate,
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
-    onWidgetUpdate,
-    onWidgetAlignSystemUpdate,
+    onWidgetLayoutUpdate,
+    onAlignmentUpdate,
   });
   const Zone = isMobile ? MobileZone : ZoneComponent;
 
@@ -76,13 +75,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
           zone={alignSystem?.outer}
           layoutConstraint={layoutConstraint}
           theme={theme}
-          widgetComponent={widgetComponent}>
+          renderWidget={renderWidget}>
           {(!isMobile || alignSystem?.inner) && (
             <ZoneComponent
               zoneName="inner"
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
-              widgetComponent={widgetComponent}
+              renderWidget={renderWidget}
             />
           )}
         </Zone>

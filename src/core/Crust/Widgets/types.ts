@@ -1,5 +1,9 @@
 export type { Camera, FlyToDestination, LookAtDestination, Theme, Clock } from "../types";
 
+export type InternalWidget<P = any> = Omit<Widget<P>, "layout" | "extended"> & {
+  extended?: boolean;
+};
+
 export type Widget<P = any> = {
   id: string;
   pluginId?: string;

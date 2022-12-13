@@ -1,17 +1,17 @@
 import { omit, pick } from "lodash-es";
-import { useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
 import { useTheme } from "@reearth/theme";
 
 import type {
-  Widget,
   Alignment,
   WidgetLayoutConstraint,
   Location,
   WidgetLayout,
-  WidgetComponent,
+  WidgetProps,
+  InternalWidget,
 } from "./types";
 
 type Props = {
@@ -19,10 +19,10 @@ type Props = {
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
   align: Alignment;
-  widgets?: Widget[];
+  widgets?: InternalWidget[];
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
-  widgetComponent?: WidgetComponent;
+  renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
 export default function Area({
@@ -32,7 +32,7 @@ export default function Area({
   align,
   widgets,
   layoutConstraint,
-  widgetComponent: W,
+  renderWidget,
 }: Props) {
   const theme = useTheme();
   const layout = useMemo<WidgetLayout>(
@@ -89,15 +89,13 @@ export default function Area({
             extendable={extendable2}
             style={{ pointerEvents: "none" }}>
             {({ editing }) =>
-              W ? (
-                <W
-                  widget={widget}
-                  layout={layout}
-                  extended={!!extended}
-                  editing={editing}
-                  onExtend={handleExtend}
-                />
-              ) : null
+              renderWidget?.({
+                widget,
+                layout,
+                extended: !!extended,
+                editing,
+                onExtend: handleExtend,
+              })
             }
           </GridItem>
         );
@@ -111,7 +109,7 @@ function useOverriddenExtended({
   widgets,
 }: {
   layout: WidgetLayout;
-  widgets: Widget[] | undefined;
+  widgets: InternalWidget[] | undefined;
 }) {
   const extendable = layout.location.section === "center" || layout.location.area === "middle";
   const [overriddenExtended, overrideExtend] = useState<{ [id in string]?: boolean }>({});

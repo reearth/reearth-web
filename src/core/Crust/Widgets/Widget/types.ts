@@ -7,4 +7,5 @@ export type {
   WidgetLayout,
   WidgetLocation,
   Clock,
+  InternalWidget,
 } from "../types";

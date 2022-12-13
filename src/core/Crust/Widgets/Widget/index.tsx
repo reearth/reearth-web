@@ -4,20 +4,19 @@ import builtin, { isBuiltinWidget } from "./builtin";
 import type {
   Theme,
   FlyToDestination,
-  Widget as RawWidget,
+  Widget,
   WidgetLayout,
   WidgetLocation,
   LookAtDestination,
   Clock,
   Camera,
+  InternalWidget,
 } from "./types";
 
 export type { WidgetLayout } from "../types";
 
-export type Widget = Omit<RawWidget, "layout" | "extended"> & { extended?: boolean };
-
 export type Props = {
-  widget: Widget;
+  widget: InternalWidget;
   extended?: boolean;
   editing?: boolean;
   layout?: WidgetLayout;
@@ -26,7 +25,7 @@ export type Props = {
   isBuilt?: boolean;
   context?: Context;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  renderWidget?: (w: RawWidget) => ReactNode;
+  renderWidget?: (w: Widget) => ReactNode;
 };
 
 export type Context = {
@@ -52,7 +51,7 @@ export type Context = {
 };
 
 export type ComponentProps<P = any> = Omit<Props, "widget" | "renderWidget"> & {
-  widget: RawWidget<P>;
+  widget: Widget<P>;
 };
 
 export type Component = ComponentType<ComponentProps>;
@@ -68,7 +67,7 @@ export default function WidgetComponent({
   const vertical = location ? isVertical(location) : false;
   const actualExtended = !!(props.extended ?? widget.extended);
 
-  const w = useMemo<RawWidget | undefined>(
+  const w = useMemo<Widget | undefined>(
     () => ({
       ...widget,
       extended: {

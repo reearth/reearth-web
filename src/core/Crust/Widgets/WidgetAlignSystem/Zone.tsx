@@ -2,26 +2,20 @@ import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
 import Area from "./Area";
-import type { WidgetZone, WidgetLayoutConstraint, WidgetComponent } from "./types";
+import type { WidgetZone, WidgetLayoutConstraint, WidgetProps } from "./types";
 
 export type Props = {
   children?: ReactNode;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
-  widgetComponent?: WidgetComponent;
+  renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
-export default function Zone({
-  zone,
-  zoneName,
-  layoutConstraint,
-  children,
-  widgetComponent,
-}: Props) {
+export default function Zone({ zone, zoneName, layoutConstraint, children, renderWidget }: Props) {
   return (
     <>
       {sections.map(s => (
@@ -40,7 +34,7 @@ export default function Zone({
                 widgets={zone?.[s]?.[a]?.widgets}
                 align={zone?.[s]?.[a]?.align ?? "start"}
                 layoutConstraint={layoutConstraint}
-                widgetComponent={widgetComponent}
+                renderWidget={renderWidget}
               />
             ),
           )}

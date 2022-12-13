@@ -1,13 +1,10 @@
-import { ComponentType } from "react";
 import { Alignment } from "react-align";
 
-import type { Widget as RawWidget, WidgetAlignment, WidgetLocation } from "../types";
+import type { InternalWidget, WidgetAlignment, WidgetLocation } from "../types";
 
 export type { Alignment } from "react-align";
 
-export type { Theme, Widget as RawWidget, WidgetAlignment, WidgetLocation } from "../types";
-
-export type Widget = Omit<RawWidget, "layout" | "extended"> & { extended?: boolean };
+export type { Theme, Widget, InternalWidget, WidgetAlignment, WidgetLocation } from "../types";
 
 export type Location = {
   zone: "inner" | "outer";
@@ -17,7 +14,7 @@ export type Location = {
 
 export type WidgetArea = {
   align: Alignment;
-  widgets?: Widget[];
+  widgets?: InternalWidget[];
 };
 
 export type WidgetSection = {
@@ -50,11 +47,9 @@ export type WidgetLayoutConstraint = {
 };
 
 export type WidgetProps = {
-  widget: Widget;
+  widget: InternalWidget;
   layout: WidgetLayout;
   extended: boolean;
   editing: boolean;
   onExtend: (id: string, extended: boolean | undefined) => void;
 };
-
-export type WidgetComponent = ComponentType<WidgetProps>;

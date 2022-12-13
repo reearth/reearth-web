@@ -4,37 +4,37 @@ import { getLocationFromId } from "./Area";
 import type { Location, Alignment } from "./types";
 
 export default function ({
-  onWidgetUpdate,
-  onWidgetAlignSystemUpdate,
+  onWidgetLayoutUpdate: onWidgetLayoutUpdate,
+  onAlignmentUpdate: onAlignmentUpdate,
 }: {
-  onWidgetUpdate?: (
+  onWidgetLayoutUpdate?: (
     id: string,
     update: { location?: Location; extended?: boolean; index?: number },
   ) => void;
-  onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
+  onAlignmentUpdate?: (location: Location, align: Alignment) => void;
 }) {
   const handleMove = useCallback(
     (id: string, area: string, index: number, prevArea: string, _prevIndex: number) => {
       const location = area !== prevArea ? getLocationFromId(area) : undefined;
-      onWidgetUpdate?.(id, { index, location });
+      onWidgetLayoutUpdate?.(id, { index, location });
     },
-    [onWidgetUpdate],
+    [onWidgetLayoutUpdate],
   );
 
   const handleExtend = useCallback(
     (id: string, extended: boolean) => {
-      onWidgetUpdate?.(id, { extended });
+      onWidgetLayoutUpdate?.(id, { extended });
     },
-    [onWidgetUpdate],
+    [onWidgetLayoutUpdate],
   );
 
   const handleAlignmentChange = useCallback(
     (id: string, a: Alignment) => {
       const l = getLocationFromId(id);
       if (!l) return;
-      onWidgetAlignSystemUpdate?.(l, a);
+      onAlignmentUpdate?.(l, a);
     },
-    [onWidgetAlignSystemUpdate],
+    [onAlignmentUpdate],
   );
 
   return { handleMove, handleExtend, handleAlignmentChange };

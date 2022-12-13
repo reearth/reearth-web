@@ -6,7 +6,7 @@ import Slide from "@reearth/components/atoms/Slide";
 import { styled } from "@reearth/theme";
 
 import Area from "./Area";
-import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetComponent } from "./types";
+import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";
 
 export type Props = {
   children?: ReactNode;
@@ -14,7 +14,7 @@ export type Props = {
   zoneName: "inner" | "outer";
   theme?: Theme;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
-  widgetComponent?: WidgetComponent;
+  renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
 const sections = ["left", "center", "right"] as const;
@@ -26,7 +26,7 @@ export default function MobileZone({
   layoutConstraint,
   theme,
   children,
-  widgetComponent,
+  renderWidget,
 }: Props) {
   const filteredSections = useMemo(() => {
     return sections.filter(s => !!zone?.[s] || (s === "center" && children));
@@ -53,7 +53,7 @@ export default function MobileZone({
                   widgets={zone?.[s]?.[a]?.widgets}
                   align={zone?.[s]?.[a]?.align ?? "start"}
                   layoutConstraint={layoutConstraint}
-                  widgetComponent={widgetComponent}
+                  renderWidget={renderWidget}
                 />
               ),
             )}
