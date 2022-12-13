@@ -7,5 +7,6 @@ export type {
   Clock,
   ValueTypes,
   ValueType,
+  SceneProperty,
 } from "../Map";
-export type { PublishTheme as Theme } from "@reearth/theme";
+export type { Theme } from "./theme";
