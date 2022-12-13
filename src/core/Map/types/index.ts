@@ -15,6 +15,7 @@ export type {
   ClusterComponentType,
   ClusterComponentProps,
   ClusterProperty,
+  Ref as LayersRef,
 } from "../Layers";
 export type {
   ComputedFeature,

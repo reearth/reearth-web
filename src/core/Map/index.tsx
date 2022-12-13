@@ -14,10 +14,12 @@ export type {
   ClusterProperty,
 } from "./Layers";
 
+export type { MapRef as Ref } from "./hooks";
+
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
-} & Omit<LayersProps, "Feature" | "clusterComponent"> &
+} & Omit<LayersProps, "Feature" | "clusterComponent" | "onLayerSelect"> &
   EngineProps;
 
 function Map(
@@ -32,13 +34,18 @@ function Map(
     layers,
     overrides,
     selectedLayerId,
+    onLayerSelect,
     ...props
   }: Props,
   ref: Ref<MapRef>,
 ): JSX.Element | null {
   const currentEngine = engine ? engines?.[engine] : undefined;
   const Engine = currentEngine?.component;
-  const { engineRef } = useHooks({ ref });
+  const { engineRef, layersRef, selectedLayer, handleLayerSelect } = useHooks({
+    ref,
+    selectedLayerId,
+    onLayerSelect,
+  });
 
   return Engine ? (
     <Engine
@@ -46,9 +53,11 @@ function Map(
       isBuilt={isBuilt}
       isEditable={isEditable}
       property={sceneProperty}
-      selectedLayerId={selectedLayerId}
+      selectedLayerId={selectedLayer}
+      onLayerSelect={handleLayerSelect}
       {...props}>
       <Layers
+        ref={layersRef}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
         isBuilt={isBuilt}
@@ -56,10 +65,11 @@ function Map(
         layers={layers}
         overrides={overrides}
         sceneProperty={sceneProperty}
-        selectedLayerId={selectedLayerId}
+        selectedLayerId={selectedLayer}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}
+        onLayerSelect={handleLayerSelect}
       />
     </Engine>
   ) : null;

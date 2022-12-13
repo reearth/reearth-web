@@ -593,3 +593,52 @@ test("compat", () => {
     },
   });
 });
+
+test("select", () => {
+  const handleLayerSelect = vi.fn();
+  const initialLayers: Layer[] = [
+    {
+      id: "x",
+      type: "simple",
+    },
+  ];
+  const { result, rerender } = renderHook(
+    ({ layers }: { layers?: Layer[] } = {}) => {
+      const ref = useRef<Ref>(null);
+      useHooks({ ref, layers, onLayerSelect: handleLayerSelect });
+      return { ref };
+    },
+    {
+      initialProps: {
+        layers: initialLayers,
+      },
+    },
+  );
+
+  result.current.ref.current?.select("x");
+  rerender({ layers: initialLayers });
+  expect(result.current.ref.current?.selectedLayer()).toEqual({
+    id: "x",
+  });
+  expect(handleLayerSelect).toBeCalledWith("x");
+  expect(handleLayerSelect).toBeCalledTimes(2);
+
+  handleLayerSelect.mockClear();
+  rerender({ layers: [] });
+  expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
+  expect(handleLayerSelect).toBeCalledWith(undefined);
+  expect(handleLayerSelect).toBeCalledTimes(1);
+
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.select("y");
+  rerender();
+  expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
+  expect(handleLayerSelect).toBeCalledWith(undefined);
+  expect(handleLayerSelect).toBeCalledTimes(2);
+
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.select(undefined);
+  rerender();
+  expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
+  expect(handleLayerSelect).not.toBeCalled();
+});
