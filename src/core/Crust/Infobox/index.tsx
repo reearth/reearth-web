@@ -4,14 +4,13 @@ import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
 import { useT } from "@reearth/i18n";
-import { SceneThemeOptions, styled, useTheme } from "@reearth/theme";
-import { ValueTypes, ValueType } from "@reearth/util/value";
+import { styled, useTheme } from "@reearth/theme";
 
 import BlockComponent from "./Block";
 import Field from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
-import { Block, InfoboxProperty } from "./types";
+import { ValueTypes, ValueType, Block, InfoboxProperty, Theme } from "./types";
 
 export type { InfoboxProperty, Block, LatLng } from "./types";
 
@@ -26,7 +25,7 @@ export type Props = {
   isBuilt?: boolean;
   selectedBlockId?: string;
   visible?: boolean;
-  theme?: SceneThemeOptions;
+  theme?: Theme;
   onMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(

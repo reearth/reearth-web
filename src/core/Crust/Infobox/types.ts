@@ -1,6 +1,6 @@
 import type { Typography } from "../types";
 
-export type { LatLng, Typography } from "../types";
+export type { LatLng, Typography, ValueTypes, ValueType, Theme } from "../types";
 
 export type InfoboxProperty = {
   showTitle?: boolean;

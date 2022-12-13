@@ -5,5 +5,7 @@ export type {
   FlyToDestination,
   LookAtDestination,
   Clock,
+  ValueTypes,
+  ValueType,
 } from "../Map";
 export type { PublishTheme as Theme } from "@reearth/theme";

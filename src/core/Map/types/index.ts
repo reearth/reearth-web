@@ -26,6 +26,8 @@ export type {
   LatLng,
   Rect,
   LatLngHeight,
+  ValueTypes,
+  ValueType,
 } from "../../mantle";
 
 export type EngineRef = {

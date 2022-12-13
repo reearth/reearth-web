@@ -5,22 +5,16 @@ import Flex from "@reearth/components/atoms/Flex";
 import FloatedPanel from "@reearth/components/atoms/FloatedPanel";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import {
-  styled,
-  css,
-  usePublishTheme,
-  SceneThemeOptions,
-  fonts,
-  metricsSizes,
-} from "@reearth/theme";
+import { styled, css, fonts, metricsSizes } from "@reearth/theme";
 
-import { Typography, typographyStyles } from "../utils";
+import type { Theme } from "../types";
+import { type Typography, typographyStyles } from "../utils";
 
 export type Props = {
   className?: string;
   children?: ReactNode;
   infoboxKey?: string;
-  theme?: SceneThemeOptions;
+  theme?: Theme;
   title?: string;
   height?: number;
   outlineColor?: string;
@@ -50,7 +44,7 @@ export type Props = {
 const Frame: React.FC<Props> = ({
   className,
   infoboxKey,
-  theme,
+  theme: publishedTheme,
   title,
   size,
   height,
@@ -77,7 +71,6 @@ const Frame: React.FC<Props> = ({
   onExit,
   onExited,
 }) => {
-  const publishedTheme = usePublishTheme(theme);
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
@@ -134,7 +127,7 @@ const Frame: React.FC<Props> = ({
         size={size}
         height={height}
         heightType={heightType}
-        outlineColor={outlineColor ? outlineColor : publishedTheme.mainText}
+        outlineColor={outlineColor ? outlineColor : publishedTheme?.mainText}
         outlineWidth={outlineWidth}
         floated>
         <Wrapper ref={ref} open={open}>
@@ -142,12 +135,12 @@ const Frame: React.FC<Props> = ({
             {!open && (
               <IconWrapper align="center" justify="space-around">
                 <StyledIcon
-                  color={publishedTheme.mainIcon}
+                  color={publishedTheme?.mainIcon}
                   icon="arrowLeft"
                   size={16}
                   open={open}
                 />
-                <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
+                <StyledIcon color={publishedTheme?.mainIcon} icon="infobox" size={24} open={open} />
               </IconWrapper>
             )}
             {open && (
@@ -157,7 +150,7 @@ const Frame: React.FC<Props> = ({
             )}
           </TitleFlex>
           <CloseBtn
-            color={publishedTheme.mainIcon}
+            color={publishedTheme?.mainIcon}
             icon="cancel"
             size={16}
             onClick={handleClose}
@@ -264,7 +257,7 @@ const TitleFlex = styled(Flex)<{ open?: boolean }>`
   width: 75%;
 `;
 
-const StyledIcon = styled(Icon)<{ open?: boolean; color: string }>`
+const StyledIcon = styled(Icon)<{ open?: boolean; color?: string }>`
   display: ${({ open }) => (open ? "none" : "block")};
   color: ${({ color }) => color};
 `;
@@ -276,7 +269,7 @@ const TitleText = styled.span<{
   display: ${({ show }) => (show ? "block" : "none")};
 `;
 
-const CloseBtn = styled(Icon)<{ open?: boolean; color: string }>`
+const CloseBtn = styled(Icon)<{ open?: boolean; color?: string }>`
   position: absolute;
   top: 10px;
   right: 10px;
