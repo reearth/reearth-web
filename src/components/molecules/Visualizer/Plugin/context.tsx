@@ -7,7 +7,7 @@ import {
   useMemo,
 } from "react";
 
-import events from "@reearth/util/event";
+import events, { EventEmitter } from "@reearth/util/event";
 import { Rect } from "@reearth/util/value";
 
 import { MouseEvents, MouseEventHandles } from "../Engine/ref";
@@ -31,6 +31,7 @@ import type {
   Clock,
   Viewport,
   LatLngHeight,
+  WidgetLocationOptions,
 } from "./types";
 
 export type EngineContext = {
@@ -81,12 +82,20 @@ export type Props = {
   moveRight: (amount: number) => void;
   moveOverTerrain: () => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
+  moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
 };
+
+type SelectedReearthEventType = Pick<
+  ReearthEventType,
+  "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "layeredit"
+>;
 
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
   overrideSceneProperty: (id: string, property: any) => void;
+  emit: EventEmitter<SelectedReearthEventType>;
+  moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
 };
 
 export const context = createContext<Context | undefined>(undefined);
@@ -140,13 +149,11 @@ export function Provider({
   moveRight,
   moveOverTerrain,
   flyToGround,
+  moveWidget,
   children,
 }: Props): JSX.Element {
   const [ev, emit] = useMemo(
-    () =>
-      events<
-        Pick<ReearthEventType, "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents>
-      >(),
+    () => events<SelectedReearthEventType>(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [engineName],
   );
@@ -218,6 +225,8 @@ export function Provider({
         flyToGround,
       }),
       overrideSceneProperty,
+      emit,
+      moveWidget,
     }),
     [
       api,
@@ -263,10 +272,12 @@ export function Provider({
       moveOverTerrain,
       flyToGround,
       overrideSceneProperty,
+      emit,
+      moveWidget,
     ],
   );
 
-  useEmit<Pick<ReearthEventType, "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents>>(
+  useEmit<SelectedReearthEventType>(
     {
       select: useMemo<[layerId: string | undefined]>(
         () => (selectedLayer ? [selectedLayer.id] : [undefined]),

@@ -66,6 +66,7 @@ export type Props = {
   isPublished?: boolean;
   inEditor?: boolean;
   widgetAlignEditorActivated?: boolean;
+  engineMeta?: Record<string, unknown>;
   onWidgetUpdate?: WidgetAlignSystemProps["onWidgetUpdate"];
   onWidgetAlignSystemUpdate?: WidgetAlignSystemProps["onWidgetAlignSystemUpdate"];
   renderInfoboxInsertionPopUp?: InfoboxProps["renderInsertionPopUp"];
@@ -95,6 +96,7 @@ export default function Visualizer({
   selectedBlockId: outerSelectedBlockId,
   zoomedLayerId,
   widgetAlignEditorActivated,
+  engineMeta,
   onLayerSelect,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
@@ -128,6 +130,7 @@ export default function Visualizer({
     shownPluginModalInfo,
     pluginPopupContainerRef,
     shownPluginPopupInfo,
+    overriddenAlignSystem,
     viewport,
     onPluginModalShow,
     onPluginPopupShow,
@@ -155,6 +158,7 @@ export default function Visualizer({
     clock: props.clock,
     sceneProperty,
     tags,
+    alignSystem: widgets?.alignSystem,
     onLayerSelect,
     onBlockSelect,
     onBlockChange,
@@ -171,7 +175,7 @@ export default function Visualizer({
           {isDroppable && <DropHolder />}
           {ready && widgets?.alignSystem && (
             <WidgetAlignSystem
-              alignSystem={widgets.alignSystem}
+              alignSystem={overriddenAlignSystem}
               editing={widgetAlignEditorActivated}
               onWidgetUpdate={onWidgetUpdate}
               onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
@@ -204,6 +208,7 @@ export default function Visualizer({
               !!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID] ||
               !!widgets?.ownBuiltinWidgets?.[NAVIGATOR_BUILTIN_WIDGET_ID]
             }
+            meta={engineMeta}
             onLayerSelect={selectLayer}
             onCameraChange={updateCamera}
             onTick={updateClock}
