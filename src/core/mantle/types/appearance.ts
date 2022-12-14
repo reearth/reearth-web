@@ -21,6 +21,7 @@ export type AppearanceTypes = {
   model: ModelAppearance;
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
+  box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
   legacy_resource: LegacyResourceAppearance;
 };
@@ -135,6 +136,35 @@ export type LegacyResourceAppearance = {
   clampToGround?: boolean;
 };
 
+export type BoxAppearance = {
+  height?: number;
+  width?: number;
+  length?: number;
+  heading?: number;
+  pitch?: number;
+  roll?: number;
+  fillColor?: string;
+  outlineColor?: string;
+  activeOutlineColor?: string;
+  outlineWidth?: number;
+  draggableOutlineColor?: string;
+  activeDraggableOutlineColor?: string;
+  draggableOutlineWidth?: number;
+  scalePoint?: boolean;
+  axisLine?: boolean;
+  pointFillColor?: string;
+  pointOutlineColor?: string;
+  activePointOutlineColor?: string;
+  pointOutlineWidth?: number;
+  axisLineColor?: string;
+  axisLineWidth?: number;
+  allowEnterGround?: boolean;
+  cursor?: string;
+  activeBox?: boolean;
+  activeScalePointIndex?: number; // 0 ~ 11
+  activeEdgeIndex?: number; // 0 ~ 11
+};
+
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   marker: 1,
   polyline: 1,
@@ -142,6 +172,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   ellipsoid: 1,
   model: 1,
   "3dtiles": 1,
+  box: 1,
   photooverlay: 1,
   legacy_resource: 1,
 };
