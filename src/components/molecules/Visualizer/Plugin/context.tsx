@@ -301,17 +301,14 @@ export function Provider({
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
       resize: useMemo<[viewport: ViewportSize] | undefined>(
-        () =>
-          viewport
-            ? [
-                {
-                  width: viewport.width,
-                  height: viewport.height,
-                  isMobile: viewport.isMobile,
-                } as ViewportSize,
-              ]
-            : undefined,
-        [viewport],
+        () => [
+          {
+            width: viewport.width,
+            height: viewport.height,
+            isMobile: viewport.isMobile,
+          } as ViewportSize,
+        ],
+        [viewport.width, viewport.height, viewport.isMobile],
       ),
     },
     emit,
