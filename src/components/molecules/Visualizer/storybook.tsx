@@ -89,6 +89,14 @@ export const context: ProviderProps = {
     isMobile: false,
   },
   layers: new LayerStore({ id: "", children: layers }),
+  pluginInstances: {
+    meta: {
+      current: [],
+    },
+    postMessage: () => {},
+    addPluginMessageSender: () => {},
+    removePluginMessageSender: () => {},
+  },
   clientStorage: {
     getAsync: act("clientStorage.getAsync"),
     setAsync: act("clientStorage.setAsync"),

@@ -26,9 +26,10 @@ import type {
   Tag,
 } from "./Plugin/types";
 import useClientStorage from "./useClientStorage";
+import usePluginInstances from "./usePluginInstances";
 import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import { useOverriddenProperty } from "./utils";
-import type { WidgetAlignSystem } from "./WidgetAlignSystem";
+import type { WidgetAlignSystem, Widget } from "./WidgetAlignSystem";
 
 export type Viewport = {
   width: number;
@@ -54,6 +55,7 @@ export default ({
   sceneProperty,
   tags,
   alignSystem,
+  floatingWidgets,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
@@ -77,6 +79,7 @@ export default ({
   sceneProperty?: SceneProperty;
   tags?: Tag[];
   alignSystem?: WidgetAlignSystem;
+  floatingWidgets?: Widget[];
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends keyof ValueTypes>(
@@ -258,6 +261,12 @@ export default ({
     alignSystem,
   });
 
+  const pluginInstances = usePluginInstances({
+    alignSystem,
+    floatingWidgets,
+    blocks: selectedLayer?.infobox?.blocks,
+  });
+
   const clientStorage = useClientStorage();
 
   const providerProps: ProviderProps = useProviderProps(
@@ -268,6 +277,7 @@ export default ({
       tags,
       camera: innerCamera,
       clock: innerClock,
+      pluginInstances,
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
