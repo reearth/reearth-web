@@ -222,11 +222,14 @@ export function exposed({
             return () => {
               const promise = new Promise(resolve => {
                 setTimeout(() => {
-                  console.log("test promise resolved");
+                  console.log("Test: test promise resolved");
                   resolve("hoge");
                 }, 2000);
               });
-              console.log("test promise API called. Return promise", promise);
+              promise.then(value => {
+                console.log("Test: resolve with value:", value);
+              });
+              console.log("Test: test promise API called. Return promise", promise);
               return promise;
             };
           },

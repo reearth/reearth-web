@@ -51,7 +51,8 @@ export const defaultIsMarshalable = (obj: any): boolean => {
     Array.isArray(obj) ||
     Object.getPrototypeOf(obj) === Function.prototype ||
     Object.getPrototypeOf(obj) === Object.prototype ||
-    obj instanceof Date
+    obj instanceof Date ||
+    typeof obj?.then === "function"
   );
 };
 
@@ -163,9 +164,18 @@ export default function useHook({
     (async () => {
       const ctx = (await getQuickJS()).newContext();
       arena.current = new Arena(ctx, {
-        isMarshalable: target =>
-          defaultIsMarshalable(target) ||
-          (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
+        isMarshalable: target => {
+          console.log(
+            "isMarshalable",
+            target,
+            defaultIsMarshalable(target) ||
+              (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
+          );
+          return (
+            defaultIsMarshalable(target) ||
+            (typeof isMarshalable === "function" ? isMarshalable(target) : "json")
+          );
+        },
       });
 
       const e =

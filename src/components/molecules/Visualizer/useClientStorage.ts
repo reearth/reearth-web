@@ -25,8 +25,8 @@ export default () => {
           getStore(pluginId)
             .getItem(key)
             .then((value: any) => {
-              console.log("localStorage: get", value);
               resolve(value);
+              console.log("Dev: localStorage: get", value);
             })
             .catch((err: any) => {
               console.log(`err get client storage value for ${pluginId} ${key}: ${err}`);
@@ -42,7 +42,7 @@ export default () => {
           getStore(pluginId)
             .setItem(key, value)
             .then(() => {
-              console.log("localStorage: set", key, value);
+              console.log("Dev: localStorage: set", key, value);
               resolve();
             })
             .catch((err: any) => {
@@ -59,7 +59,7 @@ export default () => {
           getStore(pluginId)
             .removeItem(key)
             .then(() => {
-              console.log("localStorage: delete", key);
+              console.log("Dev: localStorage: delete", key);
               resolve();
             })
             .catch((err: any) => {
@@ -76,7 +76,7 @@ export default () => {
           getStore(pluginId)
             .keys()
             .then((value: string[]) => {
-              console.log("localStorage: keys", value);
+              console.log("Dev: localStorage: keys", value);
               resolve(value);
             })
             .catch((err: any) => {
