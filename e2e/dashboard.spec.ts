@@ -1,4 +1,5 @@
 /* eslint-disable playwright/no-wait-for-timeout */
+
 import { expect, test } from "@reearth/e2e/utils";
 
 test("Dashboard can be logged in", async ({ page, reearth }) => {
@@ -45,4 +46,35 @@ test("Workspace ", async ({ page, reearth }) => {
   await expect(page.getByText("reearth's workspace")).toBeVisible();
   await page.getByRole("link").nth(1).click();
   await page.waitForTimeout(3000);
+});
+
+test("Header  ", async ({ page, reearth }) => {
+  await reearth.initUser();
+  await reearth.goto(`/dashboard/${reearth.teamId}`);
+  await expect(page.getByText("reearth's workspace")).toBeVisible();
+
+  // Display menu Switch workspace
+  await page.locator(".css-gfu9bm").click();
+  await page.hover("div[class='css-gfu9bm'] p[class='css-1ohhn6c']", {
+    strict: true,
+  });
+  await page.waitForTimeout(1000);
+  await page.locator("(//p[text()='reearth'])[2]").click();
+
+  // Manage Workspace
+  await page.locator(".css-gfu9bm").click();
+  await page.hover("div[class='css-gfu9bm'] p[class='css-1ohhn6c']", {
+    strict: true,
+  });
+  await page.waitForTimeout(1000);
+  await page.locator("(//p[@class='css-1ohhn6c'])[3]").click();
+
+  // logout
+  await page.locator(".css-gfu9bm").click();
+  await page.hover("div[class='css-gfu9bm'] p[class='css-1ohhn6c']", {
+    strict: true,
+  });
+  await page.click("//p[text()='Log out']");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(5000);
 });
