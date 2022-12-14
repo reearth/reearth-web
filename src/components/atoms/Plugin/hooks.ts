@@ -164,18 +164,9 @@ export default function useHook({
     (async () => {
       const ctx = (await getQuickJS()).newContext();
       arena.current = new Arena(ctx, {
-        isMarshalable: target => {
-          console.log(
-            "isMarshalable",
-            target,
-            defaultIsMarshalable(target) ||
-              (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
-          );
-          return (
-            defaultIsMarshalable(target) ||
-            (typeof isMarshalable === "function" ? isMarshalable(target) : "json")
-          );
-        },
+        isMarshalable: target =>
+          defaultIsMarshalable(target) ||
+          (typeof isMarshalable === "function" ? isMarshalable(target) : "json"),
       });
 
       const e =
