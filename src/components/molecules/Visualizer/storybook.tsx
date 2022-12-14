@@ -90,6 +90,14 @@ export const context: ProviderProps = {
     query: {},
   },
   layers: new LayerStore({ id: "", children: layers }),
+  pluginInstances: {
+    meta: {
+      current: [],
+    },
+    postMessage: () => {},
+    addPluginMessageSender: () => {},
+    removePluginMessageSender: () => {},
+  },
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
   zoomIn: act("zoomIn"),
