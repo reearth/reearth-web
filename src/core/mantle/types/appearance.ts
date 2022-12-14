@@ -1,3 +1,5 @@
+import { EXPERIMENTAL_clipping } from "@reearth/util/value";
+
 import { objKeys } from "../utils";
 
 import type { Camera, LatLng, Typography } from "./value";
@@ -109,6 +111,9 @@ export type Cesium3DTilesAppearance = {
   tileset?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  edgeWidth?: number;
+  edgeColor?: string;
+  experimental_clipping?: EXPERIMENTAL_clipping;
 };
 
 export type LegacyPhotooverlayAppearance = {
