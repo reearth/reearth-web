@@ -291,7 +291,7 @@ export function Provider({
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
       resize: useMemo<[viewport: Viewport] | undefined>(
-        () => (viewport ? [viewport] : undefined),
+        () => (viewport ? [viewport as Viewport] : undefined),
         [viewport],
       ),
     },

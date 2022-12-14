@@ -359,6 +359,7 @@ export type Viewport = {
   readonly width: number;
   readonly height: number;
   readonly isMobile: boolean;
+  readonly query: Record<string, string>;
 };
 
 type Rect = {
