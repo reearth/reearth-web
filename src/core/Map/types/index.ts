@@ -44,8 +44,8 @@ export type EngineRef = {
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
   zoomOut: (amount: number, options?: CameraOptions) => void;
-  orbit: (radian: number) => void;
-  rotateRight: (radian: number) => void;
+  orbit: (radians: number) => void;
+  rotateRight: (radians: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   getClock: () => Clock | undefined;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
@@ -61,6 +61,11 @@ export type EngineRef = {
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
   mouseEventCallbacks: MouseEvents;
+  pause: () => void;
+  play: () => void;
+  changeSpeed: (speed: number) => void;
+  changeTime: (time: Date) => void;
+  tick: () => void;
 };
 
 export type EngineProps = {

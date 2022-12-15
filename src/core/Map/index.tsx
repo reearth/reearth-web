@@ -12,6 +12,7 @@ export type {
   FeatureComponentType,
   FeatureComponentProps,
   ClusterProperty,
+  Layer,
 } from "./Layers";
 
 export type { MapRef as Ref } from "./hooks";

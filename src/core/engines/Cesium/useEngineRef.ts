@@ -1,5 +1,5 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath } from "cesium";
+import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
@@ -310,6 +310,32 @@ export default function useEngineRef(
         mouseEventCallbacks.current.wheel = cb;
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
+      changeSpeed: (speed: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.multiplier = speed;
+        viewer.clock.clockStep = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+      },
+      changeTime: (time: Date) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.currentTime = JulianDate.fromDate(time);
+      },
+      pause: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.shouldAnimate = false;
+      },
+      play: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.shouldAnimate = true;
+      },
+      tick: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.tick();
+      },
     };
   }, [cesium]);
 
