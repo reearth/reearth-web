@@ -10,9 +10,10 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
+// TODO: Use new plugin system
 import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 import { FeatureProps } from "@reearth/core/engines/Cesium/Feature";
-import { toColor } from "@reearth/util/value";
+import { toColor } from "@reearth/core/mantle";
 
 import { Property } from "..";
 import { sampleTerrainHeightFromCartesian } from "../../../common";

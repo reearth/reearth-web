@@ -27,6 +27,7 @@ export type {
   Rect,
   LatLngHeight,
 } from "../../mantle";
+export * from "./event";
 
 export type EngineRef = {
   [index in keyof MouseEventHandles]: MouseEventHandles[index];

@@ -8,8 +8,9 @@ import {
 } from "cesium";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+// TODO: Use new plugin system
 import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
-import { EventCallback } from "@reearth/util/event";
+import { EventCallback } from "@reearth/core/Map";
 
 import { EdgeEventCallback, EdgeProperties } from "../Edge";
 
