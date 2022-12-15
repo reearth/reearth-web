@@ -91,7 +91,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         homeButton={false}
         geocoder={false}
         infoBox={false}
-        imageryProvider={false}
         baseLayerPicker={false}
         navigationHelpButton={false}
         projectionPicker={false}
