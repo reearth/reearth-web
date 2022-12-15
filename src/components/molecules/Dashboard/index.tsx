@@ -36,7 +36,8 @@ const Dashboard: React.FC<Props> = ({
       ref={wrapperRef}
       onScroll={e => {
         !isLoading && hasMoreProjects && onScrollToBottom(e, onGetMoreProjects);
-      }}>
+      }}
+      data-testid="dashboard-wrapper">
       {header}
       <Content>
         {children}

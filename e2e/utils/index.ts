@@ -77,7 +77,7 @@ export async function initUser(
     throw new Error("access token is not initialized");
   }
 
-  const { userName, userId, teamId, api, signUpSecret } = config;
+  const { userName, userId, workspaceId: teamId, api, signUpSecret } = config;
 
   if (!userName || !userId || !teamId || !api) {
     throw new Error(

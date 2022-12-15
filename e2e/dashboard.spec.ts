@@ -4,13 +4,47 @@ import { expect, test } from "@reearth/e2e/utils";
 
 test("Dashboard can be logged in", async ({ page, reearth }) => {
   await reearth.initUser();
-  await reearth.goto(`/dashboard/${reearth.teamId}`);
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
 
   await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
 });
+
+test("show many projects", async ({ page, reearth }) => {
+  await reearth.initUser();
+
+  for (let i = 0; i < 10; i++) {
+    await reearth.gql(
+      `mutation ($workspaceId: ID!, $name: String!) {
+        createProject(input: {
+          teamId: $workspaceId,
+          visualizer: CESIUM
+          name: $name
+        }) {
+          project {
+            id
+            name
+          }
+        }
+      }`,
+      {
+        name: `Project${i}`,
+        workspaceId: reearth.workspaceId,
+      },
+    );
+  }
+
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
+  await expect(page.getByText("Project9")).toBeVisible();
+  await page.getByTestId("dashboard-wrapper").evaluate(node => node.scrollTo(0, node.scrollHeight));
+
+  for (let i = 0; i < 10; i++) {
+    await expect(page.getByText(`Project${i}`)).toBeVisible();
+  }
+});
+
 test("Can create a project ", async ({ page, reearth }) => {
   await reearth.initUser();
-  await reearth.goto(`/dashboard/${reearth.teamId}`);
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
 
   await page.locator(".css-xdawb4").first().click();
 
@@ -26,9 +60,10 @@ test("Can create a project ", async ({ page, reearth }) => {
   await expect(page.getByText("test description")).toBeVisible();
   await page.locator(".css-19kfshh").first().click();
 });
+
 test("Create a new workspace", async ({ page, reearth }) => {
   await reearth.initUser();
-  await reearth.goto(`/dashboard/${reearth.teamId}`);
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
 
   await page.locator(".css-hfefqr > .css-xdawb4").click();
 
@@ -40,17 +75,18 @@ test("Create a new workspace", async ({ page, reearth }) => {
   await page.waitForTimeout(3000);
   await expect(page.getByText("Team workspace's workspace")).toBeVisible();
 });
+
 test("Workspace ", async ({ page, reearth }) => {
   await reearth.initUser();
-  await reearth.goto(`/dashboard/${reearth.teamId}`);
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
   await expect(page.getByText("reearth's workspace")).toBeVisible();
   await page.getByRole("link").nth(1).click();
   await page.waitForTimeout(3000);
 });
 
-test("Header  ", async ({ page, reearth }) => {
+test("Header", async ({ page, reearth }) => {
   await reearth.initUser();
-  await reearth.goto(`/dashboard/${reearth.teamId}`);
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
   await expect(page.getByText("reearth's workspace")).toBeVisible();
 
   // Display menu Switch workspace
