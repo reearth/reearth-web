@@ -1,7 +1,7 @@
 import { forwardRef, type Ref } from "react";
 
 import useHooks, { MapRef } from "./hooks";
-import Layers, { type Props as LayersProps } from "./Layers";
+import Layers, { SelectedLayerReason, type Props as LayersProps } from "./Layers";
 import { Engine, EngineProps } from "./types";
 
 export * from "./types";
@@ -13,6 +13,7 @@ export type {
   FeatureComponentProps,
   ClusterProperty,
   Layer,
+  SelectedLayerReason,
 } from "./Layers";
 
 export type { MapRef as Ref } from "./hooks";
@@ -20,7 +21,8 @@ export type { MapRef as Ref } from "./hooks";
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
-} & Omit<LayersProps, "Feature" | "clusterComponent" | "onLayerSelect"> &
+  selectedLayerReason?: SelectedLayerReason;
+} & Omit<LayersProps, "Feature" | "clusterComponent" | "onLayerSelect" | "selectedReason"> &
   EngineProps;
 
 function Map(
@@ -35,6 +37,7 @@ function Map(
     layers,
     overrides,
     selectedLayerId,
+    selectedLayerReason,
     onLayerSelect,
     ...props
   }: Props,
@@ -67,6 +70,7 @@ function Map(
         overrides={overrides}
         sceneProperty={sceneProperty}
         selectedLayerId={selectedLayer}
+        selectedReason={selectedLayerReason}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}

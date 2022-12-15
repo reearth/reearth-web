@@ -94,12 +94,6 @@ export type EngineProps = {
 
 export type SelectLayerOptions = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
-};
-
-export type OverriddenInfobox = {
-  title?: string;
-  content: { key: string; value: string }[];
 };
 
 export type Clock = {
