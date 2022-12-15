@@ -1,19 +1,9 @@
-import {
-  type RefObject,
-  useImperativeHandle,
-  useRef,
-  type Ref,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { useImperativeHandle, useRef, type Ref, useState, useEffect, useCallback } from "react";
 
+import { MapRef, mapRef } from "./ref";
 import { EngineRef, LayersRef, SelectLayerOptions } from "./types";
 
-export type MapRef = {
-  engine: RefObject<EngineRef>;
-  layers: RefObject<LayersRef>;
-};
+export type { MapRef } from "./ref";
 
 export default function ({
   ref,
@@ -29,10 +19,11 @@ export default function ({
 
   useImperativeHandle(
     ref,
-    () => ({
-      engine: engineRef,
-      layers: layersRef,
-    }),
+    () =>
+      mapRef({
+        engineRef,
+        layersRef,
+      }),
     [],
   );
 
