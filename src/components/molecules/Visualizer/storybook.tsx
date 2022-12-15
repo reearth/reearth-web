@@ -89,6 +89,14 @@ export const context: ProviderProps = {
     isMobile: false,
   },
   layers: new LayerStore({ id: "", children: layers }),
+  pluginInstances: {
+    meta: {
+      current: [],
+    },
+    postMessage: () => {},
+    addPluginMessageSender: () => {},
+    removePluginMessageSender: () => {},
+  },
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
   zoomIn: act("zoomIn"),
@@ -113,6 +121,7 @@ export const context: ProviderProps = {
   moveRight: act("moveRight"),
   moveOverTerrain: act("moveOverTerrain"),
   flyToGround: act("flyToGround"),
+  moveWidget: act("moveWidget"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(

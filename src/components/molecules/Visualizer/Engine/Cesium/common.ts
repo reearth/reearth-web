@@ -29,6 +29,7 @@ import {
   Ray,
   IntersectionTests,
   Matrix4,
+  SceneMode,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -37,6 +38,7 @@ import { tweenInterval } from "@reearth/util/raf";
 import { Camera } from "@reearth/util/value";
 
 import { CameraOptions, Clock } from "../../Plugin/types";
+import { FlyToDestination } from "../ref";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -379,9 +381,16 @@ export const getCenterCamera = ({
 };
 
 export const zoom = (
-  { camera, scene, relativeAmount }: { camera: CesiumCamera; scene: Scene; relativeAmount: number },
+  { viewer, relativeAmount }: { viewer: Viewer; relativeAmount: number },
   options?: CameraOptions,
 ) => {
+  const { camera, scene } = viewer;
+  if (scene.mode !== SceneMode.SCENE3D) {
+    const pos = getCamera(viewer);
+    flyTo(camera, { ...pos, height: (pos?.height || 1) * relativeAmount }, { duration: 0.5 });
+    return;
+  }
+
   const center = getCenterCamera({ camera, scene });
   const target =
     center ||
@@ -630,12 +639,13 @@ export function moveRight(scene: Scene, amount: number) {
 }
 
 export async function moveOverTerrain(viewer: Viewer, offset = 0) {
-  const camera = viewer.scene.camera;
-  const height = await sampleTerrainHeight(viewer.scene, camera.position);
+  const camera = getCamera(viewer);
+  if (camera?.lng === undefined || camera?.lat === undefined) return;
+  const height = await sampleTerrainHeight(viewer.scene, camera.lng, camera.lat);
   if (height && height !== 0) {
     const innerCamera = getCamera(viewer);
     if (innerCamera && innerCamera?.height < height + offset) {
-      camera.moveUp(height + offset - innerCamera.height);
+      viewer.scene.camera.moveUp(height + offset - innerCamera.height);
     }
   }
 }
@@ -643,28 +653,20 @@ export async function moveOverTerrain(viewer: Viewer, offset = 0) {
 export async function flyToGround(
   viewer: Viewer,
   cancelCameraFlight: MutableRefObject<(() => void) | undefined>,
-  camera?: {
-    lat?: number;
-    lng?: number;
-    height?: number;
-    heading?: number;
-    pitch?: number;
-    roll?: number;
-    fov?: number;
-  },
+  camera: FlyToDestination,
   options?: {
     duration?: number;
     easing?: (time: number) => number;
   },
   offset = 0,
 ) {
-  const height = await sampleTerrainHeight(viewer.scene, viewer.scene.camera.position);
+  if (camera.lng === undefined || camera.lat === undefined) return;
+  const height = await sampleTerrainHeight(viewer.scene, camera.lng, camera.lat);
   const tarHeight = height ? height + offset : offset;
-  const groundCamera = { ...camera, height: tarHeight };
   cancelCameraFlight.current?.();
   cancelCameraFlight.current = flyTo(
     viewer.scene?.camera,
-    { ...getCamera(viewer), ...groundCamera },
+    { ...getCamera(viewer), ...camera, height: tarHeight },
     options,
   );
 }
@@ -687,15 +689,28 @@ function rotateVectorAboutAxis(vector: Cartesian3, rotateAxis: Cartesian3, rotat
   return rotatedVector;
 }
 
-async function sampleTerrainHeight(
+export async function sampleTerrainHeight(
   scene: Scene,
-  position: Cartesian3,
+  lng: number,
+  lat: number,
 ): Promise<number | undefined> {
   const terrainProvider = scene.terrainProvider;
   if (terrainProvider instanceof EllipsoidTerrainProvider) return 0;
 
   const [sample] = await sampleTerrainMostDetailed(terrainProvider, [
-    Cartographic.fromCartesian(position, scene.globe.ellipsoid, new Cartographic()),
+    Cartographic.fromDegrees(lng, lat),
   ]);
   return sample.height;
+}
+
+export async function sampleTerrainHeightFromCartesian(scene: Scene, translation: Cartesian3) {
+  const cart = Cartographic.fromCartesian(translation);
+  const [lng, lat] = [
+    CesiumMath.toDegrees(cart?.longitude || 0),
+    CesiumMath.toDegrees(cart?.latitude || 0),
+  ];
+  if (!lng || !lat) {
+    return;
+  }
+  return await sampleTerrainHeight(scene, lng, lat);
 }
