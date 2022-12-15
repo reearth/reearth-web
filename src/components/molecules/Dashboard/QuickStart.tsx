@@ -13,15 +13,15 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 export interface Props {
   className?: string;
-  onCreateTeam?: (data: { name: string }) => Promise<void>;
-  onCreateProject?: (data: {
+  assetModal?: React.ReactNode;
+  selectedAsset?: string;
+  onWorkspaceCreate?: (data: { name: string }) => Promise<void>;
+  onProjectCreate?: (data: {
     name: string;
     description: string;
     imageUrl: string;
   }) => Promise<void>;
-  assetModal?: React.ReactNode;
   toggleAssetModal?: () => void;
-  selectedAsset?: string;
   onAssetSelect?: (asset?: string) => void;
 }
 
@@ -29,8 +29,8 @@ const QuickStart: React.FC<Props> = ({
   className,
   assetModal,
   selectedAsset,
-  onCreateTeam,
-  onCreateProject,
+  onWorkspaceCreate,
+  onProjectCreate,
   toggleAssetModal,
   onAssetSelect,
 }) => {
@@ -94,7 +94,7 @@ const QuickStart: React.FC<Props> = ({
       <ProjectCreationModal
         open={projCreateOpen}
         onClose={handleProjModalClose}
-        onSubmit={onCreateProject}
+        onSubmit={onProjectCreate}
         toggleAssetModal={toggleAssetModal}
         selectedAsset={selectedAsset}
         assetModal={assetModal}
@@ -102,7 +102,7 @@ const QuickStart: React.FC<Props> = ({
       <WorkspaceCreationModal
         open={workCreateOpen}
         onClose={() => setWorkCreateOpen(false)}
-        onSubmit={onCreateTeam}
+        onSubmit={onWorkspaceCreate}
       />
     </StyledDashboardBlock>
   );
@@ -179,7 +179,6 @@ const HeroBannerButton = styled(Flex)`
   z-index: ${({ theme }) => theme.zIndexes.base};
   overflow: hidden;
 
-  color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
   padding: 120px auto;
   width: 48%;
   height: 114px;
@@ -199,7 +198,11 @@ const HeroBannerButton = styled(Flex)`
     z-index: ${({ theme }) => theme.zIndexes.hidden};
   }
 
-  &:hover: :before {
+  :hover {
+    color: ${({ theme }) => theme.dashboard.heroButtonTextHover};
+  }
+
+  &:hover:before {
     transform: translateY(-50%);
   }
   @media only screen and (max-width: 1024px) {

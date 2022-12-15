@@ -20,6 +20,7 @@ export type Reearth = {
   readonly modal: Modal;
   readonly popup: Popup;
   readonly plugin: Plugin;
+  readonly plugins: Plugins;
   readonly layers: Layers;
   readonly layer?: Layer;
   readonly widget?: Widget;
@@ -50,10 +51,22 @@ export type MouseEvent = {
   delta?: number;
 };
 
+export type LayerEditEvent = {
+  layerId: string | undefined;
+  scale?: { width: number; length: number; height: number; location: LatLngHeight };
+  rotate?: { heading: number; pitch: number; roll: number };
+};
+
+export type PluginMessage = {
+  data: any;
+  sender: string;
+};
+
 export type ReearthEventType = {
   update: [];
   close: [];
   cameramove: [camera: CameraPosition];
+  layeredit: [e: LayerEditEvent];
   select: [layerId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];
@@ -74,6 +87,7 @@ export type ReearthEventType = {
   resize: [props: Viewport];
   modalclose: [];
   popupclose: [];
+  pluginmessage: [props: PluginMessage];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -82,6 +96,19 @@ export type Plugin = {
   readonly extensionId: string;
   readonly extensionType: string;
   readonly property?: any;
+};
+
+export type PluginExtensionInstance = {
+  readonly id: string;
+  readonly pluginId: string;
+  readonly name: string;
+  readonly extensionId: string;
+  readonly extensionType: "widget" | "block";
+};
+
+export type Plugins = {
+  readonly instances: PluginExtensionInstance[];
+  readonly postMessage?: (id: string, message: any) => void;
 };
 
 export type LatLngHeight = {
@@ -208,6 +235,7 @@ export type Widget<P = any> = {
     vertically: boolean;
   };
   layout?: WidgetLayout;
+  moveTo?: (options: WidgetLocationOptions) => void;
 };
 
 export type WidgetLayout = {
@@ -222,6 +250,10 @@ export type WidgetLocation = {
 };
 
 export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetLocationOptions = WidgetLocation & {
+  method?: "insert" | "append";
+};
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */
 export type UI = {
@@ -268,6 +300,7 @@ export type UI = {
     /** Overrides whether the iframe is extended. This option is only available for widgets on an extendable area on the widget align system. */
     extended?: boolean | undefined,
   ) => void;
+  readonly close: () => void;
 };
 
 export type Modal = {

@@ -25,7 +25,10 @@ import type {
   LookAtDestination,
   Tag,
 } from "./Plugin/types";
+import usePluginInstances from "./usePluginInstances";
+import useWidgetAlignSystem from "./useWidgetAlignSystem";
 import { useOverriddenProperty } from "./utils";
+import type { WidgetAlignSystem, Widget } from "./WidgetAlignSystem";
 
 export type Viewport = {
   width: number;
@@ -50,6 +53,8 @@ export default ({
   clock,
   sceneProperty,
   tags,
+  alignSystem,
+  floatingWidgets,
   onLayerSelect,
   onBlockSelect,
   onBlockChange,
@@ -72,6 +77,8 @@ export default ({
   clock?: Clock;
   sceneProperty?: SceneProperty;
   tags?: Tag[];
+  alignSystem?: WidgetAlignSystem;
+  floatingWidgets?: Widget[];
   onLayerSelect?: (id?: string) => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends keyof ValueTypes>(
@@ -249,6 +256,16 @@ export default ({
     pageview(window.location.pathname);
   }, [isPublished, enableGA, trackingId]);
 
+  const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
+    alignSystem,
+  });
+
+  const pluginInstances = usePluginInstances({
+    alignSystem,
+    floatingWidgets,
+    blocks: selectedLayer?.infobox?.blocks,
+  });
+
   const providerProps: ProviderProps = useProviderProps(
     {
       engineName: engineType || "",
@@ -257,6 +274,7 @@ export default ({
       tags,
       camera: innerCamera,
       clock: innerClock,
+      pluginInstances,
       selectedLayer,
       layerSelectionReason,
       layerOverridenInfobox,
@@ -268,6 +286,7 @@ export default ({
       selectLayer,
       overrideLayerProperty,
       overrideSceneProperty,
+      moveWidget,
     },
     engineRef,
     layers,
@@ -315,6 +334,7 @@ export default ({
     pluginPopupContainerRef,
     shownPluginPopupInfo,
     viewport,
+    overriddenAlignSystem,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,

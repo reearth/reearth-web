@@ -3,6 +3,7 @@ import { merge } from "@reearth/util/object";
 
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
+import type { PluginInstances } from "../usePluginInstances";
 
 import type {
   GlobalThis,
@@ -14,7 +15,7 @@ import type {
   Plugin,
   Tag,
   PopupPosition,
-  Viewport,
+  WidgetLocationOptions,
 } from "./types";
 
 export type CommonReearth = Omit<
@@ -24,6 +25,7 @@ export type CommonReearth = Omit<
 
 export function exposed({
   render,
+  closeUI,
   postMessage,
   resize,
   renderModal,
@@ -41,6 +43,8 @@ export function exposed({
   block,
   widget,
   overrideSceneProperty,
+  moveWidget,
+  pluginPostMessage,
 }: {
   render: (
     html: string,
@@ -51,6 +55,7 @@ export function exposed({
       extended?: boolean;
     },
   ) => void;
+  closeUI: Reearth["ui"]["close"];
   postMessage: Reearth["ui"]["postMessage"];
   resize: Reearth["ui"]["resize"];
   renderModal: (
@@ -75,6 +80,8 @@ export function exposed({
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
+  moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
+  pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
 }): GlobalThis {
   return merge({
     console: {
@@ -91,7 +98,6 @@ export function exposed({
             };
           },
         }),
-        viewport: commonReearth.viewport as Viewport,
         layers: merge(commonReearth.layers, {
           get add() {
             return (layer: Layer, parentId?: string) =>
@@ -115,6 +121,7 @@ export function exposed({
           },
           postMessage,
           resize,
+          close: closeUI,
         },
         modal: {
           show: (
@@ -168,6 +175,20 @@ export function exposed({
             return plugin?.property;
           },
         },
+        plugins: {
+          get postMessage() {
+            const sender =
+              (plugin?.extensionType === "widget"
+                ? widget?.()?.id
+                : plugin?.extensionType === "block"
+                ? block?.()?.id
+                : "") ?? "";
+            return (id: string, msg: any) => pluginPostMessage(id, msg, sender);
+          },
+          get instances() {
+            return commonReearth.plugins.instances;
+          },
+        },
         ...events,
       },
       plugin?.extensionType === "block"
@@ -183,7 +204,14 @@ export function exposed({
       plugin?.extensionType === "widget"
         ? {
             get widget() {
-              return widget?.();
+              return {
+                ...widget?.(),
+                moveTo: (options: WidgetLocationOptions) => {
+                  const widgetId = widget?.()?.id;
+                  if (!widgetId) return;
+                  moveWidget?.(widgetId, options);
+                },
+              };
             },
           }
         : {},
@@ -201,6 +229,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  pluginInstances,
   viewport,
   selectedLayer,
   layerSelectionReason,
@@ -241,6 +270,7 @@ export function commonReearth({
   viewport: () => VisualizerViewport;
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenInfobox: () => GlobalThis["reearth"]["layers"]["overriddenInfobox"];
@@ -324,7 +354,7 @@ export function commonReearth({
       getLocationFromScreen,
     },
     get viewport() {
-      return viewport?.();
+      return viewport();
     },
     engineName,
     camera: {
@@ -412,6 +442,11 @@ export function commonReearth({
       },
       get add() {
         return addLayer;
+      },
+    },
+    plugins: {
+      get instances() {
+        return pluginInstances().meta.current;
       },
     },
     ...events,
