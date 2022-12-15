@@ -1,8 +1,6 @@
-import { EXPERIMENTAL_clipping } from "@reearth/util/value";
-
 import { objKeys } from "../utils";
 
-import type { Camera, LatLng, Typography } from "./value";
+import type { Camera, EXPERIMENTAL_clipping, LatLng, Typography } from "./value";
 
 export type LayerAppearance<T> = {
   [K in keyof T]?: T[K] | Expression;
