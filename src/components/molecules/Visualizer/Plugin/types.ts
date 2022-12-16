@@ -85,7 +85,7 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
-  resize: [props: Viewport];
+  resize: [props: ViewportSize];
   modalclose: [];
   popupclose: [];
   pluginmessage: [props: PluginMessage];
@@ -376,10 +376,14 @@ export type Visualizer = {
   readonly overrideProperty: (property: any) => void;
 };
 
-export type Viewport = {
+export type ViewportSize = {
   readonly width: number;
   readonly height: number;
   readonly isMobile: boolean;
+};
+
+export type Viewport = ViewportSize & {
+  readonly query: Record<string, string>;
 };
 
 type Rect = {
