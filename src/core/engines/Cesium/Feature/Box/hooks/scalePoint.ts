@@ -11,10 +11,9 @@ import {
 } from "cesium";
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 
-// TODO: Use new plugin system
-import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 import { EventCallback } from "@reearth/core/Map";
 
+import { useContext } from "../../context";
 import { PointEventCallback, ScalePointProperties } from "../ScalePoints";
 
 export const useHooks = ({
@@ -151,14 +150,14 @@ export const useHooks = ({
   }, [dimensions, cesiumDimensions]);
 
   useEffect(() => {
-    ctx?.reearth.on("mousedown", handlePointMouseDown);
-    ctx?.reearth.on("mousemove", handlePointMouseMove);
-    ctx?.reearth.on("mouseup", handlePointMouseUp);
+    ctx?.reearth?.on("mousedown", handlePointMouseDown);
+    ctx?.reearth?.on("mousemove", handlePointMouseMove);
+    ctx?.reearth?.on("mouseup", handlePointMouseUp);
 
     return () => {
-      ctx?.reearth.off("mousedown", handlePointMouseDown);
-      ctx?.reearth.off("mousemove", handlePointMouseMove);
-      ctx?.reearth.off("mouseup", handlePointMouseUp);
+      ctx?.reearth?.off("mousedown", handlePointMouseDown);
+      ctx?.reearth?.off("mousemove", handlePointMouseMove);
+      ctx?.reearth?.off("mouseup", handlePointMouseUp);
     };
   }, [ctx, handlePointMouseDown, handlePointMouseMove, handlePointMouseUp]);
 

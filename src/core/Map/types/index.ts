@@ -9,6 +9,8 @@ import type {
 import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
 import type { FeatureComponentType, ClusterComponentType } from "../Layers";
 
+import { ReearthEventType } from "./event";
+
 export type {
   FeatureComponentProps,
   FeatureComponentType,
@@ -28,6 +30,27 @@ export type {
   LatLngHeight,
 } from "../../mantle";
 export * from "./event";
+
+/** Most of the APIs related to Re:Earth are stored in this object. */
+export type Reearth = {
+  readonly on: <T extends keyof ReearthEventType>(
+    type: T,
+    callback: (...args: ReearthEventType[T]) => void,
+  ) => void;
+  readonly off: <T extends keyof ReearthEventType>(
+    type: T,
+    callback: (...args: ReearthEventType[T]) => void,
+  ) => void;
+  readonly once: <T extends keyof ReearthEventType>(
+    type: T,
+    callback: (...args: ReearthEventType[T]) => void,
+  ) => void;
+};
+
+export type CommonReearth = Omit<
+  Reearth,
+  "plugin" | "ui" | "modal" | "popup" | "block" | "layer" | "widget"
+>;
 
 export type EngineRef = {
   [index in keyof MouseEventHandles]: MouseEventHandles[index];
@@ -83,6 +106,12 @@ export type EngineProps = {
   onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+};
+
+export type Viewport = {
+  readonly width: number;
+  readonly height: number;
+  readonly isMobile: boolean;
 };
 
 export type SelectLayerOptions = {

@@ -8,10 +8,9 @@ import {
 } from "cesium";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// TODO: Use new plugin system
-import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 import { EventCallback } from "@reearth/core/Map";
 
+import { useContext } from "../../context";
 import { EdgeEventCallback, EdgeProperties } from "../Edge";
 
 export const useHooks = ({
@@ -92,13 +91,13 @@ export const useHooks = ({
   );
 
   useEffect(() => {
-    ctx?.reearth.on("mousedown", handleMouseDown);
-    ctx?.reearth.on("mousemove", handleMouseMove);
-    ctx?.reearth.on("mouseup", handleMouseUp);
+    ctx?.reearth?.on("mousedown", handleMouseDown);
+    ctx?.reearth?.on("mousemove", handleMouseMove);
+    ctx?.reearth?.on("mouseup", handleMouseUp);
     return () => {
-      ctx?.reearth.off("mousedown", handleMouseDown);
-      ctx?.reearth.off("mousemove", handleMouseMove);
-      ctx?.reearth.off("mouseup", handleMouseUp);
+      ctx?.reearth?.off("mousedown", handleMouseDown);
+      ctx?.reearth?.off("mousemove", handleMouseMove);
+      ctx?.reearth?.off("mouseup", handleMouseUp);
     };
   }, [ctx, handleMouseDown, handleMouseMove, handleMouseUp]);
 

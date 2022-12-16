@@ -323,6 +323,12 @@ export default ({
       selectionReason,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
+      emit: () => {},
+      reearth: {
+        on: () => {},
+        off: () => {},
+        once: () => {},
+      },
     }),
     [selectionReason, engineAPI],
   );
