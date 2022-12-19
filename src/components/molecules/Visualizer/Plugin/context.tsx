@@ -58,7 +58,7 @@ export type Props = {
   layerOverriddenProperties?: { [key: string]: any };
   viewport: VisualizerViewport;
   clientStorage: {
-    getAsync: (pluginId: string, key: string) => Promise<any | undefined>;
+    getAsync: (pluginId: string, key: string) => Promise<any>;
     setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
     deleteAsync: (pluginId: string, key: string) => Promise<void>;
     keysAsync: (pluginId: string) => Promise<string[]>;
@@ -105,7 +105,7 @@ export type Context = {
   engine: EngineContext;
   pluginInstances: PluginInstances;
   clientStorage: {
-    getAsync: (pluginId: string, key: string) => Promise<any | undefined>;
+    getAsync: (pluginId: string, key: string) => Promise<any>;
     setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
     deleteAsync: (pluginId: string, key: string) => Promise<void>;
     keysAsync: (pluginId: string) => Promise<string[]>;

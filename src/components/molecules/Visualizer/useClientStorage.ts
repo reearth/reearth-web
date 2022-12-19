@@ -18,7 +18,7 @@ export default () => {
   const clientStorage = useMemo(() => {
     return {
       getAsync: (pluginId: string, key: string) => {
-        return new Promise<any | undefined>((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
           getStore(pluginId)
             .getItem(key)
             .then((value: any) => {

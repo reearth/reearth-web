@@ -85,7 +85,7 @@ export function exposed({
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
   clientStorage: {
-    getAsync: (pluginId: string, key: string) => Promise<any | undefined>;
+    getAsync: (pluginId: string, key: string) => Promise<any>;
     setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
     deleteAsync: (pluginId: string, key: string) => Promise<void>;
     keysAsync: (pluginId: string) => Promise<string[]>;
