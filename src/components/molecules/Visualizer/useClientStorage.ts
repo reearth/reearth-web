@@ -19,14 +19,10 @@ export default () => {
     return {
       getAsync: (pluginId: string, key: string) => {
         return new Promise<any | undefined>((resolve, reject) => {
-          if (!pluginId || !key) {
-            reject();
-          }
           getStore(pluginId)
             .getItem(key)
             .then((value: any) => {
               resolve(value);
-              console.log("Dev: localStorage: get", value);
             })
             .catch((err: any) => {
               console.log(`err get client storage value for ${pluginId} ${key}: ${err}`);
@@ -36,13 +32,9 @@ export default () => {
       },
       setAsync: (pluginId: string, key: string, value: any) => {
         return new Promise<void>((resolve, reject) => {
-          if (!pluginId || !key) {
-            reject();
-          }
           getStore(pluginId)
             .setItem(key, value)
             .then(() => {
-              console.log("Dev: localStorage: set", key, value);
               resolve();
             })
             .catch((err: any) => {
@@ -53,13 +45,9 @@ export default () => {
       },
       deleteAsync: (pluginId: string, key: string) => {
         return new Promise<void>((resolve, reject) => {
-          if (!pluginId || !key) {
-            reject();
-          }
           getStore(pluginId)
             .removeItem(key)
             .then(() => {
-              console.log("Dev: localStorage: delete", key);
               resolve();
             })
             .catch((err: any) => {
@@ -70,13 +58,9 @@ export default () => {
       },
       keysAsync: (pluginId: string) => {
         return new Promise<string[]>((resolve, reject) => {
-          if (!pluginId) {
-            reject();
-          }
           getStore(pluginId)
             .keys()
             .then((value: string[]) => {
-              console.log("Dev: localStorage: keys", value);
               resolve(value);
             })
             .catch((err: any) => {
@@ -87,9 +71,6 @@ export default () => {
       },
       dropStore: (pluginId: string) => {
         return new Promise<void>((resolve, reject) => {
-          if (!pluginId) {
-            reject();
-          }
           getStore(pluginId)
             .dropInstance()
             .then(() => resolve())

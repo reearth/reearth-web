@@ -41,6 +41,7 @@ export function exposed({
   layer,
   block,
   widget,
+  startEventLoop,
   overrideSceneProperty,
   moveWidget,
   pluginPostMessage,
@@ -79,6 +80,7 @@ export function exposed({
   layer?: () => Layer | undefined;
   block?: () => Block | undefined;
   widget?: () => Widget | undefined;
+  startEventLoop?: () => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
@@ -198,37 +200,39 @@ export function exposed({
         clientStorage: {
           get getAsync() {
             return (key: string) => {
-              return clientStorage.getAsync(plugin?.id ?? "", key);
+              const promise = clientStorage.getAsync(plugin?.id ?? "", key);
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
             };
           },
           get setAsync() {
             return (key: string, value: any) => {
-              return clientStorage.setAsync(plugin?.id ?? "", key, value);
+              const localValue =
+                typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
+              const promise = clientStorage.setAsync(plugin?.id ?? "", key, localValue);
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
             };
           },
           get deleteAsync() {
             return (key: string) => {
-              return clientStorage.deleteAsync(plugin?.id ?? "", key);
+              const promise = clientStorage.deleteAsync(plugin?.id ?? "", key);
+              promise.finally(() => {
+                startEventLoop?.();
+              });
+              return promise;
             };
           },
-          keysAsync(cb: (keys: string[]) => void) {
-            const p = clientStorage.keysAsync(plugin?.id ?? "");
-            p.then(v => cb(v));
-            // console.log(p);
-            return p;
-          },
-          get testPromise() {
+          get keysAsync() {
             return () => {
-              const promise = new Promise(resolve => {
-                setTimeout(() => {
-                  console.log("Test: test promise resolved");
-                  resolve("hoge");
-                }, 2000);
+              const promise = clientStorage.keysAsync(plugin?.id ?? "");
+              promise.finally(() => {
+                startEventLoop?.();
               });
-              promise.then(value => {
-                console.log("Test: resolve with value:", value);
-              });
-              console.log("Test: test promise API called. Return promise", promise);
               return promise;
             };
           },

@@ -518,7 +518,7 @@ export type Clock = {
 };
 
 export type ClientStorage = {
-  readonly getAsync: (key: string) => Promise<any | undefined>;
+  readonly getAsync: (key: string) => Promise<any>;
   readonly setAsync: (key: string, value: any) => Promise<void>;
   readonly deleteAsync: (key: string) => Promise<void>;
   readonly keysAsync: () => Promise<string[]>;
