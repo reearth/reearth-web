@@ -10,12 +10,13 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
+// TODO: Use new plugin system
+import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 import { FeatureProps } from "@reearth/core/engines/Cesium/Feature";
 import { toColor } from "@reearth/core/mantle";
 
 import { Property } from "..";
 import { sampleTerrainHeightFromCartesian } from "../../../common";
-import { useContext } from "../../context";
 import { EdgeEventCallback } from "../Edge";
 import { PointEventCallback } from "../ScalePoints";
 import { computeMouseMoveAmount, updateTrs } from "../utils";
@@ -209,7 +210,7 @@ export const useHooks = ({
         nextTranslation,
       ) as Cartographic;
 
-      ctx?.emit?.("layeredit", {
+      ctx?.emit("layeredit", {
         layerId,
         scale: {
           width: nextScale.x,
@@ -260,7 +261,7 @@ export const useHooks = ({
 
       const { heading, pitch, roll } = HeadingPitchRoll.fromQuaternion(nextRotation);
 
-      ctx?.emit?.("layeredit", {
+      ctx?.emit("layeredit", {
         layerId,
         rotate: {
           heading,

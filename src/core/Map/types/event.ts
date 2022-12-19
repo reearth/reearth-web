@@ -1,58 +1,5 @@
 import EventTarget from "@ungap/event-target";
 
-import { CameraPosition } from "@reearth/core/mantle/compat/types";
-
-import { LatLngHeight, Viewport } from ".";
-
-export type MouseEvent = {
-  x?: number;
-  y?: number;
-  lat?: number;
-  lng?: number;
-  height?: number;
-  layerId?: string;
-  delta?: number;
-};
-
-export type LayerEditEvent = {
-  layerId: string | undefined;
-  scale?: { width: number; length: number; height: number; location: LatLngHeight };
-  rotate?: { heading: number; pitch: number; roll: number };
-};
-
-export type PluginMessage = {
-  data: any;
-  sender: string;
-};
-
-export type ReearthEventType = {
-  update: [];
-  close: [];
-  cameramove: [camera: CameraPosition];
-  layeredit: [e: LayerEditEvent];
-  select: [layerId: string | undefined];
-  message: [message: any];
-  click: [props: MouseEvent];
-  doubleclick: [props: MouseEvent];
-  mousedown: [props: MouseEvent];
-  mouseup: [props: MouseEvent];
-  rightclick: [props: MouseEvent];
-  rightdown: [props: MouseEvent];
-  rightup: [props: MouseEvent];
-  middleclick: [props: MouseEvent];
-  middledown: [props: MouseEvent];
-  middleup: [props: MouseEvent];
-  mousemove: [props: MouseEvent];
-  mouseenter: [props: MouseEvent];
-  mouseleave: [props: MouseEvent];
-  wheel: [props: MouseEvent];
-  tick: [props: Date];
-  resize: [props: Viewport];
-  modalclose: [];
-  popupclose: [];
-  pluginmessage: [props: PluginMessage];
-};
-
 export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
 export type EventEmitter<E extends { [P in string]: any[] } = { [P in string]: any[] }> = <
   T extends keyof E,
