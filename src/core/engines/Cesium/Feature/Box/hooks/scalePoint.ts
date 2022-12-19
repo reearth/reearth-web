@@ -7,12 +7,13 @@ import {
   PolylineDashMaterialProperty,
   PositionProperty,
   Quaternion,
+  ScreenSpaceEventHandler,
+  ScreenSpaceEventType,
   TranslationRotationScale,
 } from "cesium";
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
+import { useCesium } from "resium";
 
-// TODO: Use new plugin system
-import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 import { EventCallback } from "@reearth/core/Map";
 
 import { PointEventCallback, ScalePointProperties } from "../ScalePoints";
@@ -47,7 +48,7 @@ export const useHooks = ({
   const layerId = `${id}-${index}`;
   const oppositeLayerId = `${id}-opposite-${index}`;
 
-  const ctx = useContext();
+  const { viewer } = useCesium();
 
   const [entitiesPosition] = useState(() => {
     const point = new Cartesian3();
@@ -104,8 +105,9 @@ export const useHooks = ({
   const isOppositePointClicked = useRef(false);
   const handlePointMouseDown: EventCallback = useCallback(
     e => {
-      isOppositePointClicked.current = e.layerId === oppositeLayerId;
-      if (e.layerId === layerId || e.layerId === oppositeLayerId) {
+      const currentLayerId = viewer.scene.pick(e.position)?.id?.id;
+      isOppositePointClicked.current = currentLayerId === oppositeLayerId;
+      if (currentLayerId === layerId || currentLayerId === oppositeLayerId) {
         onPointMouseDown?.(e, {
           layerId: isOppositePointClicked.current ? oppositeLayerId : layerId,
           index,
@@ -113,7 +115,7 @@ export const useHooks = ({
         });
       }
     },
-    [onPointMouseDown, index, layerId, oppositeLayerId],
+    [onPointMouseDown, index, layerId, oppositeLayerId, viewer],
   );
   const handlePointMouseMove: EventCallback = useCallback(
     e => {
@@ -150,17 +152,13 @@ export const useHooks = ({
     );
   }, [dimensions, cesiumDimensions]);
 
+  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer.scene.canvas), [viewer]);
   useEffect(() => {
-    ctx?.reearth.on("mousedown", handlePointMouseDown);
-    ctx?.reearth.on("mousemove", handlePointMouseMove);
-    ctx?.reearth.on("mouseup", handlePointMouseUp);
-
-    return () => {
-      ctx?.reearth.off("mousedown", handlePointMouseDown);
-      ctx?.reearth.off("mousemove", handlePointMouseMove);
-      ctx?.reearth.off("mouseup", handlePointMouseUp);
-    };
-  }, [ctx, handlePointMouseDown, handlePointMouseMove, handlePointMouseUp]);
+    eventHandler.setInputAction(handlePointMouseDown, ScreenSpaceEventType.LEFT_DOWN);
+    eventHandler.setInputAction(handlePointMouseMove, ScreenSpaceEventType.MOUSE_MOVE);
+    eventHandler.setInputAction(handlePointMouseUp, ScreenSpaceEventType.LEFT_UP);
+    return () => eventHandler.destroy();
+  }, [eventHandler, handlePointMouseDown, handlePointMouseMove, handlePointMouseUp]);
 
   return {
     entitiesPosition,

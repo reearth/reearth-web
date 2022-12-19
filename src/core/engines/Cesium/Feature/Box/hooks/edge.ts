@@ -4,12 +4,13 @@ import {
   Color,
   ColorMaterialProperty,
   Matrix4,
+  ScreenSpaceEventHandler,
+  ScreenSpaceEventType,
   TranslationRotationScale,
 } from "cesium";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCesium } from "resium";
 
-// TODO: Use new plugin system
-import { useContext } from "@reearth/components/molecules/Visualizer/Plugin";
 import { EventCallback } from "@reearth/core/Map";
 
 import { EdgeEventCallback, EdgeProperties } from "../Edge";
@@ -40,7 +41,7 @@ export const useHooks = ({
   onMouseEnter?: EdgeEventCallback;
   onMouseLeave?: EdgeEventCallback;
 }) => {
-  const ctx = useContext();
+  const { viewer } = useCesium();
   const [cbp] = useState(
     () =>
       new CallbackProperty(() => {
@@ -69,12 +70,13 @@ export const useHooks = ({
 
   const handleMouseDown: EventCallback = useCallback(
     e => {
-      if (e.layerId !== id) {
+      const currentLayerId = viewer.scene.pick(e.position)?.id?.id;
+      if (currentLayerId !== id) {
         return;
       }
       onMouseDown?.(e, { layerId: id, index });
     },
-    [onMouseDown, id, index],
+    [onMouseDown, id, index, viewer],
   );
 
   const handleMouseMove: EventCallback = useCallback(
@@ -91,16 +93,13 @@ export const useHooks = ({
     [onMouseUp, index, id],
   );
 
+  const eventHandler = useMemo(() => new ScreenSpaceEventHandler(viewer.scene.canvas), [viewer]);
   useEffect(() => {
-    ctx?.reearth.on("mousedown", handleMouseDown);
-    ctx?.reearth.on("mousemove", handleMouseMove);
-    ctx?.reearth.on("mouseup", handleMouseUp);
-    return () => {
-      ctx?.reearth.off("mousedown", handleMouseDown);
-      ctx?.reearth.off("mousemove", handleMouseMove);
-      ctx?.reearth.off("mouseup", handleMouseUp);
-    };
-  }, [ctx, handleMouseDown, handleMouseMove, handleMouseUp]);
+    eventHandler.setInputAction(handleMouseDown, ScreenSpaceEventType.LEFT_DOWN);
+    eventHandler.setInputAction(handleMouseMove, ScreenSpaceEventType.MOUSE_MOVE);
+    eventHandler.setInputAction(handleMouseUp, ScreenSpaceEventType.LEFT_UP);
+    return () => eventHandler.destroy();
+  }, [eventHandler, handleMouseDown, handleMouseMove, handleMouseUp]);
 
   return {
     cbp,

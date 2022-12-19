@@ -118,12 +118,14 @@ export const useHooks = ({
       if (currentPointIndex.current !== index || !position || !oppositePosition || !pointLocal) {
         return;
       }
+
+      const mousePosition = e.startPosition;
       if (prevMousePosition2dForPoint.current === undefined) {
-        prevMousePosition2dForPoint.current = new Cartesian2(e.x, e.y);
+        prevMousePosition2dForPoint.current = new Cartesian2(mousePosition.x, mousePosition.y);
         return;
       }
 
-      const currentMousePosition2d = new Cartesian2(e.x, e.y);
+      const currentMousePosition2d = new Cartesian2(mousePosition.x, mousePosition.y);
 
       const axisVector = Cartesian3.subtract(position, oppositePosition, new Cartesian3());
       const length = Cartesian3.magnitude(axisVector);
@@ -238,15 +240,19 @@ export const useHooks = ({
   const prevMouseXAxisForEdge = useRef<number>();
   const handleEdgeMouseMove: EdgeEventCallback = useCallback(
     (e, { index, layerId }) => {
+      console.log("Edge before: ", layerId, index, currentEdgeIndex.current);
       if (currentEdgeIndex.current !== index) {
         return;
       }
+
+      const mousePosition = e.startPosition;
       if (prevMouseXAxisForEdge.current === undefined) {
-        prevMouseXAxisForEdge.current = e.x;
+        prevMouseXAxisForEdge.current = mousePosition.x;
         return;
       }
-      const dx = e.x - prevMouseXAxisForEdge.current;
-      prevMouseXAxisForEdge.current = e.x;
+
+      const dx = mousePosition.x - prevMouseXAxisForEdge.current;
+      prevMouseXAxisForEdge.current = mousePosition.x;
       const sensitivity = 0.05;
       const hpr = new HeadingPitchRoll(0, 0, 0);
       // -dx because the screen coordinates is opposite to local coordinates space.
