@@ -59,6 +59,12 @@ export type Data = {
   type: DataType;
   url?: string;
   value?: any;
+  csv?: {
+    idColumn?: string | number; // number is index of columns
+    latColumn?: string | number; // number is index of columns
+    lngColumn?: string | number; // number is index of columns
+    noHeader?: boolean;
+  };
 };
 
 export type DataRange = {
@@ -67,7 +73,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles";
+export type DataType = "geojson" | "3dtiles" | "csv";
 
 // Feature
 
