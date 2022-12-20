@@ -10,14 +10,14 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
-import { FeatureProps } from "@reearth/core/engines/Cesium/Feature";
+import type { FeatureProps } from "@reearth/core/engines/Cesium/Feature";
 import { toColor } from "@reearth/core/mantle";
 
-import { Property } from "..";
+import type { Property } from "..";
 import { sampleTerrainHeightFromCartesian } from "../../../common";
 import { useContext } from "../../context";
-import { EdgeEventCallback } from "../Edge";
-import { PointEventCallback } from "../ScalePoints";
+import type { EdgeEventCallback } from "../Edge";
+import type { PointEventCallback } from "../ScalePoints";
 import { computeMouseMoveAmount, updateTrs } from "../utils";
 
 export const useHooks = ({

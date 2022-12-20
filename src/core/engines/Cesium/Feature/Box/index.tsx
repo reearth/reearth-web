@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
-import { FeatureComponentConfig, FeatureProps } from "@reearth/core/engines/Cesium/Feature";
-import { BoxAppearance, LatLngHeight } from "@reearth/core/mantle";
+import type { FeatureComponentConfig, FeatureProps } from "@reearth/core/engines/Cesium/Feature";
+import type { BoxAppearance, LatLngHeight } from "@reearth/core/mantle";
 
 import { BOX_EDGES, SCALE_POINTS, SIDE_PLANES, SIDE_PLANE_NAMES } from "./constants";
 import { Edge } from "./Edge";

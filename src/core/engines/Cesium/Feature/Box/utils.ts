@@ -12,11 +12,11 @@ import {
   TranslationRotationScale,
 } from "cesium";
 
-import { Geometry } from "@reearth/core/mantle";
+import type { Geometry } from "@reearth/core/mantle";
 
 import { translationWithClamping } from "../../utils";
 
-import { Property } from ".";
+import type { Property } from ".";
 
 export const updateTrs = (
   trs: TranslationRotationScale,

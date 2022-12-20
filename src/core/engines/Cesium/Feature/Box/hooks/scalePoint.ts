@@ -14,9 +14,9 @@ import {
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { useCesium } from "resium";
 
-import { EventCallback } from "@reearth/core/Map";
+import type { EventCallback } from "@reearth/core/Map";
 
-import { PointEventCallback, ScalePointProperties } from "../ScalePoints";
+import type { PointEventCallback, ScalePointProperties } from "../ScalePoints";
 
 export const useHooks = ({
   id,

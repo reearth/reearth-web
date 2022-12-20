@@ -2,7 +2,7 @@
 
 import { Cartesian3, Plane as CesiumPlane } from "cesium";
 
-import { EdgeProperties } from "./Edge";
+import type { EdgeProperties } from "./Edge";
 
 // ref: https://github.com/TerriaJS/terriajs/blob/cad62a45cbee98c7561625458bec3a48510f6cbc/lib/Models/BoxDrawing.ts#L161-L169
 export const SIDE_PLANES: readonly CesiumPlane[] = [

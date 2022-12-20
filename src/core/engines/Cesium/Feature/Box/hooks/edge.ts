@@ -11,9 +11,9 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
-import { EventCallback } from "@reearth/core/Map";
+import type { EventCallback } from "@reearth/core/Map";
 
-import { EdgeEventCallback, EdgeProperties } from "../Edge";
+import type { EdgeEventCallback, EdgeProperties } from "../Edge";
 
 export const useHooks = ({
   id,
