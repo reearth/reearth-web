@@ -240,7 +240,6 @@ export const useHooks = ({
   const prevMouseXAxisForEdge = useRef<number>();
   const handleEdgeMouseMove: EdgeEventCallback = useCallback(
     (e, { index, layerId }) => {
-      console.log("Edge before: ", layerId, index, currentEdgeIndex.current);
       if (currentEdgeIndex.current !== index) {
         return;
       }
