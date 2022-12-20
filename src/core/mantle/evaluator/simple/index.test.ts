@@ -1,8 +1,8 @@
-import { expect, test } from "vitest";
+import { expect, test, describe } from "vitest";
 
 import { evalLayerAppearances, evalSimpleLayer } from ".";
 
-test("evalLayerAppearances", async () => {
+test("evalSimpleLayer", async () => {
   expect(
     await evalSimpleLayer(
       {
@@ -12,7 +12,7 @@ test("evalLayerAppearances", async () => {
           type: "geojson",
         },
         marker: {
-          pointColor: "red",
+          pointColor: "'#FF0000'",
           pointSize: { conditions: [["true", "1"]] },
         },
       },
@@ -24,43 +24,137 @@ test("evalLayerAppearances", async () => {
   ).toEqual({
     layer: {
       marker: {
-        pointColor: "red",
-        pointSize: undefined,
+        pointColor: "#FF0000",
+        pointSize: 1,
       },
     },
     features: [
       {
         id: "a",
         marker: {
-          pointColor: "red",
-          pointSize: undefined,
+          pointColor: "#FF0000",
+          pointSize: 1,
         },
       },
     ],
   });
 });
 
-test("evalLayerAppearances", () => {
-  expect(
-    evalLayerAppearances(
-      {
-        marker: {
-          pointColor: "red",
-          pointSize: { conditions: [["true", "1"]] },
+describe("Conditional styling", () => {
+  test("conditions with variables, members and Strictly Equals", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "'#FF0000'",
+            pointSize: {
+              conditions: [
+                ["${id} === '123'", "2"],
+                ["${properties['id']} === '2432432'", "${id}"],
+                ["true", "1"],
+              ],
+            },
+          },
         },
+        {
+          id: "x",
+          type: "simple",
+        },
+        {
+          id: "1233",
+          properties: {
+            id: "2432432",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000",
+        pointSize: "1233",
       },
-      {
-        id: "x",
-        type: "simple",
+    });
+  });
+
+  test("conditions with variables, builtIn function and GreaterThan", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: {
+              conditions: [
+                ["atan2(${GridY}, ${GridX}) > 0.0", "14343"],
+                ["true", "123232"],
+              ],
+            },
+            pointSize: 23213,
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+        },
+        {
+          id: "blah",
+          GridY: 5,
+          GridX: 5,
+          properties: {
+            id: "2432432",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: 14343,
+        pointSize: 23213,
       },
-      {
-        id: "y",
+    });
+  });
+
+  test("Conditions with JSONPath, strictly equal and JSONPath result", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "'#FF0000'",
+            pointSize: {
+              conditions: [
+                ["${$.phoneNumbers[:1].type} === 'iPhone'", "${$.age}"],
+                ["true", "1"],
+              ],
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+        },
+        {
+          id: "blah",
+          firstName: "John",
+          lastName: "doe",
+          age: 26,
+          address: {
+            streetAddress: "naist street",
+            city: "Nara",
+            postalCode: "630-0192",
+          },
+          phoneNumbers: [
+            {
+              type: "iPhone",
+              number: "0123-4567-8888",
+            },
+            {
+              type: "home",
+              number: "0123-4567-8910",
+            },
+          ],
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000",
+        pointSize: 26,
       },
-    ),
-  ).toEqual({
-    marker: {
-      pointColor: "red",
-      pointSize: undefined,
-    },
+    });
   });
 });

@@ -6,6 +6,7 @@ import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
 
 export * from "./appearance";
 export * from "./value";
+export * from "./expression";
 
 // Layer
 
@@ -63,12 +64,12 @@ export type DataRange = {
 export type DataType = "geojson" | "3dtiles";
 
 // Feature
-
 export type Feature = {
   id: string;
   geometry?: Geometry;
   properties?: any;
   range?: DataRange;
+  [key: string]: any;
 };
 
 export type Geometry = Point | LineString | Polygon;

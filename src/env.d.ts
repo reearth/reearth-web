@@ -23,3 +23,7 @@ interface ImportMetaEnv {}
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare module "jsep" {
+  function addLiteral(literal_name: string, literal_value: string): void;
+}
