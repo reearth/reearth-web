@@ -157,8 +157,9 @@ export const useHooks = ({
     eventHandler.setInputAction(handlePointMouseDown, ScreenSpaceEventType.LEFT_DOWN);
     eventHandler.setInputAction(handlePointMouseMove, ScreenSpaceEventType.MOUSE_MOVE);
     eventHandler.setInputAction(handlePointMouseUp, ScreenSpaceEventType.LEFT_UP);
-    return () => eventHandler.destroy();
   }, [eventHandler, handlePointMouseDown, handlePointMouseMove, handlePointMouseUp]);
+
+  useEffect(() => () => eventHandler.destroy(), [eventHandler]);
 
   return {
     entitiesPosition,

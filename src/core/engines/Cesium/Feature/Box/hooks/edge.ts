@@ -98,8 +98,9 @@ export const useHooks = ({
     eventHandler.setInputAction(handleMouseDown, ScreenSpaceEventType.LEFT_DOWN);
     eventHandler.setInputAction(handleMouseMove, ScreenSpaceEventType.MOUSE_MOVE);
     eventHandler.setInputAction(handleMouseUp, ScreenSpaceEventType.LEFT_UP);
-    return () => eventHandler.destroy();
   }, [eventHandler, handleMouseDown, handleMouseMove, handleMouseUp]);
+
+  useEffect(() => () => eventHandler.destroy(), [eventHandler]);
 
   return {
     cbp,
