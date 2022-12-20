@@ -207,7 +207,7 @@ function Tileset({
 
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
-      ? IonResource.fromAssetId(1240402) // https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
+      ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
       : isVisible
       ? tileset
       : null;
