@@ -18,8 +18,18 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-export default function Resource({ isVisible, property }: Props) {
-  const { url, type, clampToGround } = property ?? {};
+export default function Resource({ isVisible, property, layer }: Props) {
+  const { clampToGround } = property ?? {};
+  const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
+    const type = property?.type;
+    const url = property?.url;
+    if (layer?.layer.type !== "simple") {
+      return [type, url];
+    }
+    const data = layer.layer.data;
+    return [type ?? (data?.type as ResourceAppearance["type"]), url ?? data?.url];
+  }, [property, layer]);
+
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
     [type, url],
@@ -29,7 +39,9 @@ export default function Resource({ isVisible, property }: Props) {
 
   if (!isVisible || !Component || !url) return null;
 
-  return <Component data={url} clampToGround={clampToGround} />;
+  return <Component data={url} show={true} clampToGround={clampToGround} />;
 }
 
-export const config: FeatureComponentConfig = {};
+export const config: FeatureComponentConfig = {
+  noFeature: true,
+};
