@@ -22,7 +22,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   model: [Model, modelConfig],
   "3dtiles": [Tileset, tilesetConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
-  legacy_resource: [Resource, resourceConfig],
+  resource: [Resource, resourceConfig],
 };
 
 export default function Feature({

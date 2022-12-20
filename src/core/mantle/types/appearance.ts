@@ -22,7 +22,7 @@ export type AppearanceTypes = {
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
-  legacy_resource: LegacyResourceAppearance;
+  resource: ResourceAppearance;
 };
 
 export type MarkerAppearance = {
@@ -129,7 +129,7 @@ export type LegacyPhotooverlayAppearance = {
   photoOverlayDescription?: string;
 };
 
-export type LegacyResourceAppearance = {
+export type ResourceAppearance = {
   url?: string;
   type?: "geojson" | "kml" | "czml" | "auto";
   clampToGround?: boolean;
@@ -143,7 +143,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   model: 1,
   "3dtiles": 1,
   photooverlay: 1,
-  legacy_resource: 1,
+  resource: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);
