@@ -1,4 +1,4 @@
-import type { Feature as GeoJsonFeature, Point } from "geojson";
+import type { Feature as GeoJSONFeature, Point } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
@@ -87,15 +87,15 @@ const setCoordinatesToPointGeometry = (
   return geometry;
 };
 
-type CsvGeoJsonFeature = GeoJsonFeature<Point | null>;
+type CsvGeoJSONFeature = GeoJSONFeature<Point | null>;
 
 const makeGeoJsonFromArray = (
   headers: string[],
   values: string[],
   options: Data["csv"],
-): CsvGeoJsonFeature => {
+): CsvGeoJSONFeature => {
   const result = values.reduce(
-    (result: CsvGeoJsonFeature, value, idx) => {
+    (result: CsvGeoJSONFeature, value, idx) => {
       if (options?.idColumn !== undefined && [headers[idx], idx].includes(options.idColumn)) {
         return {
           ...result,
@@ -142,7 +142,7 @@ const makeGeoJsonFromArray = (
   return result;
 };
 
-const makeFeature = (value: CsvGeoJsonFeature, range: DataRange | undefined): Feature | void => {
+const makeFeature = (value: CsvGeoJSONFeature, range: DataRange | undefined): Feature | void => {
   if (value.type !== "Feature") {
     return;
   }
