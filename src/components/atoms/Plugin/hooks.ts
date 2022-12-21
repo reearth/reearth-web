@@ -53,7 +53,7 @@ export const defaultIsMarshalable = (obj: any): boolean => {
     Object.getPrototypeOf(obj) === Function.prototype ||
     Object.getPrototypeOf(obj) === Object.prototype ||
     obj instanceof Date ||
-    typeof obj?.then === "function"
+    obj instanceof Promise
   );
 };
 
