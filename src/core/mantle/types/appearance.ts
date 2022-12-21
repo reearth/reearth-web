@@ -3,7 +3,6 @@ import { objKeys } from "../utils";
 import type { StyleExpression } from "./expression";
 import type { Camera, EXPERIMENTAL_clipping, LatLng, Typography } from "./value";
 
-
 export type LayerAppearance<T> = {
   [K in keyof T]?: T[K] | StyleExpression;
 };
