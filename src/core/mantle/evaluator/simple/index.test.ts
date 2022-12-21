@@ -41,7 +41,7 @@ test("evalSimpleLayer", async () => {
 });
 
 describe("Conditional styling", () => {
-  test("conditions with variables, members and Strictly Equals", () => {
+  test("conditions with variables from properties, members and Strictly Equals", () => {
     expect(
       evalLayerAppearances(
         {
@@ -49,8 +49,7 @@ describe("Conditional styling", () => {
             pointColor: "'#FF0000'",
             pointSize: {
               conditions: [
-                ["${id} === '123'", "2"],
-                ["${properties['id']} === '2432432'", "${id}"],
+                ["${id} === '2432432'", "2"],
                 ["true", "1"],
               ],
             },
@@ -70,7 +69,40 @@ describe("Conditional styling", () => {
     ).toEqual({
       marker: {
         pointColor: "#FF0000",
-        pointSize: "1233",
+        pointSize: 2,
+      },
+    });
+  });
+
+  test("conditions with variables from feature, members and Strictly Equals", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "'#FF0000'",
+            pointSize: {
+              conditions: [
+                ["${id} === '1233'", "4232"],
+                ["true", "1"],
+              ],
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+        },
+        {
+          id: "1233",
+          properties: {
+            foo: "122",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000",
+        pointSize: 4232,
       },
     });
   });
@@ -95,10 +127,12 @@ describe("Conditional styling", () => {
         },
         {
           id: "blah",
-          GridY: 5,
-          GridX: 5,
           properties: {
-            id: "2432432",
+            GridY: 5,
+            GridX: 5,
+            properties: {
+              id: "2432432",
+            },
           },
         },
       ),
@@ -130,24 +164,26 @@ describe("Conditional styling", () => {
         },
         {
           id: "blah",
-          firstName: "John",
-          lastName: "doe",
-          age: 26,
-          address: {
-            streetAddress: "naist street",
-            city: "Nara",
-            postalCode: "630-0192",
+          properties: {
+            firstName: "John",
+            lastName: "doe",
+            age: 26,
+            address: {
+              streetAddress: "naist street",
+              city: "Nara",
+              postalCode: "630-0192",
+            },
+            phoneNumbers: [
+              {
+                type: "iPhone",
+                number: "0123-4567-8888",
+              },
+              {
+                type: "home",
+                number: "0123-4567-8910",
+              },
+            ],
           },
-          phoneNumbers: [
-            {
-              type: "iPhone",
-              number: "0123-4567-8888",
-            },
-            {
-              type: "home",
-              number: "0123-4567-8910",
-            },
-          ],
         },
       ),
     ).toEqual({

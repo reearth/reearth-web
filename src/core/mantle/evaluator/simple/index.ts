@@ -44,18 +44,18 @@ export function evalLayerAppearances(
 }
 
 function evalExpression(
-  _styleExpression: StyleExpression,
-  _layer: LayerSimple,
-  _feature?: Feature,
+  styleExpression: StyleExpression,
+  layer: LayerSimple,
+  feature?: Feature,
 ): unknown {
-  if (!defined(_styleExpression)) {
+  if (!defined(styleExpression)) {
     return undefined;
-  } else if (typeof _styleExpression === "object" && _styleExpression.conditions) {
-    return new ConditionalExpression(_styleExpression as ConditionsExpression, _feature).evaluate();
-  } else if (typeof _styleExpression === "boolean" || typeof _styleExpression === "number") {
-    return new Expression(String(_styleExpression), _feature).evaluate();
-  } else if (typeof _styleExpression === "string") {
-    return new Expression(_styleExpression, _feature).evaluate();
+  } else if (typeof styleExpression === "object" && styleExpression.conditions) {
+    return new ConditionalExpression(styleExpression as ConditionsExpression, feature).evaluate();
+  } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+    return new Expression(String(styleExpression), feature).evaluate();
+  } else if (typeof styleExpression === "string") {
+    return new Expression(styleExpression, feature).evaluate();
   }
-  return _styleExpression;
+  return styleExpression;
 }

@@ -76,7 +76,6 @@ export type Feature = {
   geometry?: Geometry;
   properties?: any;
   range?: DataRange;
-  [key: string]: any;
 };
 
 export type Geometry = Point | LineString | Polygon | MultiPoint | MultiLineString | MultiPolygon;

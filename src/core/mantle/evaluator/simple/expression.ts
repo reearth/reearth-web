@@ -3,13 +3,7 @@ import jsep from "jsep";
 import { JSONPath } from "jsonpath-plus";
 import * as randomWords from "random-words";
 
-import {
-  Feature,
-  BinaryFunction,
-  UnaryFunction,
-  ConditionsExpression,
-  JPLiteral,
-} from "../../types";
+import { Feature, ConditionsExpression } from "../../types";
 
 import {
   unaryOperators,
@@ -21,22 +15,30 @@ import {
   ExpressionNodeType,
 } from "./constants";
 
+export type UnaryFunction = (call: string, left: number) => number;
+export type BinaryFunction = (call: string, left: number, right: number) => number;
+
+export type JPLiteral = {
+  literalName: string;
+  literalValue: any;
+};
+
 export class ConditionalExpression {
-  _conditions: [string, string][];
-  _runtimeConditions: Statement[];
-  _feature?: Feature;
+  #conditions: [string, string][];
+  #runtimeConditions: Statement[];
+  #feature?: Feature;
 
   constructor(conditionsExpression: ConditionsExpression, feature?: Feature, defines?: any) {
-    this._conditions = conditionsExpression.conditions;
-    this._runtimeConditions = [];
-    this._feature = feature;
+    this.#conditions = conditionsExpression.conditions;
+    this.#runtimeConditions = [];
+    this.#feature = feature;
 
     this.setRuntime(defines);
   }
 
   setRuntime(defines: any) {
     const runtimeConditions = [];
-    const conditions = this._conditions;
+    const conditions = this.#conditions;
     if (!defined(conditions)) {
       return;
     }
@@ -47,16 +49,16 @@ export class ConditionalExpression {
       const condExpression = String(statement[1]);
       runtimeConditions.push(
         new Statement(
-          new Expression(cond, this._feature, defines),
-          new Expression(condExpression, this._feature, defines),
+          new Expression(cond, this.#feature, defines),
+          new Expression(condExpression, this.#feature, defines),
         ),
       );
     }
-    this._runtimeConditions = runtimeConditions;
+    this.#runtimeConditions = runtimeConditions;
   }
 
   evaluate() {
-    const conditions = this._runtimeConditions;
+    const conditions = this.#runtimeConditions;
     if (defined(conditions)) {
       const length = conditions.length;
       for (let i = 0; i < length; ++i) {
@@ -80,16 +82,19 @@ class Statement {
 }
 
 export class Expression {
-  _expression: string;
-  _runtimeAst: Node | Error;
-  _feature?: Feature;
+  #expression: string;
+  #runtimeAst: Node | Error;
+  #feature?: Feature;
 
   constructor(expression: string, feature?: Feature, defines?: any) {
-    this._expression = expression;
-    this._feature = feature;
+    this.#expression = expression;
+    this.#feature = feature;
     let literalJP: JPLiteral[] = [];
     expression = replaceDefines(expression, defines);
-    [expression, literalJP] = replaceVariables(removeBackslashes(expression), this._feature);
+    [expression, literalJP] = replaceVariables(
+      removeBackslashes(expression),
+      this.#feature?.properties,
+    );
 
     if (literalJP.length !== 0) {
       for (const elem of literalJP) {
@@ -108,11 +113,11 @@ export class Expression {
       throw new Error(`failed to generate ast: ${e}`);
     }
 
-    this._runtimeAst = createRuntimeAst(this, ast);
+    this.#runtimeAst = createRuntimeAst(this, ast);
   }
 
   evaluate() {
-    const value = (this._runtimeAst as Node).evaluate(this._feature);
+    const value = (this.#runtimeAst as Node).evaluate(this.#feature);
     return value;
   }
 }
@@ -139,7 +144,7 @@ export function replaceBackslashes(expression: string): string {
   return expression.replace(replacementRegex, "\\");
 }
 
-export function replaceVariables(expression: string, feature?: Feature): [string, JPLiteral[]] {
+export function replaceVariables(expression: string, feature?: any): [string, JPLiteral[]] {
   let exp = expression;
   let result = "";
   const literalJP: JPLiteral[] = [];
@@ -161,8 +166,8 @@ export function replaceVariables(expression: string, feature?: Feature): [string
         if (!defined(feature)) {
           throw new Error(`replaceVariable: features need to be defined for JSONPath`);
         }
-        if (containsValidJSONPath(varExp, feature as Feature)) {
-          const res = JSONPath({ json: feature as Feature, path: varExp });
+        if (containsValidJSONPath(varExp, feature)) {
+          const res = JSONPath({ json: feature, path: varExp });
           if (res.length == 1) {
             const placeholderLiteral = generateRandomLiteralWords();
             literalJP.push({
@@ -623,13 +628,20 @@ export class Node {
     return result;
   }
   _evaluateVariable(feature: Feature) {
-    if (String(this._value) in feature) {
-      return feature[String(this._value)];
+    let property;
+    if (String(this._value) in feature.properties) {
+      property = feature.properties[String(this._value)];
+    } else if (String(this._value) === "id") {
+      property = feature.id;
     }
+    if (!defined(property)) {
+      property = "";
+    }
+    return property;
   }
   _evaluateMemberDot(feature: Feature) {
     if (checkFeature(this._left)) {
-      return feature[this._right.evaluate(feature)];
+      return feature.properties[this._right.evaluate(feature)];
     }
     const property = this._left.evaluate(feature);
     if (!defined(property)) {
@@ -642,7 +654,7 @@ export class Node {
 
   _evaluateMemberBrackets(feature: Feature) {
     if (checkFeature(this._left)) {
-      return feature[this._right.evaluate(feature)];
+      return feature.properties[this._right.evaluate(feature)];
     }
     const property = this._left.evaluate(feature);
     if (!defined(property)) {
