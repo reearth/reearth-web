@@ -80,7 +80,7 @@ describe("replaceVariables", () => {
         },
       ],
     });
-    expect(res[0].literal_value).toBe("iPhone");
+    expect(res[0].literalValue).toBe("iPhone");
   });
 });
 

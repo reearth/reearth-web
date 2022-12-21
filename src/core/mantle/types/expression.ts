@@ -8,6 +8,6 @@ export type UnaryFunction = (call: string, left: number) => number;
 export type BinaryFunction = (call: string, left: number, right: number) => number;
 
 export type JPLiteral = {
-  literal_name: string;
-  literal_value: any;
+  literalName: string;
+  literalValue: any;
 };

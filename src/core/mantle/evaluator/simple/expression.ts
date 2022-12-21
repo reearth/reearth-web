@@ -93,7 +93,7 @@ export class Expression {
 
     if (literalJP.length !== 0) {
       for (const elem of literalJP) {
-        jsep.addLiteral(elem.literal_name, elem.literal_value);
+        jsep.addLiteral(elem.literalName, elem.literalValue);
       }
     }
 
@@ -166,8 +166,8 @@ export function replaceVariables(expression: string, feature?: Feature): [string
           if (res.length == 1) {
             const placeholderLiteral = generateRandomLiteralWords();
             literalJP.push({
-              literal_name: placeholderLiteral,
-              literal_value: res[0],
+              literalName: placeholderLiteral,
+              literalValue: res[0],
             });
             result += placeholderLiteral;
           } else if (res.length < 1) {

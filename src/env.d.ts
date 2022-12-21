@@ -25,5 +25,5 @@ interface ImportMeta {
 }
 
 declare module "jsep" {
-  function addLiteral(literal_name: string, literal_value: string): void;
+  function addLiteral(literalName: string, literalValue: string): void;
 }
