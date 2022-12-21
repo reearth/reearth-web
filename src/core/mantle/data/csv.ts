@@ -64,17 +64,24 @@ const parseCSV = async (
   });
 };
 
+const SUPPORTED_COORDINATES = {
+  lat: 0,
+  lng: 1,
+  height: 2,
+} as const;
+
 const mutMakePointGeometry = (
   geometry: Point | null,
   value: any,
-  coordIdx: 0 | 1,
+  coordIdx: typeof SUPPORTED_COORDINATES[keyof typeof SUPPORTED_COORDINATES],
+  optional?: boolean,
 ): Point | null => {
   if (geometry === null) {
     return null;
   }
   const coordinate = Number(value);
   if (isNaN(coordinate) || (typeof value !== "number" && !value)) {
-    return null;
+    return optional ? geometry : null;
   }
   geometry.coordinates[coordIdx] = coordinate;
   return geometry;
@@ -102,6 +109,12 @@ const makeGeoJsonFromArray = (
       if (options?.lngColumn !== undefined && [headers[idx], idx].includes(options.lngColumn)) {
         return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 1) };
       }
+      if (
+        options?.heightColumn !== undefined &&
+        [headers[idx], idx].includes(options.heightColumn)
+      ) {
+        return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 2, true) };
+      }
 
       return {
         ...result,
@@ -120,7 +133,7 @@ const makeGeoJsonFromArray = (
       properties: {},
     },
   );
-  if (result.geometry?.coordinates.length !== 2) {
+  if ((result.geometry?.coordinates.length || 0) < 2) {
     result.geometry = null;
   }
   return result;

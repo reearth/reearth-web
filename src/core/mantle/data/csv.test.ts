@@ -7,10 +7,10 @@ test("with header", async () => {
   const fetchDataMock = vi.spyOn(Utils, "f");
   fetchDataMock.mockImplementation(async () => {
     return {
-      text: async () => `id,country,lat,,lng
-1,Japan,0,,1
-2,US,2,,3
-3,UK,4,,5
+      text: async () => `id,country,lat,,lng,height
+1,Japan,0,,1,10
+2,US,2,,3,
+3,UK,4,,5,30
 `,
     } as Response;
   });
@@ -22,6 +22,7 @@ test("with header", async () => {
       idColumn: "id",
       latColumn: "lat",
       lngColumn: "lng",
+      heightColumn: "height",
       noHeader: false,
     },
   });
@@ -31,7 +32,7 @@ test("with header", async () => {
       id: "1",
       geometry: {
         type: "Point",
-        coordinates: [0, 1],
+        coordinates: [0, 1, 10],
       },
       properties: {
         country: "Japan",
@@ -53,7 +54,7 @@ test("with header", async () => {
       id: "3",
       geometry: {
         type: "Point",
-        coordinates: [4, 5],
+        coordinates: [4, 5, 30],
       },
       properties: {
         country: "UK",
@@ -305,11 +306,12 @@ test("invalid parameters", async () => {
   const generateRandomStringMock = vi.spyOn(Utils, "generateRandomString");
   fetchDataMock.mockImplementation(async () => {
     return {
-      text: async () => `id,lat,lng
-1,abc,1
-,2,
-3,,
-4,100,100
+      text: async () => `id,lat,lng,height
+1,abc,1,10
+,2,,20
+3,,,30
+4,100,100,abc
+5,200,200,50
 `,
     } as Response;
   });
@@ -322,6 +324,7 @@ test("invalid parameters", async () => {
       idColumn: "id",
       latColumn: "lat",
       lngColumn: "lng",
+      heightColumn: "height",
       noHeader: false,
     },
   });
@@ -350,6 +353,15 @@ test("invalid parameters", async () => {
       geometry: {
         type: "Point",
         coordinates: [100, 100],
+      },
+      properties: {},
+      range: undefined,
+    },
+    {
+      id: "5",
+      geometry: {
+        type: "Point",
+        coordinates: [200, 200, 50],
       },
       properties: {},
       range: undefined,

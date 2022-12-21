@@ -63,6 +63,7 @@ export type Data = {
     idColumn?: string | number;
     latColumn?: string | number;
     lngColumn?: string | number;
+    heightColumn?: string | number;
     noHeader?: boolean;
   };
 };
