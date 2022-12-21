@@ -100,6 +100,7 @@ export default () => {
     const widget = [
       {
         id: "xxx",
+        pluginId: "reearth-plugineditor",
         // extended: true,
         __REEARTH_SOURCECODE: executableSourceCode,
       },
