@@ -60,9 +60,9 @@ export type Data = {
   url?: string;
   value?: any;
   csv?: {
-    idColumn?: string | number; // number is index of columns
-    latColumn?: string | number; // number is index of columns
-    lngColumn?: string | number; // number is index of columns
+    idColumn?: string | number;
+    latColumn?: string | number;
+    lngColumn?: string | number;
     noHeader?: boolean;
   };
 };
