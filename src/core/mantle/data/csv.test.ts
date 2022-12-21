@@ -82,7 +82,7 @@ test("has header but set index", async () => {
     csv: {
       idColumn: 0,
       latColumn: 2,
-      lngColumn: 100, // This should not fount.
+      lngColumn: 100, // This should not found
       noHeader: false,
     },
   });
