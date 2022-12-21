@@ -90,10 +90,7 @@ test("has header but set index", async () => {
   expect(features).toEqual([
     {
       id: "1",
-      geometry: {
-        type: "Point",
-        coordinates: [0, undefined],
-      },
+      geometry: undefined,
       properties: {
         country: "Japan",
         lng: "1",
@@ -102,10 +99,7 @@ test("has header but set index", async () => {
     },
     {
       id: "2",
-      geometry: {
-        type: "Point",
-        coordinates: [2, undefined],
-      },
+      geometry: undefined,
       properties: {
         country: "US",
         lng: "3",
@@ -114,10 +108,7 @@ test("has header but set index", async () => {
     },
     {
       id: "3",
-      geometry: {
-        type: "Point",
-        coordinates: [4, undefined],
-      },
+      geometry: undefined,
       properties: {
         country: "UK",
         lng: "5",
@@ -302,6 +293,63 @@ test("some delimiter", async () => {
       geometry: {
         type: "Point",
         coordinates: [4, 5],
+      },
+      properties: {},
+      range: undefined,
+    },
+  ]);
+});
+
+test("invalid parameters", async () => {
+  const fetchDataMock = vi.spyOn(Utils, "f");
+  const generateRandomStringMock = vi.spyOn(Utils, "generateRandomString");
+  fetchDataMock.mockImplementation(async () => {
+    return {
+      text: async () => `id,lat,lng
+1,abc,1
+,2,
+3,,
+4,100,100
+`,
+    } as Response;
+  });
+  generateRandomStringMock.mockImplementation(() => "random");
+
+  const features = await fetchCSV({
+    type: "csv",
+    url: "http://example.com",
+    csv: {
+      idColumn: "id",
+      latColumn: "lat",
+      lngColumn: "lng",
+      noHeader: false,
+    },
+  });
+
+  expect(features).toEqual([
+    {
+      id: "1",
+      geometry: undefined,
+      properties: {},
+      range: undefined,
+    },
+    {
+      id: "random",
+      geometry: undefined,
+      properties: {},
+      range: undefined,
+    },
+    {
+      id: "3",
+      geometry: undefined,
+      properties: {},
+      range: undefined,
+    },
+    {
+      id: "4",
+      geometry: {
+        type: "Point",
+        coordinates: [100, 100],
       },
       properties: {},
       range: undefined,

@@ -1,4 +1,4 @@
-import type { Feature as GeoJsonFeature } from "geojson";
+import type { Feature as GeoJsonFeature, Point } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
@@ -64,13 +64,31 @@ const parseCSV = async (
   });
 };
 
+const mutMakePointGeometry = (
+  geometry: Point | null,
+  value: any,
+  coordIdx: 0 | 1,
+): Point | null => {
+  if (geometry === null) {
+    return null;
+  }
+  const coordinate = Number(value);
+  if (isNaN(coordinate) || (typeof value !== "number" && !value)) {
+    return null;
+  }
+  geometry.coordinates[coordIdx] = coordinate;
+  return geometry;
+};
+
+type CsvGeoJsonFeature = GeoJsonFeature<Point | null>;
+
 const makeGeoJsonFromArray = (
   headers: string[],
   values: string[],
   options: Data["csv"],
-): GeoJsonFeature =>
-  values.reduce(
-    (result, value, idx) => {
+): CsvGeoJsonFeature => {
+  const result = values.reduce(
+    (result: CsvGeoJsonFeature, value, idx) => {
       if (options?.idColumn !== undefined && [headers[idx], idx].includes(options.idColumn)) {
         return {
           ...result,
@@ -79,24 +97,10 @@ const makeGeoJsonFromArray = (
       }
 
       if (options?.latColumn !== undefined && [headers[idx], idx].includes(options.latColumn)) {
-        const geometry = {
-          ...result.geometry,
-          coordinates: [Number(value), result.geometry.coordinates[1]],
-        };
-        return {
-          ...result,
-          geometry,
-        };
+        return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 0) };
       }
       if (options?.lngColumn !== undefined && [headers[idx], idx].includes(options.lngColumn)) {
-        const geometry = {
-          ...result.geometry,
-          coordinates: [result.geometry.coordinates[0], Number(value)],
-        };
-        return {
-          ...result,
-          geometry,
-        };
+        return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 1) };
       }
 
       return {
@@ -111,13 +115,18 @@ const makeGeoJsonFromArray = (
       type: "Feature",
       geometry: {
         type: "Point",
-        coordinates: new Array(2),
+        coordinates: [],
       },
       properties: {},
     },
   );
+  if (result.geometry?.coordinates.length !== 2) {
+    result.geometry = null;
+  }
+  return result;
+};
 
-const makeFeature = (value: GeoJsonFeature, range: DataRange | undefined): Feature | void => {
+const makeFeature = (value: CsvGeoJsonFeature, range: DataRange | undefined): Feature | void => {
   if (value.type !== "Feature") {
     return;
   }
@@ -125,8 +134,7 @@ const makeFeature = (value: GeoJsonFeature, range: DataRange | undefined): Featu
   const geo = value.geometry;
   return {
     id: (value.id && String(value.id)) || generateRandomString(12),
-    geometry:
-      geo.type === "Point" || geo.type === "LineString" || geo.type === "Polygon" ? geo : undefined,
+    geometry: geo ?? undefined,
     properties: value.properties,
     range,
   };
