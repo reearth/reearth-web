@@ -79,8 +79,8 @@ export default () => {
                     : []),
                   {
                     id: "yyy",
-                    pluginId: "plugins",
-                    extensionId: "block",
+                    pluginId: "reearth",
+                    extensionId: "locationblock",
                     property: {
                       location: { lat: 0, lng: 139 },
                     },
