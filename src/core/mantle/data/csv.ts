@@ -70,7 +70,7 @@ const SUPPORTED_COORDINATES = {
   height: 2,
 } as const;
 
-const mutMakePointGeometry = (
+const setCoordinatesToPointGeometry = (
   geometry: Point | null,
   value: any,
   coordIdx: typeof SUPPORTED_COORDINATES[keyof typeof SUPPORTED_COORDINATES],
@@ -104,16 +104,19 @@ const makeGeoJsonFromArray = (
       }
 
       if (options?.latColumn !== undefined && [headers[idx], idx].includes(options.latColumn)) {
-        return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 0) };
+        return { ...result, geometry: setCoordinatesToPointGeometry(result.geometry, value, 0) };
       }
       if (options?.lngColumn !== undefined && [headers[idx], idx].includes(options.lngColumn)) {
-        return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 1) };
+        return { ...result, geometry: setCoordinatesToPointGeometry(result.geometry, value, 1) };
       }
       if (
         options?.heightColumn !== undefined &&
         [headers[idx], idx].includes(options.heightColumn)
       ) {
-        return { ...result, geometry: mutMakePointGeometry(result.geometry, value, 2, true) };
+        return {
+          ...result,
+          geometry: setCoordinatesToPointGeometry(result.geometry, value, 2, true),
+        };
       }
 
       return {
