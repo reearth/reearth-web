@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
 
 import type { ResourceAppearance } from "../../..";
-import { type FeatureComponentConfig, type FeatureProps } from "../utils";
+import { extractSimpleLayerData, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 export type Props = FeatureProps<Property>;
 export type Property = ResourceAppearance;
@@ -21,12 +21,9 @@ const comps = {
 export default function Resource({ isVisible, property, layer }: Props) {
   const { clampToGround } = property ?? {};
   const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
+    const data = extractSimpleLayerData(layer);
     const type = property?.type;
     const url = property?.url;
-    if (layer?.layer.type !== "simple") {
-      return [type, url];
-    }
-    const data = layer.layer.data;
     return [type ?? (data?.type as ResourceAppearance["type"]), url ?? data?.url];
   }, [property, layer]);
 
