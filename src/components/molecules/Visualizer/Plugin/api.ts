@@ -2,6 +2,7 @@ import type { Events } from "@reearth/util/event";
 import { merge } from "@reearth/util/object";
 
 import type { LayerStore } from "../Layers";
+import type { ClientStorage } from "../useClientStorage";
 import type { PluginInstances } from "../usePluginInstances";
 
 import type {
@@ -84,12 +85,7 @@ export function exposed({
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
-  clientStorage: {
-    getAsync: (pluginId: string, key: string) => Promise<any>;
-    setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
-    deleteAsync: (pluginId: string, key: string) => Promise<void>;
-    keysAsync: (pluginId: string) => Promise<string[]>;
-  };
+  clientStorage: ClientStorage;
 }): GlobalThis {
   return merge({
     console: {
@@ -200,7 +196,14 @@ export function exposed({
         clientStorage: {
           get getAsync() {
             return (key: string) => {
-              const promise = clientStorage.getAsync(plugin?.id ?? "", key);
+              const promise = clientStorage.getAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+                key,
+              );
               promise.finally(() => {
                 startEventLoop?.();
               });
@@ -211,7 +214,15 @@ export function exposed({
             return (key: string, value: any) => {
               const localValue =
                 typeof value === "object" ? JSON.parse(JSON.stringify(value)) : value;
-              const promise = clientStorage.setAsync(plugin?.id ?? "", key, localValue);
+              const promise = clientStorage.setAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+                key,
+                localValue,
+              );
               promise.finally(() => {
                 startEventLoop?.();
               });
@@ -220,7 +231,14 @@ export function exposed({
           },
           get deleteAsync() {
             return (key: string) => {
-              const promise = clientStorage.deleteAsync(plugin?.id ?? "", key);
+              const promise = clientStorage.deleteAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+                key,
+              );
               promise.finally(() => {
                 startEventLoop?.();
               });
@@ -229,7 +247,13 @@ export function exposed({
           },
           get keysAsync() {
             return () => {
-              const promise = clientStorage.keysAsync(plugin?.id ?? "");
+              const promise = clientStorage.keysAsync(
+                (plugin?.extensionType === "widget"
+                  ? widget?.()?.id
+                  : plugin?.extensionType === "block"
+                  ? block?.()?.id
+                  : "") ?? "",
+              );
               promise.finally(() => {
                 startEventLoop?.();
               });

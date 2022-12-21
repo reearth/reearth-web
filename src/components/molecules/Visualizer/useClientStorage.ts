@@ -1,17 +1,22 @@
 import localforage from "localforage";
 import { useRef, useMemo, useCallback } from "react";
 
+export type ClientStorage = {
+  getAsync: (extensionInstanceId: string, key: string) => Promise<any>;
+  setAsync: (extensionInstanceId: string, key: string, value: any) => Promise<void>;
+  deleteAsync: (extensionInstanceId: string, key: string) => Promise<void>;
+  keysAsync: (extensionInstanceId: string) => Promise<string[]>;
+  dropStore: (extensionInstanceId: string) => Promise<void>;
+};
+
 export default () => {
   const clientStores = useRef<Map<string, LocalForage>>(new Map());
 
-  const getStore = useCallback((pluginId: string) => {
-    if (!pluginId) return false;
-    const storeName =
-      pluginId === "reearth-plugineditor"
-        ? pluginId
-        : pluginId.includes("~")
-        ? `reearth-plugin-${pluginId.substring(0, pluginId.lastIndexOf("~"))}`
-        : `reearth-plugin-${pluginId}`;
+  const getStore = useCallback((extensionInstanceId: string) => {
+    if (!extensionInstanceId) return false;
+    const storeName = extensionInstanceId.startsWith("reearth-plugineditor")
+      ? extensionInstanceId
+      : `reearth-plugin-${extensionInstanceId}`;
     let store = clientStores.current.get(storeName);
     if (!store) {
       store = localforage.createInstance({
@@ -24,9 +29,9 @@ export default () => {
 
   const clientStorage = useMemo(() => {
     return {
-      getAsync: (pluginId: string, key: string) => {
+      getAsync: (extensionInstanceId: string, key: string) => {
         return new Promise<any>((resolve, reject) => {
-          const store = getStore(pluginId);
+          const store = getStore(extensionInstanceId);
           if (!store) {
             reject();
           } else {
@@ -36,15 +41,17 @@ export default () => {
                 resolve(value);
               })
               .catch((err: any) => {
-                console.log(`err get client storage value for ${pluginId} ${key}: ${err}`);
+                console.log(
+                  `err get client storage value for ${extensionInstanceId} ${key}: ${err}`,
+                );
                 reject();
               });
           }
         });
       },
-      setAsync: (pluginId: string, key: string, value: any) => {
+      setAsync: (extensionInstanceId: string, key: string, value: any) => {
         return new Promise<void>((resolve, reject) => {
-          const store = getStore(pluginId);
+          const store = getStore(extensionInstanceId);
           if (!store) {
             reject();
           } else {
@@ -54,15 +61,17 @@ export default () => {
                 resolve();
               })
               .catch((err: any) => {
-                console.log(`err set client storage value for ${pluginId} ${key} ${value}: ${err}`);
+                console.log(
+                  `err set client storage value for ${extensionInstanceId} ${key} ${value}: ${err}`,
+                );
                 reject();
               });
           }
         });
       },
-      deleteAsync: (pluginId: string, key: string) => {
+      deleteAsync: (extensionInstanceId: string, key: string) => {
         return new Promise<void>((resolve, reject) => {
-          const store = getStore(pluginId);
+          const store = getStore(extensionInstanceId);
           if (!store) {
             reject();
           } else {
@@ -72,15 +81,17 @@ export default () => {
                 resolve();
               })
               .catch((err: any) => {
-                console.log(`err delete client storage value for ${pluginId} ${key}: ${err}`);
+                console.log(
+                  `err delete client storage value for ${extensionInstanceId} ${key}: ${err}`,
+                );
                 reject();
               });
           }
         });
       },
-      keysAsync: (pluginId: string) => {
+      keysAsync: (extensionInstanceId: string) => {
         return new Promise<string[]>((resolve, reject) => {
-          const store = getStore(pluginId);
+          const store = getStore(extensionInstanceId);
           if (!store) {
             reject();
           } else {
@@ -90,16 +101,16 @@ export default () => {
                 resolve(value);
               })
               .catch((err: any) => {
-                console.log(`err get client storage keys for ${pluginId}: ${err}`);
+                console.log(`err get client storage keys for ${extensionInstanceId}: ${err}`);
                 reject();
               });
           }
         });
       },
       // Currently not in use.
-      dropStore: (pluginId: string) => {
+      dropStore: (extensionInstanceId: string) => {
         return new Promise<void>((resolve, reject) => {
-          const store = getStore(pluginId);
+          const store = getStore(extensionInstanceId);
           if (!store) {
             reject();
           } else {
@@ -107,11 +118,11 @@ export default () => {
               .dropInstance()
               .then(() => resolve())
               .catch((err: any) => {
-                console.log(`err drop client storage for ${pluginId}: ${err}`);
+                console.log(`err drop client storage for ${extensionInstanceId}: ${err}`);
                 reject();
               })
               .finally(() => {
-                clientStores.current.delete(pluginId);
+                clientStores.current.delete(extensionInstanceId);
               });
           }
         });

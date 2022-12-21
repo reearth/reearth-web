@@ -14,6 +14,7 @@ import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
+import type { ClientStorage } from "../useClientStorage";
 import { PluginInstances } from "../usePluginInstances";
 import { useGet } from "../utils";
 
@@ -57,13 +58,7 @@ export type Props = {
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
   viewport: VisualizerViewport;
-  clientStorage: {
-    getAsync: (pluginId: string, key: string) => Promise<any>;
-    setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
-    deleteAsync: (pluginId: string, key: string) => Promise<void>;
-    keysAsync: (pluginId: string) => Promise<string[]>;
-    dropStore: (pluginId: string) => Promise<void>;
-  };
+  clientStorage: ClientStorage;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -104,13 +99,7 @@ export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
   pluginInstances: PluginInstances;
-  clientStorage: {
-    getAsync: (pluginId: string, key: string) => Promise<any>;
-    setAsync: (pluginId: string, key: string, value: any) => Promise<void>;
-    deleteAsync: (pluginId: string, key: string) => Promise<void>;
-    keysAsync: (pluginId: string) => Promise<string[]>;
-    dropStore: (pluginId: string) => Promise<void>;
-  };
+  clientStorage: ClientStorage;
   overrideSceneProperty: (id: string, property: any) => void;
   emit: EventEmitter<SelectedReearthEventType>;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
