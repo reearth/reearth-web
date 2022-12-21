@@ -72,7 +72,7 @@ export default () => {
                   ...(mode === "block"
                     ? [
                         {
-                          id: "xxx",
+                          id: "reearth-plugineditor-block",
                           __REEARTH_SOURCECODE: executableSourceCode,
                         } as any,
                       ]
@@ -99,8 +99,7 @@ export default () => {
 
     const widget = [
       {
-        id: "xxx",
-        pluginId: "reearth-plugineditor",
+        id: "reearth-plugineditor-widget",
         // extended: true,
         __REEARTH_SOURCECODE: executableSourceCode,
       },
