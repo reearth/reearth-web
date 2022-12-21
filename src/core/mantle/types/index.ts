@@ -1,4 +1,11 @@
-import type { LineString, Point, Polygon } from "geojson";
+import type {
+  LineString,
+  Point,
+  Polygon,
+  MultiPoint,
+  MultiLineString,
+  MultiPolygon,
+} from "geojson";
 
 import type { Infobox, Block, Tag } from "../compat/types";
 
@@ -72,7 +79,7 @@ export type Feature = {
   [key: string]: any;
 };
 
-export type Geometry = Point | LineString | Polygon;
+export type Geometry = Point | LineString | Polygon | MultiPoint | MultiLineString | MultiPolygon;
 
 export type ComputedLayerStatus = "fetching" | "ready";
 
