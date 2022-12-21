@@ -97,5 +97,5 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
 }
 
 export const config: FeatureComponentConfig = {
-  noFeature: true,
+  noLayer: true,
 };
