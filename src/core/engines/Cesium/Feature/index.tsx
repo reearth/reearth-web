@@ -1,5 +1,6 @@
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
+import Box, { config as boxConfig } from "./Box";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
 import Marker, { config as markerConfig } from "./Marker";
 import Model, { config as modelConfig } from "./Model";
@@ -22,6 +23,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   ellipsoid: [Ellipsoid, ellipsoidConfig],
   model: [Model, modelConfig],
   "3dtiles": [Tileset, tilesetConfig],
+  box: [Box, boxConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
   resource: [Resource, resourceConfig],
   raster: [Raster, rasterConfig],
