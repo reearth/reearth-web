@@ -29,7 +29,11 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   raster: [Raster, rasterConfig],
 };
 
+const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
 const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
+  if (!PICKABLE_APPEARANCE.includes(k)) {
+    return;
+  }
   if (layer.layer.type !== "simple") {
     return;
   }
