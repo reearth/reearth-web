@@ -23,6 +23,7 @@ export type AppearanceTypes = {
   ellipsoid: EllipsoidAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
+  raster: RasterAppearance;
 };
 
 export type MarkerAppearance = {
@@ -135,6 +136,16 @@ export type ResourceAppearance = {
   clampToGround?: boolean;
 };
 
+export type RasterAppearance = {
+  url?: string;
+  type?: "wms";
+  layers?: string[];
+  zIndex?: number;
+  minimumLevel?: number;
+  maximumLevel?: number;
+  credit?: string;
+};
+
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   marker: 1,
   polyline: 1,
@@ -144,6 +155,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   "3dtiles": 1,
   photooverlay: 1,
   resource: 1,
+  raster: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);
