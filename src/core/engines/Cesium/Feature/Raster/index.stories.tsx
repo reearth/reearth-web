@@ -24,11 +24,10 @@ Default.args = {
       type: "simple",
       data: {
         type: "wms",
-        url: "",
+        url: "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi",
+        layers: "IMERG_Precipitation_Rate",
       },
-      raster: {
-        layers: [""],
-      },
+      raster: {},
     },
   ],
   property: {
