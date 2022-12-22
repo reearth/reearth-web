@@ -33,7 +33,7 @@ Default.args = {
         },
       },
       model: {
-        model: "/BoxAnimated.glb",
+        url: "/BoxAnimated.glb",
         scale: 1000000,
       },
     },
