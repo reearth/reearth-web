@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/react";
 
-import { engine } from "../../";
+import { engine } from "../..";
 import Component, { Props } from "../../../../Map";
 
 export default {
