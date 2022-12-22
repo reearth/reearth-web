@@ -40,3 +40,7 @@ function wrap<T>(f: (d: any) => T): (d: any) => T | undefined {
 export function objKeys<T extends string | number | symbol>(obj: { [k in T]: 1 }): T[] {
   return Object.keys(obj) as T[];
 }
+
+export function defined(value: any) {
+  return value !== undefined && value !== null;
+}

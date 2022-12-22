@@ -1,4 +1,3 @@
-import { defined } from "cesium";
 import { pick } from "lodash-es";
 
 import type { EvalContext, EvalResult } from "..";
@@ -11,6 +10,7 @@ import {
   LayerSimple,
   StyleExpression,
 } from "../../types";
+import { defined } from "../../utils";
 
 import { ConditionalExpression, Expression } from "./expression";
 

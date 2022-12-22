@@ -1,9 +1,10 @@
-import { defined, Math as CesiumMath } from "cesium";
+import { Math as CesiumMath } from "cesium";
 import jsep from "jsep";
 import { JSONPath } from "jsonpath-plus";
 import * as randomWords from "random-words";
 
 import { Feature, ConditionsExpression } from "../../types";
+import { defined } from "../../utils";
 
 import {
   unaryOperators,
