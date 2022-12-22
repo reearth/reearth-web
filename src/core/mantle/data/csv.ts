@@ -41,7 +41,7 @@ const parseCSV = async (
           }
           headerKeys = [];
         }
-        const value = makeGeoJsonFromArray(headerKeys, record, options);
+        const value = makeGeoJSONFromArray(headerKeys, record, options);
         const feature = makeFeature(value, range);
         if (feature) {
           result.push(feature);
@@ -87,15 +87,15 @@ const setCoordinatesToPointGeometry = (
   return geometry;
 };
 
-type CsvGeoJSONFeature = GeoJSONFeature<Point | null>;
+type CSVGeoJSONFeature = GeoJSONFeature<Point | null>;
 
-const makeGeoJsonFromArray = (
+const makeGeoJSONFromArray = (
   headers: string[],
   values: string[],
   options: Data["csv"],
-): CsvGeoJSONFeature => {
+): CSVGeoJSONFeature => {
   const result = values.reduce(
-    (result: CsvGeoJSONFeature, value, idx) => {
+    (result: CSVGeoJSONFeature, value, idx) => {
       if (options?.idColumn !== undefined && [headers[idx], idx].includes(options.idColumn)) {
         return {
           ...result,
@@ -142,7 +142,7 @@ const makeGeoJsonFromArray = (
   return result;
 };
 
-const makeFeature = (value: CsvGeoJSONFeature, range: DataRange | undefined): Feature | void => {
+const makeFeature = (value: CSVGeoJSONFeature, range: DataRange | undefined): Feature | void => {
   if (value.type !== "Feature") {
     return;
   }
