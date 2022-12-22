@@ -8,7 +8,7 @@ import { extractSimpleLayerData, type FeatureComponentConfig, type FeatureProps 
 export type Props = FeatureProps<Property>;
 export type Property = RasterAppearance;
 
-const imageryProviders = {
+const ImageryProviders = {
   wms: WebMapServiceImageryProvider,
 };
 
@@ -22,7 +22,7 @@ export default function Raster({ isVisible, layer, property }: Props) {
     return [type ?? (data?.type as RasterAppearance["type"]), url ?? data?.url];
   }, [layer]);
 
-  const imageryProvider = type ? imageryProviders[type] : undefined;
+  const imageryProvider = type ? ImageryProviders[type] : undefined;
 
   useEffect(() => {
     if (!isVisible || !imageryProvider || !url || !layers?.length) return;
