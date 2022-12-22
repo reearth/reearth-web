@@ -13,7 +13,7 @@ const ImageryProviders = {
 };
 
 export default function Raster({ isVisible, layer, property }: Props) {
-  const { zIndex, minimumLevel, maximumLevel, credit } = property ?? {};
+  const { minimumLevel, maximumLevel, credit } = property ?? {};
   const { viewer } = useCesium();
   const { type, url, layers } = useMemo(() => {
     const data = extractSimpleLayerData(layer);
@@ -40,11 +40,11 @@ export default function Raster({ isVisible, layer, property }: Props) {
       credit,
     });
     const imageryLayers: ImageryLayerCollection = viewer.imageryLayers;
-    const layer = imageryLayers.addImageryProvider(provider, zIndex);
+    const layer = imageryLayers.addImageryProvider(provider);
     return () => {
       imageryLayers.remove(layer);
     };
-  }, [isVisible, imageryProvider, url, zIndex, viewer, layers, minimumLevel, maximumLevel, credit]);
+  }, [isVisible, imageryProvider, url, viewer, layers, minimumLevel, maximumLevel, credit]);
 
   return null;
 }

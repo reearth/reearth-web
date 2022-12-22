@@ -141,7 +141,6 @@ export type ResourceAppearance = {
 };
 
 export type RasterAppearance = {
-  zIndex?: number;
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
