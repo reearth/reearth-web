@@ -13,22 +13,28 @@ const ImageryProviders = {
 };
 
 export default function Raster({ isVisible, layer, property }: Props) {
-  const { layers, zIndex, minimumLevel, maximumLevel, credit } = property ?? {};
+  const { zIndex, minimumLevel, maximumLevel, credit } = property ?? {};
   const { viewer } = useCesium();
-  const [type, url] = useMemo((): [RasterAppearance["type"], string | undefined] => {
+  const { type, url, layers } = useMemo(() => {
     const data = extractSimpleLayerData(layer);
-    const type = layer?.raster?.type;
-    const url = layer?.raster?.url;
-    return [type ?? (data?.type as RasterAppearance["type"]), url ?? data?.url];
+    return {
+      type: data?.type as keyof typeof ImageryProviders,
+      url: data?.url,
+      layers: data?.layers
+        ? Array.isArray(data.layers)
+          ? data.layers.join(",")
+          : data?.layers
+        : undefined,
+    };
   }, [layer]);
 
   const imageryProvider = type ? ImageryProviders[type] : undefined;
 
   useEffect(() => {
-    if (!isVisible || !imageryProvider || !url || !layers?.length) return;
+    if (!isVisible || !imageryProvider || !url || !layers) return;
     const provider = new imageryProvider({
       url,
-      layers: layers.join(","),
+      layers,
       minimumLevel,
       maximumLevel,
       credit,

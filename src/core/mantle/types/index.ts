@@ -59,6 +59,7 @@ export type Data = {
   type: DataType;
   url?: string;
   value?: any;
+  layers?: string | string[];
 };
 
 export type DataRange = {

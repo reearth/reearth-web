@@ -141,9 +141,6 @@ export type ResourceAppearance = {
 };
 
 export type RasterAppearance = {
-  url?: string;
-  type?: "wms";
-  layers?: string[];
   zIndex?: number;
   minimumLevel?: number;
   maximumLevel?: number;
