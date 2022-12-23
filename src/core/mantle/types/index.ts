@@ -68,7 +68,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles" | "czml" | "wms";
+export type DataType = "geojson" | "3dtiles" | "czml" | "wms" | "mvt";
 
 // Feature
 

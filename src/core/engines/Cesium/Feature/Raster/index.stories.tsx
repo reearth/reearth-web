@@ -11,8 +11,8 @@ export default {
 
 const Template: Story<Props> = args => <Component {...args} />;
 
-export const Default = Template.bind([]);
-Default.args = {
+export const WMS = Template.bind([]);
+WMS.args = {
   engine: "cesium",
   engines: {
     cesium: engine,
@@ -27,7 +27,43 @@ Default.args = {
         url: "https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi",
         layers: "IMERG_Precipitation_Rate",
       },
-      raster: {},
+      raster: {
+        maximumLevel: 100,
+      },
+    },
+  ],
+  property: {
+    tiles: [
+      {
+        id: "default",
+        tile_type: "default",
+      },
+    ],
+  },
+};
+
+export const MVT = Template.bind([]);
+MVT.args = {
+  engine: "cesium",
+  engines: {
+    cesium: engine,
+  },
+  ready: true,
+  layers: [
+    {
+      id: "l",
+      type: "simple",
+      data: {
+        type: "mvt",
+        url: "https://example.com/{z}/{x}/{y}.mvt",
+        layers: "layerName",
+      },
+      raster: {
+        fillColor: "white",
+        strokeColor: "white",
+        strokeWidth: 1,
+        lineJoin: "round",
+      },
     },
   ],
   property: {

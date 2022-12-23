@@ -144,7 +144,8 @@ export type RasterAppearance = {
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
-};
+  lineJoin?: CanvasLineJoin;
+} & PolygonAppearance;
 
 export type BoxAppearance = {
   height?: number;
