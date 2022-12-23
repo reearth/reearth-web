@@ -193,4 +193,37 @@ describe("Conditional styling", () => {
       },
     });
   });
+
+  test("Conditions with Color in HexCode", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointSize: 26,
+            pointColor: {
+              conditions: [
+                ["${bgColor} === color('red')", "color('blue')"],
+                ["true", "color('white')"],
+              ],
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+        },
+        {
+          id: "blah",
+          properties: {
+            bgColor: "#FF0000",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#0000FF", // blue
+        pointSize: 26,
+      },
+    });
+  });
 });

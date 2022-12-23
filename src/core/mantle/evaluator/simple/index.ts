@@ -12,7 +12,8 @@ import {
 } from "../../types";
 import { defined } from "../../utils";
 
-import { ConditionalExpression, Expression } from "./expression";
+import { ConditionalExpression } from "./conditionalExpression";
+import { Expression } from "./expression";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,

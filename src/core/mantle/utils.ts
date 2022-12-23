@@ -44,3 +44,10 @@ export function objKeys<T extends string | number | symbol>(obj: { [k in T]: 1 }
 export function defined(value: any) {
   return value !== undefined && value !== null;
 }
+
+export function defaultValue(a: any, b: any) {
+  if (a !== undefined && a !== null) {
+    return a;
+  }
+  return b;
+}
