@@ -1,10 +1,11 @@
 import { VectorTileFeature } from "@mapbox/vector-tile";
 import { ImageryLayerCollection, ImageryProvider, WebMapServiceImageryProvider } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
-import { useEffect, useMemo, useRef, useState, useReducer } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
-import { ComputedLayer, Feature } from "@reearth/core/mantle";
+import { ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
+import { evalFeature } from "@reearth/core/mantle/evaluator/simple";
 
 import { extractSimpleLayerData } from "../utils";
 
@@ -62,8 +63,31 @@ export const useWMS = ({
   useImageryProvider(imageryProvider);
 };
 
-const idFromGeometry = (tile: { x: number; y: number; level: number }) =>
-  [tile.x, tile.y, tile.level].join(":");
+type TileCoords = { x: number; y: number; level: number };
+
+const idFromGeometry = (tile: TileCoords) => [tile.x, tile.y, tile.level].join(":");
+
+const makeFeatureFromPolygon = (
+  id: string,
+  feature: VectorTileFeature,
+  tile: TileCoords,
+): Feature => {
+  const geometry = feature.loadGeometry();
+  const coordinates = geometry.map(points => points.map(p => [p.x, p.y]));
+  return {
+    id,
+    geometry: {
+      type: "Polygon",
+      coordinates,
+    },
+    properties: feature.properties,
+    range: {
+      x: tile.x,
+      y: tile.y,
+      z: tile.level,
+    },
+  };
+};
 
 export const useMVT = ({
   isVisible,
@@ -76,9 +100,8 @@ export const useMVT = ({
 
   const [cachedFeatureIds] = useState(() => new Set<Feature["id"]>());
   const cachedFeaturesRef = useRef<Feature[]>([]);
-  const cachedCalculatedFeaturesRef = useRef(layer?.features || []);
-  const [forceRasterizeMarker, forceRasterize] = useReducer(() => ({}), {});
-  const shouldRasterizeRef = useRef(false);
+  const cachedCalculatedLayerRef = useRef(layer);
+  const shouldSyncFeatureRef = useRef(false);
 
   const imageryProvider = useMemo(() => {
     if (!isVisible || !url || !layers) return;
@@ -93,43 +116,37 @@ export const useMVT = ({
       layerName: layers,
       onRenderFeature: (mvtFeature, tile) => {
         const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
-        if (cachedFeatureIds.has(id)) {
-          return true;
+        if (!cachedFeatureIds.has(id)) {
+          shouldSyncFeatureRef.current = true;
         }
-
-        // Rasterize MVT only when unknown feature is exist.
-        shouldRasterizeRef.current = true;
-
-        if (VectorTileFeature.types[mvtFeature.type] === "Polygon") {
-          const geometry = mvtFeature.loadGeometry();
-          const coordinates = geometry.map(points => points.map(p => [p.x, p.y]));
-          cachedFeatureIds.add(id);
-          cachedFeaturesRef.current.push({
-            id,
-            geometry: {
-              type: "Polygon",
-              coordinates,
-            },
-            properties: mvtFeature.properties,
-            range: {
-              x: tile.x,
-              y: tile.y,
-              z: tile.level,
-            },
-          });
-        }
-        return false;
+        return true;
       },
       onFeaturesRendered: () => {
-        if (shouldRasterizeRef.current) {
+        if (shouldSyncFeatureRef.current) {
           onFeatureFetch?.(cachedFeaturesRef.current);
-          shouldRasterizeRef.current = false;
+          shouldSyncFeatureRef.current = false;
         }
       },
       style: (mvtFeature, tile) => {
-        const feature = cachedCalculatedFeaturesRef.current.find(
-          f => f.id === (mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile)),
-        );
+        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const feature = ((): ComputedFeature | void => {
+          if (!cachedFeatureIds.has(id)) {
+            const layer = cachedCalculatedLayerRef.current?.layer;
+            if (
+              layer?.type === "simple" &&
+              VectorTileFeature.types[mvtFeature.type] === "Polygon"
+            ) {
+              const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
+              cachedFeatureIds.add(id);
+              cachedFeaturesRef.current.push(feature);
+              return evalFeature(layer, feature);
+            }
+          } else {
+            return cachedCalculatedLayerRef.current?.features.find(
+              f => f.id === (mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile)),
+            );
+          }
+        })();
         return {
           fillStyle: feature?.raster?.fillColor,
           strokeStyle: feature?.raster?.strokeColor,
@@ -148,19 +165,11 @@ export const useMVT = ({
     layers,
     cachedFeatureIds,
     onFeatureFetch,
-    forceRasterizeMarker, // This is needed to rasterize the ImageryProvider lazily for performance.
   ]);
 
-  // Debounce rasterize of MVT.
-  // `onFeatureFetch` is called frequently, so we need to rasterize lazily.
-  const debouncingForceRasterizeTimer = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    cachedCalculatedFeaturesRef.current = layer?.features || [];
-    clearTimeout(debouncingForceRasterizeTimer.current);
-    debouncingForceRasterizeTimer.current = setTimeout(() => {
-      forceRasterize();
-    }, 100);
-  }, [layer?.features]);
+    cachedCalculatedLayerRef.current = layer;
+  }, [layer]);
 
   useImageryProvider(imageryProvider);
 };
