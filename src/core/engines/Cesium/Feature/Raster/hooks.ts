@@ -47,10 +47,7 @@ export const useWMS = ({
   const { type, url, layers } = useData(layer);
 
   const imageryProvider = useMemo(() => {
-    if (!isVisible || !url || !layers) return;
-    if (type !== "wms") {
-      return;
-    }
+    if (!isVisible || !url || !layers || type !== "wms") return;
     return new WebMapServiceImageryProvider({
       url,
       layers,
@@ -104,10 +101,7 @@ export const useMVT = ({
   const shouldSyncFeatureRef = useRef(false);
 
   const imageryProvider = useMemo(() => {
-    if (!isVisible || !url || !layers) return;
-    if (type !== "mvt") {
-      return;
-    }
+    if (!isVisible || !url || !layers || type !== "mvt") return;
     return new MVTImageryProvider({
       minimumLevel,
       maximumLevel,
