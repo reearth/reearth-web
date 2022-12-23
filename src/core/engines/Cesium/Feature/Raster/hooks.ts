@@ -9,7 +9,7 @@ import { evalFeature } from "@reearth/core/mantle/evaluator/simple";
 
 import { extractSimpleLayerData } from "../utils";
 
-import { Props } from ".";
+import { Props } from "./types";
 
 const useImageryProvider = (imageryProvider: ImageryProvider | undefined) => {
   const { viewer } = useCesium();

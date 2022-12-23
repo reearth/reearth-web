@@ -1,10 +1,7 @@
-import type { RasterAppearance } from "../../..";
-import { type FeatureComponentConfig, type FeatureProps } from "../utils";
+import { type FeatureComponentConfig } from "../utils";
 
 import { useMVT, useWMS } from "./hooks";
-
-export type Props = FeatureProps<Property>;
-export type Property = RasterAppearance;
+import type { Props } from "./types";
 
 export default function Raster({ isVisible, layer, property, onFeatureFetch }: Props) {
   useWMS({ isVisible, layer, property });
