@@ -142,10 +142,10 @@ export const useMVT = ({
           }
         })();
         return {
-          fillStyle: feature?.raster?.fillColor,
-          strokeStyle: feature?.raster?.strokeColor,
-          lineWidth: feature?.raster?.strokeWidth,
-          lineJoin: feature?.raster?.lineJoin,
+          fillStyle: feature?.polygon?.fillColor,
+          strokeStyle: feature?.polygon?.strokeColor,
+          lineWidth: feature?.polygon?.strokeWidth,
+          lineJoin: feature?.polygon?.lineJoin,
         };
       },
     });

@@ -76,6 +76,7 @@ export type PolygonAppearance = {
   strokeWidth?: number;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  lineJoin?: CanvasLineJoin;
 };
 
 export type EllipsoidAppearance = {
@@ -144,8 +145,7 @@ export type RasterAppearance = {
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
-  lineJoin?: CanvasLineJoin;
-} & PolygonAppearance;
+};
 
 export type BoxAppearance = {
   height?: number;

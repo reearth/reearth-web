@@ -55,10 +55,10 @@ MVT.args = {
       type: "simple",
       data: {
         type: "mvt",
-        url: "https://example.com/{z}/{x}/{y}.mvt",
-        layers: "layerName",
+        url: "https://d2jfi34fqvxlsc.cloudfront.net/main/data/mvt/tran/13100_tokyo/{z}/{x}/{y}.mvt",
+        layers: "road",
       },
-      raster: {
+      polygon: {
         fillColor: "white",
         strokeColor: "white",
         strokeWidth: 1,
