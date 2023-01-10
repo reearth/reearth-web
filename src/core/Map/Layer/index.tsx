@@ -1,6 +1,6 @@
 import { ComponentType } from "react";
 
-import type { DataRange, Feature, ComputedLayer, Layer, DataType } from "../../mantle";
+import type { DataRange, Feature, ComputedLayer, Layer, DataType, LayerSimple } from "../../mantle";
 
 import useHooks, { type Atoms } from "./hooks";
 
@@ -21,6 +21,7 @@ export type FeatureComponentProps = {
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
+  evalFeature?: (layer: LayerSimple, feature: Feature) => Feature | undefined;
 } & CommonProps;
 
 export type Props = {
@@ -40,12 +41,13 @@ export default function LayerComponent({
   delegatedDataTypes,
   ...props
 }: Props): JSX.Element | null {
-  const { computedLayer, handleFeatureDelete, handleFeatureFetch, handleFeatureRequest } = useHooks(
-    Feature ? layer : undefined,
-    atoms,
-    overrides,
-    delegatedDataTypes,
-  );
+  const {
+    computedLayer,
+    handleFeatureDelete,
+    handleFeatureFetch,
+    handleFeatureRequest,
+    evalFeature,
+  } = useHooks(Feature ? layer : undefined, atoms, overrides, delegatedDataTypes);
 
   return layer && computedLayer && Feature ? (
     <Feature
@@ -53,6 +55,7 @@ export default function LayerComponent({
       onFeatureDelete={handleFeatureDelete}
       onFeatureFetch={handleFeatureFetch}
       onFeatureRequest={handleFeatureRequest}
+      evalFeature={evalFeature}
       {...props}
     />
   ) : null;

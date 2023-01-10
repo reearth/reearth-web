@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
 import { ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
-import { evalFeature } from "@reearth/core/mantle/evaluator/simple";
 
 import { extractSimpleLayerData } from "../utils";
 
@@ -91,7 +90,8 @@ export const useMVT = ({
   property,
   layer,
   onFeatureFetch,
-}: Pick<Props, "isVisible" | "property" | "layer" | "onFeatureFetch">) => {
+  evalFeature,
+}: Pick<Props, "isVisible" | "property" | "layer" | "onFeatureFetch" | "evalFeature">) => {
   const { minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
@@ -133,7 +133,7 @@ export const useMVT = ({
               const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
               cachedFeatureIds.add(id);
               cachedFeaturesRef.current.push(feature);
-              return evalFeature(layer, feature);
+              return evalFeature?.(layer, feature);
             }
           } else {
             return cachedCalculatedLayerRef.current?.features.find(
@@ -159,6 +159,7 @@ export const useMVT = ({
     layers,
     cachedFeatureIds,
     onFeatureFetch,
+    evalFeature,
   ]);
 
   useEffect(() => {
