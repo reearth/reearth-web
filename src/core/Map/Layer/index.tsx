@@ -21,7 +21,7 @@ export type FeatureComponentProps = {
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
-  evalFeature?: (layer: LayerSimple, feature: Feature) => Feature | undefined;
+  evalFeature?: (layer: LayerSimple, feature: Feature) => ComputedFeature | undefined;
 } & CommonProps;
 
 export type Props = {
