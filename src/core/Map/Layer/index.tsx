@@ -1,6 +1,14 @@
 import { ComponentType } from "react";
 
-import type { DataRange, Feature, ComputedLayer, Layer, DataType, LayerSimple } from "../../mantle";
+import type {
+  DataRange,
+  Feature,
+  ComputedLayer,
+  Layer,
+  DataType,
+  LayerSimple,
+  ComputedFeature,
+} from "../../mantle";
 
 import useHooks, { type Atoms } from "./hooks";
 
