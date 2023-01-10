@@ -3,9 +3,9 @@ import { type FeatureComponentConfig } from "../utils";
 import { useMVT, useWMS } from "./hooks";
 import type { Props } from "./types";
 
-export default function Raster({ isVisible, layer, property, onFeatureFetch, evalFeature }: Props) {
+export default function Raster({ isVisible, layer, property, evalFeature }: Props) {
   useWMS({ isVisible, layer, property });
-  useMVT({ isVisible, layer, property, onFeatureFetch, evalFeature });
+  useMVT({ isVisible, layer, property, evalFeature });
 
   return null;
 }

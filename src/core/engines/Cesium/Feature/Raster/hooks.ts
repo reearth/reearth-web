@@ -89,7 +89,6 @@ export const useMVT = ({
   isVisible,
   property,
   layer,
-  onFeatureFetch,
   evalFeature,
 }: Pick<Props, "isVisible" | "property" | "layer" | "onFeatureFetch" | "evalFeature">) => {
   const { minimumLevel, maximumLevel, credit } = property ?? {};
@@ -99,7 +98,6 @@ export const useMVT = ({
   const cachedFeaturesRef = useRef<Feature[]>([]);
   const cachedComputedFeaturesRef = useRef<Map<Feature["id"], ComputedFeature>>(new Map());
   const cachedCalculatedLayerRef = useRef(layer);
-  const shouldSyncFeatureRef = useRef(false);
 
   const imageryProvider = useMemo(() => {
     if (!isVisible || !url || !layers || type !== "mvt") return;
@@ -109,19 +107,6 @@ export const useMVT = ({
       credit,
       urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
       layerName: layers,
-      onRenderFeature: (mvtFeature, tile) => {
-        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
-        if (!cachedFeatureIds.has(id)) {
-          shouldSyncFeatureRef.current = true;
-        }
-        return true;
-      },
-      onFeaturesRendered: () => {
-        if (shouldSyncFeatureRef.current) {
-          onFeatureFetch?.(cachedFeaturesRef.current);
-          shouldSyncFeatureRef.current = false;
-        }
-      },
       style: (mvtFeature, tile) => {
         const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
         const feature = ((): ComputedFeature | void => {
@@ -163,7 +148,6 @@ export const useMVT = ({
     credit,
     layers,
     cachedFeatureIds,
-    onFeatureFetch,
     evalFeature,
   ]);
 
