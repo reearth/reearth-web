@@ -34,6 +34,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
 const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   geojson: "auto",
   czml: "auto",
+  csv: "auto",
   wms: ["raster"],
   mvt: ["raster"],
   ["3dtiles"]: ["model"],
