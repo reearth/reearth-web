@@ -23,7 +23,8 @@ export type AppearanceTypes = {
   ellipsoid: EllipsoidAppearance;
   box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
-  legacy_resource: LegacyResourceAppearance;
+  resource: ResourceAppearance;
+  raster: RasterAppearance;
 };
 
 export type MarkerAppearance = {
@@ -85,7 +86,8 @@ export type EllipsoidAppearance = {
 };
 
 export type ModelAppearance = {
-  model?: string;
+  model?: string; // For compat
+  url?: string;
   heightReference?: "none" | "clamp" | "relative";
   heading?: number;
   pitch?: number;
@@ -133,10 +135,16 @@ export type LegacyPhotooverlayAppearance = {
   photoOverlayDescription?: string;
 };
 
-export type LegacyResourceAppearance = {
+export type ResourceAppearance = {
   url?: string;
   type?: "geojson" | "kml" | "czml" | "auto";
   clampToGround?: boolean;
+};
+
+export type RasterAppearance = {
+  minimumLevel?: number;
+  maximumLevel?: number;
+  credit?: string;
 };
 
 export type BoxAppearance = {
@@ -177,7 +185,8 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   "3dtiles": 1,
   box: 1,
   photooverlay: 1,
-  legacy_resource: 1,
+  resource: 1,
+  raster: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);
