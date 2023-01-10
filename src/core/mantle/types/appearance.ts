@@ -86,8 +86,7 @@ export type EllipsoidAppearance = {
 };
 
 export type ModelAppearance = {
-  // For compat
-  model?: string;
+  model?: string; // For compat
   url?: string;
   heightReference?: "none" | "clamp" | "relative";
   heading?: number;
