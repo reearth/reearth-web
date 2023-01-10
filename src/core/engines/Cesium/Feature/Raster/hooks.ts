@@ -97,6 +97,7 @@ export const useMVT = ({
 
   const [cachedFeatureIds] = useState(() => new Set<Feature["id"]>());
   const cachedFeaturesRef = useRef<Feature[]>([]);
+  const cachedComputedFeaturesRef = useRef<Map<Feature["id"], ComputedFeature>>(new Map());
   const cachedCalculatedLayerRef = useRef(layer);
   const shouldSyncFeatureRef = useRef(false);
 
@@ -133,11 +134,15 @@ export const useMVT = ({
               const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
               cachedFeatureIds.add(id);
               cachedFeaturesRef.current.push(feature);
-              return evalFeature?.(layer, feature);
+              const computedFeature = evalFeature?.(layer, feature);
+              if (computedFeature) {
+                cachedComputedFeaturesRef.current.set(id, computedFeature);
+              }
+              return computedFeature;
             }
           } else {
-            return cachedCalculatedLayerRef.current?.features.find(
-              f => f.id === (mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile)),
+            return cachedComputedFeaturesRef.current.get(
+              mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
             );
           }
         })();
