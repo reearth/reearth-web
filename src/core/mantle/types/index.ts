@@ -60,6 +60,13 @@ export type Data = {
   url?: string;
   value?: any;
   layers?: string | string[];
+  csv?: {
+    idColumn?: string | number;
+    latColumn?: string | number;
+    lngColumn?: string | number;
+    heightColumn?: string | number;
+    noHeader?: boolean;
+  };
 };
 
 export type DataRange = {
@@ -68,7 +75,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles" | "czml" | "wms";
+export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms";
 
 // Feature
 
