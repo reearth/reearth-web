@@ -64,6 +64,7 @@ MVT.args = {
         strokeWidth: 1,
         lineJoin: "round",
       },
+      raster: {},
     },
   ],
   property: {
