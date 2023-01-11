@@ -20,7 +20,8 @@ export type AppearanceTypes = {
   ellipsoid: EllipsoidAppearance;
   box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
-  legacy_resource: LegacyResourceAppearance;
+  resource: ResourceAppearance;
+  raster: RasterAppearance;
 };
 
 export type MarkerAppearance = {
@@ -72,6 +73,7 @@ export type PolygonAppearance = {
   strokeWidth?: number;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  lineJoin?: CanvasLineJoin;
 };
 
 export type EllipsoidAppearance = {
@@ -82,7 +84,8 @@ export type EllipsoidAppearance = {
 };
 
 export type ModelAppearance = {
-  model?: string;
+  model?: string; // For compat
+  url?: string;
   heightReference?: "none" | "clamp" | "relative";
   heading?: number;
   pitch?: number;
@@ -104,6 +107,8 @@ export type ModelAppearance = {
 export type Cesium3DTilesAppearance = {
   sourceType?: "url" | "osm";
   tileset?: string;
+  show?: boolean;
+  color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   edgeWidth?: number;
@@ -130,10 +135,16 @@ export type LegacyPhotooverlayAppearance = {
   photoOverlayDescription?: string;
 };
 
-export type LegacyResourceAppearance = {
+export type ResourceAppearance = {
   url?: string;
   type?: "geojson" | "kml" | "czml" | "auto";
   clampToGround?: boolean;
+};
+
+export type RasterAppearance = {
+  minimumLevel?: number;
+  maximumLevel?: number;
+  credit?: string;
 };
 
 export type BoxAppearance = {
@@ -174,7 +185,8 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   "3dtiles": 1,
   box: 1,
   photooverlay: 1,
-  legacy_resource: 1,
+  resource: 1,
+  raster: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);
