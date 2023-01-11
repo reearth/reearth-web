@@ -8,7 +8,7 @@ import {
   Feature,
   LayerAppearanceTypes,
   LayerSimple,
-  StyleExpression,
+  ExpressionContainer,
 } from "../../types";
 import { defined } from "../../utils";
 
@@ -44,19 +44,23 @@ export function evalLayerAppearances(
   );
 }
 
-function evalExpression(
-  styleExpression: StyleExpression,
-  layer: LayerSimple,
-  feature?: Feature,
-): unknown {
-  if (!defined(styleExpression)) {
-    return undefined;
-  } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-    return new ConditionalExpression(styleExpression as ConditionsExpression, feature).evaluate();
-  } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-    return new Expression(String(styleExpression), feature).evaluate();
-  } else if (typeof styleExpression === "string") {
-    return new Expression(styleExpression, feature).evaluate();
+function hasExpression(e: any): e is ExpressionContainer {
+  return typeof e === "object" && e && "expression" in e;
+}
+
+function evalExpression(expressionContainer: any, layer: LayerSimple, feature?: Feature): unknown {
+  if (hasExpression(expressionContainer)) {
+    const styleExpression = expressionContainer.expression;
+    if (!defined(styleExpression)) {
+      return undefined;
+    } else if (typeof styleExpression === "object" && styleExpression.conditions) {
+      return new ConditionalExpression(styleExpression as ConditionsExpression, feature).evaluate();
+    } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+      return new Expression(String(styleExpression), feature).evaluate();
+    } else if (typeof styleExpression === "string") {
+      return new Expression(styleExpression, feature).evaluate();
+    }
+    return styleExpression;
   }
-  return styleExpression;
+  return expressionContainer;
 }

@@ -1,10 +1,10 @@
 import { objKeys } from "../utils";
 
-import type { StyleExpression } from "./expression";
+import type { ExpressionContainer } from "./expression";
 import type { Camera, EXPERIMENTAL_clipping, LatLng, Typography } from "./value";
 
 export type LayerAppearance<T> = {
-  [K in keyof T]?: T[K] | StyleExpression;
+  [K in keyof T]?: T[K] | ExpressionContainer;
 };
 
 export type LayerAppearanceTypes = {

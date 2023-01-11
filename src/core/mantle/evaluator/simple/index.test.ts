@@ -12,8 +12,8 @@ test("evalSimpleLayer", async () => {
           type: "geojson",
         },
         marker: {
-          pointColor: "'#FF0000'",
-          pointSize: { conditions: [["true", "1"]] },
+          pointColor: "#FF0000",
+          pointSize: { expression: { conditions: [["true", "1"]] } },
         },
       },
       {
@@ -46,12 +46,14 @@ describe("Conditional styling", () => {
       evalLayerAppearances(
         {
           marker: {
-            pointColor: "'#FF0000'",
+            pointColor: "#FF0000",
             pointSize: {
-              conditions: [
-                ["${id} === '2432432'", "2"],
-                ["true", "1"],
-              ],
+              expression: {
+                conditions: [
+                  ["${id} === '2432432'", "2"],
+                  ["true", "1"],
+                ],
+              },
             },
           },
         },
@@ -79,12 +81,14 @@ describe("Conditional styling", () => {
       evalLayerAppearances(
         {
           marker: {
-            pointColor: "'#FF0000'",
+            pointColor: "#FF0000",
             pointSize: {
-              conditions: [
-                ["${id} === '1233'", "4232"],
-                ["true", "1"],
-              ],
+              expression: {
+                conditions: [
+                  ["${id} === '1233'", "4232"],
+                  ["true", "1"],
+                ],
+              },
             },
           },
         },
@@ -113,10 +117,12 @@ describe("Conditional styling", () => {
         {
           marker: {
             pointColor: {
-              conditions: [
-                ["atan2(${GridY}, ${GridX}) > 0.0", "14343"],
-                ["true", "123232"],
-              ],
+              expression: {
+                conditions: [
+                  ["atan2(${GridY}, ${GridX}) > 0.0", "14343"],
+                  ["true", "123232"],
+                ],
+              },
             },
             pointSize: 23213,
           },
@@ -149,12 +155,14 @@ describe("Conditional styling", () => {
       evalLayerAppearances(
         {
           marker: {
-            pointColor: "'#FF0000'",
+            pointColor: "#FF0000",
             pointSize: {
-              conditions: [
-                ["${$.phoneNumbers[:1].type} === 'iPhone'", "${$.age}"],
-                ["true", "1"],
-              ],
+              expression: {
+                conditions: [
+                  ["${$.phoneNumbers[:1].type} === 'iPhone'", "${$.age}"],
+                  ["true", "1"],
+                ],
+              },
             },
           },
         },
@@ -201,10 +209,12 @@ describe("Conditional styling", () => {
           marker: {
             pointSize: 26,
             pointColor: {
-              conditions: [
-                ["${bgColor} === color('red')", "color('blue')"],
-                ["true", "color('white')"],
-              ],
+              expression: {
+                conditions: [
+                  ["${bgColor} === color('red')", "color('blue')"],
+                  ["true", "color('white')"],
+                ],
+              },
             },
           },
         },
