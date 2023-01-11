@@ -8,8 +8,6 @@ export type {
   SceneProperty,
   MouseEvent,
   MouseEvents,
-  ComputedFeature,
-  ComputedLayer,
   Geometry,
   AppearanceTypes,
   Camera,
@@ -21,6 +19,7 @@ export type {
   FlyToDestination,
   TerrainProperty,
   LayerEditEvent,
+  EvalFeature,
 } from "../Map";
 export type {
   Cesium3DTilesAppearance,
@@ -32,4 +31,7 @@ export type {
   LegacyPhotooverlayAppearance,
   ResourceAppearance,
   RasterAppearance,
+  ComputedFeature,
+  ComputedLayer,
+  Feature,
 } from "../mantle";

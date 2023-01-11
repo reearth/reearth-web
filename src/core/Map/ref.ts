@@ -53,6 +53,8 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   tick: 1,
   zoomIn: 1,
   zoomOut: 1,
+  changeStart: 1,
+  changeStop: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {

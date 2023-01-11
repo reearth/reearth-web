@@ -10,6 +10,7 @@ export type {
   FeatureComponentType,
   Layer,
   LayerSimple,
+  EvalFeature,
 } from "../Layer";
 export type { LazyLayer, Ref, NaiveLayer, LayerSelectionReason, OverriddenInfobox } from "./hooks";
 export type {

@@ -15,6 +15,7 @@ export type {
   Layer,
   LayerSelectionReason,
   Cluster,
+  EvalFeature,
 } from "./Layers";
 
 export type { MapRef as Ref } from "./hooks";
