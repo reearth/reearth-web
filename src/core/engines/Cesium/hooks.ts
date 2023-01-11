@@ -49,7 +49,7 @@ export default ({
   property?: SceneProperty;
   camera?: Camera;
   selectedLayerId?: string;
-  selectionReason?: string;
+  selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
   onLayerSelect?: (id?: string, options?: LayerSelectionReason) => void;
