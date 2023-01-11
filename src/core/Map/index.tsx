@@ -26,7 +26,7 @@ export type Props = {
   LayersProps,
   "Feature" | "clusterComponent" | "onLayerSelect" | "selectedReason" | "delegatedDataTypes"
 > &
-  EngineProps;
+  Omit<EngineProps, "selectionReason">;
 
 function Map(
   {
@@ -60,7 +60,8 @@ function Map(
       isBuilt={isBuilt}
       isEditable={isEditable}
       property={sceneProperty}
-      selectedLayerId={selectedLayer}
+      selectedLayerId={selectedLayerId}
+      layerSelectionReason={selectedLayer[2]}
       onLayerSelect={handleLayerSelect}
       {...props}>
       <Layers
@@ -72,7 +73,7 @@ function Map(
         layers={layers}
         overrides={overrides}
         sceneProperty={sceneProperty}
-        selectedLayerId={selectedLayer}
+        selectedLayerId={selectedLayer[0]}
         selectedReason={layerSelectionReason}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}

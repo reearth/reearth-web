@@ -7,7 +7,7 @@ import type {
 } from "react";
 
 import type { LatLngHeight, Camera, Rect, LatLng, DataType, Layer } from "../../mantle";
-import type { FeatureComponentType, ClusterComponentType } from "../Layers";
+import type { FeatureComponentType, ClusterComponentType, LayerSelectionReason } from "../Layers";
 
 export type {
   FeatureComponentProps,
@@ -16,6 +16,7 @@ export type {
   ClusterComponentProps,
   ClusterProperty,
   Ref as LayersRef,
+  LayerSelectionReason,
 } from "../Layers";
 export type {
   Layer,
@@ -80,8 +81,7 @@ export type EngineProps = {
   children?: ReactNode;
   ready?: boolean;
   selectedLayerId?: string;
-  selectionReason?: string;
-  layerSelectionReason?: string;
+  layerSelectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
   shouldRender?: boolean;
@@ -89,16 +89,12 @@ export type EngineProps = {
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
-    options?: SelectLayerOptions,
+    options?: LayerSelectionReason,
   ) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
-};
-
-export type SelectLayerOptions = {
-  reason?: string;
 };
 
 export type Clock = {

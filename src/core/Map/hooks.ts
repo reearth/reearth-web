@@ -1,13 +1,12 @@
-import { useImperativeHandle, useRef, type Ref, useState, useEffect, useCallback } from "react";
+import { useImperativeHandle, useRef, type Ref, useState, useCallback } from "react";
 
 import { type MapRef, mapRef } from "./ref";
-import type { EngineRef, LayersRef, SelectLayerOptions, Layer } from "./types";
+import type { EngineRef, LayersRef, Layer, LayerSelectionReason } from "./types";
 
 export type { MapRef } from "./ref";
 
 export default function ({
   ref,
-  selectedLayerId,
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
@@ -15,7 +14,7 @@ export default function ({
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
-    options?: SelectLayerOptions,
+    options?: LayerSelectionReason,
   ) => void;
 }) {
   const engineRef = useRef<EngineRef>(null);
@@ -31,15 +30,14 @@ export default function ({
     [],
   );
 
-  const [selectedLayer, selectLayer] = useState(selectedLayerId);
-  useEffect(() => {
-    selectLayer(selectedLayerId);
-  }, [selectedLayerId]);
+  const [selectedLayer, selectLayer] = useState<
+    [string | undefined, Layer | undefined, LayerSelectionReason | undefined]
+  >([undefined, undefined, undefined]);
 
   const handleLayerSelect = useCallback(
-    (id: string | undefined, layer: Layer | undefined, options?: SelectLayerOptions) => {
-      selectLayer(id);
-      onLayerSelect?.(id, layer, options);
+    (id: string | undefined, layer: Layer | undefined, reason?: LayerSelectionReason) => {
+      selectLayer([id, layer, reason]);
+      onLayerSelect?.(id, layer, reason);
     },
     [onLayerSelect],
   );
