@@ -236,4 +236,45 @@ describe("Conditional styling", () => {
       },
     });
   });
+
+  test("Expression with defines field in the layer", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointSize: 26,
+            pointColor: {
+              expression: {
+                conditions: [
+                  ["(${NewHeight} >= 100.0)", "${HeightColor}"],
+                  ["(${NewHeight} >= 1.0)", "color('#FF0000')"],
+                  ["true", "color('blue')"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          defines: {
+            NewHeight: "${Height}/2.0",
+            HeightColor: "color('#FF2000')",
+          },
+        },
+        {
+          id: "blah",
+          properties: {
+            bgColor: "#FF0000",
+            Height: 200,
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF2000", // blue
+        pointSize: 26,
+      },
+    });
+  });
 });

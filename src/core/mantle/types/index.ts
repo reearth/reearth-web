@@ -23,6 +23,7 @@ export type LayerSimple = {
   type: "simple";
   data?: Data;
   properties?: any;
+  defines?: Record<string, string>;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 

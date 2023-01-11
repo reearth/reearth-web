@@ -59,11 +59,11 @@ function evalExpression(expressionContainer: any, layer: LayerSimple, feature?: 
     if (!defined(styleExpression)) {
       return undefined;
     } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-      return new ConditionalExpression(styleExpression, feature).evaluate();
+      return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();
     } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-      return new Expression(String(styleExpression), feature).evaluate();
+      return new Expression(String(styleExpression), feature, layer.defines).evaluate();
     } else if (typeof styleExpression === "string") {
-      return new Expression(styleExpression, feature).evaluate();
+      return new Expression(styleExpression, feature, layer.defines).evaluate();
     }
     return styleExpression;
   }
