@@ -4,7 +4,6 @@ import type { EvalContext, EvalResult } from "..";
 import {
   appearanceKeys,
   AppearanceTypes,
-  ConditionsExpression,
   Feature,
   LayerAppearanceTypes,
   LayerSimple,
@@ -54,7 +53,7 @@ function evalExpression(expressionContainer: any, layer: LayerSimple, feature?: 
     if (!defined(styleExpression)) {
       return undefined;
     } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-      return new ConditionalExpression(styleExpression as ConditionsExpression, feature).evaluate();
+      return new ConditionalExpression(styleExpression, feature).evaluate();
     } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
       return new Expression(String(styleExpression), feature).evaluate();
     } else if (typeof styleExpression === "string") {
