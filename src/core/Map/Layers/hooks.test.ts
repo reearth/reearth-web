@@ -622,7 +622,7 @@ test("select", () => {
   expect(result.current.ref.current?.selectedLayer()).toEqual({
     id: "x",
   });
-  expect(handleLayerSelect).toBeCalledWith("x", { reason: "reason" });
+  expect(handleLayerSelect).toBeCalledWith("x", { id: "x", type: "simple" }, { reason: "reason" });
   expect(handleLayerSelect).toBeCalledTimes(1);
 
   // remove reason
@@ -632,14 +632,14 @@ test("select", () => {
   expect(result.current.ref.current?.selectedLayer()).toEqual({
     id: "x",
   });
-  expect(handleLayerSelect).toBeCalledWith("x", undefined);
+  expect(handleLayerSelect).toBeCalledWith("x", { id: "x", type: "simple" }, undefined);
   expect(handleLayerSelect).toBeCalledTimes(1);
 
   // delete layers
   handleLayerSelect.mockClear();
   rerender({ layers: [] });
   expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
-  expect(handleLayerSelect).toBeCalledWith(undefined, undefined);
+  expect(handleLayerSelect).toBeCalledWith(undefined, undefined, undefined);
   expect(handleLayerSelect).toBeCalledTimes(1);
 
   // select a layer that does not exist
@@ -647,8 +647,7 @@ test("select", () => {
   result.current.ref.current?.select("y");
   rerender();
   expect(result.current.ref.current?.selectedLayer()).toBeUndefined();
-  expect(handleLayerSelect).toBeCalledWith(undefined, undefined);
-  expect(handleLayerSelect).toBeCalledTimes(2);
+  expect(handleLayerSelect).not.toBeCalled();
 
   // unselect
   handleLayerSelect.mockClear();
