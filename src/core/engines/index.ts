@@ -20,6 +20,7 @@ export type {
   Clock,
   FlyToDestination,
   TerrainProperty,
+  LayerEditEvent,
 } from "../Map";
 export type {
   Cesium3DTilesAppearance,
