@@ -1,4 +1,11 @@
-import type { LineString, Point, Polygon } from "geojson";
+import type {
+  LineString,
+  Point,
+  Polygon,
+  MultiPoint,
+  MultiLineString,
+  MultiPolygon,
+} from "geojson";
 
 import type { Infobox, Block, Tag } from "../compat/types";
 
@@ -52,6 +59,14 @@ export type Data = {
   type: DataType;
   url?: string;
   value?: any;
+  layers?: string | string[];
+  csv?: {
+    idColumn?: string | number;
+    latColumn?: string | number;
+    lngColumn?: string | number;
+    heightColumn?: string | number;
+    noHeader?: boolean;
+  };
 };
 
 export type DataRange = {
@@ -60,7 +75,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles";
+export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms" | "mvt";
 
 // Feature
 
@@ -71,7 +86,7 @@ export type Feature = {
   range?: DataRange;
 };
 
-export type Geometry = Point | LineString | Polygon;
+export type Geometry = Point | LineString | Polygon | MultiPoint | MultiLineString | MultiPolygon;
 
 export type ComputedLayerStatus = "fetching" | "ready";
 

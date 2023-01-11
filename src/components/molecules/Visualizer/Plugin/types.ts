@@ -20,12 +20,14 @@ export type Reearth = {
   readonly modal: Modal;
   readonly popup: Popup;
   readonly plugin: Plugin;
+  readonly plugins: Plugins;
   readonly layers: Layers;
   readonly layer?: Layer;
   readonly widget?: Widget;
   readonly block?: Block;
   readonly scene: Scene;
   readonly viewport: Viewport;
+  readonly clientStorage: ClientStorage;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -56,6 +58,11 @@ export type LayerEditEvent = {
   rotate?: { heading: number; pitch: number; roll: number };
 };
 
+export type PluginMessage = {
+  data: any;
+  sender: string;
+};
+
 export type ReearthEventType = {
   update: [];
   close: [];
@@ -78,9 +85,10 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
-  resize: [props: Viewport];
+  resize: [props: ViewportSize];
   modalclose: [];
   popupclose: [];
+  pluginmessage: [props: PluginMessage];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -89,6 +97,19 @@ export type Plugin = {
   readonly extensionId: string;
   readonly extensionType: string;
   readonly property?: any;
+};
+
+export type PluginExtensionInstance = {
+  readonly id: string;
+  readonly pluginId: string;
+  readonly name: string;
+  readonly extensionId: string;
+  readonly extensionType: "widget" | "block";
+};
+
+export type Plugins = {
+  readonly instances: PluginExtensionInstance[];
+  readonly postMessage?: (id: string, message: any) => void;
 };
 
 export type LatLngHeight = {
@@ -355,10 +376,14 @@ export type Visualizer = {
   readonly overrideProperty: (property: any) => void;
 };
 
-export type Viewport = {
+export type ViewportSize = {
   readonly width: number;
   readonly height: number;
   readonly isMobile: boolean;
+};
+
+export type Viewport = ViewportSize & {
+  readonly query: Record<string, string>;
 };
 
 type Rect = {
@@ -490,4 +515,11 @@ export type Clock = {
   readonly tick: () => Date;
   readonly play: () => void;
   readonly pause: () => void;
+};
+
+export type ClientStorage = {
+  readonly getAsync: (key: string) => Promise<any>;
+  readonly setAsync: (key: string, value: any) => Promise<void>;
+  readonly deleteAsync: (key: string) => Promise<void>;
+  readonly keysAsync: () => Promise<string[]>;
 };

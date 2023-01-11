@@ -87,8 +87,28 @@ export const context: ProviderProps = {
     width: 1280,
     height: 720,
     isMobile: false,
+    query: {},
   },
   layers: new LayerStore({ id: "", children: layers }),
+  pluginInstances: {
+    meta: {
+      current: [],
+    },
+    postMessage: () => {},
+    addPluginMessageSender: () => {},
+    removePluginMessageSender: () => {},
+  },
+  clientStorage: {
+    getAsync: act("clientStorage.getAsync"),
+    setAsync: act("clientStorage.setAsync"),
+    deleteAsync: act("clientStorage.deleteAsync"),
+    keysAsync: act("clientStorage.keysAsync"),
+    dropStore: () => {
+      return new Promise<void>(resolve => {
+        resolve();
+      });
+    },
+  },
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),
   zoomIn: act("zoomIn"),

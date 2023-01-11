@@ -207,6 +207,10 @@ export function useAPI({
   const event =
     useRef<[Events<ReearthEventType>, EventEmitter<ReearthEventType>, (() => void) | undefined]>();
 
+  const pluginMessageSender = useCallback((msg: any) => {
+    event.current?.[1]("pluginmessage", msg);
+  }, []);
+
   const onPreInit = useCallback(() => {
     const e = events<ReearthEventType>();
     let cancel: (() => void) | undefined;
@@ -241,7 +245,20 @@ export function useAPI({
     }
 
     event.current = [e[0], e[1], cancel];
-  }, [ctx?.reearth.on, ctx?.reearth.off, ctx?.reearth.once]);
+
+    const instanceId = widget?.id ?? block?.id;
+    if (instanceId) {
+      ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+    }
+  }, [
+    ctx?.reearth.on,
+    ctx?.reearth.off,
+    ctx?.reearth.once,
+    ctx?.pluginInstances,
+    widget?.id,
+    block?.id,
+    pluginMessageSender,
+  ]);
 
   const onDispose = useCallback(() => {
     event.current?.[1]("close");
@@ -253,6 +270,10 @@ export function useAPI({
     if (popupVisible) {
       onPluginPopupShow?.();
     }
+    const instanceId = widget?.id ?? block?.id;
+    if (instanceId) {
+      ctx?.pluginInstances.removePluginMessageSender(instanceId);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onPluginModalShow, onPluginPopupShow]);
 
@@ -263,7 +284,7 @@ export function useAPI({
 
   const staticExposed = useMemo((): ((api: IFrameAPI) => GlobalThis) | undefined => {
     if (!ctx?.reearth) return;
-    return ({ main, modal, popup, messages }: IFrameAPI) => {
+    return ({ main, modal, popup, messages, startEventLoop }: IFrameAPI) => {
       return exposed({
         commonReearth: ctx.reearth,
         events: {
@@ -366,14 +387,19 @@ export function useAPI({
           main.resize(width, height);
           onResize?.(width, height, extended);
         },
+        startEventLoop,
         overrideSceneProperty: ctx.overrideSceneProperty,
         moveWidget: ctx.moveWidget,
+        pluginPostMessage: ctx.pluginInstances.postMessage,
+        clientStorage: ctx.clientStorage,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.overrideSceneProperty,
     ctx?.moveWidget,
+    ctx?.pluginInstances,
+    ctx?.clientStorage,
     extensionId,
     extensionType,
     pluginId,

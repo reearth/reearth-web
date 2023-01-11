@@ -61,7 +61,9 @@ export type EXPERIMENTAL_clipping = {
     };
     distance: number;
   }[];
-  location: LatLngHeight;
+  // for compat
+  location?: LatLngHeight;
+  coordinates?: number[];
   /**
    * x-axis
    */

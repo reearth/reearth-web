@@ -69,30 +69,46 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     const currentLayer = get(layer);
     if (!currentLayer) return;
 
-    if (
-      currentLayer.type !== "simple" ||
-      !currentLayer.data ||
-      get(delegatedDataTypes).includes(currentLayer.data.type)
-    ) {
+    if (currentLayer.type !== "simple" || !currentLayer.data) {
       set(layerStatus, "ready");
       return;
     }
 
-    set(layerStatus, "fetching");
-
     const layerId = currentLayer.id;
+
+    // With delegated data, we can skip fetching process.
+    if (get(delegatedDataTypes).includes(currentLayer.data.type)) {
+      set(layerStatus, "fetching");
+
+      const getAllFeatures = async (data: Data) => {
+        const getterAll = get(dataAtoms.getAll);
+        const allFeatures = getterAll(layerId, data);
+        return allFeatures?.flat();
+      };
+
+      const getFeatures = async (data: Data, range?: DataRange) => {
+        const getter = get(dataAtoms.get);
+        const c = getter(layerId, data, range);
+        return c;
+      };
+
+      const result = await evalLayer(currentLayer, { getFeatures, getAllFeatures });
+      set(layerStatus, "ready");
+      set(computedResult, result);
+      return;
+    }
+
+    set(layerStatus, "fetching");
 
     // Used for a simple layer.
     // It retrieves all features for the layer stored in the cache,
     // but attempts to retrieve data from the network if the main feature is not yet in the cache.
     const getAllFeatures = async (data: Data) => {
       const getterAll = get(dataAtoms.getAll);
+      const allFeatures = getterAll(layerId, data);
 
       // Ignore cache if data is embedded
-      if (!data.value) {
-        const allFeatures = getterAll(layerId, data);
-        if (allFeatures) return allFeatures.flat();
-      }
+      if (allFeatures) return allFeatures.flat();
 
       await set(dataAtoms.fetch, { data, layerId });
       return getterAll(layerId, data)?.flat() ?? [];
@@ -103,12 +119,10 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     // If it is not stored in the cache, it attempts to retrieve the data from the network.
     const getFeatures = async (data: Data, range?: DataRange) => {
       const getter = get(dataAtoms.get);
+      const c = getter(layerId, data, range);
 
       // Ignore cache if data is embedded
-      if (!data.value) {
-        const c = getter(layerId, data, range);
-        if (c) return c;
-      }
+      if (c) return c;
 
       await set(dataAtoms.fetch, { data, range, layerId });
       return getter(layerId, data, range);

@@ -14,6 +14,8 @@ import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
+import type { ClientStorage } from "../useClientStorage";
+import { PluginInstances } from "../usePluginInstances";
 import { useGet } from "../utils";
 
 import type { CommonReearth } from "./api";
@@ -30,6 +32,7 @@ import type {
   MouseEvent,
   Clock,
   Viewport,
+  ViewportSize,
   LatLngHeight,
   WidgetLocationOptions,
 } from "./types";
@@ -48,12 +51,14 @@ export type Props = {
   tags?: Tag[];
   camera?: CameraPosition;
   clock: Clock | undefined;
+  pluginInstances: PluginInstances;
   layers: LayerStore;
   selectedLayer?: Layer;
   layerSelectionReason?: string;
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
-  viewport?: VisualizerViewport;
+  viewport: VisualizerViewport;
+  clientStorage: ClientStorage;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -93,6 +98,8 @@ type SelectedReearthEventType = Pick<
 export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
+  pluginInstances: PluginInstances;
+  clientStorage: ClientStorage;
   overrideSceneProperty: (id: string, property: any) => void;
   emit: EventEmitter<SelectedReearthEventType>;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
@@ -115,12 +122,14 @@ export function Provider({
   tags,
   camera,
   clock,
+  pluginInstances,
   layers,
   selectedLayer,
   layerSelectionReason,
   layerOverridenInfobox,
   layerOverriddenProperties,
   viewport,
+  clientStorage,
   showLayer,
   hideLayer,
   addLayer,
@@ -164,6 +173,7 @@ export function Provider({
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useGet(clock);
+  const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
   const getLayerSelectionReason = useGet(layerSelectionReason);
@@ -191,6 +201,7 @@ export function Provider({
         tags: getTags,
         camera: getCamera,
         clock: getClock,
+        pluginInstances: getPluginInstances,
         viewport: getViewport,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
@@ -227,18 +238,22 @@ export function Provider({
       overrideSceneProperty,
       emit,
       moveWidget,
+      pluginInstances,
+      clientStorage,
     }),
     [
       api,
       builtinPrimitives,
       engineName,
       ev,
+      clientStorage,
       getLayers,
       getSceneProperty,
       getInEditor,
       getTags,
       getCamera,
       getClock,
+      getPluginInstances,
       getViewport,
       getSelectedLayer,
       getLayerSelectionReason,
@@ -274,6 +289,7 @@ export function Provider({
       overrideSceneProperty,
       emit,
       moveWidget,
+      pluginInstances,
     ],
   );
 
@@ -290,9 +306,15 @@ export function Provider({
       tick: useMemo<[date: Date] | undefined>(() => {
         return clock ? [clock.currentTime] : undefined;
       }, [clock]),
-      resize: useMemo<[viewport: Viewport] | undefined>(
-        () => (viewport ? [viewport] : undefined),
-        [viewport],
+      resize: useMemo<[viewport: ViewportSize] | undefined>(
+        () => [
+          {
+            width: viewport.width,
+            height: viewport.height,
+            isMobile: viewport.isMobile,
+          } as ViewportSize,
+        ],
+        [viewport.width, viewport.height, viewport.isMobile],
       ),
     },
     emit,

@@ -1,6 +1,6 @@
 import { objKeys } from "../utils";
 
-import type { Camera, LatLng, Typography } from "./value";
+import type { Camera, EXPERIMENTAL_clipping, LatLng, Typography } from "./value";
 
 export type LayerAppearance<T> = {
   [K in keyof T]?: T[K] | Expression;
@@ -21,8 +21,10 @@ export type AppearanceTypes = {
   model: ModelAppearance;
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
+  box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
-  legacy_resource: LegacyResourceAppearance;
+  resource: ResourceAppearance;
+  raster: RasterAppearance;
 };
 
 export type MarkerAppearance = {
@@ -74,6 +76,7 @@ export type PolygonAppearance = {
   strokeWidth?: number;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  lineJoin?: CanvasLineJoin;
 };
 
 export type EllipsoidAppearance = {
@@ -84,7 +87,8 @@ export type EllipsoidAppearance = {
 };
 
 export type ModelAppearance = {
-  model?: string;
+  model?: string; // For compat
+  url?: string;
   heightReference?: "none" | "clamp" | "relative";
   heading?: number;
   pitch?: number;
@@ -106,8 +110,13 @@ export type ModelAppearance = {
 export type Cesium3DTilesAppearance = {
   sourceType?: "url" | "osm";
   tileset?: string;
+  show?: boolean;
+  color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  edgeWidth?: number;
+  edgeColor?: string;
+  experimental_clipping?: EXPERIMENTAL_clipping;
 };
 
 export type LegacyPhotooverlayAppearance = {
@@ -129,10 +138,45 @@ export type LegacyPhotooverlayAppearance = {
   photoOverlayDescription?: string;
 };
 
-export type LegacyResourceAppearance = {
+export type ResourceAppearance = {
   url?: string;
   type?: "geojson" | "kml" | "czml" | "auto";
   clampToGround?: boolean;
+};
+
+export type RasterAppearance = {
+  minimumLevel?: number;
+  maximumLevel?: number;
+  credit?: string;
+};
+
+export type BoxAppearance = {
+  height?: number;
+  width?: number;
+  length?: number;
+  heading?: number;
+  pitch?: number;
+  roll?: number;
+  fillColor?: string;
+  outlineColor?: string;
+  activeOutlineColor?: string;
+  outlineWidth?: number;
+  draggableOutlineColor?: string;
+  activeDraggableOutlineColor?: string;
+  draggableOutlineWidth?: number;
+  scalePoint?: boolean;
+  axisLine?: boolean;
+  pointFillColor?: string;
+  pointOutlineColor?: string;
+  activePointOutlineColor?: string;
+  pointOutlineWidth?: number;
+  axisLineColor?: string;
+  axisLineWidth?: number;
+  allowEnterGround?: boolean;
+  cursor?: string;
+  activeBox?: boolean;
+  activeScalePointIndex?: number; // 0 ~ 11
+  activeEdgeIndex?: number; // 0 ~ 11
 };
 
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
@@ -142,8 +186,10 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   ellipsoid: 1,
   model: 1,
   "3dtiles": 1,
+  box: 1,
   photooverlay: 1,
-  legacy_resource: 1,
+  resource: 1,
+  raster: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);

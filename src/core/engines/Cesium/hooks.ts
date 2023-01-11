@@ -17,6 +17,7 @@ import type {
   MouseEvent,
   MouseEvents,
   Clock,
+  LayerEditEvent,
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
@@ -45,6 +46,7 @@ export default ({
   onCameraChange,
   onLayerDrag,
   onLayerDrop,
+  onLayerEdit,
   onTick,
 }: {
   ref: React.ForwardedRef<EngineRef>;
@@ -59,6 +61,7 @@ export default ({
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  onLayerEdit?: (e: LayerEditEvent) => void;
   onTick?: (clock: Clock) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
@@ -296,6 +299,12 @@ export default ({
     viewer.scene.requestRender();
   });
 
+  const handleUpdate = useCallback(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.requestRender();
+  }, []);
+
   // enable Drag and Drop Layers
   const handleLayerDrag = useCallback(
     (e: Entity, position: Cartesian3 | undefined, _context: Context): boolean | void => {
@@ -347,8 +356,9 @@ export default ({
       selectionReason,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
+      onLayerEdit,
     }),
-    [selectionReason, engineAPI],
+    [selectionReason, engineAPI, onLayerEdit],
   );
 
   const handleTick = useCallback(() => {
@@ -369,6 +379,7 @@ export default ({
     context,
     handleMount,
     handleUnmount,
+    handleUpdate,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
