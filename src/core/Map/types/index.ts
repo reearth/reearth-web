@@ -6,7 +6,7 @@ import type {
   CSSProperties,
 } from "react";
 
-import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
+import type { LatLngHeight, Camera, Rect, LatLng, DataType, Layer } from "../../mantle";
 import type { FeatureComponentType, ClusterComponentType } from "../Layers";
 
 export type {
@@ -18,6 +18,7 @@ export type {
   Ref as LayersRef,
 } from "../Layers";
 export type {
+  Layer,
   ComputedFeature,
   ComputedLayer,
   Geometry,
@@ -85,7 +86,11 @@ export type EngineProps = {
   isLayerDragging?: boolean;
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
+  onLayerSelect?: (
+    id: string | undefined,
+    layer: Layer | undefined,
+    options?: SelectLayerOptions,
+  ) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;

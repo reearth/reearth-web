@@ -36,7 +36,7 @@ export type Props = {
   selectedLayerId?: string;
   // widgets
   widgetAlignSystem?: WidgetAlignSystemType;
-  widgetAlighSystemEditing?: boolean;
+  widgetAlignSystemEditing?: boolean;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   // infobox
   infoboxKey?: string;
@@ -82,7 +82,7 @@ export default function Crust({
   clock,
   selectedLayerId,
   widgetAlignSystem,
-  widgetAlighSystemEditing,
+  widgetAlignSystemEditing,
   widgetLayoutConstraint,
   blocks,
   infoboxKey,
@@ -112,7 +112,7 @@ export default function Crust({
         isBuilt={isBuilt}
         isEditable={isEditable}
         alignSystem={widgetAlignSystem}
-        editing={widgetAlighSystemEditing}
+        editing={widgetAlignSystemEditing}
         layoutConstraint={widgetLayoutConstraint}
         theme={theme}
         context={widgetContext}

@@ -80,7 +80,11 @@ export default function useHooks({
   hiddenLayers?: string[];
   selectedLayerId?: string;
   selectedReason?: SelectedLayerReason;
-  onLayerSelect?: (id: string | undefined, reason: SelectedLayerReason | undefined) => void;
+  onLayerSelect?: (
+    id: string | undefined,
+    layer: Layer | undefined,
+    reason: SelectedLayerReason | undefined,
+  ) => void;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
@@ -121,6 +125,8 @@ export default function useHooks({
       return res;
     });
   }, [tempLayers, layers, overriddenLayers]);
+
+  const getLayer = useCallback((id: string) => layerMap.get(id), [layerMap]);
 
   const getComputedLayer = useAtomValue(
     useMemo(
@@ -412,10 +418,10 @@ export default function useHooks({
   );
 
   const { select, selectedLayer } = useSelection({
-    layers: flattenedLayers,
     selectedLayerId,
     selectedReason,
-    findById,
+    getLayer,
+    getLazyLayer: findById,
     onLayerSelect,
   });
 
@@ -559,43 +565,52 @@ function compat(layer: unknown): Layer | undefined {
 }
 
 function useSelection({
-  layers,
   selectedLayerId,
   selectedReason,
-  findById,
+  getLayer,
+  getLazyLayer,
   onLayerSelect,
 }: {
-  layers: any;
   selectedLayerId?: string;
   selectedReason?: SelectedLayerReason;
-  findById: (id: string) => LazyLayer | undefined;
-  onLayerSelect?: (id: string | undefined, reason: SelectedLayerReason | undefined) => void;
+  getLayer: (id: string) => Layer | undefined;
+  getLazyLayer: (id: string) => LazyLayer | undefined;
+  onLayerSelect?: (
+    id: string | undefined,
+    layer: Layer | undefined,
+    reason: SelectedLayerReason | undefined,
+  ) => void;
 }) {
   const [selectedLayer, setSelectedLayer] = useState<
     [string | undefined, SelectedLayerReason | undefined]
   >([selectedLayerId, selectedReason]);
 
   useEffect(() => {
-    setSelectedLayer(s =>
-      selectedLayerId && findById(selectedLayerId)
+    setSelectedLayer(s => {
+      return selectedLayerId && getLayer(selectedLayerId)
         ? s[0] !== selectedLayerId || !isEqual(s[1], selectedReason)
           ? [selectedLayerId, selectedReason]
           : s
         : !s[0] && !s[1]
         ? s
-        : [undefined, undefined],
-    );
-  }, [findById, selectedLayerId, selectedReason]);
+        : [undefined, undefined];
+    });
+  }, [getLayer, selectedLayerId, selectedReason]);
+
+  const actualSelectedLayer = useMemo(
+    () => (selectedLayerId ? getLayer(selectedLayerId) : undefined),
+    [getLayer, selectedLayerId],
+  );
 
   useEffect(() => {
-    onLayerSelect?.(selectedLayer[0], selectedLayer[1]);
-  }, [onLayerSelect, selectedLayer]);
+    onLayerSelect?.(selectedLayer[0], actualSelectedLayer, selectedLayer[1]);
+  }, [onLayerSelect, selectedLayer, actualSelectedLayer]);
 
   useEffect(() => {
     setSelectedLayer(s =>
-      s[0] && findById(s[0]) ? s : !s[0] && !s[1] ? s : [undefined, undefined],
+      s[0] && getLayer(s[0]) ? s : !s[0] && !s[1] ? s : [undefined, undefined],
     );
-  }, [findById, layers]);
+  }, [getLayer]);
 
   const select = useCallback((id: unknown, options?: SelectedLayerReason) => {
     if (typeof id === "string") setSelectedLayer([id || undefined, options]);
@@ -603,8 +618,8 @@ function useSelection({
   }, []);
 
   const selectedLayerForRef = useCallback(
-    () => (selectedLayer[0] ? findById(selectedLayer[0]) : undefined),
-    [findById, selectedLayer],
+    () => (selectedLayer[0] ? getLazyLayer(selectedLayer[0]) : undefined),
+    [getLazyLayer, selectedLayer],
   );
 
   return {
