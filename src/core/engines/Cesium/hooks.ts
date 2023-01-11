@@ -11,7 +11,7 @@ import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
 import type {
   Camera,
   LatLng,
-  SelectedLayerReason,
+  LayerSelectionReason,
   EngineRef,
   SceneProperty,
   MouseEvent,
@@ -52,7 +52,7 @@ export default ({
   selectionReason?: string;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id?: string, options?: SelectedLayerReason) => void;
+  onLayerSelect?: (id?: string, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;

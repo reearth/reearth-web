@@ -59,12 +59,18 @@ export type Ref = {
   findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
   hide: (...layers: string[]) => void;
   show: (...layers: string[]) => void;
-  select: (id: string | undefined, options?: SelectedLayerReason) => void;
+  select: (id: string | undefined, reason?: LayerSelectionReason) => void;
   selectedLayer: () => LazyLayer | undefined;
 };
 
-export type SelectedLayerReason = {
+export type OverriddenInfobox = {
+  title?: string;
+  content: { key: string; value: string }[];
+};
+
+export type LayerSelectionReason = {
   reason?: string;
+  overriddenInfobox?: OverriddenInfobox;
 };
 
 export default function useHooks({
@@ -79,11 +85,11 @@ export default function useHooks({
   ref?: ForwardedRef<Ref>;
   hiddenLayers?: string[];
   selectedLayerId?: string;
-  selectedReason?: SelectedLayerReason;
+  selectedReason?: LayerSelectionReason;
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
-    reason: SelectedLayerReason | undefined,
+    reason: LayerSelectionReason | undefined,
   ) => void;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
@@ -572,17 +578,17 @@ function useSelection({
   onLayerSelect,
 }: {
   selectedLayerId?: string;
-  selectedReason?: SelectedLayerReason;
+  selectedReason?: LayerSelectionReason;
   getLayer: (id: string) => Layer | undefined;
   getLazyLayer: (id: string) => LazyLayer | undefined;
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
-    reason: SelectedLayerReason | undefined,
+    reason: LayerSelectionReason | undefined,
   ) => void;
 }) {
   const [selectedLayer, setSelectedLayer] = useState<
-    [string | undefined, SelectedLayerReason | undefined]
+    [string | undefined, LayerSelectionReason | undefined]
   >([selectedLayerId, selectedReason]);
 
   useEffect(() => {
@@ -612,7 +618,7 @@ function useSelection({
     );
   }, [getLayer]);
 
-  const select = useCallback((id: unknown, options?: SelectedLayerReason) => {
+  const select = useCallback((id: unknown, options?: LayerSelectionReason) => {
     if (typeof id === "string") setSelectedLayer([id || undefined, options]);
     else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
   }, []);

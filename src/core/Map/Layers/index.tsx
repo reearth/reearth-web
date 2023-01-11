@@ -2,7 +2,7 @@ import { forwardRef, type ForwardRefRenderFunction } from "react";
 
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
 
-import useHooks, { SelectedLayerReason, type Layer, type Ref } from "./hooks";
+import useHooks, { LayerSelectionReason, type Layer, type Ref } from "./hooks";
 
 export type {
   CommonProps,
@@ -11,7 +11,7 @@ export type {
   Layer,
   LayerSimple,
 } from "../Layer";
-export type { LazyLayer, Ref, NaiveLayer, SelectedLayerReason } from "./hooks";
+export type { LazyLayer, Ref, NaiveLayer, LayerSelectionReason, OverriddenInfobox } from "./hooks";
 export type {
   ClusterComponentType,
   ClusterComponentProps,
@@ -21,11 +21,11 @@ export type {
 export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   hiddenLayers?: string[];
   selectedLayerId?: string;
-  selectedReason?: SelectedLayerReason;
+  selectedReason?: LayerSelectionReason;
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
-    reason: SelectedLayerReason | undefined,
+    reason: LayerSelectionReason | undefined,
   ) => void;
 };
 
