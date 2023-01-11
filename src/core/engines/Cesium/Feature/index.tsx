@@ -1,4 +1,6 @@
-import type { AppearanceTypes, FeatureComponentProps } from "../..";
+import { DataType } from "@reearth/core/mantle";
+
+import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
 import Box, { config as boxConfig } from "./Box";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
@@ -7,6 +9,7 @@ import Model, { config as modelConfig } from "./Model";
 import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
 import Polygon, { config as polygonConfig } from "./Polygon";
 import Polyline, { config as polylineConfig } from "./Polyline";
+import Raster, { config as rasterConfig } from "./Raster";
 import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
 import type { FeatureComponent, FeatureComponentConfig } from "./utils";
@@ -24,7 +27,28 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   "3dtiles": [Tileset, tilesetConfig],
   box: [Box, boxConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
-  legacy_resource: [Resource, resourceConfig],
+  resource: [Resource, resourceConfig],
+  raster: [Raster, rasterConfig],
+};
+
+const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
+  geojson: "auto",
+  czml: "auto",
+  csv: "auto",
+  wms: ["raster"],
+  mvt: ["raster"],
+  ["3dtiles"]: ["3dtiles"],
+};
+
+const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
+const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
+  if (!PICKABLE_APPEARANCE.includes(k)) {
+    return;
+  }
+  if (layer.layer.type !== "simple") {
+    return;
+  }
+  return layer.layer[k];
 };
 
 export default function Feature({
@@ -37,12 +61,18 @@ export default function Feature({
       {[undefined, ...layer.features].flatMap(f =>
         (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => {
           const [C, config] = components[k] ?? [];
+          if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
+            return null;
+          }
+
+          const displayType =
+            layer.layer.type === "simple" &&
+            layer.layer.data?.type &&
+            displayConfig[layer.layer.data.type];
+
           if (
-            !C ||
-            (f && !f[k]) ||
-            !layer[k] ||
-            (config.noLayer && !f) ||
-            (config.noFeature && f)
+            (Array.isArray(displayType) && !displayType.includes(k)) ||
+            (!Array.isArray(displayType) && displayType !== "auto")
           ) {
             return null;
           }
@@ -52,7 +82,7 @@ export default function Feature({
               {...props}
               key={`${f?.id || ""}_${k}`}
               id={f ? f.id : layer.id}
-              property={f ? f[k] : layer[k]}
+              property={f ? f[k] : layer[k] || pickProperty(k, layer)}
               geometry={f?.geometry}
               feature={f}
               layer={layer}
