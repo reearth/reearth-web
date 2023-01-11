@@ -4,7 +4,7 @@ export type {
   EngineComponent,
   EngineRef,
   EngineProps,
-  SelectLayerOptions,
+  SelectedLayerReason,
   SceneProperty,
   MouseEvent,
   MouseEvents,

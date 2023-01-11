@@ -43,8 +43,8 @@ export type Context = {
   onTick?: () => void;
   onZoomIn?: (amount: number) => void;
   onZoomOut?: (amount: number) => void;
-  onCameraOrbit?: (orbit: number) => void;
-  onCameraRotateRight?: (radian: number) => void;
+  onCameraOrbit?: (radians: number) => void;
+  onCameraRotateRight?: (radians: number) => void;
   findPhotooverlayLayer?: (
     id: string,
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
