@@ -16,12 +16,13 @@ export type {
   ClusterComponentType,
   ClusterComponentProps,
   ClusterProperty,
+  Cluster,
 } from "../ClusteredLayers";
 
 export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   hiddenLayers?: string[];
   selectedLayerId?: string;
-  selectedReason?: LayerSelectionReason;
+  selectionReason?: LayerSelectionReason;
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
@@ -30,7 +31,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
-  { layers, hiddenLayers, selectedLayerId, selectedReason, onLayerSelect, ...props },
+  { layers, hiddenLayers, selectedLayerId, selectionReason, onLayerSelect, ...props },
   ref,
 ) => {
   const { atomMap, flattenedLayers, isHidden } = useHooks({
@@ -38,7 +39,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     ref,
     hiddenLayers,
     selectedLayerId,
-    selectedReason,
+    selectionReason,
     onLayerSelect,
   });
 

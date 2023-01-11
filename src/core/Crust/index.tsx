@@ -39,7 +39,6 @@ export type Props = {
   widgetAlignSystemEditing?: boolean;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   // infobox
-  infoboxKey?: string;
   infoboxProperty?: InfoboxProperty;
   blocks?: Block[];
   infoboxTitle?: string;
@@ -85,10 +84,8 @@ export default function Crust({
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
   blocks,
-  infoboxKey,
   infoboxProperty,
   infoboxTitle,
-  showInfoboxTitle,
   infoboxVisible,
   selectedBlockId,
   onWidgetLayoutUpdate,
@@ -124,9 +121,8 @@ export default function Crust({
         isBuilt={isBuilt}
         isEditable={isEditable}
         blocks={blocks}
-        infoboxKey={infoboxKey}
+        infoboxKey={selectedLayerId}
         property={infoboxProperty}
-        showTitle={showInfoboxTitle}
         title={infoboxTitle}
         visible={infoboxVisible}
         selectedBlockId={selectedBlockId}

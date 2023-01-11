@@ -78,14 +78,14 @@ export default function useHooks({
   ref,
   hiddenLayers,
   selectedLayerId,
-  selectedReason,
+  selectionReason,
   onLayerSelect,
 }: {
   layers?: Layer[];
   ref?: ForwardedRef<Ref>;
   hiddenLayers?: string[];
   selectedLayerId?: string;
-  selectedReason?: LayerSelectionReason;
+  selectionReason?: LayerSelectionReason;
   onLayerSelect?: (
     id: string | undefined,
     layer: Layer | undefined,
@@ -425,7 +425,7 @@ export default function useHooks({
 
   const { select, selectedLayer } = useSelection({
     selectedLayerId,
-    selectedReason,
+    selectedReason: selectionReason,
     getLayer,
     getLazyLayer: findById,
     onLayerSelect,

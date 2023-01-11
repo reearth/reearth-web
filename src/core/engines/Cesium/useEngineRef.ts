@@ -336,6 +336,16 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         viewer.clock.tick();
       },
+      changeStart: (start: Date) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.startTime = JulianDate.fromDate(start);
+      },
+      changeStop: (stop: Date) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.stopTime = JulianDate.fromDate(stop);
+      },
     };
   }, [cesium]);
 

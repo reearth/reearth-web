@@ -16,6 +16,7 @@ import type {
   SceneProperty,
   MouseEvent,
   MouseEvents,
+  Clock,
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
@@ -35,6 +36,7 @@ export default ({
   ref,
   property,
   camera,
+  clock,
   selectedLayerId,
   selectionReason,
   isLayerDraggable,
@@ -48,6 +50,7 @@ export default ({
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
   camera?: Camera;
+  clock?: Clock;
   selectedLayerId?: string;
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
@@ -56,7 +59,7 @@ export default ({
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
-  onTick?: (time: Date) => void;
+  onTick?: (clock: Clock) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -99,7 +102,7 @@ export default ({
       }
       const clock = getClock(cesium?.current?.cesiumElement?.clock);
       if (clock) {
-        onTick?.(clock.current);
+        onTick?.(clock);
       }
     },
     [
@@ -152,6 +155,27 @@ export default ({
       emittedCamera.current = [];
     }
   }, [camera, engineAPI]);
+
+  useEffect(() => {
+    if (!clock) return;
+    if (clock.current) {
+      engineAPI.changeTime(clock.current);
+    }
+    if (clock.playing === true) {
+      engineAPI.play();
+    } else if (clock.playing === false) {
+      engineAPI.pause();
+    }
+    if (clock.speed) {
+      engineAPI.changeSpeed(clock.speed);
+    }
+    if (clock.start) {
+      engineAPI.changeStart(clock.start);
+    }
+    if (clock.stop) {
+      engineAPI.changeStop(clock.stop);
+    }
+  }, [clock, engineAPI]);
 
   // manage layer selection
   useEffect(() => {
@@ -327,6 +351,13 @@ export default ({
     [selectionReason, engineAPI],
   );
 
+  const handleTick = useCallback(() => {
+    const clock = getClock(cesium?.current?.cesiumElement?.clock);
+    if (clock) {
+      onTick?.(clock);
+    }
+  }, [onTick]);
+
   return {
     backgroundColor,
     cesium,
@@ -335,12 +366,13 @@ export default ({
     cameraViewBoundariesMaterial,
     cesiumIonAccessToken,
     mouseEventHandles,
+    context,
     handleMount,
     handleUnmount,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    context,
+    handleTick,
   };
 };
 

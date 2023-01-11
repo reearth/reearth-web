@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, type Ref, useState, useCallback } from "react";
+import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
 
 import { type MapRef, mapRef } from "./ref";
 import type { EngineRef, LayersRef, Layer, LayerSelectionReason } from "./types";
@@ -30,6 +30,15 @@ export default function ({
     [],
   );
 
+  // Order in which selectedLayerId prop propagates from the outside: Map -> Layers -> Engine
+  // 1. selectedLayerId prop on Map component
+  // 2. selectedLayerId prop on Layer component
+  // 3. onLayerSelect event on Layer component
+  // 4. handleLayerSelect fucntion
+  // 5. selectedLayer state
+  // 6. selectedLayerId prop on Engine component, onLayerSelect event on Layer component
+  // 7. onLayerSelect event on Map component
+
   const [selectedLayer, selectLayer] = useState<
     [string | undefined, Layer | undefined, LayerSelectionReason | undefined]
   >([undefined, undefined, undefined]);
@@ -37,15 +46,26 @@ export default function ({
   const handleLayerSelect = useCallback(
     (id: string | undefined, layer: Layer | undefined, reason?: LayerSelectionReason) => {
       selectLayer([id, layer, reason]);
-      onLayerSelect?.(id, layer, reason);
     },
-    [onLayerSelect],
+    [],
   );
+
+  const handleEngineLayerSelect = useCallback(
+    (id: string | undefined, reason?: LayerSelectionReason) => {
+      layersRef.current?.select(id, reason);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    onLayerSelect?.(selectedLayer[0], selectedLayer[1], selectedLayer[2]);
+  }, [onLayerSelect, selectedLayer]);
 
   return {
     engineRef,
     layersRef,
     selectedLayer,
     handleLayerSelect,
+    handleEngineLayerSelect,
   };
 }

@@ -20,7 +20,6 @@ export type Props = {
   property?: InfoboxProperty;
   blocks?: Block[];
   title?: string;
-  showTitle?: boolean;
   isEditable?: boolean;
   isBuilt?: boolean;
   selectedBlockId?: string;

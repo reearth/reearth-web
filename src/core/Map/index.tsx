@@ -1,8 +1,8 @@
 import { forwardRef, type Ref } from "react";
 
 import useHooks, { MapRef } from "./hooks";
-import Layers, { LayerSelectionReason, type Props as LayersProps } from "./Layers";
-import { Engine, EngineProps } from "./types";
+import Layers, { type Props as LayersProps } from "./Layers";
+import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
 
@@ -14,6 +14,7 @@ export type {
   ClusterProperty,
   Layer,
   LayerSelectionReason,
+  Cluster,
 } from "./Layers";
 
 export type { MapRef as Ref } from "./hooks";
@@ -21,12 +22,8 @@ export type { MapRef as Ref } from "./hooks";
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
-  layerSelectionReason?: LayerSelectionReason;
-} & Omit<
-  LayersProps,
-  "Feature" | "clusterComponent" | "onLayerSelect" | "selectedReason" | "delegatedDataTypes"
-> &
-  Omit<EngineProps, "selectionReason">;
+} & Omit<LayersProps, "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes"> &
+  Omit<EngineProps, "selectionReason" | "onLayerSelect">;
 
 function Map(
   {
@@ -48,11 +45,12 @@ function Map(
 ): JSX.Element | null {
   const currentEngine = engine ? engines?.[engine] : undefined;
   const Engine = currentEngine?.component;
-  const { engineRef, layersRef, selectedLayer, handleLayerSelect } = useHooks({
-    ref,
-    selectedLayerId,
-    onLayerSelect,
-  });
+  const { engineRef, layersRef, selectedLayer, handleLayerSelect, handleEngineLayerSelect } =
+    useHooks({
+      ref,
+      selectedLayerId,
+      onLayerSelect,
+    });
 
   return Engine ? (
     <Engine
@@ -60,9 +58,9 @@ function Map(
       isBuilt={isBuilt}
       isEditable={isEditable}
       property={sceneProperty}
-      selectedLayerId={selectedLayerId}
+      selectedLayerId={selectedLayer[0]}
       layerSelectionReason={selectedLayer[2]}
-      onLayerSelect={handleLayerSelect}
+      onLayerSelect={handleEngineLayerSelect}
       {...props}>
       <Layers
         ref={layersRef}
@@ -73,8 +71,8 @@ function Map(
         layers={layers}
         overrides={overrides}
         sceneProperty={sceneProperty}
-        selectedLayerId={selectedLayer[0]}
-        selectedReason={layerSelectionReason}
+        selectedLayerId={selectedLayerId}
+        selectionReason={layerSelectionReason}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}

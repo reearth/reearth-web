@@ -66,6 +66,8 @@ export type EngineRef = {
   pause: () => void;
   play: () => void;
   changeSpeed: (speed: number) => void;
+  changeStart: (start: Date) => void;
+  changeStop: (stop: Date) => void;
   changeTime: (time: Date) => void;
   tick: () => void;
 };
@@ -77,6 +79,7 @@ export type EngineProps = {
   isBuilt?: boolean;
   property?: SceneProperty;
   camera?: Camera;
+  clock?: Clock;
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
@@ -88,7 +91,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   onLayerSelect?: (id: string | undefined, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
+  onTick?: (clock: Clock) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
 };
