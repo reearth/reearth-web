@@ -23,8 +23,8 @@ export type { Widget, InternalWidget } from "./types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
-  editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  editing?: boolean;
   isMobile?: boolean;
   theme?: Theme;
   isEditable?: boolean;

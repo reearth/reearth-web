@@ -7,6 +7,7 @@ export type {
   Clock,
   ValueTypes,
   ValueType,
+  Ref as MapRef,
   SceneProperty,
 } from "../Map";
 export type { Theme } from "./theme";
