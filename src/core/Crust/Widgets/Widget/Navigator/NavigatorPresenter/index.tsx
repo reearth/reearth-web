@@ -13,7 +13,7 @@ export { degreeToRadian, radianToDegree } from "./utils";
 export type Props = {
   theme?: Theme;
   degree: number;
-  editing: boolean;
+  editing?: boolean;
   /**
    * Pass degree of circle as callback arguments.
    * This event is invoked when mouse down on outer circle and mouse move.
@@ -67,7 +67,7 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
   return (
     <Container>
       <CompassContainer>
-        <Compass ref={compassRef} editing={editing}>
+        <Compass ref={compassRef} editing={!!editing}>
           <CompassIcon onMouseDown={handleOnMouseDownCompass} publishedTheme={theme}>
             <Icon
               icon="compass"
@@ -85,7 +85,10 @@ const NavigatorPresenter: React.FC<Props> = memo(function NavigatorPresenterMemo
               <Icon icon="compassFocus" color={theme?.select} alt="" size={30} />
             </CompassFocusIcon>
           )}
-          <AngleIcon onMouseDown={handleOnMouseDownAngle} publishedTheme={theme} editing={editing}>
+          <AngleIcon
+            onMouseDown={handleOnMouseDownAngle}
+            publishedTheme={theme}
+            editing={!!editing}>
             <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
           </AngleIcon>
         </Compass>
