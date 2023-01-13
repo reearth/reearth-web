@@ -22,7 +22,7 @@ export type Command =
   | { type: "setLayer"; layer?: Layer }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
-  | { type: "writeComputedFeatures"; features: Feature[] }
+  | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
   | { type: "deleteFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
   | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] };
@@ -142,44 +142,47 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
-  const writeComputedFeatures = atom(null, async (get, set, value: ComputedFeature[]) => {
-    const currentLayer = get(layer);
-    if (currentLayer?.type !== "simple" || !currentLayer.data) return;
+  const writeComputedFeatures = atom(
+    null,
+    async (get, set, value: { feature: Feature[]; computed: ComputedFeature[] }) => {
+      const currentLayer = get(layer);
+      if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
-    if (process.env.NODE_ENV === "development") {
-      if (!get(delegatedDataTypes).includes(currentLayer.data.type)) {
-        throw new Error("writeComputedFeature can be called with delegated data");
+      if (process.env.NODE_ENV === "development") {
+        if (!get(delegatedDataTypes).includes(currentLayer.data.type)) {
+          throw new Error("writeComputedFeature can be called with delegated data");
+        }
       }
-    }
 
-    set(layerStatus, "fetching");
+      set(layerStatus, "fetching");
 
-    set(dataAtoms.set, {
-      data: currentLayer.data,
-      features: value,
-      layerId: currentLayer.id,
-    });
+      set(dataAtoms.set, {
+        data: currentLayer.data,
+        features: value.feature,
+        layerId: currentLayer.id,
+      });
 
-    const computedLayer = await evalLayer(currentLayer, {
-      getAllFeatures: async () => undefined,
-      getFeatures: async () => undefined,
-    });
+      const computedLayer = await evalLayer(currentLayer, {
+        getAllFeatures: async () => undefined,
+        getFeatures: async () => undefined,
+      });
 
-    if (!computedLayer) {
-      return;
-    }
+      if (!computedLayer) {
+        return;
+      }
 
-    set(layerStatus, "ready");
+      set(layerStatus, "ready");
 
-    const prevResult = get(computedResult);
+      const prevResult = get(computedResult);
 
-    const result = {
-      layer: computedLayer.layer,
-      features: [...(prevResult?.features || []), ...value],
-    };
+      const result = {
+        layer: computedLayer.layer,
+        features: [...(prevResult?.features || []), ...value.computed],
+      };
 
-    set(computedResult, result);
-  });
+      set(computedResult, result);
+    },
+  );
 
   const deleteFeatures = atom(null, async (get, set, value: string[]) => {
     const currentLayer = get(layer);
@@ -207,7 +210,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           await s(writeFeatures, value.features);
           break;
         case "writeComputedFeatures":
-          await s(writeComputedFeatures, value.features);
+          await s(writeComputedFeatures, value.value);
           break;
         case "deleteFeatures":
           await s(deleteFeatures, value.features);

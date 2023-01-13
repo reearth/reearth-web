@@ -29,7 +29,7 @@ export type FeatureComponentProps = {
   layer: ComputedLayer;
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
-  onComputedFeatureFetch?: (features: ComputedFeature[]) => void;
+  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
   evalFeature: EvalFeature;
 } & CommonProps;

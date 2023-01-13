@@ -160,7 +160,10 @@ test("computeAtom", async () => {
 
   // write computed features
   act(() => {
-    result.current.set({ type: "writeComputedFeatures", features: features3 });
+    result.current.set({
+      type: "writeComputedFeatures",
+      value: { feature: features3, computed: features3 },
+    });
   });
 
   expect(result.current.result).toEqual({

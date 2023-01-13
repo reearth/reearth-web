@@ -110,6 +110,7 @@ export const useMVT = ({
   const polygonAppearanceLineWidth = layer?.polygon?.strokeWidth;
   const polygonAppearanceLineJoin = layer?.polygon?.lineJoin;
 
+  const tempFeaturesRef = useRef<Feature[]>([]);
   const tempComputedFeaturesRef = useRef<ComputedFeature[]>([]);
   const imageryProvider = useMemo(() => {
     if (!isVisible || !url || !layers || type !== "mvt") return;
@@ -128,54 +129,66 @@ export const useMVT = ({
       },
       onFeaturesRendered: () => {
         if (shouldSyncFeatureRef.current) {
-          onComputedFeatureFetch?.(tempComputedFeaturesRef.current);
+          onComputedFeatureFetch?.(tempFeaturesRef.current, tempComputedFeaturesRef.current);
+          tempFeaturesRef.current = [];
           tempComputedFeaturesRef.current = [];
           shouldSyncFeatureRef.current = false;
         }
       },
       style: (mvtFeature, tile) => {
         const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
-        const feature = ((): ComputedFeature | void => {
-          const layer = cachedCalculatedLayerRef.current?.layer;
-          if (layer?.type === "simple" && VectorTileFeature.types[mvtFeature.type] === "Polygon") {
-            if (!cachedFeaturesRef.current.has(id)) {
-              const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
-              cachedFeaturesRef.current.set(id, feature);
-              const computedFeature = evalFeature?.(layer, feature);
-              if (computedFeature) {
-                cachedComputedFeaturesRef.current.set(id, computedFeature);
-              }
-              return computedFeature;
-            } else {
-              const feature = cachedFeaturesRef.current.get(id);
-              if (
-                feature &&
-                (polygonAppearanceFillStyle !== feature?.properties.fillColor ||
-                  polygonAppearanceStrokeStyle !== feature?.properties.strokeStyle ||
-                  polygonAppearanceLineWidth !== feature?.properties.lineWidth ||
-                  polygonAppearanceLineJoin !== feature?.properties.lineJoin)
-              ) {
+        const [feature, computedFeature] =
+          ((): [Feature | undefined, ComputedFeature | undefined] | void => {
+            const layer = cachedCalculatedLayerRef.current?.layer;
+            if (
+              layer?.type === "simple" &&
+              VectorTileFeature.types[mvtFeature.type] === "Polygon"
+            ) {
+              if (!cachedFeaturesRef.current.has(id)) {
+                const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
+                cachedFeaturesRef.current.set(id, feature);
                 const computedFeature = evalFeature?.(layer, feature);
                 if (computedFeature) {
                   cachedComputedFeaturesRef.current.set(id, computedFeature);
                 }
-              }
-              return cachedComputedFeaturesRef.current.get(
-                mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
-              );
-            }
-          }
-        })();
+                return [feature, computedFeature];
+              } else {
+                const feature = cachedFeaturesRef.current.get(id);
+                if (!feature) {
+                  return;
+                }
 
-        if (feature) {
-          tempComputedFeaturesRef.current.push(feature);
+                if (
+                  polygonAppearanceFillStyle !== feature?.properties.fillColor ||
+                  polygonAppearanceStrokeStyle !== feature?.properties.strokeStyle ||
+                  polygonAppearanceLineWidth !== feature?.properties.lineWidth ||
+                  polygonAppearanceLineJoin !== feature?.properties.lineJoin
+                ) {
+                  const computedFeature = evalFeature?.(layer, feature);
+                  if (computedFeature) {
+                    cachedComputedFeaturesRef.current.set(id, computedFeature);
+                  }
+                }
+                return [
+                  feature,
+                  cachedComputedFeaturesRef.current.get(
+                    mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
+                  ),
+                ];
+              }
+            }
+          })() || [];
+
+        if (feature && computedFeature) {
+          tempFeaturesRef.current.push(feature);
+          tempComputedFeaturesRef.current.push(computedFeature);
         }
 
         return {
-          fillStyle: feature?.polygon?.fillColor,
-          strokeStyle: feature?.polygon?.strokeColor,
-          lineWidth: feature?.polygon?.strokeWidth,
-          lineJoin: feature?.polygon?.lineJoin,
+          fillStyle: computedFeature?.polygon?.fillColor,
+          strokeStyle: computedFeature?.polygon?.strokeColor,
+          lineWidth: computedFeature?.polygon?.strokeWidth,
+          lineJoin: computedFeature?.polygon?.lineJoin,
         };
       },
     });

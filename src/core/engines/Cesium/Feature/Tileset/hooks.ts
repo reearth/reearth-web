@@ -75,7 +75,7 @@ const useFeature = ({
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
-  onComputedFeatureFetch?: (feature: ComputedFeature[]) => void;
+  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (feature: string[]) => void;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
@@ -133,6 +133,7 @@ const useFeature = ({
 
       currentTiles.set(t, nextFeatureId);
 
+      const tempFeatures: Feature[] = [];
       const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
@@ -153,11 +154,12 @@ const useFeature = ({
 
         const computedFeature = attachComputedFeature(feature);
         if (computedFeature) {
+          tempFeatures.push(feature.feature);
           tempComputedFeatures.push(computedFeature);
         }
       });
 
-      onComputedFeatureFetch?.(tempComputedFeatures);
+      onComputedFeatureFetch?.(tempFeatures, tempComputedFeatures);
     });
 
     tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) => {
@@ -209,7 +211,7 @@ export const useHooks = ({
   layer?: ComputedLayer;
   feature?: ComputedFeature;
   evalFeature: EvalFeature;
-  onComputedFeatureFetch?: (feature: Feature[]) => void;
+  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (feature: string[]) => void;
 }) => {
   const { viewer } = useCesium();

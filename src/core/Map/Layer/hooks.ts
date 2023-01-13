@@ -22,7 +22,8 @@ export default function useHooks(
     [set],
   );
   const writeComputedFeatures = useCallback(
-    (features: ComputedFeature[]) => set({ type: "writeComputedFeatures", features }),
+    (feature: Feature[], computed: ComputedFeature[]) =>
+      set({ type: "writeComputedFeatures", value: { feature, computed } }),
     [set],
   );
   const requestFetch = useCallback(
