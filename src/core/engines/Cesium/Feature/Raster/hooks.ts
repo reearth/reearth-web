@@ -88,8 +88,13 @@ export const useMVT = ({
   isVisible,
   property,
   layer,
+  onComputedFeatureFetch,
   evalFeature,
-}: Pick<Props, "isVisible" | "property" | "layer" | "onFeatureFetch" | "evalFeature">) => {
+  onFeatureDelete,
+}: Pick<
+  Props,
+  "isVisible" | "property" | "layer" | "onComputedFeatureFetch" | "evalFeature" | "onFeatureDelete"
+>) => {
   const { minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
@@ -97,11 +102,15 @@ export const useMVT = ({
   const cachedComputedFeaturesRef = useRef<Map<Feature["id"], ComputedFeature>>(new Map());
   const cachedCalculatedLayerRef = useRef(layer);
 
+  const cachedFeatureIdsRef = useRef(new Set<Feature["id"]>());
+  const shouldSyncFeatureRef = useRef(false);
+
   const polygonAppearanceFillStyle = layer?.polygon?.fillColor;
   const polygonAppearanceStrokeStyle = layer?.polygon?.strokeColor;
   const polygonAppearanceLineWidth = layer?.polygon?.strokeWidth;
   const polygonAppearanceLineJoin = layer?.polygon?.lineJoin;
 
+  const tempComputedFeaturesRef = useRef<ComputedFeature[]>([]);
   const imageryProvider = useMemo(() => {
     if (!isVisible || !url || !layers || type !== "mvt") return;
     return new MVTImageryProvider({
@@ -110,6 +119,20 @@ export const useMVT = ({
       credit,
       urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
       layerName: layers,
+      onRenderFeature: (mvtFeature, tile) => {
+        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        if (!cachedFeatureIdsRef.current.has(id)) {
+          shouldSyncFeatureRef.current = true;
+        }
+        return true;
+      },
+      onFeaturesRendered: () => {
+        if (shouldSyncFeatureRef.current) {
+          onComputedFeatureFetch?.(tempComputedFeaturesRef.current);
+          tempComputedFeaturesRef.current = [];
+          shouldSyncFeatureRef.current = false;
+        }
+      },
       style: (mvtFeature, tile) => {
         const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
         const feature = ((): ComputedFeature | void => {
@@ -143,6 +166,11 @@ export const useMVT = ({
             }
           }
         })();
+
+        if (feature) {
+          tempComputedFeaturesRef.current.push(feature);
+        }
+
         return {
           fillStyle: feature?.polygon?.fillColor,
           strokeStyle: feature?.polygon?.strokeColor,
@@ -160,6 +188,7 @@ export const useMVT = ({
     credit,
     layers,
     evalFeature,
+    onComputedFeatureFetch,
     polygonAppearanceFillStyle,
     polygonAppearanceStrokeStyle,
     polygonAppearanceLineWidth,
@@ -169,6 +198,13 @@ export const useMVT = ({
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
   }, [layer]);
+
+  useEffect(() => {
+    const ids = cachedFeatureIdsRef.current;
+    return () => {
+      onFeatureDelete?.(Array.from(ids.values()));
+    };
+  }, [onFeatureDelete]);
 
   useImageryProvider(imageryProvider);
 };

@@ -27,6 +27,13 @@ const features2: Feature[] = [
     range,
   },
 ];
+const features3: Feature[] = [
+  {
+    id: "c",
+    geometry: { type: "Point", coordinates: [0, 0] },
+    range,
+  },
+];
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -68,7 +75,7 @@ test("computeAtom", async () => {
   expect(result.current.result).toEqual({
     id: "xxx",
     layer,
-    status: "fetching",
+    status: "ready",
     features: [],
     originalFeatures: [],
   }),
@@ -151,6 +158,29 @@ test("computeAtom", async () => {
     }),
   );
 
+  // write computed features
+  act(() => {
+    result.current.set({ type: "writeComputedFeatures", features: features3 });
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer,
+    status: "fetching",
+    features: [...features, ...features2],
+    originalFeatures: [...features, ...features3],
+  });
+
+  await waitFor(() =>
+    expect(result.current.result).toEqual({
+      id: "xxx",
+      layer,
+      status: "ready",
+      features: [...features, ...features2, ...features3],
+      originalFeatures: [...features, ...features3],
+    }),
+  );
+
   // override appearances
   act(() => {
     result.current.set({
@@ -166,11 +196,14 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "ready",
-    features: [...features, ...features2].map(f => ({ ...f, marker: { pointColor: "red" } })),
-    originalFeatures: [...features, ...features2],
+    features: [...features, ...features2, ...features3].map(f => ({
+      ...f,
+      marker: { pointColor: "red" },
+    })),
+    originalFeatures: [...features, ...features3],
   });
 
-  // delete a feature
+  // delete a feature b
   act(() => {
     result.current.set({ type: "override" });
     result.current.set({ type: "deleteFeatures", features: ["b"] });
@@ -180,8 +213,32 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features: [...features, ...features2],
-    originalFeatures: features,
+    features: [...features, ...features2, ...features3],
+    originalFeatures: [...features, ...features3],
+  });
+
+  await waitFor(() =>
+    expect(result.current.result).toEqual({
+      id: "xxx",
+      layer,
+      status: "ready",
+      features: [...features, ...features3],
+      originalFeatures: [...features, ...features3],
+    }),
+  );
+
+  // delete a feature c
+  act(() => {
+    result.current.set({ type: "override" });
+    result.current.set({ type: "deleteFeatures", features: ["c"] });
+  });
+
+  expect(result.current.result).toEqual({
+    id: "xxx",
+    layer,
+    status: "fetching",
+    features: [...features, ...features3],
+    originalFeatures: [...features],
   });
 
   await waitFor(() =>
