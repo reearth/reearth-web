@@ -1,5 +1,7 @@
 import { ReactNode, RefObject } from "react";
 
+import { ComputedFeature, ComputedLayer, Feature } from "../mantle";
+
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
@@ -33,7 +35,13 @@ export type Props = {
   sceneProperty?: SceneProperty;
   camera?: Camera;
   clock?: Clock;
-  selectedLayerId?: string;
+  selectedComputedLayer?: ComputedLayer;
+  selectedComputedFeature?: ComputedFeature;
+  selectedFeature?: Feature;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   // widgets
   widgetAlignSystem?: WidgetAlignSystemType;
   widgetAlignSystemEditing?: boolean;
@@ -121,7 +129,7 @@ export default function Crust({
         isBuilt={isBuilt}
         isEditable={isEditable}
         blocks={blocks}
-        infoboxKey={selectedLayerId}
+        infoboxKey={selectedLayerId?.layerId}
         property={infoboxProperty}
         title={infoboxTitle}
         visible={infoboxVisible}

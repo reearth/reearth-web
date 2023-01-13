@@ -21,14 +21,7 @@ import type {
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import {
-  getCamera,
-  isDraggable,
-  isSelectable,
-  layerIdField,
-  getLocationFromScreen,
-  getClock,
-} from "./common";
+import { getCamera, isDraggable, isSelectable, getLocationFromScreen, getClock } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition } from "./utils";
@@ -53,11 +46,14 @@ export default ({
   property?: SceneProperty;
   camera?: Camera;
   clock?: Clock;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id?: string, options?: LayerSelectionReason) => void;
+  onLayerSelect?: (layerId?: string, featureId?: string, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
@@ -185,7 +181,7 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId);
+    const entity = findEntity(viewer, selectedLayerId?.layerId);
     if (viewer.selectedEntity === entity) return;
 
     const tag = getTag(entity);
@@ -252,6 +248,7 @@ export default ({
     return mouseEvents;
   }, [handleMouseEvent, handleMouseWheel]);
 
+  // TODO: Support MVT
   const handleClick = useCallback(
     (_: CesiumMovementEvent, target: RootEventTarget) => {
       mouseEventHandles.click?.(_, target);
@@ -259,14 +256,15 @@ export default ({
       if (!viewer || viewer.isDestroyed()) return;
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
-        onLayerSelect?.(target.id.id);
+        const tag = getTag(target.id);
+        onLayerSelect?.(tag?.layerId);
         return;
       }
 
       if (target && target instanceof Cesium3DTileFeature) {
-        const layerId: string | undefined = (target.primitive as any)?.[layerIdField];
-        if (layerId) {
-          onLayerSelect?.(layerId, {
+        const tag = getTag(target);
+        if (tag) {
+          onLayerSelect?.(tag.layerId, String(tag.featureId), {
             overriddenInfobox: {
               title: target.getProperty("name"),
               content: tileProperties(target),

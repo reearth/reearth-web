@@ -40,7 +40,10 @@ export default function ({
   range?: number;
   autoStart?: boolean;
   stories?: Story[];
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
   onLayerSelect?: (id: string | undefined, options?: { reason?: string }) => void;
@@ -61,7 +64,7 @@ export default function ({
   }>();
 
   const selectedLayer = useMemo(
-    () => (selectedLayerId ? findPhotooverlayLayer?.(selectedLayerId) : undefined),
+    () => (selectedLayerId?.layerId ? findPhotooverlayLayer?.(selectedLayerId.layerId) : undefined),
     [findPhotooverlayLayer, selectedLayerId],
   );
 
