@@ -5,7 +5,7 @@ import { test, expect, vi, beforeEach } from "vitest";
 
 import * as DataCache from "../data";
 import { EvalContext, evalLayer } from "../evaluator";
-import type { Data, DataRange, Feature, Layer, LayerSimple } from "../types";
+import type { ComputedFeature, Data, DataRange, Feature, Layer, LayerSimple } from "../types";
 
 import { doubleKeyCacheAtom } from "./cache";
 import { computeAtom } from "./compute";
@@ -19,9 +19,12 @@ const data: TestData = {
 };
 const range: DataRange = { x: 0, y: 0, z: 0 };
 const layer: Layer = { id: "xxx", type: "simple", data };
-const features: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] } }];
+const features: Feature[] = [
+  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+];
 const features2: Feature[] = [
   {
+    type: "Feature",
     id: "b",
     geometry: { type: "Point", coordinates: [0, 0] },
     range,
@@ -29,11 +32,15 @@ const features2: Feature[] = [
 ];
 const features3: Feature[] = [
   {
+    type: "Feature",
     id: "c",
     geometry: { type: "Point", coordinates: [0, 0] },
     range,
   },
 ];
+
+const toComputedFeature = (f: Feature[]): ComputedFeature[] =>
+  f.map(v => ({ ...v, type: "ComputedFeature" }));
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -107,7 +114,7 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features,
+      features: toComputedFeature(features),
       originalFeatures: features,
     }),
   );
@@ -121,7 +128,7 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features,
+    features: toComputedFeature(features),
     originalFeatures: features,
   });
 
@@ -130,7 +137,7 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features,
+      features: toComputedFeature(features),
       originalFeatures: features,
     });
   });
@@ -144,7 +151,7 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features,
+    features: toComputedFeature(features),
     originalFeatures: [...features, ...features2],
   });
 
@@ -153,7 +160,7 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features: [...features, ...features2],
+      features: [...toComputedFeature(features), ...toComputedFeature(features2)],
       originalFeatures: [...features, ...features2],
     }),
   );
@@ -162,7 +169,7 @@ test("computeAtom", async () => {
   act(() => {
     result.current.set({
       type: "writeComputedFeatures",
-      value: { feature: features3, computed: features3 },
+      value: { feature: features3, computed: toComputedFeature(features3) },
     });
   });
 
@@ -170,7 +177,7 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features: [...features, ...features2],
+    features: [...toComputedFeature(features), ...toComputedFeature(features2)],
     originalFeatures: [...features, ...features3],
   });
 
@@ -179,7 +186,11 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features: [...features, ...features2, ...features3],
+      features: [
+        ...toComputedFeature(features),
+        ...toComputedFeature(features2),
+        ...toComputedFeature(features3),
+      ],
       originalFeatures: [...features, ...features3],
     }),
   );
@@ -201,6 +212,7 @@ test("computeAtom", async () => {
     status: "ready",
     features: [...features, ...features2, ...features3].map(f => ({
       ...f,
+      type: "ComputedFeature",
       marker: { pointColor: "red" },
     })),
     originalFeatures: [...features, ...features3],
@@ -216,7 +228,11 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features: [...features, ...features2, ...features3],
+    features: [
+      ...toComputedFeature(features),
+      ...toComputedFeature(features2),
+      ...toComputedFeature(features3),
+    ],
     originalFeatures: [...features, ...features3],
   });
 
@@ -225,7 +241,7 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features: [...features, ...features3],
+      features: [...toComputedFeature(features), ...toComputedFeature(features3)],
       originalFeatures: [...features, ...features3],
     }),
   );
@@ -240,7 +256,7 @@ test("computeAtom", async () => {
     id: "xxx",
     layer,
     status: "fetching",
-    features: [...features, ...features3],
+    features: [...toComputedFeature(features), ...toComputedFeature(features3)],
     originalFeatures: [...features],
   });
 
@@ -249,7 +265,7 @@ test("computeAtom", async () => {
       id: "xxx",
       layer,
       status: "ready",
-      features,
+      features: toComputedFeature(features),
       originalFeatures: features,
     }),
   );
@@ -267,13 +283,14 @@ test("computeAtom with cache", async () => {
   fetchDataMock.mockImplementation(async data => {
     return [
       {
+        type: "Feature",
         id: (data as any).test_id || "",
         geometry: data.value?.geometry || { type: "Point", coordinates: [0, 0] },
       },
     ];
   });
   const internalFeatures: Feature[] = [
-    { id: features[0].id, geometry: { type: "Point", coordinates: [1, 1] } },
+    { type: "Feature", id: features[0].id, geometry: { type: "Point", coordinates: [1, 1] } },
   ];
   const { result } = renderHook(() => {
     const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
@@ -305,7 +322,7 @@ test("computeAtom with cache", async () => {
       data,
     },
     status: "ready",
-    features: features,
+    features: toComputedFeature(features),
     originalFeatures: [...features],
   });
 
@@ -346,7 +363,7 @@ test("computeAtom with cache", async () => {
       },
     },
     status: "ready",
-    features: internalFeatures,
+    features: toComputedFeature(internalFeatures),
     originalFeatures: [...internalFeatures],
   });
 
@@ -381,7 +398,7 @@ test("computeAtom with cache", async () => {
       },
     },
     status: "ready",
-    features: internalFeatures,
+    features: toComputedFeature(internalFeatures),
     originalFeatures: [...internalFeatures],
   });
 
@@ -419,8 +436,12 @@ test("computeAtom with cache", async () => {
       },
     },
     status: "ready",
-    features: [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] } }],
-    originalFeatures: [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] } }],
+    features: [
+      { type: "ComputedFeature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+    ],
+    originalFeatures: [
+      { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+    ],
   });
 
   expect(fetchDataMock).toBeCalledTimes(3);
@@ -429,6 +450,6 @@ test("computeAtom with cache", async () => {
 vi.mock("../evaluator", (): { evalLayer: typeof evalLayer } => ({
   evalLayer: async (layer: LayerSimple, ctx: EvalContext) => {
     if (!layer.data) return { layer: {}, features: undefined };
-    return { layer: {}, features: await ctx.getAllFeatures(layer.data) };
+    return { layer: {}, features: toComputedFeature((await ctx.getAllFeatures(layer.data)) || []) };
   },
 }));

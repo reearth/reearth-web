@@ -80,12 +80,15 @@ export type DataRange = {
 export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms" | "mvt";
 
 // Feature
-export type Feature = {
+export type CommonFeature<T extends "Feature" | "ComputedFeature"> = {
+  type: T;
   id: string;
   geometry?: Geometry;
   properties?: any;
   range?: DataRange;
 };
+
+export type Feature = CommonFeature<"Feature">;
 
 export type Geometry = Point | LineString | Polygon | MultiPoint | MultiLineString | MultiPolygon;
 
@@ -102,4 +105,4 @@ export type ComputedLayer = {
   properties?: any;
 } & Partial<AppearanceTypes>;
 
-export type ComputedFeature = Feature & Partial<AppearanceTypes>;
+export type ComputedFeature = CommonFeature<"ComputedFeature"> & Partial<AppearanceTypes>;

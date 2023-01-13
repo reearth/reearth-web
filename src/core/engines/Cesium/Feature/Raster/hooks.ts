@@ -70,6 +70,7 @@ const makeFeatureFromPolygon = (
   const geometry = feature.loadGeometry();
   const coordinates = geometry.map(points => points.map(p => [p.x, p.y]));
   return {
+    type: "Feature",
     id,
     geometry: {
       type: "Polygon",

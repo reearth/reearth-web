@@ -46,6 +46,7 @@ const makeFeatureFrom3DTile = (
   coordinates: number[],
 ): Feature => {
   return {
+    type: "Feature",
     id,
     geometry: {
       type: "Point",

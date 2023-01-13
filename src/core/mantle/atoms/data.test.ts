@@ -11,12 +11,16 @@ import { dataAtom } from "./data";
 
 const data: Data = { type: "geojson", url: "https://example.com/example.geojson" };
 const range: DataRange = { x: 0, y: 0, z: 0 };
-const features: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] } }];
-const features2: Feature[] = [{ id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range }];
+const features: Feature[] = [
+  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+];
+const features2: Feature[] = [
+  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
+];
 const features3: Feature[] = [
-  { id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
-  { id: "b", geometry: { type: "Point", coordinates: [0, 0] }, range },
-  { id: "c", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "Feature", id: "b", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "Feature", id: "c", geometry: { type: "Point", coordinates: [0, 0] }, range },
 ];
 
 test("dataAtom set", () => {
@@ -153,7 +157,7 @@ test("data.value is present", async () => {
 
   await waitFor(() =>
     expect(result.current.getAll(layerId, data1)).toEqual([
-      [{ id: "f", geometry: { type: "Point", coordinates: [1, 2] } }],
+      [{ type: "Feature", id: "f", geometry: { type: "Point", coordinates: [1, 2] } }],
     ]),
   );
 
@@ -164,13 +168,15 @@ test("data.value is present", async () => {
 
   await waitFor(() =>
     expect(result.current.getAll(layerId, data1)).toEqual([
-      [{ id: "g", geometry: { type: "Point", coordinates: [2, 3] } }],
+      [{ type: "Feature", id: "g", geometry: { type: "Point", coordinates: [2, 3] } }],
     ]),
   );
 });
 
 vi.mock("../data", (): { fetchData: typeof fetchData } => ({
   fetchData: vi.fn(async data =>
-    data.value ? [{ id: data.value.id, geometry: data.value.geometry }] : features,
+    data.value
+      ? [{ type: "Feature", id: data.value.id, geometry: data.value.geometry } as Feature]
+      : features,
   ),
 }));
