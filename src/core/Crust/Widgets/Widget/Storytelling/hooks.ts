@@ -46,7 +46,11 @@ export default function ({
   };
   onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
-  onLayerSelect?: (id: string | undefined, options?: { reason?: string }) => void;
+  onLayerSelect?: (
+    layerId: string | undefined,
+    featureId: string | undefined,
+    options?: { reason?: string },
+  ) => void;
   findPhotooverlayLayer?: (
     id: string,
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
@@ -101,7 +105,7 @@ export default function ({
         camera,
         range,
       });
-      selectLayer?.(id, { reason: "storytelling" });
+      selectLayer?.(id, undefined, { reason: "storytelling" });
     },
     [camera, duration, range, selectLayer, stories],
   );

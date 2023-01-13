@@ -49,9 +49,6 @@ export class Expression {
   }
 
   evaluate() {
-    if (!this.#feature) {
-      return;
-    }
     const value = (this.#runtimeAst as Node).evaluate(this.#feature);
     return value;
   }
