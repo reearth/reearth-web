@@ -12,15 +12,15 @@ import { dataAtom } from "./data";
 const data: Data = { type: "geojson", url: "https://example.com/example.geojson" };
 const range: DataRange = { x: 0, y: 0, z: 0 };
 const features: Feature[] = [
-  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+  { type: "feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
 ];
 const features2: Feature[] = [
-  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
 ];
 const features3: Feature[] = [
-  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
-  { type: "Feature", id: "b", geometry: { type: "Point", coordinates: [0, 0] }, range },
-  { type: "Feature", id: "c", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "feature", id: "b", geometry: { type: "Point", coordinates: [0, 0] }, range },
+  { type: "feature", id: "c", geometry: { type: "Point", coordinates: [0, 0] }, range },
 ];
 
 test("dataAtom set", () => {
@@ -135,11 +135,11 @@ test("data.value is present", async () => {
   const layerId = "x";
   const data1: Data = {
     type: "geojson",
-    value: { id: "f", type: "Feature", geometry: { type: "Point", coordinates: [1, 2] } },
+    value: { id: "f", type: "feature", geometry: { type: "Point", coordinates: [1, 2] } },
   };
   const data2: Data = {
     type: "geojson",
-    value: { id: "g", type: "Feature", geometry: { type: "Point", coordinates: [2, 3] } },
+    value: { id: "g", type: "feature", geometry: { type: "Point", coordinates: [2, 3] } },
   };
 
   const { result } = renderHook(() => {
@@ -157,7 +157,7 @@ test("data.value is present", async () => {
 
   await waitFor(() =>
     expect(result.current.getAll(layerId, data1)).toEqual([
-      [{ type: "Feature", id: "f", geometry: { type: "Point", coordinates: [1, 2] } }],
+      [{ type: "feature", id: "f", geometry: { type: "Point", coordinates: [1, 2] } }],
     ]),
   );
 
@@ -168,7 +168,7 @@ test("data.value is present", async () => {
 
   await waitFor(() =>
     expect(result.current.getAll(layerId, data1)).toEqual([
-      [{ type: "Feature", id: "g", geometry: { type: "Point", coordinates: [2, 3] } }],
+      [{ type: "feature", id: "g", geometry: { type: "Point", coordinates: [2, 3] } }],
     ]),
   );
 });
@@ -176,7 +176,7 @@ test("data.value is present", async () => {
 vi.mock("../data", (): { fetchData: typeof fetchData } => ({
   fetchData: vi.fn(async data =>
     data.value
-      ? [{ type: "Feature", id: data.value.id, geometry: data.value.geometry } as Feature]
+      ? [{ type: "feature", id: data.value.id, geometry: data.value.geometry } as Feature]
       : features,
   ),
 }));

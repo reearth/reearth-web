@@ -26,7 +26,7 @@ export async function evalSimpleLayer(
     features: features?.map(f => ({
       ...f,
       ...evalLayerAppearances(appearances, layer, f),
-      type: "ComputedFeature",
+      type: "computedFeature",
     })),
   };
 }
@@ -36,7 +36,7 @@ export const evalSimpleLayerFeature = (layer: LayerSimple, feature: Feature): Co
   return {
     ...feature,
     ...evalLayerAppearances(appearances, layer, feature),
-    type: "ComputedFeature",
+    type: "computedFeature",
   };
 };
 

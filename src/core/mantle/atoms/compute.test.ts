@@ -20,11 +20,11 @@ const data: TestData = {
 const range: DataRange = { x: 0, y: 0, z: 0 };
 const layer: Layer = { id: "xxx", type: "simple", data };
 const features: Feature[] = [
-  { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+  { type: "feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
 ];
 const features2: Feature[] = [
   {
-    type: "Feature",
+    type: "feature",
     id: "b",
     geometry: { type: "Point", coordinates: [0, 0] },
     range,
@@ -32,7 +32,7 @@ const features2: Feature[] = [
 ];
 const features3: Feature[] = [
   {
-    type: "Feature",
+    type: "feature",
     id: "c",
     geometry: { type: "Point", coordinates: [0, 0] },
     range,
@@ -40,7 +40,7 @@ const features3: Feature[] = [
 ];
 
 const toComputedFeature = (f: Feature[]): ComputedFeature[] =>
-  f.map(v => ({ ...v, type: "ComputedFeature" }));
+  f.map(v => ({ ...v, type: "computedFeature" }));
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -212,7 +212,7 @@ test("computeAtom", async () => {
     status: "ready",
     features: [...features, ...features2, ...features3].map(f => ({
       ...f,
-      type: "ComputedFeature",
+      type: "computedFeature",
       marker: { pointColor: "red" },
     })),
     originalFeatures: [...features, ...features3],
@@ -283,14 +283,14 @@ test("computeAtom with cache", async () => {
   fetchDataMock.mockImplementation(async data => {
     return [
       {
-        type: "Feature",
+        type: "feature",
         id: (data as any).test_id || "",
         geometry: data.value?.geometry || { type: "Point", coordinates: [0, 0] },
       },
     ];
   });
   const internalFeatures: Feature[] = [
-    { type: "Feature", id: features[0].id, geometry: { type: "Point", coordinates: [1, 1] } },
+    { type: "feature", id: features[0].id, geometry: { type: "Point", coordinates: [1, 1] } },
   ];
   const { result } = renderHook(() => {
     const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
@@ -331,7 +331,7 @@ test("computeAtom with cache", async () => {
   const sharedData = {
     test_id: "a",
     type: "geojson",
-    value: { type: "Feature", geometry: internalFeatures[0].geometry },
+    value: { type: "feature", geometry: internalFeatures[0].geometry },
   } as TestData;
 
   // Set `data.value` and add marker property.
@@ -437,10 +437,10 @@ test("computeAtom with cache", async () => {
     },
     status: "ready",
     features: [
-      { type: "ComputedFeature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+      { type: "computedFeature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
     ],
     originalFeatures: [
-      { type: "Feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
+      { type: "feature", id: "a", geometry: { type: "Point", coordinates: [0, 0] } },
     ],
   });
 
