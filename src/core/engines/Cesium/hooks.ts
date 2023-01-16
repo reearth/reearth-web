@@ -248,10 +248,9 @@ export default ({
     return mouseEvents;
   }, [handleMouseEvent, handleMouseWheel]);
 
-  // TODO: Support MVT
   const handleClick = useCallback(
-    (_: CesiumMovementEvent, target: RootEventTarget) => {
-      mouseEventHandles.click?.(_, target);
+    (e: CesiumMovementEvent, target: RootEventTarget) => {
+      mouseEventHandles.click?.(e, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
@@ -272,6 +271,19 @@ export default ({
           });
         }
         return;
+      }
+
+      // Check imagery layer
+      // ref: https://github.com/CesiumGS/cesium/blob/96b978e0c53aba3bc4f1191111e0be61781ae9dd/packages/widgets/Source/Viewer/Viewer.js#L167
+      if (target === undefined && e.position) {
+        const scene = viewer.scene;
+        const pickRay = scene.camera.getPickRay(e.position);
+        if (!pickRay) return;
+        scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene)?.then(l => {
+          l.map(f => {
+            onLayerSelect?.(f.data.layerId, f.data.featureId);
+          });
+        });
       }
 
       onLayerSelect?.();
