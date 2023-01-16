@@ -17,7 +17,7 @@ test("evalSimpleLayer", async () => {
         },
       },
       {
-        getAllFeatures: async () => [{ type: "Feature", id: "a" }],
+        getAllFeatures: async () => [{ type: "feature", id: "a" }],
         getFeatures: async () => undefined,
       },
     ),
@@ -30,7 +30,7 @@ test("evalSimpleLayer", async () => {
     },
     features: [
       {
-        type: "ComputedFeature",
+        type: "computedFeature",
         id: "a",
         marker: {
           pointColor: "#FF0000",
@@ -63,7 +63,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
-          type: "Feature",
+          type: "feature",
           id: "1233",
           properties: {
             id: "2432432",
@@ -99,7 +99,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
-          type: "Feature",
+          type: "feature",
           id: "1233",
           properties: {
             foo: "122",
@@ -135,7 +135,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
-          type: "Feature",
+          type: "feature",
           id: "blah",
           properties: {
             GridY: 5,
@@ -175,7 +175,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
-          type: "Feature",
+          type: "feature",
           id: "blah",
           properties: {
             firstName: "John",
@@ -228,7 +228,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
-          type: "Feature",
+          type: "feature",
           id: "blah",
           properties: {
             bgColor: "#FF0000",
@@ -269,7 +269,7 @@ describe("Conditional styling", () => {
           },
         },
         {
-          type: "Feature",
+          type: "feature",
           id: "blah",
           properties: {
             bgColor: "#FF0000",

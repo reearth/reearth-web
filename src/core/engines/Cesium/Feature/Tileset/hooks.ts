@@ -49,7 +49,7 @@ const makeFeatureFrom3DTile = (
     feature.getPropertyIds().map(id => [id, feature.getProperty(id)]),
   );
   return {
-    type: "Feature",
+    type: "feature",
     id,
     geometry: {
       type: "Point",
