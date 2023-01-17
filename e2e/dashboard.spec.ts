@@ -76,6 +76,30 @@ test("Create a new workspace", async ({ page, reearth }) => {
   await expect(page.getByText("Team workspace's workspace")).toBeVisible();
 });
 
+test("Create many workspace", async ({ page, reearth }) => {
+  await reearth.initUser();
+  for (let i = 0; i < 2; i++) {
+    await reearth.gql(
+      `mutation CreateTeam($name: String!) {
+      createTeam(input:{
+        name: $name
+      }){
+        team{
+          id
+          name
+        }
+      }
+    }`,
+      {
+        name: `graphql${i}`,
+      },
+    );
+  }
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
+  await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
+  await page.waitForTimeout(3000);
+});
+
 test("Workspace ", async ({ page, reearth }) => {
   await reearth.initUser();
   await reearth.goto(`/dashboard/${reearth.workspaceId}`);
@@ -113,4 +137,27 @@ test("Header", async ({ page, reearth }) => {
   await page.click("//p[text()='Log out']");
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(5000);
+});
+
+test.describe("Devices", () => {
+  // Use device viewport
+  test.use({ viewport: { width: 600, height: 900 } });
+  test("Device viewport ", async ({ page, reearth }) => {
+    await reearth.initUser();
+    await reearth.goto(`/dashboard/${reearth.workspaceId}`);
+
+    console.log(await page.viewportSize()?.width);
+    console.log(await page.viewportSize()?.height);
+
+    await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
+    await page.waitForTimeout(3000);
+
+    await page.locator(".css-gfu9bm").click();
+    await page.hover("div[class='css-gfu9bm'] p[class='css-1ohhn6c']", {
+      strict: true,
+    });
+    await page.click("//p[text()='Log out']");
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(5000);
+  });
 });
