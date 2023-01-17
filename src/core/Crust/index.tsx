@@ -1,6 +1,7 @@
 import { ReactNode, RefObject } from "react";
 
 import { ComputedFeature, ComputedLayer, Feature } from "../mantle";
+import { LayerSelectionReason } from "../Map";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -38,6 +39,7 @@ export type Props = {
   selectedComputedLayer?: ComputedLayer;
   selectedComputedFeature?: ComputedFeature;
   selectedFeature?: Feature;
+  selectedReason?: LayerSelectionReason;
   selectedLayerId?: {
     layerId?: string;
     featureId?: string;

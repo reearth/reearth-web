@@ -188,6 +188,7 @@ export default function Visualizer({
         selectedComputedLayer={selectedLayer?.layer}
         selectedFeature={selectedFeature}
         selectedComputedFeature={selectedComputedFeature}
+        selectedReason={selectedLayer.reason}
         infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
         infoboxTitle={selectedLayer?.layer?.layer.title}
         infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
