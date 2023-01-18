@@ -11,7 +11,7 @@ import Crust, {
   type WidgetLayoutConstraint,
 } from "../Crust";
 import { ExternalPluginProps } from "../Crust/Plugins/Plugin";
-import { Widget } from "../Crust/Widgets";
+import { InternalWidget } from "../Crust/Widgets";
 import { Tag } from "../mantle/compat/types";
 import Map, {
   type ValueTypes,
@@ -46,7 +46,7 @@ export type Props = {
   widgetAlignSystem?: WidgetAlignSystem;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   widgetAlignSystemEditing?: boolean;
-  floatingWidgets?: Widget[];
+  floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
   clusters?: Cluster[];

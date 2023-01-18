@@ -6,7 +6,7 @@ import { LayerSelectionReason } from "@reearth/core/Map/Layers";
 import { Viewport } from "@reearth/core/Visualizer/useViewport";
 
 import { MapRef } from "../types";
-import { Widget, WidgetAlignSystem } from "../Widgets";
+import { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
 import { CommonReearth } from "./api";
 import { ClientStorage } from "./useClientStorage";
@@ -22,7 +22,7 @@ export type Props = PropsWithChildren<{
   layerSelectionReason?: LayerSelectionReason;
   viewport?: Viewport;
   alignSystem?: WidgetAlignSystem;
-  floatingWidgets?: Widget[];
+  floatingWidgets?: InternalWidget[];
   overrideSceneProperty: (id: string, property: any) => void;
 }>;
 

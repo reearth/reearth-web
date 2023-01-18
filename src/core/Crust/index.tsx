@@ -20,7 +20,7 @@ import Widgets, {
   Alignment,
   Location,
   WidgetLayoutConstraint,
-  Widget,
+  InternalWidget,
 } from "./Widgets";
 
 export type { ValueTypes, ValueType } from "./types";
@@ -60,7 +60,7 @@ export type Props = {
   widgetAlignSystem?: WidgetAlignSystemType;
   widgetAlignSystemEditing?: boolean;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
-  floatingWidgets?: Widget[];
+  floatingWidgets?: InternalWidget[];
   // infobox
   infoboxProperty?: InfoboxProperty;
   blocks?: Block[];

@@ -1,14 +1,14 @@
 import { useEffect, useRef, useMemo, MutableRefObject } from "react";
 
 import { Block } from "../Infobox";
-import { Widget, WidgetAlignSystem } from "../Widgets";
-import { WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
+import { WidgetAlignSystem } from "../Widgets";
+import { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
 
 import type { PluginExtensionInstance } from "./plugin_types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystem;
-  floatingWidgets?: Widget[];
+  floatingWidgets?: InternalWidget[];
   blocks?: Block[];
 };
 
