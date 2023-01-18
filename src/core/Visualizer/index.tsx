@@ -1,11 +1,18 @@
 import { CSSProperties, type ReactNode } from "react";
 
+// TODO(@keiya01): Change directory structure
+import DropHolder from "@reearth/components/atoms/DropHolder";
+import Filled from "@reearth/components/atoms/Filled";
+
 import Crust, {
   type Alignment,
   type Location,
   type WidgetAlignSystem,
   type WidgetLayoutConstraint,
 } from "../Crust";
+import { ExternalPluginProps } from "../Crust/Plugins/Plugin";
+import { Widget } from "../Crust/Widgets";
+import { Tag } from "../mantle/compat/types";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -35,9 +42,11 @@ export type Props = {
   engine?: EngineType;
   isBuilt?: boolean;
   isEditable?: boolean;
+  rootLayerId?: string;
   widgetAlignSystem?: WidgetAlignSystem;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   widgetAlignSystemEditing?: boolean;
+  floatingWidgets?: Widget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
   clusters?: Cluster[];
@@ -49,6 +58,7 @@ export type Props = {
   style?: CSSProperties;
   small?: boolean;
   ready?: boolean;
+  tags?: Tag[];
   selectedBlockId?: string;
   selectedLayerId?: {
     layerId?: string;
@@ -87,11 +97,12 @@ export type Props = {
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
-};
+} & ExternalPluginProps;
 
 export default function Visualizer({
   engine,
   isBuilt,
+  rootLayerId,
   isEditable,
   sceneProperty,
   layers,
@@ -99,8 +110,10 @@ export default function Visualizer({
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
+  floatingWidgets,
   small,
   ready,
+  tags,
   selectedBlockId,
   selectedLayerId,
   hiddenLayers,
@@ -110,6 +123,8 @@ export default function Visualizer({
   clock: initialClock,
   meta,
   style,
+  pluginBaseUrl,
+  pluginProperty,
   onLayerDrag,
   onLayerDrop,
   onLayerSelect,
@@ -127,21 +142,29 @@ export default function Visualizer({
 }: Props): JSX.Element | null {
   const {
     mapRef,
+    wrapperRef,
     selectedLayer,
     selectedBlock,
     selectedFeature,
     selectedComputedFeature,
+    viewport,
     camera,
     clock,
     isMobile,
+    overriddenSceneProperty,
+    isDroppable,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
     handleTick,
+    overrideSceneProperty,
   } = useHooks({
+    rootLayerId,
+    isEditable,
     camera: initialCamera,
     clock: initialClock,
     selectedBlockId,
+    sceneProperty,
     onLayerSelect,
     onBlockSelect,
     onCameraChange,
@@ -149,12 +172,13 @@ export default function Visualizer({
   });
 
   return (
-    <>
+    <Filled ref={wrapperRef}>
+      {isDroppable && <DropHolder />}
       <Map
         ref={mapRef}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        sceneProperty={sceneProperty}
+        sceneProperty={overriddenSceneProperty}
         engine={engine}
         layers={layers}
         engines={engines}
@@ -178,9 +202,13 @@ export default function Visualizer({
         onTick={handleTick}
       />
       <Crust
+        engineName={engine}
+        tags={tags}
+        viewport={viewport}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        sceneProperty={sceneProperty}
+        sceneProperty={overriddenSceneProperty}
+        overrideSceneProperty={overrideSceneProperty}
         blocks={selectedLayer?.layer?.layer.infobox?.blocks}
         camera={camera}
         clock={clock}
@@ -197,7 +225,9 @@ export default function Visualizer({
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}
+        floatingWidgets={floatingWidgets}
         mapRef={mapRef}
+        externalPlugin={{ pluginBaseUrl, pluginProperty }}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
         onInfoboxMaskClick={onInfoboxMaskClick}
@@ -208,6 +238,6 @@ export default function Visualizer({
         onBlockInsert={onBlockInsert}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
       />
-    </>
+    </Filled>
   );
 }
