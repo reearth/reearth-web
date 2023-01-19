@@ -42,6 +42,7 @@ export type Props = {
   engine?: EngineType;
   isBuilt?: boolean;
   isEditable?: boolean;
+  inEditor?: boolean;
   rootLayerId?: string;
   widgetAlignSystem?: WidgetAlignSystem;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -104,6 +105,7 @@ export default function Visualizer({
   isBuilt,
   rootLayerId,
   isEditable,
+  inEditor,
   sceneProperty,
   layers,
   clusters,
@@ -207,6 +209,7 @@ export default function Visualizer({
         viewport={viewport}
         isBuilt={isBuilt}
         isEditable={isEditable}
+        inEditor={inEditor}
         sceneProperty={overriddenSceneProperty}
         overrideSceneProperty={overrideSceneProperty}
         blocks={selectedLayer?.layer?.layer.infobox?.blocks}
