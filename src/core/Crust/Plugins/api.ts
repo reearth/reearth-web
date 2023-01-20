@@ -1,10 +1,10 @@
-import { Tag } from "@reearth/core/mantle/compat/types";
-import { Events, Layer, NaiveLayer } from "@reearth/core/Map";
+import type { Tag } from "@reearth/core/mantle/compat";
+import type { Events, Layer, NaiveLayer } from "@reearth/core/Map";
 import { merge } from "@reearth/util/object";
 
-import { Block } from "../Infobox";
-import { MapRef } from "../types";
-import { Widget, WidgetLocationOptions } from "../Widgets/types";
+import type { Block } from "../Infobox";
+import type { MapRef } from "../types";
+import type { Widget, WidgetLocationOptions } from "../Widgets";
 
 import type { GlobalThis, ReearthEventType, Reearth, Plugin, PopupPosition } from "./plugin_types";
 import type { ClientStorage } from "./useClientStorage";

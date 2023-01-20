@@ -3,7 +3,7 @@ import React, { type ReactNode } from "react";
 import AdditionButton from "@reearth/components/atoms/AdditionButton";
 import Icon from "@reearth/components/atoms/Icon";
 import Text from "@reearth/components/atoms/Text";
-import { Layer } from "@reearth/core/mantle";
+import type { Layer } from "@reearth/core/mantle";
 import { useT } from "@reearth/i18n";
 import { styled, useTheme } from "@reearth/theme";
 
@@ -11,7 +11,7 @@ import BlockComponent from "./Block";
 import Field from "./Field";
 import Frame from "./Frame";
 import useHooks from "./hooks";
-import { ValueTypes, ValueType, Block, InfoboxProperty, Theme, BlockProps } from "./types";
+import type { ValueTypes, ValueType, Block, InfoboxProperty, Theme, BlockProps } from "./types";
 
 export type { InfoboxProperty, Block, LatLng, BlockProps } from "./types";
 

@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import useClientStorage from "@reearth/components/molecules/Visualizer/useClientStorage";
-import { CameraPosition } from "@reearth/core/mantle/compat/types";
-import { MouseEventHandles, MouseEvents } from "@reearth/core/Map";
-import events from "@reearth/core/Map/types/event";
-import { useGet } from "@reearth/core/Map/utils";
+import type { CameraPosition } from "@reearth/core/mantle";
+import { type MouseEventHandles, type MouseEvents, events, useGet } from "@reearth/core/Map";
 
 import { commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";

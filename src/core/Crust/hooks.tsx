@@ -1,11 +1,14 @@
-import { ReactNode, RefObject, useCallback, useMemo, useRef, useState } from "react";
+import { type ReactNode, type RefObject, useCallback, useMemo, useRef, useState } from "react";
 
-import { BlockProps } from "./Infobox";
-import Plugin, { ExternalPluginProps } from "./Plugins/Plugin";
-import { PluginModalInfo } from "./Plugins/Plugin/ModalContainer";
-import { PluginPopupInfo } from "./Plugins/Plugin/PopupContainer";
-import { MapRef } from "./types";
-import { WidgetProps } from "./Widgets";
+import type { BlockProps } from "./Infobox";
+import {
+  Plugin,
+  type PluginModalInfo,
+  type PluginPopupInfo,
+  type ExternalPluginProps,
+} from "./Plugins";
+import type { MapRef } from "./types";
+import type { WidgetProps } from "./Widgets";
 
 export default function useHook({
   mapRef,

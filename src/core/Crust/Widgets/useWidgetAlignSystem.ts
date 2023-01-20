@@ -1,8 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 
-import { WidgetAlignSystem } from "../Widgets";
-import { InternalWidget, WidgetLocationOptions } from "../Widgets/types";
-import { WidgetArea, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
+import type {
+  WidgetAlignSystem,
+  InternalWidget,
+  WidgetLocationOptions,
+  WidgetArea,
+  WidgetSection,
+  WidgetZone,
+} from "../Widgets";
 
 export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined }) => {
   const [overriddenAlignSystem, setOverrideAlignSystem] = useState<WidgetAlignSystem | undefined>(

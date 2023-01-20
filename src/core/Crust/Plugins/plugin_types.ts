@@ -1,15 +1,17 @@
-import { ComputedLayer, LatLngHeight, Rect } from "@reearth/core/mantle";
-import { CameraPosition, Tag } from "@reearth/core/mantle/compat/types";
-import {
+import type { ComputedLayer, LatLngHeight, Rect, CameraPosition, Tag } from "@reearth/core/mantle";
+import type {
   CameraOptions,
   FlyToDestination,
   LayerEditEvent,
   LayersRef,
   LookAtDestination,
+  LayerSelectionReason,
+  LazyLayer,
+  OverriddenInfobox,
+  OverriddenLayer,
+  Undefinable,
+  WrappedRef,
 } from "@reearth/core/Map";
-import { LayerSelectionReason, LazyLayer, OverriddenInfobox } from "@reearth/core/Map/Layers";
-import { OverriddenLayer } from "@reearth/core/Map/Layers/hooks";
-import { Undefinable, WrappedRef } from "@reearth/core/Map/utils";
 
 import { Block } from "../Infobox";
 import { Widget } from "../Widgets";

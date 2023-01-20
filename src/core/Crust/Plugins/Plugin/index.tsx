@@ -1,16 +1,18 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 
-import { Layer } from "@reearth/core/mantle";
+import type { Layer } from "@reearth/core/mantle";
 
-import { Block } from "../../Infobox";
+import type { Block } from "../../Infobox";
 import type { MapRef } from "../../types";
-import { Widget } from "../../Widgets";
-import { WidgetLocationOptions } from "../../Widgets/types";
-import P, { Props as PluginProps } from "../PluginFrame";
+import type { Widget, WidgetLocationOptions } from "../../Widgets";
+import P, { type Props as PluginProps } from "../PluginFrame";
 
 import useHooks from "./hooks";
 import type { PluginModalInfo } from "./ModalContainer";
 import type { PluginPopupInfo } from "./PopupContainer";
+
+export { default as PopupContainer, type PluginPopupInfo } from "./PopupContainer";
+export { default as ModalContainer, type PluginModalInfo } from "./ModalContainer";
 
 export type CommonProps = {
   pluginProperty?: any; // Taken from Visualizer

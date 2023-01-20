@@ -10,7 +10,7 @@ import {
 
 import theme, { styled } from "@reearth/theme";
 
-import { PopupPosition } from "../../plugin_types";
+import type { PopupPosition } from "../../plugin_types";
 
 type AxesOffsets = {
   mainAxis?: number;

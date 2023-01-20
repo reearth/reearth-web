@@ -1,31 +1,30 @@
-import { ReactNode, RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 
-import { Tag } from "@reearth/core/mantle/compat/types";
+import type { Tag } from "@reearth/core/mantle";
 
-import { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import { LayerSelectionReason } from "../Map";
-import { Viewport } from "../Visualizer/useViewport";
+import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
+import type { LayerSelectionReason } from "../Map";
+import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
-import Plugins from "./Plugins";
-import { ExternalPluginProps } from "./Plugins/Plugin";
-import ModalContainer from "./Plugins/Plugin/ModalContainer";
-import PopupContainer from "./Plugins/Plugin/PopupContainer";
+import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import { ValueTypes, ValueType, MapRef, SceneProperty, Camera, Clock } from "./types";
+import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera, Clock } from "./types";
 import Widgets, {
-  WidgetAlignSystem as WidgetAlignSystemType,
-  Alignment,
-  Location,
-  WidgetLayoutConstraint,
-  InternalWidget,
+  type WidgetAlignSystem as WidgetAlignSystemType,
+  type Alignment,
+  type Location,
+  type WidgetLayoutConstraint,
+  type InternalWidget,
 } from "./Widgets";
 
 export type { ValueTypes, ValueType } from "./types";
 
 export type { Block } from "./Infobox";
+
+export type { ExternalPluginProps } from "./Plugins";
 
 export type {
   Context,
@@ -33,6 +32,7 @@ export type {
   WidgetAlignSystem,
   Alignment,
   Location,
+  InternalWidget,
 } from "./Widgets";
 
 export type Props = {

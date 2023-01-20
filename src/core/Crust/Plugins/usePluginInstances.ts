@@ -1,8 +1,8 @@
-import { useEffect, useRef, useMemo, MutableRefObject } from "react";
+import { useEffect, useRef, useMemo, type MutableRefObject } from "react";
 
-import { Block } from "../Infobox";
-import { WidgetAlignSystem } from "../Widgets";
-import { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
+import type { Block } from "../Infobox";
+import type { WidgetAlignSystem } from "../Widgets";
+import type { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
 
 import type { PluginExtensionInstance } from "./plugin_types";
 

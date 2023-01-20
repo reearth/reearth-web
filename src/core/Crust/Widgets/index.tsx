@@ -16,11 +16,14 @@ export type {
   Location,
   WidgetAlignSystem,
   WidgetLayoutConstraint,
+  WidgetArea,
+  WidgetZone,
+  WidgetSection,
 } from "./WidgetAlignSystem";
 
 export type { Context } from "./Widget";
 
-export type { Widget, InternalWidget } from "./types";
+export type { Widget, InternalWidget, WidgetLocationOptions } from "./types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;

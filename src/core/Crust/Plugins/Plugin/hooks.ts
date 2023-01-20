@@ -1,15 +1,19 @@
-import { Options } from "quickjs-emscripten-sync";
+import type { Options } from "quickjs-emscripten-sync";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 
-import { Layer, mergeEvents } from "@reearth/core/Map";
-import events, { EventEmitter, Events } from "@reearth/core/Map/types/event";
-import { useGet } from "@reearth/core/Map/utils";
+import {
+  events,
+  type Layer,
+  mergeEvents,
+  type EventEmitter,
+  type Events,
+  useGet,
+} from "@reearth/core/Map";
 
-import { Block } from "../../Infobox";
-import { MapRef } from "../../types";
-import { Widget } from "../../Widgets";
-import { WidgetLocationOptions } from "../../Widgets/types";
+import type { Block } from "../../Infobox";
+import type { MapRef } from "../../types";
+import type { Widget, WidgetLocationOptions } from "../../Widgets";
 import { exposed } from "../api";
 import { usePluginContext } from "../context";
 import type { GlobalThis, ReearthEventType } from "../plugin_types";

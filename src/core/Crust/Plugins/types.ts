@@ -1,16 +1,15 @@
-import { PropsWithChildren, RefObject } from "react";
+import type { PropsWithChildren, RefObject } from "react";
 
-import { Tag } from "@reearth/core/mantle/compat/types";
-import { ComputedLayer } from "@reearth/core/Map";
-import { LayerSelectionReason } from "@reearth/core/Map/Layers";
-import { Viewport } from "@reearth/core/Visualizer/useViewport";
+import type { Tag } from "@reearth/core/mantle";
+import type { ComputedLayer, LayerSelectionReason } from "@reearth/core/Map";
+import type { Viewport } from "@reearth/core/Visualizer";
 
-import { MapRef } from "../types";
-import { InternalWidget, WidgetAlignSystem } from "../Widgets";
+import type { MapRef } from "../types";
+import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
-import { CommonReearth } from "./api";
-import { ClientStorage } from "./useClientStorage";
-import { PluginInstances } from "./usePluginInstances";
+import type { CommonReearth } from "./api";
+import type { ClientStorage } from "./useClientStorage";
+import type { PluginInstances } from "./usePluginInstances";
 
 export type Props = PropsWithChildren<{
   engineName?: string;

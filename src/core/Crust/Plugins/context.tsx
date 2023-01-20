@@ -1,6 +1,6 @@
 import { createContext, FC, PropsWithChildren, useContext } from "react";
 
-import { Context } from "./types";
+import type { Context } from "./types";
 
 const PluginContext = createContext<Context | undefined>(undefined);
 

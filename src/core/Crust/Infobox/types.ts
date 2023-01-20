@@ -1,4 +1,4 @@
-import { Layer } from "@reearth/core/mantle";
+import type { Layer } from "@reearth/core/mantle";
 
 import type { Typography } from "../types";
 

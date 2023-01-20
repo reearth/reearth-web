@@ -1,9 +1,17 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useWindowSize } from "react-use";
 
-import { DropOptions, useDrop } from "@reearth/util/use-dnd";
+import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
-import { ComputedFeature, Feature } from "../mantle";
+import type { ComputedFeature, Feature } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
@@ -12,7 +20,7 @@ import type {
   ComputedLayer,
   SceneProperty,
 } from "../Map";
-import { useOverriddenProperty } from "../Map/utils";
+import { useOverriddenProperty } from "../Map";
 
 import useViewport from "./useViewport";
 

@@ -9,10 +9,10 @@ import Crust, {
   type Location,
   type WidgetAlignSystem,
   type WidgetLayoutConstraint,
+  type ExternalPluginProps,
+  type InternalWidget,
 } from "../Crust";
-import { ExternalPluginProps } from "../Crust/Plugins/Plugin";
-import { InternalWidget } from "../Crust/Widgets";
-import { Tag } from "../mantle/compat/types";
+import { Tag } from "../mantle";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -37,6 +37,7 @@ export type {
   WidgetLayoutConstraint,
 } from "../Crust";
 export type { EngineType } from "./engines";
+export { Viewport } from "./useViewport";
 
 export type Props = {
   engine?: EngineType;
