@@ -33,7 +33,13 @@ export type {
   Alignment,
   Location,
   InternalWidget,
+  WidgetZone,
+  WidgetSection,
+  BuiltinWidgets,
+  WidgetArea,
+  WidgetAlignment,
 } from "./Widgets";
+export { isBuiltinWidget } from "./Widgets";
 
 export type Props = {
   // common

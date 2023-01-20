@@ -346,7 +346,12 @@ export const useHooks = ({
         return;
       }
 
-      await tilesetRef.current?.readyPromise;
+      try {
+        await tilesetRef.current?.readyPromise;
+      } catch (e) {
+        console.error("Could not load 3D tiles: ", e);
+        return;
+      }
 
       const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
         tilesetRef.current.boundingSphere.center.clone(),

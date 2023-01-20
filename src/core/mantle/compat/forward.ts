@@ -194,6 +194,27 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "resource") {
     appearance = "resource";
+  } else if (l.extensionId === "box") {
+    appearance = "box";
+    legacyPropertyKeys = ["position", "height"];
+    if (l.property?.default?.location) {
+      data = {
+        type: "geojson",
+        value: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              l.property.default.location.lng,
+              l.property.default.location.lat,
+              ...(typeof l.property.default.location.height === "number"
+                ? [l.property.default.location.height]
+                : []),
+            ],
+          },
+        } as Feature<Point>,
+      };
+    }
   }
 
   const property = appearance

@@ -53,8 +53,11 @@ export type Reearth = {
       WrappedRef<LayersRef>,
       | "layers"
       | "isLayer"
+      | "overrideProperties"
       | "override"
+      | "add"
       | "addAll"
+      | "addLegacy"
       | "replace"
       | "deleteLayer"
       | "selectedLayer"
@@ -62,7 +65,8 @@ export type Reearth = {
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
       readonly overriddenProperties?: OverriddenLayer[];
-      readonly overrideProperty?: WrappedRef<LayersRef>["override"];
+      readonly overrideProperty?: WrappedRef<LayersRef>["overrideProperties"];
+      readonly add?: WrappedRef<LayersRef>["addLegacy"];
       selectionReason?: LayerSelectionReason;
       overriddenInfobox?: LayerSelectionReason["overriddenInfobox"];
       tags?: Tag[];

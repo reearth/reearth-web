@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { objectFromGetter } from "@reearth/util/object";
 
-import { computeAtom, convertLegacyLayer } from "../../mantle";
+import { computeAtom, convertLegacyLayer, LayerSimple } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { useGet } from "../utils";
 
@@ -43,8 +43,10 @@ export type Ref = {
   findByIds: (...ids: string[]) => (LazyLayer | undefined)[];
   add: (layer: NaiveLayer) => LazyLayer | undefined;
   addAll: (...layers: NaiveLayer[]) => (LazyLayer | undefined)[];
+  addLegacy: (...layers: NaiveLayer[]) => string | undefined;
   replace: (...layers: Layer[]) => void;
   override: (id: string, layer?: Partial<Layer> | null) => void;
+  overrideProperties: (id: string, properties?: Partial<LayerSimple["properties"]> | null) => void;
   deleteLayer: (...ids: string[]) => void;
   isLayer: (obj: any) => obj is LazyLayer;
   layers: () => LazyLayer[];
@@ -262,6 +264,36 @@ export default function useHooks({
     [add],
   );
 
+  const addLegacy = useCallback(
+    (layer: NaiveLayer): string | undefined => {
+      if (!isValidLayer(layer)) return;
+
+      const rawLayer = compat(layer);
+      if (!rawLayer) return;
+
+      const newLayer = { ...rawLayer, id: uuidv4() };
+
+      // generate ids for layers and blocks
+      walkLayers([newLayer], l => {
+        if (!l.id) {
+          l.id = uuidv4();
+        }
+        l.infobox?.blocks?.forEach(b => {
+          if (b.id) return;
+          b.id = uuidv4();
+        });
+        layerMap.set(l.id, l);
+        atomMap.set(l.id, computeAtom());
+      });
+
+      tempLayersRef.current = [...tempLayersRef.current, newLayer];
+      setTempLayers(layers => [...layers, newLayer]);
+
+      return newLayer.id;
+    },
+    [atomMap, layerMap],
+  );
+
   const replace = useCallback(
     (...layers: Layer[]) => {
       const validLayers = layers
@@ -303,6 +335,32 @@ export default function useHooks({
               extensionId: originalLayer.compat.extensionId,
             }
           : {}),
+      });
+      if (!rawLayer) return;
+      const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
+      setOverridenLayers(layers => {
+        const i = layers.findIndex(l => l.id === id);
+        if (i < 0) return [...layers, layer2];
+        return [...layers.slice(0, i - 1), layer2, ...layers.slice(i + 1)];
+      });
+    },
+    [layerMap],
+  );
+
+  const overrideProperties = useCallback(
+    (id: string, properties?: Partial<LayerSimple["properties"]> | null) => {
+      const originalLayer = layerMap.get(id);
+      if (!originalLayer) return;
+
+      const rawLayer = compat({
+        ...originalLayer,
+        ...(originalLayer.compat && properties
+          ? {
+              type: originalLayer.type === "group" ? "group" : "item",
+              extensionId: originalLayer.compat.extensionId,
+            }
+          : {}),
+        ...(properties ? { property: properties } : {}),
       });
       if (!rawLayer) return;
       const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
@@ -449,8 +507,10 @@ export default function useHooks({
       findById,
       add,
       addAll,
+      addLegacy,
       replace,
       override,
+      overrideProperties,
       deleteLayer,
       findByIds,
       isLayer,
@@ -470,8 +530,10 @@ export default function useHooks({
       findById,
       add,
       addAll,
+      addLegacy,
       replace,
       override,
+      overrideProperties,
       deleteLayer,
       findByIds,
       isLayer,
