@@ -1,12 +1,4 @@
-import {
-  type Dispatch,
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
@@ -33,17 +25,20 @@ export default function useHooks({
   sceneProperty,
   isEditable,
   rootLayerId,
+  zoomedLayerId,
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
   onTick,
+  onZoomToLayer,
 }: {
   selectedBlockId?: string;
   camera?: Camera;
-  clock?: Date;
+  clock?: Clock;
   isEditable?: boolean;
   rootLayerId?: string;
   sceneProperty?: SceneProperty;
+  zoomedLayerId?: string;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -53,6 +48,7 @@ export default function useHooks({
   onBlockSelect?: (blockId?: string) => void;
   onCameraChange?: (camera: Camera) => void;
   onTick?: (clock: Date) => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 }) {
   const mapRef = useRef<MapRef>(null);
 
@@ -124,16 +120,24 @@ export default function useHooks({
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
 
   // clock
-  const [clock, handleTick] = useValue(initialClock, onTick);
+  const [clock, handleTick] = useValue(initialClock?.current, onTick);
   const handleTick2 = useCallback((clock: Clock) => handleTick(clock.current), [handleTick]);
   const mapClock = useMemo<Clock | undefined>(
-    () => (clock ? { current: clock } : undefined),
-    [clock],
+    () => (clock ? { ...initialClock, current: clock } : undefined),
+    [clock, initialClock],
   );
 
   // mobile
   const { width } = useWindowSize();
   const isMobile = width < viewportMobileMaxWidth;
+
+  // zoom to layer
+  useEffect(() => {
+    if (zoomedLayerId) {
+      mapRef.current?.engine?.lookAtLayer(zoomedLayerId);
+      onZoomToLayer?.(undefined);
+    }
+  }, [zoomedLayerId, onZoomToLayer]);
 
   return {
     mapRef,
@@ -159,18 +163,22 @@ export default function useHooks({
 function useValue<T>(
   initial: T | undefined,
   onChange: ((t: T) => void) | undefined,
-): [T | undefined, Dispatch<SetStateAction<T | undefined>>] {
+): [T | undefined, (v?: T) => void] {
   const [state, set] = useState(initial);
 
-  useEffect(() => {
-    if (state) {
-      onChange?.(state);
-    }
-  }, [state, onChange]);
+  const handleOnChange = useCallback(
+    (v?: T) => {
+      if (v) {
+        set(v);
+        onChange?.(v);
+      }
+    },
+    [onChange],
+  );
 
   useEffect(() => {
     set(initial);
   }, [initial]);
 
-  return [state, set];
+  return [state, handleOnChange];
 }
