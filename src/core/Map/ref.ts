@@ -61,7 +61,6 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
 const layersRefKeys: FunctionKeys<LayersRef> = {
   add: 1,
   addAll: 1,
-  addLegacy: 1,
   deleteLayer: 1,
   find: 1,
   findAll: 1,

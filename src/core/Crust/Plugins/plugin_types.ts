@@ -1,4 +1,11 @@
-import type { ComputedLayer, LatLngHeight, Rect, CameraPosition, Tag } from "@reearth/core/mantle";
+import type {
+  ComputedLayer,
+  LatLngHeight,
+  Rect,
+  CameraPosition,
+  Tag,
+  NaiveLayer,
+} from "@reearth/core/mantle";
 import type {
   CameraOptions,
   FlyToDestination,
@@ -57,7 +64,6 @@ export type Reearth = {
       | "override"
       | "add"
       | "addAll"
-      | "addLegacy"
       | "replace"
       | "deleteLayer"
       | "selectedLayer"
@@ -66,7 +72,7 @@ export type Reearth = {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
       readonly overriddenProperties?: OverriddenLayer[];
       readonly overrideProperty?: WrappedRef<LayersRef>["overrideProperties"];
-      readonly add?: WrappedRef<LayersRef>["addLegacy"];
+      readonly add?: (layer: NaiveLayer) => string | undefined;
       selectionReason?: LayerSelectionReason;
       overriddenInfobox?: LayerSelectionReason["overriddenInfobox"];
       tags?: Tag[];
