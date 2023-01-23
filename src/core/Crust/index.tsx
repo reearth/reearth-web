@@ -6,9 +6,6 @@ import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { LayerSelectionReason } from "../Map";
 import type { Viewport } from "../Visualizer";
 
-import { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import { LayerSelectionReason } from "../Map";
-
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
