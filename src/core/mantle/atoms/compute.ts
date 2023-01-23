@@ -148,7 +148,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       const currentLayer = get(layer);
       if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
-      if (process.env.NODE_ENV === "development") {
+      if (import.meta.env.DEV) {
         if (!get(delegatedDataTypes).includes(currentLayer.data.type)) {
           throw new Error("writeComputedFeature can be called with delegated data");
         }

@@ -165,6 +165,11 @@ test("computeAtom", async () => {
     }),
   );
 
+  // set a layer with delegatedDataTypes
+  act(() => {
+    result.current.set({ type: "updateDelegatedDataTypes", delegatedDataTypes: ["geojson"] });
+  });
+
   // write computed features
   act(() => {
     result.current.set({
@@ -195,6 +200,11 @@ test("computeAtom", async () => {
     }),
   );
 
+  // delete delegatedDataTypes
+  act(() => {
+    result.current.set({ type: "updateDelegatedDataTypes", delegatedDataTypes: [] });
+  });
+
   // override appearances
   act(() => {
     result.current.set({
@@ -209,7 +219,7 @@ test("computeAtom", async () => {
   expect(result.current.result).toEqual({
     id: "xxx",
     layer,
-    status: "ready",
+    status: "fetching",
     features: [...features, ...features2, ...features3].map(f => ({
       ...f,
       type: "computedFeature",
