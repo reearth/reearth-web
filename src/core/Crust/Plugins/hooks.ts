@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import useClientStorage from "@reearth/components/molecules/Visualizer/useClientStorage";
-import type { CameraPosition } from "@reearth/core/mantle";
-import { type MouseEventHandles, type MouseEvents, events, useGet } from "@reearth/core/Map";
+import type { CameraPosition, NaiveLayer } from "@reearth/core/mantle";
+import {
+  type MouseEventHandles,
+  type MouseEvents,
+  events,
+  useGet,
+  CameraOptions,
+  LookAtDestination,
+  FlyToDestination,
+  LayerSelectionReason,
+} from "@reearth/core/Map";
 
 import { commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
@@ -25,6 +34,8 @@ export default function ({
   layerSelectionReason,
   alignSystem,
   floatingWidgets,
+  camera,
+  clock,
   overrideSceneProperty,
   onLayerEdit,
 }: Props) {
@@ -32,9 +43,6 @@ export default function ({
 
   const layersRef = mapRef?.current?.layers;
   const engineRef = mapRef?.current?.engine;
-
-  const camera = useMemo(() => engineRef?.getCamera(), [engineRef]);
-  const clock = useMemo(() => engineRef?.getClock(), [engineRef]);
 
   const pluginInstances = usePluginInstances({
     alignSystem,
@@ -70,9 +78,187 @@ export default function ({
     [overrideSceneProperty],
   );
 
+  const flyTo = useCallback(
+    (dest: FlyToDestination, options?: CameraOptions) => {
+      engineRef?.flyTo(dest, options);
+    },
+    [engineRef],
+  );
+
+  const lookAt = useCallback(
+    (dest: LookAtDestination, options?: CameraOptions) => {
+      engineRef?.lookAt(dest, options);
+    },
+    [engineRef],
+  );
+
+  const cameraViewport = useCallback(() => {
+    return engineRef?.getViewport();
+  }, [engineRef]);
+
   const layersInViewport = useCallback(() => {
     return layersRef?.findAll(layer => !!engineRef?.inViewport(layer?.property?.default?.location));
   }, [engineRef, layersRef]);
+
+  const zoomIn = useCallback(
+    (amount: number) => {
+      engineRef?.zoomIn(amount);
+    },
+    [engineRef],
+  );
+
+  const zoomOut = useCallback(
+    (amount: number) => {
+      engineRef?.zoomOut(amount);
+    },
+    [engineRef],
+  );
+
+  const rotateRight = useCallback(
+    (radian: number) => {
+      engineRef?.rotateRight(radian);
+    },
+    [engineRef],
+  );
+
+  const orbit = useCallback(
+    (radian: number) => {
+      engineRef?.orbit(radian);
+    },
+    [engineRef],
+  );
+
+  const captureScreen = useCallback(
+    (type?: string, encoderOptions?: number) => {
+      return engineRef?.captureScreen(type, encoderOptions);
+    },
+    [engineRef],
+  );
+
+  const getLocationFromScreen = useCallback(
+    (x: number, y: number, withTerrain?: boolean) => {
+      return engineRef?.getLocationFromScreen(x, y, withTerrain);
+    },
+    [engineRef],
+  );
+
+  const enableScreenSpaceCameraController = useCallback(
+    (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
+    [engineRef],
+  );
+
+  const lookHorizontal = useCallback(
+    (amount: number) => {
+      engineRef?.lookHorizontal(amount);
+    },
+    [engineRef],
+  );
+
+  const lookVertical = useCallback(
+    (amount: number) => {
+      engineRef?.lookVertical(amount);
+    },
+    [engineRef],
+  );
+
+  const moveForward = useCallback(
+    (amount: number) => {
+      engineRef?.moveForward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveBackward = useCallback(
+    (amount: number) => {
+      engineRef?.moveBackward(amount);
+    },
+    [engineRef],
+  );
+
+  const moveUp = useCallback(
+    (amount: number) => {
+      engineRef?.moveUp(amount);
+    },
+    [engineRef],
+  );
+
+  const moveDown = useCallback(
+    (amount: number) => {
+      engineRef?.moveDown(amount);
+    },
+    [engineRef],
+  );
+
+  const moveLeft = useCallback(
+    (amount: number) => {
+      engineRef?.moveLeft(amount);
+    },
+    [engineRef],
+  );
+
+  const moveRight = useCallback(
+    (amount: number) => {
+      engineRef?.moveRight(amount);
+    },
+    [engineRef],
+  );
+
+  const moveOverTerrain = useCallback(
+    (offset?: number) => {
+      return engineRef?.moveOverTerrain(offset);
+    },
+    [engineRef],
+  );
+
+  const flyToGround = useCallback(
+    (dest: FlyToDestination, options?: CameraOptions, offset?: number) => {
+      engineRef?.flyToGround(dest, options, offset);
+    },
+    [engineRef],
+  );
+
+  const addLayer = useCallback(
+    (layer: NaiveLayer) => {
+      return layersRef?.add(layer)?.id;
+    },
+    [layersRef],
+  );
+
+  const overrideLayerProperty = useCallback(
+    (id: string, properties?: Partial<any> | null | undefined) => {
+      layersRef?.override(id, properties);
+    },
+    [layersRef],
+  );
+
+  const selectLayer = useCallback(
+    (
+      layerId: string | undefined,
+      featureId?: string | undefined,
+      reason?: LayerSelectionReason | undefined,
+    ) => {
+      layersRef?.select(layerId, featureId, reason);
+    },
+    [layersRef],
+  );
+
+  const showLayer = useCallback(
+    (...args: string[]) => {
+      layersRef?.show(...args);
+    },
+    [layersRef],
+  );
+
+  const hideLayer = useCallback(
+    (...args: string[]) => {
+      layersRef?.hide(...args);
+    },
+    [layersRef],
+  );
+
+  const layerOverriddenProperties = useCallback(() => {
+    return layersRef?.overriddenLayers();
+  }, [layersRef]);
 
   const value = useMemo<Context>(
     () => ({
@@ -89,34 +275,34 @@ export default function ({
         viewport: getViewport,
         selectedLayer: getSelectedLayer,
         layerSelectionReason: getLayerSelectionReason,
-        layerOverriddenProperties: layersRef?.overriddenLayers,
-        showLayer: layersRef?.show,
-        hideLayer: layersRef?.hide,
-        addLayer: layersRef?.addLegacy,
-        selectLayer: layersRef?.select,
-        overrideLayerProperty: layersRef?.overrideProperties,
+        layerOverriddenProperties,
+        showLayer,
+        hideLayer,
+        addLayer,
+        selectLayer,
+        overrideLayerProperty,
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
-        flyTo: engineRef?.flyTo,
-        lookAt: engineRef?.lookAt,
-        zoomIn: engineRef?.zoomIn,
-        zoomOut: engineRef?.zoomOut,
-        cameraViewport: engineRef?.getViewport,
-        rotateRight: engineRef?.rotateRight,
-        orbit: engineRef?.orbit,
-        captureScreen: engineRef?.captureScreen,
-        getLocationFromScreen: engineRef?.getLocationFromScreen,
-        enableScreenSpaceCameraController: engineRef?.enableScreenSpaceCameraController,
-        lookHorizontal: engineRef?.lookHorizontal,
-        lookVertical: engineRef?.lookVertical,
-        moveForward: engineRef?.moveForward,
-        moveBackward: engineRef?.moveBackward,
-        moveUp: engineRef?.moveUp,
-        moveDown: engineRef?.moveDown,
-        moveLeft: engineRef?.moveLeft,
-        moveRight: engineRef?.moveRight,
-        moveOverTerrain: engineRef?.moveOverTerrain,
-        flyToGround: engineRef?.flyToGround,
+        flyTo,
+        lookAt,
+        zoomIn,
+        zoomOut,
+        cameraViewport,
+        rotateRight,
+        orbit,
+        captureScreen,
+        getLocationFromScreen,
+        enableScreenSpaceCameraController,
+        lookHorizontal,
+        lookVertical,
+        moveForward,
+        moveBackward,
+        moveUp,
+        moveDown,
+        moveLeft,
+        moveRight,
+        moveOverTerrain,
+        flyToGround,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -136,12 +322,36 @@ export default function ({
       getSelectedLayer,
       getLayerSelectionReason,
       overrideScenePropertyCommon,
-      layersRef,
-      engineRef,
+      lookAt,
       layersInViewport,
       pluginInstances,
       clientStorage,
       overrideSceneProperty,
+      addLayer,
+      cameraViewport,
+      captureScreen,
+      enableScreenSpaceCameraController,
+      flyTo,
+      flyToGround,
+      getLocationFromScreen,
+      hideLayer,
+      lookHorizontal,
+      lookVertical,
+      moveBackward,
+      moveDown,
+      moveForward,
+      moveLeft,
+      moveOverTerrain,
+      moveRight,
+      moveUp,
+      orbit,
+      overrideLayerProperty,
+      rotateRight,
+      selectLayer,
+      showLayer,
+      zoomIn,
+      zoomOut,
+      layerOverriddenProperties,
     ],
   );
 

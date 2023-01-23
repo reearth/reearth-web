@@ -385,8 +385,6 @@ test("add, replace, delete", () => {
   ]);
 });
 
-test.todo("addLegacy");
-
 test("override", () => {
   const dataValue = {
     type: "Feature",

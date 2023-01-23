@@ -43,7 +43,6 @@ export type Ref = {
   findByIds: (...ids: string[]) => (LazyLayer | undefined)[];
   add: (layer: NaiveLayer) => LazyLayer | undefined;
   addAll: (...layers: NaiveLayer[]) => (LazyLayer | undefined)[];
-  addLegacy: (...layers: NaiveLayer[]) => string | undefined;
   replace: (...layers: Layer[]) => void;
   override: (id: string, layer?: Partial<Layer> | null) => void;
   overrideProperties: (id: string, properties?: Partial<LayerSimple["properties"]> | null) => void;
@@ -264,36 +263,6 @@ export default function useHooks({
     [add],
   );
 
-  const addLegacy = useCallback(
-    (layer: NaiveLayer): string | undefined => {
-      if (!isValidLayer(layer)) return;
-
-      const rawLayer = compat(layer);
-      if (!rawLayer) return;
-
-      const newLayer = { ...rawLayer, id: uuidv4() };
-
-      // generate ids for layers and blocks
-      walkLayers([newLayer], l => {
-        if (!l.id) {
-          l.id = uuidv4();
-        }
-        l.infobox?.blocks?.forEach(b => {
-          if (b.id) return;
-          b.id = uuidv4();
-        });
-        layerMap.set(l.id, l);
-        atomMap.set(l.id, computeAtom());
-      });
-
-      tempLayersRef.current = [...tempLayersRef.current, newLayer];
-      setTempLayers(layers => [...layers, newLayer]);
-
-      return newLayer.id;
-    },
-    [atomMap, layerMap],
-  );
-
   const replace = useCallback(
     (...layers: Layer[]) => {
       const validLayers = layers
@@ -507,7 +476,6 @@ export default function useHooks({
       findById,
       add,
       addAll,
-      addLegacy,
       replace,
       override,
       overrideProperties,
@@ -530,7 +498,6 @@ export default function useHooks({
       findById,
       add,
       addAll,
-      addLegacy,
       replace,
       override,
       overrideProperties,

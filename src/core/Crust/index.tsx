@@ -165,6 +165,8 @@ export default function Crust({
       viewport={viewport}
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
+      camera={camera}
+      clock={clock}
       overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
