@@ -26,6 +26,7 @@ export default function ({
   alignSystem,
   floatingWidgets,
   overrideSceneProperty,
+  onLayerEdit,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
@@ -202,7 +203,10 @@ export default function ({
         emit(event, props);
       });
     });
-  }, [emit, onMouseEvent]);
+    onLayerEdit(e => {
+      emit("layeredit", e);
+    });
+  }, [emit, onMouseEvent, onLayerEdit]);
 
   // expose plugin API for developers
   useEffect(() => {

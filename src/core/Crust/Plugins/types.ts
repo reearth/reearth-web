@@ -1,7 +1,7 @@
 import type { PropsWithChildren, RefObject } from "react";
 
 import type { Tag } from "@reearth/core/mantle";
-import type { ComputedLayer, LayerSelectionReason } from "@reearth/core/Map";
+import type { ComputedLayer, LayerEditEvent, LayerSelectionReason } from "@reearth/core/Map";
 import type { Viewport } from "@reearth/core/Visualizer";
 
 import type { MapRef } from "../types";
@@ -23,6 +23,7 @@ export type Props = PropsWithChildren<{
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
   overrideSceneProperty: (id: string, property: any) => void;
+  onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
 }>;
 
 export type Context = {

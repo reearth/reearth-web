@@ -166,6 +166,8 @@ export default function Visualizer({
     handleCameraChange,
     handleTick,
     overrideSceneProperty,
+    handleLayerEdit,
+    onLayerEdit,
   } = useHooks({
     rootLayerId,
     isEditable,
@@ -221,6 +223,7 @@ export default function Visualizer({
         onBlockDelete={onBlockDelete}
         onBlockInsert={onBlockInsert}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+        onLayerEdit={onLayerEdit}
       />
       <Map
         ref={mapRef}
@@ -248,6 +251,7 @@ export default function Visualizer({
         onLayerDrop={onLayerDrop}
         onLayerSelect={handleLayerSelect}
         onTick={handleTick}
+        onLayerEdit={handleLayerEdit}
       />
     </Filled>
   );
