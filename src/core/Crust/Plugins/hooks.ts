@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import useClientStorage from "@reearth/components/molecules/Visualizer/useClientStorage";
 import type { CameraPosition, NaiveLayer } from "@reearth/core/mantle";
 import {
   type MouseEventHandles,
