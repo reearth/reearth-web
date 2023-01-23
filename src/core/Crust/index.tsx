@@ -3,11 +3,8 @@ import type { ReactNode, RefObject } from "react";
 import type { Tag } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import type { LayerSelectionReason } from "../Map";
+import type { LayerEditEvent, LayerSelectionReason } from "../Map";
 import type { Viewport } from "../Visualizer";
-
-import { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import { LayerSelectionReason } from "../Map";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -104,6 +101,7 @@ export type Props = {
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
+  onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
 };
 
 export default function Crust({
@@ -141,6 +139,7 @@ export default function Crust({
   onBlockInsert,
   renderInfoboxInsertionPopup,
   overrideSceneProperty,
+  onLayerEdit,
 }: Props): JSX.Element | null {
   const {
     renderBlock,
@@ -166,7 +165,10 @@ export default function Crust({
       viewport={viewport}
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
-      overrideSceneProperty={overrideSceneProperty}>
+      camera={camera}
+      clock={clock}
+      overrideSceneProperty={overrideSceneProperty}
+      onLayerEdit={onLayerEdit}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}

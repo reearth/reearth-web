@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import useClientStorage from "@reearth/components/molecules/Visualizer/useClientStorage";
 import type { CameraPosition } from "@reearth/core/mantle";
-import { type MouseEventHandles, type MouseEvents, events, useGet } from "@reearth/core/Map";
+import {
+  type MouseEventHandles,
+  type MouseEvents,
+  events,
+  useGet,
+  CameraOptions,
+  LookAtDestination,
+} from "@reearth/core/Map";
 
 import { commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
@@ -25,15 +32,15 @@ export default function ({
   layerSelectionReason,
   alignSystem,
   floatingWidgets,
+  camera,
+  clock,
   overrideSceneProperty,
+  onLayerEdit,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
   const layersRef = mapRef?.current?.layers;
   const engineRef = mapRef?.current?.engine;
-
-  const camera = useMemo(() => engineRef?.getCamera(), [engineRef]);
-  const clock = useMemo(() => engineRef?.getClock(), [engineRef]);
 
   const pluginInstances = usePluginInstances({
     alignSystem,
@@ -73,6 +80,13 @@ export default function ({
     return layersRef?.findAll(layer => !!engineRef?.inViewport(layer?.property?.default?.location));
   }, [engineRef, layersRef]);
 
+  const lookAt = useCallback(
+    (dest: LookAtDestination, options?: CameraOptions) => {
+      engineRef?.lookAt(dest, options);
+    },
+    [engineRef],
+  );
+
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -97,7 +111,7 @@ export default function ({
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
         flyTo: engineRef?.flyTo,
-        lookAt: engineRef?.lookAt,
+        lookAt,
         zoomIn: engineRef?.zoomIn,
         zoomOut: engineRef?.zoomOut,
         cameraViewport: engineRef?.getViewport,
@@ -135,6 +149,7 @@ export default function ({
       getSelectedLayer,
       getLayerSelectionReason,
       overrideScenePropertyCommon,
+      lookAt,
       layersRef,
       engineRef,
       layersInViewport,
@@ -202,7 +217,10 @@ export default function ({
         emit(event, props);
       });
     });
-  }, [emit, onMouseEvent]);
+    onLayerEdit(e => {
+      emit("layeredit", e);
+    });
+  }, [emit, onMouseEvent, onLayerEdit]);
 
   // expose plugin API for developers
   useEffect(() => {

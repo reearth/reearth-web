@@ -11,6 +11,7 @@ import type {
   Clock,
   ComputedLayer,
   SceneProperty,
+  LayerEditEvent,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 
@@ -131,6 +132,15 @@ export default function useHooks({
   const { width } = useWindowSize();
   const isMobile = width < viewportMobileMaxWidth;
 
+  // layer edit
+  const onLayerEditRef = useRef<(e: LayerEditEvent) => void>();
+  const onLayerEdit = useCallback((cb: (e: LayerEditEvent) => void) => {
+    onLayerEditRef.current = cb;
+  }, []);
+  const handleLayerEdit = useCallback((e: LayerEditEvent) => {
+    onLayerEditRef.current?.(e);
+  }, []);
+
   // zoom to layer
   useEffect(() => {
     if (zoomedLayerId) {
@@ -157,6 +167,8 @@ export default function useHooks({
     handleCameraChange: changeCamera,
     handleTick: handleTick2,
     overrideSceneProperty,
+    handleLayerEdit,
+    onLayerEdit,
   };
 }
 
