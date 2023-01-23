@@ -407,7 +407,10 @@ export function useAPI({
         },
         startEventLoop,
         overrideSceneProperty: ctx.overrideSceneProperty,
-        moveWidget,
+        moveWidget: (widgetId: string, options: WidgetLocationOptions) => {
+          moveWidget?.(widgetId, options);
+          ctx.pluginInstances.runTimesCache.increment(widgetId);
+        },
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
       });
