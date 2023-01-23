@@ -16,6 +16,7 @@ import {
 import { commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
 import { Context, Props } from "./types";
+import useClientStorage from "./useClientStorage";
 import usePluginInstances from "./usePluginInstances";
 
 export type SelectedReearthEventType = Pick<
