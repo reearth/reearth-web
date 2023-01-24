@@ -226,7 +226,7 @@ export default function ({
 
   const overrideLayerProperty = useCallback(
     (id: string, properties?: Partial<any> | null | undefined) => {
-      layersRef?.override(id, properties);
+      layersRef?.overrideProperties(id, properties);
     },
     [layersRef],
   );
