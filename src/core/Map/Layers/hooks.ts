@@ -13,6 +13,7 @@ import {
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
 
+import { DATA_CACHE_KEYS } from "@reearth/core/mantle/atoms/data";
 import { objectFromGetter } from "@reearth/util/object";
 
 import { computeAtom, convertLegacyLayer, LayerSimple } from "../../mantle";
@@ -316,6 +317,7 @@ export default function useHooks({
     [layerMap],
   );
 
+  // For compat
   const overrideProperties = useCallback(
     (id: string, properties?: Partial<LayerSimple["properties"]> | null) => {
       const originalLayer = layerMap.get(id);
@@ -327,11 +329,29 @@ export default function useHooks({
           ? {
               type: originalLayer.type === "group" ? "group" : "item",
               extensionId: originalLayer.compat.extensionId,
+              property: {
+                default: {
+                  ...(originalLayer.compat.property?.default || {}),
+                  ...(properties.default || {}),
+                },
+              },
             }
           : {}),
-        ...(properties ? { property: properties } : {}),
+        ...(!originalLayer.compat && properties ? { property: properties } : {}),
       });
       if (!rawLayer) return;
+
+      if (
+        rawLayer.type === "simple" &&
+        rawLayer.data?.value &&
+        // If data isn't cachable, reuse layer id for performance.
+        DATA_CACHE_KEYS.some(k => !rawLayer.data?.[k])
+      ) {
+        // If layer property is overridden, feature is legacy layer.
+        // So we can set layer id to prevent unnecessary render.
+        rawLayer.data.value.id = id;
+      }
+
       const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);

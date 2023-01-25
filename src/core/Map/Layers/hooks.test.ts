@@ -463,6 +463,7 @@ test("override", () => {
 test("overrideProperties", () => {
   const dataValue = {
     type: "Feature",
+    id: "y",
     geometry: { type: "Point", coordinates: [1, 2] },
   };
   const layers: Layer[] = [
