@@ -31,6 +31,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   raster: [Raster, rasterConfig],
 };
 
+// This indicates what component should render for file extension.
 const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   geojson: "auto",
   czml: "auto",
@@ -56,6 +57,32 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
+  const displayType =
+    layer.layer.type === "simple" && layer.layer.data?.type && displayConfig[layer.layer.data.type];
+  const areAllDisplayTypeNoFeature =
+    Array.isArray(displayType) &&
+    displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
+
+  if (areAllDisplayTypeNoFeature) {
+    return (
+      <>
+        {displayType.map(k => {
+          const [C] = components[k] ?? [];
+          return (
+            <C
+              {...props}
+              key={`${layer?.id || ""}_${k}`}
+              id={layer.id}
+              property={layer[k] || pickProperty(k, layer)}
+              layer={layer}
+              isVisible={layer.layer.visible !== false && !isHidden}
+            />
+          );
+        })}
+      </>
+    );
+  }
+
   return (
     <>
       {[undefined, ...layer.features].flatMap(f =>
@@ -64,11 +91,6 @@ export default function Feature({
           if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
             return null;
           }
-
-          const displayType =
-            layer.layer.type === "simple" &&
-            layer.layer.data?.type &&
-            displayConfig[layer.layer.data.type];
 
           if (
             (Array.isArray(displayType) && !displayType.includes(k)) ||
