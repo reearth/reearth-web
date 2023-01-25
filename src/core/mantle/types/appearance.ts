@@ -101,6 +101,7 @@ export type ModelAppearance = {
   lightColor?: string;
   silhouette?: boolean;
   silhouetteColor?: string;
+  bearingProperty?: number;
   silhouetteSize?: number; // default: 1
 };
 

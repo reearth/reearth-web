@@ -60,6 +60,7 @@ export type NaiveBlock<P = any> = Omit<Block<P>, "id">;
 export type Data = {
   type: DataType;
   url?: string;
+  refreshInterval?: number;
   value?: any;
   layers?: string | string[];
   csv?: {
@@ -77,7 +78,7 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms" | "mvt";
+export type DataType = "geojson" | "3dtiles" | "czml" | "csv" | "wms" | "mvt" | "gtfs";
 
 // Feature
 export type Feature = {

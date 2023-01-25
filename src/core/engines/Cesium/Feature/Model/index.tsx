@@ -44,6 +44,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     lightColor,
     silhouette,
     silhouetteColor,
+    bearingProperty,
     silhouetteSize = 1,
   } = property ?? {};
 
@@ -55,16 +56,21 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const orientation = useMemo(
     () =>
       position
-        ? Transforms.headingPitchRollQuaternion(
-            position,
-            new HeadingPitchRoll(
-              CesiumMath.toRadians(heading ?? 0),
-              CesiumMath.toRadians(pitch ?? 0),
-              CesiumMath.toRadians(roll ?? 0),
-            ),
-          )
+        ? bearingProperty
+          ? Transforms.headingPitchRollQuaternion(
+              position,
+              HeadingPitchRoll.fromDegrees(bearingProperty - 90.0, 0.0, 0.0),
+            )
+          : Transforms.headingPitchRollQuaternion(
+              position,
+              new HeadingPitchRoll(
+                CesiumMath.toRadians(heading ?? 0),
+                CesiumMath.toRadians(pitch ?? 0),
+                CesiumMath.toRadians(roll ?? 0),
+              ),
+            )
         : undefined,
-    [heading, pitch, position, roll],
+    [bearingProperty, heading, pitch, position, roll],
   );
   const modelColor = useMemo(() => (colorBlend ? toColor(color) : undefined), [colorBlend, color]);
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
