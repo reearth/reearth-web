@@ -50,7 +50,9 @@ export default () => {
       {
         id: "pluginprimitive",
         pluginId: "reearth",
-        extensionId: "marker",
+        compat: {
+          extensionId: "marker",
+        },
         type: "simple",
         isVisible: true,
         data: {
