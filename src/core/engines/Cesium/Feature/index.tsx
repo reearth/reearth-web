@@ -41,7 +41,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   ["3dtiles"]: ["3dtiles"],
 };
 
-const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
+const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster", "3dtiles"];
 const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
   if (!PICKABLE_APPEARANCE.includes(k)) {
     return;
