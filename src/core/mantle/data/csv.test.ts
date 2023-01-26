@@ -15,17 +15,27 @@ test("with header", async () => {
     } as Response;
   });
 
-  const features = await fetchCSV({
-    type: "csv",
-    url: "http://example.com",
-    csv: {
-      idColumn: "id",
-      latColumn: "lat",
-      lngColumn: "lng",
-      heightColumn: "height",
-      noHeader: false,
+  let features;
+  await fetchCSV(
+    {
+      type: "csv",
+      url: "http://example.com",
+      csv: {
+        idColumn: "id",
+        latColumn: "lat",
+        lngColumn: "lng",
+        heightColumn: "height",
+        noHeader: false,
+      },
     },
-  });
+    result => {
+      if (result) {
+        features = result;
+      } else {
+        console.log("No data was returned");
+      }
+    },
+  );
 
   expect(features).toEqual([
     {
@@ -77,16 +87,27 @@ test("has header but set index", async () => {
     } as Response;
   });
 
-  const features = await fetchCSV({
-    type: "csv",
-    url: "http://example.com",
-    csv: {
-      idColumn: 0,
-      latColumn: 2,
-      lngColumn: 100, // This should not found
-      noHeader: false,
+  let features;
+
+  await fetchCSV(
+    {
+      type: "csv",
+      url: "http://example.com",
+      csv: {
+        idColumn: 0,
+        latColumn: 2,
+        lngColumn: 100, // This should not found
+        noHeader: false,
+      },
     },
-  });
+    result => {
+      if (result) {
+        features = result;
+      } else {
+        console.log("No data was returned");
+      }
+    },
+  );
 
   expect(features).toEqual([
     {
@@ -137,17 +158,27 @@ I'm CSV",5
 `,
     } as Response;
   });
+  let features;
 
-  const features = await fetchCSV({
-    type: "csv",
-    url: "http://example.com",
-    csv: {
-      idColumn: 0,
-      latColumn: 2,
-      lngColumn: 4, // This should not fount.
-      noHeader: false,
+  await fetchCSV(
+    {
+      type: "csv",
+      url: "http://example.com",
+      csv: {
+        idColumn: 0,
+        latColumn: 2,
+        lngColumn: 4, // This should not fount.
+        noHeader: false,
+      },
     },
-  });
+    result => {
+      if (result) {
+        features = result;
+      } else {
+        console.log("No data was returned");
+      }
+    },
+  );
 
   expect(features).toEqual([
     {
@@ -205,17 +236,27 @@ test("without header", async () => {
 `,
     } as Response;
   });
+  let features;
 
-  const features = await fetchCSV({
-    type: "csv",
-    url: "http://example.com",
-    csv: {
-      idColumn: 0,
-      latColumn: 2,
-      lngColumn: 4,
-      noHeader: true,
+  await fetchCSV(
+    {
+      type: "csv",
+      url: "http://example.com",
+      csv: {
+        idColumn: 0,
+        latColumn: 2,
+        lngColumn: 4,
+        noHeader: true,
+      },
     },
-  });
+    result => {
+      if (result) {
+        features = result;
+      } else {
+        console.log("No data was returned");
+      }
+    },
+  );
 
   expect(features).toEqual([
     {
@@ -258,17 +299,27 @@ test("some delimiter", async () => {
 `,
     } as Response;
   });
+  let features;
 
-  const features = await fetchCSV({
-    type: "csv",
-    url: "http://example.com",
-    csv: {
-      idColumn: 0,
-      latColumn: 2,
-      lngColumn: 4,
-      noHeader: true,
+  await fetchCSV(
+    {
+      type: "csv",
+      url: "http://example.com",
+      csv: {
+        idColumn: 0,
+        latColumn: 2,
+        lngColumn: 4,
+        noHeader: true,
+      },
     },
-  });
+    result => {
+      if (result) {
+        features = result;
+      } else {
+        console.log("No data was returned");
+      }
+    },
+  );
 
   expect(features).toEqual([
     {
@@ -317,17 +368,28 @@ test("invalid parameters", async () => {
   });
   generateRandomStringMock.mockImplementation(() => "random");
 
-  const features = await fetchCSV({
-    type: "csv",
-    url: "http://example.com",
-    csv: {
-      idColumn: "id",
-      latColumn: "lat",
-      lngColumn: "lng",
-      heightColumn: "height",
-      noHeader: false,
+  let features;
+
+  await fetchCSV(
+    {
+      type: "csv",
+      url: "http://example.com",
+      csv: {
+        idColumn: "id",
+        latColumn: "lat",
+        lngColumn: "lng",
+        heightColumn: "height",
+        noHeader: false,
+      },
     },
-  });
+    result => {
+      if (result) {
+        features = result;
+      } else {
+        console.log("No data was returned");
+      }
+    },
+  );
 
   expect(features).toEqual([
     {

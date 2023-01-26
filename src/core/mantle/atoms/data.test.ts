@@ -170,7 +170,9 @@ test("data.value is present", async () => {
 });
 
 vi.mock("../data", (): { fetchData: typeof fetchData } => ({
-  fetchData: vi.fn(async data =>
-    data.value ? [{ id: data.value.id, geometry: data.value.geometry }] : features,
-  ),
+  fetchData: vi.fn(async (data, callback) => {
+    data.value
+      ? callback([{ id: data.value.id, geometry: data.value.geometry }])
+      : callback(features);
+  }),
 }));

@@ -4,14 +4,19 @@ import type { Data, DataRange, Feature } from "../types";
 
 import { f, generateRandomString } from "./utils";
 
-export async function fetchCSV(data: Data, range?: DataRange): Promise<Feature[] | void> {
+export async function fetchCSV(
+  data: Data,
+  callback: (result: Feature[] | void) => void,
+  range?: DataRange,
+): Promise<void> {
   if (!data.url) {
     const value = data.value;
     const feature = makeFeature(value, range);
-    return feature ? [feature] : undefined;
+    callback(feature ? [feature] : undefined);
+    return;
   }
   const csvText = await (await f(data.url)).text();
-  return await parseCSV(csvText, data.csv, range);
+  callback(await parseCSV(csvText, data.csv, range));
 }
 
 const parseCSV = async (
