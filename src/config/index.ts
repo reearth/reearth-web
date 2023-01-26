@@ -149,8 +149,8 @@ export default async function loadConfig() {
   }
 
   if (config?.extensionUrls) {
-    const extensions = await loadExtensions(config.extensionUrls);
-    config.extensions = extensions;
+    // const extensions = await loadExtensions(config.extensionUrls);
+    // config.extensions = extensions;
   }
 
   window.REEARTH_CONFIG = config;
