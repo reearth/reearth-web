@@ -11,7 +11,7 @@ import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera, Clock } from "./types";
+import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera } from "./types";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -52,7 +52,6 @@ export type Props = {
   sceneProperty?: SceneProperty;
   viewport?: Viewport;
   camera?: Camera;
-  clock?: Clock;
   selectedComputedLayer?: ComputedLayer;
   selectedComputedFeature?: ComputedFeature;
   selectedFeature?: Feature;
@@ -114,7 +113,6 @@ export default function Crust({
   sceneProperty,
   viewport,
   camera,
-  clock,
   tags,
   selectedLayerId,
   selectedReason,
@@ -151,7 +149,7 @@ export default function Crust({
     pluginPopupContainerRef,
   } = useHooks({ mapRef, ...externalPlugin });
   const theme = usePublishTheme(sceneProperty?.theme);
-  const widgetContext = useWidgetContext({ mapRef, camera, clock, sceneProperty, selectedLayerId });
+  const widgetContext = useWidgetContext({ mapRef, camera, sceneProperty, selectedLayerId });
 
   return (
     <Plugins
@@ -166,7 +164,6 @@ export default function Crust({
       alignSystem={widgetAlignSystem}
       floatingWidgets={floatingWidgets}
       camera={camera}
-      clock={clock}
       overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}>
       <ModalContainer

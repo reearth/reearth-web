@@ -1,11 +1,10 @@
 import { RefObject, useMemo } from "react";
 
-import { Camera, Clock, MapRef, SceneProperty } from "./types";
+import { Camera, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
 export const useWidgetContext = ({
   mapRef,
-  clock,
   camera,
   selectedLayerId,
   sceneProperty,
@@ -14,23 +13,20 @@ export const useWidgetContext = ({
     () =>
       widgetContextFromMapRef({
         mapRef,
-        clock,
         camera,
         selectedLayerId,
         sceneProperty,
       }),
-    [camera, clock, mapRef, sceneProperty, selectedLayerId],
+    [camera, mapRef, sceneProperty, selectedLayerId],
   );
 
 export function widgetContextFromMapRef({
   mapRef,
-  clock,
   camera,
   selectedLayerId,
   sceneProperty,
 }: {
   mapRef?: RefObject<MapRef>;
-  clock?: Clock;
   camera?: Camera;
   selectedLayerId?: {
     layerId?: string;
@@ -43,7 +39,9 @@ export function widgetContextFromMapRef({
 
   return {
     camera,
-    clock,
+    get clock() {
+      return engine()?.getClock();
+    },
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {

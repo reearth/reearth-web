@@ -3,7 +3,7 @@ import { useMemo, useEffect, useCallback } from "react";
 import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
 import { convertLegacyLayer } from "@reearth/core/mantle";
-import type { Clock, Cluster, Layer } from "@reearth/core/Map";
+import type { Cluster, Layer } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -30,7 +30,6 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
-  useClock,
 } from "@reearth/state";
 import { valueTypeToGQL, type ValueTypes, valueToGQL, type LatLng } from "@reearth/util/value";
 
@@ -48,7 +47,6 @@ export default (isBuilt?: boolean) => {
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
-  const [clockState, onTick] = useClock();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
@@ -57,23 +55,6 @@ export default (isBuilt?: boolean) => {
   const [moveInfoboxField] = useMoveInfoboxFieldMutation();
   const [removeInfoboxField] = useRemoveInfoboxFieldMutation();
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
-
-  const handleOnTick = useCallback(
-    (d: Date) => {
-      onTick(c => (c ? { ...c, currentTime: d } : c));
-    },
-    [onTick],
-  );
-  const clock = useMemo<Clock>(
-    () => ({
-      start: clockState?.startTime,
-      stop: clockState?.stopTime,
-      current: clockState?.currentTime || new Date(),
-      speed: clockState?.speed,
-      playing: clockState?.playing,
-    }),
-    [clockState],
-  );
 
   const onBlockMove = useCallback(
     async (id: string, _fromIndex: number, toIndex: number) => {
@@ -314,7 +295,6 @@ export default (isBuilt?: boolean) => {
     isCapturing,
     sceneMode,
     camera,
-    clock,
     widgetAlignEditorActivated,
     engineMeta,
     selectLayer,
@@ -327,7 +307,6 @@ export default (isBuilt?: boolean) => {
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
-    onTick: handleOnTick,
     onFovChange,
     handleDropLayer,
     zoomToLayer,

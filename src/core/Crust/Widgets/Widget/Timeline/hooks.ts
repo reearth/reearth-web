@@ -64,7 +64,6 @@ export const useTimeline = ({
       const t = new Date(currentTime);
       onTimeChange?.(t);
       setCurrentTime(currentTime);
-      // setCurrentTime(getOrNewDate(clock.tick()).getTime());
     },
     [clock, onTimeChange],
   );

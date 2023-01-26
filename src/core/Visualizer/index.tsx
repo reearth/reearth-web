@@ -23,7 +23,6 @@ import Map, {
   type LatLng,
   type Cluster,
   type ComputedLayer,
-  type Clock,
 } from "../Map";
 
 import { engines, type EngineType } from "./engines";
@@ -56,7 +55,6 @@ export type Props = {
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
   camera?: Camera;
-  clock?: Clock;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
   small?: boolean;
@@ -70,7 +68,6 @@ export type Props = {
   hiddenLayers?: string[];
   zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
@@ -126,7 +123,6 @@ export default function Visualizer({
   isLayerDraggable,
   isLayerDragging,
   camera: initialCamera,
-  clock: initialClock,
   meta,
   style,
   pluginBaseUrl,
@@ -139,7 +135,6 @@ export default function Visualizer({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onInfoboxMaskClick,
-  onTick,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
@@ -157,14 +152,12 @@ export default function Visualizer({
     selectedComputedFeature,
     viewport,
     camera,
-    clock,
     isMobile,
     overriddenSceneProperty,
     isDroppable,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
-    handleTick,
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
@@ -172,14 +165,12 @@ export default function Visualizer({
     rootLayerId,
     isEditable,
     camera: initialCamera,
-    clock: initialClock,
     selectedBlockId,
     sceneProperty,
     zoomedLayerId,
     onLayerSelect,
     onBlockSelect,
     onCameraChange,
-    onTick,
     onZoomToLayer,
   });
 
@@ -197,7 +188,6 @@ export default function Visualizer({
         overrideSceneProperty={overrideSceneProperty}
         blocks={selectedLayer?.layer?.layer.infobox?.blocks}
         camera={camera}
-        clock={clock}
         isMobile={isMobile}
         selectedComputedLayer={selectedLayer?.layer}
         selectedFeature={selectedFeature}
@@ -234,7 +224,6 @@ export default function Visualizer({
         layers={layers}
         engines={engines}
         camera={camera}
-        clock={clock}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
         isLayerDraggable={isLayerDraggable}
@@ -250,7 +239,6 @@ export default function Visualizer({
         onLayerDrag={onLayerDrag}
         onLayerDrop={onLayerDrop}
         onLayerSelect={handleLayerSelect}
-        onTick={handleTick}
         onLayerEdit={handleLayerEdit}
       />
     </Filled>

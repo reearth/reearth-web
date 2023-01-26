@@ -8,7 +8,6 @@ import type {
   Ref as MapRef,
   LayerSelectionReason,
   Camera,
-  Clock,
   ComputedLayer,
   SceneProperty,
   LayerEditEvent,
@@ -22,7 +21,6 @@ const viewportMobileMaxWidth = 768;
 export default function useHooks({
   selectedBlockId: initialSelectedBlockId,
   camera: initialCamera,
-  clock: initialClock,
   sceneProperty,
   isEditable,
   rootLayerId,
@@ -30,12 +28,10 @@ export default function useHooks({
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
-  onTick,
   onZoomToLayer,
 }: {
   selectedBlockId?: string;
   camera?: Camera;
-  clock?: Clock;
   isEditable?: boolean;
   rootLayerId?: string;
   sceneProperty?: SceneProperty;
@@ -48,7 +44,6 @@ export default function useHooks({
   ) => void;
   onBlockSelect?: (blockId?: string) => void;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
 }) {
   const mapRef = useRef<MapRef>(null);
@@ -120,14 +115,6 @@ export default function useHooks({
   // camera
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
 
-  // clock
-  const [clock, handleTick] = useValue(initialClock?.current, onTick);
-  const handleTick2 = useCallback((clock: Clock) => handleTick(clock.current), [handleTick]);
-  const mapClock = useMemo<Clock | undefined>(
-    () => (clock ? { ...initialClock, current: clock } : undefined),
-    [clock, initialClock],
-  );
-
   // mobile
   const { width } = useWindowSize();
   const isMobile = width < viewportMobileMaxWidth;
@@ -158,14 +145,12 @@ export default function useHooks({
     selectedBlock,
     viewport,
     camera,
-    clock: mapClock,
     isMobile,
     overriddenSceneProperty,
     isDroppable,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
-    handleTick: handleTick2,
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
