@@ -487,4 +487,77 @@ test("resource", () => {
       },
     },
   });
+
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "resource",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          url: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [2, 1, 3],
+                [3, 2, 4],
+              ],
+            },
+          },
+          type: "geojson",
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    resource: {
+      url: {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2, 1, 3],
+            [3, 2, 4],
+          ],
+        },
+      },
+      type: "geojson",
+    },
+    data: {
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2, 1, 3],
+            [3, 2, 4],
+          ],
+        },
+      },
+      type: "geojson",
+    },
+    compat: {
+      extensionId: "resource",
+      propertyId: "p",
+      property: {
+        default: {
+          url: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [2, 1, 3],
+                [3, 2, 4],
+              ],
+            },
+          },
+          type: "geojson",
+        },
+      },
+    },
+  });
 });

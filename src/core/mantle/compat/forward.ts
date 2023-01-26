@@ -194,6 +194,14 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "resource") {
     appearance = "resource";
+    // For compat
+    if (l.property?.default?.url && typeof l.property.default.url === "object") {
+      const obj = l.property.default.url;
+      data = {
+        type: l.property.default.type,
+        value: obj,
+      };
+    }
   } else if (l.extensionId === "box") {
     appearance = "box";
     legacyPropertyKeys = ["position", "height"];
