@@ -311,7 +311,7 @@ export default function useHooks({
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);
         if (i < 0) return [...layers, layer2];
-        return [...layers.slice(0, i - 1), layer2, ...layers.slice(i + 1)];
+        return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
       });
     },
     [layerMap],
@@ -356,7 +356,7 @@ export default function useHooks({
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);
         if (i < 0) return [...layers, layer2];
-        return [...layers.slice(0, i - 1), layer2, ...layers.slice(i + 1)];
+        return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
       });
     },
     [layerMap],
