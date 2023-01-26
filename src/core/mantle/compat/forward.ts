@@ -204,7 +204,7 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "box") {
     appearance = "box";
-    legacyPropertyKeys = ["position", "height"];
+    legacyPropertyKeys = ["location", "height"];
     if (l.property?.default?.location) {
       data = {
         type: "geojson",

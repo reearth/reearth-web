@@ -561,3 +561,55 @@ test("resource", () => {
     },
   });
 });
+
+test("box", () => {
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "box",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          color: "red",
+          location: {
+            lng: 1,
+            lat: 2,
+            height: 3,
+          },
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    box: {
+      color: "red",
+    },
+    data: {
+      type: "geojson",
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [1, 2, 3],
+        },
+      },
+    },
+    compat: {
+      extensionId: "box",
+      propertyId: "p",
+      property: {
+        default: {
+          color: "red",
+          location: {
+            lng: 1,
+            lat: 2,
+            height: 3,
+          },
+        },
+      },
+    },
+  });
+});
