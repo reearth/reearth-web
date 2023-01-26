@@ -56,6 +56,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   changeStart: 1,
   changeStop: 1,
   inViewport: 1,
+  onTick: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {

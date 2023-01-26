@@ -10,6 +10,7 @@ import {
   LookAtDestination,
   FlyToDestination,
   LayerSelectionReason,
+  TickEventCallback,
 } from "@reearth/core/Map";
 
 import { commonReearth } from "./api";
@@ -35,7 +36,6 @@ export default function ({
   alignSystem,
   floatingWidgets,
   camera,
-  clock,
   overrideSceneProperty,
   onLayerEdit,
 }: Props) {
@@ -56,17 +56,20 @@ export default function ({
   const getInEditor = useGet(!!inEditor);
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
-  const getClock = useGet({
-    startTime: clock?.start,
-    stopTime: clock?.stop,
-    currentTime: clock?.current,
-    playing: clock?.playing,
-    paused: !clock?.playing,
-    speed: clock?.speed,
-    play: engineRef?.play,
-    pause: engineRef?.pause,
-    tick: engineRef?.tick,
-  });
+  const getClock = useCallback(() => {
+    const clock = engineRef?.getClock();
+    return {
+      startTime: clock?.start,
+      stopTime: clock?.stop,
+      currentTime: clock?.current,
+      playing: clock?.playing,
+      paused: !clock?.playing,
+      speed: clock?.speed,
+      play: engineRef?.play,
+      pause: engineRef?.pause,
+      tick: engineRef?.tick,
+    };
+  }, [engineRef]);
   const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
@@ -365,9 +368,6 @@ export default function ({
         () => (camera ? [camera] : undefined),
         [camera],
       ),
-      tick: useMemo<[date: Date] | undefined>(() => {
-        return clock ? [clock.current] : undefined;
-      }, [clock]),
       resize: useMemo<[viewport: ViewportSize] | undefined>(
         () => [
           {
@@ -385,6 +385,13 @@ export default function ({
   const onMouseEvent = useCallback(
     (eventType: keyof MouseEventHandles, fn: any) => {
       mapRef?.current?.engine[eventType]?.(fn);
+    },
+    [mapRef],
+  );
+
+  const onTickEvent = useCallback(
+    (fn: TickEventCallback) => {
+      mapRef?.current?.engine.onTick?.(fn);
     },
     [mapRef],
   );
@@ -416,7 +423,10 @@ export default function ({
     onLayerEdit(e => {
       emit("layeredit", e);
     });
-  }, [emit, onMouseEvent, onLayerEdit]);
+    onTickEvent(e => {
+      emit("tick", e);
+    });
+  }, [emit, onMouseEvent, onLayerEdit, onTickEvent]);
 
   // expose plugin API for developers
   useEffect(() => {
