@@ -39,7 +39,8 @@ export default function MobileZone({
 }: Props) {
   const filteredSections = useMemo(() => {
     return sections.filter(
-      s => !!Object.keys(zone?.[s] || {}).length || (s === "center" && children),
+      s =>
+        areas.filter(a => zone?.[s]?.[a]?.widgets?.length).length || (s === "center" && children),
     );
   }, [zone, children]);
 
