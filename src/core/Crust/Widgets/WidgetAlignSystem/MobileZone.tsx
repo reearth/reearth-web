@@ -29,7 +29,9 @@ export default function MobileZone({
   renderWidget,
 }: Props) {
   const filteredSections = useMemo(() => {
-    return sections.filter(s => !!zone?.[s] || (s === "center" && children));
+    return sections.filter(
+      s => !!Object.keys(zone?.[s] || {}).length || (s === "center" && children),
+    );
   }, [zone, children]);
 
   const [pos, setPos] = useState(filteredSections.length === 3 ? 1 : 0);
