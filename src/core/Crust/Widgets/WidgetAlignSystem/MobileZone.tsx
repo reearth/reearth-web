@@ -14,6 +14,7 @@ export type Props = {
   zoneName: "inner" | "outer";
   theme?: Theme;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  invisibleWidgets?: string[];
   renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
@@ -26,14 +27,17 @@ export default function MobileZone({
   layoutConstraint,
   theme,
   children,
+  invisibleWidgets,
   renderWidget,
 }: Props) {
   const filteredSections = useMemo(() => {
     return sections.filter(
       s =>
-        areas.filter(a => zone?.[s]?.[a]?.widgets?.length).length || (s === "center" && children),
+        areas.filter(a => zone?.[s]?.[a]?.widgets?.find(w => !invisibleWidgets?.includes(w.id)))
+          .length ||
+        (s === "center" && children),
     );
-  }, [zone, children]);
+  }, [zone, children, invisibleWidgets]);
 
   const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
 

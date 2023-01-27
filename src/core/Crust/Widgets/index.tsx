@@ -54,6 +54,7 @@ export type WidgetProps = {
   layout: WidgetLayout;
   onExtend: (id: string, extended: boolean | undefined) => void;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
+  onVisible: (widgetId: string, v: boolean) => void;
 };
 
 export default function Widgets({
@@ -69,7 +70,7 @@ export default function Widgets({
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
 }: Props): JSX.Element | null {
-  const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
+  const { overriddenAlignSystem, moveWidget, onVisible, invisibleWidgets } = useWidgetAlignSystem({
     alignSystem,
   });
 
@@ -92,17 +93,19 @@ export default function Widgets({
             layout,
             onExtend,
             moveWidget,
+            onVisible,
           })
         }
         onExtend={onExtend}
       />
     ),
-    [context, isBuilt, isEditable, renderWidget, theme, moveWidget],
+    [context, isBuilt, isEditable, renderWidget, theme, moveWidget, onVisible],
   );
 
   return (
     <WidgetAlignSystem
       alignSystem={overriddenAlignSystem}
+      invisibleWidgets={invisibleWidgets}
       editing={editing}
       isMobile={isMobile}
       layoutConstraint={layoutConstraint}
