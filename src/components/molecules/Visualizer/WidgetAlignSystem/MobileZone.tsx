@@ -1,4 +1,4 @@
-import { ReactNode, useState, useMemo } from "react";
+import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -44,8 +44,14 @@ export default function MobileZone({
     );
   }, [zone, children]);
 
-  const [pos, setPos] = useState(filteredSections.length === 3 ? 1 : 0);
+  const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
+
+  const [pos, setPos] = useState(initialPos);
   const publishedTheme = usePublishTheme(sceneProperty.theme);
+
+  useEffect(() => {
+    setPos(initialPos);
+  }, [initialPos]);
 
   return (
     <>
