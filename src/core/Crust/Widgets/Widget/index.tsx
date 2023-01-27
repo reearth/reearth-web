@@ -34,6 +34,7 @@ export type Props = {
 export type Context = {
   clock?: Clock;
   camera?: Camera;
+  initialCamera?: Camera;
   selectedLayerId?: {
     layerId?: string;
     featureId?: string;
