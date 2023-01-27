@@ -219,7 +219,6 @@ export default function Visualizer({
         ref={mapRef}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        sceneProperty={overriddenSceneProperty}
         engine={engine}
         layers={layers}
         engines={engines}
@@ -231,7 +230,7 @@ export default function Visualizer({
         meta={meta}
         style={style}
         // overrides={overrides} // not used for now
-        property={sceneProperty}
+        property={overriddenSceneProperty}
         selectedLayerId={selectedLayerId}
         small={small}
         ready={ready}
