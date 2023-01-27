@@ -74,7 +74,8 @@ export type EngineRef = {
   tick: () => Date | void;
   inViewport: (location?: LatLng) => boolean;
   onTick: TickEvent;
-  tickEventCallback?: RefObject<TickEventCallback | undefined>;
+  tickEventCallback?: RefObject<TickEventCallback[]>;
+  removeTickEventListener: TickEvent;
 };
 
 export type EngineProps = {

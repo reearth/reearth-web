@@ -341,7 +341,7 @@ export default ({
 
   const handleTick = useCallback(
     (d: Date) => {
-      engineAPI.tickEventCallback?.current?.(d);
+      engineAPI.tickEventCallback?.current?.forEach(e => e(d));
     },
     [engineAPI],
   );

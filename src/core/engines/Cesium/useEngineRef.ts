@@ -49,7 +49,7 @@ export default function useEngineRef(
     mouseleave: undefined,
     wheel: undefined,
   });
-  const tickEventCallback = useRef<TickEventCallback>();
+  const tickEventCallback = useRef<TickEventCallback[]>([]);
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -376,7 +376,10 @@ export default function useEngineRef(
         );
       },
       onTick: cb => {
-        tickEventCallback.current = cb;
+        tickEventCallback.current.push(cb);
+      },
+      removeTickEventListener: cb => {
+        tickEventCallback.current = tickEventCallback.current.filter(c => c !== cb) || [];
       },
       tickEventCallback,
     };

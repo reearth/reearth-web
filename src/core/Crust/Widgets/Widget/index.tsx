@@ -1,5 +1,7 @@
 import { ComponentType, ReactNode, useMemo } from "react";
 
+import type { TickEvent } from "@reearth/core/Map";
+
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
   Theme,
@@ -48,7 +50,8 @@ export type Context = {
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
   onTimeChange?: (time: Date) => void;
-  onTick?: () => void;
+  onTick?: TickEvent;
+  removeTickEventListener?: TickEvent;
   onZoomIn?: (amount: number) => void;
   onZoomOut?: (amount: number) => void;
   onCameraOrbit?: (radians: number) => void;
