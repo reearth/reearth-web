@@ -1,5 +1,125 @@
 import Pbf from "pbf";
 
+export type GTFS = {
+  header?: Header | null;
+  entities?: Entity[];
+};
+
+export type Header = {
+  gtfs_realtime_version?: string;
+  incrementality?: HeaderIncrementality;
+  timestamp?: number;
+};
+
+export type Entity = {
+  id?: string;
+  is_deleted?: boolean;
+  trip_update?: TripUpdate | null;
+  vehicle?: VehiclePosition | null;
+  alert?: Alert | null;
+};
+
+export type TripUpdate = {
+  trip?: TripDescriptor | null;
+  vehicle?: VehicleDescriptor | null;
+  stop_time_update?: StopTimeUpdate[];
+  timestamp?: number;
+  delay?: number;
+};
+
+export type StopTimeEvent = {
+  delay?: number;
+  time?: number;
+  uncertainty?: number;
+};
+
+export type StopTimeUpdate = {
+  stop_sequence?: number;
+  stop_id?: string;
+  arrival?: StopTimeEvent | null;
+  departure?: StopTimeEvent | null;
+  schedule_relationship?: StopTimeUpdateScheduleRelationship;
+};
+
+export type VehiclePosition = {
+  trip?: TripDescriptor | null;
+  vehicle?: VehicleDescriptor | null;
+  position?: Position | null;
+  current_stop_sequence?: number;
+  stop_id?: string;
+  current_status?: VehicleStopStatus;
+  timestamp?: number;
+  congestion_level?: CongestionLevel;
+  occupancy_status?: OccupancyStatus;
+};
+
+export type Alert = {
+  active_period?: TimeRange[];
+  informed_entity?: EntitySelector[];
+  cause?: AlertCause;
+  effect?: AlertEffect;
+  url?: TranslatedString | null;
+  header_text?: TranslatedString | null;
+  description_text?: TranslatedString | null;
+};
+
+export type TimeRange = {
+  start?: number;
+  end?: number;
+};
+
+export type Position = {
+  latitude?: number;
+  longitude?: number;
+  bearing?: number;
+  odometer?: number;
+  speed?: number;
+};
+
+export type TripDescriptor = {
+  trip_id?: string;
+  route_id?: string;
+  direction_id?: number;
+  start_time?: string;
+  start_date?: string;
+  schedule_relationship?: TripDescriptorScheduleRelationship;
+};
+
+export type VehicleDescriptor = {
+  id?: string;
+  label?: string;
+  license_plate?: string;
+};
+
+export type EntitySelector = {
+  agency_id?: string;
+  route_id?: string;
+  route_type?: number;
+  trip?: TripDescriptor | null;
+  stop_id?: string;
+};
+
+export type TranslatedString = {
+  translation?: Translation[];
+};
+
+export type Translation = {
+  text?: string;
+  language?: string;
+};
+
+export type Trips = {
+  timestamp?: number;
+  trips?: Trip[];
+};
+
+export type Trip = {
+  id: string;
+  properties: VehiclePosition;
+  path: [number, number][];
+  timestamps: number[];
+};
+
 export abstract class ProtobufMessageReader<T> {
   abstract readonly defaultMessage: T;
 
@@ -8,11 +128,6 @@ export abstract class ProtobufMessageReader<T> {
   }
 
   protected abstract readField(tag: number, obj?: T, pbf?: Pbf): void;
-}
-
-export interface GTFS {
-  header?: Header | null;
-  entities?: Entity[];
 }
 
 export class GTFSReader extends ProtobufMessageReader<GTFS> {
@@ -33,12 +148,6 @@ enum HeaderIncrementality {
   DIFFERENTIAL,
 }
 
-export interface Header {
-  gtfs_realtime_version?: string;
-  incrementality?: HeaderIncrementality;
-  timestamp?: number;
-}
-
 export class HeaderReader extends ProtobufMessageReader<Header> {
   readonly defaultMessage: Header = {
     gtfs_realtime_version: "",
@@ -51,14 +160,6 @@ export class HeaderReader extends ProtobufMessageReader<Header> {
     else if (tag === 2) obj.incrementality = pbf.readVarint();
     else if (tag === 3) obj.timestamp = pbf.readVarint();
   }
-}
-
-export interface Entity {
-  id?: string;
-  is_deleted?: boolean;
-  trip_update?: TripUpdate | null;
-  vehicle?: VehiclePosition | null;
-  alert?: Alert | null;
 }
 
 export class EntityReader extends ProtobufMessageReader<Entity> {
@@ -81,14 +182,6 @@ export class EntityReader extends ProtobufMessageReader<Entity> {
   }
 }
 
-export interface TripUpdate {
-  trip?: TripDescriptor | null;
-  vehicle?: VehicleDescriptor | null;
-  stop_time_update?: StopTimeUpdate[];
-  timestamp?: number;
-  delay?: number;
-}
-
 export class TripUpdateReader extends ProtobufMessageReader<TripUpdate> {
   readonly defaultMessage: TripUpdate = {
     trip: {},
@@ -109,12 +202,6 @@ export class TripUpdateReader extends ProtobufMessageReader<TripUpdate> {
   }
 }
 
-export interface StopTimeEvent {
-  delay?: number;
-  time?: number;
-  uncertainty?: number;
-}
-
 export class StopTimeEventReader extends ProtobufMessageReader<StopTimeEvent> {
   readonly defaultMessage: StopTimeEvent = {
     delay: 0,
@@ -127,14 +214,6 @@ export class StopTimeEventReader extends ProtobufMessageReader<StopTimeEvent> {
     else if (tag === 2) obj.time = pbf.readVarint(true);
     else if (tag === 3) obj.uncertainty = pbf.readVarint(true);
   }
-}
-
-export interface StopTimeUpdate {
-  stop_sequence?: number;
-  stop_id?: string;
-  arrival?: StopTimeEvent | null;
-  departure?: StopTimeEvent | null;
-  schedule_relationship?: StopTimeUpdateScheduleRelationship;
 }
 
 export class StopTimeUpdateReader extends ProtobufMessageReader<StopTimeUpdate> {
@@ -161,18 +240,6 @@ enum StopTimeUpdateScheduleRelationship {
   SCHEDULED,
   SKIPPED,
   NO_DATA,
-}
-
-export interface VehiclePosition {
-  trip?: TripDescriptor | null;
-  vehicle?: VehicleDescriptor | null;
-  position?: Position | null;
-  current_stop_sequence?: number;
-  stop_id?: string;
-  current_status?: VehicleStopStatus;
-  timestamp?: number;
-  congestion_level?: CongestionLevel;
-  occupancy_status?: OccupancyStatus;
 }
 
 export class VehiclePositionReader extends ProtobufMessageReader<VehiclePosition> {
@@ -224,16 +291,6 @@ export enum OccupancyStatus {
   CRUSHED_STANDING_ROOM_ONLY,
   FULL,
   NOT_ACCEPTING_PASSENGERS,
-}
-
-export interface Alert {
-  active_period?: TimeRange[];
-  informed_entity?: EntitySelector[];
-  cause?: AlertCause;
-  effect?: AlertEffect;
-  url?: TranslatedString | null;
-  header_text?: TranslatedString | null;
-  description_text?: TranslatedString | null;
 }
 
 export class AlertReader extends ProtobufMessageReader<Alert> {
@@ -289,11 +346,6 @@ enum AlertEffect {
   STOP_MOVED,
 }
 
-export interface TimeRange {
-  start?: number;
-  end?: number;
-}
-
 export class TimeRangeReader extends ProtobufMessageReader<TimeRange> {
   readonly defaultMessage: TimeRange = {
     start: 0,
@@ -304,14 +356,6 @@ export class TimeRangeReader extends ProtobufMessageReader<TimeRange> {
     if (tag === 1) obj.start = pbf.readVarint();
     else if (tag === 2) obj.end = pbf.readVarint();
   }
-}
-
-export interface Position {
-  latitude?: number;
-  longitude?: number;
-  bearing?: number;
-  odometer?: number;
-  speed?: number;
 }
 
 export class PositionReader extends ProtobufMessageReader<Position> {
@@ -330,15 +374,6 @@ export class PositionReader extends ProtobufMessageReader<Position> {
     else if (tag === 4) obj.odometer = pbf.readDouble();
     else if (tag === 5) obj.speed = pbf.readFloat();
   }
-}
-
-export interface TripDescriptor {
-  trip_id?: string;
-  route_id?: string;
-  direction_id?: number;
-  start_time?: string;
-  start_date?: string;
-  schedule_relationship?: TripDescriptorScheduleRelationship;
 }
 
 export class TripDescriptorReader extends ProtobufMessageReader<TripDescriptor> {
@@ -368,12 +403,6 @@ enum TripDescriptorScheduleRelationship {
   CANCELED,
 }
 
-export interface VehicleDescriptor {
-  id?: string;
-  label?: string;
-  license_plate?: string;
-}
-
 export class VehicleDescriptorReader extends ProtobufMessageReader<VehicleDescriptor> {
   readonly defaultMessage: VehicleDescriptor = {
     id: "",
@@ -386,14 +415,6 @@ export class VehicleDescriptorReader extends ProtobufMessageReader<VehicleDescri
     else if (tag === 2) obj.label = pbf.readString();
     else if (tag === 3) obj.license_plate = pbf.readString();
   }
-}
-
-export interface EntitySelector {
-  agency_id?: string;
-  route_id?: string;
-  route_type?: number;
-  trip?: TripDescriptor | null;
-  stop_id?: string;
 }
 
 export class EntitySelectorReader extends ProtobufMessageReader<EntitySelector> {
@@ -414,10 +435,6 @@ export class EntitySelectorReader extends ProtobufMessageReader<EntitySelector> 
   }
 }
 
-export interface TranslatedString {
-  translation?: Translation[];
-}
-
 export class TranslatedStringReader extends ProtobufMessageReader<TranslatedString> {
   readonly defaultMessage: TranslatedString = { translation: [] };
 
@@ -427,11 +444,6 @@ export class TranslatedStringReader extends ProtobufMessageReader<TranslatedStri
   }
 }
 
-export interface Translation {
-  text?: string;
-  language?: string;
-}
-
 export class TranslationReader extends ProtobufMessageReader<Translation> {
   readonly defaultMessage: Translation = { text: "", language: "" };
 
@@ -439,16 +451,4 @@ export class TranslationReader extends ProtobufMessageReader<Translation> {
     if (tag === 1) obj.text = pbf.readString();
     else if (tag === 2) obj.language = pbf.readString();
   }
-}
-
-export interface Trips {
-  timestamp?: number;
-  trips?: Trip[];
-}
-
-export interface Trip {
-  id: string;
-  properties: VehiclePosition;
-  path: [number, number][];
-  timestamps: number[];
 }
