@@ -268,6 +268,7 @@ export function useAPI({
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
       ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+      ctx.pluginInstances.runTimesCache.increment(instanceId);
     }
   }, [
     ctx?.reearth.on,
@@ -407,10 +408,7 @@ export function useAPI({
         },
         startEventLoop,
         overrideSceneProperty: ctx.overrideSceneProperty,
-        moveWidget: (widgetId: string, options: WidgetLocationOptions) => {
-          moveWidget?.(widgetId, options);
-          ctx.pluginInstances.runTimesCache.increment(widgetId);
-        },
+        moveWidget,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
       });
