@@ -36,7 +36,7 @@ export default function ({
   widget,
   pluginProperty,
   shownPluginModalInfo,
-  onVisible,
+  onVisibilityChange,
   onPluginModalShow,
   shownPluginPopupInfo,
   onPluginPopupShow,
@@ -55,7 +55,7 @@ export default function ({
   block?: Block;
   pluginProperty?: any;
   shownPluginModalInfo?: PluginModalInfo;
-  onVisible?: (widgetId: string, v: boolean) => void;
+  onVisibilityChange?: (widgetId: string, v: boolean) => void;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   shownPluginPopupInfo?: PluginPopupInfo;
   onPluginPopupShow?: (modalInfo?: PluginModalInfo) => void;
@@ -85,10 +85,10 @@ export default function ({
       setUIVisibility(v);
       const instanceId = widget?.id ?? block?.id;
       if (instanceId) {
-        onVisible?.(instanceId, v);
+        onVisibilityChange?.(instanceId, v);
       }
     },
-    [onVisible, widget, block],
+    [onVisibilityChange, widget, block],
   );
 
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =

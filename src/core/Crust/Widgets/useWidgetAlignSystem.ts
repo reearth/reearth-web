@@ -18,7 +18,7 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
   //       The reason why we use invisible list is prevent initializing cost.
   const [invisibleWidgets, setInvisibleWidgets] = useState<string[]>([]);
 
-  const onVisible = useCallback((widgetId: string, v: boolean) => {
+  const onVisibilityChange = useCallback((widgetId: string, v: boolean) => {
     setInvisibleWidgets(a => {
       if (!a.includes(widgetId) && !v) {
         return [...a, widgetId];
@@ -131,6 +131,6 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
     overriddenAlignSystem,
     moveWidget,
     invisibleWidgets,
-    onVisible,
+    onVisibilityChange,
   };
 };
