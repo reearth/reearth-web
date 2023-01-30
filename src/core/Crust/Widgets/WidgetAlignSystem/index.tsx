@@ -31,7 +31,7 @@ export type {
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
-  invisibleWidgets?: string[];
+  invisibleWidgetIDs?: string[];
   editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isMobile?: boolean;
@@ -50,7 +50,7 @@ export type Props = {
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
-  invisibleWidgets,
+  invisibleWidgetIDs,
   editing,
   isMobile,
   layoutConstraint,
@@ -76,13 +76,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
           zoneName="outer"
           zone={alignSystem?.outer}
           layoutConstraint={layoutConstraint}
-          invisibleWidgets={invisibleWidgets}
+          invisibleWidgetIDs={invisibleWidgetIDs}
           theme={theme}
           renderWidget={renderWidget}>
           {(!isMobile || alignSystem?.inner) && (
             <ZoneComponent
               zoneName="inner"
-              invisibleWidgets={invisibleWidgets}
+              invisibleWidgetIDs={invisibleWidgetIDs}
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
               renderWidget={renderWidget}

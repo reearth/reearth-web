@@ -70,7 +70,7 @@ export default function Widgets({
   onAlignmentUpdate,
   onWidgetLayoutUpdate,
 }: Props): JSX.Element | null {
-  const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgets } =
+  const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgetIDs } =
     useWidgetAlignSystem({
       alignSystem,
     });
@@ -106,7 +106,7 @@ export default function Widgets({
   return (
     <WidgetAlignSystem
       alignSystem={overriddenAlignSystem}
-      invisibleWidgets={invisibleWidgets}
+      invisibleWidgetIDs={invisibleWidgetIDs}
       editing={editing}
       isMobile={isMobile}
       layoutConstraint={layoutConstraint}
