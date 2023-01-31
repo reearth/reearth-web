@@ -88,7 +88,7 @@ export default function ({
         onVisibilityChange?.(instanceId, v);
       }
     },
-    [onVisibilityChange, widget, block],
+    [onVisibilityChange, widget?.id, block?.id],
   );
 
   const { staticExposed, isMarshalable, onPreInit, onDispose, onModalClose, onPopupClose } =
