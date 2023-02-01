@@ -31,13 +31,6 @@ export async function fetchShapefile(data: Data, range?: DataRange): Promise<Fea
   }
 }
 
-/**
- * Parses `shp` & `dbf` files into a GeoJSON object.
- * @param shpFile The path to the `shp` file.
- * @param dbfFile The path to the `dbf` file.
- * @param configuration The configuration settings to use.
- * @returns A promise containing the GeoJSON object.
- */
 export const parseFiles = async (
   shpFile: Buffer,
   dbfFile: Buffer,
@@ -47,10 +40,6 @@ export const parseFiles = async (
 };
 
 interface Configuration {
-  /**
-   * If property values should be trimmed.
-   * @default true
-   */
   trim?: boolean;
 }
 
