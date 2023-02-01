@@ -36,14 +36,14 @@ export const parseFiles = async (
   dbfFile: Buffer,
   configuration?: Configuration,
 ): Promise<GeoJSON> => {
-  return new Parser(shpFile, dbfFile, configuration).parse();
+  return new ShapefileParser(shpFile, dbfFile, configuration).parse();
 };
 
 interface Configuration {
   trim?: boolean;
 }
 
-class Parser {
+class ShapefileParser {
   #shp: Buffer;
   #dbf: Buffer;
   #configuration?: Configuration;
