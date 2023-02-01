@@ -25,13 +25,13 @@ export async function fetchShapefile(data: Data, range?: DataRange): Promise<Fea
   }
 
   if (shpFileBuffer && dbfFileBuffer) {
-    return processGeoJSON(await parseFiles(shpFileBuffer, dbfFileBuffer), range);
+    return processGeoJSON(await parseShapefiles(shpFileBuffer, dbfFileBuffer), range);
   } else {
     throw new Error(`Zip archive does not contain .shp and .dbf files`);
   }
 }
 
-export const parseFiles = async (
+export const parseShapefiles = async (
   shpFile: Buffer,
   dbfFile: Buffer,
   configuration?: Configuration,
