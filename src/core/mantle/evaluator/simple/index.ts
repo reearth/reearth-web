@@ -81,7 +81,10 @@ function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
     return feature;
   }
 
-  const next = { ...feature };
+  const next = {
+    ...feature,
+    ...(feature?.properties ? { properties: { ...feature.properties } } : {}),
+  };
   keys.forEach(k => {
     next.properties[k] = (() => {
       const p = next.properties[k];
