@@ -20,9 +20,10 @@ export async function evalSimpleLayer(
   ctx: EvalContext,
 ): Promise<EvalResult | undefined> {
   const features = layer.data ? await ctx.getAllFeatures(layer.data) : undefined;
+  const firstFeature = [...(features || [])].shift();
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   return {
-    layer: evalLayerAppearances(appearances, layer),
+    layer: evalLayerAppearances(appearances, layer, firstFeature),
     features: features?.map(f => evalSimpleLayerFeature(layer, f)),
   };
 }
