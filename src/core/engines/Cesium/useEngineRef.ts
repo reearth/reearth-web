@@ -3,7 +3,7 @@ import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
-import { TickEventCallback } from "@reearth/core/Map";
+import { CameraOptions, FlyToDestination, TickEventCallback } from "@reearth/core/Map";
 
 import type { EngineRef, MouseEvents, MouseEvent } from "..";
 
@@ -27,6 +27,7 @@ import {
   zoom,
   lookAtWithoutAnimation,
 } from "./common";
+import { findEntity } from "./utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -68,15 +69,34 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      flyTo: (camera, options) => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        cancelCameraFlight.current?.();
-        cancelCameraFlight.current = flyTo(
-          viewer.scene?.camera,
-          { ...getCamera(viewer), ...camera },
-          options,
-        );
+      flyTo: (...args) => {
+        const firstArg = args[0];
+        if (firstArg && typeof firstArg === "object") {
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          const [camera, options] = [args[0] as FlyToDestination, args[1] as CameraOptions];
+          cancelCameraFlight.current?.();
+          cancelCameraFlight.current = flyTo(
+            viewer.scene?.camera,
+            { ...getCamera(viewer), ...camera },
+            options,
+          );
+        }
+        if (firstArg && typeof firstArg === "string") {
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          const [layerId, featureId, options] = [
+            args[0] as string,
+            args[1] as string | undefined,
+            args[2] as CameraOptions,
+          ];
+          const entity = findEntity(viewer, layerId, featureId);
+          if (entity) {
+            viewer.flyTo(entity, options);
+          }
+        }
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
