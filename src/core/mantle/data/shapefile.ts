@@ -1,3 +1,4 @@
+import { fileTypeFromBuffer } from "file-type";
 import type { GeoJSON } from "geojson";
 import JSZip from "jszip";
 
@@ -8,26 +9,32 @@ import { f } from "./utils";
 
 export async function fetchShapefile(data: Data, range?: DataRange): Promise<Feature[] | void> {
   const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
-  const zip = await JSZip.loadAsync(new Uint8Array(arrayBuffer));
+  const type = await fileTypeFromBuffer(new Uint8Array(arrayBuffer));
 
-  let shpFileArrayBuffer: ArrayBuffer | undefined;
-  let dbfFileArrayBuffer: ArrayBuffer | undefined;
+  if (type?.ext === "zip") {
+    const zip = await JSZip.loadAsync(new Uint8Array(arrayBuffer));
 
-  // Access the files inside the ZIP archive
-  const zipEntries = Object.values(zip.files);
-  for (const entry of zipEntries) {
-    const filename = entry.name;
-    if (filename.endsWith(".shp")) {
-      shpFileArrayBuffer = await entry.async("arraybuffer");
-    } else if (filename.endsWith(".dbf")) {
-      dbfFileArrayBuffer = await entry.async("arraybuffer");
+    let shpFileArrayBuffer: ArrayBuffer | undefined;
+    let dbfFileArrayBuffer: ArrayBuffer | undefined;
+
+    // Access the files inside the ZIP archive
+    const zipEntries = Object.values(zip.files);
+    for (const entry of zipEntries) {
+      const filename = entry.name;
+      if (filename.endsWith(".shp")) {
+        shpFileArrayBuffer = await entry.async("arraybuffer");
+      } else if (filename.endsWith(".dbf")) {
+        dbfFileArrayBuffer = await entry.async("arraybuffer");
+      }
     }
-  }
 
-  if (shpFileArrayBuffer && dbfFileArrayBuffer) {
-    return processGeoJSON(await parseShapefiles(shpFileArrayBuffer, dbfFileArrayBuffer), range);
+    if (shpFileArrayBuffer && dbfFileArrayBuffer) {
+      return processGeoJSON(await parseShapefiles(shpFileArrayBuffer, dbfFileArrayBuffer), range);
+    } else {
+      throw new Error(`Zip archive does not contain .shp and .dbf files`);
+    }
   } else {
-    throw new Error(`Zip archive does not contain .shp and .dbf files`);
+    throw new Error(`Invalid file type, expected .zip file, but got ${type?.ext}`);
   }
 }
 
