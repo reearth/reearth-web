@@ -6,22 +6,22 @@ import type { Data, DataRange, Feature } from "../types";
 import { f } from "./utils";
 
 export async function fetchGPXfile(data: Data, _range?: DataRange): Promise<Feature[] | void> {
-  const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
-  return handler(arrayBuffer);
+  const xmlDataStr = data.url ? await (await f(data.url)).text() : data.value;
+  return handler(xmlDataStr);
 }
 
-function handler(buffer: ArrayBuffer) {
-  const gpxData = parseBuffer(buffer);
+function handler(xmlDataStr: string) {
+  const gpxData = parseBuffer(xmlDataStr);
   return transform(gpxData);
 }
 
-function parseBuffer(buffer: ArrayBuffer) {
+function parseBuffer(xmlDataStr: string) {
   const options: X2jOptionsOptional = {
     ignoreAttributes: false,
     attributeNamePrefix: "@_",
   };
   const parser = new XMLParser(options);
-  return parser.parse(Buffer.from(buffer)) as GPX;
+  return parser.parse(xmlDataStr) as GPX;
 }
 
 function transform(gpxFile: GPX) {
