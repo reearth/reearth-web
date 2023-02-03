@@ -28,8 +28,8 @@ const comps = {
 };
 
 const delegatingAppearance: Record<keyof typeof comps, (keyof AppearanceTypes)[]> = {
-  kml: [],
-  geojson: [],
+  kml: ["marker", "polyline", "polygon"],
+  geojson: ["marker", "polyline", "polygon"],
   czml: ["marker", "polyline", "polygon"],
 };
 
