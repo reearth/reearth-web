@@ -38,6 +38,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   wms: ["raster"],
   mvt: ["raster"],
   ["3dtiles"]: ["3dtiles"],
+  gpx: "auto",
 };
 
 const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
