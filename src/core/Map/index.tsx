@@ -5,6 +5,7 @@ import Layers, { type Props as LayersProps } from "./Layers";
 import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
+export { useGet, type WrappedRef, type Undefinable, useOverriddenProperty } from "./utils";
 
 export type {
   NaiveLayer,
@@ -16,6 +17,8 @@ export type {
   LayerSelectionReason,
   Cluster,
   EvalFeature,
+  OverriddenInfobox,
+  OverriddenLayer,
 } from "./Layers";
 
 export type { MapRef as Ref } from "./hooks";
@@ -32,7 +35,6 @@ function Map(
     engine,
     isBuilt,
     isEditable,
-    sceneProperty,
     clusters,
     hiddenLayers,
     layers,
@@ -58,9 +60,8 @@ function Map(
       ref={engineRef}
       isBuilt={isBuilt}
       isEditable={isEditable}
-      property={sceneProperty}
-      selectedLayerId={selectedLayer[0]}
-      layerSelectionReason={selectedLayer[2]}
+      selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+      layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
       {...props}>
       <Layers
@@ -71,7 +72,6 @@ function Map(
         isEditable={isEditable}
         layers={layers}
         overrides={overrides}
-        sceneProperty={sceneProperty}
         selectedLayerId={selectedLayerId}
         selectionReason={layerSelectionReason}
         Feature={currentEngine?.featureComponent}
