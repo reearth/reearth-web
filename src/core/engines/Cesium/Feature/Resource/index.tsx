@@ -4,7 +4,7 @@ import {
   GeoJsonDataSource as CesiumGeoJsonDataSource,
 } from "cesium";
 import { useCallback, useMemo } from "react";
-import { KmlDataSource, CzmlDataSource, GeoJsonDataSource } from "resium";
+import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
 import { evalFeature } from "@reearth/core/mantle";
 
@@ -41,6 +41,7 @@ export default function Resource({ isVisible, property, layer }: Props) {
     const url = property?.url;
     return [type ?? (data?.type as ResourceAppearance["type"]), url ?? data?.url];
   }, [property, layer]);
+  const { viewer } = useCesium();
 
   const ext = useMemo(
     () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
@@ -52,9 +53,9 @@ export default function Resource({ isVisible, property, layer }: Props) {
 
   const handleOnChange = useCallback(
     (e: CesiumCzmlDataSource | CesiumKmlDataSource | CesiumGeoJsonDataSource) => {
-      attachStyle(e, appearances, layer, evalFeature);
+      attachStyle(e, appearances, layer, evalFeature, viewer);
     },
-    [appearances, layer],
+    [appearances, layer, viewer],
   );
 
   if (!isVisible || !Component || !url) return null;

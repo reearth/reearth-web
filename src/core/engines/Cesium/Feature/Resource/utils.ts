@@ -6,6 +6,7 @@ import {
   Entity,
   Cartesian3,
   PolygonHierarchy,
+  Viewer,
 } from "cesium";
 
 import { AppearanceTypes, ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
@@ -100,6 +101,7 @@ export const attachStyle = (
   appearances: (keyof AppearanceTypes)[] | undefined,
   layer: ComputedLayer | undefined,
   evalFeature: EvalFeature,
+  viewer: Viewer,
 ) => {
   if (!layer) {
     return;
@@ -111,7 +113,7 @@ export const attachStyle = (
       }
 
       if (appearance === "marker") {
-        const position = entity.position?.getValue(JulianDate.now());
+        const position = entity.position?.getValue(viewer.clock.currentTime);
         const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
         const feature: Feature = {
           type: "feature",
