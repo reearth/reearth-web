@@ -53,7 +53,7 @@ export default function Resource({ isVisible, property, layer }: Props) {
 
   const handleOnChange = useCallback(
     (e: CesiumCzmlDataSource | CesiumKmlDataSource | CesiumGeoJsonDataSource) => {
-      attachStyle(e, appearances, layer, evalFeature, viewer);
+      attachStyle(e, appearances, layer, evalFeature, viewer.clock.currentTime);
     },
     [appearances, layer, viewer],
   );
