@@ -1,5 +1,5 @@
-import AdmZip from "adm-zip";
 import type { GeoJSON } from "geojson";
+import JSZip from "jszip";
 
 import type { Data, DataRange, Feature } from "../types";
 
@@ -8,32 +8,32 @@ import { f } from "./utils";
 
 export async function fetchShapefile(data: Data, range?: DataRange): Promise<Feature[] | void> {
   const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
-  const zip = new AdmZip(Buffer.from(arrayBuffer));
+  const zip = await JSZip.loadAsync(new Uint8Array(arrayBuffer));
 
-  let shpFileBuffer: Buffer | undefined;
-  let dbfFileBuffer: Buffer | undefined;
+  let shpFileArrayBuffer: ArrayBuffer | undefined;
+  let dbfFileArrayBuffer: ArrayBuffer | undefined;
 
   // Access the files inside the ZIP archive
-  const zipEntries = zip.getEntries();
+  const zipEntries = Object.values(zip.files);
   for (const entry of zipEntries) {
-    const filename = entry.entryName;
+    const filename = entry.name;
     if (filename.endsWith(".shp")) {
-      shpFileBuffer = entry.getData();
+      shpFileArrayBuffer = await entry.async("arraybuffer");
     } else if (filename.endsWith(".dbf")) {
-      dbfFileBuffer = entry.getData();
+      dbfFileArrayBuffer = await entry.async("arraybuffer");
     }
   }
 
-  if (shpFileBuffer && dbfFileBuffer) {
-    return processGeoJSON(await parseShapefiles(shpFileBuffer, dbfFileBuffer), range);
+  if (shpFileArrayBuffer && dbfFileArrayBuffer) {
+    return processGeoJSON(await parseShapefiles(shpFileArrayBuffer, dbfFileArrayBuffer), range);
   } else {
     throw new Error(`Zip archive does not contain .shp and .dbf files`);
   }
 }
 
 export const parseShapefiles = async (
-  shpFile: Buffer,
-  dbfFile: Buffer,
+  shpFile: ArrayBuffer,
+  dbfFile: ArrayBuffer,
   configuration?: Configuration,
 ): Promise<GeoJSON> => {
   return new ShapefileParser(shpFile, dbfFile, configuration).parse();
@@ -44,20 +44,20 @@ interface Configuration {
 }
 
 class ShapefileParser {
-  #shp: Buffer;
-  #dbf: Buffer;
+  #shp: ArrayBuffer;
+  #dbf: ArrayBuffer;
   #configuration?: Configuration;
   #features: any[] = [];
   #propertiesArray: any[] = [];
 
-  constructor(shp: Buffer, dbf: Buffer, configuration?: Configuration) {
+  constructor(shp: ArrayBuffer, dbf: ArrayBuffer, configuration?: Configuration) {
     this.#shp = shp;
     this.#dbf = dbf;
     this.#configuration = configuration;
   }
 
   #parseShp() {
-    const dataView = new DataView(new Uint8Array(this.#shp).buffer);
+    const dataView = new DataView(this.#shp);
     let idx = 0;
     const wordLength = dataView.getInt32((idx += 6 * 4), false);
     const byteLength = wordLength * 2;
@@ -72,7 +72,6 @@ class ShapefileParser {
       const length: number = dataView.getInt32((idx += 4), false);
 
       const type: number = dataView.getInt32((idx += 4), true);
-      console.log("type: ", type);
       let idxFeature: number = idx + 4;
       let numberOfParts: number, nbpoints: number, numberOfPoints: number, nbpartsPoint: number[];
       switch (type) {
