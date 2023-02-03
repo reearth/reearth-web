@@ -1,5 +1,7 @@
 import { ComponentType, ReactNode, useMemo } from "react";
 
+import type { TickEvent } from "@reearth/core/Map";
+
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
   Theme,
@@ -14,6 +16,7 @@ import type {
 } from "./types";
 
 export type { WidgetLayout } from "../types";
+export { isBuiltinWidget, type BuiltinWidgets } from "./builtin";
 
 export type Props = {
   widget: InternalWidget;
@@ -31,16 +34,25 @@ export type Props = {
 export type Context = {
   clock?: Clock;
   camera?: Camera;
-  selectedLayerId?: string;
+  initialCamera?: Camera;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   is2d?: boolean;
   onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
-  onLayerSelect?: (id: string | undefined, options?: { reason?: string }) => void;
+  onLayerSelect?: (
+    layerId: string | undefined,
+    featureId: string | undefined,
+    options?: { reason?: string },
+  ) => void;
   onPlay?: () => void;
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
   onTimeChange?: (time: Date) => void;
-  onTick?: () => void;
+  onTick?: TickEvent;
+  removeTickEventListener?: TickEvent;
   onZoomIn?: (amount: number) => void;
   onZoomOut?: (amount: number) => void;
   onCameraOrbit?: (radians: number) => void;

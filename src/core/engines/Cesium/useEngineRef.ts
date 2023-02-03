@@ -3,6 +3,8 @@ import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
+import { TickEventCallback } from "@reearth/core/Map";
+
 import type { EngineRef, MouseEvents, MouseEvent } from "..";
 
 import {
@@ -47,6 +49,7 @@ export default function useEngineRef(
     mouseleave: undefined,
     wheel: undefined,
   });
+  const tickEventCallback = useRef<TickEventCallback[]>([]);
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -342,7 +345,7 @@ export default function useEngineRef(
       tick: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        viewer.clock.tick();
+        return JulianDate.toDate(viewer.clock.tick());
       },
       changeStart: (start: Date) => {
         const viewer = cesium.current?.cesiumElement;
@@ -354,6 +357,31 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         viewer.clock.stopTime = JulianDate.fromDate(stop);
       },
+      inViewport: location => {
+        const rect = e.getViewport();
+        return !!(
+          rect &&
+          location &&
+          typeof location.lng === "number" &&
+          typeof location.lat === "number" &&
+          Cesium.Rectangle.contains(
+            new Cesium.Rectangle(
+              CesiumMath.toRadians(rect.west),
+              CesiumMath.toRadians(rect.south),
+              CesiumMath.toRadians(rect.east),
+              CesiumMath.toRadians(rect.north),
+            ),
+            Cesium.Cartographic.fromDegrees(location.lng, location.lat),
+          )
+        );
+      },
+      onTick: cb => {
+        tickEventCallback.current.push(cb);
+      },
+      removeTickEventListener: cb => {
+        tickEventCallback.current = tickEventCallback.current.filter(c => c !== cb) || [];
+      },
+      tickEventCallback,
     };
   }, [cesium]);
 

@@ -17,7 +17,7 @@ test("evalSimpleLayer", async () => {
         },
       },
       {
-        getAllFeatures: async () => [{ id: "a" }],
+        getAllFeatures: async () => [{ type: "feature", id: "a" }],
         getFeatures: async () => undefined,
       },
     ),
@@ -30,10 +30,59 @@ test("evalSimpleLayer", async () => {
     },
     features: [
       {
+        type: "computedFeature",
         id: "a",
         marker: {
           pointColor: "#FF0000",
           pointSize: 1,
+        },
+      },
+    ],
+  });
+});
+
+test("evaluate json properties", async () => {
+  expect(
+    await evalSimpleLayer(
+      {
+        id: "x",
+        type: "simple",
+        data: {
+          type: "geojson",
+          jsonProperties: ["key1", "key2"],
+        },
+      },
+      {
+        getAllFeatures: async () => [
+          {
+            type: "feature",
+            id: "a",
+          },
+          {
+            type: "feature",
+            id: "b",
+            properties: {
+              key1: `["hoge", "fuga"]`,
+              key2: "abc",
+            },
+          },
+        ],
+        getFeatures: async () => undefined,
+      },
+    ),
+  ).toEqual({
+    layer: {},
+    features: [
+      {
+        type: "computedFeature",
+        id: "a",
+      },
+      {
+        type: "computedFeature",
+        id: "b",
+        properties: {
+          key1: ["hoge", "fuga"],
+          key2: "abc",
         },
       },
     ],
@@ -62,6 +111,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
+          type: "feature",
           id: "1233",
           properties: {
             id: "2432432",
@@ -97,6 +147,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
+          type: "feature",
           id: "1233",
           properties: {
             foo: "122",
@@ -132,6 +183,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
+          type: "feature",
           id: "blah",
           properties: {
             GridY: 5,
@@ -171,6 +223,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
+          type: "feature",
           id: "blah",
           properties: {
             firstName: "John",
@@ -223,6 +276,7 @@ describe("Conditional styling", () => {
           type: "simple",
         },
         {
+          type: "feature",
           id: "blah",
           properties: {
             bgColor: "#FF0000",
@@ -263,6 +317,7 @@ describe("Conditional styling", () => {
           },
         },
         {
+          type: "feature",
           id: "blah",
           properties: {
             bgColor: "#FF0000",
