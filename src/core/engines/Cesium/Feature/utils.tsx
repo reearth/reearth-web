@@ -1,5 +1,11 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { Cesium3DTileset, Color, Entity as CesiumEntity, PropertyBag } from "cesium";
+import {
+  Cesium3DTileFeature,
+  Cesium3DTileset,
+  Color,
+  Entity as CesiumEntity,
+  PropertyBag,
+} from "cesium";
 import {
   ComponentProps,
   ComponentType,
@@ -21,6 +27,7 @@ export type FeatureProps<P = any> = {
   layer?: ComputedLayer;
   feature?: ComputedFeature;
   geometry?: Geometry;
+  sceneProperty?: any;
 } & Omit<FeatureComponentProps, "layer">;
 
 export type FeatureComponent = ComponentType<FeatureProps>;
@@ -36,6 +43,7 @@ export type Tag = {
   draggable?: boolean;
   unselectable?: boolean;
   legacyLocationPropertyKey?: string;
+  originalProperties?: any;
 };
 
 export const EntityExt = forwardRef(EntityExtComponent);
@@ -66,10 +74,18 @@ function EntityExtComponent(
   return <Entity ref={composeRefs(ref, r)} {...props} />;
 }
 
-export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefined, tag: Tag) {
+export function attachTag(
+  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  tag: Tag,
+) {
   if (!entity) return;
 
   if (entity instanceof Cesium3DTileset) {
+    (entity as any)[tagKey] = tag;
+    return;
+  }
+
+  if (entity instanceof Cesium3DTileFeature) {
     (entity as any)[tagKey] = tag;
     return;
   }
@@ -78,15 +94,22 @@ export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefi
     entity.properties = new PropertyBag();
   }
   for (const k of tagKeys) {
-    if (!(k in tag)) entity.properties.removeProperty(`reearth_${k}`);
+    if (!(k in tag) && entity.properties.hasProperty(`reearth_${k}`))
+      entity.properties.removeProperty(`reearth_${k}`);
     else entity.properties[`reearth_${k}`] = tag[k];
   }
 }
 
-export function getTag(entity: CesiumEntity | Cesium3DTileset | null | undefined): Tag | undefined {
+export function getTag(
+  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+): Tag | undefined {
   if (!entity) return;
 
   if (entity instanceof Cesium3DTileset) {
+    return (entity as any)[tagKey];
+  }
+
+  if (entity instanceof Cesium3DTileFeature) {
     return (entity as any)[tagKey];
   }
 
@@ -107,6 +130,7 @@ const tagObj: { [k in keyof Tag]: 1 } = {
   featureId: 1,
   layerId: 1,
   unselectable: 1,
+  originalProperties: 1,
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];

@@ -13,9 +13,10 @@ import {
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
 
+import { DATA_CACHE_KEYS } from "@reearth/core/mantle/atoms/data";
 import { objectFromGetter } from "@reearth/util/object";
 
-import { computeAtom, convertLegacyLayer } from "../../mantle";
+import { computeAtom, convertLegacyLayer, LayerSimple } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { useGet } from "../utils";
 
@@ -45,6 +46,7 @@ export type Ref = {
   addAll: (...layers: NaiveLayer[]) => (LazyLayer | undefined)[];
   replace: (...layers: Layer[]) => void;
   override: (id: string, layer?: Partial<Layer> | null) => void;
+  overrideProperties: (id: string, properties?: Partial<LayerSimple["properties"]> | null) => void;
   deleteLayer: (...ids: string[]) => void;
   isLayer: (obj: any) => obj is LazyLayer;
   layers: () => LazyLayer[];
@@ -59,8 +61,9 @@ export type Ref = {
   findByTagLabels: (...tagLabels: string[]) => LazyLayer[];
   hide: (...layers: string[]) => void;
   show: (...layers: string[]) => void;
-  select: (id: string | undefined, reason?: LayerSelectionReason) => void;
+  select: (layerId: string | undefined, featureId?: string, reason?: LayerSelectionReason) => void;
   selectedLayer: () => LazyLayer | undefined;
+  overriddenLayers: () => OverriddenLayer[];
 };
 
 export type OverriddenInfobox = {
@@ -68,7 +71,14 @@ export type OverriddenInfobox = {
   content: { key: string; value: string }[];
 };
 
+export type OverriddenLayer = Omit<Layer, "type" | "children">;
+
 export type LayerSelectionReason = {
+  reason?: string;
+  overriddenInfobox?: OverriddenInfobox;
+};
+
+export type FeatureSelectionReason = {
   reason?: string;
   overriddenInfobox?: OverriddenInfobox;
 };
@@ -84,16 +94,20 @@ export default function useHooks({
   layers?: Layer[];
   ref?: ForwardedRef<Ref>;
   hiddenLayers?: string[];
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   selectionReason?: LayerSelectionReason;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
-  const [overriddenLayers, setOverridenLayers] = useState<Omit<Layer, "type" | "children">[]>([]);
+  const [overriddenLayers, setOverridenLayers] = useState<OverriddenLayer[]>([]);
   const atomMap = useMemo(() => new Map<string, Atom>(), []);
   const lazyLayerMap = useMemo(() => new Map<string, LazyLayer>(), []);
 
@@ -188,15 +202,15 @@ export default function useHooks({
   }, [getComputedLayer, layerMap, lazyComputedLayerPrototype]);
 
   const findById = useCallback(
-    (id: string): LazyLayer | undefined => {
-      const lazyLayer = lazyLayerMap.get(id);
+    (layerId: string): LazyLayer | undefined => {
+      const lazyLayer = lazyLayerMap.get(layerId);
       if (lazyLayer) return lazyLayer;
 
-      if (!layerMap.has(id)) return;
+      if (!layerMap.has(layerId)) return;
 
       const l = Object.create(lazyLayerPrototype);
-      l.id = id;
-      lazyLayerMap.set(id, l);
+      l.id = layerId;
+      lazyLayerMap.set(layerId, l);
 
       return l;
     },
@@ -297,7 +311,52 @@ export default function useHooks({
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);
         if (i < 0) return [...layers, layer2];
-        return [...layers.slice(0, i - 1), layer2, ...layers.slice(i + 1)];
+        return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
+      });
+    },
+    [layerMap],
+  );
+
+  // For compat
+  const overrideProperties = useCallback(
+    (id: string, properties?: Partial<LayerSimple["properties"]> | null) => {
+      const originalLayer = layerMap.get(id);
+      if (!originalLayer) return;
+
+      const rawLayer = compat({
+        ...originalLayer,
+        ...(originalLayer.compat && properties
+          ? {
+              type: originalLayer.type === "group" ? "group" : "item",
+              extensionId: originalLayer.compat.extensionId,
+              property: {
+                default: {
+                  ...(originalLayer.compat.property?.default || {}),
+                  ...(properties.default || {}),
+                },
+              },
+            }
+          : {}),
+        ...(!originalLayer.compat && properties ? { property: properties } : {}),
+      });
+      if (!rawLayer) return;
+
+      if (
+        rawLayer.type === "simple" &&
+        rawLayer.data?.value &&
+        // If data isn't cachable, reuse layer id for performance.
+        DATA_CACHE_KEYS.some(k => !rawLayer.data?.[k])
+      ) {
+        // If layer property is overridden, feature is legacy layer.
+        // So we can set layer id to prevent unnecessary render.
+        rawLayer.data.value.id = id;
+      }
+
+      const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
+      setOverridenLayers(layers => {
+        const i = layers.findIndex(l => l.id === id);
+        if (i < 0) return [...layers, layer2];
+        return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
       });
     },
     [layerMap],
@@ -421,6 +480,8 @@ export default function useHooks({
     [showLayer],
   );
 
+  const overriddenLayersRef = useCallback(() => overriddenLayers, [overriddenLayers]);
+
   const { select, selectedLayer } = useSelection({
     flattenedLayers,
     selectedLayerId,
@@ -437,6 +498,7 @@ export default function useHooks({
       addAll,
       replace,
       override,
+      overrideProperties,
       deleteLayer,
       findByIds,
       isLayer,
@@ -450,6 +512,7 @@ export default function useHooks({
       show: showLayers,
       select,
       selectedLayer,
+      overriddenLayers: overriddenLayersRef,
     }),
     [
       findById,
@@ -457,6 +520,7 @@ export default function useHooks({
       addAll,
       replace,
       override,
+      overrideProperties,
       deleteLayer,
       findByIds,
       isLayer,
@@ -470,6 +534,7 @@ export default function useHooks({
       showLayers,
       select,
       selectedLayer,
+      overriddenLayersRef,
     ],
   );
 
@@ -576,62 +641,82 @@ function useSelection({
   onLayerSelect,
 }: {
   flattenedLayers?: Layer[];
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   selectedReason?: LayerSelectionReason;
-  getLazyLayer: (id: string) => LazyLayer | undefined;
+  getLazyLayer: (layerId: string) => LazyLayer | undefined;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
 }) {
   const [[selectedLayerId, selectedReason], setSelectedLayer] = useState<
-    [string | undefined, LayerSelectionReason | undefined]
+    [{ layerId?: string; featureId?: string } | undefined, LayerSelectionReason | undefined]
   >([initialSelectedLayerId, initialSelectedReason]);
 
   useEffect(() => {
     setSelectedLayer(s => {
       return initialSelectedLayerId
-        ? s[0] !== initialSelectedLayerId || !isEqual(s[1], initialSelectedReason)
+        ? s[0]?.layerId !== initialSelectedLayerId.layerId || !isEqual(s[1], initialSelectedReason)
           ? [initialSelectedLayerId, initialSelectedReason]
           : s
-        : !s[0] && !s[1]
+        : !s[0]?.layerId && !s[1]
         ? s
-        : [undefined, undefined];
+        : s;
     });
   }, [initialSelectedLayerId, initialSelectedReason]);
 
-  const actualSelectedLayer = useMemo(
-    () => (selectedLayerId ? flattenedLayers?.find(l => l.id === selectedLayerId) : undefined),
-    [flattenedLayers, selectedLayerId],
-  );
+  const selectedLayerForRef = useCallback(() => {
+    return selectedLayerId?.layerId ? getLazyLayer(selectedLayerId.layerId) : undefined;
+  }, [getLazyLayer, selectedLayerId]);
 
   useEffect(() => {
+    const actualSelectedLayer = selectedLayerForRef();
     if (actualSelectedLayer) {
-      onLayerSelect?.(actualSelectedLayer.id, actualSelectedLayer, selectedReason);
+      onLayerSelect?.(
+        actualSelectedLayer.id,
+        selectedLayerId?.featureId,
+        () =>
+          new Promise(resolve => {
+            // Wait until computed feature is ready
+            queueMicrotask(() => {
+              resolve(actualSelectedLayer.computed);
+            });
+          }),
+        selectedReason,
+      );
     } else {
-      onLayerSelect?.(undefined, undefined, undefined);
+      onLayerSelect?.(undefined, undefined, undefined, undefined);
     }
-  }, [onLayerSelect, actualSelectedLayer, selectedReason]);
+  }, [onLayerSelect, selectedLayerId, selectedReason, selectedLayerForRef]);
 
   useEffect(() => {
     setSelectedLayer(s =>
-      s[0] && flattenedLayers?.find(l => l.id === s[0])
+      s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
         ? s
-        : !s[0] && !s[1]
+        : !s[0]?.layerId && !s[1]
         ? s
         : [undefined, undefined],
     );
   }, [flattenedLayers]);
 
-  const select = useCallback((id: unknown, options?: LayerSelectionReason) => {
-    if (typeof id === "string") setSelectedLayer([id || undefined, options]);
-    else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
-  }, []);
-
-  const selectedLayerForRef = useCallback(
-    () => (selectedLayerId ? getLazyLayer(selectedLayerId) : undefined),
-    [getLazyLayer, selectedLayerId],
+  const select = useCallback(
+    (layerId?: unknown, featureId?: unknown, options?: LayerSelectionReason) => {
+      if (typeof layerId === "string")
+        setSelectedLayer([
+          {
+            layerId: layerId || undefined,
+            featureId: typeof featureId === "string" ? featureId || undefined : undefined,
+          },
+          options,
+        ]);
+      else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
+    },
+    [],
   );
 
   return {

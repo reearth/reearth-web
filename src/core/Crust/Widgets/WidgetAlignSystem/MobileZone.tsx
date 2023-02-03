@@ -1,4 +1,4 @@
-import { ReactNode, useState, useMemo } from "react";
+import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
@@ -7,6 +7,7 @@ import { styled } from "@reearth/theme";
 
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";
+import { filterSections } from "./utils";
 
 export type Props = {
   children?: ReactNode;
@@ -14,10 +15,10 @@ export type Props = {
   zoneName: "inner" | "outer";
   theme?: Theme;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  invisibleWidgetIDs?: string[];
   renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
-const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
@@ -26,13 +27,20 @@ export default function MobileZone({
   layoutConstraint,
   theme,
   children,
+  invisibleWidgetIDs,
   renderWidget,
 }: Props) {
   const filteredSections = useMemo(() => {
-    return sections.filter(s => !!zone?.[s] || (s === "center" && children));
-  }, [zone, children]);
+    return filterSections(zone, invisibleWidgetIDs, s => s === "center" && children);
+  }, [zone, children, invisibleWidgetIDs]);
 
-  const [pos, setPos] = useState(filteredSections.length === 3 ? 1 : 0);
+  const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
+
+  const [pos, setPos] = useState(initialPos);
+
+  useEffect(() => {
+    setPos(initialPos);
+  }, [initialPos]);
 
   return (
     <>

@@ -1,50 +1,113 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
-import type { Layer, Ref as MapRef, LayerSelectionReason, Camera, Clock } from "../Map";
+import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
+
+import type { ComputedFeature, Feature } from "../mantle";
+import type {
+  Ref as MapRef,
+  LayerSelectionReason,
+  Camera,
+  ComputedLayer,
+  SceneProperty,
+  LayerEditEvent,
+} from "../Map";
+import { useOverriddenProperty } from "../Map";
+
+import useViewport from "./useViewport";
 
 const viewportMobileMaxWidth = 768;
 
 export default function useHooks({
   selectedBlockId: initialSelectedBlockId,
   camera: initialCamera,
-  clock: initialClock,
+  sceneProperty,
+  isEditable,
+  rootLayerId,
+  zoomedLayerId,
   onLayerSelect,
   onBlockSelect,
   onCameraChange,
-  onTick,
+  onZoomToLayer,
 }: {
   selectedBlockId?: string;
   camera?: Camera;
-  clock?: Date;
+  isEditable?: boolean;
+  rootLayerId?: string;
+  sceneProperty?: SceneProperty;
+  zoomedLayerId?: string;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onBlockSelect?: (blockId?: string) => void;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 }) {
   const mapRef = useRef<MapRef>(null);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const { ref: dropRef, isDroppable } = useDrop(
+    useMemo(
+      (): DropOptions => ({
+        accept: ["primitive"],
+        drop(_item, context) {
+          if (!rootLayerId || !isEditable) return;
+          const loc = context.position
+            ? mapRef.current?.engine.getLocationFromScreen(context.position.x, context.position.y)
+            : undefined;
+          return {
+            type: "earth",
+            layerId: rootLayerId,
+            position: loc ? { lat: loc.lat, lng: loc.lng, height: loc.height } : undefined,
+          };
+        },
+        wrapperRef,
+      }),
+      [rootLayerId, isEditable],
+    ),
+  );
+  dropRef(wrapperRef);
+
+  const viewport = useViewport({
+    wrapperRef,
+  });
+
   // layer
-  const [selectedLayer, selectLayer] = useState<
-    [string | undefined, Layer | undefined, LayerSelectionReason | undefined]
-  >([undefined, undefined, undefined]);
+  const [selectedLayer, selectLayer] = useState<{
+    layerId?: string;
+    featureId?: string;
+    layer?: ComputedLayer;
+    reason?: LayerSelectionReason;
+  }>({});
+  const [selectedFeature, selectFeature] = useState<Feature>();
+  const [selectedComputedFeature, selectComputedFeature] = useState<ComputedFeature>();
   useEffect(() => {
-    onLayerSelect?.(...selectedLayer);
+    const { layerId, featureId, layer, reason } = selectedLayer;
+    onLayerSelect?.(layerId, featureId, async () => layer, reason);
   }, [onLayerSelect, selectedLayer]);
   const handleLayerSelect = useCallback(
-    (
-      id: string | undefined,
-      layer: Layer | undefined,
+    async (
+      layerId: string | undefined,
+      featureId: string | undefined,
+      layer: (() => Promise<ComputedLayer | undefined>) | undefined,
       reason: LayerSelectionReason | undefined,
     ) => {
-      selectLayer([id, layer, reason]);
+      const computedLayer = await layer?.();
+
+      selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
+      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId));
+
+      selectLayer({ layerId, featureId, layer: computedLayer, reason });
     },
     [],
   );
+
+  // scene
+  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
 
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
@@ -52,47 +115,67 @@ export default function useHooks({
   // camera
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
 
-  // clock
-  const [clock, handleTick] = useValue(initialClock, onTick);
-  const handleTick2 = useCallback((clock: Clock) => handleTick(clock.current), [handleTick]);
-  const mapClock = useMemo<Clock | undefined>(
-    () => (clock ? { current: clock } : undefined),
-    [clock],
-  );
-
   // mobile
   const { width } = useWindowSize();
   const isMobile = width < viewportMobileMaxWidth;
 
+  // layer edit
+  const onLayerEditRef = useRef<(e: LayerEditEvent) => void>();
+  const onLayerEdit = useCallback((cb: (e: LayerEditEvent) => void) => {
+    onLayerEditRef.current = cb;
+  }, []);
+  const handleLayerEdit = useCallback((e: LayerEditEvent) => {
+    onLayerEditRef.current?.(e);
+  }, []);
+
+  // zoom to layer
+  useEffect(() => {
+    if (zoomedLayerId) {
+      mapRef.current?.engine?.lookAtLayer(zoomedLayerId);
+      onZoomToLayer?.(undefined);
+    }
+  }, [zoomedLayerId, onZoomToLayer]);
+
   return {
     mapRef,
-    selectedLayer: selectedLayer[1],
+    wrapperRef,
+    selectedLayer: selectedLayer,
+    selectedFeature,
+    selectedComputedFeature,
     selectedBlock,
+    viewport,
     camera,
-    clock: mapClock,
     isMobile,
+    overriddenSceneProperty,
+    isDroppable,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
-    handleTick: handleTick2,
+    overrideSceneProperty,
+    handleLayerEdit,
+    onLayerEdit,
   };
 }
 
 function useValue<T>(
   initial: T | undefined,
   onChange: ((t: T) => void) | undefined,
-): [T | undefined, Dispatch<SetStateAction<T | undefined>>] {
+): [T | undefined, (v?: T) => void] {
   const [state, set] = useState(initial);
 
-  useEffect(() => {
-    if (state) {
-      onChange?.(state);
-    }
-  }, [state, onChange]);
+  const handleOnChange = useCallback(
+    (v?: T) => {
+      if (v) {
+        set(v);
+        onChange?.(v);
+      }
+    },
+    [onChange],
+  );
 
   useEffect(() => {
     set(initial);
   }, [initial]);
 
-  return [state, set];
+  return [state, handleOnChange];
 }
