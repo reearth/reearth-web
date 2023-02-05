@@ -8,7 +8,6 @@ import {
   WidgetSection,
   WidgetArea,
   Alignment,
-  WidgetAreaPadding,
   WidgetLayoutConstraint,
   Tag,
 } from "@reearth/components/molecules/Visualizer";
@@ -16,6 +15,7 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/components/molecules/Visualizer/Widget/builtin";
+import { WidgetAreaPadding } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   GetBlocksQuery,
   Maybe,
