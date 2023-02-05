@@ -17,6 +17,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
   const {
     rootLayerId,
     selectedBlockId,
+    selectedWidgetAlignAreaId,
     zoomedLayerId,
     sceneProperty,
     pluginProperty,
@@ -34,6 +35,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
     engineMeta,
     selectLayer,
     selectBlock,
+    selectWidgetAlignArea,
     onBlockChange,
     onBlockMove,
     onBlockRemove,
@@ -67,6 +69,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
       widgets={widgets}
       selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}
+      selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
       zoomedLayerId={zoomedLayerId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}
@@ -85,6 +88,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
       onWidgetUpdate={onWidgetUpdate}
       onWidgetAlignSystemUpdate={onWidgetAlignSystemUpdate}
       onBlockSelect={selectBlock}
+      onWidgetAlignAreaSelect={selectWidgetAlignArea}
       onBlockChange={onBlockChange}
       onBlockMove={onBlockMove}
       onBlockDelete={onBlockRemove}

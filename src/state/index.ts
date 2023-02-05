@@ -16,6 +16,9 @@ export const useRootLayerId = () => useAtom(rootLayerId);
 const widgetAlignEditor = atom<boolean | undefined>(undefined);
 export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
 
+const selectedWidgetAlignArea = atom<string | undefined>(undefined);
+export const useSelectedWidgetAlignArea = () => useAtom(selectedWidgetAlignArea);
+
 export type Selected =
   | { type: "scene" }
   | { type: "layer"; layerId: string }

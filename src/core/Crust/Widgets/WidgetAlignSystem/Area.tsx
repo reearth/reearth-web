@@ -7,6 +7,7 @@ import { useTheme } from "@reearth/theme";
 
 import type {
   Alignment,
+  WidgetAreaPadding,
   WidgetLayoutConstraint,
   Location,
   WidgetLayout,
@@ -19,6 +20,10 @@ type Props = {
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
   align: Alignment;
+  padding: WidgetAreaPadding;
+  backgroundColor: string;
+  gap: number;
+  centered: boolean;
   widgets?: InternalWidget[];
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
@@ -30,6 +35,10 @@ export default function Area({
   section,
   area,
   align,
+  padding,
+  backgroundColor,
+  gap,
+  centered,
   widgets,
   layoutConstraint,
   renderWidget,
@@ -61,14 +70,28 @@ export default function Area({
             : undefined
           : undefined
       }
-      style={{ flexWrap: "wrap", pointerEvents: "none" }}
+      style={{
+        flexWrap: "wrap",
+        pointerEvents: "none",
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        backgroundColor: backgroundColor,
+        gap: gap,
+        alignItems: centered ? "center" : "unset",
+      }}
       editorStyle={{
         flexWrap: "wrap",
-        background: area === "middle" ? theme.alignSystem.blueBg : theme.alignSystem.orangeBg,
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        background: backgroundColor
+          ? backgroundColor
+          : area === "middle"
+          ? theme.alignSystem.blueBg
+          : theme.alignSystem.orangeBg,
         border:
           area === "middle"
             ? `1px solid ${theme.alignSystem.blueHighlight}`
             : `1px solid ${theme.alignSystem.orangeHighlight}`,
+        gap: gap,
+        alignItems: centered ? "center" : "unset",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
       {widgets?.map((widget, i) => {

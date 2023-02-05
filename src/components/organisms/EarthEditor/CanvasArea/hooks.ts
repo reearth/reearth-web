@@ -33,6 +33,7 @@ import {
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
   useClock,
+  useSelectedWidgetAlignArea,
 } from "@reearth/state";
 import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/util/value";
 
@@ -53,6 +54,7 @@ export default (isBuilt?: boolean) => {
   const [clock, onTick] = useClock();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [selectedWidgetAlignArea, selectWidgetAlignArea] = useSelectedWidgetAlignArea();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
@@ -289,6 +291,7 @@ export default (isBuilt?: boolean) => {
     selectedLayerId,
     zoomedLayerId,
     selectedBlockId: selectedBlock,
+    selectedWidgetAlignAreaId: selectedWidgetAlignArea,
     sceneProperty,
     pluginProperty,
     clusterProperty,
@@ -304,6 +307,7 @@ export default (isBuilt?: boolean) => {
     engineMeta,
     selectLayer,
     selectBlock,
+    selectWidgetAlignArea,
     onBlockChange,
     onBlockMove,
     onBlockRemove,

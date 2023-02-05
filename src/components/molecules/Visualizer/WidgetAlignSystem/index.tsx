@@ -29,6 +29,7 @@ export type {
 } from "./hooks";
 
 export type Props = {
+  selectedWidgetAlignAreaId?: string;
   alignSystem?: WidgetAlignSystemType;
   editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -46,9 +47,11 @@ export type Props = {
   ) => void;
   onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
+  onWidgetAlignAreaSelect?: (id?: string) => void;
 } & PluginCommonProps;
 
 const WidgetAlignSystem: React.FC<Props> = ({
+  selectedWidgetAlignAreaId,
   alignSystem,
   editing,
   sceneProperty,
@@ -59,6 +62,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   layoutConstraint,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
+  onWidgetAlignAreaSelect,
   ...props
 }) => {
   const { handleMove, handleExtend, handleAlignmentChange } = useHooks({
@@ -76,6 +80,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         {props.viewport?.isMobile ? (
           <MobileZone
             zoneName="outer"
+            selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
@@ -83,10 +88,12 @@ const WidgetAlignSystem: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             layoutConstraint={layoutConstraint}
+            onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
             {...props}>
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
+                selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
@@ -94,6 +101,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
                 isEditable={isEditable}
                 isBuilt={isBuilt}
                 layoutConstraint={layoutConstraint}
+                onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
                 {...props}
               />
             )}
@@ -101,6 +109,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         ) : (
           <ZoneComponent
             zoneName="outer"
+            selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
@@ -108,9 +117,11 @@ const WidgetAlignSystem: React.FC<Props> = ({
             isEditable={isEditable}
             isBuilt={isBuilt}
             layoutConstraint={layoutConstraint}
+            onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
             {...props}>
             <ZoneComponent
               zoneName="inner"
+              selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
               zone={alignSystem?.inner}
               sceneProperty={sceneProperty}
               pluginProperty={pluginProperty}
@@ -118,6 +129,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
               isEditable={isEditable}
               isBuilt={isBuilt}
               layoutConstraint={layoutConstraint}
+              onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
               {...props}
             />
           </ZoneComponent>

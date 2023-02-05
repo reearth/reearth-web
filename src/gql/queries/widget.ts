@@ -213,8 +213,20 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
     $sceneId: ID!
     $location: WidgetLocationInput!
     $align: WidgetAreaAlign
+    $gap: Int
+    $centered: Boolean
+    $background: String
   ) {
-    updateWidgetAlignSystem(input: { sceneId: $sceneId, location: $location, align: $align }) {
+    updateWidgetAlignSystem(
+      input: {
+        sceneId: $sceneId
+        location: $location
+        align: $align
+        gap: $gap
+        centered: $centered
+        background: $background
+      }
+    ) {
       scene {
         id
         widgets {

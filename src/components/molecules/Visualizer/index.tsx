@@ -62,6 +62,7 @@ export type Props = {
   selectedLayerId?: string;
   zoomedLayerId?: string;
   selectedBlockId?: string;
+  selectedWidgetAlignAreaId?: string;
   pluginBaseUrl?: string;
   isPublished?: boolean;
   inEditor?: boolean;
@@ -73,6 +74,7 @@ export type Props = {
   onLayerSelect?: (id?: string) => void;
   onLayerDrop?: (layer: Layer, key: string, latlng: LatLng) => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
+  onWidgetAlignAreaSelect?: (id?: string) => void;
 } & Omit<EngineProps, "children" | "property" | "onLayerSelect" | "onLayerDrop"> &
   Pick<
     InfoboxProps,
@@ -94,6 +96,7 @@ export default function Visualizer({
   inEditor,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
+  selectedWidgetAlignAreaId,
   zoomedLayerId,
   widgetAlignEditorActivated,
   engineMeta,
@@ -108,6 +111,7 @@ export default function Visualizer({
   onBlockSelect,
   onLayerDrop,
   onZoomToLayer,
+  onWidgetAlignAreaSelect,
   ...props
 }: Props): JSX.Element {
   const {
@@ -176,6 +180,7 @@ export default function Visualizer({
           {isDroppable && <DropHolder />}
           {ready && widgets?.alignSystem && (
             <WidgetAlignSystem
+              selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
               alignSystem={overriddenAlignSystem}
               editing={widgetAlignEditorActivated}
               onWidgetUpdate={onWidgetUpdate}
@@ -193,6 +198,7 @@ export default function Visualizer({
               viewport={viewport}
               pluginBaseUrl={pluginBaseUrl}
               layoutConstraint={widgets.layoutConstraint}
+              onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
             />
           )}
           <Engine
