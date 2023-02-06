@@ -3,6 +3,7 @@ import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { styled } from "@reearth/theme";
 
 import Area from "./Area";
@@ -11,17 +12,20 @@ import { filterSections } from "./utils";
 
 export type Props = {
   children?: ReactNode;
+  selectedWidgetAlignArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   theme?: Theme;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   invisibleWidgetIDs?: string[];
   renderWidget?: (props: WidgetProps) => ReactNode;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 };
 
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
+  selectedWidgetAlignArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -29,6 +33,7 @@ export default function MobileZone({
   children,
   invisibleWidgetIDs,
   renderWidget,
+  onWidgetAlignAreaSelect,
 }: Props) {
   const filteredSections = useMemo(() => {
     return filterSections(zone, invisibleWidgetIDs, s => s === "center" && children);
@@ -55,6 +60,7 @@ export default function MobileZone({
               ) : (
                 <Area
                   key={a}
+                  selectedWidgetAlignArea={selectedWidgetAlignArea}
                   zone={zoneName}
                   section={s}
                   area={a}
@@ -66,6 +72,7 @@ export default function MobileZone({
                   backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
                   layoutConstraint={layoutConstraint}
                   renderWidget={renderWidget}
+                  onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
                 />
               ),
             )}

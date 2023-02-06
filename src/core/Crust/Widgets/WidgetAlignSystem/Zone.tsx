@@ -1,22 +1,34 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
+
 import Area from "./Area";
 import type { WidgetZone, WidgetLayoutConstraint, WidgetProps } from "./types";
 
 export type Props = {
   children?: ReactNode;
+  selectedWidgetAlignArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   invisibleWidgetIDs?: string[];
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   renderWidget?: (props: WidgetProps) => ReactNode;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 };
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
-export default function Zone({ zone, zoneName, layoutConstraint, children, renderWidget }: Props) {
+export default function Zone({
+  selectedWidgetAlignArea,
+  zone,
+  zoneName,
+  layoutConstraint,
+  children,
+  renderWidget,
+  onWidgetAlignAreaSelect,
+}: Props) {
   return (
     <>
       {sections.map(s => (
@@ -29,6 +41,7 @@ export default function Zone({ zone, zoneName, layoutConstraint, children, rende
             ) : (
               <Area
                 key={a}
+                selectedWidgetAlignArea={selectedWidgetAlignArea}
                 zone={zoneName}
                 section={s}
                 area={a}
@@ -40,6 +53,7 @@ export default function Zone({ zone, zoneName, layoutConstraint, children, rende
                 centered={zone?.[s]?.[a]?.centered ?? false}
                 layoutConstraint={layoutConstraint}
                 renderWidget={renderWidget}
+                onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
               />
             ),
           )}

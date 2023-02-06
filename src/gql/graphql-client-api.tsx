@@ -3164,6 +3164,7 @@ export type UpdateWidgetAlignSystemMutationVariables = Exact<{
   sceneId: Scalars['ID'];
   location: WidgetLocationInput;
   align?: InputMaybe<WidgetAreaAlign>;
+  padding?: InputMaybe<WidgetAreaPaddingInput>;
   gap?: InputMaybe<Scalars['Int']>;
   centered?: InputMaybe<Scalars['Boolean']>;
   background?: InputMaybe<Scalars['String']>;
@@ -7995,9 +7996,9 @@ export type UpdateWidgetMutationHookResult = ReturnType<typeof useUpdateWidgetMu
 export type UpdateWidgetMutationResult = Apollo.MutationResult<UpdateWidgetMutation>;
 export type UpdateWidgetMutationOptions = Apollo.BaseMutationOptions<UpdateWidgetMutation, UpdateWidgetMutationVariables>;
 export const UpdateWidgetAlignSystemDocument = gql`
-    mutation UpdateWidgetAlignSystem($sceneId: ID!, $location: WidgetLocationInput!, $align: WidgetAreaAlign, $gap: Int, $centered: Boolean, $background: String) {
+    mutation UpdateWidgetAlignSystem($sceneId: ID!, $location: WidgetLocationInput!, $align: WidgetAreaAlign, $padding: WidgetAreaPaddingInput, $gap: Int, $centered: Boolean, $background: String) {
   updateWidgetAlignSystem(
-    input: {sceneId: $sceneId, location: $location, align: $align, gap: $gap, centered: $centered, background: $background}
+    input: {sceneId: $sceneId, location: $location, align: $align, padding: $padding, gap: $gap, centered: $centered, background: $background}
   ) {
     scene {
       id
@@ -8033,6 +8034,7 @@ export type UpdateWidgetAlignSystemMutationFn = Apollo.MutationFunction<UpdateWi
  *      sceneId: // value for 'sceneId'
  *      location: // value for 'location'
  *      align: // value for 'align'
+ *      padding: // value for 'padding'
  *      gap: // value for 'gap'
  *      centered: // value for 'centered'
  *      background: // value for 'background'

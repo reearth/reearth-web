@@ -1,6 +1,7 @@
 import React from "react";
 import { GridWrapper } from "react-align";
 
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { styled } from "@reearth/theme";
 
 import { Viewport } from "../hooks";
@@ -29,7 +30,7 @@ export type {
 } from "./hooks";
 
 export type Props = {
-  selectedWidgetAlignAreaId?: string;
+  selectedWidgetAlignArea?: WidgetAreaState;
   alignSystem?: WidgetAlignSystemType;
   editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -47,11 +48,11 @@ export type Props = {
   ) => void;
   onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
-  onWidgetAlignAreaSelect?: (id?: string) => void;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 } & PluginCommonProps;
 
 const WidgetAlignSystem: React.FC<Props> = ({
-  selectedWidgetAlignAreaId,
+  selectedWidgetAlignArea,
   alignSystem,
   editing,
   sceneProperty,
@@ -80,7 +81,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         {props.viewport?.isMobile ? (
           <MobileZone
             zoneName="outer"
-            selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+            selectedWidgetAlignArea={selectedWidgetAlignArea}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
@@ -93,7 +94,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
-                selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+                selectedWidgetAlignArea={selectedWidgetAlignArea}
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
@@ -109,7 +110,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         ) : (
           <ZoneComponent
             zoneName="outer"
-            selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+            selectedWidgetAlignArea={selectedWidgetAlignArea}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
@@ -121,7 +122,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             {...props}>
             <ZoneComponent
               zoneName="inner"
-              selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+              selectedWidgetAlignArea={selectedWidgetAlignArea}
               zone={alignSystem?.inner}
               sceneProperty={sceneProperty}
               pluginProperty={pluginProperty}

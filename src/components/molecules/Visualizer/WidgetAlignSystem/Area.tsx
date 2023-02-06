@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { useTheme } from "@reearth/theme";
 
 import { Viewport } from "../hooks";
@@ -18,7 +19,7 @@ import type {
 } from "./hooks";
 
 type Props = {
-  selectedWidgetAlignAreaId?: string;
+  selectedWidgetAlignArea?: WidgetAreaState;
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
@@ -32,13 +33,13 @@ type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
-  onWidgetAlignAreaSelect?: (id?: string) => void;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;
 
 export default function Area({
-  selectedWidgetAlignAreaId,
+  selectedWidgetAlignArea,
   zone,
   section,
   area,
@@ -67,7 +68,18 @@ export default function Area({
     <GridArea
       key={area}
       id={`${zone}/${section}/${area}`}
-      onClick={(id?: string) => onWidgetAlignAreaSelect?.(id)}
+      onClick={() =>
+        onWidgetAlignAreaSelect?.({
+          area,
+          section,
+          zone,
+          align,
+          background: backgroundColor,
+          centered,
+          gap,
+          padding,
+        })
+      }
       vertical={area === "middle"}
       stretch={area === "middle"}
       bottom={(section === "right" && area !== "top") || area === "bottom"}
@@ -98,7 +110,8 @@ export default function Area({
           ? theme.alignSystem.blueBg
           : theme.alignSystem.orangeBg,
         border:
-          selectedWidgetAlignAreaId === `${zone}/${section}/${area}`
+          `${selectedWidgetAlignArea?.zone}/${selectedWidgetAlignArea?.section}/${selectedWidgetAlignArea?.area}` ===
+          `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
             ? `1px solid ${theme.alignSystem.blueHighlight}`

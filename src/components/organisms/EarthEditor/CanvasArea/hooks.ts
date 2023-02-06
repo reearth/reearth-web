@@ -292,7 +292,7 @@ export default (isBuilt?: boolean) => {
     selectedLayerId,
     zoomedLayerId,
     selectedBlockId: selectedBlock,
-    selectedWidgetAlignAreaId: selectedWidgetAlignArea,
+    selectedWidgetAlignArea,
     sceneProperty,
     pluginProperty,
     clusterProperty,

@@ -213,6 +213,7 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
     $sceneId: ID!
     $location: WidgetLocationInput!
     $align: WidgetAreaAlign
+    $padding: WidgetAreaPaddingInput
     $gap: Int
     $centered: Boolean
     $background: String
@@ -222,6 +223,7 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
         sceneId: $sceneId
         location: $location
         align: $align
+        padding: $padding
         gap: $gap
         centered: $centered
         background: $background

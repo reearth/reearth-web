@@ -15,6 +15,11 @@ import {
   useLinkDatasetMutation,
   useUpdatePropertyItemsMutation,
   ListOperation,
+  useUpdateWidgetAlignSystemMutation,
+  WidgetAreaAlign,
+  WidgetAreaType,
+  WidgetSectionType,
+  WidgetZoneType,
 } from "@reearth/gql";
 import { useLang } from "@reearth/i18n";
 import {
@@ -38,6 +43,21 @@ export type Mode = RawMode;
 export type FieldPointer = {
   itemId?: string;
   fieldId: string;
+};
+
+export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
+export type WidgetAreaState = {
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  align: WidgetAlignment;
+  padding?: WidgetAreaPadding;
+  gap?: number;
+  centered?: boolean;
+  background?: string;
 };
 
 export default (mode: Mode) => {
@@ -73,6 +93,35 @@ export default (mode: Mode) => {
     selected,
     locale: lang,
   });
+
+  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation({
+    refetchQueries: ["GetEarthWidgets"],
+  });
+  const handleAreaStateChange = useCallback(
+    async (widgetAreaState?: WidgetAreaState) => {
+      if (!sceneId || !widgetAreaState) return;
+
+      const results = await updateWidgetAlignSystemMutation({
+        variables: {
+          sceneId,
+          location: {
+            area: widgetAreaState.area.toUpperCase() as WidgetAreaType,
+            section: widgetAreaState.section.toUpperCase() as WidgetSectionType,
+            zone: widgetAreaState.zone.toUpperCase() as WidgetZoneType,
+          },
+          align: widgetAreaState.align.toUpperCase() as WidgetAreaAlign,
+          background: widgetAreaState.background,
+          padding: widgetAreaState.padding,
+          centered: widgetAreaState.centered,
+          gap: widgetAreaState.gap,
+        },
+      });
+      if (results.data?.updateWidgetAlignSystem) {
+        selectWidgetAlignArea(widgetAreaState);
+      }
+    },
+    [sceneId, updateWidgetAlignSystemMutation, selectWidgetAlignArea],
+  );
 
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
   const changeValue = useCallback(
@@ -341,6 +390,7 @@ export default (mode: Mode) => {
     widgetAlignEditorActivated: widgetAlignEditorActivated,
     selectedWidgetAlignArea,
     selectedWidget,
+    handleAreaStateChange,
     updatePropertyItems,
     datasetSchemas,
     layers,

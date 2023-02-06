@@ -3,6 +3,7 @@ import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
 import { Viewport } from "../hooks";
@@ -13,7 +14,7 @@ import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   children?: ReactNode;
-  selectedWidgetAlignAreaId?: string;
+  selectedWidgetAlignArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -21,14 +22,14 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
-  onWidgetAlignAreaSelect?: (id?: string) => void;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
-  selectedWidgetAlignAreaId,
+  selectedWidgetAlignArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -70,7 +71,7 @@ export default function MobileZone({
               ) : (
                 <Area
                   key={a}
-                  selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+                  selectedWidgetAlignArea={selectedWidgetAlignArea}
                   zone={zoneName}
                   section={s}
                   area={a}

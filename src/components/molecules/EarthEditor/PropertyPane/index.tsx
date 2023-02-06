@@ -25,6 +25,7 @@ import PropertyItem, {
   Layer as LayerType,
   AssetModalProps as AssetModalPropsType,
   Mode as ModeType,
+  WidgetAreaState,
 } from "./PropertyItem";
 import WidgetAlignSystemAreaForm from "./WidgetAlignSystemAreaForm";
 import WidgetAlignSystemToggle from "./WidgetAlignSystemToggle";
@@ -61,8 +62,9 @@ export type Props = {
   onRemovePane?: () => void;
   assetModal?: ComponentType<AssetModalProps>;
   selectedWidget?: Widget;
-  selectedWidgetAlignArea?: string;
+  selectedWidgetAlignArea?: WidgetAreaState;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
+  onAreaStateChange?: (widgetAreaState: WidgetAreaState) => Promise<void> | void;
   widgetAlignEditorActivated?: boolean;
 } & Pick<
   PropertyItemProps,
@@ -107,6 +109,7 @@ const PropertyPane: React.FC<Props> = ({
   selectedWidgetAlignArea,
   onWidgetAlignEditorActivate,
   widgetAlignEditorActivated,
+  onAreaStateChange,
   onChange,
   onRemove,
   onLink,
@@ -165,7 +168,10 @@ const PropertyPane: React.FC<Props> = ({
       )}
       {mode === "widgets" && selectedWidgetAlignArea && (
         <GroupWrapper className={className} name={t("Container")}>
-          <WidgetAlignSystemAreaForm />
+          <WidgetAlignSystemAreaForm
+            selectedWidgetAlignArea={selectedWidgetAlignArea}
+            onAreaStateChange={onAreaStateChange}
+          />
         </GroupWrapper>
       )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||

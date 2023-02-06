@@ -17,7 +17,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
   const {
     rootLayerId,
     selectedBlockId,
-    selectedWidgetAlignAreaId,
+    selectedWidgetAlignArea,
     zoomedLayerId,
     sceneProperty,
     pluginProperty,
@@ -69,7 +69,7 @@ const CanvasArea: React.FC<Props> = ({ className, isBuilt, inEditor }) => {
       widgets={widgets}
       selectedLayerId={selectedLayerId}
       selectedBlockId={selectedBlockId}
-      selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+      selectedWidgetAlignArea={selectedWidgetAlignArea}
       zoomedLayerId={zoomedLayerId}
       rootLayerId={rootLayerId}
       sceneProperty={sceneProperty}

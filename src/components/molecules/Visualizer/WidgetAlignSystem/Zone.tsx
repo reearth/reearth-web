@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { GridSection } from "react-align";
 
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
+
 import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
@@ -9,7 +11,7 @@ import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   children?: ReactNode;
-  selectedWidgetAlignAreaId?: string;
+  selectedWidgetAlignArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -18,14 +20,14 @@ export type Props = {
   sceneProperty?: any;
   viewport?: Viewport;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
-  onWidgetAlignAreaSelect?: (id?: string) => void;
+  onWidgetAlignAreaSelect?: (widgetAreaState?: WidgetAreaState) => void;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function Zone({
-  selectedWidgetAlignAreaId,
+  selectedWidgetAlignArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -50,7 +52,7 @@ export default function Zone({
             ) : (
               <Area
                 key={a}
-                selectedWidgetAlignAreaId={selectedWidgetAlignAreaId}
+                selectedWidgetAlignArea={selectedWidgetAlignArea}
                 zone={zoneName}
                 section={s}
                 area={a}

@@ -9,12 +9,17 @@ import { metricsSizes } from "@reearth/theme/metrics";
 
 import ColorField from "../PropertyField/ColorField";
 import NumberField from "../PropertyField/NumberField";
+import { WidgetAreaPadding, WidgetAreaState } from "../PropertyItem";
 
 export type Props = {
-  onChange?: () => Promise<void> | void;
+  selectedWidgetAlignArea: WidgetAreaState;
+  onAreaStateChange?: (widgetAreaState: WidgetAreaState) => Promise<void> | void;
 };
 
-const WidgetAlignSystemAreaForm: React.FC<Props> = () => {
+const WidgetAlignSystemAreaForm: React.FC<Props> = ({
+  selectedWidgetAlignArea,
+  onAreaStateChange,
+}) => {
   const t = useT();
   return (
     <>
@@ -27,21 +32,73 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = () => {
         <PaddingPropertyFieldsWrapper>
           <PaddingPropertyFieldsRow style={{ justifyContent: "center" }}>
             <PaddingFieldWrapper>
-              <NumberField suffix="px" min={0} />
+              <NumberField
+                suffix="px"
+                min={0}
+                value={selectedWidgetAlignArea.padding?.top}
+                onChange={(value?: number) =>
+                  onAreaStateChange?.({
+                    ...selectedWidgetAlignArea,
+                    padding: {
+                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      top: value ?? 0,
+                    },
+                  })
+                }
+              />
             </PaddingFieldWrapper>
           </PaddingPropertyFieldsRow>
 
           <PaddingPropertyFieldsRow style={{ justifyContent: "space-between" }}>
             <PaddingFieldWrapper>
-              <NumberField suffix="px" min={0} />
+              <NumberField
+                suffix="px"
+                min={0}
+                value={selectedWidgetAlignArea.padding?.left}
+                onChange={(value?: number) =>
+                  onAreaStateChange?.({
+                    ...selectedWidgetAlignArea,
+                    padding: {
+                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      left: value ?? 0,
+                    },
+                  })
+                }
+              />
             </PaddingFieldWrapper>
             <PaddingFieldWrapper>
-              <NumberField suffix="px" min={0} />
+              <NumberField
+                suffix="px"
+                min={0}
+                value={selectedWidgetAlignArea.padding?.right}
+                onChange={(value?: number) =>
+                  onAreaStateChange?.({
+                    ...selectedWidgetAlignArea,
+                    padding: {
+                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      right: value ?? 0,
+                    },
+                  })
+                }
+              />
             </PaddingFieldWrapper>
           </PaddingPropertyFieldsRow>
           <PaddingPropertyFieldsRow style={{ justifyContent: "center" }}>
             <PaddingFieldWrapper>
-              <NumberField suffix="px" min={0} />
+              <NumberField
+                suffix="px"
+                min={0}
+                value={selectedWidgetAlignArea.padding?.bottom}
+                onChange={(value?: number) =>
+                  onAreaStateChange?.({
+                    ...selectedWidgetAlignArea,
+                    padding: {
+                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      bottom: value ?? 0,
+                    },
+                  })
+                }
+              />
             </PaddingFieldWrapper>
           </PaddingPropertyFieldsRow>
         </PaddingPropertyFieldsWrapper>
@@ -54,7 +111,17 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = () => {
           </Text>
         </StyledPropertyTitleWrapper>
         <StyledPropertyFieldWrapper>
-          <NumberField suffix="px" min={0} />
+          <NumberField
+            suffix="px"
+            min={0}
+            value={selectedWidgetAlignArea.gap}
+            onChange={(value?: number) =>
+              onAreaStateChange?.({
+                ...selectedWidgetAlignArea,
+                gap: value,
+              })
+            }
+          />
         </StyledPropertyFieldWrapper>
       </FormItemWrapper>
       <FormItemWrapper>
@@ -64,7 +131,15 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = () => {
           </Text>
         </StyledPropertyTitleWrapper>
         <StyledPropertyFieldWrapper>
-          <ToggleButton />
+          <ToggleButton
+            checked={selectedWidgetAlignArea.centered}
+            onChange={(value?: boolean) =>
+              onAreaStateChange?.({
+                ...selectedWidgetAlignArea,
+                centered: value,
+              })
+            }
+          />
         </StyledPropertyFieldWrapper>
       </FormItemWrapper>
       <FormItemWrapper>
@@ -74,7 +149,15 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = () => {
           </Text>
         </StyledPropertyTitleWrapper>
         <StyledPropertyFieldWrapper>
-          <ColorField value="red" onChange={() => 0} />
+          <ColorField
+            value={selectedWidgetAlignArea.background}
+            onChange={(value?: string) =>
+              onAreaStateChange?.({
+                ...selectedWidgetAlignArea,
+                background: value,
+              })
+            }
+          />
         </StyledPropertyFieldWrapper>
       </FormItemWrapper>
     </>
