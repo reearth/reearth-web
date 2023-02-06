@@ -41,6 +41,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     labelText,
     labelPosition: labelPos = "right",
     labelBackground,
+    labelBackgroundColor,
     image = marker,
     imageSize,
     imageHorizontalOrigin: horizontalOrigin,
@@ -82,11 +83,6 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     shadowOffsetY,
   });
 
-  const cesiumImageColor = useMemo(
-    () => (imageColor ? Color.fromCssColorString(imageColor) : undefined),
-    [imageColor],
-  );
-
   const pixelOffset = useMemo(() => {
     const padding = 15;
     const x = (isStyleImage ? imgw : pointSize) / 2 + padding;
@@ -105,6 +101,15 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     return Color.WHITE.withAlpha(0.4);
   }, []);
 
+  const imageColorCesium = useMemo(() => toColor(imageColor), [imageColor]);
+  const pointColorCesium = useMemo(() => toColor(pointColor), [pointColor]);
+  const pointOutlineColorCesium = useMemo(() => toColor(pointOutlineColor), [pointOutlineColor]);
+  const labelColorCesium = useMemo(() => toColor(labelTypography?.color), [labelTypography?.color]);
+  const labelBackgroundColorCesium = useMemo(
+    () => toColor(labelBackgroundColor),
+    [labelBackgroundColor],
+  );
+
   return !pos || !isVisible ? null : (
     <>
       {extrudePoints && (
@@ -120,15 +125,15 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}
-            color={toColor(pointColor)}
-            outlineColor={toColor(pointOutlineColor)}
+            color={pointColorCesium}
+            outlineColor={pointOutlineColorCesium}
             outlineWidth={pointOutlineWidth}
             heightReference={heightReference(hr)}
           />
         ) : (
           <BillboardGraphics
             image={icon}
-            color={cesiumImageColor}
+            color={imageColorCesium}
             horizontalOrigin={ho(horizontalOrigin)}
             verticalOrigin={vo(verticalOrigin)}
             heightReference={heightReference(hr)}
@@ -151,10 +156,11 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
                 : VerticalOrigin.CENTER
             }
             pixelOffset={pixelOffset}
-            fillColor={toColor(labelTypography?.color)}
+            fillColor={labelColorCesium}
             font={toCSSFont(labelTypography, { fontSize: 30 })}
             text={labelText}
             showBackground={labelBackground}
+            backgroundColor={labelBackgroundColorCesium}
             heightReference={heightReference(hr)}
           />
         )}
