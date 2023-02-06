@@ -42,6 +42,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     labelPosition: labelPos = "right",
     labelBackground,
     labelBackgroundColor,
+    labelBackgroundPaddingHorizontal,
+    labelBackgroundPaddingVertical,
     image = marker,
     imageSize,
     imageHorizontalOrigin: horizontalOrigin,
@@ -109,6 +111,12 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     () => toColor(labelBackgroundColor),
     [labelBackgroundColor],
   );
+  const labelBackgroundPadding = useMemo(
+    // https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html?classFilter=labelgra#backgroundPadding
+    () =>
+      new Cartesian2(labelBackgroundPaddingHorizontal || 7, labelBackgroundPaddingVertical || 5),
+    [labelBackgroundPaddingHorizontal, labelBackgroundPaddingVertical],
+  );
 
   return !pos || !isVisible ? null : (
     <>
@@ -161,6 +169,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             text={labelText}
             showBackground={labelBackground}
             backgroundColor={labelBackgroundColorCesium}
+            backgroundPadding={labelBackgroundPadding}
             heightReference={heightReference(hr)}
           />
         )}

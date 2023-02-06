@@ -68,6 +68,8 @@ type Property = {
     labelTypography?: Typography;
     labelBackground?: boolean;
     labelBackgroundColor?: string;
+    labelBackgroundPaddingHorizontal?: number;
+    labelBackgroundPaddingVertical?: number;
     extrude?: boolean;
   };
 };
@@ -89,6 +91,8 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     labelPosition: labelPos = "right",
     labelBackground,
     labelBackgroundColor,
+    labelBackgroundPaddingHorizontal,
+    labelBackgroundPaddingVertical,
     image = marker,
     imageSize,
     imageHorizontalOrigin: horizontalOrigin,
@@ -166,6 +170,12 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
     () => toColor(labelBackgroundColor),
     [labelBackgroundColor],
   );
+  const labelBackgroundPadding = useMemo(
+    // https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html?classFilter=labelgra#backgroundPadding
+    () =>
+      new Cartesian2(labelBackgroundPaddingHorizontal || 7, labelBackgroundPaddingVertical || 5),
+    [labelBackgroundPaddingHorizontal, labelBackgroundPaddingVertical],
+  );
 
   return !pos || !isVisible ? null : (
     <>
@@ -218,6 +228,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
             text={labelText}
             showBackground={labelBackground}
             backgroundColor={labelBackgroundColorCesium}
+            backgroundPadding={labelBackgroundPadding}
             heightReference={heightReference(hr)}
           />
         )}
