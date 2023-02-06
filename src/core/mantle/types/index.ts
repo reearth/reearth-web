@@ -60,7 +60,6 @@ export type NaiveBlock<P = any> = Omit<Block<P>, "id">;
 export type Data = {
   type: DataType;
   url?: string;
-  refreshInterval?: number;
   value?: any;
   layers?: string | string[];
   jsonProperties?: string[];

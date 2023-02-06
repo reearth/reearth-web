@@ -3,7 +3,6 @@ import Pbf from "pbf";
 import type { Data, DataRange, Feature } from "../types";
 
 import { Trips, Trip, GTFS, GTFSReader } from "./gtfsReader";
-// import { OccupancyStatus } from "./gtfsReader";
 import { f } from "./utils";
 
 let gtfs: GTFS = {};
@@ -26,7 +25,7 @@ export async function fetchGTFS(data: Data, range?: DataRange): Promise<Feature[
   return processGTFS(gtfs, range);
 }
 
-export function processGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] {
+export function processGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] | void {
   if (gtfs) {
     if (current) {
       previous = current;
@@ -42,21 +41,22 @@ export function processGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] {
     }
   }
 
-  const result: Feature[] = [];
-
-  tripsData?.trips?.flatMap(f => {
-    result.push({
-      type: "feature",
-      id: f.id,
-      geometry: {
-        type: "Point",
-        coordinates: [f.properties.position?.longitude || 0, f.properties.position?.latitude || 0],
-      },
-      properties: {},
+  return tripsData?.trips
+    ?.filter(f => !!f.properties.position)
+    .map(f => {
+      return {
+        type: "feature",
+        id: f.id,
+        geometry: {
+          type: "Point",
+          coordinates: [
+            f.properties.position?.longitude || 0,
+            f.properties.position?.latitude || 0,
+          ],
+        },
+        properties: {},
+      };
     });
-  });
-
-  return result;
 }
 
 export const GTFStoTrips = (gtfs: GTFS): Trips => {
@@ -110,17 +110,3 @@ export const mergeTrips = (current: Trips, prev?: Trips) => {
   }
   return current;
 };
-
-// // Function that provides color of bus according it its occupancy
-// const getBusColor = (d: Trip): string => {
-//   switch (d.properties.occupancy_status) {
-//     case OccupancyStatus.FULL:
-//       return "#cf222e";
-//     case OccupancyStatus.STANDING_ROOM_ONLY:
-//       return "#dc6d1a";
-//     case OccupancyStatus.FEW_SEATS_AVAILABLE:
-//       return "#f6e05e";
-//     default:
-//       return "#0969da";
-//   }
-// };
