@@ -41,8 +41,8 @@ export const translationWithClamping = (
 
 export function findEntity(
   viewer: CesiumViewer,
-  layerId: string | undefined,
-  featureId: string | undefined,
+  layerId?: string,
+  featureId?: string,
 ): Entity | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";

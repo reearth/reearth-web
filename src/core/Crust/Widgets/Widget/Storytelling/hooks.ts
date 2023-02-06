@@ -123,7 +123,7 @@ export default function ({
   }, [selectedLayer]);
 
   useEffect(() => {
-    const id = selectedLayerId;
+    const id = selectedLayerId?.layerId;
     const index = id ? stories?.findIndex(l => l.layer === id) : undefined;
     select(
       typeof index === "number" && index >= 0

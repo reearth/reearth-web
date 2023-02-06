@@ -3,7 +3,7 @@ import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
-import { CameraOptions, FlyToDestination, TickEventCallback } from "@reearth/core/Map";
+import { TickEventCallback } from "@reearth/core/Map";
 
 import type { EngineRef, MouseEvents, MouseEvent } from "..";
 
@@ -69,32 +69,31 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      flyTo: (...args) => {
-        const firstArg = args[0];
-        if (firstArg && typeof firstArg === "object") {
+      flyTo: (target, options) => {
+        if (target && typeof target === "object") {
           const viewer = cesium.current?.cesiumElement;
           if (!viewer || viewer.isDestroyed()) return;
 
-          const [camera, options] = [args[0] as FlyToDestination, args[1] as CameraOptions];
           cancelCameraFlight.current?.();
           cancelCameraFlight.current = flyTo(
             viewer.scene?.camera,
-            { ...getCamera(viewer), ...camera },
+            { ...getCamera(viewer), ...target },
             options,
           );
         }
-        if (firstArg && typeof firstArg === "string") {
+        if (target && typeof target === "string") {
           const viewer = cesium.current?.cesiumElement;
           if (!viewer || viewer.isDestroyed()) return;
 
-          const [layerId, featureId, options] = [
-            args[0] as string,
-            args[1] as string | undefined,
-            args[2] as CameraOptions,
-          ];
-          const entity = findEntity(viewer, layerId, featureId);
-          if (entity) {
-            viewer.flyTo(entity, options);
+          const layerOrFeatureId = target;
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          if (entityFromFeatureId) {
+            viewer.flyTo(entityFromFeatureId, options);
+          } else {
+            const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
+            if (entityFromLayerId) {
+              viewer.flyTo(entityFromLayerId, options);
+            }
           }
         }
       },
