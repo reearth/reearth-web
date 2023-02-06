@@ -44,7 +44,7 @@ export default function ({
     layerId?: string;
     featureId?: string;
   };
-  onFlyTo?: (camera: FlyToDestination, options?: { duration?: number }) => void;
+  onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
   onLookAt?: (camera: LookAtDestination, options?: { duration?: number }) => void;
   onLayerSelect?: (
     layerId: string | undefined,
