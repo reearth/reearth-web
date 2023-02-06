@@ -20,10 +20,9 @@ export async function evalSimpleLayer(
   ctx: EvalContext,
 ): Promise<EvalResult | undefined> {
   const features = layer.data ? await ctx.getAllFeatures(layer.data) : undefined;
-  const firstFeature = [...(features || [])].shift();
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   return {
-    layer: evalLayerAppearances(appearances, layer, firstFeature),
+    layer: evalLayerAppearances(appearances, layer),
     features: features?.map(f => evalSimpleLayerFeature(layer, f)),
   };
 }
@@ -43,6 +42,17 @@ export function evalLayerAppearances(
   layer: LayerSimple,
   feature?: Feature,
 ): Partial<AppearanceTypes> {
+  if (feature === undefined) {
+    if (layer.properties && layer.id) {
+      feature = {
+        type: "feature",
+        id: layer.id,
+        properties: layer.properties,
+      };
+    } else {
+      throw new Error(`layer.properties and layer.id is required`);
+    }
+  }
   return Object.fromEntries(
     Object.entries(appearance).map(([k, v]) => [
       k,
