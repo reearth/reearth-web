@@ -82,8 +82,8 @@ export default function ({
   );
 
   const flyTo = useCallback(
-    (...args: any[]) => {
-      engineRef?.flyTo(...args);
+    (target: string | FlyToDestination, options?: CameraOptions | undefined) => {
+      engineRef?.flyTo(target, options);
     },
     [engineRef],
   );
