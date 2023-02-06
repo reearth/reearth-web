@@ -46,6 +46,7 @@ export function processGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] {
 
   tripsData?.trips?.flatMap(f => {
     result.push({
+      type: "feature",
       id: f.id,
       geometry: {
         type: "Point",
