@@ -16,6 +16,7 @@ describe("evalSimpleLayer", () => {
             pointColor: "#FF0000",
             pointSize: { expression: { conditions: [["true", "1"]] } },
           },
+          properties: {},
         },
         {
           getAllFeatures: async () => [{ type: "feature", id: "a" }],
@@ -52,6 +53,7 @@ describe("evalSimpleLayer", () => {
             type: "geojson",
             jsonProperties: ["key1", "key2"],
           },
+          properties: {},
         },
         {
           getAllFeatures: async () => [
