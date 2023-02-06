@@ -249,6 +249,7 @@ export function useAPI({
     const instanceId = widget?.id ?? block?.id;
     if (instanceId) {
       ctx?.pluginInstances.addPluginMessageSender(instanceId, pluginMessageSender);
+      ctx?.pluginInstances.runTimesCache.increment(instanceId);
     }
   }, [
     ctx?.reearth.on,
@@ -395,11 +396,7 @@ export function useAPI({
       });
     };
   }, [
-    ctx?.reearth,
-    ctx?.overrideSceneProperty,
-    ctx?.moveWidget,
-    ctx?.pluginInstances,
-    ctx?.clientStorage,
+    ctx,
     extensionId,
     extensionType,
     pluginId,

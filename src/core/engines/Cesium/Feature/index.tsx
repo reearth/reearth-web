@@ -31,17 +31,22 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   raster: [Raster, rasterConfig],
 };
 
+// This indicates what component should render for file extension.
 const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   geojson: "auto",
-  czml: "auto",
   csv: "auto",
+  czml: ["resource"],
+  kml: ["resource"],
   wms: ["raster"],
   mvt: ["raster"],
   ["3dtiles"]: ["3dtiles"],
   gtfs: "auto",
 };
 
-const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster"];
+// Some layer that is delegated data is not computed when layer is updated.
+// Feature's property of delegated data type is calculated when feature is loaded.
+// So in case of delegated data type, to attach property to layer, we need to use normal property before calculated.
+const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster", "3dtiles"];
 const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
   if (!PICKABLE_APPEARANCE.includes(k)) {
     return;
@@ -57,6 +62,32 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
+  const displayType =
+    layer.layer.type === "simple" && layer.layer.data?.type && displayConfig[layer.layer.data.type];
+  const areAllDisplayTypeNoFeature =
+    Array.isArray(displayType) &&
+    displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
+
+  if (areAllDisplayTypeNoFeature) {
+    return (
+      <>
+        {displayType.map(k => {
+          const [C] = components[k] ?? [];
+          return (
+            <C
+              {...props}
+              key={`${layer?.id || ""}_${k}`}
+              id={layer.id}
+              property={pickProperty(k, layer) || layer[k]}
+              layer={layer}
+              isVisible={layer.layer.visible !== false && !isHidden}
+            />
+          );
+        })}
+      </>
+    );
+  }
+
   return (
     <>
       {[undefined, ...layer.features].flatMap(f =>
@@ -65,11 +96,6 @@ export default function Feature({
           if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
             return null;
           }
-
-          const displayType =
-            layer.layer.type === "simple" &&
-            layer.layer.data?.type &&
-            displayConfig[layer.layer.data.type];
 
           if (
             (Array.isArray(displayType) && !displayType.includes(k)) ||
