@@ -29,6 +29,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
     layers,
     selectedWidget,
     widgetAlignEditorActivated,
+    selectedWidgetAlignArea,
     changeValue,
     removeField,
     link,
@@ -73,6 +74,7 @@ const PropertyPane: React.FC<Props> = ({ mode }) => {
           assetModal={AssetModalComponent}
           selectedWidget={selectedWidget}
           widgetAlignEditorActivated={widgetAlignEditorActivated}
+          selectedWidgetAlignArea={selectedWidgetAlignArea}
           onCreateInfobox={createInfobox}
           onChange={changeValue}
           onRemove={removeField}

@@ -26,6 +26,7 @@ import PropertyItem, {
   AssetModalProps as AssetModalPropsType,
   Mode as ModeType,
 } from "./PropertyItem";
+import WidgetAlignSystemAreaForm from "./WidgetAlignSystemAreaForm";
 import WidgetAlignSystemToggle from "./WidgetAlignSystemToggle";
 
 export type Item = ItemItem;
@@ -60,6 +61,7 @@ export type Props = {
   onRemovePane?: () => void;
   assetModal?: ComponentType<AssetModalProps>;
   selectedWidget?: Widget;
+  selectedWidgetAlignArea?: string;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   widgetAlignEditorActivated?: boolean;
 } & Pick<
@@ -102,6 +104,7 @@ const PropertyPane: React.FC<Props> = ({
   onCreateInfobox,
   onRemovePane,
   selectedWidget,
+  selectedWidgetAlignArea,
   onWidgetAlignEditorActivate,
   widgetAlignEditorActivated,
   onChange,
@@ -159,6 +162,11 @@ const PropertyPane: React.FC<Props> = ({
           checked={widgetAlignEditorActivated}
           onChange={() => onWidgetAlignEditorActivate?.(!widgetAlignEditorActivated)}
         />
+      )}
+      {mode === "widgets" && selectedWidgetAlignArea && (
+        <GroupWrapper className={className} name={t("Container")}>
+          <WidgetAlignSystemAreaForm />
+        </GroupWrapper>
       )}
       {((mode === "widget" && !!selectedWidget?.enabled) ||
         (mode !== "widget" && (propertyId || infoboxCreatable))) && (

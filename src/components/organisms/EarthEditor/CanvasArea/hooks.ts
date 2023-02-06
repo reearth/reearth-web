@@ -95,6 +95,7 @@ export default (isBuilt?: boolean) => {
     variables: { sceneId: sceneId ?? "", lang: lang },
     skip: !sceneId,
   });
+
   const { data: sceneData } = useGetEarthWidgetsQuery({
     variables: { sceneId: sceneId ?? "", lang: lang },
     skip: !sceneId,
