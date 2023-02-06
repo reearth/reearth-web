@@ -1,11 +1,10 @@
 import { RefObject, useMemo } from "react";
 
-import { Camera, Clock, MapRef, SceneProperty } from "./types";
+import { Camera, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
 export const useWidgetContext = ({
   mapRef,
-  clock,
   camera,
   selectedLayerId,
   sceneProperty,
@@ -14,25 +13,25 @@ export const useWidgetContext = ({
     () =>
       widgetContextFromMapRef({
         mapRef,
-        clock,
         camera,
         selectedLayerId,
         sceneProperty,
       }),
-    [camera, clock, mapRef, sceneProperty, selectedLayerId],
+    [camera, mapRef, sceneProperty, selectedLayerId],
   );
 
 export function widgetContextFromMapRef({
   mapRef,
-  clock,
   camera,
   selectedLayerId,
   sceneProperty,
 }: {
   mapRef?: RefObject<MapRef>;
-  clock?: Clock;
   camera?: Camera;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   sceneProperty?: SceneProperty;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
@@ -40,7 +39,10 @@ export function widgetContextFromMapRef({
 
   return {
     camera,
-    clock,
+    get clock() {
+      return engine()?.getClock();
+    },
+    initialCamera: sceneProperty?.default?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
@@ -68,7 +70,8 @@ export function widgetContextFromMapRef({
     onPause: (...args) => engine()?.pause(...args),
     onPlay: (...args) => engine()?.play(...args),
     onSpeedChange: (...args) => engine()?.changeSpeed(...args),
-    onTick: (...args) => engine()?.tick(...args),
+    onTick: (...args) => engine()?.onTick(...args),
+    removeTickEventListener: (...args) => engine()?.removeTickEventListener(...args),
     onTimeChange: (...args) => engine()?.changeTime(...args),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
     onZoomOut: (...args) => engine()?.zoomOut(...args),

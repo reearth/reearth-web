@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { GridWrapper } from "react-align";
 
 import { styled } from "@reearth/theme";
@@ -13,6 +13,7 @@ import type {
   Theme,
   WidgetProps,
 } from "./types";
+import { filterSections } from "./utils";
 import ZoneComponent from "./Zone";
 
 export type {
@@ -31,6 +32,7 @@ export type {
 
 export type Props = {
   alignSystem?: WidgetAlignSystemType;
+  invisibleWidgetIDs?: string[];
   editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   isMobile?: boolean;
@@ -49,6 +51,7 @@ export type Props = {
 
 const WidgetAlignSystem: React.FC<Props> = ({
   alignSystem,
+  invisibleWidgetIDs,
   editing,
   isMobile,
   layoutConstraint,
@@ -63,6 +66,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
   });
   const Zone = isMobile ? MobileZone : ZoneComponent;
 
+  const hasInner = useMemo(() => {
+    if (!alignSystem?.inner) {
+      return;
+    }
+    return !!filterSections(alignSystem?.inner, invisibleWidgetIDs).length;
+  }, [alignSystem, invisibleWidgetIDs]);
+
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
       <GridWrapper
@@ -74,11 +84,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
           zoneName="outer"
           zone={alignSystem?.outer}
           layoutConstraint={layoutConstraint}
+          invisibleWidgetIDs={invisibleWidgetIDs}
           theme={theme}
           renderWidget={renderWidget}>
-          {(!isMobile || alignSystem?.inner) && (
+          {(!isMobile || hasInner) && (
             <ZoneComponent
               zoneName="inner"
+              invisibleWidgetIDs={invisibleWidgetIDs}
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
               renderWidget={renderWidget}

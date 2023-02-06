@@ -1,6 +1,13 @@
 import { ComponentType } from "react";
 
-import type { DataRange, Feature, ComputedLayer, Layer, DataType } from "../../mantle";
+import type {
+  DataRange,
+  Feature,
+  ComputedLayer,
+  Layer,
+  DataType,
+  ComputedFeature,
+} from "../../mantle";
 
 import useHooks, { type Atoms, type EvalFeature } from "./hooks";
 
@@ -15,13 +22,14 @@ export type CommonProps = {
   isEditable?: boolean;
   isHidden?: boolean;
   isSelected?: boolean;
-  sceneProperty?: any;
 };
 
 export type FeatureComponentProps = {
   layer: ComputedLayer;
+  sceneProperty?: any;
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
+  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
   evalFeature: EvalFeature;
 } & CommonProps;
@@ -31,6 +39,7 @@ export type Props = {
   atom?: Atoms;
   overrides?: Record<string, any>;
   delegatedDataTypes?: DataType[];
+  sceneProperty?: any;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;
@@ -47,6 +56,7 @@ export default function LayerComponent({
     computedLayer,
     handleFeatureDelete,
     handleFeatureFetch,
+    handleComputedFeatureFetch,
     handleFeatureRequest,
     evalFeature,
   } = useHooks(Feature ? layer : undefined, atoms, overrides, delegatedDataTypes);
@@ -56,6 +66,7 @@ export default function LayerComponent({
       layer={computedLayer}
       onFeatureDelete={handleFeatureDelete}
       onFeatureFetch={handleFeatureFetch}
+      onComputedFeatureFetch={handleComputedFeatureFetch}
       onFeatureRequest={handleFeatureRequest}
       evalFeature={evalFeature}
       {...props}

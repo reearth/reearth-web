@@ -1,11 +1,18 @@
 import { CSSProperties, type ReactNode } from "react";
 
+// TODO(@keiya01): Change directory structure
+import DropHolder from "@reearth/components/atoms/DropHolder";
+import Filled from "@reearth/components/atoms/Filled";
+
 import Crust, {
   type Alignment,
   type Location,
   type WidgetAlignSystem,
   type WidgetLayoutConstraint,
+  type ExternalPluginProps,
+  type InternalWidget,
 } from "../Crust";
+import { Tag } from "../mantle";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -15,6 +22,7 @@ import Map, {
   type Camera,
   type LatLng,
   type Cluster,
+  type ComputedLayer,
 } from "../Map";
 
 import { engines, type EngineType } from "./engines";
@@ -29,35 +37,43 @@ export type {
   WidgetLayoutConstraint,
 } from "../Crust";
 export type { EngineType } from "./engines";
+export type { Viewport } from "./useViewport";
 
 export type Props = {
   engine?: EngineType;
   isBuilt?: boolean;
   isEditable?: boolean;
+  inEditor?: boolean;
+  rootLayerId?: string;
   widgetAlignSystem?: WidgetAlignSystem;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   widgetAlignSystemEditing?: boolean;
+  floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
   clusters?: Cluster[];
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
   camera?: Camera;
-  clock?: Date;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
   small?: boolean;
   ready?: boolean;
+  tags?: Tag[];
   selectedBlockId?: string;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   hiddenLayers?: string[];
+  zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
-  onTick?: (clock: Date) => void;
   onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
-    id: string | undefined,
-    layer: Layer | undefined,
+    layerId: string | undefined,
+    featureId: string | undefined,
+    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onWidgetLayoutUpdate?: (
@@ -81,30 +97,37 @@ export type Props = {
   onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
-};
+} & ExternalPluginProps;
 
 export default function Visualizer({
   engine,
   isBuilt,
+  rootLayerId,
   isEditable,
+  inEditor,
   sceneProperty,
   layers,
   clusters,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
+  floatingWidgets,
   small,
   ready,
+  tags,
   selectedBlockId,
   selectedLayerId,
   hiddenLayers,
   isLayerDraggable,
   isLayerDragging,
   camera: initialCamera,
-  clock: initialClock,
   meta,
   style,
+  pluginBaseUrl,
+  pluginProperty,
+  zoomedLayerId,
   onLayerDrag,
   onLayerDrop,
   onLayerSelect,
@@ -112,54 +135,75 @@ export default function Visualizer({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onInfoboxMaskClick,
-  onTick,
   onBlockSelect,
   onBlockChange,
   onBlockMove,
   onBlockDelete,
   onBlockInsert,
+  onZoomToLayer,
   renderInfoboxInsertionPopup,
 }: Props): JSX.Element | null {
   const {
     mapRef,
+    wrapperRef,
     selectedLayer,
     selectedBlock,
+    selectedFeature,
+    selectedComputedFeature,
+    viewport,
     camera,
-    clock,
     isMobile,
+    overriddenSceneProperty,
+    isDroppable,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
-    handleTick,
+    overrideSceneProperty,
+    handleLayerEdit,
+    onLayerEdit,
   } = useHooks({
+    rootLayerId,
+    isEditable,
     camera: initialCamera,
-    clock: initialClock,
     selectedBlockId,
+    sceneProperty,
+    zoomedLayerId,
     onLayerSelect,
     onBlockSelect,
     onCameraChange,
-    onTick,
+    onZoomToLayer,
   });
 
   return (
-    <>
+    <Filled ref={wrapperRef}>
+      {isDroppable && <DropHolder />}
       <Crust
+        engineName={engine}
+        tags={tags}
+        viewport={viewport}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        sceneProperty={sceneProperty}
-        blocks={selectedLayer?.infobox?.blocks}
+        inEditor={inEditor}
+        sceneProperty={overriddenSceneProperty}
+        overrideSceneProperty={overrideSceneProperty}
+        blocks={selectedLayer?.layer?.layer.infobox?.blocks}
         camera={camera}
-        clock={clock}
         isMobile={isMobile}
-        infoboxProperty={selectedLayer?.infobox?.property?.default}
-        infoboxTitle={selectedLayer?.title}
-        infoboxVisible={!!selectedLayer?.infobox}
+        selectedComputedLayer={selectedLayer?.layer}
+        selectedFeature={selectedFeature}
+        selectedComputedFeature={selectedComputedFeature}
+        selectedReason={selectedLayer.reason}
+        infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
+        infoboxTitle={selectedLayer?.layer?.layer.title}
+        infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
         selectedBlockId={selectedBlock}
-        selectedLayerId={selectedLayer?.id}
+        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}
+        floatingWidgets={floatingWidgets}
         mapRef={mapRef}
+        externalPlugin={{ pluginBaseUrl, pluginProperty }}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
         onInfoboxMaskClick={onInfoboxMaskClick}
@@ -169,17 +213,16 @@ export default function Visualizer({
         onBlockDelete={onBlockDelete}
         onBlockInsert={onBlockInsert}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+        onLayerEdit={onLayerEdit}
       />
       <Map
         ref={mapRef}
         isBuilt={isBuilt}
         isEditable={isEditable}
-        sceneProperty={sceneProperty}
         engine={engine}
         layers={layers}
         engines={engines}
         camera={camera}
-        clock={clock}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
         isLayerDraggable={isLayerDraggable}
@@ -187,7 +230,7 @@ export default function Visualizer({
         meta={meta}
         style={style}
         // overrides={overrides} // not used for now
-        property={sceneProperty}
+        property={overriddenSceneProperty}
         selectedLayerId={selectedLayerId}
         small={small}
         ready={ready}
@@ -195,8 +238,8 @@ export default function Visualizer({
         onLayerDrag={onLayerDrag}
         onLayerDrop={onLayerDrop}
         onLayerSelect={handleLayerSelect}
-        onTick={handleTick}
+        onLayerEdit={handleLayerEdit}
       />
-    </>
+    </Filled>
   );
 }
