@@ -1,73 +1,61 @@
 import Pbf from "pbf";
+import { useEffect, useState } from "react";
 
 import type { Data, DataRange, Feature } from "../types";
 
-import { Trips, Trip, GTFSReader, GTFS } from "./gtfsReader";
-// import { OccupancyStatus } from "./gtfsReader";
+import { Trips, Trip, GTFS, GTFSReader } from "./transitReader";
+// import { OccupancyStatus } from "./transitReader";
 import { f } from "./utils";
 
-let gtfs: GTFS = {};
-let current: Trips = {};
-let previous: Trips = {};
-let tripsData: Trips = {};
+export async function useFetchGTFS(data: Data, range?: DataRange): Promise<Feature[] | void> {
+  const [gtfs, setData] = useState<GTFS>();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
+        const pbfBuffer = new Pbf(new Uint8Array(arrayBuffer));
+        const gtfs = new GTFSReader().read(pbfBuffer);
+        setData(gtfs);
+      } catch (err) {
+        throw new Error(`failed to generate ast: ${err}`);
+      }
+    };
+    fetchData();
 
-export async function fetchGTFS(
-  data: Data,
-  callback: (result: Feature[] | void) => void,
-  range?: DataRange,
-): Promise<void> {
-  const fetchData = async () => {
-    try {
-      const arrayBuffer = data.url ? await (await f(data.url)).arrayBuffer() : data.value;
-      const pbfBuffer = new Pbf(new Uint8Array(arrayBuffer));
-      gtfs = new GTFSReader().read(pbfBuffer);
-    } catch (err) {
-      throw new Error(`failed to fetch gtfs: ${err}`);
-    }
-  };
-  await fetchData();
+    // default refresh time as 10s
+    const refreshTime = data.refreshInterval ? data.refreshInterval * 1000 : 10000;
 
-  callback(processGTFS(gtfs, range));
-
-  // default refresh time as 10s
-  const refreshTime = data.refreshInterval ? data.refreshInterval * 1000 : 10000;
-
-  setInterval(async () => {
-    await fetchData();
-    callback(processGTFS(gtfs, range));
-  }, refreshTime);
-}
-
-export function processGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] {
-  if (gtfs) {
-    if (current) {
-      previous = current;
-      const currentTrips = GTFStoTrips(gtfs);
-      current = currentTrips;
-      const merged = mergeTrips(currentTrips, previous);
-
-      tripsData = merged;
-    } else {
-      const currentTrips = GTFStoTrips(gtfs);
-      current = currentTrips;
-      tripsData = currentTrips;
-    }
-  }
-
-  const result: Feature[] = [];
-
-  tripsData?.trips?.flatMap(f => {
-    result.push({
-      id: f.id,
-      geometry: {
-        type: "Point",
-        coordinates: [f.properties.position?.longitude || 0, f.properties.position?.latitude || 0],
-      },
-      properties: {},
-    });
+    const inverval = setInterval(fetchData, refreshTime);
+    return () => clearInterval(inverval);
   });
 
-  return result;
+  return useProcessGTFS(gtfs, range);
+}
+
+export function useProcessGTFS(gtfs?: GTFS, _range?: DataRange): Feature[] {
+  const [current, setCurrent] = useState<Trips>();
+  const [previous, setPrevious] = useState<Trips>();
+  const [tripsData, setTripsData] = useState<Trips>();
+
+  useEffect(() => {
+    if (gtfs) {
+      if (current) {
+        setPrevious(current);
+        const currentTrips = GTFStoTrips(gtfs);
+        setCurrent(currentTrips);
+        const merged = mergeTrips(currentTrips, previous);
+        setTripsData(merged);
+      } else {
+        const currentTrips = GTFStoTrips(gtfs);
+        setCurrent(currentTrips);
+        setTripsData(currentTrips);
+      }
+    }
+  }, [current, gtfs, previous]);
+
+  console.log(tripsData);
+
+  // tripsData.trips contains everything that's needed for producing a model or a point i.e vehicle location etc.
 }
 
 export const GTFStoTrips = (gtfs: GTFS): Trips => {
@@ -86,12 +74,12 @@ export const GTFStoTrips = (gtfs: GTFS): Trips => {
 export const mergeTrips = (current: Trips, prev?: Trips) => {
   if (prev) {
     const prevMap = new Map();
-    prev.trips?.forEach(trip => {
+    prev.trips.forEach(trip => {
       prevMap.set(trip.id, trip);
     });
     const mergedMap = new Map();
     const newIds: string[] = [];
-    current.trips?.forEach(entity => {
+    current.trips.forEach(entity => {
       const previousEntity = prevMap.get(entity.id);
       if (previousEntity) {
         const previousPath = previousEntity.path;

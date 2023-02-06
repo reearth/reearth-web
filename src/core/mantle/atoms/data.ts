@@ -70,19 +70,8 @@ export function dataAtom(cacheAtoms = globalDataFeaturesCache) {
 
       try {
         set(fetching, f => [...f, [k, rk]]);
-        let features: Feature[] = [];
-        await fetchData(
-          value.data,
-          result => {
-            if (result) {
-              features = result;
-            } else {
-              console.log("No data was returned");
-            }
-          },
-          value.range,
-        );
-        if (features.length !== 0) {
+        const features = await fetchData(value.data, value.range);
+        if (features) {
           set(cacheAtoms.set, { key: k, key2: rk, value: features });
         }
       } finally {

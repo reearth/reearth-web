@@ -2,21 +2,16 @@ import type { Data, DataRange, Feature } from "../types";
 
 import { fetchCSV } from "./csv";
 import { fetchGeoJSON } from "./geojson";
-import { fetchGTFS } from "./gtfs";
+import { useFetchGTFS } from "./gtfs";
 
-const registry: Record<
-  string,
-  (data: Data, callback: (result: Feature[] | void) => void, range?: DataRange) => void
-> = {
+export type DataFetcher = (data: Data, range?: DataRange) => Promise<Feature[] | void>;
+
+const registry: Record<string, DataFetcher> = {
   geojson: fetchGeoJSON,
   csv: fetchCSV,
-  gtfs: fetchGTFS,
+  gtfs: useFetchGTFS,
 };
 
-export async function fetchData(
-  data: Data,
-  callback: (result: Feature[] | void) => void,
-  range?: DataRange,
-): Promise<void> {
-  registry[data.type]?.(data, callback, range);
+export async function fetchData(data: Data, range?: DataRange): Promise<Feature[] | void> {
+  return registry[data.type]?.(data, range);
 }

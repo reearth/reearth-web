@@ -34,14 +34,7 @@ beforeEach(() => {
 
 test("computeAtom", async () => {
   const fetchDataMock = vi.spyOn(DataCache, "fetchData");
-  fetchDataMock.mockImplementation(async (data, callback) => {
-    callback([
-      {
-        id: (data as any).test_id || "",
-        geometry: data.value?.geometry || { type: "Point", coordinates: [0, 0] },
-      },
-    ]);
-  });
+  fetchDataMock.mockReturnValue(Promise.resolve(features));
 
   const { result } = renderHook(() => {
     const atoms = useMemo(() => computeAtom(doubleKeyCacheAtom<string, string, Feature[]>()), []);
@@ -211,13 +204,13 @@ test("computeAtom", async () => {
 
 test("computeAtom with cache", async () => {
   const fetchDataMock = vi.spyOn(DataCache, "fetchData");
-  fetchDataMock.mockImplementation(async (data, callback) => {
-    callback([
+  fetchDataMock.mockImplementation(async data => {
+    return [
       {
         id: (data as any).test_id || "",
         geometry: data.value?.geometry || { type: "Point", coordinates: [0, 0] },
       },
-    ]);
+    ];
   });
   const internalFeatures: Feature[] = [
     { id: features[0].id, geometry: { type: "Point", coordinates: [1, 1] } },
