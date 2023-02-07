@@ -3,7 +3,6 @@ import { ReactNode, useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
-import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { useTheme } from "@reearth/theme";
 
 import type {
@@ -16,8 +15,20 @@ import type {
   InternalWidget,
 } from "./types";
 
+export type WidgetAreaType = {
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  align: Alignment;
+  padding?: WidgetAreaPadding;
+  widgets?: InternalWidget[];
+  gap?: number;
+  centered?: boolean;
+  background?: string;
+};
+
 type Props = {
-  selectedWidgetAlignArea?: WidgetAreaState;
+  selectedWidgetArea?: WidgetAreaType;
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
@@ -27,14 +38,14 @@ type Props = {
   gap: number;
   centered: boolean;
   widgets?: InternalWidget[];
-  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
   renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
 export default function Area({
-  selectedWidgetAlignArea,
+  selectedWidgetArea,
   zone,
   section,
   area,
@@ -46,7 +57,7 @@ export default function Area({
   widgets,
   layoutConstraint,
   renderWidget,
-  onWidgetAlignAreaSelect,
+  onWidgetAreaSelect,
 }: Props) {
   const theme = useTheme();
   const layout = useMemo<WidgetLayout>(
@@ -62,7 +73,7 @@ export default function Area({
     <GridArea
       key={area}
       onClick={() =>
-        onWidgetAlignAreaSelect?.({
+        onWidgetAreaSelect?.({
           area,
           section,
           zone,
@@ -104,7 +115,7 @@ export default function Area({
           ? theme.alignSystem.blueBg
           : theme.alignSystem.orangeBg,
         border:
-          `${selectedWidgetAlignArea?.zone}/${selectedWidgetAlignArea?.section}/${selectedWidgetAlignArea?.area}` ===
+          `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"

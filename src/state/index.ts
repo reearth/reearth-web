@@ -31,8 +31,8 @@ export type WidgetAreaState = {
   background?: string;
 };
 
-const selectedWidgetAlignArea = atom<WidgetAreaState | undefined>(undefined);
-export const useSelectedWidgetAlignArea = () => useAtom(selectedWidgetAlignArea);
+const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
+export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
 
 export type Selected =
   | { type: "scene" }

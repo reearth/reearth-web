@@ -11,7 +11,7 @@ import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   children?: ReactNode;
-  selectedWidgetAlignArea?: WidgetAreaState;
+  selectedWidgetArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -27,7 +27,7 @@ const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function Zone({
-  selectedWidgetAlignArea,
+  selectedWidgetArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -52,7 +52,7 @@ export default function Zone({
             ) : (
               <Area
                 key={a}
-                selectedWidgetAlignArea={selectedWidgetAlignArea}
+                selectedWidgetArea={selectedWidgetArea}
                 zone={zoneName}
                 section={s}
                 area={a}

@@ -30,7 +30,7 @@ export type {
 } from "./hooks";
 
 export type Props = {
-  selectedWidgetAlignArea?: WidgetAreaState;
+  selectedWidgetArea?: WidgetAreaState;
   alignSystem?: WidgetAlignSystemType;
   editing?: boolean;
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -52,7 +52,7 @@ export type Props = {
 } & PluginCommonProps;
 
 const WidgetAlignSystem: React.FC<Props> = ({
-  selectedWidgetAlignArea,
+  selectedWidgetArea,
   alignSystem,
   editing,
   sceneProperty,
@@ -81,7 +81,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         {props.viewport?.isMobile ? (
           <MobileZone
             zoneName="outer"
-            selectedWidgetAlignArea={selectedWidgetAlignArea}
+            selectedWidgetArea={selectedWidgetArea}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
@@ -94,7 +94,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             {alignSystem?.inner && (
               <ZoneComponent
                 zoneName="inner"
-                selectedWidgetAlignArea={selectedWidgetAlignArea}
+                selectedWidgetArea={selectedWidgetArea}
                 zone={alignSystem?.inner}
                 sceneProperty={sceneProperty}
                 pluginProperty={pluginProperty}
@@ -110,7 +110,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
         ) : (
           <ZoneComponent
             zoneName="outer"
-            selectedWidgetAlignArea={selectedWidgetAlignArea}
+            selectedWidgetArea={selectedWidgetArea}
             zone={alignSystem?.outer}
             sceneProperty={sceneProperty}
             pluginProperty={pluginProperty}
@@ -122,7 +122,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             {...props}>
             <ZoneComponent
               zoneName="inner"
-              selectedWidgetAlignArea={selectedWidgetAlignArea}
+              selectedWidgetArea={selectedWidgetArea}
               zone={alignSystem?.inner}
               sceneProperty={sceneProperty}
               pluginProperty={pluginProperty}

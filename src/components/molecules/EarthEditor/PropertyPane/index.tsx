@@ -62,7 +62,7 @@ export type Props = {
   onRemovePane?: () => void;
   assetModal?: ComponentType<AssetModalProps>;
   selectedWidget?: Widget;
-  selectedWidgetAlignArea?: WidgetAreaState;
+  selectedWidgetArea?: WidgetAreaState;
   onWidgetAlignEditorActivate?: (enabled: boolean) => void;
   onAreaStateChange?: (widgetAreaState: WidgetAreaState) => Promise<void> | void;
   widgetAlignEditorActivated?: boolean;
@@ -106,7 +106,7 @@ const PropertyPane: React.FC<Props> = ({
   onCreateInfobox,
   onRemovePane,
   selectedWidget,
-  selectedWidgetAlignArea,
+  selectedWidgetArea,
   onWidgetAlignEditorActivate,
   widgetAlignEditorActivated,
   onAreaStateChange,
@@ -166,10 +166,10 @@ const PropertyPane: React.FC<Props> = ({
           onChange={() => onWidgetAlignEditorActivate?.(!widgetAlignEditorActivated)}
         />
       )}
-      {mode === "widgets" && selectedWidgetAlignArea && (
+      {mode === "widgets" && selectedWidgetArea && (
         <GroupWrapper className={className} name={t("Container")}>
           <WidgetAlignSystemAreaForm
-            selectedWidgetAlignArea={selectedWidgetAlignArea}
+            selectedWidgetArea={selectedWidgetArea}
             onAreaStateChange={onAreaStateChange}
           />
         </GroupWrapper>

@@ -63,7 +63,7 @@ export type Props = {
   selectedLayerId?: string;
   zoomedLayerId?: string;
   selectedBlockId?: string;
-  selectedWidgetAlignArea?: WidgetAreaState;
+  selectedWidgetArea?: WidgetAreaState;
   pluginBaseUrl?: string;
   isPublished?: boolean;
   inEditor?: boolean;
@@ -97,7 +97,7 @@ export default function Visualizer({
   inEditor,
   selectedLayerId: outerSelectedLayerId,
   selectedBlockId: outerSelectedBlockId,
-  selectedWidgetAlignArea,
+  selectedWidgetArea,
   zoomedLayerId,
   widgetAlignEditorActivated,
   engineMeta,
@@ -181,7 +181,7 @@ export default function Visualizer({
           {isDroppable && <DropHolder />}
           {ready && widgets?.alignSystem && (
             <WidgetAlignSystem
-              selectedWidgetAlignArea={selectedWidgetAlignArea}
+              selectedWidgetArea={selectedWidgetArea}
               alignSystem={overriddenAlignSystem}
               editing={widgetAlignEditorActivated}
               onWidgetUpdate={onWidgetUpdate}

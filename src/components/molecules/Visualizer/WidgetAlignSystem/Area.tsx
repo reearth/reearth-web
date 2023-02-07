@@ -19,7 +19,7 @@ import type {
 } from "./hooks";
 
 type Props = {
-  selectedWidgetAlignArea?: WidgetAreaState;
+  selectedWidgetArea?: WidgetAreaState;
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
@@ -39,7 +39,7 @@ type Props = {
 } & PluginCommonProps;
 
 export default function Area({
-  selectedWidgetAlignArea,
+  selectedWidgetArea,
   zone,
   section,
   area,
@@ -110,7 +110,7 @@ export default function Area({
           ? theme.alignSystem.blueBg
           : theme.alignSystem.orangeBg,
         border:
-          `${selectedWidgetAlignArea?.zone}/${selectedWidgetAlignArea?.section}/${selectedWidgetAlignArea?.area}` ===
+          `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"

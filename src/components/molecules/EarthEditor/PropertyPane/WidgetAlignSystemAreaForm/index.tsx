@@ -12,14 +12,11 @@ import NumberField from "../PropertyField/NumberField";
 import { WidgetAreaPadding, WidgetAreaState } from "../PropertyItem";
 
 export type Props = {
-  selectedWidgetAlignArea: WidgetAreaState;
+  selectedWidgetArea: WidgetAreaState;
   onAreaStateChange?: (widgetAreaState: WidgetAreaState) => Promise<void> | void;
 };
 
-const WidgetAlignSystemAreaForm: React.FC<Props> = ({
-  selectedWidgetAlignArea,
-  onAreaStateChange,
-}) => {
+const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onAreaStateChange }) => {
   const t = useT();
   return (
     <>
@@ -35,12 +32,12 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
               <NumberField
                 suffix="px"
                 min={0}
-                value={selectedWidgetAlignArea.padding?.top}
+                value={selectedWidgetArea.padding?.top}
                 onChange={(value?: number) =>
                   onAreaStateChange?.({
-                    ...selectedWidgetAlignArea,
+                    ...selectedWidgetArea,
                     padding: {
-                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      ...(selectedWidgetArea.padding as WidgetAreaPadding),
                       top: value ?? 0,
                     },
                   })
@@ -54,12 +51,12 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
               <NumberField
                 suffix="px"
                 min={0}
-                value={selectedWidgetAlignArea.padding?.left}
+                value={selectedWidgetArea.padding?.left}
                 onChange={(value?: number) =>
                   onAreaStateChange?.({
-                    ...selectedWidgetAlignArea,
+                    ...selectedWidgetArea,
                     padding: {
-                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      ...(selectedWidgetArea.padding as WidgetAreaPadding),
                       left: value ?? 0,
                     },
                   })
@@ -70,12 +67,12 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
               <NumberField
                 suffix="px"
                 min={0}
-                value={selectedWidgetAlignArea.padding?.right}
+                value={selectedWidgetArea.padding?.right}
                 onChange={(value?: number) =>
                   onAreaStateChange?.({
-                    ...selectedWidgetAlignArea,
+                    ...selectedWidgetArea,
                     padding: {
-                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      ...(selectedWidgetArea.padding as WidgetAreaPadding),
                       right: value ?? 0,
                     },
                   })
@@ -88,12 +85,12 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
               <NumberField
                 suffix="px"
                 min={0}
-                value={selectedWidgetAlignArea.padding?.bottom}
+                value={selectedWidgetArea.padding?.bottom}
                 onChange={(value?: number) =>
                   onAreaStateChange?.({
-                    ...selectedWidgetAlignArea,
+                    ...selectedWidgetArea,
                     padding: {
-                      ...(selectedWidgetAlignArea.padding as WidgetAreaPadding),
+                      ...(selectedWidgetArea.padding as WidgetAreaPadding),
                       bottom: value ?? 0,
                     },
                   })
@@ -114,10 +111,10 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
           <NumberField
             suffix="px"
             min={0}
-            value={selectedWidgetAlignArea.gap}
+            value={selectedWidgetArea.gap}
             onChange={(value?: number) =>
               onAreaStateChange?.({
-                ...selectedWidgetAlignArea,
+                ...selectedWidgetArea,
                 gap: value,
               })
             }
@@ -132,10 +129,10 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
         </StyledPropertyTitleWrapper>
         <StyledPropertyFieldWrapper>
           <ToggleButton
-            checked={selectedWidgetAlignArea.centered}
+            checked={selectedWidgetArea.centered}
             onChange={(value?: boolean) =>
               onAreaStateChange?.({
-                ...selectedWidgetAlignArea,
+                ...selectedWidgetArea,
                 centered: value,
               })
             }
@@ -150,10 +147,10 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({
         </StyledPropertyTitleWrapper>
         <StyledPropertyFieldWrapper>
           <ColorField
-            value={selectedWidgetAlignArea.background}
+            value={selectedWidgetArea.background}
             onChange={(value?: string) =>
               onAreaStateChange?.({
-                ...selectedWidgetAlignArea,
+                ...selectedWidgetArea,
                 background: value,
               })
             }
