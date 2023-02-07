@@ -59,6 +59,8 @@ export default function Area({
   renderWidget,
   onWidgetAreaSelect,
 }: Props) {
+  console.log(padding);
+
   const theme = useTheme();
   const layout = useMemo<WidgetLayout>(
     () => ({

@@ -114,7 +114,7 @@ export default (alias?: string) => {
         .filter((w): w is InternalWidget => !!w);
       return {
         align: align ?? "start",
-        padding: padding ?? { top: 0, bottom: 0, left: 0, right: 0 },
+        padding: padding ?? { top: 6, bottom: 6, left: 6, right: 6 },
         widgets: areaWidgets || [],
         background: area?.background as string | undefined,
         centered: area?.centered,
