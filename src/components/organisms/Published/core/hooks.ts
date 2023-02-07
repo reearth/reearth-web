@@ -1,11 +1,11 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import type { Block } from "@reearth/components/molecules/Visualizer";
+import type { Block, ClusterProperty } from "@reearth/components/molecules/Visualizer";
 import { config } from "@reearth/config";
 import type { InternalWidget, WidgetAlignSystem, WidgetAlignment } from "@reearth/core/Crust";
 import { convertLegacyLayer, type Layer, type LegacyLayer } from "@reearth/core/mantle";
-import type { Cluster } from "@reearth/core/Map";
+import { convertLegacyCluster } from "@reearth/core/mantle/compat/forward";
 
 import type {
   PublishedData,
@@ -26,10 +26,11 @@ export default (alias?: string) => {
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
     {},
   );
-  const clusters = useMemo<Cluster[]>(
+  const legacyClusters = useMemo<ClusterProperty[]>(
     () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
     [data],
   );
+  const clusters = convertLegacyCluster(legacyClusters);
 
   const layers = useMemo(() => {
     return [
