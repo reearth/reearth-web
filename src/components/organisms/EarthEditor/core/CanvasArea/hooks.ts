@@ -30,6 +30,7 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
+  useSelectedWidgetArea,
 } from "@reearth/state";
 import { valueTypeToGQL, type ValueTypes, valueToGQL, type LatLng } from "@reearth/util/value";
 
@@ -49,6 +50,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [selectedWidgetArea, selectWidgetArea] = useSelectedWidgetArea();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
@@ -307,6 +309,7 @@ export default (isBuilt?: boolean) => {
     isCapturing,
     sceneMode,
     camera,
+    selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
     layerSelectionReason,
@@ -317,6 +320,7 @@ export default (isBuilt?: boolean) => {
     onBlockRemove,
     onBlockInsert,
     onWidgetUpdate,
+    selectWidgetArea,
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,

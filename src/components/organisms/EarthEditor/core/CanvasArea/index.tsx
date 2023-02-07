@@ -28,6 +28,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     isCapturing,
     sceneMode,
     camera,
+    selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
     layerSelectionReason,
@@ -39,6 +40,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     onBlockInsert,
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
+    selectWidgetArea,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,
@@ -67,6 +69,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         widgetLayoutConstraint={widgets?.layoutConstraint}
         selectedLayerId={selectedLayerId}
         selectedBlockId={selectedBlockId}
+        selectedWidgetArea={selectedWidgetArea}
         zoomedLayerId={zoomedLayerId}
         rootLayerId={rootLayerId}
         sceneProperty={sceneProperty}
@@ -83,6 +86,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         onCameraChange={onCameraChange}
         onWidgetLayoutUpdate={onWidgetUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignSystemUpdate}
+        onWidgetAreaSelect={selectWidgetArea}
         onBlockSelect={selectBlock}
         onBlockChange={onBlockChange}
         onBlockMove={onBlockMove}
