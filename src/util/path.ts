@@ -10,3 +10,6 @@ export const parseHost = (source: DataSource): string | undefined => {
 
   return parsed[2];
 };
+
+export const getExtname = (url: string | undefined): string | undefined =>
+  url?.match(/\.([a-z]+?)(?:\?.*?)?$/)?.[1];
