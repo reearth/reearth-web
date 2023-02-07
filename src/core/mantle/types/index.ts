@@ -86,7 +86,10 @@ export type DataType =
   | "csv"
   | "wms"
   | "mvt"
-  | "kml";
+  | "kml"
+  | "gpx"
+  | "shapefile"
+  | "gtfs";
 
 // Feature
 export type CommonFeature<T extends "feature" | "computedFeature"> = {

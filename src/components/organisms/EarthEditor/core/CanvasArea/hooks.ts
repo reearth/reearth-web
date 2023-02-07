@@ -2,8 +2,13 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
-import { convertLegacyLayer } from "@reearth/core/mantle";
-import type { Cluster, Layer } from "@reearth/core/Map";
+import {
+  convertLegacyLayer,
+  convertLegacyCluster,
+  type ComputedLayer,
+  type LegacyCluster,
+} from "@reearth/core/mantle";
+import type { Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -102,7 +107,14 @@ export default (isBuilt?: boolean) => {
 
   // convert data
   const selectedLayerId = useMemo(
-    () => (selected?.type === "layer" ? { layerId: selected.layerId } : undefined),
+    () =>
+      selected?.type === "layer"
+        ? { layerId: selected.layerId, featureId: selected.featureId }
+        : undefined,
+    [selected],
+  );
+  const layerSelectionReason = useMemo(
+    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
     [selected],
   );
 
@@ -118,13 +130,14 @@ export default (isBuilt?: boolean) => {
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
-  const clusters = useMemo<Cluster[]>(
+  const legacyClusters = useMemo<LegacyCluster[]>(
     () =>
       scene?.clusters
         .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
-        .filter((c): c is Cluster => !!c) ?? [],
+        .filter((c): c is LegacyCluster => !!c) ?? [],
     [scene?.clusters],
   );
+  const clusters = convertLegacyCluster(legacyClusters);
 
   const pluginProperty = useMemo(
     () =>
@@ -136,7 +149,12 @@ export default (isBuilt?: boolean) => {
   );
 
   const selectLayer = useCallback(
-    (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
+    (
+      id?: string,
+      featureId?: string,
+      _layer?: () => Promise<ComputedLayer | undefined>,
+      layerSelectionReason?: LayerSelectionReason,
+    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
     [select],
   );
 
@@ -300,6 +318,7 @@ export default (isBuilt?: boolean) => {
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
+    layerSelectionReason,
     selectLayer,
     selectBlock,
     onBlockChange,
