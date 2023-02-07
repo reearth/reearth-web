@@ -2,7 +2,7 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
-import { convertLegacyLayer } from "@reearth/core/mantle";
+import { ComputedLayer, convertLegacyLayer } from "@reearth/core/mantle";
 import type { Cluster, Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
@@ -106,8 +106,10 @@ export default (isBuilt?: boolean) => {
         : undefined,
     [selected],
   );
-  const layerSelectionReason =
-    selected?.type === "layer" ? selected.layerSelectionReason : undefined;
+  const layerSelectionReason = useMemo(
+    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
+    [selected],
+  );
 
   const layers = useMemo(() => {
     const l =
@@ -139,8 +141,12 @@ export default (isBuilt?: boolean) => {
   );
 
   const selectLayer = useCallback(
-    (id?: string, featureId?: string, layerSelectionReason?: LayerSelectionReason) =>
-      select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
+    (
+      id?: string,
+      featureId?: string,
+      _layer?: () => Promise<ComputedLayer | undefined>,
+      layerSelectionReason?: LayerSelectionReason,
+    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
     [select],
   );
 
