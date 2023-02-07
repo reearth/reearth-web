@@ -2,7 +2,7 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
-import { ComputedLayer, convertLegacyLayer } from "@reearth/core/mantle";
+import { type ComputedLayer, convertLegacyLayer } from "@reearth/core/mantle";
 import type { Cluster, Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
