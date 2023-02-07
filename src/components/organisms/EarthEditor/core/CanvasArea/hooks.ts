@@ -2,7 +2,12 @@ import { useMemo, useEffect, useCallback } from "react";
 
 import { config } from "@reearth/config";
 import type { Alignment, Location } from "@reearth/core/Crust";
-import { ComputedLayer, convertLegacyLayer } from "@reearth/core/mantle";
+import {
+  convertLegacyLayer,
+  convertLegacyCluster,
+  type ComputedLayer,
+  type LegacyCluster,
+} from "@reearth/core/mantle";
 import type { Cluster, Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
@@ -30,6 +35,7 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
+  useSelectedWidgetArea,
 } from "@reearth/state";
 import { valueTypeToGQL, type ValueTypes, valueToGQL, type LatLng } from "@reearth/util/value";
 
@@ -49,6 +55,7 @@ export default (isBuilt?: boolean) => {
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [selectedWidgetArea, selectWidgetArea] = useSelectedWidgetArea();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
@@ -123,13 +130,14 @@ export default (isBuilt?: boolean) => {
   const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
-  const clusters = useMemo<Cluster[]>(
+  const legacyClusters = useMemo<LegacyCluster[]>(
     () =>
       scene?.clusters
         .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
-        .filter((c): c is Cluster => !!c) ?? [],
+        .filter((c): c is LegacyCluster => !!c) ?? [],
     [scene?.clusters],
   );
+  const clusters = convertLegacyCluster(legacyClusters);
 
   const pluginProperty = useMemo(
     () =>
@@ -307,6 +315,7 @@ export default (isBuilt?: boolean) => {
     isCapturing,
     sceneMode,
     camera,
+    selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
     layerSelectionReason,
@@ -317,6 +326,7 @@ export default (isBuilt?: boolean) => {
     onBlockRemove,
     onBlockInsert,
     onWidgetUpdate,
+    selectWidgetArea,
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,

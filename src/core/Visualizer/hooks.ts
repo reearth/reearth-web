@@ -3,7 +3,7 @@ import { useWindowSize } from "react-use";
 
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
-import { Block } from "../Crust";
+import type { Block } from "../Crust";
 import type { ComputedFeature, Feature } from "../mantle";
 import type {
   Ref as MapRef,

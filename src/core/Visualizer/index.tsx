@@ -11,6 +11,7 @@ import Crust, {
   type WidgetLayoutConstraint,
   type ExternalPluginProps,
   type InternalWidget,
+  WidgetAreaType,
 } from "../Crust";
 import { Tag } from "../mantle";
 import Map, {
@@ -66,6 +67,7 @@ export type Props = {
     featureId?: string;
   };
   layerSelectionReason?: LayerSelectionReason;
+  selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
   zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
@@ -86,6 +88,7 @@ export type Props = {
     },
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onInfoboxMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
@@ -120,6 +123,7 @@ export default function Visualizer({
   tags,
   selectedBlockId,
   selectedLayerId,
+  selectedWidgetArea,
   hiddenLayers,
   isLayerDraggable,
   isLayerDragging,
@@ -136,6 +140,7 @@ export default function Visualizer({
   onCameraChange,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
+  onWidgetAreaSelect,
   onInfoboxMaskClick,
   onBlockSelect,
   onBlockChange,
@@ -192,6 +197,7 @@ export default function Visualizer({
         blocks={infobox?.blocks}
         camera={camera}
         isMobile={isMobile}
+        selectedWidgetArea={selectedWidgetArea}
         selectedComputedLayer={selectedLayer?.layer}
         selectedFeature={selectedFeature}
         selectedComputedFeature={selectedComputedFeature}
@@ -209,6 +215,7 @@ export default function Visualizer({
         externalPlugin={{ pluginBaseUrl, pluginProperty }}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
+        onWidgetAreaSelect={onWidgetAreaSelect}
         onInfoboxMaskClick={onInfoboxMaskClick}
         onBlockSelect={handleBlockSelect}
         onBlockChange={onBlockChange}
