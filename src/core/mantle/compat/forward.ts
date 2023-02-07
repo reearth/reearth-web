@@ -1,7 +1,11 @@
 import { Feature, LineString, Point, Polygon } from "geojson";
 import { omitBy } from "lodash-es";
 
+import { Cluster } from "@reearth/core/Map";
+
 import type { Data, Layer, LayerGroup, LayerSimple } from "../types";
+
+import { LegacyCluster } from "./types";
 
 import type { LegacyLayer } from ".";
 
@@ -185,8 +189,12 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     }
   } else if (l.extensionId === "tileset") {
     appearance = "3dtiles";
-    legacyPropertyKeys = ["tileset"];
-    if (l.property?.default?.tileset) {
+    legacyPropertyKeys = ["tileset", "sourceType"];
+    if (l.property?.default?.sourceType === "osm") {
+      data = {
+        type: "osm-buildings",
+      };
+    } else if (l.property?.default?.tileset) {
       data = {
         type: "3dtiles",
         url: l.property.default.tileset,
@@ -203,8 +211,8 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       };
     } else {
       data = {
-        type: l.property.default.type,
-        url: l.property.default.url,
+        type: l.property.default?.type,
+        url: l.property.default?.url,
       };
     }
   } else if (l.extensionId === "box") {
@@ -250,4 +258,15 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     },
     v => typeof v === "undefined" || v === null,
   ) as any;
+}
+
+export function convertLegacyCluster(clusters: LegacyCluster[]): Cluster[] {
+  return clusters.map(c => ({
+    id: c.id,
+    property: {
+      default: c.default,
+      layers: c.layers,
+    },
+    layers: c.layers?.map(l => l.layer).filter((l): l is string => !!l),
+  }));
 }

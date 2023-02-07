@@ -6,7 +6,8 @@ import {
 import { useCallback, useMemo } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
-import { evalFeature } from "@reearth/core/mantle";
+import { DataType, evalFeature } from "@reearth/core/mantle";
+import { getExtname } from "@reearth/util/path";
 
 import type { ResourceAppearance, AppearanceTypes } from "../../..";
 import { extractSimpleLayerData, type FeatureComponentConfig, type FeatureProps } from "../utils";
@@ -33,21 +34,23 @@ const delegatingAppearance: Record<keyof typeof comps, (keyof AppearanceTypes)[]
   czml: ["marker", "polyline", "polygon"],
 };
 
+const DataTypeListAllowsOnlyProperty: DataType[] = ["geojson"];
+
 export default function Resource({ isVisible, property, layer }: Props) {
   const { clampToGround } = property ?? {};
   const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
     const data = extractSimpleLayerData(layer);
     const type = property?.type;
     const url = property?.url;
-    return [type ?? (data?.type as ResourceAppearance["type"]), url ?? data?.url];
+    return [
+      type ?? (data?.type as ResourceAppearance["type"]),
+      url ?? (data && !DataTypeListAllowsOnlyProperty.includes(data.type) ? data?.url : undefined),
+    ];
   }, [property, layer]);
   const { viewer } = useCesium();
 
-  const ext = useMemo(
-    () => (!type || type === "auto" ? url?.match(/\.([a-z]+?)(?:\?.*?)?$/) : undefined),
-    [type, url],
-  );
-  const actualType = ext ? types[ext[1]] : type !== "auto" ? type : undefined;
+  const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
+  const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
   const appearances = actualType ? delegatingAppearance[actualType] : undefined;
 

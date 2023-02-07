@@ -11,6 +11,7 @@ import Crust, {
   type WidgetLayoutConstraint,
   type ExternalPluginProps,
   type InternalWidget,
+  WidgetAreaType,
 } from "../Crust";
 import { Tag } from "../mantle";
 import Map, {
@@ -65,6 +66,8 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
+  layerSelectionReason?: LayerSelectionReason;
+  selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
   zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
@@ -85,6 +88,7 @@ export type Props = {
     },
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onInfoboxMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
   onBlockChange?: <T extends ValueType>(
@@ -119,6 +123,7 @@ export default function Visualizer({
   tags,
   selectedBlockId,
   selectedLayerId,
+  selectedWidgetArea,
   hiddenLayers,
   isLayerDraggable,
   isLayerDragging,
@@ -128,12 +133,14 @@ export default function Visualizer({
   pluginBaseUrl,
   pluginProperty,
   zoomedLayerId,
+  layerSelectionReason,
   onLayerDrag,
   onLayerDrop,
   onLayerSelect,
   onCameraChange,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
+  onWidgetAreaSelect,
   onInfoboxMaskClick,
   onBlockSelect,
   onBlockChange,
@@ -155,6 +162,7 @@ export default function Visualizer({
     isMobile,
     overriddenSceneProperty,
     isDroppable,
+    infobox,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
@@ -182,20 +190,21 @@ export default function Visualizer({
         tags={tags}
         viewport={viewport}
         isBuilt={isBuilt}
-        isEditable={isEditable}
+        isEditable={isEditable && infobox?.isEditable}
         inEditor={inEditor}
         sceneProperty={overriddenSceneProperty}
         overrideSceneProperty={overrideSceneProperty}
-        blocks={selectedLayer?.layer?.layer.infobox?.blocks}
+        blocks={infobox?.blocks}
         camera={camera}
         isMobile={isMobile}
+        selectedWidgetArea={selectedWidgetArea}
         selectedComputedLayer={selectedLayer?.layer}
         selectedFeature={selectedFeature}
         selectedComputedFeature={selectedComputedFeature}
         selectedReason={selectedLayer.reason}
-        infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
-        infoboxTitle={selectedLayer?.layer?.layer.title}
-        infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
+        infoboxProperty={infobox?.property}
+        infoboxTitle={infobox?.title}
+        infoboxVisible={!!infobox?.visible}
         selectedBlockId={selectedBlock}
         selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
         widgetAlignSystem={widgetAlignSystem}
@@ -206,6 +215,7 @@ export default function Visualizer({
         externalPlugin={{ pluginBaseUrl, pluginProperty }}
         onWidgetLayoutUpdate={onWidgetLayoutUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
+        onWidgetAreaSelect={onWidgetAreaSelect}
         onInfoboxMaskClick={onInfoboxMaskClick}
         onBlockSelect={handleBlockSelect}
         onBlockChange={onBlockChange}
@@ -232,6 +242,7 @@ export default function Visualizer({
         // overrides={overrides} // not used for now
         property={overriddenSceneProperty}
         selectedLayerId={selectedLayerId}
+        layerSelectionReason={layerSelectionReason}
         small={small}
         ready={ready}
         onCameraChange={handleCameraChange}
