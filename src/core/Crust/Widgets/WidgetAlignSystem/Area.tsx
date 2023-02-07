@@ -104,6 +104,7 @@ export default function Area({
         backgroundColor: backgroundColor,
         gap: gap,
         alignItems: centered ? "center" : "unset",
+        borderRadius: 0,
       }}
       editorStyle={{
         flexWrap: "wrap",

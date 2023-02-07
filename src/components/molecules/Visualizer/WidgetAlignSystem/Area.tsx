@@ -103,6 +103,7 @@ export default function Area({
         backgroundColor: isMobileZone ? "inherit" : backgroundColor,
         gap: isMobileZone ? "inherit" : gap,
         alignItems: centered && !isMobileZone ? "center" : "inherit",
+        borderRadius: 0,
       }}
       editorStyle={{
         flexWrap: "wrap",
