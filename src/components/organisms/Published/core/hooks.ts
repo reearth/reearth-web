@@ -4,8 +4,12 @@ import { useState, useMemo, useEffect } from "react";
 import type { Block, ClusterProperty } from "@reearth/components/molecules/Visualizer";
 import { config } from "@reearth/config";
 import type { InternalWidget, WidgetAlignSystem, WidgetAlignment } from "@reearth/core/Crust";
-import { convertLegacyLayer, type Layer, type LegacyLayer } from "@reearth/core/mantle";
-import { convertLegacyCluster } from "@reearth/core/mantle";
+import {
+  convertLegacyLayer,
+  type Layer,
+  type LegacyLayer,
+  convertLegacyCluster,
+} from "@reearth/core/mantle";
 
 import type {
   PublishedData,

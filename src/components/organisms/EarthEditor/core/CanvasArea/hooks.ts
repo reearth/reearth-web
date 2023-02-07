@@ -8,7 +8,7 @@ import {
   type ComputedLayer,
   type LegacyCluster,
 } from "@reearth/core/mantle";
-import type { Cluster, Layer, LayerSelectionReason } from "@reearth/core/Map";
+import type { Layer, LayerSelectionReason } from "@reearth/core/Map";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
