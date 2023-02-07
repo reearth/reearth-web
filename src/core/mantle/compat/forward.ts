@@ -188,7 +188,7 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
     legacyPropertyKeys = ["tileset", "sourceType"];
     if (l.property?.default?.sourceType === "osm") {
       data = {
-        type: "osm",
+        type: "osm-buildings",
       };
     } else if (l.property?.default?.tileset) {
       data = {

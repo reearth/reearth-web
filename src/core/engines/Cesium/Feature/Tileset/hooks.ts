@@ -401,7 +401,7 @@ export const useHooks = ({
   }, [styleUrl]);
 
   const tilesetUrl = useMemo(() => {
-    return type === "osm" && isVisible
+    return type === "osm-buildings" && isVisible
       ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
       : type === "3dtiles" && isVisible
       ? url ?? tileset

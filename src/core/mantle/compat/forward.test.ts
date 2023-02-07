@@ -436,7 +436,7 @@ test("3dtiles", () => {
     type: "simple",
     visible: true,
     data: {
-      type: "osm",
+      type: "osm-buildings",
     },
     "3dtiles": {
       hoge: "red",
