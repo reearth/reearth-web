@@ -11,6 +11,7 @@ import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   children?: ReactNode;
+  isMobileZone?: boolean;
   selectedWidgetArea?: WidgetAreaState;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
@@ -27,6 +28,7 @@ const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function Zone({
+  isMobileZone,
   selectedWidgetArea,
   zone,
   zoneName,
@@ -52,6 +54,7 @@ export default function Zone({
             ) : (
               <Area
                 key={a}
+                isMobileZone={isMobileZone}
                 selectedWidgetArea={selectedWidgetArea}
                 zone={zoneName}
                 section={s}
