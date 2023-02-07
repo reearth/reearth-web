@@ -140,7 +140,8 @@ export default function Area({
             index={i}
             extended={extended ?? widget.extended}
             extendable={extendable2}
-            style={{ pointerEvents: "none" }}>
+            style={{ pointerEvents: "none", margin: 0 }}
+            editorStyle={{ margin: 0 }}>
             {({ editing }) =>
               renderWidget?.({
                 widget,
