@@ -5,7 +5,7 @@ import type { Block, ClusterProperty } from "@reearth/components/molecules/Visua
 import { config } from "@reearth/config";
 import type { InternalWidget, WidgetAlignSystem, WidgetAlignment } from "@reearth/core/Crust";
 import { convertLegacyLayer, type Layer, type LegacyLayer } from "@reearth/core/mantle";
-import { convertLegacyCluster } from "@reearth/core/mantle/compat/forward";
+import { convertLegacyCluster } from "@reearth/core/mantle";
 
 import type {
   PublishedData,
