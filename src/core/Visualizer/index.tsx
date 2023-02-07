@@ -65,6 +65,7 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
+  layerSelectionReason?: LayerSelectionReason;
   hiddenLayers?: string[];
   zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
@@ -128,6 +129,7 @@ export default function Visualizer({
   pluginBaseUrl,
   pluginProperty,
   zoomedLayerId,
+  layerSelectionReason,
   onLayerDrag,
   onLayerDrop,
   onLayerSelect,
@@ -155,6 +157,7 @@ export default function Visualizer({
     isMobile,
     overriddenSceneProperty,
     isDroppable,
+    infobox,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
@@ -182,20 +185,20 @@ export default function Visualizer({
         tags={tags}
         viewport={viewport}
         isBuilt={isBuilt}
-        isEditable={isEditable}
+        isEditable={isEditable && infobox?.isEditable}
         inEditor={inEditor}
         sceneProperty={overriddenSceneProperty}
         overrideSceneProperty={overrideSceneProperty}
-        blocks={selectedLayer?.layer?.layer.infobox?.blocks}
+        blocks={infobox?.blocks}
         camera={camera}
         isMobile={isMobile}
         selectedComputedLayer={selectedLayer?.layer}
         selectedFeature={selectedFeature}
         selectedComputedFeature={selectedComputedFeature}
         selectedReason={selectedLayer.reason}
-        infoboxProperty={selectedLayer?.layer?.layer.infobox?.property?.default}
-        infoboxTitle={selectedLayer?.layer?.layer.title}
-        infoboxVisible={!!selectedLayer?.layer?.layer.infobox}
+        infoboxProperty={infobox?.property}
+        infoboxTitle={infobox?.title}
+        infoboxVisible={!!infobox?.visible}
         selectedBlockId={selectedBlock}
         selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
         widgetAlignSystem={widgetAlignSystem}
@@ -232,6 +235,7 @@ export default function Visualizer({
         // overrides={overrides} // not used for now
         property={overriddenSceneProperty}
         selectedLayerId={selectedLayerId}
+        layerSelectionReason={layerSelectionReason}
         small={small}
         ready={ready}
         onCameraChange={handleCameraChange}

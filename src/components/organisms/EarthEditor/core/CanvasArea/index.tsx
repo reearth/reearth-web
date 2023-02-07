@@ -30,6 +30,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     camera,
     widgetAlignEditorActivated,
     engineMeta,
+    layerSelectionReason,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -77,6 +78,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
         meta={engineMeta}
+        layerSelectionReason={layerSelectionReason}
         onLayerSelect={selectLayer}
         onCameraChange={onCameraChange}
         onWidgetLayoutUpdate={onWidgetUpdate}
