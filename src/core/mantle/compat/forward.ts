@@ -207,8 +207,8 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       };
     } else {
       data = {
-        type: l.property.default.type,
-        url: l.property.default.url,
+        type: l.property.default?.type,
+        url: l.property.default?.url,
       };
     }
   } else if (l.extensionId === "box") {
