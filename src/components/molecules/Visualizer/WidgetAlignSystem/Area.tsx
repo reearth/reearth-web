@@ -73,7 +73,6 @@ export default function Area({
           area,
           section,
           zone,
-          align,
           background: backgroundColor,
           centered,
           gap,

@@ -19,7 +19,7 @@ export type WidgetAreaType = {
   zone: "inner" | "outer";
   section: "left" | "center" | "right";
   area: "top" | "middle" | "bottom";
-  align: Alignment;
+  align?: Alignment;
   padding?: WidgetAreaPadding;
   widgets?: InternalWidget[];
   gap?: number;
@@ -77,7 +77,6 @@ export default function Area({
           area,
           section,
           zone,
-          align,
           background: backgroundColor,
           centered,
           gap,
