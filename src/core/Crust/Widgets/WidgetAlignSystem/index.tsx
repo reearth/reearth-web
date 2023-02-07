@@ -49,7 +49,7 @@ export type Props = {
       index?: number;
     },
   ) => void;
-  onWidgetAreaSelect: (widgetArea?: WidgetAreaType) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onAlignmentUpdate?: (location: Location, align: Alignment) => void;
 };
 

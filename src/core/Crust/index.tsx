@@ -88,7 +88,7 @@ export type Props = {
     },
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
-  onWidgetAreaSelect: (widgetArea?: WidgetAreaType) => void;
+  onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // infobox events
   onInfoboxMaskClick?: () => void;
   onBlockSelect?: (id?: string) => void;
