@@ -142,7 +142,7 @@ const WidgetAlignSystemAreaForm: React.FC<Props> = ({ selectedWidgetArea, onArea
       <FormItemWrapper>
         <StyledPropertyTitleWrapper>
           <Text size="xs" otherProperties={{ userSelect: "none" }}>
-            {t("Bg Color")}
+            {t("Background Color")}
           </Text>
         </StyledPropertyTitleWrapper>
         <StyledPropertyFieldWrapper>
