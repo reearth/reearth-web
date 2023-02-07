@@ -55,6 +55,9 @@ export type MarkerAppearance = {
     | "rightbottom";
   labelTypography?: Typography;
   labelBackground?: boolean;
+  labelBackgroundColor?: string;
+  labelBackgroundPaddingHorizontal?: number;
+  labelBackgroundPaddingVertical?: number;
   extrude?: boolean;
 };
 
@@ -101,11 +104,11 @@ export type ModelAppearance = {
   lightColor?: string;
   silhouette?: boolean;
   silhouetteColor?: string;
+  bearing?: number;
   silhouetteSize?: number; // default: 1
 };
 
 export type Cesium3DTilesAppearance = {
-  sourceType?: "url" | "osm";
   tileset?: string;
   show?: boolean;
   color?: string;
