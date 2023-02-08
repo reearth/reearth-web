@@ -1,11 +1,15 @@
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect } from "react";
 
-import type { Block } from "@reearth/components/molecules/Visualizer";
+import type { Block, ClusterProperty } from "@reearth/components/molecules/Visualizer";
 import { config } from "@reearth/config";
 import type { InternalWidget, WidgetAlignSystem, WidgetAlignment } from "@reearth/core/Crust";
-import { convertLegacyLayer, type Layer, type LegacyLayer } from "@reearth/core/mantle";
-import type { Cluster } from "@reearth/core/Map";
+import {
+  convertLegacyLayer,
+  type Layer,
+  type LegacyLayer,
+  convertLegacyCluster,
+} from "@reearth/core/mantle";
 
 import type {
   PublishedData,
@@ -13,6 +17,7 @@ import type {
   WidgetSection,
   WidgetArea,
   Layer as RawLayer,
+  WidgetAreaPadding,
 } from "./types";
 import { useGA } from "./useGA";
 
@@ -26,10 +31,11 @@ export default (alias?: string) => {
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
     {},
   );
-  const clusters = useMemo<Cluster[]>(
+  const legacyClusters = useMemo<ClusterProperty[]>(
     () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
     [data],
   );
+  const clusters = convertLegacyCluster(legacyClusters);
 
   const layers = useMemo(() => {
     return [
@@ -102,12 +108,17 @@ export default (alias?: string) => {
 
     const widgetArea = (area?: WidgetArea | null) => {
       const align = area?.align.toLowerCase() as WidgetAlignment | undefined;
+      const padding = area?.padding as WidgetAreaPadding | undefined;
       const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
         .map<InternalWidget | undefined>(w => widgets?.find(w2 => w === w2.id))
         .filter((w): w is InternalWidget => !!w);
       return {
         align: align ?? "start",
+        padding: padding ?? { top: 0, bottom: 0, left: 0, right: 0 },
         widgets: areaWidgets || [],
+        background: area?.background as string | undefined,
+        centered: area?.centered,
+        gap: area?.gap,
       };
     };
 

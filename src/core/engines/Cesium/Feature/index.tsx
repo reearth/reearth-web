@@ -1,4 +1,5 @@
 import { DataType } from "@reearth/core/mantle";
+import { getExtname } from "@reearth/util/path";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
@@ -34,11 +35,16 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
 // This indicates what component should render for file extension.
 const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   geojson: "auto",
-  czml: "auto",
   csv: "auto",
+  czml: ["resource"],
+  kml: ["resource"],
   wms: ["raster"],
   mvt: ["raster"],
-  ["3dtiles"]: ["3dtiles"],
+  "3dtiles": ["3dtiles"],
+  "osm-buildings": ["3dtiles"],
+  gpx: "auto",
+  shapefile: "auto",
+  gtfs: "auto",
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
@@ -60,8 +66,12 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
-  const displayType =
-    layer.layer.type === "simple" && layer.layer.data?.type && displayConfig[layer.layer.data.type];
+  const data = layer.layer.type === "simple" ? layer.layer.data : undefined;
+  const ext =
+    !data?.type || (data.type as string) === "auto"
+      ? (getExtname(data?.url) as DataType)
+      : undefined;
+  const displayType = data?.type && displayConfig[ext ?? data.type];
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
