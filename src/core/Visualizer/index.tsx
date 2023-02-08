@@ -12,6 +12,7 @@ import Crust, {
   type ExternalPluginProps,
   type InternalWidget,
   WidgetAreaType,
+  BuiltinWidgets,
 } from "../Crust";
 import { Tag } from "../mantle";
 import Map, {
@@ -48,6 +49,7 @@ export type Props = {
   rootLayerId?: string;
   widgetAlignSystem?: WidgetAlignSystem;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
+  ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   widgetAlignSystemEditing?: boolean;
   floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
@@ -115,6 +117,7 @@ export default function Visualizer({
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
   floatingWidgets,
+  ownBuiltinWidgets,
   small,
   ready,
   tags,
@@ -158,6 +161,7 @@ export default function Visualizer({
     isDroppable,
     isLayerDragging,
     infobox,
+    shouldRender,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
@@ -173,6 +177,7 @@ export default function Visualizer({
     selectedBlockId,
     sceneProperty,
     zoomedLayerId,
+    ownBuiltinWidgets,
     onLayerSelect,
     onBlockSelect,
     onCameraChange,
@@ -237,6 +242,7 @@ export default function Visualizer({
         isLayerDraggable={isEditable}
         meta={meta}
         style={style}
+        shouldRender={shouldRender}
         // overrides={overrides} // not used for now
         property={overriddenSceneProperty}
         selectedLayerId={selectedLayerId}
