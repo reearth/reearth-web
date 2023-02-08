@@ -53,8 +53,6 @@ export type Props = {
   sceneProperty?: SceneProperty;
   layers?: Layer[];
   clusters?: Cluster[];
-  isLayerDraggable?: boolean;
-  isLayerDragging?: boolean;
   camera?: Camera;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
@@ -71,7 +69,6 @@ export type Props = {
   hiddenLayers?: string[];
   zoomedLayerId?: string;
   onCameraChange?: (camera: Camera) => void;
-  onLayerDrag?: (layerId: string, position: LatLng) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
     layerId: string | undefined,
@@ -125,8 +122,6 @@ export default function Visualizer({
   selectedLayerId,
   selectedWidgetArea,
   hiddenLayers,
-  isLayerDraggable,
-  isLayerDragging,
   camera: initialCamera,
   meta,
   style,
@@ -134,7 +129,6 @@ export default function Visualizer({
   pluginProperty,
   zoomedLayerId,
   layerSelectionReason,
-  onLayerDrag,
   onLayerDrop,
   onLayerSelect,
   onCameraChange,
@@ -162,10 +156,13 @@ export default function Visualizer({
     isMobile,
     overriddenSceneProperty,
     isDroppable,
+    isLayerDragging,
     infobox,
     handleLayerSelect,
     handleBlockSelect,
     handleCameraChange,
+    handleLayerDrag,
+    handleLayerDrop,
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
@@ -180,6 +177,7 @@ export default function Visualizer({
     onBlockSelect,
     onCameraChange,
     onZoomToLayer,
+    onLayerDrop,
   });
 
   return (
@@ -235,8 +233,8 @@ export default function Visualizer({
         camera={camera}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
-        isLayerDraggable={isLayerDraggable}
         isLayerDragging={isLayerDragging}
+        isLayerDraggable={isEditable}
         meta={meta}
         style={style}
         // overrides={overrides} // not used for now
@@ -246,8 +244,8 @@ export default function Visualizer({
         small={small}
         ready={ready}
         onCameraChange={handleCameraChange}
-        onLayerDrag={onLayerDrag}
-        onLayerDrop={onLayerDrop}
+        onLayerDrag={handleLayerDrag}
+        onLayerDrop={handleLayerDrop}
         onLayerSelect={handleLayerSelect}
         onLayerEdit={handleLayerEdit}
       />
