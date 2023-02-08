@@ -47,7 +47,7 @@ export default function Zone({
                 area={a}
                 widgets={zone?.[s]?.[a]?.widgets}
                 align={zone?.[s]?.[a]?.align ?? "start"}
-                padding={zone?.[s]?.[a]?.padding ?? { top: 6, bottom: 6, left: 6, right: 6 }}
+                padding={zone?.[s]?.[a]?.padding}
                 backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
                 gap={zone?.[s]?.[a]?.gap ?? 6}
                 centered={zone?.[s]?.[a]?.centered ?? false}

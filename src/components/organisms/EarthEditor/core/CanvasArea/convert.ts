@@ -250,7 +250,12 @@ export const convertWidgets = (
       };
     return {
       align: align ?? "start",
-      padding: padding ?? { top: 6, bottom: 6, left: 6, right: 6 },
+      padding: {
+        top: padding?.top ?? 6,
+        bottom: padding?.bottom ?? 6,
+        left: padding?.left ?? 6,
+        right: padding?.right ?? 6,
+      },
       background: area?.background as string | undefined,
       centered: area?.centered,
       gap: area?.gap,
