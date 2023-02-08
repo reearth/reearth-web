@@ -28,6 +28,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
 
   const {
     model,
+    url,
     heightReference: hr,
     heading,
     pitch,
@@ -43,6 +44,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     lightColor,
     silhouette,
     silhouetteColor,
+    bearing,
     silhouetteSize = 1,
   } = property ?? {};
 
@@ -54,22 +56,27 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const orientation = useMemo(
     () =>
       position
-        ? Transforms.headingPitchRollQuaternion(
-            position,
-            new HeadingPitchRoll(
-              CesiumMath.toRadians(heading ?? 0),
-              CesiumMath.toRadians(pitch ?? 0),
-              CesiumMath.toRadians(roll ?? 0),
-            ),
-          )
+        ? bearing
+          ? Transforms.headingPitchRollQuaternion(
+              position,
+              HeadingPitchRoll.fromDegrees(bearing - 90.0, 0.0, 0.0),
+            )
+          : Transforms.headingPitchRollQuaternion(
+              position,
+              new HeadingPitchRoll(
+                CesiumMath.toRadians(heading ?? 0),
+                CesiumMath.toRadians(pitch ?? 0),
+                CesiumMath.toRadians(roll ?? 0),
+              ),
+            )
         : undefined,
-    [heading, pitch, position, roll],
+    [bearing, heading, pitch, position, roll],
   );
   const modelColor = useMemo(() => (colorBlend ? toColor(color) : undefined), [colorBlend, color]);
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
 
-  return !isVisible || !model || !position ? null : (
+  return !isVisible || (!model && !url) || !position ? null : (
     <EntityExt
       id={id}
       position={position}
@@ -78,7 +85,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
       featureId={feature?.id}
       draggable>
       <ModelGraphics
-        uri={model}
+        uri={model || url}
         scale={scale}
         shadows={shadowMode(shadows)}
         colorBlendMode={colorBlendMode(colorBlend)}
@@ -97,5 +104,5 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
 }
 
 export const config: FeatureComponentConfig = {
-  noFeature: true,
+  noLayer: true,
 };

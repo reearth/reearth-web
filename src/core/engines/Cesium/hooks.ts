@@ -7,30 +7,23 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
-import { LayerEditEvent } from "@reearth/core/Map";
 
 import type {
   Camera,
   LatLng,
-  SelectLayerOptions,
+  LayerSelectionReason,
   EngineRef,
   SceneProperty,
   MouseEvent,
   MouseEvents,
+  LayerEditEvent,
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import {
-  getCamera,
-  isDraggable,
-  isSelectable,
-  layerIdField,
-  getLocationFromScreen,
-  getClock,
-} from "./common";
+import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import useEngineRef from "./useEngineRef";
-import { convertCartesian3ToPosition } from "./utils";
+import { convertCartesian3ToPosition, findEntity } from "./utils";
 
 export default ({
   ref,
@@ -45,21 +38,26 @@ export default ({
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
-  onTick,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
   camera?: Camera;
-  selectedLayerId?: string;
-  selectionReason?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
+  selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (id?: string, options?: SelectLayerOptions) => void;
+  onLayerSelect?: (layerId?: string, featureId?: string, options?: LayerSelectionReason) => void;
   onCameraChange?: (camera: Camera) => void;
-  onLayerDrag?: (layerId: string, position: LatLng) => void;
-  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;
+  onLayerDrop?: (
+    layerId: string,
+    featureId: string | undefined,
+    position: LatLng | undefined,
+  ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
-  onTick?: (time: Date) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -100,24 +98,18 @@ export default ({
       if (camera) {
         onCameraChange?.(camera);
       }
-      const clock = getClock(cesium?.current?.cesiumElement?.clock);
-      if (clock) {
-        onTick?.(clock.current);
-      }
     },
     [
       engineAPI,
       onCameraChange,
-      onTick,
       property?.default?.camera,
       property?.cameraLimiter?.cameraLimitterEnabled,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
-      prevDeps[2] === nextDeps[2] &&
-      isEqual(prevDeps[3], nextDeps[3]) &&
-      prevDeps[4] === nextDeps[4],
+      isEqual(prevDeps[2], nextDeps[2]) &&
+      prevDeps[3] === nextDeps[3],
   );
 
   const handleUnmount = useCallback(() => {
@@ -161,7 +153,7 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId);
+    const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
     if (viewer.selectedEntity === entity) return;
 
     const tag = getTag(entity);
@@ -229,20 +221,21 @@ export default ({
   }, [handleMouseEvent, handleMouseWheel]);
 
   const handleClick = useCallback(
-    (_: CesiumMovementEvent, target: RootEventTarget) => {
-      mouseEventHandles.click?.(_, target);
+    (e: CesiumMovementEvent, target: RootEventTarget) => {
+      mouseEventHandles.click?.(e, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
-        onLayerSelect?.(target.id.id);
+        const tag = getTag(target.id);
+        onLayerSelect?.(tag?.layerId, tag?.featureId);
         return;
       }
 
       if (target && target instanceof Cesium3DTileFeature) {
-        const layerId: string | undefined = (target.primitive as any)?.[layerIdField];
-        if (layerId) {
-          onLayerSelect?.(layerId, {
+        const tag = getTag(target);
+        if (tag) {
+          onLayerSelect?.(tag.layerId, String(tag.featureId), {
             overriddenInfobox: {
               title: target.getProperty("name"),
               content: tileProperties(target),
@@ -250,6 +243,19 @@ export default ({
           });
         }
         return;
+      }
+
+      // Check imagery layer
+      // ref: https://github.com/CesiumGS/cesium/blob/96b978e0c53aba3bc4f1191111e0be61781ae9dd/packages/widgets/Source/Viewer/Viewer.js#L167
+      if (target === undefined && e.position) {
+        const scene = viewer.scene;
+        const pickRay = scene.camera.getPickRay(e.position);
+        if (!pickRay) return;
+        scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene)?.then(l => {
+          l.map(f => {
+            onLayerSelect?.(f.data.layerId, f.data.featureId);
+          });
+        });
       }
 
       onLayerSelect?.();
@@ -290,7 +296,10 @@ export default ({
       const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
       if (!pos) return false;
 
-      onLayerDrag?.(e.id, pos);
+      const tag = getTag(e);
+      if (!tag) return false;
+
+      onLayerDrag?.(tag.layerId || "", tag.featureId, pos);
     },
     [onLayerDrag],
   );
@@ -300,9 +309,9 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return false;
 
-      const key = isDraggable(e);
+      const tag = getTag(e);
       const pos = convertCartesian3ToPosition(cesium.current?.cesiumElement, position);
-      onLayerDrop?.(e.id, key || "", pos);
+      onLayerDrop?.(tag?.layerId || "", tag?.featureId || "", pos);
 
       return false; // let apollo-client handle optimistic updates
     },
@@ -337,6 +346,13 @@ export default ({
     [selectionReason, engineAPI, onLayerEdit],
   );
 
+  const handleTick = useCallback(
+    (d: Date) => {
+      engineAPI.tickEventCallback?.current?.forEach(e => e(d));
+    },
+    [engineAPI],
+  );
+
   return {
     backgroundColor,
     cesium,
@@ -345,13 +361,14 @@ export default ({
     cameraViewBoundariesMaterial,
     cesiumIonAccessToken,
     mouseEventHandles,
+    context,
     handleMount,
     handleUnmount,
     handleUpdate,
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    context,
+    handleTick,
   };
 };
 
@@ -362,28 +379,6 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       (a, b) => [...a, { key: b, value: t.getProperty(b) }],
       [],
     );
-}
-
-function findEntity(viewer: CesiumViewer, layerId: string | undefined): Entity | undefined {
-  if (!layerId) return;
-
-  let entity = viewer.entities.getById(layerId);
-  if (entity) return entity;
-
-  entity = viewer.entities.values.find(e => getTag(e)?.layerId === layerId);
-  if (entity) return entity;
-
-  for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
-    for (let i = 0; i < ds.length; i++) {
-      const entities = ds.get(i).entities.values;
-      const e = entities.find(e => getTag(e)?.layerId === layerId);
-      if (e) {
-        return e;
-      }
-    }
-  }
-
-  return;
 }
 
 function getLayerId(target: RootEventTarget): string | undefined {

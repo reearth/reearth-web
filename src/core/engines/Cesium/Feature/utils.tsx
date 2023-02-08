@@ -1,5 +1,11 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { Cesium3DTileset, Entity as CesiumEntity, PropertyBag } from "cesium";
+import {
+  Cesium3DTileFeature,
+  Cesium3DTileset,
+  Color,
+  Entity as CesiumEntity,
+  PropertyBag,
+} from "cesium";
 import {
   ComponentProps,
   ComponentType,
@@ -10,6 +16,8 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
+import { Data } from "@reearth/core/mantle";
+
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
 export type FeatureProps<P = any> = {
@@ -19,6 +27,7 @@ export type FeatureProps<P = any> = {
   layer?: ComputedLayer;
   feature?: ComputedFeature;
   geometry?: Geometry;
+  sceneProperty?: any;
 } & Omit<FeatureComponentProps, "layer">;
 
 export type FeatureComponent = ComponentType<FeatureProps>;
@@ -34,6 +43,7 @@ export type Tag = {
   draggable?: boolean;
   unselectable?: boolean;
   legacyLocationPropertyKey?: string;
+  originalProperties?: any;
 };
 
 export const EntityExt = forwardRef(EntityExtComponent);
@@ -64,10 +74,18 @@ function EntityExtComponent(
   return <Entity ref={composeRefs(ref, r)} {...props} />;
 }
 
-export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefined, tag: Tag) {
+export function attachTag(
+  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  tag: Tag,
+) {
   if (!entity) return;
 
   if (entity instanceof Cesium3DTileset) {
+    (entity as any)[tagKey] = tag;
+    return;
+  }
+
+  if (entity instanceof Cesium3DTileFeature) {
     (entity as any)[tagKey] = tag;
     return;
   }
@@ -76,15 +94,22 @@ export function attachTag(entity: CesiumEntity | Cesium3DTileset | null | undefi
     entity.properties = new PropertyBag();
   }
   for (const k of tagKeys) {
-    if (!(k in tag)) entity.properties.removeProperty(`reearth_${k}`);
+    if (!(k in tag) && entity.properties.hasProperty(`reearth_${k}`))
+      entity.properties.removeProperty(`reearth_${k}`);
     else entity.properties[`reearth_${k}`] = tag[k];
   }
 }
 
-export function getTag(entity: CesiumEntity | Cesium3DTileset | null | undefined): Tag | undefined {
+export function getTag(
+  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+): Tag | undefined {
   if (!entity) return;
 
   if (entity instanceof Cesium3DTileset) {
+    return (entity as any)[tagKey];
+  }
+
+  if (entity instanceof Cesium3DTileFeature) {
     return (entity as any)[tagKey];
   }
 
@@ -105,8 +130,27 @@ const tagObj: { [k in keyof Tag]: 1 } = {
   featureId: 1,
   layerId: 1,
   unselectable: 1,
+  originalProperties: 1,
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
 
 const tagKey = "__reearth_tag";
+
+export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | void => {
+  if (layer?.layer.type !== "simple") {
+    return;
+  }
+  return layer.layer.data;
+};
+
+export const toColor = (c?: string) => {
+  if (!c || typeof c !== "string") return undefined;
+
+  // support alpha
+  const m = c.match(/^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/);
+  if (!m) return Color.fromCssColorString(c);
+
+  const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
+  return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
+};

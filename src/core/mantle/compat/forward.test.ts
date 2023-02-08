@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
-import { convertLegacyLayer } from "./forward";
-import type { Infobox, Tag } from "./types";
+import { convertLegacyCluster, convertLegacyLayer } from "./forward";
+import type { Infobox, LegacyCluster, Tag } from "./types";
 
 const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];
@@ -417,6 +417,43 @@ test("model", () => {
 });
 
 test("3dtiles", () => {
+  // osm
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "tileset",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          sourceType: "osm",
+          hoge: "red",
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    data: {
+      type: "osm-buildings",
+    },
+    "3dtiles": {
+      hoge: "red",
+    },
+    compat: {
+      extensionId: "tileset",
+      propertyId: "p",
+      property: {
+        default: {
+          sourceType: "osm",
+          hoge: "red",
+        },
+      },
+    },
+  });
+
+  // tileset
   expect(
     convertLegacyLayer({
       id: "x",
@@ -463,6 +500,7 @@ test("resource", () => {
       isVisible: true,
       property: {
         default: {
+          type: "abc",
           url: "xxx",
           hoge: "red",
         },
@@ -472,7 +510,12 @@ test("resource", () => {
     id: "x",
     type: "simple",
     visible: true,
-    legacy_resource: {
+    data: {
+      type: "abc",
+      url: "xxx",
+    },
+    resource: {
+      type: "abc",
       url: "xxx",
       hoge: "red",
     },
@@ -481,10 +524,163 @@ test("resource", () => {
       propertyId: "p",
       property: {
         default: {
+          type: "abc",
           url: "xxx",
           hoge: "red",
         },
       },
     },
   });
+
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "resource",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          url: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [2, 1, 3],
+                [3, 2, 4],
+              ],
+            },
+          },
+          type: "geojson",
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    resource: {
+      url: {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2, 1, 3],
+            [3, 2, 4],
+          ],
+        },
+      },
+      type: "geojson",
+    },
+    data: {
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [2, 1, 3],
+            [3, 2, 4],
+          ],
+        },
+      },
+      type: "geojson",
+    },
+    compat: {
+      extensionId: "resource",
+      propertyId: "p",
+      property: {
+        default: {
+          url: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [2, 1, 3],
+                [3, 2, 4],
+              ],
+            },
+          },
+          type: "geojson",
+        },
+      },
+    },
+  });
+});
+
+test("box", () => {
+  expect(
+    convertLegacyLayer({
+      id: "x",
+      extensionId: "box",
+      propertyId: "p",
+      isVisible: true,
+      property: {
+        default: {
+          color: "red",
+          location: {
+            lng: 1,
+            lat: 2,
+            height: 3,
+          },
+        },
+      },
+    }),
+  ).toEqual({
+    id: "x",
+    type: "simple",
+    visible: true,
+    box: {
+      color: "red",
+    },
+    data: {
+      type: "geojson",
+      value: {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [1, 2, 3],
+        },
+      },
+    },
+    compat: {
+      extensionId: "box",
+      propertyId: "p",
+      property: {
+        default: {
+          color: "red",
+          location: {
+            lng: 1,
+            lat: 2,
+            height: 3,
+          },
+        },
+      },
+    },
+  });
+});
+
+test("convertLegacyCluster", () => {
+  const legacy: LegacyCluster[] = [
+    {
+      id: "test",
+      default: {
+        clusterPixelRange: 100,
+        clusterMinSize: 1,
+      },
+      layers: [{ layer: "1" }, {}],
+    },
+  ];
+
+  expect(convertLegacyCluster(legacy)).toEqual([
+    {
+      id: "test",
+      property: {
+        default: {
+          clusterPixelRange: 100,
+          clusterMinSize: 1,
+        },
+        layers: [{ layer: "1" }, {}],
+      },
+      layers: ["1"],
+    },
+  ]);
 });

@@ -1,8 +1,9 @@
-import { ReactNode, useState, useMemo } from "react";
+import { ReactNode, useState, useMemo, useEffect } from "react";
 import { GridSection } from "react-align";
 
 import Icon from "@reearth/components/atoms/Icon";
 import Slide from "@reearth/components/atoms/Slide";
+import { WidgetAreaState } from "@reearth/components/organisms/EarthEditor/PropertyPane/hooks";
 import { styled, usePublishTheme, PublishTheme } from "@reearth/theme";
 
 import { Viewport } from "../hooks";
@@ -13,6 +14,8 @@ import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
   children?: ReactNode;
+  selectedWidgetArea?: WidgetAreaState;
+  isMobileZone?: boolean;
   zone?: WidgetZone;
   zoneName: "inner" | "outer";
   layoutConstraint?: { [w: string]: WidgetLayoutConstraint };
@@ -20,12 +23,15 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
+  onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
 const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
+  isMobileZone,
+  selectedWidgetArea,
   zone,
   zoneName,
   layoutConstraint,
@@ -34,15 +40,25 @@ export default function MobileZone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  onWidgetAlignAreaSelect,
   children,
   ...props
 }: Props) {
   const filteredSections = useMemo(() => {
-    return sections.filter(s => !!zone?.[s] || (s === "center" && children));
+    return sections.filter(
+      s =>
+        areas.filter(a => zone?.[s]?.[a]?.widgets?.length).length || (s === "center" && children),
+    );
   }, [zone, children]);
 
-  const [pos, setPos] = useState(filteredSections.length === 3 ? 1 : 0);
+  const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
+
+  const [pos, setPos] = useState(initialPos);
   const publishedTheme = usePublishTheme(sceneProperty.theme);
+
+  useEffect(() => {
+    setPos(initialPos);
+  }, [initialPos]);
 
   return (
     <>
@@ -57,17 +73,24 @@ export default function MobileZone({
               ) : (
                 <Area
                   key={a}
+                  selectedWidgetArea={selectedWidgetArea}
                   zone={zoneName}
                   section={s}
                   area={a}
+                  isMobileZone={isMobileZone}
                   widgets={zone?.[s]?.[a]?.widgets}
                   align={zone?.[s]?.[a]?.align ?? "start"}
+                  padding={zone?.[s]?.[a]?.padding ?? { top: 6, bottom: 6, left: 6, right: 6 }}
+                  backgroundColor={zone?.[s]?.[a]?.background ?? "unset"}
+                  gap={zone?.[s]?.[a]?.gap ?? 6}
+                  centered={zone?.[s]?.[a]?.centered ?? false}
                   layoutConstraint={layoutConstraint}
                   sceneProperty={sceneProperty}
                   pluginProperty={pluginProperty}
                   pluginBaseUrl={pluginBaseUrl}
                   isEditable={isEditable}
                   isBuilt={isBuilt}
+                  onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
                   {...props}
                 />
               ),

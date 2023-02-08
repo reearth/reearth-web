@@ -7,10 +7,14 @@ export type Props = {
   layers?: Layer[];
   atomMap?: Map<string, Atom>;
   overrides?: Record<string, Record<string, any>>;
-  selectedLayerId?: string;
+  selectedLayerId?: {
+    layerId?: string;
+    featureId?: string;
+  };
   isHidden?: (id: string) => boolean;
   clusters?: Cluster[];
   delegatedDataTypes?: DataType[];
+  sceneProperty?: any;
   clusterComponent?: ClusterComponentType;
   Feature?: LayerProps["Feature"];
 } & Omit<CommonProps, "isSelected" | "isHidden">;
@@ -68,7 +72,7 @@ export default function ClusteredLayers({
           layer={layer}
           atom={a}
           overrides={overrides?.[layer.id]}
-          isSelected={!!selectedLayerId && selectedLayerId == layer.id}
+          isSelected={!!selectedLayerId?.layerId && selectedLayerId.layerId == layer.id}
           isHidden={isHidden?.(layer.id)}
           delegatedDataTypes={delegatedDataTypes}
         />
@@ -83,7 +87,7 @@ export default function ClusteredLayers({
         clusters
           ?.filter(cluster => !!cluster.id)
           .map(cluster => (
-            <Cluster key={cluster.id} cluster={cluster}>
+            <Cluster key={cluster.id} cluster={cluster} property={cluster.property}>
               {layers?.filter(layer => cluster?.layers?.some(l => l === layer.id)).map(renderLayer)}
             </Cluster>
           ))}

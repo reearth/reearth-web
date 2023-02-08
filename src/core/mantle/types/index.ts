@@ -13,6 +13,7 @@ import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
 
 export * from "./appearance";
 export * from "./value";
+export * from "./expression";
 
 // Layer
 
@@ -22,6 +23,7 @@ export type LayerSimple = {
   type: "simple";
   data?: Data;
   properties?: any;
+  defines?: Record<string, string>;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
@@ -59,6 +61,15 @@ export type Data = {
   type: DataType;
   url?: string;
   value?: any;
+  layers?: string | string[];
+  jsonProperties?: string[];
+  csv?: {
+    idColumn?: string | number;
+    latColumn?: string | number;
+    lngColumn?: string | number;
+    heightColumn?: string | number;
+    noHeader?: boolean;
+  };
 };
 
 export type DataRange = {
@@ -67,16 +78,29 @@ export type DataRange = {
   z: number;
 };
 
-export type DataType = "geojson" | "3dtiles";
+export type DataType =
+  | "geojson"
+  | "3dtiles"
+  | "osm-buildings"
+  | "czml"
+  | "csv"
+  | "wms"
+  | "mvt"
+  | "kml"
+  | "gpx"
+  | "shapefile"
+  | "gtfs";
 
 // Feature
-
-export type Feature = {
+export type CommonFeature<T extends "feature" | "computedFeature"> = {
+  type: T;
   id: string;
   geometry?: Geometry;
   properties?: any;
   range?: DataRange;
 };
+
+export type Feature = CommonFeature<"feature">;
 
 export type Geometry = Point | LineString | Polygon | MultiPoint | MultiLineString | MultiPolygon;
 
@@ -93,4 +117,4 @@ export type ComputedLayer = {
   properties?: any;
 } & Partial<AppearanceTypes>;
 
-export type ComputedFeature = Feature & Partial<AppearanceTypes>;
+export type ComputedFeature = CommonFeature<"computedFeature"> & Partial<AppearanceTypes>;

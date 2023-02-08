@@ -14,6 +14,7 @@ import { MouseEvents, MouseEventHandles } from "../Engine/ref";
 import { Viewport as VisualizerViewport } from "../hooks";
 import type { LayerStore } from "../Layers";
 import type { Component as PrimitiveComponent } from "../Primitive";
+import type { ClientStorage } from "../useClientStorage";
 import { PluginInstances } from "../usePluginInstances";
 import { useGet } from "../utils";
 
@@ -57,6 +58,7 @@ export type Props = {
   layerOverridenInfobox?: OverriddenInfobox;
   layerOverriddenProperties?: { [key: string]: any };
   viewport: VisualizerViewport;
+  clientStorage: ClientStorage;
   showLayer: (...id: string[]) => void;
   hideLayer: (...id: string[]) => void;
   addLayer: (layer: Layer, parentId?: string, creator?: string) => string | undefined;
@@ -97,6 +99,7 @@ export type Context = {
   reearth: CommonReearth;
   engine: EngineContext;
   pluginInstances: PluginInstances;
+  clientStorage: ClientStorage;
   overrideSceneProperty: (id: string, property: any) => void;
   emit: EventEmitter<SelectedReearthEventType>;
   moveWidget: (widgetId: string, options: WidgetLocationOptions) => void;
@@ -104,12 +107,6 @@ export type Context = {
 
 export const context = createContext<Context | undefined>(undefined);
 export const useContext = (): Context | undefined => useReactContext(context);
-
-declare global {
-  interface Window {
-    reearth?: CommonReearth;
-  }
-}
 
 export function Provider({
   engine: { api, builtinPrimitives },
@@ -126,6 +123,7 @@ export function Provider({
   layerOverridenInfobox,
   layerOverriddenProperties,
   viewport,
+  clientStorage,
   showLayer,
   hideLayer,
   addLayer,
@@ -235,12 +233,14 @@ export function Provider({
       emit,
       moveWidget,
       pluginInstances,
+      clientStorage,
     }),
     [
       api,
       builtinPrimitives,
       engineName,
       ev,
+      clientStorage,
       getLayers,
       getSceneProperty,
       getInEditor,
@@ -342,7 +342,7 @@ export function Provider({
 
   // expose plugin API for developers
   useEffect(() => {
-    window.reearth = value.reearth;
+    (window as any).reearth = value.reearth;
     return () => {
       delete window.reearth;
     };

@@ -97,6 +97,24 @@ export const context: ProviderProps = {
     postMessage: () => {},
     addPluginMessageSender: () => {},
     removePluginMessageSender: () => {},
+    runTimesCache: {
+      get: () => 1,
+      increment: () => {},
+      decrement: () => {},
+      clear: () => {},
+      clearAll: () => {},
+    },
+  },
+  clientStorage: {
+    getAsync: act("clientStorage.getAsync"),
+    setAsync: act("clientStorage.setAsync"),
+    deleteAsync: act("clientStorage.deleteAsync"),
+    keysAsync: act("clientStorage.keysAsync"),
+    dropStore: () => {
+      return new Promise<void>(resolve => {
+        resolve();
+      });
+    },
   },
   flyTo: act("flyTo"),
   lookAt: act("lookAt"),

@@ -15,6 +15,7 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/components/molecules/Visualizer/Widget/builtin";
+import { WidgetAreaPadding } from "@reearth/components/molecules/Visualizer/WidgetAlignSystem/hooks";
 import {
   GetBlocksQuery,
   Maybe,
@@ -248,13 +249,23 @@ export const convertWidgets = (
 
   const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea | undefined => {
     const align = area?.align.toLowerCase() as Alignment | undefined;
+    const padding = area?.padding as WidgetAreaPadding | undefined;
     const areaWidgets: Widget[] | undefined = area?.widgetIds
       .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
       .filter((w): w is Widget => !!w);
     if (!areaWidgets || (areaWidgets && areaWidgets.length < 1)) return;
     return {
       align: align ?? "start",
+      padding: {
+        top: padding?.top ?? 6,
+        bottom: padding?.bottom ?? 6,
+        left: padding?.left ?? 6,
+        right: padding?.right ?? 6,
+      },
       widgets: areaWidgets,
+      background: area?.background as string | undefined,
+      centered: area?.centered,
+      gap: area?.gap,
     };
   };
 

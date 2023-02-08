@@ -1,6 +1,7 @@
 import { atom } from "jotai";
-import { merge, pick } from "lodash-es";
+import { merge, pick, isEqual } from "lodash-es";
 
+import { processGeoJSON } from "../data/geojson";
 import { evalLayer, EvalResult } from "../evaluator";
 import type {
   ComputedFeature,
@@ -14,7 +15,7 @@ import type {
 } from "../types";
 import { appearanceKeys } from "../types";
 
-import { dataAtom, globalDataFeaturesCache } from "./data";
+import { dataAtom, DATA_CACHE_KEYS, globalDataFeaturesCache } from "./data";
 
 export type Atom = ReturnType<typeof computeAtom>;
 
@@ -22,6 +23,7 @@ export type Command =
   | { type: "setLayer"; layer?: Layer }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
+  | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
   | { type: "deleteFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
   | { type: "updateDelegatedDataTypes"; delegatedDataTypes: DataType[] };
@@ -69,18 +71,46 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     const currentLayer = get(layer);
     if (!currentLayer) return;
 
-    if (
-      currentLayer.type !== "simple" ||
-      !currentLayer.data ||
-      get(delegatedDataTypes).includes(currentLayer.data.type)
-    ) {
+    if (currentLayer.type !== "simple" || !currentLayer.data) {
+      set(layerStatus, "ready");
+      return;
+    }
+
+    const layerId = currentLayer.id;
+
+    // To write feature with delegated data, you should use `writeComputedFeature` atom.
+    if (get(delegatedDataTypes).includes(currentLayer.data.type)) {
       set(layerStatus, "ready");
       return;
     }
 
     set(layerStatus, "fetching");
 
-    const layerId = currentLayer.id;
+    const shouldFetch = (prevFeatures: Feature[] | undefined) => {
+      if (currentLayer.type !== "simple") {
+        return false;
+      }
+
+      // `data.url` should be cached on dataAtoms, so we can return true in this line.
+      if (currentLayer.data?.url || !currentLayer.data?.value) {
+        return true;
+      }
+
+      // Only support geojson for specifying direct feature.
+      if (currentLayer.data?.type !== "geojson") {
+        return false;
+      }
+
+      const curFeatures = processGeoJSON(currentLayer.data.value);
+      if (curFeatures.length === prevFeatures?.length) {
+        return !curFeatures.every((cur, i) => {
+          const prev = prevFeatures[i];
+          return isEqual({ ...cur, id: "" }, { ...prev, id: "" });
+        });
+      }
+
+      return true;
+    };
 
     // Used for a simple layer.
     // It retrieves all features for the layer stored in the cache,
@@ -89,8 +119,20 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       const getterAll = get(dataAtoms.getAll);
       const allFeatures = getterAll(layerId, data);
 
+      const flattenAllFeatures = allFeatures?.flat();
+
       // Ignore cache if data is embedded
-      if (allFeatures) return allFeatures.flat();
+      if (
+        allFeatures &&
+        // Check if data has cache key
+        DATA_CACHE_KEYS.every(k => !!data[k])
+      ) {
+        return flattenAllFeatures;
+      }
+
+      if (!shouldFetch(flattenAllFeatures)) {
+        return flattenAllFeatures;
+      }
 
       await set(dataAtoms.fetch, { data, layerId });
       return getterAll(layerId, data)?.flat() ?? [];
@@ -105,6 +147,10 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
       // Ignore cache if data is embedded
       if (c) return c;
+
+      if (!shouldFetch(c)) {
+        return c;
+      }
 
       await set(dataAtoms.fetch, { data, range, layerId });
       return getter(layerId, data, range);
@@ -139,6 +185,48 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     await set(compute, undefined);
   });
 
+  const writeComputedFeatures = atom(
+    null,
+    async (get, set, value: { feature: Feature[]; computed: ComputedFeature[] }) => {
+      const currentLayer = get(layer);
+      if (currentLayer?.type !== "simple" || !currentLayer.data) return;
+
+      if (import.meta.env.DEV) {
+        if (!get(delegatedDataTypes).includes(currentLayer.data.type)) {
+          throw new Error("writeComputedFeature can be called with delegated data");
+        }
+      }
+
+      set(layerStatus, "fetching");
+
+      set(dataAtoms.set, {
+        data: currentLayer.data,
+        features: value.feature,
+        layerId: currentLayer.id,
+      });
+
+      const computedLayer = await evalLayer(currentLayer, {
+        getAllFeatures: async () => undefined,
+        getFeatures: async () => undefined,
+      });
+
+      if (!computedLayer) {
+        return;
+      }
+
+      set(layerStatus, "ready");
+
+      const prevResult = get(computedResult);
+
+      const result = {
+        layer: computedLayer.layer,
+        features: [...(prevResult?.features || []), ...value.computed],
+      };
+
+      set(computedResult, result);
+    },
+  );
+
   const deleteFeatures = atom(null, async (get, set, value: string[]) => {
     const currentLayer = get(layer);
     if (currentLayer?.type !== "simple" || !currentLayer?.data) return;
@@ -163,6 +251,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
           break;
         case "writeFeatures":
           await s(writeFeatures, value.features);
+          break;
+        case "writeComputedFeatures":
+          await s(writeComputedFeatures, value.value);
           break;
         case "deleteFeatures":
           await s(deleteFeatures, value.features);

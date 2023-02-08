@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
 
 import { Clock } from "@reearth/components/molecules/Visualizer/Plugin/types";
+import { LayerSelectionReason } from "@reearth/core/Map";
 import { Camera } from "@reearth/util/value";
 
 // useError is needed for Apollo provider error only. Handle other errors with useNotification directly.
@@ -16,9 +17,32 @@ export const useRootLayerId = () => useAtom(rootLayerId);
 const widgetAlignEditor = atom<boolean | undefined>(undefined);
 export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
 
+export type WidgetAlignment = "start" | "centered" | "end";
+
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
+export type WidgetAreaState = {
+  zone: "inner" | "outer";
+  section: "left" | "center" | "right";
+  area: "top" | "middle" | "bottom";
+  align?: WidgetAlignment;
+  padding?: WidgetAreaPadding;
+  gap?: number;
+  centered?: boolean;
+  background?: string;
+};
+
+const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
+export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
+
 export type Selected =
   | { type: "scene" }
-  | { type: "layer"; layerId: string }
+  | {
+      type: "layer";
+      layerId: string;
+      featureId?: string;
+      layerSelectionReason?: LayerSelectionReason;
+    }
   | { type: "widgets" }
   | { type: "cluster"; clusterId: string }
   | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }

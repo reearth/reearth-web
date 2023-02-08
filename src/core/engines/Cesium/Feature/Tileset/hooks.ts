@@ -10,18 +10,201 @@ import {
   TranslationRotationScale,
   HeadingPitchRoll,
   Matrix3,
+  Cesium3DTileset,
+  Cesium3DTile,
+  Cesium3DTileContent,
+  Cesium3DTileFeature,
 } from "cesium";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
-import { ComputedFeature, ComputedLayer, toColor } from "@reearth/core/mantle";
-import { SceneProperty } from "@reearth/core/Map";
-
+import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { translationWithClamping } from "../../utils";
-import { attachTag } from "../utils";
+import { attachTag, extractSimpleLayerData, toColor } from "../utils";
 
 import { Property } from ".";
+
+const useData = (layer: ComputedLayer | undefined) => {
+  return useMemo(() => {
+    const data = extractSimpleLayerData(layer);
+    return {
+      type: data?.type,
+      url: data?.url,
+      layers: data?.layers
+        ? Array.isArray(data.layers)
+          ? data.layers.join(",")
+          : data?.layers
+        : undefined,
+    };
+  }, [layer]);
+};
+
+const makeFeatureFrom3DTile = (
+  id: string,
+  feature: Cesium3DTileFeature,
+  coordinates: number[],
+): Feature => {
+  const properties = Object.fromEntries(
+    feature.getPropertyIds().map(id => [id, feature.getProperty(id)]),
+  );
+  return {
+    type: "feature",
+    id,
+    geometry: {
+      type: "Point",
+      coordinates,
+    },
+    properties,
+    range: {
+      x: coordinates[0],
+      y: coordinates[1],
+      z: coordinates[2],
+    },
+  };
+};
+
+type CachedFeature = {
+  feature: Feature;
+  raw: Cesium3DTileFeature;
+};
+
+const useFeature = ({
+  id,
+  tileset,
+  layer,
+  evalFeature,
+  onComputedFeatureFetch,
+  onFeatureDelete,
+}: {
+  id?: string;
+  tileset: MutableRefObject<Cesium3DTileset | undefined>;
+  layer?: ComputedLayer;
+  evalFeature: EvalFeature;
+  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
+  onFeatureDelete?: (feature: string[]) => void;
+}) => {
+  const cachedFeaturesRef = useRef<CachedFeature[]>([]);
+  const cachedCalculatedLayerRef = useRef(layer);
+  const layerId = layer?.id || id;
+
+  const attachComputedFeature = useCallback(
+    (feature?: CachedFeature) => {
+      const layer = cachedCalculatedLayerRef?.current?.layer;
+      if (layer?.type === "simple" && feature?.feature) {
+        const computedFeature = evalFeature(layer, feature?.feature);
+        const show = computedFeature?.["3dtiles"]?.show;
+        if (show !== undefined) {
+          feature.raw.show = show;
+        }
+        const color = toColor(computedFeature?.["3dtiles"]?.color);
+        if (color !== undefined) {
+          feature.raw.color = color;
+        }
+
+        return computedFeature;
+      }
+      return;
+    },
+    [evalFeature],
+  );
+
+  useEffect(() => {
+    function lookupFeatures(
+      c: Cesium3DTileContent,
+      cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void,
+    ) {
+      if (!c) return [];
+      const length = c.featuresLength;
+      for (let i = 0; i < length; i++) {
+        const f = c.getFeature(i);
+        if (!f) {
+          continue;
+        }
+        cb(f, c);
+      }
+      c.innerContents?.flatMap(c => lookupFeatures(c, cb));
+      return;
+    }
+
+    const currentTiles: Map<Cesium3DTile, string> = new Map();
+
+    tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) => {
+      if (currentTiles.has(t)) {
+        return;
+      }
+
+      const tempFeatures: Feature[] = [];
+      const tempComputedFeatures: ComputedFeature[] = [];
+      lookupFeatures(t.content, (tileFeature, content) => {
+        const coordinates = content.tile.boundingSphere.center;
+        const nextFeatureId = String(tileFeature.featureId);
+        currentTiles.set(t, nextFeatureId);
+        const id = String(nextFeatureId + tileFeature.featureId);
+        const feature = (() => {
+          const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
+            coordinates.x,
+            coordinates.y,
+            coordinates.z,
+          ]);
+          const feature: CachedFeature = {
+            feature: normalFeature,
+            raw: tileFeature,
+          };
+          cachedFeaturesRef.current.push(feature);
+          return feature;
+        })();
+
+        attachTag(tileFeature, { layerId, featureId: id });
+
+        const computedFeature = attachComputedFeature(feature);
+        if (computedFeature) {
+          tempFeatures.push(feature.feature);
+          tempComputedFeatures.push(computedFeature);
+        }
+      });
+
+      onComputedFeatureFetch?.(tempFeatures, tempComputedFeatures);
+    });
+
+    tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) => {
+      currentTiles.delete(t);
+      const featureIds: string[] = [];
+      lookupFeatures(t.content, (tileFeature, content) => {
+        const coordinates = content.tile.boundingSphere.center;
+        const id =
+          `${tileFeature.featureId}` ?? `${coordinates.x}-${coordinates.y}-${coordinates.z}`;
+        featureIds.push(id);
+      });
+      onFeatureDelete?.(featureIds);
+    });
+  }, [
+    tileset,
+    cachedFeaturesRef,
+    attachComputedFeature,
+    onComputedFeatureFetch,
+    onFeatureDelete,
+    layerId,
+  ]);
+
+  useEffect(() => {
+    cachedCalculatedLayerRef.current = layer;
+  }, [layer]);
+
+  // Update 3dtiles styles
+  const tileAppearanceShow = layer?.["3dtiles"]?.show;
+  const tileAppearanceColor = layer?.["3dtiles"]?.color;
+  useEffect(() => {
+    cachedFeaturesRef.current.map(f => {
+      const properties = f.feature.properties;
+      if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
+        f.feature.properties.color = tileAppearanceColor;
+        f.feature.properties.show = tileAppearanceShow;
+        attachComputedFeature(f);
+      }
+    });
+  }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
+};
 
 export const useHooks = ({
   id,
@@ -30,6 +213,9 @@ export const useHooks = ({
   sceneProperty,
   layer,
   feature,
+  evalFeature,
+  onComputedFeatureFetch,
+  onFeatureDelete,
 }: {
   id: string;
   isVisible?: boolean;
@@ -37,10 +223,12 @@ export const useHooks = ({
   sceneProperty?: SceneProperty;
   layer?: ComputedLayer;
   feature?: ComputedFeature;
+  evalFeature: EvalFeature;
+  onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
+  onFeatureDelete?: (feature: string[]) => void;
 }) => {
   const { viewer } = useCesium();
-  const { sourceType, tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } =
-    property ?? {};
+  const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } = property ?? {};
   const {
     width,
     height,
@@ -54,6 +242,7 @@ export const useHooks = ({
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
+  const { url, type } = useData(layer);
 
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -101,6 +290,15 @@ export const useHooks = ({
     [id, layer?.id, feature?.id],
   );
 
+  useFeature({
+    id,
+    tileset: tilesetRef,
+    layer,
+    evalFeature,
+    onComputedFeatureFetch,
+    onFeatureDelete,
+  });
+
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
   const inProgressSamplingTerrainHeight = useRef(false);
   const updateTerrainHeight = useCallback(
@@ -120,31 +318,18 @@ export const useHooks = ({
     [allowEnterGround, viewer],
   );
 
-  // Keep to have array references as much as possible for prevent unnecessary re-render.
-  const coordinatesRef = useRef<number[]>();
-  useEffect(() => {
-    const next = coordinates
-      ? coordinates
-      : location
-      ? [location.lng, location.lat, location.height ?? 0]
-      : undefined;
-
-    if (!next) {
-      return;
-    }
-
-    if (!coordinatesRef.current || !next.every((v, i) => coordinatesRef.current?.[i] === v)) {
-      coordinatesRef.current = next;
-    }
-  }, [coordinates, location]);
-
   useEffect(() => {
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
         return;
       }
 
-      await tilesetRef.current?.readyPromise;
+      try {
+        await tilesetRef.current?.readyPromise;
+      } catch (e) {
+        console.error("Could not load 3D tiles: ", e);
+        return;
+      }
 
       const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
         tilesetRef.current.boundingSphere.center.clone(),
@@ -152,12 +337,12 @@ export const useHooks = ({
 
       const dimensions = new Cartesian3(width || 100, length || 100, height || 100);
 
-      const coordinates = coordinatesRef.current;
-      const position = Cartesian3.fromDegrees(
-        coordinates?.[0] || 0,
-        coordinates?.[1] || 0,
-        coordinates?.[2] || 0,
-      );
+      const coords = coordinates
+        ? coordinates
+        : location
+        ? [location.lng, location.lat, location.height ?? 0]
+        : undefined;
+      const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
 
       if (!allowEnterGround) {
         translationWithClamping(
@@ -192,6 +377,8 @@ export const useHooks = ({
     heading,
     pitch,
     roll,
+    location,
+    coordinates,
     clippingPlanes.modelMatrix,
     updateTerrainHeight,
     allowEnterGround,
@@ -211,12 +398,12 @@ export const useHooks = ({
   }, [styleUrl]);
 
   const tilesetUrl = useMemo(() => {
-    return sourceType === "osm" && isVisible
+    return type === "osm-buildings" && isVisible
       ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
-      : isVisible
-      ? tileset
+      : type === "3dtiles" && isVisible
+      ? url ?? tileset
       : null;
-  }, [isVisible, sourceType, tileset]);
+  }, [isVisible, tileset, url, type]);
 
   return {
     tilesetUrl,

@@ -1,7 +1,9 @@
 import * as Cesium from "cesium";
-import { Math as CesiumMath } from "cesium";
+import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
+
+import { TickEventCallback } from "@reearth/core/Map";
 
 import type { EngineRef, MouseEvents, MouseEvent } from "..";
 
@@ -25,6 +27,7 @@ import {
   zoom,
   lookAtWithoutAnimation,
 } from "./common";
+import { findEntity } from "./utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -47,6 +50,7 @@ export default function useEngineRef(
     mouseleave: undefined,
     wheel: undefined,
   });
+  const tickEventCallback = useRef<TickEventCallback[]>([]);
   const e = useMemo((): EngineRef => {
     return {
       name: "cesium",
@@ -65,15 +69,33 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      flyTo: (camera, options) => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        cancelCameraFlight.current?.();
-        cancelCameraFlight.current = flyTo(
-          viewer.scene?.camera,
-          { ...getCamera(viewer), ...camera },
-          options,
-        );
+      flyTo: (target, options) => {
+        if (target && typeof target === "object") {
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          cancelCameraFlight.current?.();
+          cancelCameraFlight.current = flyTo(
+            viewer.scene?.camera,
+            { ...getCamera(viewer), ...target },
+            options,
+          );
+        }
+        if (target && typeof target === "string") {
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          const layerOrFeatureId = target;
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          if (entityFromFeatureId) {
+            viewer.flyTo(entityFromFeatureId, options);
+          } else {
+            const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
+            if (entityFromLayerId) {
+              viewer.flyTo(entityFromLayerId, options);
+            }
+          }
+        }
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
@@ -122,16 +144,12 @@ export default function useEngineRef(
       zoomIn: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        zoom({ camera, scene, relativeAmount: 1 / amount }, options);
+        zoom({ viewer, relativeAmount: 1 / amount }, options);
       },
       zoomOut: (amount, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        const camera = scene.camera;
-        zoom({ camera, scene, relativeAmount: amount }, options);
+        zoom({ viewer, relativeAmount: amount }, options);
       },
       orbit: radian => {
         const viewer = cesium.current?.cesiumElement;
@@ -156,7 +174,14 @@ export default function useEngineRef(
 
         camera.lookAtTransform(frame);
 
-        if (center) {
+        if (viewer.scene.mode !== Cesium.SceneMode.SCENE3D) {
+          camera.move(
+            new Cesium.Cartesian3(x, y, 0),
+            (Math.max(scene.canvas.clientWidth, scene.canvas.clientHeight) / 100) *
+              camera.positionCartographic.height *
+              distance,
+          );
+        } else if (center) {
           camera.rotateLeft(x);
           camera.rotateUp(y);
         } else {
@@ -175,9 +200,14 @@ export default function useEngineRef(
           camera.positionWC,
           scene.globe.ellipsoid,
         );
-        camera.lookAtTransform(frame);
-        camera.rotateRight(radian - -camera.heading);
-        camera.lookAtTransform(oldTransform);
+        if (viewer.scene.mode !== Cesium.SceneMode.SCENE3D) {
+          camera.twistRight(radian - -camera.heading);
+          camera.twistLeft(radian - -camera.heading);
+        } else {
+          camera.lookAtTransform(frame);
+          camera.rotateRight(radian - -camera.heading);
+          camera.lookAtTransform(oldTransform);
+        }
       },
       changeSceneMode: (sceneMode, duration = 2) => {
         const viewer = cesium.current?.cesiumElement;
@@ -310,6 +340,67 @@ export default function useEngineRef(
         mouseEventCallbacks.current.wheel = cb;
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
+      changeSpeed: (speed: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.multiplier = speed;
+        viewer.clock.clockStep = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+      },
+      changeTime: (time: Date) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.currentTime = JulianDate.fromDate(time);
+      },
+      pause: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.shouldAnimate = false;
+      },
+      play: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.shouldAnimate = true;
+      },
+      tick: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return JulianDate.toDate(viewer.clock.tick());
+      },
+      changeStart: (start: Date) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.startTime = JulianDate.fromDate(start);
+      },
+      changeStop: (stop: Date) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.clock.stopTime = JulianDate.fromDate(stop);
+      },
+      inViewport: location => {
+        const rect = e.getViewport();
+        return !!(
+          rect &&
+          location &&
+          typeof location.lng === "number" &&
+          typeof location.lat === "number" &&
+          Cesium.Rectangle.contains(
+            new Cesium.Rectangle(
+              CesiumMath.toRadians(rect.west),
+              CesiumMath.toRadians(rect.south),
+              CesiumMath.toRadians(rect.east),
+              CesiumMath.toRadians(rect.north),
+            ),
+            Cesium.Cartographic.fromDegrees(location.lng, location.lat),
+          )
+        );
+      },
+      onTick: cb => {
+        tickEventCallback.current.push(cb);
+      },
+      removeTickEventListener: cb => {
+        tickEventCallback.current = tickEventCallback.current.filter(c => c !== cb) || [];
+      },
+      tickEventCallback,
     };
   }, [cesium]);
 

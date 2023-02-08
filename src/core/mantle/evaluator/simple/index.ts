@@ -4,11 +4,16 @@ import type { EvalContext, EvalResult } from "..";
 import {
   appearanceKeys,
   AppearanceTypes,
-  Expression,
+  ComputedFeature,
   Feature,
   LayerAppearanceTypes,
   LayerSimple,
+  ExpressionContainer,
 } from "../../types";
+import { defined } from "../../utils";
+
+import { ConditionalExpression } from "./conditionalExpression";
+import { Expression } from "./expression";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -18,31 +23,88 @@ export async function evalSimpleLayer(
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   return {
     layer: evalLayerAppearances(appearances, layer),
-    features: features?.map(f => ({ ...f, ...evalLayerAppearances(appearances, layer, f) })),
+    features: features?.map(f => evalSimpleLayerFeature(layer, f)),
   };
 }
+
+export const evalSimpleLayerFeature = (layer: LayerSimple, feature: Feature): ComputedFeature => {
+  const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
+  const nextFeature = evalJsonProperties(layer, feature);
+  return {
+    ...nextFeature,
+    ...evalLayerAppearances(appearances, layer, nextFeature),
+    type: "computedFeature",
+  };
+};
 
 export function evalLayerAppearances(
   appearance: Partial<LayerAppearanceTypes>,
   layer: LayerSimple,
   feature?: Feature,
 ): Partial<AppearanceTypes> {
+  if (!feature) {
+    if (!layer.id) {
+      throw new Error("layer id is required");
+    }
+    feature = {
+      type: "feature",
+      id: layer.id,
+      properties: layer.properties || {},
+    };
+  }
   return Object.fromEntries(
     Object.entries(appearance).map(([k, v]) => [
       k,
       Object.fromEntries(
         Object.entries(v).map(([k, v]) => {
-          if (typeof v === "object" && "conditions" in v) {
-            return [k, evalExpression(v, layer, feature)];
-          }
-          return [k, v];
+          return [k, evalExpression(v, layer, feature)];
         }),
       ),
     ]),
   );
 }
 
-function evalExpression(_e: Expression, _layer: LayerSimple, _feature?: Feature): unknown {
-  // TODO: eval
-  return undefined;
+function hasExpression(e: any): e is ExpressionContainer {
+  return typeof e === "object" && e && "expression" in e;
+}
+
+function evalExpression(expressionContainer: any, layer: LayerSimple, feature?: Feature): unknown {
+  if (hasExpression(expressionContainer)) {
+    const styleExpression = expressionContainer.expression;
+    if (!defined(styleExpression)) {
+      return undefined;
+    } else if (typeof styleExpression === "object" && styleExpression.conditions) {
+      return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();
+    } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+      return new Expression(String(styleExpression), feature, layer.defines).evaluate();
+    } else if (typeof styleExpression === "string") {
+      return new Expression(styleExpression, feature, layer.defines).evaluate();
+    }
+    return styleExpression;
+  }
+  return expressionContainer;
+}
+
+function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
+  const keys = layer.data?.jsonProperties;
+  if (!feature.properties || !keys || !keys.length) {
+    return feature;
+  }
+
+  const next = {
+    ...feature,
+    ...(feature?.properties ? { properties: { ...feature.properties } } : {}),
+  };
+  keys.forEach(k => {
+    next.properties[k] = (() => {
+      const p = next.properties[k];
+      try {
+        return JSON.parse(p);
+      } catch {
+        return p;
+      }
+    })();
+  });
+
+  return next;
 }
