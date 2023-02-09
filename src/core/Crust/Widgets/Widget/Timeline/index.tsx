@@ -12,6 +12,7 @@ export type Property = {};
 const Timeline = ({
   widget,
   theme,
+  onExtend,
   context: {
     clock,
     onPlay,
@@ -23,6 +24,7 @@ const Timeline = ({
   } = {},
 }: Props): JSX.Element | null => {
   const { isOpened, currentTime, range, speed, events } = useTimeline({
+    widgetId: widget.id,
     clock,
     onPlay,
     onPause,
@@ -30,6 +32,7 @@ const Timeline = ({
     onTimeChange,
     onTick,
     removeTickEventListener,
+    onExtend,
   });
 
   return (
