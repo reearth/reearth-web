@@ -16,7 +16,6 @@ const makeRange = (startTime?: number, stopTime?: number) => {
 const DEFAULT_SPEED = 1;
 
 export const useTimeline = ({
-  widgetId,
   clock,
   onPlay,
   onPause,
@@ -24,9 +23,7 @@ export const useTimeline = ({
   onSpeedChange,
   onTick,
   removeTickEventListener,
-  onExtend,
 }: {
-  widgetId: string;
   clock?: Clock;
   onPlay?: () => void;
   onPause?: () => void;
@@ -34,7 +31,6 @@ export const useTimeline = ({
   onTimeChange?: (time: Date) => void;
   onTick?: TickEvent;
   removeTickEventListener?: TickEvent;
-  onExtend?: (id: string, extended: boolean | undefined) => void;
 }) => {
   const [range, setRange] = useState(() =>
     makeRange(clock?.start?.getTime(), clock?.stop?.getTime()),
@@ -49,14 +45,12 @@ export const useTimeline = ({
   const [speed, setSpeed] = useState(clockSpeed);
 
   const handleOnOpen = useCallback(() => {
-    onExtend?.(widgetId, true);
     setIsOpened(true);
-  }, [widgetId, onExtend]);
+  }, []);
 
   const handleOnClose = useCallback(() => {
-    onExtend?.(widgetId, false);
     setIsOpened(false);
-  }, [widgetId, onExtend]);
+  }, []);
 
   const handleTimeEvent: TimeEventHandler = useCallback(
     currentTime => {

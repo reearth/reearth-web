@@ -6,8 +6,8 @@ import { useTimeline } from "./hooks";
 
 export type Props = WidgetProps;
 
-const Timeline = ({ widget, sceneProperty, onExtend }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events } = useTimeline({ widget, onExtend });
+const Timeline = ({ widget, sceneProperty }: Props): JSX.Element | null => {
+  const { isOpened, currentTime, range, speed, events } = useTimeline();
   const theme = usePublishTheme(sceneProperty?.theme);
 
   return (
