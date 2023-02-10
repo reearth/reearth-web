@@ -499,6 +499,9 @@ export function commonReearth({
       get override() {
         return layers()?.override;
       },
+      get replace() {
+        return layers()?.replace;
+      },
       get delete() {
         return layers()?.deleteLayer;
       },

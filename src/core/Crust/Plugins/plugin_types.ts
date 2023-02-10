@@ -65,7 +65,6 @@ export type Reearth = {
       | "add"
       | "select"
       | "addAll"
-      | "replace"
       | "deleteLayer"
       | "selectedLayer"
       | "overriddenLayers"
