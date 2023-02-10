@@ -496,6 +496,12 @@ export function commonReearth({
       get findAll() {
         return layers()?.findAll;
       },
+      get override() {
+        return layers()?.override;
+      },
+      get delete() {
+        return layers()?.deleteLayer;
+      },
       get walk() {
         return layers()?.walk;
       },
