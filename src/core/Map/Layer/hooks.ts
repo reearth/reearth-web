@@ -57,7 +57,7 @@ export default function useHooks(
     });
   }, [layer, set]);
 
-  const intervalId = useRef<NodeJS.Timer>();
+  const intervalId = useRef<number>();
   useLayoutEffect(() => {
     const data = layer?.type === "simple" ? layer.data : undefined;
 
@@ -65,7 +65,7 @@ export default function useHooks(
       return;
     }
 
-    intervalId.current = setInterval(forceUpdateFeatures, data.updateInterval);
+    intervalId.current = window.setInterval(forceUpdateFeatures, data.updateInterval);
 
     return () => {
       if (intervalId.current) {
