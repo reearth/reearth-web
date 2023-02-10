@@ -61,7 +61,6 @@ export type Reearth = {
       WrappedRef<LayersRef>,
       | "layers"
       | "isLayer"
-      | "overrideProperties"
       | "add"
       | "select"
       | "addAll"
