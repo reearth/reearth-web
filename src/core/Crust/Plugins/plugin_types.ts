@@ -1,5 +1,6 @@
 import type {
   ComputedLayer,
+  ComputedFeature,
   LatLngHeight,
   Rect,
   CameraPosition,
@@ -66,6 +67,7 @@ export type Reearth = {
       | "addAll"
       | "deleteLayer"
       | "selectedLayer"
+      | "selectedFeature"
       | "overriddenLayers"
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
@@ -83,6 +85,7 @@ export type Reearth = {
       layers?: LazyLayer[];
       isLayer?: boolean;
       selected?: ComputedLayer;
+      selectedFeature?: ComputedFeature;
     }
   >;
   readonly layer?: LazyLayer;

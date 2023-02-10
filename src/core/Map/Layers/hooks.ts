@@ -375,7 +375,7 @@ export default function useHooks({
 
   const walk = useCallback(
     <T>(fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => T | void): T | undefined => {
-      return walkLayers(layersRef() ?? [], (l, i, p) => {
+      return walkLayers([...(layersRef() ?? []), ...tempLayersRef.current], (l, i, p) => {
         const ll = findById(l.id);
         if (!ll) return;
         return fn(
@@ -644,22 +644,20 @@ function useSelection({
 
   useEffect(() => {
     const actualSelectedLayer = selectedLayerForRef();
-    if (actualSelectedLayer) {
-      onLayerSelect?.(
-        actualSelectedLayer.id,
-        selectedLayerId?.featureId,
-        () =>
-          new Promise(resolve => {
-            // Wait until computed feature is ready
-            queueMicrotask(() => {
-              resolve(actualSelectedLayer.computed);
-            });
-          }),
-        selectedReason,
-      );
-    } else {
-      onLayerSelect?.(undefined, undefined, undefined, undefined);
-    }
+    onLayerSelect?.(
+      actualSelectedLayer?.id,
+      selectedLayerId?.featureId,
+      actualSelectedLayer
+        ? () =>
+            new Promise(resolve => {
+              // Wait until computed feature is ready
+              queueMicrotask(() => {
+                resolve(actualSelectedLayer?.computed);
+              });
+            })
+        : undefined,
+      selectedReason,
+    );
   }, [onLayerSelect, selectedLayerId, selectedReason, selectedLayerForRef]);
 
   useEffect(() => {
