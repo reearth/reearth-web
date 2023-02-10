@@ -56,7 +56,7 @@ export function lookupFeatures(
     }
     cb(f, c);
   }
-  c.innerContents?.flatMap(c => lookupFeatures(c, cb));
+  c.innerContents?.forEach(c => lookupFeatures(c, cb));
   return;
 }
 
