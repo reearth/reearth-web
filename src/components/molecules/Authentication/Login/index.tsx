@@ -39,7 +39,11 @@ const Login: React.FC = () => {
 
   return (
     <AuthPage>
-      <Icon className="form-item" icon="logoColorful" size={60} />
+      {window.REEARTH_CONFIG?.logoUrl ? (
+        <img src={window.REEARTH_CONFIG.logoUrl} style={{ maxWidth: "100%" }} />
+      ) : (
+        <Icon icon="logoColorful" size={60} />
+      )}
       <Text className="form-item" size="l" customColor>
         {t("Welcome")}
       </Text>
