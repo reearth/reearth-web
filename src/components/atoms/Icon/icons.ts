@@ -198,6 +198,8 @@ export default {
   export: Export,
   infobox: Infobox,
   text: InfoText,
+  // FIXME(@keiya01): Use HTML icon
+  // html: InfoText,
   video: InfoVideo,
   image: PrimPhotoOverlay,
   location: InfoLocation,
