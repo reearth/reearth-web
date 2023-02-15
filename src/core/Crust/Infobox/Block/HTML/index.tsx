@@ -19,7 +19,7 @@ const EventTypes = {
   resize: "resize",
 } as const;
 
-type MessageEventData = { type: typeof EventTypes.resize; height: number };
+type MessageEventData = { id: string } & { type: typeof EventTypes.resize; height: number };
 
 const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, onClick }) => {
   const t = useT();
@@ -44,6 +44,7 @@ window.addEventListener('load', () => {
   const resize = () => {
     const rect = window.document.body.getBoundingClientRect();
     parent.postMessage({
+      id: ${JSON.stringify(block?.id || "")},
       type: ${JSON.stringify(EventTypes.resize)},
       height: rect.top + rect.bottom,
     });
@@ -123,6 +124,11 @@ window.addEventListener('load', () => {
   useEffect(() => {
     const handleMessage = (e: any) => {
       const data: MessageEventData = e.data;
+
+      if (data.id !== block?.id) {
+        return;
+      }
+
       if (data.type === "resize") {
         setHeight(data.height);
       }
@@ -132,7 +138,7 @@ window.addEventListener('load', () => {
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [block?.id]);
 
   return (
     <Wrapper
