@@ -16,10 +16,10 @@ export type Property = {
 };
 
 const EventTypes = {
-  mount: "mount",
+  resize: "resize",
 } as const;
 
-type MessageEventData = { type: typeof EventTypes.mount; height: number };
+type MessageEventData = { type: typeof EventTypes.resize; height: number };
 
 const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, onClick }) => {
   const t = useT();
@@ -41,11 +41,19 @@ window.addEventListener('load', () => {
   window.document.body.style.color = ${JSON.stringify(theme.main.text)};
   window.document.body.style.margin = "0";
 
-  const rect = window.document.body.getBoundingClientRect();
-  parent.postMessage({
-    type: ${JSON.stringify(EventTypes.mount)},
-    height: rect.top + rect.height + rect.bottom,
+  const resize = () => {
+    const rect = window.document.body.getBoundingClientRect();
+    parent.postMessage({
+      type: ${JSON.stringify(EventTypes.resize)},
+      height: rect.top + rect.bottom,
+    });
+  }
+
+  // Resize
+  const resizeObserver = new ResizeObserver((entries) => {
+    resize();
   });
+  resizeObserver.observe(window.document.body);
 });
 `;
   const initializeIframe = useCallback(() => {
@@ -115,7 +123,7 @@ window.addEventListener('load', () => {
   useEffect(() => {
     const handleMessage = (e: any) => {
       const data: MessageEventData = e.data;
-      if (data.type === "mount") {
+      if (data.type === "resize") {
         setHeight(data.height);
       }
     };
@@ -194,7 +202,7 @@ const IFrame = styled.iframe<{ $height: number }>`
   border: none;
   padding: 5px;
   height: ${({ $height }) => $height}px;
-  min-height: ${({ $height }) => $height}px;
+  width: 100%;
 `;
 
 const InputField = styled.textarea<{ minHeight: number }>`
