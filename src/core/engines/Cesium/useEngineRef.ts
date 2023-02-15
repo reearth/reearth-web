@@ -70,10 +70,23 @@ export default function useEngineRef(
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
       flyTo: (target, options) => {
-        if (target && typeof target === "object") {
-          const viewer = cesium.current?.cesiumElement;
-          if (!viewer || viewer.isDestroyed()) return;
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
 
+        const findEntityFromLayerIdOrFeatureId = (layerOrFeatureId: string) => {
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
+            return entityFromFeatureId;
+          } else {
+            const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
+            if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
+              return entityFromLayerId;
+            }
+          }
+          return undefined;
+        };
+
+        if (target && typeof target === "object" && !Array.isArray(target)) {
           cancelCameraFlight.current?.();
           cancelCameraFlight.current = flyTo(
             viewer.scene?.camera,
@@ -81,19 +94,16 @@ export default function useEngineRef(
             options,
           );
         }
+        if (target && Array.isArray(target) && target.every(t => typeof t === "string")) {
+          const entities = target
+            .map(t => findEntityFromLayerIdOrFeatureId(t))
+            .filter((t): t is Cesium.Entity => !!t && t instanceof Cesium.Entity);
+          viewer.flyTo(entities, options);
+        }
         if (target && typeof target === "string") {
-          const viewer = cesium.current?.cesiumElement;
-          if (!viewer || viewer.isDestroyed()) return;
-
-          const layerOrFeatureId = target;
-          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
-          if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
-            viewer.flyTo(entityFromFeatureId, options);
-          } else {
-            const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
-            if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
-              viewer.flyTo(entityFromLayerId, options);
-            }
+          const entity = findEntityFromLayerIdOrFeatureId(target);
+          if (entity) {
+            viewer.flyTo(entity, options);
           }
         }
       },
