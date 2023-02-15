@@ -230,7 +230,12 @@ export default ({
           ? {
               defaultInfobox: {
                 title: entity.name,
-                content: { type: "html", value: entity.description?.getValue(new JulianDate()) },
+                content: {
+                  type: "html",
+                  value: entity.description?.getValue(
+                    cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
+                  ),
+                },
               },
             }
           : undefined,
