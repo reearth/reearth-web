@@ -15,12 +15,6 @@ export type Property = {
   title?: string;
 };
 
-const EventTypes = {
-  resize: "resize",
-} as const;
-
-type MessageEventData = { id: string } & { type: typeof EventTypes.resize; height: number };
-
 const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, onClick }) => {
   const t = useT();
   const theme = useTheme();
@@ -35,39 +29,30 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
   // iframe
   const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
   const [height, setHeight] = useState(15);
-  const initialScript = `
-window.addEventListener('load', () => {
-  // Initialize styles
-  window.document.body.style.color = ${JSON.stringify(theme.main.text)};
-  window.document.body.style.margin = "0";
-
-  const resize = () => {
-    const rect = window.document.body.getBoundingClientRect();
-    parent.postMessage({
-      id: ${JSON.stringify(block?.id || "")},
-      type: ${JSON.stringify(EventTypes.resize)},
-      height: rect.top + rect.bottom,
-    });
-  }
-
-  // Resize
-  const resizeObserver = new ResizeObserver((entries) => {
-    resize();
-  });
-  resizeObserver.observe(window.document.body);
-});
-`;
   const initializeIframe = useCallback(() => {
     const frameDocument = frameRef?.contentDocument;
-    if (!frameDocument) {
+    const frameWindow = frameRef?.contentWindow;
+    if (!frameWindow || !frameDocument) {
       return;
     }
 
-    const initialScriptTag = frameDocument?.createElement("script");
-    initialScriptTag.innerHTML = initialScript;
+    frameWindow.addEventListener("load", () => {
+      // Initialize styles
+      frameWindow.document.body.style.color = theme.main.text;
+      frameWindow.document.body.style.margin = "0";
 
-    frameDocument.head.appendChild(initialScriptTag);
-  }, [frameRef, initialScript]);
+      const resize = () => {
+        const rect = frameWindow.document.body.getBoundingClientRect();
+        setHeight(rect.top + rect.bottom);
+      };
+
+      // Resize
+      const resizeObserver = new ResizeObserver(() => {
+        resize();
+      });
+      resizeObserver.observe(frameWindow.document.body);
+    });
+  }, [frameRef, theme.main.text]);
 
   const startEditing = useCallback(() => {
     if (!isEditable) return;
@@ -121,25 +106,6 @@ window.addEventListener('load', () => {
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
-  useEffect(() => {
-    const handleMessage = (e: any) => {
-      const data: MessageEventData = e.data;
-
-      if (data.id !== block?.id) {
-        return;
-      }
-
-      if (data.type === "resize") {
-        setHeight(data.height);
-      }
-    };
-    window.addEventListener("message", handleMessage);
-
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, [block?.id]);
-
   return (
     <Wrapper
       onMouseEnter={handleMouseEnter}
@@ -176,6 +142,7 @@ window.addEventListener('load', () => {
               srcDoc={html}
               $height={height}
               allowFullScreen
+              sandbox="allow-same-origin allow-popups allow-forms"
             />
           )}
         </>
