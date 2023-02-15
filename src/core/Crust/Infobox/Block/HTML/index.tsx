@@ -137,8 +137,7 @@ window.addEventListener('load', () => {
       isTemplate={isTemplate}>
       {isTemplate && isEditable && !isEditing ? (
         <Template onDoubleClick={startEditing}>
-          {/* FIXME(@keiya01): Use HTML icon */}
-          <StyledIcon icon="text" isSelected={isSelected} isHovered={isHovered} size={24} />
+          <StyledIcon icon="html" isSelected={isSelected} isHovered={isHovered} size={24} />
           <Text isSelected={isSelected} isHovered={isHovered}>
             {t("Double click here to write.")}
           </Text>

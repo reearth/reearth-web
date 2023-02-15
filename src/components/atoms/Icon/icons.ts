@@ -61,6 +61,7 @@ import InfoVideo from "./Icons/infoboxVideoIcon.svg";
 import InfoText from "./Icons/infoboxTextIcon.svg";
 import InfoTable from "./Icons/infoboxTableIcon.svg";
 import InfoLocation from "./Icons/infoboxLocationIcon.svg";
+import InfoHTML from "./Icons/infoboxHTMLIcon.svg";
 
 // Arrows
 import ArrowToggle from "./Icons/arrowToggle.svg";
@@ -198,8 +199,7 @@ export default {
   export: Export,
   infobox: Infobox,
   text: InfoText,
-  // FIXME(@keiya01): Use HTML icon
-  // html: InfoText,
+  html: InfoHTML,
   video: InfoVideo,
   image: PrimPhotoOverlay,
   location: InfoLocation,
