@@ -38,12 +38,12 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
   const initialScript = `
 window.addEventListener('load', () => {
   // Initialize styles
-  window.document.body.style.color = "${theme.main.text}";
+  window.document.body.style.color = ${JSON.stringify(theme.main.text)};
   window.document.body.style.margin = "0";
 
   const rect = window.document.body.getBoundingClientRect();
   parent.postMessage({
-    type: "${EventTypes.mount}",
+    type: ${JSON.stringify(EventTypes.mount)},
     height: rect.top + rect.height + rect.bottom,
   });
 });
