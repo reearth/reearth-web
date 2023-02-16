@@ -223,6 +223,7 @@ export const useHooks = ({
     roll,
     pitch,
     planes: _planes,
+    visible: clippingVisible = true,
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
@@ -368,6 +369,22 @@ export const useHooks = ({
     allowEnterGround,
     terrainHeightEstimate,
   ]);
+
+  useEffect(() => {
+    clippingPlanes.enabled = clippingVisible;
+  }, [clippingPlanes, clippingVisible]);
+
+  useEffect(() => {
+    clippingPlanes.removeAll();
+    planes?.forEach(plane =>
+      clippingPlanes.add(
+        new ClippingPlane(
+          new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
+          (plane.distance || 0) * -1,
+        ),
+      ),
+    );
+  }, [planes, clippingPlanes]);
 
   useEffect(() => {
     if (!styleUrl) {
