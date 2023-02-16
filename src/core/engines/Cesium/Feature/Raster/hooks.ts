@@ -6,6 +6,7 @@ import {
   WebMapServiceImageryProvider,
 } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
+import md5 from "js-md5";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
@@ -68,7 +69,16 @@ type TileCoords = { x: number; y: number; level: number };
 const idFromGeometry = (
   geometry: ReturnType<VectorTileFeature["loadGeometry"]>,
   tile: TileCoords,
-) => [tile.x, tile.y, tile.level, ...geometry.flatMap(i => i.map(j => [j.x, j.y]))].join(":");
+) => {
+  const id = [tile.x, tile.y, tile.level, ...geometry.flatMap(i => i.map(j => [j.x, j.y]))].join(
+    ":",
+  );
+
+  const hash = md5.create();
+  hash.update(id);
+
+  return hash.hex();
+};
 
 const makeFeatureFromPolygon = (
   id: string,
