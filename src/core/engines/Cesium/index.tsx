@@ -126,7 +126,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onMouseMove={mouseEventHandles.mousemove}
       onMouseEnter={mouseEventHandles.mouseenter}
       onMouseLeave={mouseEventHandles.mouseleave}
-      onWheel={mouseEventHandles.wheel}>
+      onWheel={mouseEventHandles.wheel}
+      contextOptions={{ webgl: { preserveDrawingBuffer: true } }}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
       <Clock property={property} onTick={handleTick} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
