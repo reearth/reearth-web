@@ -1,7 +1,7 @@
 import { ComponentType, useMemo, useCallback, ReactNode } from "react";
 
-import type { Layer, Atom, Typography, DataType } from "../../mantle";
 import LayerComponent, { type CommonProps, type Props as LayerProps } from "../Layer";
+import type { Layer, Atom, Typography, DataType, ComputedFeature } from "../types";
 
 export type Props = {
   layers?: Layer[];
@@ -11,6 +11,7 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
+  selectedFeature?: ComputedFeature;
   isHidden?: (id: string) => boolean;
   clusters?: Cluster[];
   delegatedDataTypes?: DataType[];
@@ -53,6 +54,7 @@ export default function ClusteredLayers({
   selectedLayerId,
   overrides,
   delegatedDataTypes,
+  selectedFeature,
   isHidden,
   ...props
 }: Props): JSX.Element | null {
@@ -72,13 +74,22 @@ export default function ClusteredLayers({
           layer={layer}
           atom={a}
           overrides={overrides?.[layer.id]}
-          isSelected={!!selectedLayerId?.layerId && selectedLayerId.layerId == layer.id}
+          isSelected={selectedLayerId?.layerId == layer.id}
+          selectedFeature={selectedLayerId?.layerId == layer.id ? selectedFeature : undefined}
           isHidden={isHidden?.(layer.id)}
           delegatedDataTypes={delegatedDataTypes}
         />
       );
     },
-    [atomMap, isHidden, overrides, props, selectedLayerId, delegatedDataTypes],
+    [
+      atomMap,
+      props,
+      overrides,
+      selectedLayerId?.layerId,
+      selectedFeature,
+      isHidden,
+      delegatedDataTypes,
+    ],
   );
 
   return (

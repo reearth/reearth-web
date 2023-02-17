@@ -13,7 +13,7 @@ import useHooks, { type Atoms, type EvalFeature } from "./hooks";
 
 export type { EvalFeature } from "./hooks";
 
-export type { Layer, LayerSimple } from "../../mantle";
+export type { Layer, LayerSimple, ComputedFeature } from "../types";
 
 export type FeatureComponentType = ComponentType<FeatureComponentProps>;
 
@@ -41,6 +41,7 @@ export type Props = {
   overrides?: Record<string, any>;
   delegatedDataTypes?: DataType[];
   sceneProperty?: any;
+  selectedFeature?: ComputedFeature;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;
@@ -48,9 +49,10 @@ export type Props = {
 export default function LayerComponent({
   Feature,
   layer,
-  atom: atoms,
+  atom,
   overrides,
   delegatedDataTypes,
+  selectedFeature,
   ...props
 }: Props): JSX.Element | null {
   const {
@@ -60,7 +62,14 @@ export default function LayerComponent({
     handleComputedFeatureFetch,
     handleFeatureRequest,
     evalFeature,
-  } = useHooks(Feature ? layer : undefined, atoms, overrides, delegatedDataTypes);
+  } = useHooks({
+    layer: Feature ? layer : undefined,
+    atom,
+    overrides,
+    delegatedDataTypes,
+    selected: props.isSelected,
+    selectedFeature,
+  });
 
   return layer && computedLayer && Feature ? (
     <Feature

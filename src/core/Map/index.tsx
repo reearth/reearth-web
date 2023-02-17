@@ -78,6 +78,7 @@ function Map(
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}
+        selectedFeature={props.selectedFeature}
         meta={props.meta}
         onLayerSelect={handleLayerSelect}
       />

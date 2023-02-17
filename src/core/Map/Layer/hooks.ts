@@ -1,21 +1,30 @@
 import { useAtom } from "jotai";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
-import { computeAtom, DataType, type Atom, evalFeature, ComputedFeature } from "../../mantle";
-import type { DataRange, Feature, Layer } from "../../mantle";
+import { computeAtom, DataType, evalFeature } from "../../mantle";
+import type { Atom, DataRange, Layer, ComputedFeature, Feature } from "../types";
 
-export type { Atom as Atoms } from "../../mantle";
+export type { Atom as Atoms } from "../types";
 
 export const createAtom = computeAtom;
 
 export type EvalFeature = (layer: Layer, feature: Feature) => ComputedFeature | undefined;
 
-export default function useHooks(
-  layer: Layer | undefined,
-  atom: Atom | undefined,
-  overrides?: Record<string, any>,
-  delegatedDataTypes?: DataType[],
-) {
+export default function useHooks({
+  layer,
+  atom,
+  overrides,
+  delegatedDataTypes,
+  selected,
+  selectedFeature,
+}: {
+  layer: Layer | undefined;
+  atom: Atom | undefined;
+  overrides?: Record<string, any>;
+  delegatedDataTypes?: DataType[];
+  selected?: boolean;
+  selectedFeature?: ComputedFeature;
+}) {
   const [computedLayer, set] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
   const writeFeatures = useCallback(
     (features: Feature[]) => set({ type: "writeFeatures", features }),
@@ -73,6 +82,23 @@ export default function useHooks(
       }
     };
   }, [layer, forceUpdateFeatures]);
+
+  // select event
+  const selectEvent = layer?.type === "simple" && layer.events?.select;
+  useEffect(() => {
+    if (!selected || !selectEvent) return;
+    if (selectEvent.openUrl) {
+      const url = selectEvent.openUrl.urlKey
+        ? (selectedFeature ? selectedFeature.properties : computedLayer?.properties)?.[
+            selectEvent.openUrl.urlKey
+          ]
+        : selectEvent.openUrl.url;
+      if (typeof url === "string" && url) {
+        window.open(url, "_blank", "noreferrer");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]); // only selected
 
   return {
     computedLayer,
