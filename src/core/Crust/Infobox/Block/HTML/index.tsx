@@ -26,6 +26,11 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
   const isEditing = typeof editingText === "string";
   const isTemplate = !html && !title && !isEditing;
 
+  const startEditing = useCallback(() => {
+    if (!isEditable) return;
+    setEditingText(html ?? "");
+  }, [isEditable, html]);
+
   // iframe
   const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
   const [height, setHeight] = useState(15);
@@ -41,6 +46,11 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
       frameWindow.document.body.style.color = theme.main.text;
       frameWindow.document.body.style.margin = "0";
 
+      if (isEditable) {
+        frameWindow.document.body.style.cursor = "pointer";
+        frameWindow.document.addEventListener("dblclick", startEditing);
+      }
+
       const resize = () => {
         const rect = frameWindow.document.body.getBoundingClientRect();
         setHeight(rect.top + rect.bottom);
@@ -52,12 +62,7 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
       });
       resizeObserver.observe(frameWindow.document.body);
     });
-  }, [frameRef, theme.main.text]);
-
-  const startEditing = useCallback(() => {
-    if (!isEditable) return;
-    setEditingText(html ?? "");
-  }, [isEditable, html]);
+  }, [frameRef, theme.main.text, startEditing, isEditable]);
 
   const finishEditing = useCallback(() => {
     if (!isEditing) return;
@@ -138,7 +143,6 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
             <IFrame
               key={html}
               ref={setFrameRef}
-              onDoubleClick={startEditing}
               srcDoc={html}
               $height={height}
               allowFullScreen
