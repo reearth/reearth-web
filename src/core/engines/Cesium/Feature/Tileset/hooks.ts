@@ -120,9 +120,7 @@ const useFeature = ({
       const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const nextFeatureId = String(tileFeature.featureId);
-        currentTiles.set(t, nextFeatureId);
-        const id = String(nextFeatureId + tileFeature.featureId);
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         const feature = (() => {
           const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
             coordinates.x,
@@ -154,8 +152,7 @@ const useFeature = ({
       const featureIds: string[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const id =
-          `${tileFeature.featureId}` ?? `${coordinates.x}-${coordinates.y}-${coordinates.z}`;
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         featureIds.push(id);
       });
       onFeatureDelete?.(featureIds);
@@ -223,6 +220,8 @@ export const useHooks = ({
     roll,
     pitch,
     planes: _planes,
+    visible: clippingVisible = true,
+    direction = "inside",
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
@@ -244,6 +243,7 @@ export const useHooks = ({
     }
     return prevPlanes.current;
   }, [_planes]);
+  const clipDirection = direction === "inside" ? -1 : 1;
   // Create immutable object
   const [clippingPlanes] = useState(
     () =>
@@ -252,9 +252,10 @@ export const useHooks = ({
           plane =>
             new ClippingPlane(
               new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
-              (plane.distance || 0) * -1,
+              (plane.distance || 0) * clipDirection,
             ),
         ),
+        unionClippingRegions: direction === "outside",
         edgeWidth: edgeWidth,
         edgeColor: toColor(edgeColor),
       }),
@@ -350,10 +351,10 @@ export const useHooks = ({
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
+    prepareClippingPlanes();
     if (!allowEnterGround) {
       updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
     }
-    prepareClippingPlanes();
   }, [
     width,
     length,
@@ -368,6 +369,26 @@ export const useHooks = ({
     allowEnterGround,
     terrainHeightEstimate,
   ]);
+
+  useEffect(() => {
+    clippingPlanes.enabled = clippingVisible;
+  }, [clippingPlanes, clippingVisible]);
+
+  useEffect(() => {
+    clippingPlanes.unionClippingRegions = direction === "outside";
+  }, [clippingPlanes, direction]);
+
+  useEffect(() => {
+    clippingPlanes.removeAll();
+    planes?.forEach(plane =>
+      clippingPlanes.add(
+        new ClippingPlane(
+          new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
+          (plane.distance || 0) * clipDirection,
+        ),
+      ),
+    );
+  }, [planes, clippingPlanes, clipDirection]);
 
   useEffect(() => {
     if (!styleUrl) {

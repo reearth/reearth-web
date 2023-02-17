@@ -166,7 +166,20 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
+    const entity =
+      findEntity(viewer, undefined, selectedLayerId?.featureId) ||
+      findEntity(viewer, selectedLayerId?.layerId);
+    if (!entity || entity instanceof Entity) {
+      viewer.selectedEntity = entity;
+    }
+    const [prevTag, curTag] = [getTag(prevSelectedEntity.current), getTag(entity)];
+    if (
+      prevSelectedEntity.current === entity ||
+      (prevTag?.layerId === curTag?.layerId && prevTag?.featureId === curTag?.featureId)
+    )
+      return;
+    prevSelectedEntity.current = entity;
+
     if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
       const ImageryLayerDataTypes: DataType[] = ["mvt"];
@@ -193,14 +206,6 @@ export default ({
         onLayerSelect?.(layerId, feature?.id);
       }
     }
-
-    const [prevTag, curTag] = [getTag(prevSelectedEntity.current), getTag(entity)];
-    if (
-      prevSelectedEntity.current === entity ||
-      (prevTag?.layerId === curTag?.layerId && prevTag?.featureId === curTag?.featureId)
-    )
-      return;
-    prevSelectedEntity.current = entity;
 
     const tag = getTag(entity);
     if (tag?.unselectable) return;
@@ -240,10 +245,6 @@ export default ({
             }
           : undefined,
       );
-    }
-
-    if (!entity || entity instanceof Entity) {
-      viewer.selectedEntity = entity;
     }
   }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
 
@@ -320,6 +321,7 @@ export default ({
           },
         });
         prevSelectedEntity.current = target.id;
+        viewer.selectedEntity = target.id;
         return;
       }
 
