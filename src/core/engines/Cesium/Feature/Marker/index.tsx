@@ -35,6 +35,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   );
 
   const {
+    show = true,
     extrude,
     pointSize = 10,
     style,
@@ -125,7 +126,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
-  return !pos || !isVisible ? null : (
+  return !pos || !isVisible || !show ? null : (
     <>
       {extrudePoints && (
         <EntityExt

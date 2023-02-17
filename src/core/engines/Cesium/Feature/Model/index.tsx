@@ -32,6 +32,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   );
 
   const {
+    show = true,
     model,
     url,
     heightReference: hr,
@@ -82,7 +83,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
-  return !isVisible || (!model && !url) || !position ? null : (
+  return !isVisible || !show || (!model && !url) || !position ? null : (
     <EntityExt
       id={id}
       position={position}

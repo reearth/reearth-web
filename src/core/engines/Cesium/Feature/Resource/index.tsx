@@ -37,7 +37,7 @@ const delegatingAppearance: Record<keyof typeof comps, (keyof AppearanceTypes)[]
 const DataTypeListAllowsOnlyProperty: DataType[] = ["geojson"];
 
 export default function Resource({ isVisible, property, layer }: Props) {
-  const { clampToGround } = property ?? {};
+  const { show = true, clampToGround } = property ?? {};
   const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
     const data = extractSimpleLayerData(layer);
     const type = property?.type;
@@ -61,7 +61,7 @@ export default function Resource({ isVisible, property, layer }: Props) {
     [appearances, layer, viewer],
   );
 
-  if (!isVisible || !Component || !url) return null;
+  if (!isVisible || !show || !Component || !url) return null;
 
   return (
     <Component data={url} show={true} clampToGround={clampToGround} onChange={handleOnChange} />

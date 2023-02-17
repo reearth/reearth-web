@@ -25,6 +25,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   feature,
 }) {
   const {
+    show = true,
     height = 100,
     width = 100,
     length = 100,
@@ -50,10 +51,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   } = useHooks({ property, geometry, sceneProperty, feature });
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
-
   const [layerId, featureId] = [layer?.id, feature?.id];
 
-  return !isVisible ? null : (
+  return !isVisible || !show ? null : (
     <>
       {SIDE_PLANES.map((plane, i) => (
         <Side

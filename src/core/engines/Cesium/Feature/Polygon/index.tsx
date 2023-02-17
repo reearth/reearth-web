@@ -34,6 +34,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
   );
 
   const {
+    show = true,
     fill = true,
     stroke,
     fillColor,
@@ -64,7 +65,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
   const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
-  return !isVisible ? null : (
+  return !isVisible || !show ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolygonGraphics
         hierarchy={hierarchy}

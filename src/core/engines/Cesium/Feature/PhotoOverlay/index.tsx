@@ -42,6 +42,7 @@ export default function PhotoOverlay({
   );
 
   const {
+    show = true,
     image,
     imageSize,
     imageHorizontalOrigin,
@@ -86,7 +87,7 @@ export default function PhotoOverlay({
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
 
-  return !isVisible || !pos ? null : (
+  return !isVisible || !show || !pos ? null : (
     <>
       <EntityExt
         id={id}
