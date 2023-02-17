@@ -8,7 +8,12 @@ import type {
 } from "react";
 
 import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
-import type { FeatureComponentType, ClusterComponentType, LayerSelectionReason } from "../Layers";
+import type {
+  FeatureComponentType,
+  ClusterComponentType,
+  LayerSelectionReason,
+  Ref as LayersRef,
+} from "../Layers";
 
 export type {
   FeatureComponentProps,
@@ -43,6 +48,7 @@ export type EngineRef = {
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
+  sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
@@ -97,6 +103,7 @@ export type EngineProps = {
   isLayerDragging?: boolean;
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
+  layersRef?: RefObject<LayersRef>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
@@ -237,7 +244,8 @@ export type SceneProperty = {
     bgcolor?: string;
     ion?: string;
     sceneMode?: SceneMode; // default: scene3d
-  } & TerrainProperty;
+    vr?: boolean;
+  } & TerrainProperty; // compat
   cameraLimiter?: {
     cameraLimitterEnabled?: boolean;
     cameraLimitterShowHelper?: boolean;

@@ -6,11 +6,12 @@ import {
   WebMapServiceImageryProvider,
 } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
+import md5 from "js-md5";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../../..";
-import { extractSimpleLayerData } from "../utils";
+import { extractSimpleLayer, extractSimpleLayerData } from "../utils";
 
 import { Props } from "./types";
 
@@ -65,7 +66,19 @@ export const useWMS = ({
 
 type TileCoords = { x: number; y: number; level: number };
 
-const idFromGeometry = (tile: TileCoords) => [tile.x, tile.y, tile.level].join(":");
+const idFromGeometry = (
+  geometry: ReturnType<VectorTileFeature["loadGeometry"]>,
+  tile: TileCoords,
+) => {
+  const id = [tile.x, tile.y, tile.level, ...geometry.flatMap(i => i.map(j => [j.x, j.y]))].join(
+    ":",
+  );
+
+  const hash = md5.create();
+  hash.update(id);
+
+  return hash.hex();
+};
 
 const makeFeatureFromPolygon = (
   id: string,
@@ -111,10 +124,11 @@ export const useMVT = ({
   const cachedFeatureIdsRef = useRef(new Set<Feature["id"]>());
   const shouldSyncFeatureRef = useRef(false);
 
-  const polygonAppearanceFillStyle = layer?.polygon?.fillColor;
-  const polygonAppearanceStrokeStyle = layer?.polygon?.strokeColor;
-  const polygonAppearanceLineWidth = layer?.polygon?.strokeWidth;
-  const polygonAppearanceLineJoin = layer?.polygon?.lineJoin;
+  const layerSimple = extractSimpleLayer(layer);
+  const polygonAppearanceFillStyle = layerSimple?.polygon?.fillColor;
+  const polygonAppearanceStrokeStyle = layerSimple?.polygon?.strokeColor;
+  const polygonAppearanceLineWidth = layerSimple?.polygon?.strokeWidth;
+  const polygonAppearanceLineJoin = layerSimple?.polygon?.lineJoin;
 
   const tempFeaturesRef = useRef<Feature[]>([]);
   const tempComputedFeaturesRef = useRef<ComputedFeature[]>([]);
@@ -127,7 +141,7 @@ export const useMVT = ({
       urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
       layerName: layers,
       onRenderFeature: (mvtFeature, tile) => {
-        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
         if (!cachedFeatureIdsRef.current.has(id)) {
           shouldSyncFeatureRef.current = true;
         }
@@ -142,7 +156,7 @@ export const useMVT = ({
         }
       },
       style: (mvtFeature, tile) => {
-        const id = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const id = idFromGeometry(mvtFeature.loadGeometry(), tile);
         const [feature, computedFeature] =
           ((): [Feature | undefined, ComputedFeature | undefined] | void => {
             const layer = cachedCalculatedLayerRef.current?.layer;
@@ -178,7 +192,7 @@ export const useMVT = ({
                 return [
                   feature,
                   cachedComputedFeaturesRef.current.get(
-                    mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile),
+                    idFromGeometry(mvtFeature.loadGeometry(), tile),
                   ),
                 ];
               }
@@ -198,7 +212,7 @@ export const useMVT = ({
         };
       },
       onSelectFeature: (mvtFeature, tile) => {
-        const featureId = mvtFeature.id ? String(mvtFeature.id) : idFromGeometry(tile);
+        const featureId = idFromGeometry(mvtFeature.loadGeometry(), tile);
         const layerId = cachedCalculatedLayerRef.current?.layer.id;
         const l = new ImageryLayerFeatureInfo();
         l.data = {

@@ -63,6 +63,11 @@ export type Data = {
   value?: any;
   layers?: string | string[];
   jsonProperties?: string[];
+  updateInterval?: number; // milliseconds
+  time?: {
+    property?: string;
+    interval?: number; // milliseconds
+  };
   csv?: {
     idColumn?: string | number;
     latColumn?: string | number;
@@ -91,11 +96,14 @@ export type DataType =
   | "shapefile"
   | "gtfs";
 
+export type TimeInterval = [start: Date, end?: Date];
+
 // Feature
 export type CommonFeature<T extends "feature" | "computedFeature"> = {
   type: T;
   id: string;
   geometry?: Geometry;
+  interval?: TimeInterval;
   properties?: any;
   range?: DataRange;
 };

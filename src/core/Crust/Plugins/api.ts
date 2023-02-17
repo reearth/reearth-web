@@ -291,6 +291,7 @@ export function commonReearth({
   pluginInstances,
   viewport,
   selectedLayer,
+  selectedFeature,
   layerSelectionReason,
   layerOverriddenProperties,
   selectLayer,
@@ -308,6 +309,7 @@ export function commonReearth({
   rotateRight,
   captureScreen,
   getLocationFromScreen,
+  sampleTerrainHeight,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -330,6 +332,7 @@ export function commonReearth({
   clock: () => GlobalThis["reearth"]["clock"];
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
+  selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   layerOverriddenProperties?: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: LayersRef["select"];
@@ -348,6 +351,7 @@ export function commonReearth({
   cameraViewport?: () => GlobalThis["reearth"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
+  sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
@@ -409,6 +413,7 @@ export function commonReearth({
       overrideProperty: overrideSceneProperty,
       captureScreen,
       getLocationFromScreen,
+      sampleTerrainHeight,
     },
     get viewport() {
       return viewport?.();
@@ -445,8 +450,8 @@ export function commonReearth({
       },
       get select() {
         // For compat
-        return (layerId: string | undefined, reason?: LayerSelectionReason | undefined) =>
-          selectLayer?.(layerId, undefined, reason);
+        return (id: string | undefined, reason?: LayerSelectionReason | undefined) =>
+          selectLayer?.(id, id, reason);
       },
       get show() {
         return showLayer;
@@ -473,10 +478,16 @@ export function commonReearth({
         return layerSelectionReason();
       },
       get overriddenInfobox() {
-        return layerSelectionReason()?.overriddenInfobox;
+        return layerSelectionReason()?.defaultInfobox;
+      },
+      get defaultInfobox() {
+        return layerSelectionReason()?.defaultInfobox;
       },
       get selected() {
         return selectedLayer();
+      },
+      get selectedFeature() {
+        return selectedFeature();
       },
       get findById() {
         return layers()?.findById;
@@ -495,6 +506,15 @@ export function commonReearth({
       },
       get findAll() {
         return layers()?.findAll;
+      },
+      get override() {
+        return layers()?.override;
+      },
+      get replace() {
+        return layers()?.replace;
+      },
+      get delete() {
+        return layers()?.deleteLayer;
       },
       get walk() {
         return layers()?.walk;

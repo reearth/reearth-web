@@ -32,6 +32,7 @@ export default function ({
   tags,
   viewport,
   selectedLayer,
+  selectedFeature,
   layerSelectionReason,
   alignSystem,
   floatingWidgets,
@@ -73,6 +74,7 @@ export default function ({
   const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
+  const getSelectedFeature = useGet(selectedFeature);
   const getLayerSelectionReason = useGet(layerSelectionReason);
   const overrideScenePropertyCommon = useCallback(
     (property: any) => {
@@ -141,6 +143,13 @@ export default function ({
   const getLocationFromScreen = useCallback(
     (x: number, y: number, withTerrain?: boolean) => {
       return engineRef?.getLocationFromScreen(x, y, withTerrain);
+    },
+    [engineRef],
+  );
+
+  const sampleTerrainHeight = useCallback(
+    async (lng: number, lat: number) => {
+      return await engineRef?.sampleTerrainHeight(lng, lat);
     },
     [engineRef],
   );
@@ -228,8 +237,8 @@ export default function ({
   );
 
   const overrideLayerProperty = useCallback(
-    (id: string, properties?: Partial<any> | null | undefined) => {
-      layersRef?.overrideProperties(id, properties);
+    (id: string, property?: Partial<any> | null | undefined) => {
+      layersRef?.override(id, { property });
     },
     [layersRef],
   );
@@ -277,6 +286,7 @@ export default function ({
         pluginInstances: getPluginInstances,
         viewport: getViewport,
         selectedLayer: getSelectedLayer,
+        selectedFeature: getSelectedFeature,
         layerSelectionReason: getLayerSelectionReason,
         layerOverriddenProperties,
         showLayer,
@@ -295,6 +305,7 @@ export default function ({
         orbit,
         captureScreen,
         getLocationFromScreen,
+        sampleTerrainHeight,
         enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -323,6 +334,7 @@ export default function ({
       getPluginInstances,
       getViewport,
       getSelectedLayer,
+      getSelectedFeature,
       getLayerSelectionReason,
       overrideScenePropertyCommon,
       lookAt,
@@ -337,6 +349,7 @@ export default function ({
       flyTo,
       flyToGround,
       getLocationFromScreen,
+      sampleTerrainHeight,
       hideLayer,
       lookHorizontal,
       lookVertical,
@@ -360,9 +373,9 @@ export default function ({
 
   useEmit<SelectedReearthEventType>(
     {
-      select: useMemo<[layerId: string | undefined]>(
-        () => (selectedLayer ? [selectedLayer.id] : [undefined]),
-        [selectedLayer],
+      select: useMemo<[layerId: string | undefined, featureId: string | undefined]>(
+        () => (selectedLayer ? [selectedLayer.id, selectedFeature?.id] : [undefined, undefined]),
+        [selectedLayer, selectedFeature],
       ),
       cameramove: useMemo<[camera: CameraPosition] | undefined>(
         () => (camera ? [camera] : undefined),

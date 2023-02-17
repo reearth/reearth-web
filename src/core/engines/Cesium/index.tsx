@@ -41,6 +41,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     shouldRender,
     layerSelectionReason,
     meta,
+    layersRef,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -73,6 +74,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectionReason: layerSelectionReason,
     isLayerDraggable,
     meta,
+    layersRef,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -87,6 +89,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       className={className}
       animation
       timeline
+      // NOTE: We need to update cesium ion token dynamically.
+      // To replace old imagery provider, we need to remove old imagery provider.
+      imageryProvider={false}
       fullscreenButton={false}
       homeButton={false}
       geocoder={false}
@@ -165,7 +170,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           />
         </Entity>
       )}
-      <Scene backgroundColor={backgroundColor} />
+      <Scene backgroundColor={backgroundColor} useWebVR={property?.default?.vr} />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}

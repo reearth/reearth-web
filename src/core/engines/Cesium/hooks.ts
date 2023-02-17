@@ -1,12 +1,22 @@
-import { Color, Entity, Cesium3DTileFeature, Cartesian3, Ion } from "cesium";
+import {
+  Color,
+  Entity,
+  Cesium3DTileFeature,
+  Cartesian3,
+  Ion,
+  Cesium3DTileset,
+  JulianDate,
+} from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
+import { ComputedFeature, DataType } from "@reearth/core/mantle";
+import { LayersRef } from "@reearth/core/Map";
 
 import type {
   Camera,
@@ -33,6 +43,7 @@ export default ({
   selectionReason,
   isLayerDraggable,
   meta,
+  layersRef,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -46,6 +57,7 @@ export default ({
     layerId?: string;
     featureId?: string;
   };
+  layersRef?: RefObject<LayersRef>;
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
@@ -148,19 +160,93 @@ export default ({
     }
   }, [camera, engineAPI]);
 
+  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | Cesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
-    if (viewer.selectedEntity === entity) return;
+    const entity =
+      findEntity(viewer, undefined, selectedLayerId?.featureId) ||
+      findEntity(viewer, selectedLayerId?.layerId);
+    if (!entity || entity instanceof Entity) {
+      viewer.selectedEntity = entity;
+    }
+    const [prevTag, curTag] = [getTag(prevSelectedEntity.current), getTag(entity)];
+    if (
+      prevSelectedEntity.current === entity ||
+      (prevTag?.layerId === curTag?.layerId && prevTag?.featureId === curTag?.featureId)
+    )
+      return;
+    prevSelectedEntity.current = entity;
+
+    if (!entity && selectedLayerId?.featureId) {
+      // Find ImageryLayerFeature
+      const ImageryLayerDataTypes: DataType[] = ["mvt"];
+      const layers = layersRef?.current?.findAll(
+        layer =>
+          layer.type === "simple" &&
+          !!layer.data?.type &&
+          ImageryLayerDataTypes.includes(layer.data?.type),
+      );
+
+      if (layers?.length) {
+        // TODO: Get ImageryLayerFeature from `viewer.imageryLayers`.(But currently didn't find the way)
+        const [feature, layerId] =
+          ((): [ComputedFeature, string] | void => {
+            for (const layer of layers) {
+              const f = layer.computed?.features.find(
+                feature => feature.id !== selectedLayerId?.featureId,
+              );
+              if (f) {
+                return [f, layer.id];
+              }
+            }
+          })() || [];
+        onLayerSelect?.(layerId, feature?.id);
+      }
+    }
 
     const tag = getTag(entity);
     if (tag?.unselectable) return;
 
-    viewer.selectedEntity = entity;
-  }, [cesium, selectedLayerId]);
+    if (entity && entity instanceof Cesium3DTileFeature) {
+      const tag = getTag(entity);
+      if (tag) {
+        onLayerSelect?.(tag.layerId, String(tag.featureId), {
+          defaultInfobox: {
+            title: entity.getProperty("name"),
+            content: {
+              type: "table",
+              value: tileProperties(entity),
+            },
+          },
+        });
+      }
+      return;
+    }
+
+    if (entity) {
+      // Sometimes only featureId is specified, so we need to sync entity tag.
+      onLayerSelect?.(
+        tag?.layerId,
+        tag?.featureId,
+        entity instanceof Entity
+          ? {
+              defaultInfobox: {
+                title: entity.name,
+                content: {
+                  type: "html",
+                  value: entity.description?.getValue(
+                    cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
+                  ),
+                },
+              },
+            }
+          : undefined,
+      );
+    }
+  }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
 
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
@@ -228,7 +314,17 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
-        onLayerSelect?.(tag?.layerId, tag?.featureId);
+        onLayerSelect?.(tag?.layerId, tag?.featureId, {
+          defaultInfobox: {
+            title: target.id.name,
+            content: {
+              type: "html",
+              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
+            },
+          },
+        });
+        prevSelectedEntity.current = target.id;
+        viewer.selectedEntity = target.id;
         return;
       }
 
@@ -236,11 +332,15 @@ export default ({
         const tag = getTag(target);
         if (tag) {
           onLayerSelect?.(tag.layerId, String(tag.featureId), {
-            overriddenInfobox: {
+            defaultInfobox: {
               title: target.getProperty("name"),
-              content: tileProperties(target),
+              content: {
+                type: "table",
+                value: tileProperties(target),
+              },
             },
           });
+          prevSelectedEntity.current = target;
         }
         return;
       }

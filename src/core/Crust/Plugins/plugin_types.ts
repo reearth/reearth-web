@@ -1,10 +1,12 @@
 import type {
   ComputedLayer,
+  ComputedFeature,
   LatLngHeight,
   Rect,
   CameraPosition,
   Tag,
   NaiveLayer,
+  LayerSimple,
 } from "@reearth/core/mantle";
 import type {
   CameraOptions,
@@ -14,7 +16,7 @@ import type {
   LookAtDestination,
   LayerSelectionReason,
   LazyLayer,
-  OverriddenInfobox,
+  DefaultInfobox,
   OverriddenLayer,
   Undefinable,
   WrappedRef,
@@ -60,30 +62,32 @@ export type Reearth = {
       WrappedRef<LayersRef>,
       | "layers"
       | "isLayer"
-      | "overrideProperties"
-      | "override"
       | "add"
       | "select"
       | "addAll"
-      | "replace"
       | "deleteLayer"
       | "selectedLayer"
+      | "selectedFeature"
       | "overriddenLayers"
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
       readonly overriddenProperties?: OverriddenLayer[];
-      readonly overrideProperty?: WrappedRef<LayersRef>["overrideProperties"];
+      readonly overrideProperty?: (properties: LayerSimple["properties"] | undefined) => void;
       readonly add?: (layer: NaiveLayer) => string | undefined;
+      readonly delete?: WrappedRef<LayersRef>["deleteLayer"];
       readonly select?: (
         layerId: string | undefined,
         reason?: LayerSelectionReason | undefined,
       ) => void;
       selectionReason?: LayerSelectionReason;
-      overriddenInfobox?: LayerSelectionReason["overriddenInfobox"];
+      // For compat
+      overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
+      defaultInfobox?: LayerSelectionReason["defaultInfobox"];
       tags?: Tag[];
       layers?: LazyLayer[];
       isLayer?: boolean;
       selected?: ComputedLayer;
+      selectedFeature?: ComputedFeature;
     }
   >;
   readonly layer?: LazyLayer;
@@ -117,6 +121,7 @@ export type Scene = {
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
+  readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
 };
 
 export type Camera = {
@@ -173,7 +178,7 @@ export type ReearthEventType = {
   close: [];
   cameramove: [camera: CameraPosition];
   layeredit: [e: LayerEditEvent];
-  select: [layerId: string | undefined];
+  select: [layerId: string | undefined, featureId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];
   doubleclick: [props: MouseEvent];
@@ -220,7 +225,7 @@ export type Plugins = {
 
 export type SelectLayerOptions = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */

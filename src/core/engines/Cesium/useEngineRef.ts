@@ -26,6 +26,7 @@ import {
   getCenterCamera,
   zoom,
   lookAtWithoutAnimation,
+  sampleTerrainHeight,
 } from "./common";
 import { findEntity } from "./utils";
 
@@ -69,6 +70,11 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
+      sampleTerrainHeight: async (lng, lat) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return await sampleTerrainHeight(viewer.scene, lng, lat);
+      },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {
           const viewer = cesium.current?.cesiumElement;
@@ -87,11 +93,11 @@ export default function useEngineRef(
 
           const layerOrFeatureId = target;
           const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
-          if (entityFromFeatureId) {
+          if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
             viewer.flyTo(entityFromFeatureId, options);
           } else {
             const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
-            if (entityFromLayerId) {
+            if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
               viewer.flyTo(entityFromLayerId, options);
             }
           }

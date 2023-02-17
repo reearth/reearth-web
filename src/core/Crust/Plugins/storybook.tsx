@@ -92,6 +92,7 @@ export const context: Context = {
       overrideProperty: act("overrideSceneProperty"),
       captureScreen: act("captureScreen"),
       getLocationFromScreen: act("getLocationFromScreen"),
+      sampleTerrainHeight: act("sampleTerrainHeight"),
     },
     layers: {
       hide: act("layers.hide"),
@@ -102,6 +103,9 @@ export const context: Context = {
       findByIds: act("layers.findByIds"),
       walk: act("layers.walk"),
       find: act("layers.find"),
+      override: act("layers.override"),
+      replace: act("layers.replace"),
+      delete: act("layers.delete"),
       findAll: act("layers.findAll"),
       findByTags: act("layers.findByTags"),
       findByTagLabels: act("layers.findByTagLabels"),

@@ -17,7 +17,7 @@ export type {
   LayerSelectionReason,
   Cluster,
   EvalFeature,
-  OverriddenInfobox,
+  DefaultInfobox,
   OverriddenLayer,
 } from "./Layers";
 
@@ -63,6 +63,7 @@ function Map(
       selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
       layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
+      layersRef={layersRef}
       {...props}>
       <Layers
         ref={layersRef}
@@ -77,6 +78,7 @@ function Map(
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}
+        meta={props.meta}
         onLayerSelect={handleLayerSelect}
       />
     </Engine>

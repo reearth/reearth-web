@@ -12,7 +12,6 @@ import {
   Matrix3,
   Cesium3DTileset,
   Cesium3DTile,
-  Cesium3DTileContent,
   Cesium3DTileFeature,
 } from "cesium";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,8 +19,8 @@ import { CesiumComponentRef, useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
-import { translationWithClamping } from "../../utils";
-import { attachTag, extractSimpleLayerData, toColor } from "../utils";
+import { lookupFeatures, translationWithClamping } from "../../utils";
+import { attachTag, extractSimpleLayer, extractSimpleLayerData, toColor } from "../utils";
 
 import { Property } from ".";
 
@@ -110,23 +109,6 @@ const useFeature = ({
   );
 
   useEffect(() => {
-    function lookupFeatures(
-      c: Cesium3DTileContent,
-      cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void,
-    ) {
-      if (!c) return [];
-      const length = c.featuresLength;
-      for (let i = 0; i < length; i++) {
-        const f = c.getFeature(i);
-        if (!f) {
-          continue;
-        }
-        cb(f, c);
-      }
-      c.innerContents?.flatMap(c => lookupFeatures(c, cb));
-      return;
-    }
-
     const currentTiles: Map<Cesium3DTile, string> = new Map();
 
     tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) => {
@@ -138,9 +120,7 @@ const useFeature = ({
       const tempComputedFeatures: ComputedFeature[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const nextFeatureId = String(tileFeature.featureId);
-        currentTiles.set(t, nextFeatureId);
-        const id = String(nextFeatureId + tileFeature.featureId);
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         const feature = (() => {
           const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
             coordinates.x,
@@ -172,8 +152,7 @@ const useFeature = ({
       const featureIds: string[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const id =
-          `${tileFeature.featureId}` ?? `${coordinates.x}-${coordinates.y}-${coordinates.z}`;
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         featureIds.push(id);
       });
       onFeatureDelete?.(featureIds);
@@ -192,8 +171,9 @@ const useFeature = ({
   }, [layer]);
 
   // Update 3dtiles styles
-  const tileAppearanceShow = layer?.["3dtiles"]?.show;
-  const tileAppearanceColor = layer?.["3dtiles"]?.color;
+  const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
+  const tileAppearanceShow = tileAppearance?.show;
+  const tileAppearanceColor = tileAppearance?.color;
   useEffect(() => {
     cachedFeaturesRef.current.map(f => {
       const properties = f.feature.properties;
@@ -213,6 +193,7 @@ export const useHooks = ({
   sceneProperty,
   layer,
   feature,
+  meta,
   evalFeature,
   onComputedFeatureFetch,
   onFeatureDelete,
@@ -223,6 +204,7 @@ export const useHooks = ({
   sceneProperty?: SceneProperty;
   layer?: ComputedLayer;
   feature?: ComputedFeature;
+  meta?: Record<string, unknown>;
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (feature: string[]) => void;
@@ -239,6 +221,8 @@ export const useHooks = ({
     roll,
     pitch,
     planes: _planes,
+    visible: clippingVisible = true,
+    direction = "inside",
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
@@ -260,6 +244,7 @@ export const useHooks = ({
     }
     return prevPlanes.current;
   }, [_planes]);
+  const clipDirection = direction === "inside" ? -1 : 1;
   // Create immutable object
   const [clippingPlanes] = useState(
     () =>
@@ -268,9 +253,10 @@ export const useHooks = ({
           plane =>
             new ClippingPlane(
               new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
-              (plane.distance || 0) * -1,
+              (plane.distance || 0) * clipDirection,
             ),
         ),
+        unionClippingRegions: direction === "outside",
         edgeWidth: edgeWidth,
         edgeColor: toColor(edgeColor),
       }),
@@ -366,10 +352,10 @@ export const useHooks = ({
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
+    prepareClippingPlanes();
     if (!allowEnterGround) {
       updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
     }
-    prepareClippingPlanes();
   }, [
     width,
     length,
@@ -386,6 +372,26 @@ export const useHooks = ({
   ]);
 
   useEffect(() => {
+    clippingPlanes.enabled = clippingVisible;
+  }, [clippingPlanes, clippingVisible]);
+
+  useEffect(() => {
+    clippingPlanes.unionClippingRegions = direction === "outside";
+  }, [clippingPlanes, direction]);
+
+  useEffect(() => {
+    clippingPlanes.removeAll();
+    planes?.forEach(plane =>
+      clippingPlanes.add(
+        new ClippingPlane(
+          new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
+          (plane.distance || 0) * clipDirection,
+        ),
+      ),
+    );
+  }, [planes, clippingPlanes, clipDirection]);
+
+  useEffect(() => {
     if (!styleUrl) {
       setStyle(undefined);
       return;
@@ -399,11 +405,13 @@ export const useHooks = ({
 
   const tilesetUrl = useMemo(() => {
     return type === "osm-buildings" && isVisible
-      ? IonResource.fromAssetId(96188) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
+      ? IonResource.fromAssetId(96188, {
+          accessToken: meta?.cesiumIonAccessToken as string | undefined,
+        }) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
       : type === "3dtiles" && isVisible
       ? url ?? tileset
       : null;
-  }, [isVisible, tileset, url, type]);
+  }, [isVisible, tileset, url, type, meta]);
 
   return {
     tilesetUrl,
