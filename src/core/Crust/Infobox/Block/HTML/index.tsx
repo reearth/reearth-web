@@ -31,39 +31,6 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
     setEditingText(html ?? "");
   }, [isEditable, html]);
 
-  // iframe
-  const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
-  const [height, setHeight] = useState(15);
-  const initializeIframe = useCallback(() => {
-    const frameDocument = frameRef?.contentDocument;
-    const frameWindow = frameRef?.contentWindow;
-    if (!frameWindow || !frameDocument) {
-      return;
-    }
-
-    frameWindow.addEventListener("load", () => {
-      // Initialize styles
-      frameWindow.document.body.style.color = theme.main.text;
-      frameWindow.document.body.style.margin = "0";
-
-      if (isEditable) {
-        frameWindow.document.body.style.cursor = "pointer";
-        frameWindow.document.addEventListener("dblclick", startEditing);
-      }
-
-      const resize = () => {
-        const rect = frameWindow.document.body.getBoundingClientRect();
-        setHeight(rect.top + rect.bottom);
-      };
-
-      // Resize
-      const resizeObserver = new ResizeObserver(() => {
-        resize();
-      });
-      resizeObserver.observe(frameWindow.document.body);
-    });
-  }, [frameRef, theme.main.text, startEditing, isEditable]);
-
   const finishEditing = useCallback(() => {
     if (!isEditing) return;
     if (onChange && isDirty.current) {
@@ -101,13 +68,47 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
+    (e?: React.MouseEvent<HTMLDivElement>) => {
+      e?.stopPropagation();
       if (isEditing) return;
       onClick?.();
     },
     [isEditing, onClick],
   );
+
+  // iframe
+  const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
+  const [height, setHeight] = useState(15);
+  const initializeIframe = useCallback(() => {
+    const frameDocument = frameRef?.contentDocument;
+    const frameWindow = frameRef?.contentWindow;
+    if (!frameWindow || !frameDocument) {
+      return;
+    }
+
+    frameWindow.addEventListener("load", () => {
+      // Initialize styles
+      frameWindow.document.body.style.color = theme.main.text;
+      frameWindow.document.body.style.margin = "0";
+
+      if (isEditable) {
+        frameWindow.document.body.style.cursor = "pointer";
+        frameWindow.document.addEventListener("dblclick", startEditing);
+        frameWindow.document.addEventListener("click", () => handleClick());
+      }
+
+      const resize = () => {
+        const rect = frameWindow.document.body.getBoundingClientRect();
+        setHeight(rect.top + rect.bottom);
+      };
+
+      // Resize
+      const resizeObserver = new ResizeObserver(() => {
+        resize();
+      });
+      resizeObserver.observe(frameWindow.document.body);
+    });
+  }, [frameRef, theme.main.text, startEditing, isEditable, handleClick]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
@@ -143,6 +144,8 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
             <IFrame
               key={html}
               ref={setFrameRef}
+              frameBorder="0"
+              scrolling="no"
               srcDoc={html}
               $height={height}
               allowFullScreen

@@ -317,7 +317,10 @@ export default ({
         onLayerSelect?.(tag?.layerId, tag?.featureId, {
           defaultInfobox: {
             title: target.id.name,
-            content: { type: "html", value: target.id.description?.getValue(new JulianDate()) },
+            content: {
+              type: "html",
+              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
+            },
           },
         });
         prevSelectedEntity.current = target.id;
