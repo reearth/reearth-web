@@ -1,4 +1,12 @@
-import { Color, Entity, Cesium3DTileFeature, Cartesian3, Ion, Cesium3DTileset } from "cesium";
+import {
+  Color,
+  Entity,
+  Cesium3DTileFeature,
+  Cartesian3,
+  Ion,
+  Cesium3DTileset,
+  JulianDate,
+} from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -158,8 +166,21 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const entity = findEntity(viewer, selectedLayerId?.layerId, selectedLayerId?.featureId);
-    if (!entity) {
+    const entity =
+      findEntity(viewer, undefined, selectedLayerId?.featureId) ||
+      findEntity(viewer, selectedLayerId?.layerId);
+    if (!entity || entity instanceof Entity) {
+      viewer.selectedEntity = entity;
+    }
+    const [prevTag, curTag] = [getTag(prevSelectedEntity.current), getTag(entity)];
+    if (
+      prevSelectedEntity.current === entity ||
+      (prevTag?.layerId === curTag?.layerId && prevTag?.featureId === curTag?.featureId)
+    )
+      return;
+    prevSelectedEntity.current = entity;
+
+    if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
       const ImageryLayerDataTypes: DataType[] = ["mvt"];
       const layers = layersRef?.current?.findAll(
@@ -186,9 +207,6 @@ export default ({
       }
     }
 
-    if (prevSelectedEntity.current === entity) return;
-    prevSelectedEntity.current = entity;
-
     const tag = getTag(entity);
     if (tag?.unselectable) return;
 
@@ -196,9 +214,12 @@ export default ({
       const tag = getTag(entity);
       if (tag) {
         onLayerSelect?.(tag.layerId, String(tag.featureId), {
-          overriddenInfobox: {
+          defaultInfobox: {
             title: entity.getProperty("name"),
-            content: tileProperties(entity),
+            content: {
+              type: "table",
+              value: tileProperties(entity),
+            },
           },
         });
       }
@@ -207,11 +228,23 @@ export default ({
 
     if (entity) {
       // Sometimes only featureId is specified, so we need to sync entity tag.
-      onLayerSelect?.(tag?.layerId, tag?.featureId);
-    }
-
-    if (!entity || entity instanceof Entity) {
-      viewer.selectedEntity = entity;
+      onLayerSelect?.(
+        tag?.layerId,
+        tag?.featureId,
+        entity instanceof Entity
+          ? {
+              defaultInfobox: {
+                title: entity.name,
+                content: {
+                  type: "html",
+                  value: entity.description?.getValue(
+                    cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
+                  ),
+                },
+              },
+            }
+          : undefined,
+      );
     }
   }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
 
@@ -281,7 +314,17 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
-        onLayerSelect?.(tag?.layerId, tag?.featureId);
+        onLayerSelect?.(tag?.layerId, tag?.featureId, {
+          defaultInfobox: {
+            title: target.id.name,
+            content: {
+              type: "html",
+              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
+            },
+          },
+        });
+        prevSelectedEntity.current = target.id;
+        viewer.selectedEntity = target.id;
         return;
       }
 
@@ -289,11 +332,15 @@ export default ({
         const tag = getTag(target);
         if (tag) {
           onLayerSelect?.(tag.layerId, String(tag.featureId), {
-            overriddenInfobox: {
+            defaultInfobox: {
               title: target.getProperty("name"),
-              content: tileProperties(target),
+              content: {
+                type: "table",
+                value: tileProperties(target),
+              },
             },
           });
+          prevSelectedEntity.current = target;
         }
         return;
       }

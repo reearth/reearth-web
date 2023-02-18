@@ -16,7 +16,7 @@ import type {
   LookAtDestination,
   LayerSelectionReason,
   LazyLayer,
-  OverriddenInfobox,
+  DefaultInfobox,
   OverriddenLayer,
   Undefinable,
   WrappedRef,
@@ -80,7 +80,9 @@ export type Reearth = {
         reason?: LayerSelectionReason | undefined,
       ) => void;
       selectionReason?: LayerSelectionReason;
-      overriddenInfobox?: LayerSelectionReason["overriddenInfobox"];
+      // For compat
+      overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
+      defaultInfobox?: LayerSelectionReason["defaultInfobox"];
       tags?: Tag[];
       layers?: LazyLayer[];
       isLayer?: boolean;
@@ -119,6 +121,7 @@ export type Scene = {
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
+  readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
 };
 
 export type Camera = {
@@ -175,7 +178,7 @@ export type ReearthEventType = {
   close: [];
   cameramove: [camera: CameraPosition];
   layeredit: [e: LayerEditEvent];
-  select: [layerId: string | undefined];
+  select: [layerId: string | undefined, featureId: string | undefined];
   message: [message: any];
   click: [props: MouseEvent];
   doubleclick: [props: MouseEvent];
@@ -222,7 +225,7 @@ export type Plugins = {
 
 export type SelectLayerOptions = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 /** The API for iframes, which is required not only for displaying the UI but also for calling the browser API. */

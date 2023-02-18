@@ -65,21 +65,26 @@ export type Ref = {
   overriddenLayers: () => OverriddenLayer[];
 };
 
-export type OverriddenInfobox = {
+export type DefaultInfobox = {
   title?: string;
-  content: { key: string; value: string }[];
+  content:
+    | {
+        type: "table";
+        value: { key: string; value: string }[];
+      }
+    | { type: "html"; value: string };
 };
 
 export type OverriddenLayer = Omit<Layer, "type" | "children">;
 
 export type LayerSelectionReason = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 export type FeatureSelectionReason = {
   reason?: string;
-  overriddenInfobox?: OverriddenInfobox;
+  defaultInfobox?: DefaultInfobox;
 };
 
 export default function useHooks({
@@ -680,6 +685,7 @@ function useSelection({
           },
           options,
         ]);
+      else if (options) setSelectedLayer(s => [s[0], options]);
       else setSelectedLayer(s => (!s[0] && !s[1] ? s : [undefined, undefined]));
     },
     [],

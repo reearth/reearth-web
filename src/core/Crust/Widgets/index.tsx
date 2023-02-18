@@ -91,6 +91,7 @@ export default function Widgets({
         theme={theme}
         isEditable={isEditable}
         isBuilt={isBuilt}
+        isMobile={isMobile}
         context={context}
         renderWidget={widget2 =>
           renderWidget?.({
@@ -103,10 +104,11 @@ export default function Widgets({
             onVisibilityChange,
           })
         }
+        onVisibilityChange={onVisibilityChange}
         onExtend={onExtend}
       />
     ),
-    [context, isBuilt, isEditable, renderWidget, theme, moveWidget, onVisibilityChange],
+    [context, isBuilt, isEditable, isMobile, renderWidget, theme, moveWidget, onVisibilityChange],
   );
 
   return (
@@ -115,6 +117,7 @@ export default function Widgets({
       selectedWidgetArea={selectedWidgetArea}
       invisibleWidgetIDs={invisibleWidgetIDs}
       editing={editing}
+      built={isBuilt}
       isMobile={isMobile}
       layoutConstraint={layoutConstraint}
       theme={theme}
