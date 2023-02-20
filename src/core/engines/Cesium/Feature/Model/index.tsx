@@ -83,8 +83,8 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
-    () => toDistanceDisplayCondition(property?.distanceDisplayCondition),
-    [property?.distanceDisplayCondition],
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
   );
 
   return !isVisible || (!model && !url) || !position ? null : (

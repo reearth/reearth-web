@@ -54,8 +54,8 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
   const material = useMemo(() => toColor(fillColor), [fillColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
-    () => toDistanceDisplayCondition(property?.distanceDisplayCondition),
-    [property?.distanceDisplayCondition],
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
   );
 
   return !isVisible || !pos ? null : (

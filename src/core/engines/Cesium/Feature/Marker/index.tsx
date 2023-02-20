@@ -126,8 +126,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
-    () => toDistanceDisplayCondition(property?.distanceDisplayCondition),
-    [property?.distanceDisplayCondition],
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
   );
 
   return !pos || !isVisible ? null : (

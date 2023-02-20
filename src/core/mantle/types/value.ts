@@ -30,11 +30,6 @@ export type Typography = {
   underline?: boolean;
 };
 
-export type DistanceDisplayCondition = {
-  near: number; // meter
-  far: number; // meter
-};
-
 export type Coordinates = LatLngHeight[];
 
 export type Polygon = LatLngHeight[][];

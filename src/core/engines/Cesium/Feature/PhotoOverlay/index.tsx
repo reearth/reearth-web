@@ -87,8 +87,8 @@ export default function PhotoOverlay({
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
-    () => toDistanceDisplayCondition(property?.distanceDisplayCondition),
-    [property?.distanceDisplayCondition],
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
   );
 
   return !isVisible || !pos ? null : (

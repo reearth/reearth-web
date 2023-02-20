@@ -21,13 +21,7 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
-import {
-  Data,
-  DistanceDisplayCondition,
-  Layer,
-  LayerSimple,
-  TimeInterval,
-} from "@reearth/core/mantle";
+import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
@@ -188,10 +182,8 @@ export const toTimeInterval = (
 };
 
 export const toDistanceDisplayCondition = (
-  cond: DistanceDisplayCondition | undefined,
+  near: number | undefined,
+  far: number | undefined,
 ): CesiumDistanceDisplayCondition | undefined => {
-  if (!cond) {
-    return;
-  }
-  return new CesiumDistanceDisplayCondition(cond.near || 0.0, cond.far || Number.MAX_VALUE);
+  return new CesiumDistanceDisplayCondition(near || 0.0, far || Number.MAX_VALUE);
 };
