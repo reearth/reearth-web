@@ -84,7 +84,7 @@ export default function useHooks(
   // Clear expression cache if layer is unmounted
   useEffect(
     () => () => {
-      requestIdleCallback(() => {
+      window.requestIdleCallback(() => {
         // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
         computedLayer?.originalFeatures.forEach(f => {
           clearAllExpressionCaches(
