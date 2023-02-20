@@ -10,6 +10,8 @@ import md5 from "js-md5";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
+import { clearAllExpressionCaches } from "@reearth/core/mantle/evaluator/simple";
+
 import type { ComputedFeature, ComputedLayer, Feature } from "../../..";
 import { extractSimpleLayer, extractSimpleLayerData } from "../utils";
 
@@ -248,6 +250,19 @@ export const useMVT = ({
       onFeatureDelete?.(Array.from(ids.values()));
     };
   }, [onFeatureDelete]);
+
+  // Clear expression cache if layer is unmounted
+  useEffect(
+    () => () => {
+      // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
+      window.requestIdleCallback(() => {
+        cachedFeaturesRef.current.forEach(f => {
+          clearAllExpressionCaches(extractSimpleLayer(layer) || undefined, f);
+        });
+      });
+    },
+    [layer],
+  );
 
   useImageryProvider(imageryProvider);
 };
