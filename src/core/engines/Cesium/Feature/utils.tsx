@@ -185,5 +185,7 @@ export const toDistanceDisplayCondition = (
   near: number | undefined,
   far: number | undefined,
 ): CesiumDistanceDisplayCondition | undefined => {
-  return new CesiumDistanceDisplayCondition(near || 0.0, far || Number.MAX_VALUE);
+  return typeof near === "number" || typeof far === "number"
+    ? new CesiumDistanceDisplayCondition(near ?? 0.0, far ?? Number.MAX_VALUE)
+    : undefined;
 };
