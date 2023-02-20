@@ -17,8 +17,6 @@ import {
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
-import { clearAllExpressionCaches } from "@reearth/core/mantle/evaluator/simple";
-
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { lookupFeatures, translationWithClamping } from "../../utils";
@@ -186,19 +184,6 @@ const useFeature = ({
       }
     });
   }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
-
-  // Clear expression cache if layer is unmounted
-  useEffect(
-    () => () => {
-      // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
-      window.requestIdleCallback(() => {
-        cachedFeaturesRef.current.forEach(f => {
-          clearAllExpressionCaches(extractSimpleLayer(layer) || undefined, f.feature);
-        });
-      });
-    },
-    [layer],
-  );
 };
 
 export const useHooks = ({
