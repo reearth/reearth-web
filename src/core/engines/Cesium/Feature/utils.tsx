@@ -9,6 +9,7 @@ import {
   PropertyBag,
   TimeInterval as CesiumTimeInterval,
   TimeIntervalCollection as CesiumTimeIntervalCollection,
+  DistanceDisplayCondition as CesiumDistanceDisplayCondition,
 } from "cesium";
 import {
   ComponentProps,
@@ -20,7 +21,13 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
-import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/core/mantle";
+import {
+  Data,
+  DistanceDisplayCondition,
+  Layer,
+  LayerSimple,
+  TimeInterval,
+} from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
@@ -178,4 +185,13 @@ export const toTimeInterval = (
       stop: interval[1] ? JulianDate.fromDate(interval[1]) : Iso8601.MAXIMUM_VALUE,
     }),
   ]);
+};
+
+export const toDistanceDisplayCondition = (
+  cond: DistanceDisplayCondition | undefined,
+): CesiumDistanceDisplayCondition | undefined => {
+  if (!cond) {
+    return;
+  }
+  return new CesiumDistanceDisplayCondition(cond.near || 0.0, cond.far || Number.MAX_VALUE);
 };

@@ -1,7 +1,13 @@
 import { objKeys } from "../utils";
 
 import type { ExpressionContainer } from "./expression";
-import type { Camera, EXPERIMENTAL_clipping, LatLng, Typography } from "./value";
+import type {
+  Camera,
+  DistanceDisplayCondition,
+  EXPERIMENTAL_clipping,
+  LatLng,
+  Typography,
+} from "./value";
 
 export type LayerAppearance<T> = {
   [K in keyof T]?: T[K] | ExpressionContainer;
@@ -59,6 +65,7 @@ export type MarkerAppearance = {
   labelBackgroundPaddingHorizontal?: number;
   labelBackgroundPaddingVertical?: number;
   extrude?: boolean;
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export type PolylineAppearance = {
@@ -66,6 +73,7 @@ export type PolylineAppearance = {
   strokeColor?: string;
   strokeWidth?: number;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export type PolygonAppearance = {
@@ -77,6 +85,7 @@ export type PolygonAppearance = {
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   lineJoin?: CanvasLineJoin;
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export type EllipsoidAppearance = {
@@ -84,6 +93,7 @@ export type EllipsoidAppearance = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   radius?: number;
   fillColor?: string;
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export type ModelAppearance = {
@@ -106,6 +116,7 @@ export type ModelAppearance = {
   silhouetteColor?: string;
   bearing?: number;
   silhouetteSize?: number; // default: 1
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export type Cesium3DTilesAppearance = {
@@ -136,6 +147,7 @@ export type LegacyPhotooverlayAppearance = {
   imageShadowPositionY?: number;
   photoOverlayImage?: string;
   photoOverlayDescription?: string;
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export type ResourceAppearance = {
@@ -177,6 +189,7 @@ export type BoxAppearance = {
   activeBox?: boolean;
   activeScalePointIndex?: number; // 0 ~ 11
   activeEdgeIndex?: number; // 0 ~ 11
+  distanceDisplayCondition?: DistanceDisplayCondition;
 };
 
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
