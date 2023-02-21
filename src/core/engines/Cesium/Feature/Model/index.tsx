@@ -8,6 +8,7 @@ import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import {
   EntityExt,
+  toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -82,6 +83,10 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   const modelLightColor = useMemo(() => toColor(lightColor), [lightColor]);
   const modelSilhouetteColor = useMemo(() => toColor(silhouetteColor), [silhouetteColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
   return !isVisible || !show || (!model && !url) || !position ? null : (
     <EntityExt
@@ -106,6 +111,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
         heightReference={heightReference(hr)}
         maximumScale={maximumScale}
         minimumPixelSize={minimumPixelSize}
+        distanceDisplayCondition={distanceDisplayCondition}
       />
     </EntityExt>
   );

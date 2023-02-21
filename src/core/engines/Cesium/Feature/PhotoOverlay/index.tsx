@@ -11,6 +11,7 @@ import type { LegacyPhotooverlayAppearance } from "../../..";
 import { heightReference, ho, useIcon, vo } from "../../common";
 import {
   EntityExt,
+  toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -86,6 +87,10 @@ export default function PhotoOverlay({
   });
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
   return !isVisible || !show || !pos ? null : (
     <>
@@ -101,6 +106,7 @@ export default function PhotoOverlay({
           horizontalOrigin={ho(imageHorizontalOrigin)}
           verticalOrigin={vo(imageVerticalOrigin)}
           heightReference={heightReference(hr)}
+          distanceDisplayCondition={distanceDisplayCondition}
         />
       </EntityExt>
       {photoOverlayImageTransiton === "unmounted" ? null : (

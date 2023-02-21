@@ -9,6 +9,7 @@ import type { EllipsoidAppearance } from "../../..";
 import { heightReference, shadowMode } from "../../common";
 import {
   EntityExt,
+  toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -53,6 +54,10 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
 
   const material = useMemo(() => toColor(fillColor), [fillColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
   return !isVisible || !pos || !show ? null : (
     <EntityExt
@@ -68,6 +73,7 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
         material={material}
         heightReference={heightReference(hr)}
         shadows={shadowMode(shadows)}
+        distanceDisplayCondition={distanceDisplayCondition}
       />
     </EntityExt>
   );
