@@ -2,6 +2,7 @@ import React, { memo } from "react";
 
 import type { FeatureComponentConfig, FeatureProps } from "@reearth/core/engines/Cesium/Feature";
 import type { BoxAppearance, LatLngHeight } from "@reearth/core/mantle";
+import { LayerEditEvent } from "@reearth/core/Map";
 
 import { BOX_EDGES, SCALE_POINTS, SIDE_PLANES, SIDE_PLANE_NAMES } from "./constants";
 import { Edge } from "./Edge";
@@ -9,7 +10,7 @@ import { useHooks } from "./hooks/box";
 import { ScalePoints } from "./ScalePoints";
 import { Side } from "./Side";
 
-export type Props = FeatureProps<Property>;
+export type Props = FeatureProps<Property> & { onLayerEdit?: (e: LayerEditEvent) => void };
 
 export type Property = BoxAppearance & {
   // compat
@@ -23,6 +24,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   sceneProperty,
   layer,
   feature,
+  onLayerEdit,
 }) {
   const {
     height = 100,
@@ -41,13 +43,14 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     trs,
     scalePointStyle,
     availability,
+    distanceDisplayCondition,
     handlePointMouseDown,
     handlePointMouseMove,
     handlePointMouseUp,
     handleEdgeMouseDown,
     handleEdgeMouseMove,
     handleEdgeMouseUp,
-  } = useHooks({ property, geometry, sceneProperty, feature });
+  } = useHooks({ property, geometry, sceneProperty, feature, onLayerEdit });
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
 
@@ -68,6 +71,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
           activeOutlineColor={style.activeOutlineColor}
           trs={trs}
           availability={availability}
+          distanceDisplayCondition={distanceDisplayCondition}
         />
       ))}
       {BOX_EDGES.map((edge, i) => {
@@ -89,6 +93,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onMouseMove={edge.isDraggable ? handleEdgeMouseMove : undefined}
             onMouseUp={edge.isDraggable ? handleEdgeMouseUp : undefined}
             availability={availability}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         );
       })}
@@ -119,6 +124,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onPointMouseMove={handlePointMouseMove}
             onPointMouseUp={handlePointMouseUp}
             availability={availability}
+            distanceDisplayCondition={distanceDisplayCondition}
           />
         ))}
     </>

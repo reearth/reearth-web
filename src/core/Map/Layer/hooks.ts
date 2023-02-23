@@ -1,4 +1,5 @@
 import { useAtom } from "jotai";
+import { isEqual, pick } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
 import {
@@ -8,6 +9,7 @@ import {
   type Atom,
   evalFeature,
   ComputedFeature,
+  type Data,
 } from "../../mantle";
 import type { DataRange, Feature, Layer } from "../../mantle";
 
@@ -81,6 +83,20 @@ export default function useHooks(
     };
   }, [layer, forceUpdateFeatures]);
 
+  const prevForceUpdatableData = useRef<Pick<Data, "csv" | "jsonProperties">>();
+  useLayoutEffect(() => {
+    const data = layer?.type === "simple" ? layer.data : undefined;
+    const forceUpdatableData = pick(data, "csv", "jsonProperties");
+
+    if (isEqual(forceUpdatableData, prevForceUpdatableData.current) || !data?.url) {
+      return;
+    }
+
+    forceUpdateFeatures();
+
+    prevForceUpdatableData.current = forceUpdatableData;
+  }, [layer, forceUpdateFeatures]);
+
   // Clear expression cache if layer is unmounted
   useEffect(
     () => () => {
@@ -94,7 +110,7 @@ export default function useHooks(
         });
       });
     },
-    [computedLayer],
+    [], // eslint-disable-line react-hooks/exhaustive-deps -- clear cache only when layer is unmounted
   );
 
   return {
