@@ -1,5 +1,5 @@
 import { atom, useAtomValue } from "jotai";
-import { merge, omit, isEqual } from "lodash-es";
+import { omit, isEqual } from "lodash-es";
 import {
   ForwardedRef,
   useCallback,
@@ -21,6 +21,7 @@ import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { useGet } from "../utils";
 
 import { computedLayerKeys, layerKeys } from "./keys";
+import { deepAssign } from "./utils";
 
 export type { Layer, NaiveLayer } from "../../mantle";
 
@@ -133,8 +134,7 @@ export default function useHooks({
 
       // prevents unnecessary copying of data value
       const dataValue = ol.data?.value ?? (l.type === "simple" ? l.data?.value : undefined);
-      const res = merge(
-        {},
+      const res = deepAssign(
         {
           ...l,
           ...(l.type === "simple" && l.data ? { data: omit(l.data, "value") } : {}),
@@ -296,6 +296,24 @@ export default function useHooks({
       const originalLayer = layerMap.get(id);
       if (!originalLayer) return;
 
+      const overriddenLayer: any = overriddenLayers.find(l => l.id === id);
+      // prevents unnecessary copying of data value
+      const dataValue = (layer as any)?.data?.value ?? overriddenLayer?.data?.value;
+      const res = deepAssign(
+        {
+          ...(overriddenLayer || {}),
+          ...(overriddenLayer?.data ? { data: omit(overriddenLayer.data, "value") } : {}),
+        },
+        {
+          ...(layer || {}),
+          ...((layer as any)?.data ? { data: omit((layer as any).data, "value") } : {}),
+        },
+      );
+
+      if (dataValue && res.data) {
+        res.data.value = dataValue;
+      }
+
       const property = layer?.property;
       const rawLayer = compat({
         ...originalLayer,
@@ -312,7 +330,7 @@ export default function useHooks({
             }
           : {}),
         ...(!originalLayer.compat && property ? { property } : {}),
-        ...layer,
+        ...res,
       });
       if (!rawLayer) return;
 
@@ -327,14 +345,14 @@ export default function useHooks({
         rawLayer.data.value.id = id;
       }
 
-      const layer2 = { id, ...omit(rawLayer, "id", "type", "children", "compat") };
+      const layer2 = { id, ...omit(rawLayer, "id", "type", "children") } as Layer;
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);
         if (i < 0) return [...layers, layer2];
         return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
       });
     },
-    [layerMap],
+    [layerMap, overriddenLayers],
   );
 
   const deleteLayer = useCallback(
@@ -356,8 +374,8 @@ export default function useHooks({
             lazyLayerMap.delete(id);
             showLayer(id);
           });
-        tempLayersRef.current = tempLayersRef.current.filter(l =>
-          deleted.find(ll => ll.id === l.id),
+        tempLayersRef.current = tempLayersRef.current.filter(
+          l => !deleted.find(ll => ll.id === l.id),
         );
         return newLayers;
       });
