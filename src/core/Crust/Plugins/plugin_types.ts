@@ -7,6 +7,7 @@ import type {
   Tag,
   NaiveLayer,
   LayerSimple,
+  Feature,
 } from "@reearth/core/mantle";
 import type {
   CameraOptions,
@@ -89,6 +90,7 @@ export type Reearth = {
       isLayer?: boolean;
       selected?: ComputedLayer;
       selectedFeature?: ComputedFeature;
+      selectedOriginalFeature?: Feature;
     }
   >;
   readonly layer?: LazyLayer;
