@@ -474,7 +474,7 @@ export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" 
   )[colorBlendMode || ""]);
 
 export const colorBlendModeFor3DTile = (
-  colorBlendMode?: "highlight" | "replace" | "mix" | "none",
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default",
 ) =>
   ((
     {
