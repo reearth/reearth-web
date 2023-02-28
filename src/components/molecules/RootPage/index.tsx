@@ -19,7 +19,7 @@ const RootPage: React.FC<Props> = ({ loading }) => {
       gap={100}
       bg={window.REEARTH_CONFIG?.brand?.background}>
       {window.REEARTH_CONFIG?.brand?.logoUrl ? (
-        <img src={window.REEARTH_CONFIG?.brand?.logoUrl} style={{ width: 200 }} />
+        <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ width: 200 }} />
       ) : (
         <Icon icon="logo" size={200} />
       )}
