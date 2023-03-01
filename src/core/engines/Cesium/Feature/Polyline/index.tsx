@@ -33,7 +33,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [geometry?.coordinates, geometry?.type, property?.coordinates],
   );
 
-  const { clampToGround, strokeColor, strokeWidth = 1, shadows } = property ?? {};
+  const { clampToGround = true, strokeColor, strokeWidth = 1, shadows } = property ?? {};
 
   const positions = useCustomCompareMemo(
     () => coordinates?.map(c => Cartesian3.fromDegrees(c[0], c[1], c[2])),

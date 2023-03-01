@@ -36,11 +36,11 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
 
   const {
     fill = true,
-    stroke,
+    stroke = true,
     fillColor,
     strokeColor,
     strokeWidth = 1,
-    heightReference: hr,
+    heightReference: hr = "clamp",
     shadows,
     extrudedHeight,
   } = property ?? {};
