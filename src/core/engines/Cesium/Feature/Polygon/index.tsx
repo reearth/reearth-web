@@ -36,7 +36,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
 
   const {
     fill = true,
-    stroke = true,
+    stroke,
     fillColor,
     strokeColor,
     strokeWidth = 1,
