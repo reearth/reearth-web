@@ -572,3 +572,130 @@ test.describe("15. Assets Management", () => {
     await page.waitForTimeout(5000);
   });
 });
+
+test("16.Project list setting", async ({ page, reearth }) => {
+  await reearth.initUser();
+
+  for (let i = 0; i < 10; i++) {
+    await reearth.gql(
+      `mutation ($teamId: ID!, $name: String!) {
+        createProject(input: {
+          teamId: $teamId,
+          visualizer: CESIUM
+          name: $name
+        }) {
+          project {
+            id
+            name
+            
+          }
+        }
+      }`,
+      {
+        name: `Project${i}`,
+        teamId: reearth.workspaceId,
+      },
+    );
+  }
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
+  await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
+
+  for (let i = 0; i < 10; i++) {
+    await expect(page.getByText("Project9")).toBeVisible();
+  }
+  await page.locator('header:has-text("rreearth") svg').click();
+  await page.waitForTimeout(1000);
+
+  //Click Account Setting
+  await page.getByRole("link", { name: "Account Settings" }).click();
+  await page.waitForTimeout(1000);
+
+  await page.getByRole("link", { name: "Project List" }).click();
+  await page.waitForTimeout(1000);
+
+  // Click Project list
+  await page.locator('input[name="name"]').click();
+  await page.locator('input[name="name"]').fill("Test");
+  await page.locator('textarea[name="description"]').click();
+  await page.locator('textarea[name="description"]').fill("Test project");
+  await page.getByRole("button", { name: "Create" }).click();
+
+  // logout
+  await page.locator(".css-gfu9bm").click();
+  await page.hover("div[class='css-gfu9bm'] p[class='css-1ohhn6c']", {
+    strict: true,
+  });
+  await page.click("//p[text()='Log out']");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(5000);
+});
+
+test("17. Project setting", async ({ page, reearth }) => {
+  await reearth.initUser();
+
+  for (let i = 0; i < 10; i++) {
+    await reearth.gql(
+      `mutation ($teamId: ID!, $name: String!) {
+        createProject(input: {
+          teamId: $teamId,
+          visualizer: CESIUM
+          name: $name
+        }) {
+          project {
+            id
+            name
+            
+          }
+        }
+      }`,
+      {
+        name: `Project${i}`,
+        teamId: reearth.workspaceId,
+      },
+    );
+  }
+  await reearth.goto(`/dashboard/${reearth.workspaceId}`);
+  await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
+
+  for (let i = 0; i < 10; i++) {
+    await expect(page.getByText("Project9")).toBeVisible();
+  }
+
+  await page.locator('header:has-text("rreearth") svg').click();
+  await page.waitForTimeout(1000);
+
+  //Click Account Setting
+  await page.getByRole("link", { name: "Account Settings" }).click();
+  await page.waitForTimeout(1000);
+  await page.getByRole("link", { name: "Project List" }).click();
+  await page.waitForTimeout(1000);
+
+  const element = page.locator("(//div[@class='css-7txhud'])[1]");
+  await element.click();
+  await page.waitForTimeout(1000);
+  await page.getByText("Project9").click();
+  await page.waitForTimeout(1000);
+
+  // Changing Project name
+  await page.locator(".css-10aio17").first().click();
+  await page.locator('input[type="text"]').click();
+  await page.locator('input[type="text"]').fill("project test");
+  await page.locator(".css-1sg2lsz > svg:nth-child(2)").click();
+
+  // // Changing project description
+  await page
+    .locator("div:nth-child(2) > .css-1memepd > .css-1diyz6t > .css-1sg2lsz > .css-10aio17")
+    .click();
+  await page.locator("textarea").click();
+  await page.locator("textarea").fill("Project description");
+  await page.locator(".css-1sg2lsz > svg:nth-child(2)").click();
+
+  //logout
+  await page.locator(".css-gfu9bm").click();
+  await page.hover("div[class='css-gfu9bm'] p[class='css-1ohhn6c']", {
+    strict: true,
+  });
+  await page.click("//p[text()='Log out']");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(5000);
+});
