@@ -42,6 +42,17 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
+    initialClock: {
+      get current() {
+        return engine()?.convertTime(sceneProperty?.timeline?.current);
+      },
+      get start() {
+        return engine()?.convertTime(sceneProperty?.timeline?.start);
+      },
+      get stop() {
+        return engine()?.convertTime(sceneProperty?.timeline?.stop);
+      },
+    },
     initialCamera: sceneProperty?.default?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,

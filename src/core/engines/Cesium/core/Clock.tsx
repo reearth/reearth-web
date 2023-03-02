@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { Clock, useCesium } from "resium";
 
 import type { SceneProperty } from "../..";
+import { convertTime } from "../common";
 
 export type Props = {
   property?: SceneProperty;
@@ -12,12 +13,9 @@ export type Props = {
 export default function ReearthClock({ property, onTick }: Props): JSX.Element | null {
   const { animation, visible, start, stop, current, stepType, rangeType, multiplier, step } =
     property?.timeline ?? {};
-  const startTime = useMemo(() => (start ? JulianDate.fromIso8601(start) : undefined), [start]);
-  const stopTime = useMemo(() => (stop ? JulianDate.fromIso8601(stop) : undefined), [stop]);
-  const currentTime = useMemo(
-    () => (current ? JulianDate.fromIso8601(current) : undefined),
-    [current],
-  );
+  const startTime = useMemo(() => (start ? convertTime(start) : undefined), [start]);
+  const stopTime = useMemo(() => (stop ? convertTime(stop) : undefined), [stop]);
+  const currentTime = useMemo(() => (current ? convertTime(current) : undefined), [current]);
   const clockStep =
     stepType === "fixed" ? ClockStep.TICK_DEPENDENT : ClockStep.SYSTEM_CLOCK_MULTIPLIER;
   const clockMultiplier = stepType === "fixed" ? step ?? 1 : multiplier ?? 1;
