@@ -610,10 +610,13 @@ test("16.Project list setting", async ({ page, reearth }) => {
   await page.getByRole("link", { name: "Account Settings" }).click();
   await page.waitForTimeout(1000);
 
-  await page.getByRole("link", { name: "Project List" }).click();
+  // Click Project list
+  const projectsLink = page.getByRole("link", { name: "Project List" });
+  console.log(projectsLink);
+  await projectsLink.click();
   await page.waitForTimeout(1000);
 
-  // Click Project list
+  // Create a new project
   await page.locator('input[name="name"]').click();
   await page.locator('input[name="name"]').fill("Test");
   await page.locator('textarea[name="description"]').click();
@@ -667,12 +670,14 @@ test("17. Project setting", async ({ page, reearth }) => {
   //Click Account Setting
   await page.getByRole("link", { name: "Account Settings" }).click();
   await page.waitForTimeout(1000);
-  await page.getByRole("link", { name: "Project List" }).click();
+
+  //Click Project List
+  const projectsLink = await page.getByRole("link", { name: "Project List" });
+  console.log(projectsLink);
+  await projectsLink.click();
   await page.waitForTimeout(1000);
 
-  const element = page.locator("(//div[@class='css-7txhud'])[1]");
-  await element.click();
-  await page.waitForTimeout(1000);
+  //Click Project name
   await page.getByText("Project9").click();
   await page.waitForTimeout(1000);
 
