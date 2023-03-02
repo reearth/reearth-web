@@ -7,13 +7,14 @@ import {
 } from "cesium";
 import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import md5 from "js-md5";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../../..";
 import { extractSimpleLayer, extractSimpleLayerData } from "../utils";
 
 import { Props } from "./types";
+import { getWMTSImageryProvider } from "./wmts";
 
 const useImageryProvider = (imageryProvider: ImageryProvider | undefined) => {
   const { viewer } = useCesium();
@@ -60,6 +61,25 @@ export const useWMS = ({
       credit,
     });
   }, [isVisible, type, url, minimumLevel, maximumLevel, credit, layers]);
+
+  useImageryProvider(imageryProvider);
+};
+
+export const useWMTS = async ({ isVisible, layer }: Pick<Props, "isVisible" | "layer">) => {
+  const { type, url, layers } = useData(layer);
+  const [imageryProvider, setImageryProvider] = useState<ImageryProvider>();
+
+  console.log("Reached HERE");
+
+  useEffect(() => {
+    const getImageryProvider = async () => {
+      const provider = await getWMTSImageryProvider(url, layers);
+      setImageryProvider(provider);
+    };
+    if (isVisible && type === "wmts") {
+      getImageryProvider();
+    }
+  }, [isVisible, type, url, layers]);
 
   useImageryProvider(imageryProvider);
 };

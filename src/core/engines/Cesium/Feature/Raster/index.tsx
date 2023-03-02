@@ -3,7 +3,7 @@ import { memo } from "react";
 
 import { extractSimpleLayer, extractSimpleLayerData, type FeatureComponentConfig } from "../utils";
 
-import { useMVT, useWMS } from "./hooks";
+import { useMVT, useWMS, useWMTS } from "./hooks";
 import type { Props } from "./types";
 
 function Raster({
@@ -14,6 +14,7 @@ function Raster({
   evalFeature,
   onFeatureDelete,
 }: Props) {
+  useWMTS({ isVisible, layer });
   useWMS({ isVisible, layer, property });
   useMVT({ isVisible, layer, property, evalFeature, onComputedFeatureFetch, onFeatureDelete });
 

@@ -42,6 +42,37 @@ WMS.args = {
   },
 };
 
+export const WMTS = Template.bind([]);
+WMTS.args = {
+  engine: "cesium",
+  engines: {
+    cesium: engine,
+  },
+  ready: true,
+  layers: [
+    {
+      id: "l",
+      type: "simple",
+      data: {
+        type: "wmts",
+        url: "https://soggy2.zoology.ubc.ca/geoserver/gwc/service/wmts?",
+        layers: "dem_ssea_27m",
+      },
+      raster: {
+        maximumLevel: 100,
+      },
+    },
+  ],
+  property: {
+    tiles: [
+      {
+        id: "default",
+        tile_type: "default",
+      },
+    ],
+  },
+};
+
 export const MVT = Template.bind([]);
 MVT.args = {
   engine: "cesium",
