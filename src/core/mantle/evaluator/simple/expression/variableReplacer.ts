@@ -99,15 +99,17 @@ function containsValidJSONPath(expression: string, feature: Feature): boolean {
 
 const makeReservedWord = (str: string) => `$reearth_${str}_$`;
 const RESERVED_WORDS: Record<string, string> = {
-  "[": makeReservedWord("osb"),
-  "]": makeReservedWord("csb"),
-  "{": makeReservedWord("ocb"),
-  "}": makeReservedWord("ccb"),
+  "[": makeReservedWord("opened_square_bracket"),
+  "]": makeReservedWord("closed_square_bracket"),
+  "{": makeReservedWord("opened_curly_bracket"),
+  "}": makeReservedWord("closed_curly_bracket"),
+  "(": makeReservedWord("opened_parentheses"),
+  ")": makeReservedWord("closed_parentheses"),
 };
 
 const replaceReservedWord = (word: string) => {
   return word.replaceAll(
-    /(.*)(\[|\{)(.*)(\]|\})(?!\.|\[)(.+)/g,
+    /(.*)(\[|\{|\()(.*)(\]|\}|\))(?!\.|\[)(.+)/g,
     (_match, prefix, openedBracket, inner, closedBracket, suffix) => {
       return `${prefix}${RESERVED_WORDS[openedBracket]}${inner}${RESERVED_WORDS[closedBracket]}${suffix}`;
     },
