@@ -58,7 +58,6 @@ export type EngineRef = {
   rotateRight: (radians: number) => void;
   changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
   getClock: () => Clock | undefined;
-  convertTime: (time: string | undefined) => Date | undefined;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   enableScreenSpaceCameraController: (enabled: boolean) => void;
   lookHorizontal: (amount: number) => void;

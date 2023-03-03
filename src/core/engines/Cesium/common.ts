@@ -464,28 +464,6 @@ export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {
   };
 };
 
-export const convertTime = (time: string | undefined): JulianDate | undefined => {
-  if (!time) return;
-
-  const julian = (() => {
-    try {
-      return JulianDate.fromIso8601(time);
-    } catch {
-      return undefined;
-    }
-  })();
-
-  if (julian) {
-    return julian;
-  }
-
-  try {
-    return JulianDate.fromDate(new Date(time));
-  } catch {
-    return undefined;
-  }
-};
-
 export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" | "none") =>
   ((
     {

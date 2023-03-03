@@ -27,7 +27,6 @@ import {
   zoom,
   lookAtWithoutAnimation,
   sampleTerrainHeight,
-  convertTime,
 } from "./common";
 import { getTag } from "./Feature";
 import { findEntity } from "./utils";
@@ -250,11 +249,6 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed() || !viewer.clock) return;
         const clock: Cesium.Clock = viewer.clock;
         return getClock(clock);
-      },
-      convertTime: (time: string | undefined) => {
-        const t = convertTime(time);
-        if (!t) return;
-        return JulianDate.toDate(t);
       },
       captureScreen: (type?: string, encoderOptions?: number) => {
         const viewer = cesium.current?.cesiumElement;

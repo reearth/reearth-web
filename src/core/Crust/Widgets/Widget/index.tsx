@@ -35,7 +35,7 @@ export type Props = {
 
 export type Context = {
   clock?: Clock;
-  initialClock?: Partial<Clock>;
+  overriddenClock?: Partial<Clock>;
   camera?: Camera;
   initialCamera?: Camera;
   selectedLayerId?: {

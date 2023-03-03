@@ -1,5 +1,7 @@
 import { RefObject, useMemo } from "react";
 
+import { convertTime } from "@reearth/util/time";
+
 import { Camera, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
@@ -42,15 +44,15 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
-    initialClock: {
+    overriddenClock: {
       get current() {
-        return engine()?.convertTime(sceneProperty?.timeline?.current);
+        return convertTime(sceneProperty?.timeline?.current);
       },
       get start() {
-        return engine()?.convertTime(sceneProperty?.timeline?.start);
+        return convertTime(sceneProperty?.timeline?.start);
       },
       get stop() {
-        return engine()?.convertTime(sceneProperty?.timeline?.stop);
+        return convertTime(sceneProperty?.timeline?.stop);
       },
     },
     initialCamera: sceneProperty?.default?.camera,

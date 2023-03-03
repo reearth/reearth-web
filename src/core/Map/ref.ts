@@ -18,7 +18,6 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   flyToGround: 1,
   getCamera: 1,
   getClock: 1,
-  convertTime: 1,
   getLocationFromScreen: 1,
   sampleTerrainHeight: 1,
   getViewport: 1,

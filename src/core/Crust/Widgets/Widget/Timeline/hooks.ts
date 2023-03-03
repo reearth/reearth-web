@@ -25,7 +25,7 @@ const DEFAULT_SPEED = 1;
 export const useTimeline = ({
   widget,
   clock,
-  initialClock,
+  overriddenClock,
   isMobile,
   onPlay,
   onPause,
@@ -38,7 +38,7 @@ export const useTimeline = ({
 }: {
   widget: Widget;
   clock?: Clock;
-  initialClock?: Partial<Clock>;
+  overriddenClock?: Partial<Clock>;
   isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
@@ -149,8 +149,8 @@ export const useTimeline = ({
   // Sync cesium clock.
   useEffect(() => {
     setRange(prev => {
-      const start = initialClock?.start?.getTime() ?? clock?.start?.getTime();
-      const stop = initialClock?.stop?.getTime() ?? clock?.stop?.getTime();
+      const start = overriddenClock?.start?.getTime() ?? clock?.start?.getTime();
+      const stop = overriddenClock?.stop?.getTime() ?? clock?.stop?.getTime();
       const next = makeRange(start, stop);
       if (prev.start !== next.start || prev.end !== next.end) {
         return next;
@@ -164,8 +164,8 @@ export const useTimeline = ({
     clockSpeed,
     clock?.start,
     clock?.stop,
-    initialClock?.start,
-    initialClock?.stop,
+    overriddenClock?.start,
+    overriddenClock?.stop,
   ]);
 
   useEffect(() => {
@@ -180,11 +180,11 @@ export const useTimeline = ({
   }, [onTick, clock?.playing, removeTickEventListener]);
 
   useEffect(() => {
-    const current = initialClock?.current;
+    const current = overriddenClock?.current;
     if (current) {
       setCurrentTime(current.getTime());
     }
-  }, [initialClock]);
+  }, [overriddenClock]);
 
   useEffect(() => {
     if (isMobile) {
