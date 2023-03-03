@@ -67,9 +67,13 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
         features.push(feature);
         computedFeatures.push(computedFeature);
       });
-      onComputedFeatureFetch?.(features, computedFeatures);
+
+      // GeoJSON is not delegated data, so we need to skip.
+      if (type !== "geojson") {
+        onComputedFeatureFetch?.(features, computedFeatures);
+      }
     },
-    [layer, viewer, onComputedFeatureFetch],
+    [layer, viewer, onComputedFeatureFetch, type],
   );
 
   if (!isVisible || !Component || !url) return null;
