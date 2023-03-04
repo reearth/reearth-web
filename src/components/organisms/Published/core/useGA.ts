@@ -7,9 +7,7 @@ export const useGA = (sceneProperty: SceneProperty) => {
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
 
   useEffect(() => {
-    if (!enableGA || !trackingId) {
-      return;
-    }
+    if (!enableGA || !trackingId) return;
 
     const loadGaModule = async () => {
       const ga = isGa4TrackingId(trackingId) ? await import("./ga4") : await import("./ga");
