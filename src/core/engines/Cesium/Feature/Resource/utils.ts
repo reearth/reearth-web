@@ -129,6 +129,9 @@ export const attachStyle = (
       return;
     }
     attachProperties(entity, computedFeature, ["marker", "point"], {
+      show: {
+        name: "show",
+      },
       pixelSize: {
         name: "pointSize",
       },
@@ -178,6 +181,9 @@ export const attachStyle = (
       return;
     }
     attachProperties(entity, computedFeature, ["polyline", "polyline"], {
+      show: {
+        name: "show",
+      },
       width: {
         name: "strokeWidth",
       },
@@ -221,6 +227,9 @@ export const attachStyle = (
       return;
     }
     attachProperties(entity, computedFeature, ["polygon", "polygon"], {
+      show: {
+        name: "show",
+      },
       fill: {
         name: "fill",
       },
