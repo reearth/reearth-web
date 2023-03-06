@@ -9,7 +9,7 @@ import type {
   ComputedFeature,
 } from "../../mantle";
 
-import useHooks, { type Atoms, type EvalFeature } from "./hooks";
+import useHooks, { type Atom, type EvalFeature } from "./hooks";
 
 export type { EvalFeature } from "./hooks";
 
@@ -37,11 +37,11 @@ export type FeatureComponentProps = {
 
 export type Props = {
   layer?: Layer;
-  atom?: Atoms;
+  atom?: Atom;
   overrides?: Record<string, any>;
   delegatedDataTypes?: DataType[];
   sceneProperty?: any;
-  selectedFeature?: ComputedFeature;
+  selectedFeatureId?: string;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;
@@ -52,7 +52,6 @@ export default function LayerComponent({
   atom,
   overrides,
   delegatedDataTypes,
-  selectedFeature,
   ...props
 }: Props): JSX.Element | null {
   const {
@@ -68,7 +67,7 @@ export default function LayerComponent({
     overrides,
     delegatedDataTypes,
     selected: props.isSelected,
-    selectedFeature,
+    selectedFeatureId: props.selectedFeatureId,
   });
 
   return layer && computedLayer && Feature ? (

@@ -25,6 +25,7 @@ export default function useHooks({
   selectedBlockId: initialSelectedBlockId,
   camera: initialCamera,
   sceneProperty,
+  selectedLayerId,
   isEditable,
   rootLayerId,
   zoomedLayerId,
@@ -37,6 +38,7 @@ export default function useHooks({
 }: {
   selectedBlockId?: string;
   camera?: Camera;
+  selectedLayerId?: { layerId?: string; featureId?: string };
   isEditable?: boolean;
   rootLayerId?: string;
   sceneProperty?: SceneProperty;
@@ -112,6 +114,9 @@ export default function useHooks({
     },
     [],
   );
+  useEffect(() => {
+    handleLayerSelect(selectedLayerId?.layerId, selectedLayerId?.featureId, undefined, undefined);
+  }, [handleLayerSelect, selectedLayerId]);
 
   // blocks
   const blocks = useMemo(

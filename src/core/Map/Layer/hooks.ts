@@ -23,14 +23,14 @@ export default function useHooks({
   overrides,
   delegatedDataTypes,
   selected,
-  selectedFeature,
+  selectedFeatureId,
 }: {
   layer: Layer | undefined;
   atom: Atom | undefined;
   overrides?: Record<string, any>;
   delegatedDataTypes?: DataType[];
   selected?: boolean;
-  selectedFeature?: ComputedFeature;
+  selectedFeatureId?: string;
 }) {
   const [computedLayer, set] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
   const writeFeatures = useCallback(
@@ -120,7 +120,7 @@ export default function useHooks({
     [], // eslint-disable-line react-hooks/exhaustive-deps -- clear cache only when layer is unmounted
   );
 
-  useSelectEvent({ layer, selected, computedLayer, selectedFeature });
+  useSelectEvent({ layer, selected, computedLayer, selectedFeatureId });
 
   return {
     computedLayer,
@@ -136,21 +136,21 @@ function useSelectEvent({
   layer,
   selected,
   computedLayer,
-  selectedFeature,
+  selectedFeatureId,
 }: {
   layer: Layer | undefined;
   selected: boolean | undefined;
   computedLayer?: ComputedLayer;
-  selectedFeature?: ComputedFeature;
+  selectedFeatureId?: string;
 }) {
-  const selectEvent = layer?.type === "simple" && layer.events?.select;
+  const selectEvent = layer?.type === "simple" ? layer.events?.select : undefined;
   useEffect(() => {
     if (!selected || !selectEvent) return;
     if (selectEvent.openUrl) {
       const url = selectEvent.openUrl.urlKey
-        ? (selectedFeature ? selectedFeature.properties : computedLayer?.properties)?.[
-            selectEvent.openUrl.urlKey
-          ]
+        ? (selectedFeatureId
+            ? computedLayer?.features.find(f => f.id === selectedFeatureId)?.properties
+            : computedLayer?.properties)?.[selectEvent.openUrl.urlKey]
         : selectEvent.openUrl.url;
       if (typeof url === "string" && url) {
         window.open(url, "_blank", "noreferrer");

@@ -18,7 +18,7 @@ export type Props = {
   sceneProperty?: any;
   clusterComponent?: ClusterComponentType;
   Feature?: LayerProps["Feature"];
-} & Omit<CommonProps, "isSelected" | "isHidden">;
+} & Omit<CommonProps, "isSelected" | "isHidden" | "selectedFeatureId">;
 
 export type Cluster = {
   id: string;
@@ -54,7 +54,6 @@ export default function ClusteredLayers({
   selectedLayerId,
   overrides,
   delegatedDataTypes,
-  selectedFeature,
   isHidden,
   ...props
 }: Props): JSX.Element | null {
@@ -75,7 +74,7 @@ export default function ClusteredLayers({
           atom={a}
           overrides={overrides?.[layer.id]}
           isSelected={selectedLayerId?.layerId == layer.id}
-          selectedFeature={selectedLayerId?.layerId == layer.id ? selectedFeature : undefined}
+          selectedFeatureId={selectedLayerId?.featureId}
           isHidden={isHidden?.(layer.id)}
           delegatedDataTypes={delegatedDataTypes}
         />
@@ -86,7 +85,7 @@ export default function ClusteredLayers({
       props,
       overrides,
       selectedLayerId?.layerId,
-      selectedFeature,
+      selectedLayerId?.featureId,
       isHidden,
       delegatedDataTypes,
     ],

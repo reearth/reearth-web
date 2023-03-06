@@ -3,6 +3,7 @@ export type Events = {
 };
 
 export type SelectEvent = {
+  // disabled?: boolean;
   openUrl?: OpenUrlEvent;
   // photoOverlay?: PhotoOverlayEvent;
 };

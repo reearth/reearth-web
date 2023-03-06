@@ -1,4 +1,4 @@
-import { CSSProperties, type ReactNode } from "react";
+import { CSSProperties, useMemo, type ReactNode } from "react";
 
 // TODO(@keiya01): Change directory structure
 import DropHolder from "@reearth/components/atoms/DropHolder";
@@ -172,6 +172,7 @@ export default function Visualizer({
     onLayerEdit,
   } = useHooks({
     rootLayerId,
+    selectedLayerId,
     isEditable,
     camera: initialCamera,
     selectedBlockId,
@@ -184,6 +185,11 @@ export default function Visualizer({
     onZoomToLayer,
     onLayerDrop,
   });
+
+  const selectedLayerIdForInternal = useMemo(
+    () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
+    [selectedLayer.featureId, selectedLayer.layerId],
+  );
 
   return (
     <Filled ref={wrapperRef}>
@@ -209,7 +215,7 @@ export default function Visualizer({
         infoboxTitle={infobox?.title}
         infoboxVisible={!!infobox?.visible}
         selectedBlockId={selectedBlock}
-        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+        selectedLayerId={selectedLayerIdForInternal}
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}
@@ -245,7 +251,7 @@ export default function Visualizer({
         shouldRender={shouldRender}
         // overrides={overrides} // not used for now
         property={overriddenSceneProperty}
-        selectedLayerId={selectedLayerId}
+        selectedLayerId={selectedLayerIdForInternal}
         layerSelectionReason={layerSelectionReason}
         small={small}
         ready={ready}
