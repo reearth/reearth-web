@@ -172,7 +172,6 @@ export default function Visualizer({
     onLayerEdit,
   } = useHooks({
     rootLayerId,
-    selectedLayerId,
     isEditable,
     camera: initialCamera,
     selectedBlockId,
@@ -186,7 +185,7 @@ export default function Visualizer({
     onLayerDrop,
   });
 
-  const selectedLayerIdForInternal = useMemo(
+  const selectedLayerIdForCrust = useMemo(
     () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
     [selectedLayer.featureId, selectedLayer.layerId],
   );
@@ -215,7 +214,7 @@ export default function Visualizer({
         infoboxTitle={infobox?.title}
         infoboxVisible={!!infobox?.visible}
         selectedBlockId={selectedBlock}
-        selectedLayerId={selectedLayerIdForInternal}
+        selectedLayerId={selectedLayerIdForCrust}
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}
@@ -251,7 +250,7 @@ export default function Visualizer({
         shouldRender={shouldRender}
         // overrides={overrides} // not used for now
         property={overriddenSceneProperty}
-        selectedLayerId={selectedLayerIdForInternal}
+        selectedLayerId={selectedLayerId}
         layerSelectionReason={layerSelectionReason}
         small={small}
         ready={ready}
