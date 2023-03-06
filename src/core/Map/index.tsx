@@ -80,6 +80,7 @@ function Map(
         delegatedDataTypes={currentEngine.delegatedDataTypes}
         selectedFeature={props.selectedFeature}
         meta={props.meta}
+        sceneProperty={props.property}
         onLayerSelect={handleLayerSelect}
       />
     </Engine>

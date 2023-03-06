@@ -295,6 +295,42 @@ describe("Conditional styling", () => {
     });
   });
 
+  test("Conditions with Color in RGBA", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointSize: 26,
+            pointColor: {
+              expression: {
+                conditions: [
+                  ["${bgColor} === rgba(255, 0, 0, 1)", "rgba(255, 255, 0, 1)"],
+                  ["true", "rgba(255, 255, 255, 1)"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+        },
+        {
+          type: "feature",
+          id: "blah",
+          properties: {
+            bgColor: "#FF0000",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FFFF00",
+        pointSize: 26,
+      },
+    });
+  });
+
   test("Expression with defines field in the layer", () => {
     expect(
       evalLayerAppearances(
@@ -382,6 +418,38 @@ describe("Conditional styling", () => {
       marker: {
         pointColor: "#FF0000", // blue
         pointSize: 26,
+      },
+    });
+  });
+
+  test("Property has reserved word", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: "#FF0000",
+            pointSize: {
+              expression: {
+                conditions: [
+                  ["${he[llo]world} === 'value'", "100"],
+                  ["true", "1"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          properties: {
+            "he[llo]world": "value",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000", // blue
+        pointSize: 100,
       },
     });
   });

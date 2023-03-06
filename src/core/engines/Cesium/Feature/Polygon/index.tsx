@@ -11,6 +11,7 @@ import type { PolygonAppearance } from "../../..";
 import { heightReference, shadowMode } from "../../common";
 import {
   EntityExt,
+  toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -41,6 +42,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     strokeWidth = 1,
     heightReference: hr,
     shadows,
+    extrudedHeight,
   } = property ?? {};
 
   const hierarchy = useCustomCompareMemo(
@@ -63,8 +65,12 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
   );
   const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
-  return !isVisible ? null : (
+  return !isVisible || !coordiantes ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolygonGraphics
         hierarchy={hierarchy}
@@ -75,6 +81,8 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
         outlineWidth={strokeWidth}
         heightReference={heightReference(hr)}
         shadows={shadowMode(shadows)}
+        extrudedHeight={extrudedHeight}
+        distanceDisplayCondition={distanceDisplayCondition}
       />
     </EntityExt>
   );

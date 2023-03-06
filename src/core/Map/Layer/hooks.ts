@@ -1,10 +1,17 @@
 import { useAtom } from "jotai";
+import { isEqual, pick } from "lodash-es";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
-import { computeAtom, DataType, evalFeature } from "../../mantle";
-import type { Atom, DataRange, Layer, ComputedFeature, Feature } from "../types";
+import {
+  clearAllExpressionCaches,
+  computeAtom,
+  DataType,
+  evalFeature,
+  type Data,
+} from "../../mantle";
+import type { Atom, DataRange, Layer, ComputedLayer, ComputedFeature, Feature } from "../types";
 
-export type { Atom as Atoms } from "../types";
+export type { Atom as Atom } from "../types";
 
 export const createAtom = computeAtom;
 
@@ -83,7 +90,59 @@ export default function useHooks({
     };
   }, [layer, forceUpdateFeatures]);
 
-  // select event
+  const prevForceUpdatableData = useRef<Pick<Data, "csv" | "jsonProperties">>();
+  useLayoutEffect(() => {
+    const data = layer?.type === "simple" ? layer.data : undefined;
+    const forceUpdatableData = pick(data, "csv", "jsonProperties");
+
+    if (isEqual(forceUpdatableData, prevForceUpdatableData.current) || !data?.url) {
+      return;
+    }
+
+    forceUpdateFeatures();
+
+    prevForceUpdatableData.current = forceUpdatableData;
+  }, [layer, forceUpdateFeatures]);
+
+  // Clear expression cache if layer is unmounted
+  useEffect(
+    () => () => {
+      window.requestIdleCallback(() => {
+        // This is a little heavy task, and not critical for main functionality, so we can run this at idle time.
+        computedLayer?.originalFeatures.forEach(f => {
+          clearAllExpressionCaches(
+            computedLayer.layer.type === "simple" ? computedLayer.layer : undefined,
+            f,
+          );
+        });
+      });
+    },
+    [], // eslint-disable-line react-hooks/exhaustive-deps -- clear cache only when layer is unmounted
+  );
+
+  useSelectEvent({ layer, selected, computedLayer, selectedFeature });
+
+  return {
+    computedLayer,
+    handleFeatureRequest: requestFetch,
+    handleFeatureFetch: writeFeatures,
+    handleComputedFeatureFetch: writeComputedFeatures,
+    handleFeatureDelete: deleteFeatures,
+    evalFeature,
+  };
+}
+
+function useSelectEvent({
+  layer,
+  selected,
+  computedLayer,
+  selectedFeature,
+}: {
+  layer: Layer | undefined;
+  selected: boolean | undefined;
+  computedLayer?: ComputedLayer;
+  selectedFeature?: ComputedFeature;
+}) {
   const selectEvent = layer?.type === "simple" && layer.events?.select;
   useEffect(() => {
     if (!selected || !selectEvent) return;
@@ -99,13 +158,4 @@ export default function useHooks({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]); // only selected
-
-  return {
-    computedLayer,
-    handleFeatureRequest: requestFetch,
-    handleFeatureFetch: writeFeatures,
-    handleComputedFeatureFetch: writeComputedFeatures,
-    handleFeatureDelete: deleteFeatures,
-    evalFeature,
-  };
 }

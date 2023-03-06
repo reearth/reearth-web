@@ -33,6 +33,7 @@ export type MarkerAppearance = {
   pointOutlineWidth?: number;
   image?: string;
   imageSize?: number;
+  imageSizeInMeters?: boolean;
   imageHorizontalOrigin?: "left" | "center" | "right";
   imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
   imageColor?: string;
@@ -59,6 +60,8 @@ export type MarkerAppearance = {
   labelBackgroundPaddingHorizontal?: number;
   labelBackgroundPaddingVertical?: number;
   extrude?: boolean;
+  near?: number;
+  far?: number;
 };
 
 export type PolylineAppearance = {
@@ -66,6 +69,8 @@ export type PolylineAppearance = {
   strokeColor?: string;
   strokeWidth?: number;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  near?: number;
+  far?: number;
 };
 
 export type PolygonAppearance = {
@@ -77,6 +82,9 @@ export type PolygonAppearance = {
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   lineJoin?: CanvasLineJoin;
+  near?: number;
+  far?: number;
+  extrudedHeight?: number;
 };
 
 export type EllipsoidAppearance = {
@@ -84,6 +92,8 @@ export type EllipsoidAppearance = {
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   radius?: number;
   fillColor?: string;
+  near?: number;
+  far?: number;
 };
 
 export type ModelAppearance = {
@@ -106,6 +116,8 @@ export type ModelAppearance = {
   silhouetteColor?: string;
   bearing?: number;
   silhouetteSize?: number; // default: 1
+  near?: number;
+  far?: number;
 };
 
 export type Cesium3DTilesAppearance = {
@@ -114,6 +126,7 @@ export type Cesium3DTilesAppearance = {
   color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default";
   edgeWidth?: number;
   edgeColor?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
@@ -136,6 +149,8 @@ export type LegacyPhotooverlayAppearance = {
   imageShadowPositionY?: number;
   photoOverlayImage?: string;
   photoOverlayDescription?: string;
+  near?: number;
+  far?: number;
 };
 
 export type ResourceAppearance = {
@@ -177,6 +192,8 @@ export type BoxAppearance = {
   activeBox?: boolean;
   activeScalePointIndex?: number; // 0 ~ 11
   activeEdgeIndex?: number; // 0 ~ 11
+  near?: number;
+  far?: number;
 };
 
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
