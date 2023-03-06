@@ -97,7 +97,7 @@ function containsValidJSONPath(expression: string, feature: Feature): boolean {
   }
 }
 
-const makeReservedWord = (str: string) => `$reearth_${str}_$`;
+const makeReservedWord = (str: string) => `#reearth_${str}_#`;
 const RESERVED_WORDS: Record<string, string> = {
   "[": makeReservedWord("opened_square_bracket"),
   "]": makeReservedWord("closed_square_bracket"),
