@@ -56,7 +56,6 @@ export function createRuntimeAst(expression: Expression, ast: any): Node | Error
     }
     node = new Node(ExpressionNodeType.ARRAY, val);
   } else if (ast.type === "Compound") {
-    console.log("AST:", ast);
     // empty expression or multiple expressions
     throw new Error("Provide exactly one expression.");
   } else {
