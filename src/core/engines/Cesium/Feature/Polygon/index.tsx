@@ -43,6 +43,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     strokeWidth = 1,
     heightReference: hr,
     shadows,
+    extrudedHeight,
   } = property ?? {};
 
   const hierarchy = useCustomCompareMemo(
@@ -70,7 +71,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
     [property?.near, property?.far],
   );
 
-  return !isVisible || !show ? null : (
+  return !isVisible || !coordiantes || !show ? null : (
     <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
       <PolygonGraphics
         hierarchy={hierarchy}
@@ -81,6 +82,7 @@ export default function Polygon({ id, isVisible, property, geometry, layer, feat
         outlineWidth={strokeWidth}
         heightReference={heightReference(hr)}
         shadows={shadowMode(shadows)}
+        extrudedHeight={extrudedHeight}
         distanceDisplayCondition={distanceDisplayCondition}
       />
     </EntityExt>

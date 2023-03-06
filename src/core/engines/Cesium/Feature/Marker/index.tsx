@@ -53,6 +53,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     labelBackgroundPaddingVertical,
     image = marker,
     imageSize,
+    imageSizeInMeters,
     imageHorizontalOrigin: horizontalOrigin,
     imageVerticalOrigin: verticalOrigin,
     imageColor,
@@ -171,6 +172,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             verticalOrigin={vo(verticalOrigin)}
             heightReference={heightReference(hr)}
             distanceDisplayCondition={distanceDisplayCondition}
+            sizeInMeters={imageSizeInMeters}
           />
         )}
         {label && (

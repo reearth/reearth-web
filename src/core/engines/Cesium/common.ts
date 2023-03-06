@@ -30,6 +30,7 @@ import {
   Matrix4,
   Color,
   SceneMode,
+  Cesium3DTileColorBlendMode,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -317,9 +318,7 @@ export const lookAtWithoutAnimation = (
   }
 
   const position =
-    typeof camera.lat === "number" &&
-    typeof camera.lng === "number" &&
-    typeof camera.height === "number"
+    typeof camera.lat === "number" && typeof camera.lng === "number"
       ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
       : undefined;
 
@@ -472,6 +471,17 @@ export const colorBlendMode = (colorBlendMode?: "highlight" | "replace" | "mix" 
       replace: ColorBlendMode.REPLACE,
       mix: ColorBlendMode.MIX,
     } as { [key in string]?: ColorBlendMode }
+  )[colorBlendMode || ""]);
+
+export const colorBlendModeFor3DTile = (
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default",
+) =>
+  ((
+    {
+      highlight: Cesium3DTileColorBlendMode.HIGHLIGHT,
+      replace: Cesium3DTileColorBlendMode.REPLACE,
+      mix: Cesium3DTileColorBlendMode.MIX,
+    } as { [key in string]?: Cesium3DTileColorBlendMode }
   )[colorBlendMode || ""]);
 
 export const heightReference = (
@@ -678,4 +688,12 @@ export const toColor = (c?: string) => {
 
   const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
   return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
+};
+
+export const updateMapController = (viewer: Viewer, enabled: boolean) => {
+  viewer.scene.screenSpaceCameraController.enableTranslate = enabled;
+  viewer.scene.screenSpaceCameraController.enableRotate = enabled;
+  viewer.scene.screenSpaceCameraController.enableLook = enabled;
+  viewer.scene.screenSpaceCameraController.enableTilt = enabled;
+  viewer.scene.screenSpaceCameraController.enableZoom = enabled;
 };

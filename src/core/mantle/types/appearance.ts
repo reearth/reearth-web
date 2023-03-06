@@ -34,6 +34,7 @@ export type MarkerAppearance = {
   pointOutlineWidth?: number;
   image?: string;
   imageSize?: number;
+  imageSizeInMeters?: boolean;
   imageHorizontalOrigin?: "left" | "center" | "right";
   imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
   imageColor?: string;
@@ -86,6 +87,7 @@ export type PolygonAppearance = {
   lineJoin?: CanvasLineJoin;
   near?: number;
   far?: number;
+  extrudedHeight?: number;
 };
 
 export type EllipsoidAppearance = {
@@ -128,6 +130,7 @@ export type Cesium3DTilesAppearance = {
   color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default";
   edgeWidth?: number;
   edgeColor?: string;
   tileset?: string;

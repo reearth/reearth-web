@@ -2,6 +2,7 @@ import React, { memo } from "react";
 
 import type { FeatureComponentConfig, FeatureProps } from "@reearth/core/engines/Cesium/Feature";
 import type { BoxAppearance, LatLngHeight } from "@reearth/core/mantle";
+import { LayerEditEvent } from "@reearth/core/Map";
 
 import { BOX_EDGES, SCALE_POINTS, SIDE_PLANES, SIDE_PLANE_NAMES } from "./constants";
 import { Edge } from "./Edge";
@@ -9,7 +10,7 @@ import { useHooks } from "./hooks/box";
 import { ScalePoints } from "./ScalePoints";
 import { Side } from "./Side";
 
-export type Props = FeatureProps<Property>;
+export type Props = FeatureProps<Property> & { onLayerEdit?: (e: LayerEditEvent) => void };
 
 export type Property = BoxAppearance & {
   // compat
@@ -20,9 +21,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   property,
   geometry,
   isVisible,
-  sceneProperty,
   layer,
   feature,
+  onLayerEdit,
 }) {
   const {
     show = true,
@@ -49,7 +50,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     handleEdgeMouseDown,
     handleEdgeMouseMove,
     handleEdgeMouseUp,
-  } = useHooks({ property, geometry, sceneProperty, feature });
+  } = useHooks({ property, geometry, feature, onLayerEdit });
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
   const [layerId, featureId] = [layer?.id, feature?.id];
