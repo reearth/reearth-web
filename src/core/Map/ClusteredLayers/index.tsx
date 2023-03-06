@@ -1,7 +1,7 @@
 import { ComponentType, useMemo, useCallback, ReactNode } from "react";
 
 import LayerComponent, { type CommonProps, type Props as LayerProps } from "../Layer";
-import type { Layer, Atom, Typography, DataType, ComputedFeature } from "../types";
+import type { Layer, Atom, Typography, DataType } from "../types";
 
 export type Props = {
   layers?: Layer[];
@@ -11,7 +11,6 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
-  selectedFeature?: ComputedFeature;
   isHidden?: (id: string) => boolean;
   clusters?: Cluster[];
   delegatedDataTypes?: DataType[];
