@@ -2,8 +2,9 @@ import {
   KmlDataSource as CesiumKmlDataSource,
   CzmlDataSource as CesiumCzmlDataSource,
   GeoJsonDataSource as CesiumGeoJsonDataSource,
+  Entity,
 } from "cesium";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
 import { ComputedFeature, DataType, evalFeature, Feature } from "@reearth/core/mantle";
@@ -35,8 +36,13 @@ const comps = {
 
 const DataTypeListAllowsOnlyProperty: DataType[] = ["geojson"];
 
+type CachedFeature = {
+  feature: Feature;
+  raw: Entity;
+};
+
 export default function Resource({ isVisible, property, layer, onComputedFeatureFetch }: Props) {
-  const { clampToGround } = property ?? {};
+  const { show = true, clampToGround } = property ?? {};
   const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
     const data = extractSimpleLayerData(layer);
     const type = property?.type;
@@ -47,6 +53,7 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
     ];
   }, [property, layer]);
   const { viewer } = useCesium();
+  const cachedFeatures = useRef<CachedFeature[]>([]);
 
   const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
@@ -58,14 +65,17 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
       const computedFeatures: ComputedFeature[] = [];
       e.entities.values.forEach(e => {
         const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
-        if (!res) {
-          return;
-        }
-        const [feature, computedFeature] = res;
-        attachTag(e, { layerId: layer?.id, featureId: feature.id });
+        const [feature, computedFeature] = res || [];
 
-        features.push(feature);
-        computedFeatures.push(computedFeature);
+        attachTag(e, { layerId: layer?.id, featureId: feature?.id });
+
+        if (feature) {
+          features.push(feature);
+          cachedFeatures.current.push({ feature, raw: e });
+        }
+        if (computedFeature) {
+          computedFeatures.push(computedFeature);
+        }
       });
 
       // GeoJSON is not delegated data, so we need to skip.
@@ -76,7 +86,13 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
     [layer, viewer, onComputedFeatureFetch, type],
   );
 
-  if (!isVisible || !Component || !url) return null;
+  useEffect(() => {
+    cachedFeatures.current.forEach(f => {
+      attachStyle(f.raw, layer, evalFeature, viewer.clock.currentTime);
+    });
+  }, [layer, viewer]);
+
+  if (!isVisible || !show || !Component || !url) return null;
 
   return (
     <Component data={url} show={true} clampToGround={clampToGround} onChange={handleOnChange} />

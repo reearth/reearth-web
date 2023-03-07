@@ -36,6 +36,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   );
 
   const {
+    show = true,
     extrude,
     pointSize = 10,
     style,
@@ -52,6 +53,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     labelBackgroundPaddingVertical,
     image = marker,
     imageSize,
+    imageSizeInMeters,
     imageHorizontalOrigin: horizontalOrigin,
     imageVerticalOrigin: verticalOrigin,
     imageColor,
@@ -130,7 +132,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     [property?.near, property?.far],
   );
 
-  return !pos || !isVisible ? null : (
+  return !pos || !isVisible || !show ? null : (
     <>
       {extrudePoints && (
         <EntityExt
@@ -170,6 +172,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             verticalOrigin={vo(verticalOrigin)}
             heightReference={heightReference(hr)}
             distanceDisplayCondition={distanceDisplayCondition}
+            sizeInMeters={imageSizeInMeters}
           />
         )}
         {label && (
