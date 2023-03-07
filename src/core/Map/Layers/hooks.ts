@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { DATA_CACHE_KEYS } from "@reearth/core/mantle/atoms/data";
 import { objectFromGetter } from "@reearth/util/object";
 
-import { computeAtom, convertLegacyLayer } from "../../mantle";
+import { computeAtom, ComputedFeature, convertLegacyLayer, Feature } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { useGet } from "../utils";
 
@@ -64,6 +64,18 @@ export type Ref = {
   select: (layerId: string | undefined, featureId?: string, reason?: LayerSelectionReason) => void;
   selectedLayer: () => LazyLayer | undefined;
   overriddenLayers: () => OverriddenLayer[];
+
+  // For feature
+  findFeature: (
+    layerId: string,
+    fn: (feature: Feature | undefined) => boolean,
+  ) => Feature | undefined;
+  findComputedFeature: (
+    layerId: string,
+    fn: (feature: ComputedFeature | undefined) => boolean,
+  ) => ComputedFeature | undefined;
+  findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  findComputedFeatureById: (layerId: string, featureId: string) => ComputedFeature | undefined;
 };
 
 export type DefaultInfobox = {
@@ -433,6 +445,37 @@ export default function useHooks({
     [walk],
   );
 
+  const findFeature = useCallback(
+    (layerId: string, fn: (feature: Feature | undefined) => boolean): Feature | undefined => {
+      return findById(layerId)?.computed?.originalFeatures.find(fn);
+    },
+    [findById],
+  );
+
+  const findComputedFeature = useCallback(
+    (
+      layerId: string,
+      fn: (feature: ComputedFeature | undefined) => boolean,
+    ): ComputedFeature | undefined => {
+      return findById(layerId)?.computed?.features.find(fn);
+    },
+    [findById],
+  );
+
+  const findFeatureById = useCallback(
+    (layerId: string, featureId: string): Feature | undefined => {
+      return findById(layerId)?.computed?.originalFeatures.find(f => f.id === featureId);
+    },
+    [findById],
+  );
+
+  const findComputedFeatureById = useCallback(
+    (layerId: string, featureId: string): ComputedFeature | undefined => {
+      return findById(layerId)?.computed?.features.find(f => f.id === featureId);
+    },
+    [findById],
+  );
+
   const findAll = useCallback(
     (fn: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean): LazyLayer[] => {
       const res: LazyLayer[] = [];
@@ -510,6 +553,12 @@ export default function useHooks({
       select,
       selectedLayer,
       overriddenLayers: overriddenLayersRef,
+
+      // For feature
+      findFeature,
+      findComputedFeature,
+      findFeatureById,
+      findComputedFeatureById,
     }),
     [
       findById,
@@ -531,6 +580,10 @@ export default function useHooks({
       select,
       selectedLayer,
       overriddenLayersRef,
+      findFeature,
+      findComputedFeature,
+      findFeatureById,
+      findComputedFeatureById,
     ],
   );
 

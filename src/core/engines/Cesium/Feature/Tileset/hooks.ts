@@ -87,7 +87,7 @@ const useFeature = ({
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (feature: string[]) => void;
 }) => {
-  const cachedFeaturesRef = useRef<CachedFeature[]>([]);
+  const cachedFeaturesRef = useRef<Map<string, CachedFeature>>(new Map());
   const cachedCalculatedLayerRef = useRef(layer);
   const layerId = layer?.id || id;
 
@@ -135,7 +135,7 @@ const useFeature = ({
             feature: normalFeature,
             raw: tileFeature,
           };
-          cachedFeaturesRef.current.push(feature);
+          cachedFeaturesRef.current.set(id, feature);
           return feature;
         })();
 
@@ -157,6 +157,7 @@ const useFeature = ({
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
         const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
+        cachedFeaturesRef.current.delete(id);
         featureIds.push(id);
       });
       onFeatureDelete?.(featureIds);
@@ -210,7 +211,7 @@ const useFeature = ({
   const computeFeatures = useCallback(
     async (startedComputingAt: number) => {
       const tempAsyncProcesses: Promise<unknown>[] = [];
-      for (const f of cachedFeaturesRef.current) {
+      for (const [_id, f] of cachedFeaturesRef.current) {
         if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
           break;
         }

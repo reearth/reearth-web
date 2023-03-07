@@ -81,6 +81,10 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   show: 1,
   walk: 1,
   overriddenLayers: 1,
+  findFeature: 1,
+  findComputedFeature: 1,
+  findFeatureById: 1,
+  findComputedFeatureById: 1,
 };
 
 export function mapRef({

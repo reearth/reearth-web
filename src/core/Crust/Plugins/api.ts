@@ -547,6 +547,18 @@ export function commonReearth({
       get add() {
         return addLayer;
       },
+      get findFeature() {
+        return layers()?.findFeature;
+      },
+      get findComputedFeature() {
+        return layers()?.findComputedFeature;
+      },
+      get findFeatureById() {
+        return layers()?.findFeatureById;
+      },
+      get findComputedFeatureById() {
+        return layers()?.findComputedFeatureById;
+      },
     },
     plugins: {
       get instances() {

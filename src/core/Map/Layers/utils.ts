@@ -1,7 +1,7 @@
 import { isArray, isObject } from "lodash-es";
 
 import { LazyLayer } from "./hooks";
-import { layerKeys, computedLayerKeys } from "./keys";
+import { layerKeys } from "./keys";
 
 export const deepAssign = <O extends Record<string, any>>(obj: O, src: O) => {
   return Object.fromEntries(
@@ -50,12 +50,13 @@ export const copyLazyLayer = (l: LazyLayer | undefined) => {
     if (key === "computed") {
       res = {
         ...res,
-        get [key]() {
-          return computedLayerKeys.reduce((computedRes, computedKey) => {
-            computedRes[computedKey] = l?.[key as keyof LazyLayer]?.[computedKey];
-            return computedRes;
-          }, {} as Record<string, any>);
-        },
+        // get [key]() {
+        //   return computedLayerKeys.reduce((computedRes, computedKey) => {
+        //     computedRes[computedKey] = l?.[key as keyof LazyLayer]?.[computedKey];
+        //     return computedRes;
+        //   }, {} as Record<string, any>);
+        // },
+        [key]: l?.[key], // For debug. We can not access to `computed` on plugin.
       };
       return res;
     }
