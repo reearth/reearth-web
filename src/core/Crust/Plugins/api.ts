@@ -1,5 +1,12 @@
 import type { Tag } from "@reearth/core/mantle/compat";
-import type { Events, Layer, LayerSelectionReason, LayersRef, NaiveLayer } from "@reearth/core/Map";
+import {
+  Events,
+  Layer,
+  LayerSelectionReason,
+  LayersRef,
+  NaiveLayer,
+  LazyLayer,
+} from "@reearth/core/Map";
 import { merge } from "@reearth/util/object";
 
 import type { Block } from "../Infobox";
@@ -496,22 +503,27 @@ export function commonReearth({
         return selectedFeature();
       },
       get findById() {
-        return layers()?.findById;
+        return (id: string) => layers()?.findById(id);
       },
       get findByIds() {
-        return layers()?.findByIds;
+        return (...args: string[]) =>
+          layers()
+            ?.findByIds(...args)
+            ?.filter((l): l is LazyLayer => !!l);
       },
       get findByTags() {
-        return layers()?.findByTags;
+        return (...args: string[]) => layers()?.findByTags(...args);
       },
       get findByTagLabels() {
-        return layers()?.findByTagLabels;
+        return (...args: string[]) => layers()?.findByTagLabels(...args);
       },
       get find() {
-        return layers()?.find;
+        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
+          layers()?.find(cb);
       },
       get findAll() {
-        return layers()?.findAll;
+        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
+          layers()?.findAll(cb);
       },
       get override() {
         return layers()?.override;

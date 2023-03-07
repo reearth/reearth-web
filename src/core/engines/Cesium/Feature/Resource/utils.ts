@@ -117,7 +117,7 @@ export const attachStyle = (
     const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
     const feature: Feature = {
       type: "feature",
-      id: entity.id,
+      id: String(entity.id),
       geometry: {
         type: "Point",
         coordinates,
@@ -221,7 +221,7 @@ export const attachStyle = (
     ]);
     const feature: Feature = {
       type: "feature",
-      id: entity.id,
+      id: String(entity.id),
       geometry: {
         type: "LineString",
         coordinates,
@@ -267,7 +267,7 @@ export const attachStyle = (
     );
     const feature: Feature = {
       type: "feature",
-      id: entity.id,
+      id: String(entity.id),
       geometry: {
         type: "Polygon",
         coordinates,
