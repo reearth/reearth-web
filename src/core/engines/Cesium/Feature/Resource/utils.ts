@@ -144,7 +144,12 @@ export const attachStyle = (
       attachProperties(entity, computedFeature, ["marker", "point"], {
         show: {
           name: "show",
-          override: simpleLayer?.marker?.style === "point" && (simpleLayer?.marker.show ?? true),
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "point" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
         },
         pixelSize: {
           name: "pointSize",
@@ -171,7 +176,12 @@ export const attachStyle = (
       attachProperties(entity, computedFeature, ["marker", "billboard"], {
         show: {
           name: "show",
-          override: simpleLayer?.marker?.style === "image" && (simpleLayer?.marker.show ?? true),
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "image" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
         },
         image: {
           name: "image",
