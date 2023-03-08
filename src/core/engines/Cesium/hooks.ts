@@ -324,10 +324,21 @@ export default ({
         onLayerSelect?.(tag?.layerId, tag?.featureId, {
           defaultInfobox: {
             title: target.id.name,
-            content: {
-              type: "html",
-              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
-            },
+            content: target.id.description
+              ? {
+                  type: "html",
+                  value: target.id.description?.getValue(
+                    viewer.clock.currentTime ?? new JulianDate(),
+                  ),
+                }
+              : {
+                  type: "table",
+                  value: target.id.properties
+                    ? entityProperties(
+                        target.id.properties.getValue(viewer.clock.currentTime ?? new JulianDate()),
+                      )
+                    : [],
+                },
           },
         });
         prevSelectedEntity.current = target.id;
@@ -486,6 +497,13 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       (a, b) => [...a, { key: b, value: t.getProperty(b) }],
       [],
     );
+}
+
+function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
+  return Object.entries(properties).reduce<{ key: string; value: [string, string] }[]>(
+    (a, [key, value]) => [...a, { key, value }],
+    [],
+  );
 }
 
 function getLayerId(target: RootEventTarget): string | undefined {
