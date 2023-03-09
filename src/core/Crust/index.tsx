@@ -25,7 +25,7 @@ export type { ValueTypes, ValueType } from "./types";
 
 export type { Block } from "./Infobox";
 
-export type { ExternalPluginProps, SelectedFeatureInfo } from "./Plugins";
+export type { ExternalPluginProps } from "./Plugins";
 
 export type {
   Context,

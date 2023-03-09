@@ -13,8 +13,6 @@ export {
   type ExternalPluginProps,
 } from "./Plugin";
 
-export { type SelectedFeatureInfo } from "./plugin_types";
-
 export default function Plugins(props: Props) {
   const value = useHooks(props);
   return <PluginProvider value={value}>{props.children}</PluginProvider>;

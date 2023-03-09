@@ -1,6 +1,6 @@
 import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
 
-import { SelectedFeatureInfo } from "../Crust";
+import { SelectedFeatureInfo } from "../mantle";
 
 import { type MapRef, mapRef } from "./ref";
 import type { EngineRef, LayersRef, LayerSelectionReason, ComputedLayer } from "./types";

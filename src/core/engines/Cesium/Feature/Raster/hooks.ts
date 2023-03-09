@@ -171,6 +171,9 @@ export const useMVT = ({
       },
       onSelectFeature: (mvtFeature, tile) => {
         const layer = extractSimpleLayer(cachedCalculatedLayerRef.current?.layer);
+        if (!layer) {
+          return;
+        }
         const id = mvtFeature.id
           ? String(mvtFeature.id)
           : idFromGeometry(mvtFeature.loadGeometry(), tile);

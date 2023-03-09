@@ -7,9 +7,14 @@ import type {
   RefObject,
 } from "react";
 
-import { SelectedFeatureInfo } from "@reearth/core/Crust";
-
-import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
+import type {
+  LatLngHeight,
+  Camera,
+  Rect,
+  LatLng,
+  DataType,
+  SelectedFeatureInfo,
+} from "../../mantle";
 import type {
   FeatureComponentType,
   ClusterComponentType,

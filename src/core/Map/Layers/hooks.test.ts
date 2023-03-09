@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { useRef } from "react";
 import { expect, test, vi } from "vitest";
 
-import { Feature } from "../types";
+import { ComputedFeature } from "../types";
 
 import useHooks, { type Layer, type Ref } from "./hooks";
 
@@ -745,7 +745,7 @@ test("select", () => {
     "x",
     "y",
     { reason: "reason" },
-    { feature: { id: "abc" } as Feature },
+    { feature: { id: "abc" } as ComputedFeature },
   );
   rerender({ layers: initialLayers });
   expect(result.current.ref.current?.selectedLayer()).toEqual({

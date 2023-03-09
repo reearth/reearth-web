@@ -13,11 +13,10 @@ import {
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
 
-import { SelectedFeatureInfo } from "@reearth/core/Crust";
 import { DATA_CACHE_KEYS } from "@reearth/core/mantle/atoms/data";
 import { objectFromGetter } from "@reearth/util/object";
 
-import { computeAtom, convertLegacyLayer } from "../../mantle";
+import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { useGet } from "../utils";
 

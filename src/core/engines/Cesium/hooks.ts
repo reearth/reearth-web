@@ -15,8 +15,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
-import { SelectedFeatureInfo } from "@reearth/core/Crust";
-import { ComputedFeature, DataType } from "@reearth/core/mantle";
+import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/core/mantle";
 import { LayersRef } from "@reearth/core/Map";
 
 import type {
