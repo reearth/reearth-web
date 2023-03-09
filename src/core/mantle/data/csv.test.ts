@@ -30,7 +30,7 @@ test("with header", async () => {
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: {
         type: "Point",
         coordinates: [0, 1, 10],
@@ -42,7 +42,7 @@ test("with header", async () => {
     },
     {
       type: "feature",
-      id: 2,
+      id: "2",
       geometry: {
         type: "Point",
         coordinates: [2, 3],
@@ -54,7 +54,7 @@ test("with header", async () => {
     },
     {
       type: "feature",
-      id: 3,
+      id: "3",
       geometry: {
         type: "Point",
         coordinates: [4, 5, 30],
@@ -83,7 +83,7 @@ test("specify csv directly", async () => {
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: {
         type: "Point",
         coordinates: [0, 0, 0],
@@ -123,7 +123,7 @@ test("has header but set index", async () => {
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: undefined,
       properties: {
         country: "Japan",
@@ -133,7 +133,7 @@ test("has header but set index", async () => {
     },
     {
       type: "feature",
-      id: 2,
+      id: "2",
       geometry: undefined,
       properties: {
         country: "US",
@@ -143,7 +143,7 @@ test("has header but set index", async () => {
     },
     {
       type: "feature",
-      id: 3,
+      id: "3",
       geometry: undefined,
       properties: {
         country: "UK",
@@ -187,7 +187,7 @@ I'm CSV",5
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: {
         type: "Point",
         coordinates: [0, 1],
@@ -201,7 +201,7 @@ World`,
     },
     {
       type: "feature",
-      id: 2,
+      id: "2",
       geometry: {
         type: "Point",
         coordinates: [2, 3],
@@ -218,7 +218,7 @@ World`,
     },
     {
       type: "feature",
-      id: 3,
+      id: "3",
       geometry: {
         type: "Point",
         coordinates: [4, 5],
@@ -258,7 +258,7 @@ test("without header", async () => {
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: {
         type: "Point",
         coordinates: [0, 1],
@@ -268,7 +268,7 @@ test("without header", async () => {
     },
     {
       type: "feature",
-      id: 2,
+      id: "2",
       geometry: {
         type: "Point",
         coordinates: [2, 3],
@@ -278,7 +278,7 @@ test("without header", async () => {
     },
     {
       type: "feature",
-      id: 3,
+      id: "3",
       geometry: {
         type: "Point",
         coordinates: [4, 5],
@@ -314,7 +314,7 @@ test("some delimiter", async () => {
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: {
         type: "Point",
         coordinates: [0, 1],
@@ -324,7 +324,7 @@ test("some delimiter", async () => {
     },
     {
       type: "feature",
-      id: 2,
+      id: "2",
       geometry: {
         type: "Point",
         coordinates: [2, 3],
@@ -334,7 +334,7 @@ test("some delimiter", async () => {
     },
     {
       type: "feature",
-      id: 3,
+      id: "3",
       geometry: {
         type: "Point",
         coordinates: [4, 5],
@@ -376,7 +376,7 @@ test("invalid parameters", async () => {
   expect(features).toEqual([
     {
       type: "feature",
-      id: 1,
+      id: "1",
       geometry: undefined,
       properties: {},
       range: undefined,
@@ -390,14 +390,14 @@ test("invalid parameters", async () => {
     },
     {
       type: "feature",
-      id: 3,
+      id: "3",
       geometry: undefined,
       properties: {},
       range: undefined,
     },
     {
       type: "feature",
-      id: 4,
+      id: "4",
       geometry: {
         type: "Point",
         coordinates: [100, 100],
@@ -407,7 +407,7 @@ test("invalid parameters", async () => {
     },
     {
       type: "feature",
-      id: 5,
+      id: "5",
       geometry: {
         type: "Point",
         coordinates: [200, 200, 50],

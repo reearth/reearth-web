@@ -107,7 +107,7 @@ export type TimeInterval = [start: Date, end?: Date];
 // Feature
 export type CommonFeature<T extends "feature" | "computedFeature"> = {
   type: T;
-  id: string | number;
+  id: string;
   geometry?: Geometry;
   interval?: TimeInterval;
   properties?: any;
