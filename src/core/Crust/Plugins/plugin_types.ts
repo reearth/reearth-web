@@ -7,7 +7,6 @@ import type {
   Tag,
   NaiveLayer,
   LayerSimple,
-  Feature,
 } from "@reearth/core/mantle";
 import type {
   CameraOptions,
@@ -89,8 +88,7 @@ export type Reearth = {
       layers?: LazyLayer[];
       isLayer?: boolean;
       selected?: ComputedLayer;
-      selectedFeature?: Feature;
-      selectedComputedFeature?: ComputedFeature;
+      selectedFeature?: ComputedFeature;
     }
   >;
   readonly layer?: LazyLayer;
@@ -202,10 +200,6 @@ export type ReearthEventType = {
   modalclose: [];
   popupclose: [];
   pluginmessage: [props: PluginMessage];
-};
-
-export type SelectedFeatureInfo = {
-  feature?: Feature;
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */

@@ -174,7 +174,7 @@ export const useMVT = ({
         const id = mvtFeature.id
           ? String(mvtFeature.id)
           : idFromGeometry(mvtFeature.loadGeometry(), tile);
-        const feature = makeFeatureFromPolygon(id, mvtFeature, tile);
+        const feature = evalFeature(layer, makeFeatureFromPolygon(id, mvtFeature, tile));
         const info = new ImageryLayerFeatureInfo();
         info.data = { layerId: layer?.id, featureId: id, feature };
         return info;

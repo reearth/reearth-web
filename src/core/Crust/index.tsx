@@ -1,6 +1,6 @@
 import type { ReactNode, RefObject } from "react";
 
-import type { Tag } from "@reearth/core/mantle";
+import type { SelectedFeatureInfo, Tag } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { LayerEditEvent, LayerSelectionReason } from "../Map";
@@ -10,7 +10,6 @@ import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
-import { SelectedFeatureInfo } from "./Plugins/plugin_types";
 import { usePublishTheme } from "./theme";
 import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera } from "./types";
 import Widgets, {
@@ -123,7 +122,6 @@ export default function Crust({
   selectedLayerId,
   selectedReason,
   selectedComputedLayer,
-  selectedFeature,
   selectedComputedFeature,
   selectedFeatureInfo,
   widgetAlignSystem,
@@ -170,8 +168,7 @@ export default function Crust({
       inEditor={inEditor}
       tags={tags}
       selectedLayer={selectedComputedLayer}
-      selectedFeature={selectedFeature}
-      selectedComputedFeature={selectedComputedFeature}
+      selectedFeature={selectedComputedFeature}
       selectedFeatureInfo={selectedFeatureInfo}
       layerSelectionReason={selectedReason}
       viewport={viewport}

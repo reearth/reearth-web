@@ -4,9 +4,8 @@ import { useWindowSize } from "react-use";
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
-import { SelectedFeatureInfo } from "../Crust/Plugins/plugin_types";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
-import type { ComputedFeature, Feature, LatLng } from "../mantle";
+import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
@@ -107,8 +106,8 @@ export default function useHooks({
     ) => {
       const computedLayer = await layer?.();
 
-      selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId) ?? info?.feature);
-      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId));
+      selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
+      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId) ?? info?.feature);
 
       selectLayer({ layerId, featureId, layer: computedLayer, reason });
     },
