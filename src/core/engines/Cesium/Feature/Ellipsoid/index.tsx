@@ -25,6 +25,7 @@ export type Property = EllipsoidAppearance & {
 };
 
 export default function Ellipsoid({ id, isVisible, property, geometry, layer, feature }: Props) {
+  const { show = true } = property ?? {};
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -58,7 +59,7 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
     [property?.near, property?.far],
   );
 
-  return !isVisible || !pos ? null : (
+  return !isVisible || !pos || !show ? null : (
     <EntityExt
       id={id}
       position={pos}
@@ -66,7 +67,8 @@ export default function Ellipsoid({ id, isVisible, property, geometry, layer, fe
       featureId={feature?.id}
       draggable
       legacyLocationPropertyKey="default.position"
-      availability={availability}>
+      availability={availability}
+      properties={feature?.properties}>
       <EllipsoidGraphics
         radii={raddi}
         material={material}

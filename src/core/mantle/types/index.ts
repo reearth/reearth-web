@@ -10,6 +10,7 @@ import type {
 import type { Infobox, Block, Tag } from "../compat/types";
 
 import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
+import type { Events } from "./events";
 
 export * from "./appearance";
 export * from "./value";
@@ -24,6 +25,7 @@ export type LayerSimple = {
   data?: Data;
   properties?: any;
   defines?: Record<string, string>;
+  events?: Events;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
@@ -64,6 +66,7 @@ export type Data = {
   layers?: string | string[];
   jsonProperties?: string[];
   updateInterval?: number; // milliseconds
+  parameters?: Record<string, any>;
   time?: {
     property?: string;
     interval?: number; // milliseconds
@@ -74,6 +77,7 @@ export type Data = {
     lngColumn?: string | number;
     heightColumn?: string | number;
     noHeader?: boolean;
+    disableTypeConversion?: boolean;
   };
 };
 

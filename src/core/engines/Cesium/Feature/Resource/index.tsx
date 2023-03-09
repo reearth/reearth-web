@@ -2,14 +2,15 @@ import {
   KmlDataSource as CesiumKmlDataSource,
   CzmlDataSource as CesiumCzmlDataSource,
   GeoJsonDataSource as CesiumGeoJsonDataSource,
+  Entity,
 } from "cesium";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
-import { DataType, evalFeature } from "@reearth/core/mantle";
+import { ComputedFeature, DataType, evalFeature, Feature } from "@reearth/core/mantle";
 import { getExtname } from "@reearth/util/path";
 
-import type { ResourceAppearance, AppearanceTypes } from "../../..";
+import type { ResourceAppearance } from "../../..";
 import {
   attachTag,
   extractSimpleLayerData,
@@ -33,16 +34,15 @@ const comps = {
   geojson: GeoJsonDataSource,
 };
 
-const delegatingAppearance: Record<keyof typeof comps, (keyof AppearanceTypes)[]> = {
-  kml: ["marker", "polyline", "polygon"],
-  geojson: ["marker", "polyline", "polygon"],
-  czml: ["marker", "polyline", "polygon"],
-};
-
 const DataTypeListAllowsOnlyProperty: DataType[] = ["geojson"];
 
-export default function Resource({ isVisible, property, layer }: Props) {
-  const { clampToGround } = property ?? {};
+type CachedFeature = {
+  feature: Feature;
+  raw: Entity;
+};
+
+export default function Resource({ isVisible, property, layer, onComputedFeatureFetch }: Props) {
+  const { show = true, clampToGround } = property ?? {};
   const [type, url] = useMemo((): [ResourceAppearance["type"], string | undefined] => {
     const data = extractSimpleLayerData(layer);
     const type = property?.type;
@@ -53,23 +53,46 @@ export default function Resource({ isVisible, property, layer }: Props) {
     ];
   }, [property, layer]);
   const { viewer } = useCesium();
+  const cachedFeatures = useRef<CachedFeature[]>([]);
 
   const ext = useMemo(() => (!type || type === "auto" ? getExtname(url) : undefined), [type, url]);
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
-  const appearances = actualType ? delegatingAppearance[actualType] : undefined;
 
   const handleOnChange = useCallback(
     (e: CesiumCzmlDataSource | CesiumKmlDataSource | CesiumGeoJsonDataSource) => {
-      attachStyle(e, appearances, layer, evalFeature, viewer.clock.currentTime);
+      const features: Feature[] = [];
+      const computedFeatures: ComputedFeature[] = [];
       e.entities.values.forEach(e => {
-        attachTag(e, { layerId: layer?.id });
+        const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
+        const [feature, computedFeature] = res || [];
+
+        attachTag(e, { layerId: layer?.id, featureId: feature?.id });
+
+        if (feature) {
+          features.push(feature);
+          cachedFeatures.current.push({ feature, raw: e });
+        }
+        if (computedFeature) {
+          computedFeatures.push(computedFeature);
+        }
       });
+
+      // GeoJSON is not delegated data, so we need to skip.
+      if (type !== "geojson") {
+        onComputedFeatureFetch?.(features, computedFeatures);
+      }
     },
-    [appearances, layer, viewer],
+    [layer, viewer, onComputedFeatureFetch, type],
   );
 
-  if (!isVisible || !Component || !url) return null;
+  useEffect(() => {
+    cachedFeatures.current.forEach(f => {
+      attachStyle(f.raw, layer, evalFeature, viewer.clock.currentTime);
+    });
+  }, [layer, viewer]);
+
+  if (!isVisible || !show || !Component || !url) return null;
 
   return (
     <Component data={url} show={true} clampToGround={clampToGround} onChange={handleOnChange} />

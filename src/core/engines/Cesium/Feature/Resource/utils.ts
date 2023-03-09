@@ -1,18 +1,10 @@
-import {
-  KmlDataSource as CesiumKmlDataSource,
-  CzmlDataSource as CesiumCzmlDataSource,
-  GeoJsonDataSource as CesiumGeoJsonDataSource,
-  JulianDate,
-  Entity,
-  Cartesian3,
-  PolygonHierarchy,
-} from "cesium";
+import { JulianDate, Entity, Cartesian3, PolygonHierarchy } from "cesium";
 
 import { AppearanceTypes, ComputedFeature, ComputedLayer, Feature } from "@reearth/core/mantle";
 import { EvalFeature } from "@reearth/core/Map";
 
 import { heightReference, shadowMode, toColor } from "../../common";
-import { attachTag, getTag, Tag } from "../utils";
+import { attachTag, extractSimpleLayer, getTag, Tag } from "../utils";
 
 export function overrideOriginalProperties(
   entity: Entity,
@@ -37,7 +29,7 @@ type CesiumEntityAppearanceKey = "polygon" | "polyline";
 type SupportedAppearanceKey = "marker" | keyof Pick<Entity, CesiumEntityAppearanceKey>;
 
 type EntityAppearanceKey<AName extends SupportedAppearanceKey> = AName extends "marker"
-  ? keyof Pick<Entity, "point">
+  ? keyof Pick<Entity, "point" | "billboard" | "label">
   : keyof Pick<Entity, CesiumEntityAppearanceKey>;
 
 type AppearancePropertyKeyType = "color" | "heightReference" | "shadows";
@@ -53,13 +45,15 @@ export function attachProperties<
     [K in keyof Exclude<Entity[PName], undefined>]?: {
       name: keyof AppearanceTypes[AName];
       type?: AppearancePropertyKeyType;
+      override?: any;
+      default?: any;
     };
   },
 ) {
   const [appearanceName, propertyName] = namePair;
-  const property = entity[propertyName];
-  if (!property) {
-    return;
+  const property = entity[propertyName] ?? {};
+  if (!entity[propertyName]) {
+    entity[propertyName] = {} as any;
   }
 
   const tag = getTag(entity);
@@ -79,7 +73,10 @@ export function attachProperties<
     const appearanceKeyName = appearancePropertyKey.name;
     const appearanceKeyType = appearancePropertyKey.type as AppearancePropertyKeyType;
 
-    let value = (computedFeature?.[appearanceName] as any)?.[appearanceKeyName];
+    let value =
+      appearancePropertyKey.override ??
+      (computedFeature?.[appearanceName] as any)?.[appearanceKeyName] ??
+      appearancePropertyKey.default;
     switch (appearanceKeyType) {
       case "color":
         value = toColor(value);
@@ -91,58 +88,138 @@ export function attachProperties<
         value = heightReference(value);
     }
 
-    (property as any)[entityPropertyKey] = value ?? (property as any)[entityPropertyKey];
+    (entity[propertyName] as any)[entityPropertyKey] =
+      value ?? (property as any)[entityPropertyKey];
   });
 }
 
+const hasAppearance = <
+  AName extends SupportedAppearanceKey,
+  PName extends EntityAppearanceKey<AName>,
+>(
+  layer: ComputedLayer | undefined,
+  entity: Entity,
+  namePair: [appearanceName: AName, propertyName: PName],
+): boolean => {
+  return !!(extractSimpleLayer(layer)?.[namePair[0]] || entity[namePair[1]]);
+};
+
 export const attachStyle = (
-  dataSource: CesiumKmlDataSource | CesiumCzmlDataSource | CesiumGeoJsonDataSource,
-  appearances: (keyof AppearanceTypes)[] | undefined,
+  entity: Entity,
   layer: ComputedLayer | undefined,
   evalFeature: EvalFeature,
   currentTime: JulianDate,
-) => {
+): [Feature, ComputedFeature] | void => {
   if (!layer) {
     return;
   }
-  dataSource?.entities.values.forEach(entity => {
-    appearances?.forEach(appearance => {
-      if (layer?.layer.type == "simple" && !layer?.layer?.[appearance]) {
-        return;
-      }
 
-      if (appearance === "marker") {
-        const position = entity.position?.getValue(currentTime);
-        const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
-        const feature: Feature = {
-          type: "feature",
-          id: entity.id,
-          geometry: {
-            type: "Point",
-            coordinates,
+  // TODO: make it DRY
+  const point = hasAppearance(layer, entity, ["marker", "point"]);
+  const billboard = hasAppearance(layer, entity, ["marker", "billboard"]);
+  const label = hasAppearance(layer, entity, ["marker", "label"]);
+  if (point || billboard || label) {
+    const position = entity.position?.getValue(currentTime);
+    const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
+    const feature: Feature = {
+      type: "feature",
+      id: String(entity.id),
+      geometry: {
+        type: "Point",
+        coordinates,
+      },
+      properties: entity.properties?.getValue(currentTime) || {},
+      range: {
+        x: coordinates[0],
+        y: coordinates[1],
+        z: coordinates[2],
+      },
+    };
+    const computedFeature = evalFeature(layer.layer, feature);
+    if (!computedFeature) {
+      return;
+    }
+    const simpleLayer = extractSimpleLayer(layer);
+    if (point) {
+      attachProperties(entity, computedFeature, ["marker", "point"], {
+        show: {
+          name: "show",
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "point" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
+        },
+        pixelSize: {
+          name: "pointSize",
+        },
+        color: {
+          name: "pointColor",
+          type: "color",
+        },
+        outlineColor: {
+          name: "pointOutlineColor",
+          type: "color",
+        },
+        outlineWidth: {
+          name: "pointOutlineWidth",
+        },
+        heightReference: {
+          name: "heightReference",
+          type: "heightReference",
+        },
+      });
+    }
+
+    if (billboard) {
+      attachProperties(entity, computedFeature, ["marker", "billboard"], {
+        show: {
+          name: "show",
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "image" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
+        },
+        image: {
+          name: "image",
+        },
+        color: {
+          name: "imageColor",
+          type: "color",
+        },
+        scale: {
+          name: "imageSize",
+        },
+        sizeInMeters: {
+          name: "imageSizeInMeters",
+        },
+        heightReference: {
+          name: "heightReference",
+          type: "heightReference",
+        },
+        horizontalOrigin: {
+          name: "imageHorizontalOrigin",
+        },
+        verticalOrigin: {
+          name: "imageVerticalOrigin",
+        },
+      });
+
+      if (label) {
+        attachProperties(entity, computedFeature, ["marker", "label"], {
+          show: {
+            name: "show",
+            default: true,
           },
-          properties: entity.properties?.getValue(JulianDate.now()) || {},
-          range: {
-            x: coordinates[0],
-            y: coordinates[1],
-            z: coordinates[2],
+          text: {
+            name: "labelText",
           },
-        };
-        const computedFeature = evalFeature(layer.layer, feature);
-        attachProperties(entity, computedFeature, ["marker", "point"], {
-          pixelSize: {
-            name: "pointSize",
-          },
-          color: {
-            name: "pointColor",
+          backgroundColor: {
+            name: "labelBackground",
             type: "color",
-          },
-          outlineColor: {
-            name: "pointOutlineColor",
-            type: "color",
-          },
-          outlineWidth: {
-            name: "pointOutlineWidth",
           },
           heightReference: {
             name: "heightReference",
@@ -150,100 +227,117 @@ export const attachStyle = (
           },
         });
       }
+    }
+    return [feature, computedFeature];
+  }
 
-      if (appearance === "polyline") {
-        const entityPosition = entity.position?.getValue(JulianDate.now());
-        const positions = entity.polyline?.positions?.getValue(JulianDate.now()) as Cartesian3[];
-        const coordinates = positions?.map(position => [
-          position?.x ?? 0,
-          position?.y ?? 0,
-          position?.z ?? 0,
-        ]);
-        const feature: Feature = {
-          type: "feature",
-          id: entity.id,
-          geometry: {
-            type: "LineString",
-            coordinates,
-          },
-          properties: entity.properties || {},
-          range: {
-            x: entityPosition?.x ?? 0,
-            y: entityPosition?.y ?? 0,
-            z: entityPosition?.z ?? 0,
-          },
-        };
-        const computedFeature = evalFeature(layer.layer, feature);
-        attachProperties(entity, computedFeature, ["polyline", "polyline"], {
-          width: {
-            name: "strokeWidth",
-          },
-          material: {
-            name: "strokeColor",
-            type: "color",
-          },
-          shadows: {
-            name: "shadows",
-            type: "shadows",
-          },
-          clampToGround: {
-            name: "clampToGround",
-          },
-        });
-      }
-
-      if (appearance === "polygon") {
-        const entityPosition = entity.position?.getValue(JulianDate.now());
-        const hierarchy = entity.polygon?.hierarchy?.getValue(JulianDate.now()) as PolygonHierarchy;
-        const coordinates = hierarchy.holes?.map(hole =>
-          hole.positions.map(position => [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0]),
-        );
-        const feature: Feature = {
-          type: "feature",
-          id: entity.id,
-          geometry: {
-            type: "Polygon",
-            coordinates,
-          },
-          properties: entity.properties || {},
-          range: {
-            x: entityPosition?.x ?? 0,
-            y: entityPosition?.y ?? 0,
-            z: entityPosition?.z ?? 0,
-          },
-        };
-        const computedFeature = evalFeature(layer.layer, feature);
-        attachProperties(entity, computedFeature, ["polygon", "polygon"], {
-          fill: {
-            name: "fill",
-          },
-          material: {
-            name: "fillColor",
-            type: "color",
-          },
-          outline: {
-            name: "stroke",
-          },
-          outlineColor: {
-            name: "strokeColor",
-            type: "color",
-          },
-          outlineWidth: {
-            name: "strokeWidth",
-          },
-          shadows: {
-            name: "shadows",
-            type: "shadows",
-          },
-          heightReference: {
-            name: "heightReference",
-            type: "heightReference",
-          },
-          extrudedHeight: {
-            name: "extrudedHeight",
-          },
-        });
-      }
+  if (hasAppearance(layer, entity, ["polyline", "polyline"])) {
+    const entityPosition = entity.position?.getValue(JulianDate.now());
+    const positions = entity.polyline?.positions?.getValue(JulianDate.now()) as Cartesian3[];
+    const coordinates = positions?.map(position => [
+      position?.x ?? 0,
+      position?.y ?? 0,
+      position?.z ?? 0,
+    ]);
+    const feature: Feature = {
+      type: "feature",
+      id: String(entity.id),
+      geometry: {
+        type: "LineString",
+        coordinates,
+      },
+      properties: entity.properties?.getValue(currentTime) || {},
+      range: {
+        x: entityPosition?.x ?? 0,
+        y: entityPosition?.y ?? 0,
+        z: entityPosition?.z ?? 0,
+      },
+    };
+    const computedFeature = evalFeature(layer.layer, feature);
+    if (!computedFeature) {
+      return;
+    }
+    attachProperties(entity, computedFeature, ["polyline", "polyline"], {
+      show: {
+        name: "show",
+        default: true,
+      },
+      width: {
+        name: "strokeWidth",
+      },
+      material: {
+        name: "strokeColor",
+        type: "color",
+      },
+      shadows: {
+        name: "shadows",
+        type: "shadows",
+      },
+      clampToGround: {
+        name: "clampToGround",
+      },
     });
-  });
+    return [feature, computedFeature];
+  }
+
+  if (hasAppearance(layer, entity, ["polygon", "polygon"])) {
+    const entityPosition = entity.position?.getValue(JulianDate.now());
+    const hierarchy = entity.polygon?.hierarchy?.getValue(JulianDate.now()) as PolygonHierarchy;
+    const coordinates = hierarchy.holes?.map(hole =>
+      hole.positions.map(position => [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0]),
+    );
+    const feature: Feature = {
+      type: "feature",
+      id: String(entity.id),
+      geometry: {
+        type: "Polygon",
+        coordinates,
+      },
+      properties: entity.properties?.getValue(currentTime) || {},
+      range: {
+        x: entityPosition?.x ?? 0,
+        y: entityPosition?.y ?? 0,
+        z: entityPosition?.z ?? 0,
+      },
+    };
+    const computedFeature = evalFeature(layer.layer, feature);
+    if (!computedFeature) {
+      return;
+    }
+    attachProperties(entity, computedFeature, ["polygon", "polygon"], {
+      show: {
+        name: "show",
+        default: true,
+      },
+      fill: {
+        name: "fill",
+      },
+      material: {
+        name: "fillColor",
+        type: "color",
+      },
+      outline: {
+        name: "stroke",
+      },
+      outlineColor: {
+        name: "strokeColor",
+        type: "color",
+      },
+      outlineWidth: {
+        name: "strokeWidth",
+      },
+      shadows: {
+        name: "shadows",
+        type: "shadows",
+      },
+      heightReference: {
+        name: "heightReference",
+        type: "heightReference",
+      },
+      extrudedHeight: {
+        name: "extrudedHeight",
+      },
+    });
+    return [feature, computedFeature];
+  }
 };

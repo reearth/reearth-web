@@ -33,6 +33,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   );
 
   const {
+    show = true,
     model,
     url,
     heightReference: hr,
@@ -87,7 +88,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     [property?.near, property?.far],
   );
 
-  return !isVisible || (!model && !url) || !position ? null : (
+  return !isVisible || !show || (!model && !url) || !position ? null : (
     <EntityExt
       id={id}
       position={position}
@@ -95,6 +96,7 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
       layerId={layer?.id}
       featureId={feature?.id}
       draggable
+      properties={feature?.properties}
       availability={availability}>
       <ModelGraphics
         uri={model || url}
