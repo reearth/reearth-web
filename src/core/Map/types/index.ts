@@ -7,6 +7,8 @@ import type {
   RefObject,
 } from "react";
 
+import { SelectedFeatureInfo } from "@reearth/core/Crust";
+
 import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
 import type {
   FeatureComponentType,
@@ -113,6 +115,7 @@ export type EngineProps = {
     layerId: string | undefined,
     featureId?: string,
     options?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
   ) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;

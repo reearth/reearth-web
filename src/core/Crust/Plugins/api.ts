@@ -339,6 +339,7 @@ export function commonReearth({
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
+  selectedComputedFeature: () => GlobalThis["reearth"]["layers"]["selectedComputedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   selectLayer: LayersRef["select"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];

@@ -15,6 +15,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
+import { SelectedFeatureInfo } from "@reearth/core/Crust";
 import { ComputedFeature, DataType } from "@reearth/core/mantle";
 import { LayersRef } from "@reearth/core/Map";
 
@@ -61,7 +62,12 @@ export default ({
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (layerId?: string, featureId?: string, options?: LayerSelectionReason) => void;
+  onLayerSelect?: (
+    layerId?: string,
+    featureId?: string,
+    options?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
+  ) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;
   onLayerDrop?: (
@@ -379,7 +385,9 @@ export default ({
         if (!pickRay) return;
         scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene)?.then(l => {
           l.map(f => {
-            onLayerSelect?.(f.data.layerId, f.data.featureId);
+            onLayerSelect?.(f.data.layerId, f.data.featureId, undefined, {
+              feature: f.data.feature,
+            });
           });
         });
       }

@@ -10,6 +10,7 @@ import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { Block, InfoboxProperty } from "./Infobox";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
+import { SelectedFeatureInfo } from "./Plugins/plugin_types";
 import { usePublishTheme } from "./theme";
 import type { ValueTypes, ValueType, MapRef, SceneProperty, Camera } from "./types";
 import Widgets, {
@@ -25,7 +26,7 @@ export type { ValueTypes, ValueType } from "./types";
 
 export type { Block } from "./Infobox";
 
-export type { ExternalPluginProps } from "./Plugins";
+export type { ExternalPluginProps, SelectedFeatureInfo } from "./Plugins";
 
 export type {
   Context,
@@ -62,6 +63,7 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
+  selectedFeatureInfo?: SelectedFeatureInfo;
   tags?: Tag[];
   // widgets
   widgetAlignSystem?: WidgetAlignSystemType;
@@ -121,7 +123,9 @@ export default function Crust({
   selectedLayerId,
   selectedReason,
   selectedComputedLayer,
+  selectedFeature,
   selectedComputedFeature,
+  selectedFeatureInfo,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
@@ -166,7 +170,9 @@ export default function Crust({
       inEditor={inEditor}
       tags={tags}
       selectedLayer={selectedComputedLayer}
-      selectedFeature={selectedComputedFeature}
+      selectedFeature={selectedFeature}
+      selectedComputedFeature={selectedComputedFeature}
+      selectedFeatureInfo={selectedFeatureInfo}
       layerSelectionReason={selectedReason}
       viewport={viewport}
       alignSystem={widgetAlignSystem}
