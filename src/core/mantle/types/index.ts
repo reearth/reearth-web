@@ -77,6 +77,7 @@ export type Data = {
     lngColumn?: string | number;
     heightColumn?: string | number;
     noHeader?: boolean;
+    disableTypeConversion?: boolean;
   };
 };
 
@@ -106,7 +107,7 @@ export type TimeInterval = [start: Date, end?: Date];
 // Feature
 export type CommonFeature<T extends "feature" | "computedFeature"> = {
   type: T;
-  id: string;
+  id: string | number;
   geometry?: Geometry;
   interval?: TimeInterval;
   properties?: any;
