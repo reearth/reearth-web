@@ -55,8 +55,8 @@ WMTS.args = {
       type: "simple",
       data: {
         type: "wmts",
-        url: "https://soggy2.zoology.ubc.ca/geoserver/gwc/service/wmts?",
-        layers: "dem_ssea_27m",
+        url: "http://basemap.nationalmap.gov/arcgis/rest/services/USGSShadedReliefOnly/MapServer/WMTS",
+        layers: "USGSShadedReliefOnly",
       },
       raster: {
         maximumLevel: 100,

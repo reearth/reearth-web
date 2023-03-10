@@ -1,15 +1,21 @@
-import { WebMapTileServiceImageryProvider, WebMercatorTilingScheme } from "cesium";
+import {
+  GeographicTilingScheme,
+  WebMapTileServiceImageryProvider,
+  WebMercatorTilingScheme,
+} from "cesium";
 import { XMLParser, X2jOptionsOptional } from "fast-xml-parser";
 
 import { f, isDefined } from "@reearth/core/mantle/data/utils";
 
-export const getWMTSImageryProvider = async (url?: string, layerCode?: string) => {
+export const getWMTSImageryProvider = async (url?: string, layerCode?: string, credit?: string) => {
   if (!isDefined(url) || !isDefined(layerCode)) return;
   const capabilitiesUrl = getCapabilitiesUrl(url);
-  console.log("capablities: ", capabilitiesUrl);
   if (!isDefined(capabilitiesUrl)) return;
   const capabilities = await getCapablitiesFromUrl(capabilitiesUrl);
+  console.log("capablities: ", capabilities);
+  console.log("layerCode: ", layerCode);
   const layer = findLayerFromCapablities(capabilities, layerCode);
+  console.log("layerFromCode: ", layer);
   const layerIdentifier = layer?.Identifier;
   if (!isDefined(layer) || !isDefined(layerIdentifier)) {
     return;
@@ -43,24 +49,29 @@ export const getWMTSImageryProvider = async (url?: string, layerCode?: string) =
   }
 
   const style = getStyle(layer);
+  console.log("obtained style: ", style);
+  console.log("capabilities.tileMatrixSets: ", capabilities.tileMatrixSets);
 
   const tileMatrixSet = getTileMatrixSet(layer, capabilities.tileMatrixSets);
+  console.log("tileMatrixSet: ", tileMatrixSet);
   if (!isDefined(tileMatrixSet)) {
     return;
   }
+  console.log("format: ", format);
 
   const imageryProvider = new WebMapTileServiceImageryProvider({
     url: baseUrl,
     layer: layerIdentifier,
-    style: style ?? "default",
+    style: "default",
     tileMatrixSetID: tileMatrixSet.id,
     tileMatrixLabels: tileMatrixSet.labels,
     minimumLevel: tileMatrixSet.minLevel,
     maximumLevel: tileMatrixSet.maxLevel,
     tileWidth: tileMatrixSet.tileWidth,
     tileHeight: tileMatrixSet.tileHeight,
-    tilingScheme: new WebMercatorTilingScheme(),
+    tilingScheme: new GeographicTilingScheme(),
     format,
+    credit,
   });
   return imageryProvider;
 };
@@ -79,17 +90,21 @@ const getCapabilitiesUrl = (uri: string): string | undefined => {
 
 const getCapablitiesFromUrl = async (url: string): Promise<WmtsCapabilities> => {
   const xmlDataStr = await (await f(url)).text();
+  const cleanXml = xmlDataStr.replace(/(ows|psf):/g, "");
+  console.log("cleanXMl: ", cleanXml);
   const options: X2jOptionsOptional = {
     ignoreAttributes: false,
-    attributeNamePrefix: "@_",
+    attributeNamePrefix: "",
   };
   const parser = new XMLParser(options);
-  const capabilitiesJson = parser.parse(xmlDataStr) as CapabilitiesJson;
-
-  console.log("capabilities: ", capabilitiesJson);
+  const capabilities = parser.parse(cleanXml) as Capabilities;
+  console.log("capabilites: ", capabilities);
+  const capabilitiesJson = capabilities.Capabilities;
 
   const layers: WmtsLayer[] = [];
   const tileMatrixSets: TileMatrixSet[] = [];
+
+  console.log("capabilitesJson: ", capabilitiesJson);
 
   const layerElements = capabilitiesJson.Contents?.Layer as Array<WmtsLayer> | WmtsLayer;
   if (layerElements && Array.isArray(layerElements)) {
@@ -121,7 +136,9 @@ const findLayerFromCapablities = (
   if (capabilities.layers === undefined) {
     return undefined;
   }
+  console.log("capabilities.layers: ", capabilities.layers);
   let match = capabilities.layers.find(layer => layer.Identifier === name || layer.Title === name);
+  console.log("match: ", match);
   if (!match) {
     const colonIndex = name.indexOf(":");
     if (colonIndex >= 0) {
@@ -167,6 +184,8 @@ const getTileMatrixSet = (
   let tileWidth = 256;
   let tileHeight = 256;
   let tileMatrixSetLabels: string[] = [];
+  console.log("tileMatrixSetLinks: ", tileMatrixSetLinks);
+  console.log("usableTileMatrixSets: ", usableTileMatrixSets);
   for (let i = 0; i < tileMatrixSetLinks.length; i++) {
     const tileMatrixSet = tileMatrixSetLinks[i].TileMatrixSet;
     if (usableTileMatrixSets?.[tileMatrixSet]) {
@@ -215,14 +234,16 @@ const getUsableTileMatrixSets = (matrixSets: TileMatrixSet[]) => {
   if (matrixSets === undefined) {
     return;
   }
+  console.log("matrixSet: ", matrixSets);
   for (let i = 0; i < matrixSets.length; i++) {
     const matrixSet = matrixSets[i];
     if (
       !matrixSet.SupportedCRS ||
-      (!/EPSG.*900913/.test(matrixSet.SupportedCRS) && !/EPSG.*3857/.test(matrixSet.SupportedCRS))
+      (/EPSG.*900913/.test(matrixSet.SupportedCRS) && !/EPSG.*3857/.test(matrixSet.SupportedCRS))
     ) {
       continue;
     }
+    console.log("made it here!!");
     // Usable tile matrix sets must have a single 256x256 tile at the root.
     const matrices = matrixSet.TileMatrix;
     if (!isDefined(matrices) || matrices.length < 1) {
@@ -230,6 +251,8 @@ const getUsableTileMatrixSets = (matrixSets: TileMatrixSet[]) => {
     }
 
     const levelZeroMatrix = matrices[0];
+
+    console.log("levelZeroMatrix: ", levelZeroMatrix);
 
     if (!isDefined(levelZeroMatrix.TopLeftCorner)) {
       continue;
@@ -241,12 +264,14 @@ const getUsableTileMatrixSets = (matrixSets: TileMatrixSet[]) => {
     const rectangleInMeters = standardTilingScheme.rectangleToNativeRectangle(
       standardTilingScheme.rectangle,
     );
+    console.log("rectangleInMeters: ", rectangleInMeters);
     if (
       Math.abs(startX - rectangleInMeters.west) > 1 ||
       Math.abs(startY - rectangleInMeters.north) > 1
     ) {
       continue;
     }
+    console.log("made it here too!!!");
 
     if (isDefined(matrixSet.TileMatrix) && matrixSet.TileMatrix.length > 0) {
       const ids = matrixSet.TileMatrix.map(function (item: { Identifier: any }) {
@@ -266,6 +291,7 @@ const getUsableTileMatrixSets = (matrixSets: TileMatrixSet[]) => {
 
 const getStyle = (capabilitiesLayer: WmtsLayer): string | undefined => {
   const availStyles = getAvailStyles(capabilitiesLayer);
+  console.log("availStyle: ", availStyles);
   const layerAvailableStyles = availStyles.find(
     candidate => candidate.layerName === capabilitiesLayer?.Identifier,
   )?.styles;
@@ -356,12 +382,22 @@ type CapabilitiesStyle = {
 };
 
 type CapabilitiesJson = {
-  readonly Version: string;
+  readonly version: string;
   readonly Contents?: Contents;
   readonly ServiceIdentification?: ServiceIdentification;
   readonly ServiceProvider?: ServiceProvider;
   readonly OperationsMetadata?: OperationsMetadata;
   readonly ServiceMetadataURL?: OnlineResource;
+};
+
+type Xml = {
+  version: string;
+  encoding: string;
+};
+
+type Capabilities = {
+  "?xml": Xml;
+  Capabilities: CapabilitiesJson;
 };
 
 type OperationsMetadata = {

@@ -1,6 +1,6 @@
 import { Viewer } from "cesium";
 
-import { Extensions, loadExtensions } from "./extensions";
+import { Extensions } from "./extensions";
 
 export type Config = {
   version?: string;
@@ -152,10 +152,10 @@ export default async function loadConfig() {
     );
   }
 
-  if (config?.extensionUrls) {
-    const extensions = await loadExtensions(config.extensionUrls);
-    config.extensions = extensions;
-  }
+  // if (config?.extensionUrls) {
+  //   const extensions = await loadExtensions(config.extensionUrls);
+  //   config.extensions = extensions;
+  // }
 
   window.REEARTH_CONFIG = config;
 }

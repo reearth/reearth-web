@@ -14,7 +14,7 @@ function Raster({
   evalFeature,
   onFeatureDelete,
 }: Props) {
-  useWMTS({ isVisible, layer });
+  useWMTS({ isVisible, layer, property });
   useWMS({ isVisible, layer, property });
   useMVT({ isVisible, layer, property, evalFeature, onComputedFeatureFetch, onFeatureDelete });
 

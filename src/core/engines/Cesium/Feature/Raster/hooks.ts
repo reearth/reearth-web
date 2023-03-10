@@ -65,21 +65,26 @@ export const useWMS = ({
   useImageryProvider(imageryProvider);
 };
 
-export const useWMTS = async ({ isVisible, layer }: Pick<Props, "isVisible" | "layer">) => {
+export const useWMTS = ({
+  isVisible,
+  layer,
+  property,
+}: Pick<Props, "isVisible" | "property" | "layer">) => {
+  const { credit } = property ?? {};
+
   const { type, url, layers } = useData(layer);
   const [imageryProvider, setImageryProvider] = useState<ImageryProvider>();
 
-  console.log("Reached HERE");
-
   useEffect(() => {
     const getImageryProvider = async () => {
-      const provider = await getWMTSImageryProvider(url, layers);
+      console.log("getImageryProvider called");
+      const provider = await getWMTSImageryProvider(url, layers, credit);
       setImageryProvider(provider);
     };
     if (isVisible && type === "wmts") {
       getImageryProvider();
     }
-  }, [isVisible, type, url, layers]);
+  }, [isVisible, type, url, layers, credit]);
 
   useImageryProvider(imageryProvider);
 };

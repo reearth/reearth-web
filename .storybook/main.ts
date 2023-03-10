@@ -33,6 +33,7 @@ const config: StorybookViteConfig = {
             }
           : {},
       resolve: {
+        dedupe: ["@storybook/client-api"],
         alias: [
           { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
           { find: "@reearth", replacement: resolve(__dirname, "..", "src") },
