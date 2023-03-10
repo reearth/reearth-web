@@ -6,17 +6,23 @@ import { TickEvent, TickEventCallback } from "@reearth/core/Map";
 import type { Clock, Widget } from "../types";
 import { useVisible } from "../useVisible";
 
-const MAX_RANGE = 7776000000; // 3 months
+const MAX_RANGE = 86400000; // a day
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {
+  // To avoid out of range error in Cesium, we need to turn back a hour.
+  const now = Date.now() - 3600000;
   return {
-    start: startTime,
+    start: startTime
+      ? Math.min(now, startTime)
+      : stopTime
+      ? Math.min(now, stopTime - MAX_RANGE)
+      : now,
     end:
       startTime && stopTime && startTime < stopTime
-        ? Math.min(stopTime, startTime + MAX_RANGE)
+        ? Math.min(now, stopTime)
         : startTime
-        ? startTime + MAX_RANGE
-        : undefined,
+        ? Math.min(now, startTime + MAX_RANGE)
+        : now,
   };
 };
 
@@ -77,6 +83,15 @@ export const useTimeline = ({
     onExtend?.(widgetId, false);
     setIsOpened(false);
   }, [widgetId, onExtend]);
+
+  const switchCurrentTimeToStart = useCallback(
+    (t: number) => {
+      const cur = t > range.end ? range.start : t < range.start ? range.end : t;
+      onTimeChange?.(new Date(cur));
+      return cur;
+    },
+    [range, onTimeChange],
+  );
 
   const handleTimeEvent: TimeEventHandler = useCallback(
     currentTime => {
@@ -165,20 +180,28 @@ export const useTimeline = ({
   useEffect(() => {
     const h: TickEventCallback = d => {
       if (!clock?.playing) return;
-      setCurrentTime(d.getTime() || Date.now());
+      setCurrentTime(switchCurrentTimeToStart(d.getTime()));
     };
     onTick?.(h);
     return () => {
       removeTickEventListener?.(h);
     };
-  }, [onTick, clock?.playing, removeTickEventListener]);
+  }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart]);
+
+  const onTimeChangeRef = useRef<typeof onTimeChange>();
+
+  useEffect(() => {
+    onTimeChangeRef.current = onTimeChange;
+  }, [onTimeChange]);
 
   const overriddenCurrentTime = overriddenClock?.current?.getTime();
   useEffect(() => {
     if (overriddenCurrentTime) {
-      setCurrentTime(overriddenCurrentTime);
+      const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
+      setCurrentTime(t);
+      onTimeChangeRef.current?.(new Date(t));
     }
-  }, [overriddenCurrentTime]);
+  }, [overriddenCurrentTime, range]);
 
   useEffect(() => {
     if (isMobile) {
