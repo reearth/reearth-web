@@ -7,7 +7,14 @@ import type {
   RefObject,
 } from "react";
 
-import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
+import type {
+  LatLngHeight,
+  Camera,
+  Rect,
+  LatLng,
+  DataType,
+  SelectedFeatureInfo,
+} from "../../mantle";
 import type {
   FeatureComponentType,
   ClusterComponentType,
@@ -95,6 +102,7 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
+  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;
@@ -113,6 +121,7 @@ export type EngineProps = {
     layerId: string | undefined,
     featureId?: string,
     options?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
   ) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;

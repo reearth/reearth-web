@@ -1,9 +1,9 @@
 import type { ReactNode, RefObject } from "react";
 
-import type { Tag } from "@reearth/core/mantle";
+import type { SelectedFeatureInfo, Tag } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import type { LayerEditEvent, LayerSelectionReason } from "../Map";
+import type { Clock, LayerEditEvent, LayerSelectionReason } from "../Map";
 import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
@@ -52,6 +52,7 @@ export type Props = {
   isMobile?: boolean;
   mapRef?: RefObject<MapRef>;
   sceneProperty?: SceneProperty;
+  overriddenClock: Clock;
   viewport?: Viewport;
   camera?: Camera;
   selectedComputedLayer?: ComputedLayer;
@@ -62,6 +63,7 @@ export type Props = {
     layerId?: string;
     featureId?: string;
   };
+  selectedFeatureInfo?: SelectedFeatureInfo;
   tags?: Tag[];
   // widgets
   widgetAlignSystem?: WidgetAlignSystemType;
@@ -115,6 +117,7 @@ export default function Crust({
   isMobile,
   mapRef,
   sceneProperty,
+  overriddenClock,
   viewport,
   camera,
   tags,
@@ -122,6 +125,7 @@ export default function Crust({
   selectedReason,
   selectedComputedLayer,
   selectedComputedFeature,
+  selectedFeatureInfo,
   widgetAlignSystem,
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
@@ -156,7 +160,13 @@ export default function Crust({
     pluginPopupContainerRef,
   } = useHooks({ mapRef, ...externalPlugin });
   const theme = usePublishTheme(sceneProperty?.theme);
-  const widgetContext = useWidgetContext({ mapRef, camera, sceneProperty, selectedLayerId });
+  const widgetContext = useWidgetContext({
+    mapRef,
+    camera,
+    sceneProperty,
+    selectedLayerId,
+    overriddenClock,
+  });
 
   return (
     <Plugins
@@ -167,6 +177,7 @@ export default function Crust({
       tags={tags}
       selectedLayer={selectedComputedLayer}
       selectedFeature={selectedComputedFeature}
+      selectedFeatureInfo={selectedFeatureInfo}
       layerSelectionReason={selectedReason}
       viewport={viewport}
       alignSystem={widgetAlignSystem}

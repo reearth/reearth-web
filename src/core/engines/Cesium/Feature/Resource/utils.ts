@@ -45,13 +45,15 @@ export function attachProperties<
     [K in keyof Exclude<Entity[PName], undefined>]?: {
       name: keyof AppearanceTypes[AName];
       type?: AppearancePropertyKeyType;
+      override?: any;
+      default?: any;
     };
   },
 ) {
   const [appearanceName, propertyName] = namePair;
-  const property = entity[propertyName];
-  if (!property) {
-    return;
+  const property = entity[propertyName] ?? {};
+  if (!entity[propertyName]) {
+    entity[propertyName] = {} as any;
   }
 
   const tag = getTag(entity);
@@ -71,7 +73,10 @@ export function attachProperties<
     const appearanceKeyName = appearancePropertyKey.name;
     const appearanceKeyType = appearancePropertyKey.type as AppearancePropertyKeyType;
 
-    let value = (computedFeature?.[appearanceName] as any)?.[appearanceKeyName];
+    let value =
+      appearancePropertyKey.override ??
+      (computedFeature?.[appearanceName] as any)?.[appearanceKeyName] ??
+      appearancePropertyKey.default;
     switch (appearanceKeyType) {
       case "color":
         value = toColor(value);
@@ -83,7 +88,8 @@ export function attachProperties<
         value = heightReference(value);
     }
 
-    (property as any)[entityPropertyKey] = value ?? (property as any)[entityPropertyKey];
+    (entity[propertyName] as any)[entityPropertyKey] =
+      value ?? (property as any)[entityPropertyKey];
   });
 }
 
@@ -133,10 +139,17 @@ export const attachStyle = (
     if (!computedFeature) {
       return;
     }
+    const simpleLayer = extractSimpleLayer(layer);
     if (point) {
       attachProperties(entity, computedFeature, ["marker", "point"], {
         show: {
           name: "show",
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "point" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
         },
         pixelSize: {
           name: "pointSize",
@@ -163,6 +176,12 @@ export const attachStyle = (
       attachProperties(entity, computedFeature, ["marker", "billboard"], {
         show: {
           name: "show",
+          ...(simpleLayer?.marker?.style
+            ? {
+                override:
+                  simpleLayer?.marker?.style === "image" && (simpleLayer?.marker.show ?? true),
+              }
+            : {}),
         },
         image: {
           name: "image",
@@ -193,6 +212,7 @@ export const attachStyle = (
         attachProperties(entity, computedFeature, ["marker", "label"], {
           show: {
             name: "show",
+            default: true,
           },
           text: {
             name: "labelText",
@@ -212,8 +232,8 @@ export const attachStyle = (
   }
 
   if (hasAppearance(layer, entity, ["polyline", "polyline"])) {
-    const entityPosition = entity.position?.getValue(JulianDate.now());
-    const positions = entity.polyline?.positions?.getValue(JulianDate.now()) as Cartesian3[];
+    const entityPosition = entity.position?.getValue(currentTime);
+    const positions = entity.polyline?.positions?.getValue(currentTime) as Cartesian3[];
     const coordinates = positions?.map(position => [
       position?.x ?? 0,
       position?.y ?? 0,
@@ -240,6 +260,7 @@ export const attachStyle = (
     attachProperties(entity, computedFeature, ["polyline", "polyline"], {
       show: {
         name: "show",
+        default: true,
       },
       width: {
         name: "strokeWidth",
@@ -260,9 +281,9 @@ export const attachStyle = (
   }
 
   if (hasAppearance(layer, entity, ["polygon", "polygon"])) {
-    const entityPosition = entity.position?.getValue(JulianDate.now());
-    const hierarchy = entity.polygon?.hierarchy?.getValue(JulianDate.now()) as PolygonHierarchy;
-    const coordinates = hierarchy.holes?.map(hole =>
+    const entityPosition = entity.position?.getValue(currentTime);
+    const hierarchy = entity.polygon?.hierarchy?.getValue(currentTime) as PolygonHierarchy;
+    const coordinates = hierarchy?.holes?.map(hole =>
       hole.positions.map(position => [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0]),
     );
     const feature: Feature = {
@@ -286,6 +307,7 @@ export const attachStyle = (
     attachProperties(entity, computedFeature, ["polygon", "polygon"], {
       show: {
         name: "show",
+        default: true,
       },
       fill: {
         name: "fill",

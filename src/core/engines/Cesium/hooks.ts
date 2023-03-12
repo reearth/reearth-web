@@ -15,7 +15,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/config";
-import { ComputedFeature, DataType } from "@reearth/core/mantle";
+import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/core/mantle";
 import { LayersRef } from "@reearth/core/Map";
 
 import type {
@@ -61,7 +61,12 @@ export default ({
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
-  onLayerSelect?: (layerId?: string, featureId?: string, options?: LayerSelectionReason) => void;
+  onLayerSelect?: (
+    layerId?: string,
+    featureId?: string,
+    options?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
+  ) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;
   onLayerDrop?: (
@@ -321,15 +326,34 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
-        onLayerSelect?.(tag?.layerId, tag?.featureId, {
-          defaultInfobox: {
-            title: target.id.name,
-            content: {
-              type: "html",
-              value: target.id.description?.getValue(viewer.clock.currentTime ?? new JulianDate()),
-            },
-          },
-        });
+        onLayerSelect?.(
+          tag?.layerId,
+          tag?.featureId,
+          !!target.id.name || !!target.id.description || !!target.id.properties
+            ? {
+                defaultInfobox: {
+                  title: target.id.name,
+                  content: target.id.description
+                    ? {
+                        type: "html",
+                        value: target.id.description?.getValue(
+                          viewer.clock.currentTime ?? new JulianDate(),
+                        ),
+                      }
+                    : {
+                        type: "table",
+                        value: target.id.properties
+                          ? entityProperties(
+                              target.id.properties.getValue(
+                                viewer.clock.currentTime ?? new JulianDate(),
+                              ),
+                            )
+                          : [],
+                      },
+                },
+              }
+            : undefined,
+        );
         prevSelectedEntity.current = target.id;
         viewer.selectedEntity = target.id;
         return;
@@ -360,7 +384,9 @@ export default ({
         if (!pickRay) return;
         scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene)?.then(l => {
           l.map(f => {
-            onLayerSelect?.(f.data.layerId, f.data.featureId);
+            onLayerSelect?.(f.data.layerId, f.data.featureId, undefined, {
+              feature: f.data.feature,
+            });
           });
         });
       }
@@ -486,6 +512,13 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       (a, b) => [...a, { key: b, value: t.getProperty(b) }],
       [],
     );
+}
+
+function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
+  return Object.entries(properties).reduce<{ key: string; value: [string, string] }[]>(
+    (a, [key, value]) => [...a, { key, value }],
+    [],
+  );
 }
 
 function getLayerId(target: RootEventTarget): string | undefined {
