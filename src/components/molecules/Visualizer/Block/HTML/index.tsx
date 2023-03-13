@@ -90,7 +90,7 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
 
     frameWindow.addEventListener("load", () => {
       // Initialize styles
-      frameWindow.document.body.style.color = theme.main.text;
+      frameWindow.document.body.style.color = theme.infoBox.weakText;
       frameWindow.document.body.style.margin = "0";
 
       if (isEditable) {
@@ -110,7 +110,7 @@ const HTMLBlock: React.FC<Props> = ({ block, isSelected, isEditable, onChange, o
       });
       resizeObserver.observe(frameWindow.document.body);
     });
-  }, [frameRef, theme.main.text, startEditing, isEditable, handleClick]);
+  }, [frameRef, theme.infoBox.weakText, startEditing, isEditable, handleClick]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
