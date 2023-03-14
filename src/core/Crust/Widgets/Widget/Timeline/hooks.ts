@@ -182,8 +182,6 @@ export const useTimeline = ({
     };
   }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart, handleRange]);
 
-  console.log("RENDER");
-
   const onTimeChangeRef = useRef<typeof onTimeChange>();
 
   useEffect(() => {
