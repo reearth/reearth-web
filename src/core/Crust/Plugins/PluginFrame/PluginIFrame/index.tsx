@@ -2,11 +2,12 @@ import { forwardRef, ForwardRefRenderFunction, IframeHTMLAttributes, ReactNode, 
 import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 
-import IFrame, { AutoResize } from "../IFrame";
+import DangerIFrame from "../DangerIFrame";
+import IFrame, { type AutoResize } from "../IFrame";
 
 import useHooks, { Ref } from "./hooks";
 
-export type { AutoResize } from "../IFrame";
+export type { AutoResize } from "../DangerIFrame";
 export type { IFrameAPI, Ref } from "./hooks";
 
 export type Props = {
@@ -20,6 +21,7 @@ export type Props = {
   renderPlaceholder?: ReactNode;
   container?: HTMLElement | DocumentFragment;
   externalRef?: RefObject<HTMLIFrameElement>;
+  danger?: boolean;
   onRender?: (type: string) => void;
   onClick?: () => void;
   onMessage?: (message: any) => void;
@@ -37,6 +39,7 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     renderPlaceholder,
     container,
     externalRef,
+    danger,
     onRender,
     onClick,
     onMessage,
@@ -50,10 +53,11 @@ const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (
     handleLoad,
   } = useHooks({ ready, ref, visible, type, enabled, onRender });
 
+  const IFrameComponent = danger ? DangerIFrame : IFrame;
   const children = (
     <>
       {html ? (
-        <IFrame
+        <IFrameComponent
           ref={iFrameRef}
           className={className}
           iFrameProps={iFrameProps}

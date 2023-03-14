@@ -1,5 +1,5 @@
 import composeRefs from "@seznam/compose-react-refs";
-import { forwardRef, ForwardRefRenderFunction, type IframeHTMLAttributes } from "react";
+import React, { IframeHTMLAttributes } from "react";
 import type { RefObject } from "react";
 
 import useHook, { RefType, AutoResize as AutoResizeType } from "./hooks";
@@ -23,7 +23,7 @@ export type Props = {
   onAutoResized?: () => void;
 };
 
-const IFrame: ForwardRefRenderFunction<Ref, Props> = (
+const IFrame: React.ForwardRefRenderFunction<Ref, Props> = (
   {
     autoResize,
     className,
@@ -44,7 +44,6 @@ const IFrame: ForwardRefRenderFunction<Ref, Props> = (
     ref: iFrameRef,
     props,
     onLoad: onIFrameLoad,
-    srcDoc,
   } = useHook({
     width,
     height,
@@ -64,15 +63,14 @@ const IFrame: ForwardRefRenderFunction<Ref, Props> = (
       frameBorder="no"
       scrolling={autoResize ? undefined : "no"}
       data-testid="iframe"
-      srcDoc={srcDoc}
+      srcDoc=""
       key={html}
       ref={composeRefs(iFrameRef, externalRef)}
       className={className}
       onLoad={onIFrameLoad}
-      sandbox="allow-scripts allow-downloads"
       {...props}
     />
   ) : null;
 };
 
-export default forwardRef(IFrame);
+export default React.forwardRef(IFrame);
