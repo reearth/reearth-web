@@ -129,11 +129,10 @@ export default function Polygon({
       </EntityExt>
       {/* workaround */}
       {strokes?.map((p, i) => (
-        <Entity key={i}>
+        <Entity key={i} id={`${id}-stroke${i}`}>
           <PolylineGraphics
-            key={i}
             positions={p}
-            clampToGround={hr == "clamp"}
+            clampToGround={hr == "clamp" || hr == "relative"}
             width={strokeWidth}
             material={memoStrokeColor}
             shadows={shadowMode(shadows)}

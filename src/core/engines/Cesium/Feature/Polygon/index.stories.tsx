@@ -118,3 +118,57 @@ Excluded.args = {
     ],
   },
 };
+
+export const ClampToGround = Template.bind([]);
+ClampToGround.args = {
+  engine: "cesium",
+  engines: {
+    cesium: engine,
+  },
+  ready: true,
+  layers: [
+    {
+      id: "l",
+      type: "simple",
+      data: {
+        type: "geojson",
+        value: {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [
+              [
+                [137.74631070393525, 35.654778982881425],
+                [137.74631070393525, 35.56614718408652],
+                [137.81686198363366, 35.56614718408652],
+                [137.81686198363366, 35.654778982881425],
+                [137.74631070393525, 35.654778982881425],
+              ],
+            ],
+            type: "Polygon",
+          },
+        },
+      },
+      polygon: {
+        stroke: true,
+        strokeWidth: 10,
+        strokeColor: "blue",
+        fillColor: "red",
+        heightReference: "clamp",
+      },
+    },
+  ],
+  property: {
+    tiles: [
+      {
+        id: "default",
+        tile_type: "default",
+      },
+    ],
+    terrain: {
+      terrain: true,
+      terrainType: "cesium",
+      depthTestAgainstTerrain: true,
+    },
+  },
+};
