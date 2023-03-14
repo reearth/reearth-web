@@ -1,5 +1,12 @@
 import type { Tag } from "@reearth/core/mantle/compat";
-import type { Events, Layer, LayerSelectionReason, LayersRef, NaiveLayer } from "@reearth/core/Map";
+import {
+  Events,
+  Layer,
+  LayerSelectionReason,
+  LayersRef,
+  NaiveLayer,
+  LazyLayer,
+} from "@reearth/core/Map";
 import { merge } from "@reearth/util/object";
 
 import type { Block } from "../Infobox";
@@ -293,7 +300,6 @@ export function commonReearth({
   selectedLayer,
   selectedFeature,
   layerSelectionReason,
-  layerOverriddenProperties,
   selectLayer,
   showLayer,
   hideLayer,
@@ -309,6 +315,7 @@ export function commonReearth({
   rotateRight,
   captureScreen,
   getLocationFromScreen,
+  sampleTerrainHeight,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -333,7 +340,6 @@ export function commonReearth({
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
-  layerOverriddenProperties?: () => GlobalThis["reearth"]["layers"]["overriddenProperties"];
   selectLayer: LayersRef["select"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
@@ -350,6 +356,7 @@ export function commonReearth({
   cameraViewport?: () => GlobalThis["reearth"]["camera"]["viewport"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
+  sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
@@ -411,6 +418,7 @@ export function commonReearth({
       overrideProperty: overrideSceneProperty,
       captureScreen,
       getLocationFromScreen,
+      sampleTerrainHeight,
     },
     get viewport() {
       return viewport?.();
@@ -456,8 +464,16 @@ export function commonReearth({
       get hide() {
         return hideLayer;
       },
+      // For compat
       get overriddenProperties() {
-        return layerOverriddenProperties?.();
+        return layers()
+          ?.overriddenLayers?.()
+          ?.reduce((res, v) => {
+            return {
+              ...res,
+              [v.id]: v.compat?.property,
+            };
+          }, {} as { [id: string]: any });
       },
       get overrideProperty() {
         return overrideLayerProperty;
@@ -487,25 +503,33 @@ export function commonReearth({
         return selectedFeature();
       },
       get findById() {
-        return layers()?.findById;
+        return (id: string) => layers()?.findById(id);
       },
       get findByIds() {
-        return layers()?.findByIds;
+        return (...args: string[]) =>
+          layers()
+            ?.findByIds(...args)
+            ?.filter((l): l is LazyLayer => !!l);
       },
       get findByTags() {
-        return layers()?.findByTags;
+        return (...args: string[]) => layers()?.findByTags(...args);
       },
       get findByTagLabels() {
-        return layers()?.findByTagLabels;
+        return (...args: string[]) => layers()?.findByTagLabels(...args);
       },
       get find() {
-        return layers()?.find;
+        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
+          layers()?.find(cb);
       },
       get findAll() {
-        return layers()?.findAll;
+        return (cb: (layer: LazyLayer, index: number, parents: LazyLayer[]) => boolean) =>
+          layers()?.findAll(cb);
       },
       get override() {
         return layers()?.override;
+      },
+      get overridden() {
+        return layers()?.overriddenLayers?.();
       },
       get replace() {
         return layers()?.replace;

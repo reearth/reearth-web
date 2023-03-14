@@ -1,4 +1,4 @@
-import { CSSProperties, type ReactNode } from "react";
+import { CSSProperties, useMemo, type ReactNode } from "react";
 
 // TODO(@keiya01): Change directory structure
 import DropHolder from "@reearth/components/atoms/DropHolder";
@@ -158,6 +158,7 @@ export default function Visualizer({
     camera,
     isMobile,
     overriddenSceneProperty,
+    overriddenClock,
     isDroppable,
     isLayerDragging,
     infobox,
@@ -185,6 +186,11 @@ export default function Visualizer({
     onLayerDrop,
   });
 
+  const selectedLayerIdForCrust = useMemo(
+    () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
+    [selectedLayer.featureId, selectedLayer.layerId],
+  );
+
   return (
     <Filled ref={wrapperRef}>
       {isDroppable && <DropHolder />}
@@ -197,6 +203,7 @@ export default function Visualizer({
         inEditor={inEditor}
         sceneProperty={overriddenSceneProperty}
         overrideSceneProperty={overrideSceneProperty}
+        overriddenClock={overriddenClock}
         blocks={infobox?.blocks}
         camera={camera}
         isMobile={isMobile}
@@ -209,7 +216,7 @@ export default function Visualizer({
         infoboxTitle={infobox?.title}
         infoboxVisible={!!infobox?.visible}
         selectedBlockId={selectedBlock}
-        selectedLayerId={{ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }}
+        selectedLayerId={selectedLayerIdForCrust}
         widgetAlignSystem={widgetAlignSystem}
         widgetAlignSystemEditing={widgetAlignSystemEditing}
         widgetLayoutConstraint={widgetLayoutConstraint}
@@ -236,6 +243,7 @@ export default function Visualizer({
         layers={layers}
         engines={engines}
         camera={camera}
+        overriddenClock={overriddenClock}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
         isLayerDragging={isLayerDragging}

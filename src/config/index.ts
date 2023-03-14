@@ -15,6 +15,10 @@ export type Config = {
   sentryDsn?: string;
   sentryEnv?: string;
   cesiumIonAccessToken?: string;
+  brand?: {
+    logoUrl?: string;
+    background?: string;
+  };
   passwordPolicy?: {
     tooShort?: RegExp;
     tooLong?: RegExp;

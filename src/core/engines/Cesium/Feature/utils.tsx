@@ -9,6 +9,7 @@ import {
   PropertyBag,
   TimeInterval as CesiumTimeInterval,
   TimeIntervalCollection as CesiumTimeIntervalCollection,
+  DistanceDisplayCondition as CesiumDistanceDisplayCondition,
 } from "cesium";
 import {
   ComponentProps,
@@ -20,7 +21,7 @@ import {
 } from "react";
 import { type CesiumComponentRef, Entity } from "resium";
 
-import { Data, LayerSimple, TimeInterval } from "@reearth/core/mantle";
+import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
 
@@ -141,14 +142,17 @@ const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
 
 const tagKey = "__reearth_tag";
 
-export const extractSimpleLayer = (layer: ComputedLayer | undefined): LayerSimple | void => {
-  if (layer?.layer.type !== "simple") {
+export const extractSimpleLayer = (
+  layer: ComputedLayer | Layer | undefined,
+): LayerSimple | void => {
+  const l = layer && "layer" in layer ? layer.layer : layer;
+  if (l?.type !== "simple") {
     return;
   }
-  return layer.layer;
+  return l;
 };
 
-export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | void => {
+export const extractSimpleLayerData = (layer: ComputedLayer | undefined): Data | undefined => {
   return extractSimpleLayer(layer)?.data;
 };
 
@@ -175,4 +179,13 @@ export const toTimeInterval = (
       stop: interval[1] ? JulianDate.fromDate(interval[1]) : Iso8601.MAXIMUM_VALUE,
     }),
   ]);
+};
+
+export const toDistanceDisplayCondition = (
+  near: number | undefined,
+  far: number | undefined,
+): CesiumDistanceDisplayCondition | undefined => {
+  return typeof near === "number" || typeof far === "number"
+    ? new CesiumDistanceDisplayCondition(near ?? 0.0, far ?? Number.MAX_VALUE)
+    : undefined;
 };

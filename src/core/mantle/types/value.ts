@@ -53,6 +53,8 @@ export type Plane = {
 
 // Familiar with Cesium
 export type EXPERIMENTAL_clipping = {
+  useBuiltinBox?: boolean;
+  allowEnterGround?: boolean;
   planes?: {
     normal: {
       x: number;
@@ -61,6 +63,7 @@ export type EXPERIMENTAL_clipping = {
     };
     distance: number;
   }[];
+  visible?: boolean;
   // for compat
   location?: LatLngHeight;
   coordinates?: number[];
@@ -79,6 +82,7 @@ export type EXPERIMENTAL_clipping = {
   heading?: number;
   pitch?: number;
   roll?: number;
+  direction?: "inside" | "outside";
 };
 
 // Don't forget adding a new field to valueTypeMapper also!

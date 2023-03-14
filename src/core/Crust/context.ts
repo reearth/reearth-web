@@ -1,6 +1,6 @@
 import { RefObject, useMemo } from "react";
 
-import { Camera, MapRef, SceneProperty } from "./types";
+import { Camera, Clock, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
 export const useWidgetContext = ({
@@ -8,6 +8,7 @@ export const useWidgetContext = ({
   camera,
   selectedLayerId,
   sceneProperty,
+  overriddenClock,
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -16,8 +17,9 @@ export const useWidgetContext = ({
         camera,
         selectedLayerId,
         sceneProperty,
+        overriddenClock,
       }),
-    [camera, mapRef, sceneProperty, selectedLayerId],
+    [camera, mapRef, sceneProperty, selectedLayerId, overriddenClock],
   );
 
 export function widgetContextFromMapRef({
@@ -25,6 +27,7 @@ export function widgetContextFromMapRef({
   camera,
   selectedLayerId,
   sceneProperty,
+  overriddenClock,
 }: {
   mapRef?: RefObject<MapRef>;
   camera?: Camera;
@@ -33,6 +36,7 @@ export function widgetContextFromMapRef({
     featureId?: string;
   };
   sceneProperty?: SceneProperty;
+  overriddenClock: Clock;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
@@ -42,6 +46,7 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
+    overriddenClock,
     initialCamera: sceneProperty?.default?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,

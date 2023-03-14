@@ -26,7 +26,9 @@ import {
   getCenterCamera,
   zoom,
   lookAtWithoutAnimation,
+  sampleTerrainHeight,
 } from "./common";
+import { getTag } from "./Feature";
 import { findEntity } from "./utils";
 
 export default function useEngineRef(
@@ -69,6 +71,11 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
+      sampleTerrainHeight: async (lng, lat) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return await sampleTerrainHeight(viewer.scene, lng, lat);
+      },
       flyTo: (target, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
@@ -101,9 +108,30 @@ export default function useEngineRef(
           viewer.flyTo(entities, options);
         }
         if (target && typeof target === "string") {
-          const entity = findEntityFromLayerIdOrFeatureId(target);
-          if (entity) {
-            viewer.flyTo(entity, options);
+          const viewer = cesium.current?.cesiumElement;
+          if (!viewer || viewer.isDestroyed()) return;
+
+          const layerOrFeatureId = target;
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          if (entityFromFeatureId && !(entityFromFeatureId instanceof Cesium.Cesium3DTileFeature)) {
+            viewer.flyTo(entityFromFeatureId, options);
+          } else {
+            for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
+              for (let i = 0; i < ds.length; i++) {
+                const d = ds.get(i);
+                const entities = d.entities.values;
+                const e = entities.find(e => getTag(e)?.layerId === layerOrFeatureId);
+                if (e) {
+                  viewer.flyTo(d);
+                  return;
+                }
+              }
+            }
+
+            const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
+            if (entityFromLayerId && !(entityFromLayerId instanceof Cesium.Cesium3DTileFeature)) {
+              viewer.flyTo(entityFromLayerId, options);
+            }
           }
         }
       },

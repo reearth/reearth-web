@@ -71,8 +71,9 @@ export type Reearth = {
       | "overriddenLayers"
     > & {
       readonly layersInViewport?: () => LazyLayer[] | undefined;
-      readonly overriddenProperties?: OverriddenLayer[];
+      readonly overriddenProperties?: { [id: string]: any };
       readonly overrideProperty?: (properties: LayerSimple["properties"] | undefined) => void;
+      readonly overridden?: OverriddenLayer[];
       readonly add?: (layer: NaiveLayer) => string | undefined;
       readonly delete?: WrappedRef<LayersRef>["deleteLayer"];
       readonly select?: (
@@ -121,6 +122,7 @@ export type Scene = {
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
+  readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
 };
 
 export type Camera = {

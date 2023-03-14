@@ -31,6 +31,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     className,
     style,
     property,
+    overriddenClock,
     camera,
     small,
     ready,
@@ -128,7 +129,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onMouseLeave={mouseEventHandles.mouseleave}
       onWheel={mouseEventHandles.wheel}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
-      <Clock property={property} onTick={handleTick} />
+      <Clock property={property} clock={overriddenClock} onTick={handleTick} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
       <Indicator property={property} />
       <ScreenSpaceEventHandler useDefault>
@@ -170,7 +171,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
           />
         </Entity>
       )}
-      <Scene backgroundColor={backgroundColor} useWebVR={property?.default?.vr} />
+      {/* NOTE: useWebVR={false} will crash Cesium */}
+      <Scene backgroundColor={backgroundColor} useWebVR={!!property?.default?.vr || undefined} />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}
@@ -194,5 +196,5 @@ export const engine: Engine = {
   component: Component,
   featureComponent: Feature,
   clusterComponent: Cluster,
-  delegatedDataTypes: ["czml", "wms", "mvt", "3dtiles", "osm-buildings"],
+  delegatedDataTypes: ["czml", "wms", "mvt", "3dtiles", "osm-buildings", "kml"],
 };

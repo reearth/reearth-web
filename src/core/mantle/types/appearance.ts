@@ -25,6 +25,7 @@ export type AppearanceTypes = {
 };
 
 export type MarkerAppearance = {
+  show?: boolean;
   heightReference?: "none" | "clamp" | "relative";
   style?: "none" | "point" | "image";
   pointSize?: number;
@@ -33,6 +34,7 @@ export type MarkerAppearance = {
   pointOutlineWidth?: number;
   image?: string;
   imageSize?: number;
+  imageSizeInMeters?: boolean;
   imageHorizontalOrigin?: "left" | "center" | "right";
   imageVerticalOrigin?: "top" | "center" | "baseline" | "bottom";
   imageColor?: string;
@@ -59,16 +61,22 @@ export type MarkerAppearance = {
   labelBackgroundPaddingHorizontal?: number;
   labelBackgroundPaddingVertical?: number;
   extrude?: boolean;
+  near?: number;
+  far?: number;
 };
 
 export type PolylineAppearance = {
+  show?: boolean;
   clampToGround?: boolean;
   strokeColor?: string;
   strokeWidth?: number;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  near?: number;
+  far?: number;
 };
 
 export type PolygonAppearance = {
+  show?: boolean;
   fill?: boolean;
   fillColor?: string;
   stroke?: boolean;
@@ -77,16 +85,23 @@ export type PolygonAppearance = {
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   lineJoin?: CanvasLineJoin;
+  near?: number;
+  far?: number;
+  extrudedHeight?: number;
 };
 
 export type EllipsoidAppearance = {
+  show?: boolean;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   radius?: number;
   fillColor?: string;
+  near?: number;
+  far?: number;
 };
 
 export type ModelAppearance = {
+  show?: boolean;
   model?: string; // For compat
   url?: string;
   heightReference?: "none" | "clamp" | "relative";
@@ -106,20 +121,24 @@ export type ModelAppearance = {
   silhouetteColor?: string;
   bearing?: number;
   silhouetteSize?: number; // default: 1
+  near?: number;
+  far?: number;
 };
 
 export type Cesium3DTilesAppearance = {
-  tileset?: string;
   show?: boolean;
   color?: string;
   styleUrl?: string;
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  colorBlendMode?: "highlight" | "replace" | "mix" | "default";
   edgeWidth?: number;
   edgeColor?: string;
+  tileset?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
 };
 
 export type LegacyPhotooverlayAppearance = {
+  show?: boolean;
   location?: LatLng;
   height?: number;
   heightReference?: "none" | "clamp" | "relative";
@@ -136,21 +155,26 @@ export type LegacyPhotooverlayAppearance = {
   imageShadowPositionY?: number;
   photoOverlayImage?: string;
   photoOverlayDescription?: string;
+  near?: number;
+  far?: number;
 };
 
 export type ResourceAppearance = {
+  show?: boolean;
   url?: string;
   type?: "geojson" | "kml" | "czml" | "auto";
   clampToGround?: boolean;
 };
 
 export type RasterAppearance = {
+  show?: boolean;
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
 };
 
 export type BoxAppearance = {
+  show?: boolean;
   height?: number;
   width?: number;
   length?: number;
@@ -177,6 +201,8 @@ export type BoxAppearance = {
   activeBox?: boolean;
   activeScalePointIndex?: number; // 0 ~ 11
   activeEdgeIndex?: number; // 0 ~ 11
+  near?: number;
+  far?: number;
 };
 
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {

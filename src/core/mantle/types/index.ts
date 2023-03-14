@@ -10,6 +10,7 @@ import type {
 import type { Infobox, Block, Tag } from "../compat/types";
 
 import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
+import type { Events } from "./events";
 
 export * from "./appearance";
 export * from "./value";
@@ -24,6 +25,7 @@ export type LayerSimple = {
   data?: Data;
   properties?: any;
   defines?: Record<string, string>;
+  events?: Events;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
@@ -55,6 +57,10 @@ export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children" | "infobox"> & 
 export type NaiveInfobox = Omit<Infobox, "id" | "blocks"> & { blocks?: NaiveBlock[] };
 export type NaiveBlock<P = any> = Omit<Block<P>, "id">;
 
+export type SelectedFeatureInfo = {
+  feature?: ComputedFeature;
+};
+
 // Data
 
 export type Data = {
@@ -64,9 +70,11 @@ export type Data = {
   layers?: string | string[];
   jsonProperties?: string[];
   updateInterval?: number; // milliseconds
+  parameters?: Record<string, any>;
   time?: {
     property?: string;
     interval?: number; // milliseconds
+    updateClockOnLoad?: boolean;
   };
   csv?: {
     idColumn?: string | number;
@@ -74,6 +82,7 @@ export type Data = {
     lngColumn?: string | number;
     heightColumn?: string | number;
     noHeader?: boolean;
+    disableTypeConversion?: boolean;
   };
 };
 
@@ -94,7 +103,10 @@ export type DataType =
   | "kml"
   | "gpx"
   | "shapefile"
-  | "gtfs";
+  | "gtfs"
+  | "gml"
+  | "georss"
+  | "gltf";
 
 export type TimeInterval = [start: Date, end?: Date];
 

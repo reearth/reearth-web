@@ -2,9 +2,13 @@ import type { Feature as GeoJSONFeature, Point } from "geojson";
 
 import type { Data, DataRange, Feature } from "../types";
 
-import { f, generateRandomString } from "./utils";
+import { f, FetchOptions, generateRandomString } from "./utils";
 
-export async function fetchCSV(data: Data, range?: DataRange): Promise<Feature[] | void> {
+export async function fetchCSV(
+  data: Data,
+  range?: DataRange,
+  options?: FetchOptions,
+): Promise<Feature[] | void> {
   if (!data.url) {
     const value = data.value;
     if (typeof value !== "string") {
@@ -13,7 +17,7 @@ export async function fetchCSV(data: Data, range?: DataRange): Promise<Feature[]
     }
     return await parseCSV(value, data.csv, range);
   }
-  const csvText = await (await f(data.url)).text();
+  const csvText = await (await f(data.url, options)).text();
   return await parseCSV(csvText, data.csv, range);
 }
 
@@ -68,8 +72,8 @@ const parseCSV = async (
 };
 
 const SUPPORTED_COORDINATES = {
-  lat: 0,
-  lng: 1,
+  lng: 0,
+  lat: 1,
   height: 2,
 } as const;
 
@@ -98,7 +102,9 @@ const makeGeoJSONFromArray = (
   options: Data["csv"],
 ): CSVGeoJSONFeature => {
   const result = values.reduce(
-    (result: CSVGeoJSONFeature, value, idx) => {
+    (result: CSVGeoJSONFeature, element, idx) => {
+      let value: string | number = element;
+      if (!options?.disableTypeConversion) value = filterNumericString(element);
       if (options?.idColumn !== undefined && [headers[idx], idx].includes(options.idColumn)) {
         return {
           ...result,
@@ -106,11 +112,25 @@ const makeGeoJSONFromArray = (
         };
       }
 
-      if (options?.latColumn !== undefined && [headers[idx], idx].includes(options.latColumn)) {
-        return { ...result, geometry: setCoordinatesToPointGeometry(result.geometry, value, 0) };
-      }
       if (options?.lngColumn !== undefined && [headers[idx], idx].includes(options.lngColumn)) {
-        return { ...result, geometry: setCoordinatesToPointGeometry(result.geometry, value, 1) };
+        return {
+          ...result,
+          geometry: setCoordinatesToPointGeometry(
+            result.geometry,
+            value,
+            SUPPORTED_COORDINATES.lng,
+          ),
+        };
+      }
+      if (options?.latColumn !== undefined && [headers[idx], idx].includes(options.latColumn)) {
+        return {
+          ...result,
+          geometry: setCoordinatesToPointGeometry(
+            result.geometry,
+            value,
+            SUPPORTED_COORDINATES.lat,
+          ),
+        };
       }
       if (
         options?.heightColumn !== undefined &&
@@ -118,7 +138,12 @@ const makeGeoJSONFromArray = (
       ) {
         return {
           ...result,
-          geometry: setCoordinatesToPointGeometry(result.geometry, value, 2, true),
+          geometry: setCoordinatesToPointGeometry(
+            result.geometry,
+            value,
+            SUPPORTED_COORDINATES.height,
+            true,
+          ),
         };
       }
 
@@ -158,4 +183,12 @@ const makeFeature = (value: CSVGeoJSONFeature, range: DataRange | undefined): Fe
     properties: value.properties,
     range,
   };
+};
+
+const filterNumericString = (input: string): number | string => {
+  const parsed = Number(input);
+  if (isNaN(parsed) || input === "") {
+    return input;
+  }
+  return parsed;
 };

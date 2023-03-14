@@ -9,7 +9,11 @@ import {
   Cesium3DTileset,
   Cesium3DTileContent,
   Cesium3DTileFeature,
+  JulianDate,
 } from "cesium";
+
+import { InfoboxProperty } from "@reearth/core/Crust/Infobox";
+import { DefaultInfobox } from "@reearth/core/Map";
 
 import { getTag } from "./Feature";
 
@@ -45,7 +49,7 @@ export const translationWithClamping = (
 
 export function lookupFeatures(
   c: Cesium3DTileContent,
-  cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void,
+  cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void | Promise<void>,
 ) {
   if (!c) return;
   const length = c.featuresLength;
@@ -112,7 +116,7 @@ export function findEntity(
   // Find Cesium3DTileFeature
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset)) {
+    if (!(prim instanceof Cesium3DTileset) || !prim.ready) {
       continue;
     }
 
@@ -130,10 +134,39 @@ export function findEntity(
     }
 
     const tag = getTag(prim);
-    if (tag?.layerId === layerId) {
+    if (tag?.layerId && layerId && tag?.layerId === layerId) {
       return prim;
     }
   }
 
   return;
+}
+
+export const getEntityContent = (
+  entity: Entity,
+  time: JulianDate,
+  defaultContent: InfoboxProperty["defaultContent"],
+): DefaultInfobox["content"] => {
+  const content: Record<
+    Exclude<InfoboxProperty["defaultContent"], undefined>,
+    DefaultInfobox["content"]
+  > = {
+    description: {
+      type: "html",
+      value: entity.description?.getValue(time),
+    },
+    attributes: {
+      type: "table",
+      value: entity.properties ? entityProperties(entity.properties.getValue(time)) : [],
+    },
+  };
+
+  return defaultContent ? content[defaultContent] : content.description ?? content.attributes;
+};
+
+function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
+  return Object.entries(properties).reduce<{ key: string; value: [string, string] }[]>(
+    (a, [key, value]) => [...a, { key, value }],
+    [],
+  );
 }

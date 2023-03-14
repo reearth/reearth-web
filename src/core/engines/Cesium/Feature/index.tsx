@@ -13,7 +13,7 @@ import Polyline, { config as polylineConfig } from "./Polyline";
 import Raster, { config as rasterConfig } from "./Raster";
 import Resource, { config as resourceConfig } from "./Resource";
 import Tileset, { config as tilesetConfig } from "./Tileset";
-import type { FeatureComponent, FeatureComponentConfig } from "./utils";
+import { extractSimpleLayerData, FeatureComponent, FeatureComponentConfig } from "./utils";
 
 export * from "./utils";
 export { context, type Context } from "./context";
@@ -45,6 +45,9 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   gpx: "auto",
   shapefile: "auto",
   gtfs: "auto",
+  georss: [],
+  gml: [],
+  gltf: ["model"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
@@ -66,7 +69,7 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
-  const data = layer.layer.type === "simple" ? layer.layer.data : undefined;
+  const data = extractSimpleLayerData(layer);
   const ext =
     !data?.type || (data.type as string) === "auto"
       ? (getExtname(data?.url) as DataType)
@@ -84,8 +87,8 @@ export default function Feature({
           return (
             <C
               {...props}
-              key={`${layer?.id || ""}_${k}`}
-              id={layer.id}
+              key={`${layer?.id || ""}_${k}_${data?.url}`}
+              id={`${layer.id}_${k}`}
               property={pickProperty(k, layer) || layer[k]}
               layer={layer}
               isVisible={layer.layer.visible !== false && !isHidden}
@@ -116,7 +119,7 @@ export default function Feature({
             <C
               {...props}
               key={`${f?.id || ""}_${k}`}
-              id={f ? f.id : layer.id}
+              id={`${f ? f.id : layer.id}_${k}`}
               property={f ? f[k] : layer[k] || pickProperty(k, layer)}
               geometry={f?.geometry}
               feature={f}

@@ -3,21 +3,27 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { TimeEventHandler } from "@reearth/components/atoms/Timeline";
 import { TickEvent, TickEventCallback } from "@reearth/core/Map";
 
-import type { Clock } from "../types";
+import type { Clock, Widget } from "../types";
+import { useVisible } from "../useVisible";
 
+const MAX_RANGE = 86400000; // a day
 const getOrNewDate = (d?: Date) => d ?? new Date();
 const makeRange = (startTime?: number, stopTime?: number) => {
+  // To avoid out of range error in Cesium, we need to turn back a hour.
+  const now = Date.now() - 3600000;
   return {
-    start: startTime,
-    end: (startTime || 0) < (stopTime || 0) ? stopTime : undefined,
+    start: startTime || now - MAX_RANGE,
+    end: stopTime || now,
   };
 };
 
 const DEFAULT_SPEED = 1;
 
 export const useTimeline = ({
-  widgetId,
+  widget,
   clock,
+  overriddenClock,
+  isMobile,
   onPlay,
   onPause,
   onTimeChange,
@@ -25,9 +31,12 @@ export const useTimeline = ({
   onTick,
   removeTickEventListener,
   onExtend,
+  onVisibilityChange,
 }: {
-  widgetId: string;
+  widget: Widget;
   clock?: Clock;
+  overriddenClock?: Partial<Clock>;
+  isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
@@ -35,7 +44,15 @@ export const useTimeline = ({
   onTick?: TickEvent;
   removeTickEventListener?: TickEvent;
   onExtend?: (id: string, extended: boolean | undefined) => void;
+  onVisibilityChange?: (id: string, v: boolean) => void;
 }) => {
+  const visible = useVisible({
+    widgetId: widget.id,
+    visible: widget.property?.default?.visible,
+    isMobile,
+    onVisibilityChange,
+  });
+  const widgetId = widget.id;
   const [range, setRange] = useState(() =>
     makeRange(clock?.start?.getTime(), clock?.stop?.getTime()),
   );
@@ -57,6 +74,15 @@ export const useTimeline = ({
     onExtend?.(widgetId, false);
     setIsOpened(false);
   }, [widgetId, onExtend]);
+
+  const switchCurrentTimeToStart = useCallback(
+    (t: number) => {
+      const cur = t > range.end ? range.start : t < range.start ? range.end : t;
+      onTimeChange?.(new Date(cur));
+      return cur;
+    },
+    [range, onTimeChange],
+  );
 
   const handleTimeEvent: TimeEventHandler = useCallback(
     currentTime => {
@@ -126,34 +152,65 @@ export const useTimeline = ({
     }
   }, [clock, onSpeedChange, onTick]);
 
-  // Sync cesium clock.
-  useEffect(() => {
+  const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
     setRange(prev => {
-      const next = makeRange(clock?.start?.getTime(), clock?.stop?.getTime());
+      const next = makeRange(start, stop);
       if (prev.start !== next.start || prev.end !== next.end) {
         return next;
       }
       return prev;
     });
+  }, []);
+
+  const overriddenStart = overriddenClock?.start?.getTime();
+  const overriddenStop = overriddenClock?.stop?.getTime();
+
+  // Sync cesium clock.
+  useEffect(() => {
+    handleRange(overriddenStart ?? clockStartTime, overriddenStop ?? clockStopTime);
     setSpeed(Math.abs(clockSpeed));
-  }, [clockStartTime, clockStopTime, clockSpeed, clock?.start, clock?.stop]);
+  }, [clockStartTime, clockStopTime, clockSpeed, overriddenStart, overriddenStop, handleRange]);
 
   useEffect(() => {
-    const h: TickEventCallback = d => {
-      if (!clock?.playing) return;
-      setCurrentTime(d.getTime() || Date.now());
+    const h: TickEventCallback = (d, c) => {
+      handleRange(c.start.getTime(), c.stop.getTime());
+      setCurrentTime(switchCurrentTimeToStart(d.getTime()));
     };
     onTick?.(h);
     return () => {
       removeTickEventListener?.(h);
     };
-  }, [onTick, clock?.playing, removeTickEventListener]);
+  }, [onTick, clock?.playing, removeTickEventListener, switchCurrentTimeToStart, handleRange]);
+
+  const onTimeChangeRef = useRef<typeof onTimeChange>();
+
+  useEffect(() => {
+    onTimeChangeRef.current = onTimeChange;
+  }, [onTimeChange]);
+
+  const overriddenCurrentTime = overriddenClock?.current?.getTime();
+  useEffect(() => {
+    if (overriddenCurrentTime) {
+      const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
+      setCurrentTime(t);
+      onTimeChangeRef.current?.(new Date(t));
+    }
+  }, [overriddenCurrentTime, range]);
+
+  useEffect(() => {
+    if (isMobile) {
+      onExtend?.(widgetId, true);
+    } else {
+      onExtend?.(widgetId, undefined);
+    }
+  }, [widgetId, onExtend, isMobile]);
 
   return {
     speed,
     range,
     isOpened,
     currentTime,
+    visible,
     events: {
       onOpen: handleOnOpen,
       onClose: handleOnClose,

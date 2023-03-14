@@ -2,19 +2,27 @@ import TimelineUI from "@reearth/components/atoms/Timeline";
 import { styled } from "@reearth/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
+import { Visible } from "../useVisible";
 
 import { useTimeline } from "./hooks";
 
 export type Props = WidgetProps<Property>;
 
-export type Property = {};
+export type Property = {
+  default: {
+    visible: Visible;
+  };
+};
 
 const Timeline = ({
   widget,
   theme,
+  isMobile,
   onExtend,
+  onVisibilityChange,
   context: {
     clock,
+    overriddenClock,
     onPlay,
     onPause,
     onSpeedChange,
@@ -23,9 +31,11 @@ const Timeline = ({
     removeTickEventListener,
   } = {},
 }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events } = useTimeline({
-    widgetId: widget.id,
+  const { isOpened, currentTime, range, speed, events, visible } = useTimeline({
+    widget,
     clock,
+    overriddenClock,
+    isMobile,
     onPlay,
     onPause,
     onSpeedChange,
@@ -33,9 +43,10 @@ const Timeline = ({
     onTick,
     removeTickEventListener,
     onExtend,
+    onVisibilityChange,
   });
 
-  return (
+  return visible ? (
     <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>
       <TimelineUI
         isOpened={isOpened}
@@ -46,7 +57,7 @@ const Timeline = ({
         {...events}
       />
     </Widget>
-  );
+  ) : null;
 };
 
 const Widget = styled.div<{
@@ -56,7 +67,7 @@ const Widget = styled.div<{
   max-width: 100vw;
   width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "720px" : "auto")};
 
-  @media (max-width: 560px) {
+  @media (max-width: 768px) {
     width: ${({ extended, opened }) => (extended && opened ? "100%" : opened ? "90vw" : "auto")};
   }
 `;

@@ -20,7 +20,9 @@ import { CesiumComponentRef, useCesium } from "resium";
 import type { ComputedFeature, ComputedLayer, Feature, EvalFeature, SceneProperty } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { lookupFeatures, translationWithClamping } from "../../utils";
-import { attachTag, extractSimpleLayerData, toColor } from "../utils";
+import { attachTag, extractSimpleLayer, extractSimpleLayerData, toColor } from "../utils";
+
+import { useClippingBox } from "./useClippingBox";
 
 import { Property } from ".";
 
@@ -68,6 +70,8 @@ type CachedFeature = {
   raw: Cesium3DTileFeature;
 };
 
+const MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES = 5000;
+
 const useFeature = ({
   id,
   tileset,
@@ -88,15 +92,18 @@ const useFeature = ({
   const layerId = layer?.id || id;
 
   const attachComputedFeature = useCallback(
-    (feature?: CachedFeature) => {
+    async (feature?: CachedFeature) => {
       const layer = cachedCalculatedLayerRef?.current?.layer;
       if (layer?.type === "simple" && feature?.feature) {
         const computedFeature = evalFeature(layer, feature?.feature);
-        const show = computedFeature?.["3dtiles"]?.show;
+        const style = computedFeature?.["3dtiles"];
+
+        const show = style?.show;
         if (show !== undefined) {
           feature.raw.show = show;
         }
-        const color = toColor(computedFeature?.["3dtiles"]?.color);
+
+        const color = toColor(style?.color);
         if (color !== undefined) {
           feature.raw.color = color;
         }
@@ -118,11 +125,9 @@ const useFeature = ({
 
       const tempFeatures: Feature[] = [];
       const tempComputedFeatures: ComputedFeature[] = [];
-      lookupFeatures(t.content, (tileFeature, content) => {
+      lookupFeatures(t.content, async (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const nextFeatureId = String(tileFeature.featureId);
-        currentTiles.set(t, nextFeatureId);
-        const id = String(nextFeatureId + tileFeature.featureId);
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         const feature = (() => {
           const normalFeature = makeFeatureFrom3DTile(id, tileFeature, [
             coordinates.x,
@@ -139,7 +144,7 @@ const useFeature = ({
 
         attachTag(tileFeature, { layerId, featureId: id });
 
-        const computedFeature = attachComputedFeature(feature);
+        const computedFeature = await attachComputedFeature(feature);
         if (computedFeature) {
           tempFeatures.push(feature.feature);
           tempComputedFeatures.push(computedFeature);
@@ -154,8 +159,7 @@ const useFeature = ({
       const featureIds: string[] = [];
       lookupFeatures(t.content, (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
-        const id =
-          `${tileFeature.featureId}` ?? `${coordinates.x}-${coordinates.y}-${coordinates.z}`;
+        const id = `${coordinates.x}-${coordinates.y}-${coordinates.z}-${tileFeature.featureId}`;
         featureIds.push(id);
       });
       onFeatureDelete?.(featureIds);
@@ -174,25 +178,73 @@ const useFeature = ({
   }, [layer]);
 
   // Update 3dtiles styles
-  const tileAppearanceShow = layer?.["3dtiles"]?.show;
-  const tileAppearanceColor = layer?.["3dtiles"]?.color;
+  const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
+  const tileAppearanceShow = tileAppearance?.show;
+  const tileAppearanceColor = tileAppearance?.color;
+
+  // If styles are updated while features are calculating,
+  // we stop calculating features, and reassign styles.
+  const skippedComputingAt = useRef<number | null>();
   useEffect(() => {
-    cachedFeaturesRef.current.map(f => {
-      const properties = f.feature.properties;
-      if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
-        f.feature.properties.color = tileAppearanceColor;
-        f.feature.properties.show = tileAppearanceShow;
-        attachComputedFeature(f);
+    skippedComputingAt.current = Date.now();
+  }, [tileAppearanceShow, tileAppearanceColor]);
+
+  const computeFeatureAsync = useCallback(
+    async (f: CachedFeature, startedComputingAt: number) =>
+      new Promise(resolve =>
+        requestAnimationFrame(() => {
+          if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
+            resolve(undefined);
+            return;
+          }
+
+          const properties = f.feature.properties;
+          if (properties.show !== tileAppearanceShow || properties.color !== tileAppearanceColor) {
+            f.feature.properties.color = tileAppearanceColor;
+            f.feature.properties.show = tileAppearanceShow;
+            attachComputedFeature(f);
+          }
+          resolve(undefined);
+        }),
+      ),
+    [tileAppearanceShow, tileAppearanceColor, attachComputedFeature],
+  );
+
+  const computeFeatures = useCallback(
+    async (startedComputingAt: number) => {
+      const tempAsyncProcesses: Promise<unknown>[] = [];
+      for (const f of cachedFeaturesRef.current) {
+        if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
+          break;
+        }
+        tempAsyncProcesses.push(computeFeatureAsync(f, startedComputingAt));
+
+        if (tempAsyncProcesses.length > MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES) {
+          await Promise.all(tempAsyncProcesses);
+          tempAsyncProcesses.length = 0;
+        }
       }
-    });
-  }, [tileAppearanceShow, tileAppearanceColor, attachComputedFeature]);
+      if (!(skippedComputingAt.current && skippedComputingAt.current > startedComputingAt)) {
+        await Promise.all(tempAsyncProcesses);
+      }
+    },
+    [computeFeatureAsync],
+  );
+
+  useEffect(() => {
+    const compute = async () => {
+      const startedComputingAt = Date.now();
+      await computeFeatures(startedComputingAt);
+    };
+    compute();
+  }, [computeFeatures]);
 };
 
 export const useHooks = ({
   id,
+  boxId,
   isVisible,
   property,
-  sceneProperty,
   layer,
   feature,
   meta,
@@ -201,6 +253,7 @@ export const useHooks = ({
   onFeatureDelete,
 }: {
   id: string;
+  boxId: string;
   isVisible?: boolean;
   property?: Property;
   sceneProperty?: SceneProperty;
@@ -223,8 +276,11 @@ export const useHooks = ({
     roll,
     pitch,
     planes: _planes,
-  } = experimental_clipping || {};
-  const { allowEnterGround } = sceneProperty?.default || {};
+    visible: clippingVisible = true,
+    direction = "inside",
+    builtinBoxProps,
+    allowEnterGround,
+  } = useClippingBox({ clipping: experimental_clipping, boxId });
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type } = useData(layer);
 
@@ -244,6 +300,7 @@ export const useHooks = ({
     }
     return prevPlanes.current;
   }, [_planes]);
+  const clipDirection = direction === "inside" ? -1 : 1;
   // Create immutable object
   const [clippingPlanes] = useState(
     () =>
@@ -252,9 +309,10 @@ export const useHooks = ({
           plane =>
             new ClippingPlane(
               new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
-              (plane.distance || 0) * -1,
+              (plane.distance || 0) * clipDirection,
             ),
         ),
+        unionClippingRegions: direction === "outside",
         edgeWidth: edgeWidth,
         edgeColor: toColor(edgeColor),
       }),
@@ -303,6 +361,13 @@ export const useHooks = ({
   );
 
   useEffect(() => {
+    const coords = coordinates
+      ? coordinates
+      : location
+      ? [location.lng, location.lat, location.height ?? 0]
+      : undefined;
+    const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
+
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
         return;
@@ -321,19 +386,12 @@ export const useHooks = ({
 
       const dimensions = new Cartesian3(width || 100, length || 100, height || 100);
 
-      const coords = coordinates
-        ? coordinates
-        : location
-        ? [location.lng, location.lat, location.height ?? 0]
-        : undefined;
-      const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
-
       if (!allowEnterGround) {
-        translationWithClamping(
-          new TranslationRotationScale(position, undefined, dimensions),
-          !!allowEnterGround,
-          terrainHeightEstimate,
-        );
+        const trs = new TranslationRotationScale(position, undefined, dimensions);
+        translationWithClamping(trs, !!allowEnterGround, terrainHeightEstimate);
+        position.x = trs.translation.x;
+        position.y = trs.translation.y;
+        position.z = trs.translation.z;
       }
 
       const hpr = heading && pitch && roll ? new HeadingPitchRoll(heading, pitch, roll) : undefined;
@@ -350,10 +408,10 @@ export const useHooks = ({
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
-    if (!allowEnterGround) {
-      updateTerrainHeight(Matrix4.getTranslation(clippingPlanes.modelMatrix, new Cartesian3()));
-    }
     prepareClippingPlanes();
+    if (!allowEnterGround) {
+      updateTerrainHeight(position);
+    }
   }, [
     width,
     length,
@@ -368,6 +426,26 @@ export const useHooks = ({
     allowEnterGround,
     terrainHeightEstimate,
   ]);
+
+  useEffect(() => {
+    clippingPlanes.enabled = clippingVisible;
+  }, [clippingPlanes, clippingVisible]);
+
+  useEffect(() => {
+    clippingPlanes.unionClippingRegions = direction === "outside";
+  }, [clippingPlanes, direction]);
+
+  useEffect(() => {
+    clippingPlanes.removeAll();
+    planes?.forEach(plane =>
+      clippingPlanes.add(
+        new ClippingPlane(
+          new Cartesian3(plane.normal?.x, plane.normal?.y, plane.normal?.z),
+          (plane.distance || 0) * clipDirection,
+        ),
+      ),
+    );
+  }, [planes, clippingPlanes, clipDirection]);
 
   useEffect(() => {
     if (!styleUrl) {
@@ -396,5 +474,6 @@ export const useHooks = ({
     ref,
     style,
     clippingPlanes,
+    builtinBoxProps,
   };
 };

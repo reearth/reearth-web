@@ -10,6 +10,7 @@ import type { PolylineAppearance } from "../../..";
 import { shadowMode } from "../../common";
 import {
   EntityExt,
+  toDistanceDisplayCondition,
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -22,6 +23,7 @@ export type Property = PolylineAppearance & {
 };
 
 export default function Polyline({ id, isVisible, property, geometry, layer, feature }: Props) {
+  const { show = true } = property || {};
   const coordinates = useMemo(
     () =>
       geometry?.type === "LineString"
@@ -41,15 +43,25 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
   );
   const material = useMemo(() => toColor(strokeColor), [strokeColor]);
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
+  const distanceDisplayCondition = useMemo(
+    () => toDistanceDisplayCondition(property?.near, property?.far),
+    [property?.near, property?.far],
+  );
 
-  return !isVisible ? null : (
-    <EntityExt id={id} layerId={layer?.id} featureId={feature?.id} availability={availability}>
+  return !isVisible || !coordinates || !show ? null : (
+    <EntityExt
+      id={id}
+      layerId={layer?.id}
+      featureId={feature?.id}
+      availability={availability}
+      properties={feature?.properties}>
       <PolylineGraphics
         positions={positions}
         width={strokeWidth}
         material={material}
         clampToGround={clampToGround}
         shadows={shadowMode(shadows)}
+        distanceDisplayCondition={distanceDisplayCondition}
       />
     </EntityExt>
   );

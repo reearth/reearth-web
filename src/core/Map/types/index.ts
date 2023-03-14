@@ -7,7 +7,14 @@ import type {
   RefObject,
 } from "react";
 
-import type { LatLngHeight, Camera, Rect, LatLng, DataType } from "../../mantle";
+import type {
+  LatLngHeight,
+  Camera,
+  Rect,
+  LatLng,
+  DataType,
+  SelectedFeatureInfo,
+} from "../../mantle";
 import type {
   FeatureComponentType,
   ClusterComponentType,
@@ -25,7 +32,12 @@ export type {
   LayerSelectionReason,
 } from "../Layers";
 export type {
+  Atom,
+  DataType,
+  DataRange,
+  Feature,
   Layer,
+  LayerSimple,
   ComputedFeature,
   ComputedLayer,
   Geometry,
@@ -48,6 +60,7 @@ export type EngineRef = {
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
+  sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: (target: string | string[] | FlyToDestination, options?: CameraOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
@@ -89,6 +102,7 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
+  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;
@@ -107,6 +121,7 @@ export type EngineProps = {
     layerId: string | undefined,
     featureId?: string,
     options?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
   ) => void;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrag?: (layerId: string, featureId: string | undefined, position: LatLng) => void;
@@ -125,7 +140,7 @@ export type LayerEditEvent = {
 };
 
 export type Clock = {
-  current: Date;
+  current?: Date;
   start?: Date;
   stop?: Date;
   speed?: number;
@@ -160,7 +175,7 @@ export type MouseEvents = {
 };
 
 export type TickEvent = (cb: TickEventCallback) => void;
-export type TickEventCallback = (clock: Date) => void;
+export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
 
 export type MouseEventHandles = {
   onClick: (fn: MouseEvents["click"]) => void;

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
+import { convertTime } from "@reearth/util/time";
 import { type DropOptions, useDrop } from "@reearth/util/use-dnd";
 
 import type { Block, BuiltinWidgets } from "../Crust";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
-import type { ComputedFeature, Feature, LatLng } from "../mantle";
+import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
@@ -102,11 +103,12 @@ export default function useHooks({
       featureId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
       reason: LayerSelectionReason | undefined,
+      info: SelectedFeatureInfo | undefined,
     ) => {
       const computedLayer = await layer?.();
 
       selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
-      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId));
+      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId) ?? info?.feature);
 
       selectLayer({ layerId, featureId, layer: computedLayer, reason });
     },
@@ -116,11 +118,11 @@ export default function useHooks({
   // blocks
   const blocks = useMemo(
     () =>
-      selectedLayer.layer?.layer.infobox?.blocks?.map(b => ({
+      selectedLayer.layer?.layer?.infobox?.blocks?.map(b => ({
         ...b,
-        property: b.property.default ?? b.property,
+        property: b.property?.default ?? b.property,
       })),
-    [selectedLayer.layer?.layer.infobox?.blocks],
+    [selectedLayer.layer?.layer?.infobox?.blocks],
   );
 
   // Infobox
@@ -131,8 +133,8 @@ export default function useHooks({
         ? {
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
             isEditable: !!selectedLayer.layer?.layer?.infobox,
-            visible: !!selectedLayer.layer?.layer?.infobox,
-            property: selectedLayer.layer?.layer.infobox?.property?.default,
+            visible: !!selectedLayer.layer?.layer?.infobox || !!defaultInfobox,
+            property: selectedLayer.layer?.layer?.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
         : undefined,
@@ -141,6 +143,46 @@ export default function useHooks({
 
   // scene
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
+
+  // clock
+  const overriddenClock = useMemo(() => {
+    const { start, stop, current } = overriddenSceneProperty.timeline || {};
+    const startTime = convertTime(start)?.getTime();
+    const stopTime = convertTime(stop)?.getTime();
+    const currentTime = convertTime(current)?.getTime();
+
+    const DEFAULT_NEXT_RANGE = 86400000; // a day
+    const MAX_RANGE_DIFFERENCE = 2592000000; // 30 days
+
+    // To avoid out of range error in Cesium, we need to turn back a hour.
+    const now = Date.now() - 3600000;
+
+    const convertedStartTime = startTime
+      ? Math.min(now, startTime)
+      : stopTime
+      ? Math.min(now, stopTime - DEFAULT_NEXT_RANGE)
+      : now - DEFAULT_NEXT_RANGE;
+
+    const convertedStopTime = stopTime
+      ? Math.min(stopTime, convertedStartTime + MAX_RANGE_DIFFERENCE)
+      : startTime
+      ? Math.min(now, startTime + DEFAULT_NEXT_RANGE)
+      : now;
+
+    return {
+      start: start || stop ? new Date(convertedStartTime) : undefined,
+      stop: start || stop ? new Date(convertedStopTime) : undefined,
+      current:
+        start || stop || current
+          ? new Date(
+              Math.max(
+                Math.min(convertedStopTime, currentTime || convertedStartTime),
+                convertedStartTime,
+              ),
+            )
+          : undefined,
+    };
+  }, [overriddenSceneProperty]);
 
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
@@ -209,6 +251,7 @@ export default function useHooks({
     camera,
     isMobile,
     overriddenSceneProperty,
+    overriddenClock,
     isDroppable,
     infobox,
     isLayerDragging,
@@ -248,21 +291,40 @@ function useValue<T>(
 }
 
 function defaultInfoboxBlocks(defaultInfobox: DefaultInfobox | undefined): Block[] | undefined {
-  return defaultInfobox && Array.isArray(defaultInfobox?.content)
-    ? [
-        {
-          id: "content",
-          pluginId: "reearth",
-          extensionId: "dlblock",
-          property: {
-            items: defaultInfobox.content.map((c, i) => ({
-              id: i,
-              item_title: c.key,
-              item_datastr: String(c.value),
-              item_datatype: "string",
-            })),
+  if (defaultInfobox?.content.type === "table") {
+    return Array.isArray(defaultInfobox?.content.value)
+      ? [
+          {
+            id: "content",
+            pluginId: "reearth",
+            extensionId: "dlblock",
+            property: {
+              items: defaultInfobox.content.value.map((c, i) => ({
+                id: i,
+                item_title: c.key,
+                item_datastr: String(c.value),
+                item_datatype: "string",
+              })),
+            },
           },
-        },
-      ]
-    : undefined;
+        ]
+      : undefined;
+  }
+
+  if (defaultInfobox?.content.type === "html") {
+    return defaultInfobox.content.value
+      ? [
+          {
+            id: "content",
+            pluginId: "reearth",
+            extensionId: "htmlblock",
+            property: {
+              html: defaultInfobox.content.value,
+            },
+          },
+        ]
+      : undefined;
+  }
+
+  return undefined;
 }

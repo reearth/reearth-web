@@ -147,6 +147,13 @@ export default function ({
     [engineRef],
   );
 
+  const sampleTerrainHeight = useCallback(
+    async (lng: number, lat: number) => {
+      return await engineRef?.sampleTerrainHeight(lng, lat);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -261,10 +268,6 @@ export default function ({
     [layersRef],
   );
 
-  const layerOverriddenProperties = useCallback(() => {
-    return layersRef?.overriddenLayers();
-  }, [layersRef]);
-
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -281,7 +284,6 @@ export default function ({
         selectedLayer: getSelectedLayer,
         selectedFeature: getSelectedFeature,
         layerSelectionReason: getLayerSelectionReason,
-        layerOverriddenProperties,
         showLayer,
         hideLayer,
         addLayer,
@@ -298,6 +300,7 @@ export default function ({
         orbit,
         captureScreen,
         getLocationFromScreen,
+        sampleTerrainHeight,
         enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -341,6 +344,7 @@ export default function ({
       flyTo,
       flyToGround,
       getLocationFromScreen,
+      sampleTerrainHeight,
       hideLayer,
       lookHorizontal,
       lookVertical,
@@ -358,7 +362,6 @@ export default function ({
       showLayer,
       zoomIn,
       zoomOut,
-      layerOverriddenProperties,
     ],
   );
 
