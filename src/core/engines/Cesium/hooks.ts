@@ -33,7 +33,7 @@ import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import useEngineRef from "./useEngineRef";
-import { convertCartesian3ToPosition, findEntity } from "./utils";
+import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
 export default ({
   ref,
@@ -239,6 +239,10 @@ export default ({
     }
 
     if (entity) {
+      const layer = tag?.layerId
+        ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
+          layersRef?.current?.findById(tag.layerId)
+        : undefined;
       // Sometimes only featureId is specified, so we need to sync entity tag.
       onLayerSelect?.(
         tag?.layerId,
@@ -247,12 +251,11 @@ export default ({
           ? {
               defaultInfobox: {
                 title: entity.name,
-                content: {
-                  type: "html",
-                  value: entity.description?.getValue(
-                    cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
-                  ),
-                },
+                content: getEntityContent(
+                  entity,
+                  cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
+                  tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                ),
               },
             }
           : undefined,
@@ -326,6 +329,10 @@ export default ({
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
+        const layer = tag?.layerId
+          ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
+            layersRef?.current?.findById(tag.layerId)
+          : undefined;
         onLayerSelect?.(
           tag?.layerId,
           tag?.featureId,
@@ -333,23 +340,11 @@ export default ({
             ? {
                 defaultInfobox: {
                   title: target.id.name,
-                  content: target.id.description
-                    ? {
-                        type: "html",
-                        value: target.id.description?.getValue(
-                          viewer.clock.currentTime ?? new JulianDate(),
-                        ),
-                      }
-                    : {
-                        type: "table",
-                        value: target.id.properties
-                          ? entityProperties(
-                              target.id.properties.getValue(
-                                viewer.clock.currentTime ?? new JulianDate(),
-                              ),
-                            )
-                          : [],
-                      },
+                  content: getEntityContent(
+                    target.id,
+                    viewer.clock.currentTime ?? new JulianDate(),
+                    tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                  ),
                 },
               }
             : undefined,
@@ -393,7 +388,7 @@ export default ({
 
       onLayerSelect?.();
     },
-    [onLayerSelect, mouseEventHandles],
+    [onLayerSelect, mouseEventHandles, layersRef],
   );
 
   // E2E test
@@ -480,8 +475,8 @@ export default ({
   );
 
   const handleTick = useCallback(
-    (d: Date) => {
-      engineAPI.tickEventCallback?.current?.forEach(e => e(d));
+    (d: Date, clock: { start: Date; stop: Date }) => {
+      engineAPI.tickEventCallback?.current?.forEach(e => e(d, clock));
     },
     [engineAPI],
   );
@@ -512,13 +507,6 @@ function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
       (a, b) => [...a, { key: b, value: t.getProperty(b) }],
       [],
     );
-}
-
-function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
-  return Object.entries(properties).reduce<{ key: string; value: [string, string] }[]>(
-    (a, [key, value]) => [...a, { key, value }],
-    [],
-  );
 }
 
 function getLayerId(target: RootEventTarget): string | undefined {
