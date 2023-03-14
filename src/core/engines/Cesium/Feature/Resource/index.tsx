@@ -49,7 +49,7 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
     return [
       type ?? (data?.type as ResourceAppearance["type"]),
       url ?? (data && !DataTypeListAllowsOnlyProperty.includes(data.type) ? data?.url : undefined),
-      !!data?.time?.updateClockOnLoad,
+      !data?.time?.updateClockOnLoad,
     ];
   }, [property, layer]);
   const { viewer } = useCesium() as { viewer?: Viewer };
@@ -87,13 +87,29 @@ export default function Resource({ isVisible, property, layer, onComputedFeature
     [layer, viewer, onComputedFeatureFetch, type],
   );
 
+  const initialClock = useRef({
+    start: viewer?.clock.startTime,
+    stop: viewer?.clock.stopTime,
+    current: viewer?.clock.currentTime,
+  });
   const handleLoad = useCallback(
     (ds: DataSource) => {
-      if (!updateClock || !viewer?.clock) return;
+      if (!viewer?.clock) return;
+      if (!updateClock) {
+        if (
+          initialClock.current.current &&
+          initialClock.current.start &&
+          initialClock.current.stop
+        ) {
+          viewer.clock.currentTime = initialClock.current.current;
+          viewer.clock.startTime = initialClock.current.start;
+          viewer.clock.stopTime = initialClock.current.stop;
+        }
+        return;
+      }
       viewer.clock.currentTime = ds.clock.currentTime;
       viewer.clock.startTime = ds.clock.startTime;
       viewer.clock.stopTime = ds.clock.stopTime;
-      console.log(viewer.clock.startTime, viewer.clock.stopTime);
     },
     [updateClock, viewer?.clock],
   );
