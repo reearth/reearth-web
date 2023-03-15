@@ -3,7 +3,7 @@ import { ComponentType } from "react";
 import { styled } from "@reearth/theme";
 import { ValueType, ValueTypes } from "@reearth/util/value";
 
-import { SceneProperty } from "../Engine";
+import type { SceneProperty } from "../Engine";
 import { Viewport } from "../hooks";
 import Plugin from "../Plugin";
 import type { Block, Layer, InfoboxProperty, CommonProps as PluginCommonProps } from "../Plugin";
