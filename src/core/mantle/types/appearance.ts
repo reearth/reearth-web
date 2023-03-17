@@ -135,6 +135,8 @@ export type Cesium3DTilesAppearance = {
   edgeColor?: string;
   tileset?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
+  pointSize?: number;
+  meta?: unknown;
 };
 
 export type LegacyPhotooverlayAppearance = {
@@ -171,6 +173,7 @@ export type RasterAppearance = {
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
+  alpha?: number;
 };
 
 export type BoxAppearance = {

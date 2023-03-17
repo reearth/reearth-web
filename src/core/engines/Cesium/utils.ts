@@ -10,12 +10,15 @@ import {
   Cesium3DTileContent,
   Cesium3DTileFeature,
   JulianDate,
+  Model,
+  ImageryLayerFeatureInfo,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/core/Crust/Infobox";
 import { DefaultInfobox } from "@reearth/core/Map";
 
 import { getTag } from "./Feature";
+import type { InternalCesium3DTileFeature } from "./types";
 
 export const convertCartesian3ToPosition = (
   cesium?: CesiumViewer,
@@ -49,9 +52,15 @@ export const translationWithClamping = (
 
 export function lookupFeatures(
   c: Cesium3DTileContent,
-  cb: (feature: Cesium3DTileFeature, content: Cesium3DTileContent) => void | Promise<void>,
+  cb: (feature: InternalCesium3DTileFeature, content: Cesium3DTileContent) => void | Promise<void>,
 ) {
   if (!c) return;
+
+  // Use model, if featuresLength is 0.
+  if (!c.featuresLength && "_model" in c && c._model instanceof Model) {
+    return cb(c._model, c);
+  }
+
   const length = c.featuresLength;
   for (let i = 0; i < length; i++) {
     const f = c.getFeature(i);
@@ -68,7 +77,7 @@ const findFeatureFrom3DTile = (
   tile: Cesium3DTile,
   featureId?: string,
 ): Cesium3DTileFeature | void => {
-  let target: Cesium3DTileFeature | undefined = undefined;
+  let target: InternalCesium3DTileFeature | undefined = undefined;
   lookupFeatures(tile.content, f => {
     const tag = getTag(f);
     if (tag?.featureId === featureId) {
@@ -92,7 +101,7 @@ export function findEntity(
   viewer: CesiumViewer,
   layerId?: string,
   featureId?: string,
-): Entity | Cesium3DTileset | Cesium3DTileFeature | undefined {
+): Entity | Cesium3DTileset | InternalCesium3DTileFeature | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
   if (!id) return;
@@ -143,7 +152,7 @@ export function findEntity(
 }
 
 export const getEntityContent = (
-  entity: Entity,
+  entity: Entity | ImageryLayerFeatureInfo,
   time: JulianDate,
   defaultContent: InfoboxProperty["defaultContent"],
 ): DefaultInfobox["content"] => {
@@ -153,18 +162,29 @@ export const getEntityContent = (
   > = {
     description: {
       type: "html",
-      value: entity.description?.getValue(time),
+      value:
+        entity instanceof ImageryLayerFeatureInfo
+          ? entity.description
+          : entity.description?.getValue(time),
     },
     attributes: {
       type: "table",
-      value: entity.properties ? entityProperties(entity.properties.getValue(time)) : [],
+      value:
+        entity instanceof ImageryLayerFeatureInfo &&
+        "properties" in entity &&
+        entity.properties &&
+        typeof entity.properties === "object"
+          ? propertiesToTableContent(entity.properties)
+          : entity instanceof Entity && entity.properties
+          ? propertiesToTableContent(entity.properties.getValue(time))
+          : [],
     },
   };
 
-  return defaultContent ? content[defaultContent] : content.description ?? content.attributes;
+  return defaultContent ? content[defaultContent] : content.attributes ?? content.description;
 };
 
-function entityProperties(properties: Record<string, any>): { key: string; value: any }[] {
+function propertiesToTableContent(properties: Record<string, any>): { key: string; value: any }[] {
   return Object.entries(properties).reduce<{ key: string; value: [string, string] }[]>(
     (a, [key, value]) => [...a, { key, value }],
     [],

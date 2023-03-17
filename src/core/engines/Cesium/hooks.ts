@@ -6,6 +6,9 @@ import {
   Ion,
   Cesium3DTileset,
   JulianDate,
+  Cesium3DTilePointFeature,
+  Model,
+  Cartographic,
 } from "cesium";
 import type { Viewer as CesiumViewer } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -32,6 +35,7 @@ import type {
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
+import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
@@ -165,7 +169,7 @@ export default ({
     }
   }, [camera, engineAPI]);
 
-  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | Cesium3DTileFeature>();
+  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
@@ -225,15 +229,22 @@ export default ({
     if (entity && entity instanceof Cesium3DTileFeature) {
       const tag = getTag(entity);
       if (tag) {
-        onLayerSelect?.(tag.layerId, String(tag.featureId), {
-          defaultInfobox: {
-            title: entity.getProperty("name"),
-            content: {
-              type: "table",
-              value: tileProperties(entity),
-            },
-          },
-        });
+        const content = tileProperties(entity);
+        onLayerSelect?.(
+          tag.layerId,
+          String(tag.featureId),
+          content.length
+            ? {
+                defaultInfobox: {
+                  title: entity.getProperty("name"),
+                  content: {
+                    type: "table",
+                    value: content,
+                  },
+                },
+              }
+            : undefined,
+        );
       }
       return;
     }
@@ -247,7 +258,7 @@ export default ({
       onLayerSelect?.(
         tag?.layerId,
         tag?.featureId,
-        entity instanceof Entity && entity.description
+        entity instanceof Entity && (entity.description || entity.properties)
           ? {
               defaultInfobox: {
                 title: entity.name,
@@ -322,7 +333,7 @@ export default ({
   }, [handleMouseEvent, handleMouseWheel]);
 
   const handleClick = useCallback(
-    (e: CesiumMovementEvent, target: RootEventTarget) => {
+    async (e: CesiumMovementEvent, target: RootEventTarget) => {
       mouseEventHandles.click?.(e, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
@@ -336,10 +347,10 @@ export default ({
         onLayerSelect?.(
           tag?.layerId,
           tag?.featureId,
-          !!target.id.name || !!target.id.description || !!target.id.properties
+          !!target.id.description || !!target.id.properties
             ? {
                 defaultInfobox: {
-                  title: target.id.name,
+                  title: layer?.title ?? target.id.name,
                   content: getEntityContent(
                     target.id,
                     viewer.clock.currentTime ?? new JulianDate(),
@@ -354,19 +365,46 @@ export default ({
         return;
       }
 
-      if (target && target instanceof Cesium3DTileFeature) {
+      if (
+        target &&
+        (target instanceof Cesium3DTileFeature || target instanceof Cesium3DTilePointFeature)
+      ) {
         const tag = getTag(target);
         if (tag) {
-          onLayerSelect?.(tag.layerId, String(tag.featureId), {
-            defaultInfobox: {
-              title: target.getProperty("name"),
-              content: {
-                type: "table",
-                value: tileProperties(target),
-              },
-            },
-          });
+          const content = tileProperties(target);
+          onLayerSelect?.(
+            tag.layerId,
+            String(tag.featureId),
+            content.length
+              ? {
+                  defaultInfobox: {
+                    title: target.getProperty("name"),
+                    content: {
+                      type: "table",
+                      value: tileProperties(target),
+                    },
+                  },
+                }
+              : undefined,
+          );
           prevSelectedEntity.current = target;
+        }
+        return;
+      }
+
+      if (
+        target &&
+        "content" in target &&
+        target.content &&
+        typeof target.content === "object" &&
+        "_model" in target.content &&
+        target.content._model instanceof Model
+      ) {
+        const model = target.content._model;
+        const tag = getTag(model);
+        if (tag) {
+          onLayerSelect?.(tag.layerId, String(tag.featureId));
+          prevSelectedEntity.current = model;
         }
         return;
       }
@@ -376,16 +414,56 @@ export default ({
       if (target === undefined && e.position) {
         const scene = viewer.scene;
         const pickRay = scene.camera.getPickRay(e.position);
-        if (!pickRay) return;
-        scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene)?.then(l => {
-          l.map(f => {
-            onLayerSelect?.(f.data.layerId, f.data.featureId, undefined, {
-              feature: f.data.feature,
+
+        if (pickRay) {
+          const l = await scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene);
+          if (l && !!l.length) {
+            l.map(f => {
+              const pos = f.position;
+              if (pos) {
+                // NOTE: Instantiate temporal Cesium.Entity to display indicator.
+                // Although we want to use `viewer.selectionIndicator.viewModel.position` and `animateAppear`, Cesium reset selection position if `viewer.selectedEntity` is not set.
+                // ref: https://github.com/CesiumGS/cesium/blob/9295450e64c3077d96ad579012068ea05f97842c/packages/widgets/Source/Viewer/Viewer.js#L1843-L1876
+                // issue: https://github.com/CesiumGS/cesium/issues/7965
+                requestAnimationFrame(() => {
+                  viewer.selectedEntity = new Entity({
+                    position: Cartographic.toCartesian(pos),
+                  });
+                });
+              }
+
+              const tag = getTag(f.imageryLayer);
+              const layer = tag?.layerId
+                ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
+                  layersRef?.current?.findById(tag.layerId)
+                : undefined;
+              const content = getEntityContent(
+                f,
+                viewer.clock.currentTime ?? new JulianDate(),
+                tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+              );
+              onLayerSelect?.(
+                f.data.layerId,
+                f.data.featureId,
+                content.value.length
+                  ? {
+                      defaultInfobox: {
+                        title: layer?.title ?? f.name,
+                        content,
+                      },
+                    }
+                  : undefined,
+                {
+                  feature: f.data.feature,
+                },
+              );
             });
-          });
-        });
+            return;
+          }
+        }
       }
 
+      viewer.selectedEntity = undefined;
       onLayerSelect?.();
     },
     [onLayerSelect, mouseEventHandles, layersRef],
@@ -500,7 +578,9 @@ export default ({
   };
 };
 
-function tileProperties(t: Cesium3DTileFeature): { key: string; value: any }[] {
+function tileProperties(
+  t: Cesium3DTileFeature | Cesium3DTilePointFeature,
+): { key: string; value: any }[] {
   return t
     .getPropertyIds()
     .reduce<{ key: string; value: any }[]>(

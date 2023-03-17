@@ -10,7 +10,11 @@ import {
   TimeInterval as CesiumTimeInterval,
   TimeIntervalCollection as CesiumTimeIntervalCollection,
   DistanceDisplayCondition as CesiumDistanceDisplayCondition,
+  Model,
+  Cesium3DTilePointFeature,
+  ImageryLayer,
 } from "cesium";
+import md5 from "js-md5";
 import {
   ComponentProps,
   ComponentType,
@@ -24,6 +28,7 @@ import { type CesiumComponentRef, Entity } from "resium";
 import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
+import type { InternalCesium3DTileFeature } from "../types";
 
 export type FeatureProps<P = any> = {
   id: string;
@@ -80,7 +85,13 @@ function EntityExtComponent(
 }
 
 export function attachTag(
-  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  entity:
+    | CesiumEntity
+    | Cesium3DTileset
+    | InternalCesium3DTileFeature
+    | ImageryLayer
+    | null
+    | undefined,
   tag: Tag,
 ) {
   if (!entity) return;
@@ -90,7 +101,12 @@ export function attachTag(
     return;
   }
 
-  if (entity instanceof Cesium3DTileFeature) {
+  if (
+    entity instanceof Cesium3DTileFeature ||
+    entity instanceof Cesium3DTilePointFeature ||
+    entity instanceof Model ||
+    entity instanceof ImageryLayer
+  ) {
     (entity as any)[tagKey] = tag;
     return;
   }
@@ -106,7 +122,15 @@ export function attachTag(
 }
 
 export function getTag(
-  entity: CesiumEntity | Cesium3DTileset | Cesium3DTileFeature | null | undefined,
+  entity:
+    | CesiumEntity
+    | Cesium3DTileset
+    | Cesium3DTileFeature
+    | Cesium3DTilePointFeature
+    | Model
+    | ImageryLayer
+    | null
+    | undefined,
 ): Tag | undefined {
   if (!entity) return;
 
@@ -114,7 +138,12 @@ export function getTag(
     return (entity as any)[tagKey];
   }
 
-  if (entity instanceof Cesium3DTileFeature) {
+  if (
+    entity instanceof Cesium3DTileFeature ||
+    entity instanceof Cesium3DTilePointFeature ||
+    entity instanceof Model ||
+    entity instanceof ImageryLayer
+  ) {
     return (entity as any)[tagKey];
   }
 
@@ -188,4 +217,11 @@ export const toDistanceDisplayCondition = (
   return typeof near === "number" || typeof far === "number"
     ? new CesiumDistanceDisplayCondition(near ?? 0.0, far ?? Number.MAX_VALUE)
     : undefined;
+};
+
+export const generateIDWithMD5 = (id: string) => {
+  const hash = md5.create();
+  hash.update(id);
+
+  return hash.hex();
 };
