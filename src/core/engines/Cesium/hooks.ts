@@ -258,7 +258,7 @@ export default ({
       onLayerSelect?.(
         tag?.layerId,
         tag?.featureId,
-        entity instanceof Entity && entity.description
+        entity instanceof Entity && (entity.description || entity.properties)
           ? {
               defaultInfobox: {
                 title: entity.name,
