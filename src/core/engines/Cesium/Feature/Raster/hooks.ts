@@ -10,7 +10,14 @@ import { isEqual, pick } from "lodash-es";
 import { useEffect, useMemo, useRef } from "react";
 import { useCesium } from "resium";
 
-import type { ComputedFeature, ComputedLayer, Feature, PolygonAppearance } from "../../..";
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  Feature,
+  PolygonAppearance,
+  RasterAppearance,
+} from "../../..";
+import { usePick } from "../hooks";
 import { attachTag, extractSimpleLayer, extractSimpleLayerData, generateIDWithMD5 } from "../utils";
 
 import { Props } from "./types";
@@ -18,17 +25,22 @@ import { Props } from "./types";
 const useImageryProvider = (
   imageryProvider: ImageryProvider | undefined,
   layerId: string | undefined,
+  property: RasterAppearance | undefined,
 ) => {
   const { viewer } = useCesium();
+  const alpha = property?.alpha;
   useEffect(() => {
     if (!imageryProvider) return;
     const imageryLayers: ImageryLayerCollection = viewer.imageryLayers;
-    const layer = imageryLayers.addImageryProvider(imageryProvider);
-    attachTag(layer, { layerId });
+    const imageryLayer = imageryLayers.addImageryProvider(imageryProvider);
+    if (alpha !== undefined && typeof alpha === "number") {
+      imageryLayer.alpha = alpha;
+    }
+    attachTag(imageryLayer, { layerId });
     return () => {
-      imageryLayers.remove(layer);
+      imageryLayers.remove(imageryLayer);
     };
-  }, [imageryProvider, viewer, layerId]);
+  }, [imageryProvider, viewer, layerId, alpha]);
 };
 
 const useData = (layer: ComputedLayer | undefined) => {
@@ -67,7 +79,7 @@ export const useWMS = ({
     });
   }, [isVisible, show, url, layers, type, minimumLevel, maximumLevel, credit, parameters]);
 
-  useImageryProvider(imageryProvider, layer?.id);
+  useImageryProvider(imageryProvider, layer?.id, property);
 };
 
 type TileCoords = { x: number; y: number; level: number };
@@ -201,16 +213,7 @@ export const useMVT = ({
     cachedCalculatedLayerRef.current = layer;
   }, [layer]);
 
-  useImageryProvider(imageryProvider, layer?.id);
-};
-
-export const usePick = <T extends object, U extends keyof T>(
-  o: T | undefined | null,
-  fields: readonly U[],
-): Pick<T, U> | undefined => {
-  const p = useMemo(() => (o ? pick(o, fields) : undefined), [o, fields]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => p, [JSON.stringify(p)]);
+  useImageryProvider(imageryProvider, layer?.id, property);
 };
 
 const polygonAppearanceFields: (keyof PolygonAppearance)[] = [

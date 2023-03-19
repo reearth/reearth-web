@@ -82,6 +82,7 @@ export type PolygonAppearance = {
   stroke?: boolean;
   strokeColor?: string;
   strokeWidth?: number;
+  height?: number;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   lineJoin?: CanvasLineJoin;
@@ -173,6 +174,7 @@ export type RasterAppearance = {
   minimumLevel?: number;
   maximumLevel?: number;
   credit?: string;
+  alpha?: number;
 };
 
 export type BoxAppearance = {
