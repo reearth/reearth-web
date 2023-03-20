@@ -117,7 +117,7 @@ const HTMLBlock: React.FC<Props> = ({
     // Update the content of the existing or new style element
     style.textContent = `body { color:${themeColor ?? getComputedStyle(frameRef).color}; 
     font-family:Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif; 
-    font-size: ${fonts.sizes.s}px; } a {color: inherit!important;text-decoration: none;}
+    font-size: ${fonts.sizes.s}px; } a {color: ${theme?.select};text-decoration: none;}
     a:hover { text-decoration: underline; }`;
 
     const handleFrameClick = () => handleClick();
@@ -143,7 +143,7 @@ const HTMLBlock: React.FC<Props> = ({
       frameWindow.document.removeEventListener("click", handleFrameClick);
       resizeObserver.disconnect();
     };
-  }, [frameRef, themeColor, isEditable, html, handleClick, startEditing]);
+  }, [frameRef, themeColor, theme?.select, isEditable, html, handleClick, startEditing]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
 
