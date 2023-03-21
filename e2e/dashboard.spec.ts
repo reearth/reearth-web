@@ -520,10 +520,10 @@ test.describe("15. Assets Management", () => {
   const filePath0 = "./images/reearth.png";
   const filePath1 = "./images/location.webp";
   const filePath2 = "./images/RPA.png";
-  test("Upload files", async ({ page, reearth }) => {
+  const filePath3 = "./images/ロボット.jpg";
+  test("files Upload ", async ({ page, reearth }) => {
     await reearth.initUser();
     await reearth.goto(`/dashboard/${reearth.workspaceId}`);
-
     await expect(page.getByText(`${reearth.userName}'s workspace`)).toBeVisible();
     await page.locator('header:has-text("rreearth") svg').click();
     await page.getByRole("link", { name: "Account Settings" }).click();
@@ -532,11 +532,20 @@ test.describe("15. Assets Management", () => {
     // Upload file
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     page.on("filechooser", async fileChooseer => {
-      await fileChooseer.setFiles([filePath0, filePath1, filePath2]);
+      await fileChooseer.setFiles([filePath0]);
     });
     // eslint-disable-next-line playwright/no-force-option
     await page.click("button.css-2ner9m", { force: true });
+    await page.getByRole("link", { name: "Assets" }).click();
     await page.waitForTimeout(1000);
+
+    // Upload Multi-files
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    page.on("filechooser", async fileChooseer => {
+      await fileChooseer.setFiles([filePath3, filePath1, filePath2]);
+    });
+    // eslint-disable-next-line playwright/no-force-option
+    await page.click("button.css-2ner9m", { force: true });
     await page.getByRole("link", { name: "Assets" }).click();
 
     // Delete Asset one asset
@@ -544,23 +553,99 @@ test.describe("15. Assets Management", () => {
     await page.getByRole("button", { name: "Delete" }).click();
     await page.getByRole("button", { name: "Delete" }).nth(1).click();
     await expect(page.getByText("One or more assets were successfully deleted.")).toBeVisible();
-    await page.waitForTimeout(1000);
 
-    //Find The asset
+    //Find By Alphabet
+    const AlphabetSearch = page.locator("div.css-u20fhm");
+    await AlphabetSearch.click();
+    const p = page.locator("div.css-o7oefs").locator("p", { hasText: "Alphabetical" });
+    await p.click();
+    await page.waitForTimeout(1000);
+    const firstFind = page.locator("div.css-161lyav");
+    const Infind = firstFind.locator("div.css-18mn1na");
+
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    if (Infind) {
+      console.log("1. Find all list by Alphabet : ", await Infind.allTextContents());
+    } else {
+      await expect(page.getByText("No assets match your search..")).toBeVisible();
+    }
+
+    //Find The asset by Date
+    await page.locator("div.css-u20fhm").click();
+    await page.hover(".css-o7oefs", {
+      strict: true,
+    });
+    await page.click("//p[text()='Date']");
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(1000);
+    const firstFinds = page.locator("div.css-161lyav");
+    const Infinds = firstFinds.locator("div.css-18mn1na");
+
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    if (Infinds) {
+      console.log("2. Find all list by Date : ", (await Infinds.allTextContents()).sort());
+    } else {
+      await expect(page.getByText("No assets match your search..")).toBeVisible();
+    }
+
+    //Find The asset by Size
     await page.locator("div.css-u20fhm").click();
     await page.hover(".css-o7oefs", {
       strict: true,
     });
     await page.click("//p[text()='File size']");
     await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(5000);
-    // Search by name
-    await page.locator("input.css-1cie7t4").fill("location.webp");
     await page.waitForTimeout(1000);
+    const firstFinder = page.locator("div.css-161lyav");
+    const Infindi = firstFinder.locator("div.css-18mn1na");
 
-    //Card style
-    await page.click("div.css-1ey0e1n");
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    if (Infindi) {
+      console.log("3. Find all list by size : ", (await Infindi.allTextContents()).sort());
+    } else {
+      await expect(page.getByText("No assets match your search..")).toBeVisible();
+    }
+
+    // Search by  japanese name : ロボット.jpg
+    const inputField = page.locator("input.css-1cie7t4");
+    await inputField.type("ロボット.jpg");
+    await inputField.click();
+    await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
+    const table = page.locator("div.css-161lyav");
+    const header = table.locator("div.css-18mn1na");
+
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    if (header) {
+      console.log("4. Find all list by name: ロボット.jpg ", await header.allTextContents());
+      await page.getByRole("link", { name: "Account" }).click();
+      await page.getByRole("link", { name: "Assets" }).click();
+    } else {
+      await expect(page.getByText("No assets match your search.")).toBeVisible();
+    }
+
+    // Search All Assets by name
+    const items = ["reearth.png", "RPA.png", "ロボット.jpg"];
+    for (const item of items) {
+      const input = page.locator("input.css-1cie7t4");
+      await input.type(`${item}`, { delay: 50 });
+      await page.waitForLoadState();
+      await page.waitForTimeout(1000);
+      const tables = page.locator("div.css-161lyav");
+      const headers = tables.locator("div.css-18mn1na");
+
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      if (item) {
+        console.log("1. Find all list by name:", `${item}`);
+        console.log(await headers.allTextContents());
+        await page.getByRole("link", { name: "Account" }).click();
+        await page.getByRole("link", { name: "Assets" }).click();
+      } else {
+        await expect(page.getByText("No assets match your search.")).toBeVisible();
+        await page.getByRole("link", { name: "Account" }).click();
+        await page.getByRole("link", { name: "Assets" }).click();
+      }
+    }
 
     // logout
     await page.locator(".css-gfu9bm").click();
@@ -568,8 +653,6 @@ test.describe("15. Assets Management", () => {
       strict: true,
     });
     await page.click("//p[text()='Log out']");
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(5000);
   });
 });
 
