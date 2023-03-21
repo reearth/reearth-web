@@ -11,10 +11,10 @@ import {
   ExpressionContainer,
   TimeInterval,
 } from "../../types";
-import { defined } from "../../utils";
 
 import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
+import { generateRandomString } from "./expression/utils";
 import { evalTimeInterval } from "./interval";
 
 export async function evalSimpleLayer(
@@ -101,6 +101,8 @@ function hasExpression(e: any): e is ExpressionContainer {
   return typeof e === "object" && e && "expression" in e;
 }
 
+const expressionCache: Map<string, any> = new Map();
+
 function evalExpression(
   expressionContainer: any,
   layer: LayerSimple,
@@ -109,16 +111,40 @@ function evalExpression(
   try {
     if (hasExpression(expressionContainer)) {
       const styleExpression = expressionContainer.expression;
-      if (!defined(styleExpression)) {
+      if (typeof styleExpression === "undefined") {
         return undefined;
-      } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-        return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();
-      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-        return new Expression(String(styleExpression), feature, layer.defines).evaluate();
-      } else if (typeof styleExpression === "string") {
-        return new Expression(styleExpression, feature, layer.defines).evaluate();
       }
-      return styleExpression;
+
+      const cacheKey = JSON.stringify(styleExpression).includes("id")
+        ? generateRandomString(12)
+        : `${layer.id}-${JSON.stringify(styleExpression)}-${JSON.stringify(feature?.properties)}`;
+
+      const cachedValue = expressionCache.get(cacheKey);
+      if (cachedValue !== undefined) {
+        return cachedValue;
+      }
+
+      let evaluatedValue;
+
+      if (typeof styleExpression === "object" && styleExpression.conditions) {
+        evaluatedValue = new ConditionalExpression(
+          styleExpression,
+          feature,
+          layer.defines,
+        ).evaluate();
+      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+        evaluatedValue = new Expression(String(styleExpression), feature, layer.defines).evaluate();
+      } else if (typeof styleExpression === "string") {
+        evaluatedValue = new Expression(styleExpression, feature, layer.defines).evaluate();
+      } else {
+        evaluatedValue = styleExpression;
+      }
+
+      if (cacheKey !== undefined) {
+        expressionCache.set(cacheKey, evaluatedValue);
+      }
+
+      return evaluatedValue;
     }
     return expressionContainer;
   } catch (e) {
