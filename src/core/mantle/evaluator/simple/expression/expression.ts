@@ -12,7 +12,7 @@ export type JPLiteral = {
   literalValue: any;
 };
 
-const EXPRESSION_CACHES = new Map<string, Node | Error>();
+export const EXPRESSION_CACHES = new Map<string, Node | Error>();
 const DEFINE_PLACEHOLDER_REGEX_CACHE = new Map<string, RegExp>();
 
 export class Expression {
