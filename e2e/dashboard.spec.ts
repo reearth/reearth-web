@@ -553,6 +553,7 @@ test.describe("15. Assets Management", () => {
     await page.getByRole("button", { name: "Delete" }).click();
     await page.getByRole("button", { name: "Delete" }).nth(1).click();
     await expect(page.getByText("One or more assets were successfully deleted.")).toBeVisible();
+    await page.waitForTimeout(1000);
 
     //Find By Alphabet
     const AlphabetSearch = page.locator("div.css-u20fhm");
@@ -625,7 +626,7 @@ test.describe("15. Assets Management", () => {
     }
 
     // Search All Assets by name
-    const items = ["reearth.png", "RPA.png", "ロボット.jpg"];
+    const items = ["images.png", "reearth.png", "RPA.png", "location.webp"];
     for (const item of items) {
       const input = page.locator("input.css-1cie7t4");
       await input.type(`${item}`, { delay: 50 });
@@ -755,7 +756,7 @@ test("17. Project setting", async ({ page, reearth }) => {
   await page.waitForTimeout(1000);
 
   //Click Project List
-  const projectsLink = await page.getByRole("link", { name: "Project List" });
+  const projectsLink = page.getByRole("link", { name: "Project List" });
   console.log(projectsLink);
   await projectsLink.click();
   await page.waitForTimeout(1000);
