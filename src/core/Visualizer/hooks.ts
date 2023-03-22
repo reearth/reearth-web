@@ -95,7 +95,6 @@ export default function useHooks({
   const [selectedComputedFeature, selectComputedFeature] = useState<ComputedFeature>();
   useEffect(() => {
     const { layerId, featureId, layer, reason } = selectedLayer;
-    console.log("onLayerSelect", onLayerSelect);
     onLayerSelect?.(layerId, featureId, async () => layer, reason);
   }, [onLayerSelect, selectedLayer]);
   const handleLayerSelect = useCallback(
@@ -143,9 +142,7 @@ export default function useHooks({
   );
   const handleInfoboxClose = useCallback(() => {
     if (infobox?.property?.unselectOnClose) {
-      selectLayer({});
-      selectFeature(undefined);
-      selectComputedFeature(undefined);
+      mapRef?.current?.layers.select(undefined);
     }
   }, [infobox]);
 
