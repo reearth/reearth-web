@@ -95,6 +95,7 @@ export default function useHooks({
   const [selectedComputedFeature, selectComputedFeature] = useState<ComputedFeature>();
   useEffect(() => {
     const { layerId, featureId, layer, reason } = selectedLayer;
+    console.log("onLayerSelect", onLayerSelect);
     onLayerSelect?.(layerId, featureId, async () => layer, reason);
   }, [onLayerSelect, selectedLayer]);
   const handleLayerSelect = useCallback(
@@ -140,6 +141,13 @@ export default function useHooks({
         : undefined,
     [selectedLayer, defaultInfobox, blocks],
   );
+  const handleInfoboxClose = useCallback(() => {
+    if (infobox?.property?.unselectOnClose) {
+      selectLayer({});
+      selectFeature(undefined);
+      selectComputedFeature(undefined);
+    }
+  }, [infobox]);
 
   // scene
   const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
@@ -264,6 +272,7 @@ export default function useHooks({
     overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
+    handleInfoboxClose,
   };
 }
 

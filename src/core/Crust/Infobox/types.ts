@@ -21,7 +21,7 @@ export type InfoboxProperty = {
   outlineWidth?: number;
   useMask?: boolean;
   defaultContent?: "description" | "attributes";
-  hideOnClose?: boolean;
+  unselectOnClose?: boolean;
 };
 
 export type Block<P = any> = {

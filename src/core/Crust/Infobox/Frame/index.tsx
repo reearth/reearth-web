@@ -23,7 +23,6 @@ export type Props = {
   size?: "small" | "medium" | "large";
   position?: "right" | "middle" | "left";
   visible?: boolean;
-  hideOnClose?: boolean;
   noContent?: boolean;
   useMask?: boolean;
   typography?: Typography;
@@ -40,6 +39,7 @@ export type Props = {
   onEntered?: () => void;
   onExit?: () => void;
   onExited?: () => void;
+  onClose?: () => void;
 };
 
 const Frame: React.FC<Props> = ({
@@ -54,7 +54,6 @@ const Frame: React.FC<Props> = ({
   outlineColor,
   outlineWidth,
   visible,
-  hideOnClose,
   noContent,
   useMask,
   typography,
@@ -72,12 +71,12 @@ const Frame: React.FC<Props> = ({
   onEntered,
   onExit,
   onExited,
+  onClose,
 }) => {
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
-  const [actualVisible, setActualVisible] = useState(visible);
   const [showMask, setShowMask] = useState<boolean | undefined>(false);
   useClickAway(ref, () => onClickAway?.());
 
@@ -87,12 +86,9 @@ const Frame: React.FC<Props> = ({
   }, [open, noContent, isSmallWindow]);
 
   const handleClose = useCallback(() => {
-    if (hideOnClose) {
-      setActualVisible(false);
-    } else {
-      setOpen(false);
-    }
-  }, [hideOnClose]);
+    setOpen(false);
+    onClose?.();
+  }, [onClose]);
 
   useEffect(() => {
     if (!ref2.current) return;
@@ -101,16 +97,12 @@ const Frame: React.FC<Props> = ({
   }, [infoboxKey]);
 
   useEffect(() => {
-    if (!actualVisible) {
+    if (!visible) {
       setOpen(true);
     }
     setTimeout(() => {
-      setShowMask(actualVisible);
+      setShowMask(visible);
     }, 0);
-  }, [actualVisible]);
-
-  useEffect(() => {
-    setActualVisible(visible);
   }, [visible]);
 
   const wrapperStyles = useMemo(
@@ -126,7 +118,7 @@ const Frame: React.FC<Props> = ({
       <Mask activate={showMask && useMask} onClick={onMaskClick} />
       <StyledFloatedPanel
         className={className}
-        visible={actualVisible}
+        visible={visible}
         open={open}
         styles={wrapperStyles}
         onClick={onClick}
