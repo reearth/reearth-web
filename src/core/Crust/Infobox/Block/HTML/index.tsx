@@ -106,12 +106,12 @@ const HTMLBlock: React.FC<Props> = ({
 
     // Check if a style element has already been appended to the head
     let style: HTMLElement | null = frameWindow.document.querySelector(
-      'style[data-id="iframe-style"]',
+      'style[data-id="reearth-iframe-style"]',
     );
     if (!style) {
       // Create a new style element if it doesn't exist
       style = frameWindow.document.createElement("style");
-      style.dataset.id = "iframe-style";
+      style.dataset.id = "reearth-iframe-style";
       frameWindow.document.head.append(style);
     }
     // Update the content of the existing or new style element
