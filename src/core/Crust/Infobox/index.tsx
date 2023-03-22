@@ -90,6 +90,7 @@ const Infobox: React.FC<Props> = ({
       useMask={!!property?.useMask}
       outlineWidth={property?.outlineWidth}
       visible={visible}
+      unselectOnClose={property?.unselectOnClose}
       noContent={!blocks?.length}
       theme={infoboxTheme}
       backgroundColor={property?.bgcolor}
