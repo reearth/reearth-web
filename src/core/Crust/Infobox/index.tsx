@@ -25,6 +25,7 @@ export type Props = {
   isBuilt?: boolean;
   selectedBlockId?: string;
   visible?: boolean;
+  hideOnClose?: boolean;
   theme?: Theme;
   layer?: Layer;
   onMaskClick?: () => void;
@@ -88,6 +89,7 @@ const Infobox: React.FC<Props> = ({
       useMask={!!property?.useMask}
       outlineWidth={property?.outlineWidth}
       visible={visible}
+      hideOnClose={property?.hideOnClose}
       noContent={!blocks?.length}
       theme={infoboxTheme}
       backgroundColor={property?.bgcolor}

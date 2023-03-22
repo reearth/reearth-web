@@ -23,6 +23,7 @@ export type Props = {
   size?: "small" | "medium" | "large";
   position?: "right" | "middle" | "left";
   visible?: boolean;
+  hideOnClose?: boolean;
   noContent?: boolean;
   useMask?: boolean;
   typography?: Typography;
@@ -53,6 +54,7 @@ const Frame: React.FC<Props> = ({
   outlineColor,
   outlineWidth,
   visible,
+  hideOnClose,
   noContent,
   useMask,
   typography,
@@ -75,6 +77,7 @@ const Frame: React.FC<Props> = ({
   const ref = useRef<HTMLDivElement>(null);
   const ref2 = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
+  const [actualVisible, setActualVisible] = useState(visible);
   const [showMask, setShowMask] = useState<boolean | undefined>(false);
   useClickAway(ref, () => onClickAway?.());
 
@@ -84,8 +87,12 @@ const Frame: React.FC<Props> = ({
   }, [open, noContent, isSmallWindow]);
 
   const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
+    if (hideOnClose) {
+      setActualVisible(false);
+    } else {
+      setOpen(false);
+    }
+  }, [hideOnClose]);
 
   useEffect(() => {
     if (!ref2.current) return;
@@ -94,12 +101,16 @@ const Frame: React.FC<Props> = ({
   }, [infoboxKey]);
 
   useEffect(() => {
-    if (!visible) {
+    if (!actualVisible) {
       setOpen(true);
     }
     setTimeout(() => {
-      setShowMask(visible);
+      setShowMask(actualVisible);
     }, 0);
+  }, [actualVisible]);
+
+  useEffect(() => {
+    setActualVisible(visible);
   }, [visible]);
 
   const wrapperStyles = useMemo(
@@ -115,7 +126,7 @@ const Frame: React.FC<Props> = ({
       <Mask activate={showMask && useMask} onClick={onMaskClick} />
       <StyledFloatedPanel
         className={className}
-        visible={visible}
+        visible={actualVisible}
         open={open}
         styles={wrapperStyles}
         onClick={onClick}
