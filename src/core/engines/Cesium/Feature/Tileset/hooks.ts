@@ -221,7 +221,6 @@ const useFeature = ({
   // Update 3dtiles styles
   const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
   const pickedAppearance = usePick(tileAppearance, TILESET_APPEARANCE_FIELDS);
-  console.log("Picked", pickedAppearance, tileAppearance);
 
   // If styles are updated while features are calculating,
   // we stop calculating features, and reassign styles.
