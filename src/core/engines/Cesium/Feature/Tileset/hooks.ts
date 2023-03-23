@@ -235,7 +235,6 @@ const useFeature = ({
       new Promise(resolve =>
         requestAnimationFrame(() => {
           if (skippedComputingAt.current && skippedComputingAt.current > startedComputingAt) {
-            console.log("computeFeatureAsync SkIP!!!");
             resolve(undefined);
             return;
           }
