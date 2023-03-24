@@ -10,11 +10,14 @@ import {
   LayerSimple,
   ExpressionContainer,
   TimeInterval,
+  StyleExpression,
 } from "../../types";
 
 import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
+
+// const EVAL_EXPRESSION_CACHES: Map<string, any> = new Map();
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -36,11 +39,14 @@ export async function evalSimpleLayer(
   };
 }
 
-function evalFeaturesInWorker(
+async function evalFeaturesInWorker(
   features: Feature[],
   layer: LayerSimple,
   timeIntervals: TimeInterval[] | void,
 ): Promise<ComputedFeature[]> {
+  const numWorkers = navigator.hardwareConcurrency || 1;
+  const chunkSize = Math.ceil(features.length / numWorkers);
+
   const workerScript = `
     self.addEventListener('message', event => {
       const { features, layer, timeIntervals } = event.data;
@@ -55,17 +61,28 @@ function evalFeaturesInWorker(
   const workerBlob = new Blob([workerScript], { type: "text/javascript" });
   const workerUrl = URL.createObjectURL(workerBlob);
 
-  return new Promise(resolve => {
-    const worker = new Worker(workerUrl);
+  const workers = new Array(numWorkers);
+  const promises = new Array(numWorkers);
 
-    worker.addEventListener("message", event => {
-      const featureResults = event.data;
-      worker.terminate();
-      resolve(featureResults);
+  for (let i = 0; i < numWorkers; i++) {
+    const start = i * chunkSize;
+    const end = Math.min((i + 1) * chunkSize, features.length);
+    const chunk = features.slice(start, end);
+
+    workers[i] = new Worker(workerUrl);
+    promises[i] = new Promise(resolve => {
+      workers[i].addEventListener("message", (event: { data: any }) => {
+        const featureResults = event.data;
+        workers[i].terminate();
+        resolve(featureResults);
+      });
     });
 
-    worker.postMessage({ features, layer, timeIntervals });
-  });
+    workers[i].postMessage({ features: chunk, layer, timeIntervals });
+  }
+
+  const results = await Promise.all(promises);
+  return Array.prototype.concat(...results);
 }
 
 export const evalSimpleLayerFeature = (
@@ -133,11 +150,63 @@ export function clearAllExpressionCaches(
       }
     });
   });
+
+  clearCache();
 }
 
 function hasExpression(e: any): e is ExpressionContainer {
   return typeof e === "object" && e && "expression" in e;
 }
+
+export function getReferences(expression: string): string[] {
+  const result: string[] = [];
+  let exp = expression;
+  let i = exp.indexOf("${");
+
+  while (i >= 0) {
+    const openSingleQuote = exp.indexOf("'", i);
+    const openDoubleQuote = exp.indexOf('"', i);
+
+    if (openSingleQuote >= 0 && openSingleQuote < i) {
+      const closeQuote = exp.indexOf("'", openSingleQuote + 1);
+      result.push(exp.substring(0, closeQuote + 1));
+      exp = exp.substring(closeQuote + 1);
+    } else if (openDoubleQuote >= 0 && openDoubleQuote < i) {
+      const closeQuote = exp.indexOf('"', openDoubleQuote + 1);
+      result.push(exp.substring(0, closeQuote + 1));
+      exp = exp.substring(closeQuote + 1);
+    } else {
+      const j = exp.indexOf("}", i);
+
+      if (j < 0) {
+        throw new Error("Unmatched {.");
+      }
+
+      result.push(exp.substring(i + 2, j));
+      exp = exp.substring(j + 1);
+    }
+
+    i = exp.indexOf("${");
+  }
+
+  return result;
+}
+
+export function getCombinedReferences(expression: StyleExpression): string[] {
+  if (typeof expression === "string") {
+    return getReferences(expression);
+  } else {
+    const references: string[] = [];
+    for (const [condition, value] of expression.conditions) {
+      references.push(...getReferences(condition), ...getReferences(value));
+    }
+    return references;
+  }
+}
+
+// Create an array to use as the cache
+const cacheSize = 10000;
+const cache = new Array(cacheSize).fill(null);
 
 function evalExpression(
   expressionContainer: any,
@@ -150,11 +219,48 @@ function evalExpression(
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-        return new ConditionalExpression(styleExpression, feature, layer.defines).evaluate();
+        const properties = pick(feature?.properties, getCombinedReferences(styleExpression));
+        const cacheKey = JSON.stringify([styleExpression, properties, layer.defines]);
+        const cacheIndex = hashString(cacheKey) % cacheSize;
+        let result = cache[cacheIndex];
+
+        if (result !== null && cacheKey === result.key) {
+          // Return the cached result if it exists and matches the cache key
+          return result.value;
+        }
+
+        // Otherwise, evaluate the expression and store the result in the cache
+        result = {
+          key: cacheKey,
+          value: new ConditionalExpression(styleExpression, feature, layer.defines).evaluate(),
+        };
+        cache[cacheIndex] = result;
+
+        return result.value;
       } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-        return new Expression(String(styleExpression), feature, layer.defines).evaluate();
+        return styleExpression;
       } else if (typeof styleExpression === "string") {
-        return new Expression(styleExpression, feature, layer.defines).evaluate();
+        const cacheKey = JSON.stringify([
+          styleExpression,
+          pick(feature?.properties, getCombinedReferences(styleExpression)),
+          layer.defines,
+        ]);
+        const cacheIndex = hashString(cacheKey) % cacheSize;
+        let result = cache[cacheIndex];
+
+        if (result !== null && cacheKey === result.key) {
+          // Return the cached result if it exists and matches the cache key
+          return result.value;
+        }
+
+        // Otherwise, evaluate the expression and store the result in the cache
+        result = {
+          key: cacheKey,
+          value: new Expression(styleExpression, feature, layer.defines).evaluate(),
+        };
+        cache[cacheIndex] = result;
+
+        return result.value;
       }
       return styleExpression;
     }
@@ -163,6 +269,21 @@ function evalExpression(
     console.error(e);
     return;
   }
+}
+
+function clearCache() {
+  for (let i = 0; i < cacheSize; i++) {
+    cache[i] = null;
+  }
+}
+
+function hashString(str: string): number {
+  let hash = 5381;
+  let i = str.length;
+  while (i) {
+    hash = (hash * 33) ^ str.charCodeAt(--i);
+  }
+  return hash >>> 0;
 }
 
 function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
