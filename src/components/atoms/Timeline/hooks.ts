@@ -2,6 +2,7 @@ import React, {
   ChangeEventHandler,
   MouseEvent,
   MouseEventHandler,
+  RefObject,
   useCallback,
   useEffect,
   useMemo,
@@ -16,18 +17,15 @@ import {
   BORDER_WIDTH,
   DAY_SECS,
   EPOCH_SEC,
-  SCALE_ZOOM_INTERVAL,
   GAP_HORIZONTAL,
   MAX_ZOOM_RATIO,
   PADDING_HORIZONTAL,
-  SCALE_INTERVAL,
-  MINUTES_SEC,
   HOURS_SECS,
   NORMAL_SCALE_WIDTH,
   STRONG_SCALE_WIDTH,
 } from "./constants";
 import { TimeEventHandler, Range } from "./types";
-import { formatDateForTimeline } from "./utils";
+import { calcScaleInterval, formatDateForTimeline } from "./utils";
 
 const convertPositionToTime = (e: MouseEvent, { start, end }: Range, gapHorizontal: number) => {
   const curTar = e.currentTarget;
@@ -47,6 +45,8 @@ type InteractionOption = {
   gapHorizontal: number;
   zoom: number;
   isRangeLessThanHalfHours: boolean;
+  scaleElement: RefObject<HTMLDivElement>;
+  setScaleWidth: React.Dispatch<React.SetStateAction<number>>;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
   onClick?: TimeEventHandler;
   onDrag?: TimeEventHandler;
@@ -56,6 +56,8 @@ const useTimelineInteraction = ({
   range: { start, end },
   gapHorizontal,
   zoom,
+  scaleElement,
+  setScaleWidth,
   setZoom,
   onClick,
   onDrag,
@@ -122,6 +124,22 @@ const useTimelineInteraction = ({
     },
     [zoom, setZoom, isRangeLessThanHalfHours],
   );
+
+  useEffect(() => {
+    const elm = scaleElement.current;
+    if (!elm) return;
+
+    const obs = new ResizeObserver(m => {
+      const target = m[0].target;
+      console.log("First call???", m[0], target.clientWidth);
+      setScaleWidth(target.clientWidth);
+    });
+    obs.observe(elm);
+
+    return () => {
+      obs.disconnect();
+    };
+  }, [setScaleWidth, scaleElement]);
 
   return {
     onMouseDown: handleOnMouseDown,
@@ -241,7 +259,6 @@ export const useTimeline = ({
   onPlayReversed,
   onSpeedChange,
 }: Option) => {
-  const [zoom, setZoom] = useState(1);
   const range = useMemo(() => {
     const range = getRange(_range);
     if (process.env.NODE_ENV !== "production") {
@@ -255,21 +272,24 @@ export const useTimeline = ({
     };
   }, [_range]);
   const { start, end } = range;
+  const [zoom, setZoom] = useState(1);
   const startDate = useMemo(() => new Date(start), [start]);
   const gapHorizontal = GAP_HORIZONTAL * (zoom - Math.trunc(zoom) + 1);
-  const scaleInterval = Math.max(
-    SCALE_INTERVAL - Math.trunc(zoom - 1) * SCALE_ZOOM_INTERVAL * MINUTES_SEC,
-    MINUTES_SEC,
-  );
   const epochDiff = end - start;
+
+  const scaleElement = useRef<HTMLDivElement | null>(null);
+  const [scaleWidth, setScaleWidth] = useState(0);
+
+  const { scaleInterval, strongScaleMinutes } = useMemo(
+    () => calcScaleInterval(epochDiff, zoom, { gap: gapHorizontal, width: scaleWidth }),
+    [epochDiff, zoom, scaleWidth, gapHorizontal],
+  );
 
   // convert epoch diff to minutes.
   const scaleCount = Math.trunc(epochDiff / EPOCH_SEC / scaleInterval);
 
   // Count hours scale
   const hoursCount = Math.trunc(HOURS_SECS / scaleInterval);
-
-  const strongScaleMinutes = Math.max(scaleInterval / MINUTES_SEC + Math.trunc(zoom) + 1, 10);
 
   // Convert scale count to pixel.
   const currentPosition = useMemo(() => {
@@ -302,6 +322,8 @@ export const useTimeline = ({
     onClick,
     onDrag,
     isRangeLessThanHalfHours,
+    scaleElement,
+    setScaleWidth,
   });
   const player = useTimelinePlayer({ currentTime, onPlay, onPlayReversed, onSpeedChange });
 
@@ -315,5 +337,7 @@ export const useTimeline = ({
     currentPosition,
     events,
     player,
+    scaleElement,
+    shouldScroll: zoom !== 1,
   };
 };
