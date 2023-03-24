@@ -1,4 +1,5 @@
 import { pick } from "lodash-es";
+import LRUCache from "lru-cache";
 
 import type { EvalContext, EvalResult } from "..";
 import {
@@ -150,8 +151,6 @@ export function clearAllExpressionCaches(
       }
     });
   });
-
-  clearCache();
 }
 
 function hasExpression(e: any): e is ExpressionContainer {
@@ -204,9 +203,8 @@ export function getCombinedReferences(expression: StyleExpression): string[] {
   }
 }
 
-// Create an array to use as the cache
-const cacheSize = 10000;
-const cache = new Array(cacheSize).fill(null);
+// Create an LRU EVAL_EXPRESSION_CACHES with a maximum size of 10,000 entries
+const EVAL_EXPRESSION_CACHES = new LRUCache({ max: 10000 });
 
 function evalExpression(
   expressionContainer: any,
@@ -221,22 +219,21 @@ function evalExpression(
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
         const properties = pick(feature?.properties, getCombinedReferences(styleExpression));
         const cacheKey = JSON.stringify([styleExpression, properties, layer.defines]);
-        const cacheIndex = hashString(cacheKey) % cacheSize;
-        let result = cache[cacheIndex];
 
-        if (result !== null && cacheKey === result.key) {
-          // Return the cached result if it exists and matches the cache key
-          return result.value;
+        if (EVAL_EXPRESSION_CACHES.has(cacheKey)) {
+          // Return the cached result if it exists in the EVAL_EXPRESSION_CACHES
+          return EVAL_EXPRESSION_CACHES.get(cacheKey);
         }
 
-        // Otherwise, evaluate the expression and store the result in the cache
-        result = {
-          key: cacheKey,
-          value: new ConditionalExpression(styleExpression, feature, layer.defines).evaluate(),
-        };
-        cache[cacheIndex] = result;
+        // Otherwise, evaluate the expression and store the result in the EVAL_EXPRESSION_CACHES
+        const result = new ConditionalExpression(
+          styleExpression,
+          feature,
+          layer.defines,
+        ).evaluate();
+        EVAL_EXPRESSION_CACHES.set(cacheKey, result);
 
-        return result.value;
+        return result;
       } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
         return styleExpression;
       } else if (typeof styleExpression === "string") {
@@ -245,22 +242,17 @@ function evalExpression(
           pick(feature?.properties, getCombinedReferences(styleExpression)),
           layer.defines,
         ]);
-        const cacheIndex = hashString(cacheKey) % cacheSize;
-        let result = cache[cacheIndex];
 
-        if (result !== null && cacheKey === result.key) {
-          // Return the cached result if it exists and matches the cache key
-          return result.value;
+        if (EVAL_EXPRESSION_CACHES.has(cacheKey)) {
+          // Return the cached result if it exists in the EVAL_EXPRESSION_CACHES
+          return EVAL_EXPRESSION_CACHES.get(cacheKey);
         }
 
-        // Otherwise, evaluate the expression and store the result in the cache
-        result = {
-          key: cacheKey,
-          value: new Expression(styleExpression, feature, layer.defines).evaluate(),
-        };
-        cache[cacheIndex] = result;
+        // Otherwise, evaluate the expression and store the result in the EVAL_EXPRESSION_CACHES
+        const result = new Expression(styleExpression, feature, layer.defines).evaluate();
+        EVAL_EXPRESSION_CACHES.set(cacheKey, result);
 
-        return result.value;
+        return result;
       }
       return styleExpression;
     }
@@ -269,21 +261,6 @@ function evalExpression(
     console.error(e);
     return;
   }
-}
-
-function clearCache() {
-  for (let i = 0; i < cacheSize; i++) {
-    cache[i] = null;
-  }
-}
-
-function hashString(str: string): number {
-  let hash = 5381;
-  let i = str.length;
-  while (i) {
-    hash = (hash * 33) ^ str.charCodeAt(--i);
-  }
-  return hash >>> 0;
 }
 
 function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
