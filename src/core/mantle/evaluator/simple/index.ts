@@ -23,10 +23,49 @@ export async function evalSimpleLayer(
   const features = layer.data ? await ctx.getAllFeatures(layer.data) : undefined;
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   const timeIntervals = evalTimeInterval(features, layer.data?.time);
+
+  if (!features) {
+    return undefined;
+  }
+
+  const featureResults = await evalFeaturesInWorker(features, layer, timeIntervals);
+
   return {
     layer: evalLayerAppearances(appearances, layer),
-    features: features?.map((f, i) => evalSimpleLayerFeature(layer, f, timeIntervals?.[i])),
+    features: featureResults,
   };
+}
+
+function evalFeaturesInWorker(
+  features: Feature[],
+  layer: LayerSimple,
+  timeIntervals: TimeInterval[] | void,
+): Promise<ComputedFeature[]> {
+  const workerScript = `
+    self.addEventListener('message', event => {
+      const { features, layer, timeIntervals } = event.data;
+      const results = features.map((f, i) => {
+        const computedFeature = evalSimpleLayerFeature(layer, f, timeIntervals?.[i]);
+        return computedFeature;
+      });
+      self.postMessage(results);
+    });
+  `;
+
+  const workerBlob = new Blob([workerScript], { type: "text/javascript" });
+  const workerUrl = URL.createObjectURL(workerBlob);
+
+  return new Promise(resolve => {
+    const worker = new Worker(workerUrl);
+
+    worker.addEventListener("message", event => {
+      const featureResults = event.data;
+      worker.terminate();
+      resolve(featureResults);
+    });
+
+    worker.postMessage({ features, layer, timeIntervals });
+  });
 }
 
 export const evalSimpleLayerFeature = (
