@@ -122,7 +122,7 @@ function evalExpression(
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
         const cacheKey = JSON.stringify([
           styleExpression,
-          getCacheableProperties(styleExpression, feature),
+          getCacheableProperties(styleExpression, feature?.properties),
           layer.defines,
         ]);
 
@@ -143,7 +143,7 @@ function evalExpression(
       } else if (typeof styleExpression === "string") {
         const cacheKey = JSON.stringify([
           styleExpression,
-          getCacheableProperties(styleExpression, feature),
+          getCacheableProperties(styleExpression, feature?.properties),
           layer.defines,
         ]);
 

@@ -1,27 +1,31 @@
+import { JSONPath } from "jsonpath-plus";
 import { pick } from "lodash-es";
 
-import { Feature, StyleExpression } from "../../types";
+import { StyleExpression } from "../../types";
 
-const JSONPATH_REGEX =
-  /\$[a-zA-Z_][a-zA-Z0-9_]*(\[[^\]]+\])?(\.[a-zA-Z_][a-zA-Z0-9_]*(\[[^\]]+\])?)*$/g;
+export function getCacheableProperties(styleExpression: StyleExpression, feature?: any) {
+  const properties = pick(feature, getCombinedReferences(styleExpression, feature));
+  return properties;
+}
 
-export function getCombinedReferences(expression: StyleExpression): string[] {
+export function getCombinedReferences(expression: StyleExpression, feature?: any): string[] {
   if (typeof expression === "string") {
-    return getReferences(expression);
+    return getReferences(expression, feature);
   } else {
     const references: string[] = [];
     for (const [condition, value] of expression.conditions) {
-      references.push(...getReferences(condition), ...getReferences(value));
+      references.push(...getReferences(condition, feature), ...getReferences(value, feature));
     }
     return references;
   }
 }
 
-export function getReferences(expression: string): string[] {
-  if (hasJsonPath(expression)) return ["REEARTH_JSONPATH"];
+export function getReferences(expression: string, feature?: any): string[] {
   const result: string[] = [];
   let exp = expression;
   let i = exp.indexOf("${");
+  const varExpRegex = /^\$./;
+  const jsonPathCache: Record<string, any[]> = {};
 
   while (i >= 0) {
     const openSingleQuote = exp.indexOf("'", i);
@@ -39,10 +43,28 @@ export function getReferences(expression: string): string[] {
       const j = exp.indexOf("}", i);
 
       if (j < 0) {
-        throw new Error("Unmatched {.");
+        console.log("Unmatched {.");
       }
-
-      result.push(exp.substring(i + 2, j));
+      const varExp = exp.slice(i + 2, j);
+      if (varExpRegex.test(varExp)) {
+        let res = jsonPathCache[varExp];
+        if (!res) {
+          try {
+            res = JSONPath({ json: feature, path: varExp });
+            jsonPathCache[varExp] = res;
+          } catch (error) {
+            console.log("Invalid JSONPath");
+          }
+        }
+        if (res.length !== 0) {
+          console.log("JSONPathEval: ", res[0]);
+          const keyPath = getObjectPathByValue(feature, res[0]);
+          if (keyPath) result.push(keyPath);
+          else return Object.keys(feature);
+        }
+      } else {
+        result.push(exp.substring(i + 2, j));
+      }
       exp = exp.substring(j + 1);
     }
 
@@ -52,16 +74,19 @@ export function getReferences(expression: string): string[] {
   return result;
 }
 
-const hasJsonPath = (str: string): boolean => {
-  return JSONPATH_REGEX.test(str);
-};
-
-export function getCacheableProperties(styleExpression: StyleExpression, feature?: Feature) {
-  const ref = getCombinedReferences(styleExpression);
-  const properties = pick(
-    feature?.properties,
-    ref.includes("REEARTH_JSONPATH") ? Object.keys(feature?.properties) : ref,
-  );
-
-  return properties;
+function getObjectPathByValue(obj: any, value: any): string | undefined {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const prop = obj[key];
+      if (prop === value) {
+        return `[${JSON.stringify(key)}]`;
+      } else if (typeof prop === "object") {
+        const nestedKey = getObjectPathByValue(prop, value);
+        if (nestedKey !== undefined) {
+          return `[${JSON.stringify(key)}]${nestedKey}`;
+        }
+      }
+    }
+  }
+  return undefined;
 }
