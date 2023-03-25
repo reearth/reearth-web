@@ -14,27 +14,31 @@ describe("replaceVariables", () => {
   });
 
   test("should handle JSONPath palceholders in the expression string", () => {
-    const [, res] = replaceVariables("${$.phoneNumbers[:1].type}", {
-      id: "blah",
-      firstName: "John",
-      lastName: "doe",
-      age: 26,
-      address: {
-        streetAddress: "naist street",
-        city: "Nara",
-        postalCode: "630-0192",
+    const [, res] = replaceVariables(
+      "${$.phoneNumbers[:1].type}",
+      {
+        id: "blah",
+        firstName: "John",
+        lastName: "doe",
+        age: 26,
+        address: {
+          streetAddress: "naist street",
+          city: "Nara",
+          postalCode: "630-0192",
+        },
+        phoneNumbers: [
+          {
+            type: "iPhone",
+            number: "0123-4567-8888",
+          },
+          {
+            type: "home",
+            number: "0123-4567-8910",
+          },
+        ],
       },
-      phoneNumbers: [
-        {
-          type: "iPhone",
-          number: "0123-4567-8888",
-        },
-        {
-          type: "home",
-          number: "0123-4567-8910",
-        },
-      ],
-    });
+      true,
+    );
     expect(res[0].literalValue).toBe("iPhone");
   });
 
