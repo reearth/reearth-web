@@ -3,11 +3,9 @@ import { JSONPath } from "jsonpath-plus";
 import { JPLiteral } from "./expression";
 import { generateRandomString } from "./utils";
 
-export function replaceVariables(
-  expression: string,
-  feature?: any,
-  hasJSONPath?: boolean,
-): [string, JPLiteral[]] {
+export const VARIABLE_PREFIX = "czm_";
+
+export function replaceVariables(expression: string, feature?: any): [string, JPLiteral[]] {
   let exp = expression;
   let result = "";
   const literalJP: JPLiteral[] = [];
@@ -25,7 +23,7 @@ export function replaceVariables(
       result += exp.slice(0, i);
       const j = getCloseBracketIndex(exp, i);
       const varExp = exp.slice(i + 2, j);
-      if (varExpRegex.test(varExp) && hasJSONPath) {
+      if (varExpRegex.test(varExp)) {
         if (!featureDefined) {
           return [result, []];
         }
@@ -50,7 +48,7 @@ export function replaceVariables(
         }
       } else {
         const replacedVarExp = replaceReservedWord(varExp);
-        result += `czm_${replacedVarExp}`;
+        result += `${VARIABLE_PREFIX}${replacedVarExp}`;
       }
       exp = exp.slice(j + 1);
       i = exp.indexOf("${");

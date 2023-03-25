@@ -5,7 +5,7 @@ import { Feature } from "../../../types";
 import { backslashRegex, backslashReplacement } from "./constants";
 import { Node } from "./node";
 import { createRuntimeAst } from "./runtime";
-import { replaceVariables } from "./variableReplacer";
+import { replaceVariables, VARIABLE_PREFIX } from "./variableReplacer";
 
 export type JPLiteral = {
   literalName: string;
@@ -26,11 +26,9 @@ export class Expression {
     this._feature = feature;
     let literalJP: JPLiteral[] = [];
 
-    const hasJSONPath = /\$[a-zA-Z[.]/.test(expression);
-
     const cachedReplacedVariables = REPLACED_VARIABLES_CACHE.get(expression);
     // JSONPath returns simple literal so we can not cache in here
-    if (cachedReplacedVariables && !hasJSONPath) {
+    if (cachedReplacedVariables) {
       [expression, literalJP] = cachedReplacedVariables;
     } else {
       const originalExpression = expression;
@@ -38,9 +36,10 @@ export class Expression {
       [expression, literalJP] = replaceVariables(
         removeBackslashes(expression),
         this._feature?.properties,
-        hasJSONPath,
       );
-      REPLACED_VARIABLES_CACHE.set(originalExpression, [expression, literalJP]);
+      if (expression.includes(VARIABLE_PREFIX)) {
+        REPLACED_VARIABLES_CACHE.set(originalExpression, [expression, literalJP]);
+      }
     }
 
     const cachedAST = EXPRESSION_CACHES.get(expression);
