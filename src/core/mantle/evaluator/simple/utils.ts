@@ -1,31 +1,32 @@
-import { JSONPath } from "jsonpath-plus";
 import { pick } from "lodash-es";
 
 import { StyleExpression } from "../../types";
 
+const JSONPATH_IDENTIFIER = "REEARTH_JSONPATH";
+
 export function getCacheableProperties(styleExpression: StyleExpression, feature?: any) {
-  const properties = pick(feature, getCombinedReferences(styleExpression, feature));
+  const ref = getCombinedReferences(styleExpression);
+  const properties = pick(feature, ref.includes(JSONPATH_IDENTIFIER) ? Object.keys(feature) : ref);
   return properties;
 }
 
-export function getCombinedReferences(expression: StyleExpression, feature?: any): string[] {
+export function getCombinedReferences(expression: StyleExpression): string[] {
   if (typeof expression === "string") {
-    return getReferences(expression, feature);
+    return getReferences(expression);
   } else {
     const references: string[] = [];
     for (const [condition, value] of expression.conditions) {
-      references.push(...getReferences(condition, feature), ...getReferences(value, feature));
+      references.push(...getReferences(condition), ...getReferences(value));
     }
     return references;
   }
 }
 
-export function getReferences(expression: string, feature?: any): string[] {
+export function getReferences(expression: string): string[] {
   const result: string[] = [];
   let exp = expression;
   let i = exp.indexOf("${");
   const varExpRegex = /^\$./;
-  const jsonPathCache: Record<string, any[]> = {};
 
   while (i >= 0) {
     const openSingleQuote = exp.indexOf("'", i);
@@ -41,52 +42,18 @@ export function getReferences(expression: string, feature?: any): string[] {
       exp = exp.substring(closeQuote + 1);
     } else {
       const j = exp.indexOf("}", i);
-
       if (j < 0) {
-        console.log("Unmatched {.");
+        return result;
       }
       const varExp = exp.slice(i + 2, j);
       if (varExpRegex.test(varExp)) {
-        let res = jsonPathCache[varExp];
-        if (!res) {
-          try {
-            res = JSONPath({ json: feature, path: varExp });
-            jsonPathCache[varExp] = res;
-          } catch (error) {
-            console.log("Invalid JSONPath");
-          }
-        }
-        if (res.length !== 0) {
-          console.log("JSONPathEval: ", res[0]);
-          const keyPath = getObjectPathByValue(feature, res[0]);
-          if (keyPath) result.push(keyPath);
-          else return Object.keys(feature);
-        }
+        return [JSONPATH_IDENTIFIER];
       } else {
         result.push(exp.substring(i + 2, j));
       }
       exp = exp.substring(j + 1);
     }
-
     i = exp.indexOf("${");
   }
-
   return result;
-}
-
-function getObjectPathByValue(obj: any, value: any): string | undefined {
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const prop = obj[key];
-      if (prop === value) {
-        return `[${JSON.stringify(key)}]`;
-      } else if (typeof prop === "object") {
-        const nestedKey = getObjectPathByValue(prop, value);
-        if (nestedKey !== undefined) {
-          return `[${JSON.stringify(key)}]${nestedKey}`;
-        }
-      }
-    }
-  }
-  return undefined;
 }

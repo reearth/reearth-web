@@ -1,97 +1,67 @@
 import { expect, test, describe } from "vitest";
 
-import { ConditionsExpression } from "../../types";
+import { StyleExpression } from "../../types";
 
 import { getReferences, getCacheableProperties, getCombinedReferences } from "./utils";
 
 describe("getCacheableProperties", () => {
-  const feature = { foo: "bar", baz: "qux" };
-  const styleExpression: ConditionsExpression = {
-    conditions: [
-      ["${foo}", "${baz}"],
-      ["${qux}", "121"],
-    ],
+  const feature = {
+    name: "Test Feature",
+    description: "This is a test feature",
+    test: "test_path",
   };
 
-  test("should return properties that exist in feature and are referenced in styleExpression", () => {
-    const result = getCacheableProperties(styleExpression, feature);
-    expect(result).toEqual({ foo: "bar", baz: "qux" });
+  const styleExpression: StyleExpression = "color: ${test}";
+
+  test("should return cacheable properties", () => {
+    const properties = getCacheableProperties(styleExpression, feature);
+    expect(properties).toEqual({ test: "test_path" });
   });
 
-  test("should return an empty object if no properties are referenced in styleExpression", () => {
-    const styleExpression = "some string";
-    const result = getCacheableProperties(styleExpression, feature);
-    expect(result).toEqual({});
+  const styleExpressionBeta: StyleExpression = "color: ${$.['test_var']}";
+
+  test("should return combined references", () => {
+    const references = getCacheableProperties(styleExpressionBeta, feature);
+    expect(references).toEqual({
+      name: "Test Feature",
+      description: "This is a test feature",
+      test: "test_path",
+    });
   });
 });
 
 describe("getCombinedReferences", () => {
-  const feature = { foo: "bar", baz: "qux" };
+  const styleExpression: StyleExpression = {
+    conditions: [
+      ["${test_var} === 1", "color: blue"],
+      ["${test_var} === 2", "color: red"],
+    ],
+  };
 
-  test("should return references in a single expression", () => {
-    const expression = "${foo}";
-    const result = getCombinedReferences(expression, feature);
-    expect(result).toEqual(["foo"]);
-  });
-
-  test("should return references in a style expression with multiple conditions", () => {
-    const expression: ConditionsExpression = {
-      conditions: [
-        ["${foo}", "${baz}"],
-        ["${qux}", "121"],
-      ],
-    };
-    const result = getCombinedReferences(expression, feature);
-    expect(result).toEqual(["foo", "baz", "qux"]);
-  });
-
-  test("should return an empty array if expression is a string with no references", () => {
-    const expression = "some string";
-    const result = getCombinedReferences(expression, feature);
-    expect(result).toEqual([]);
+  test("should return combined references", () => {
+    const references = getCombinedReferences(styleExpression);
+    expect(references).toEqual(["test_var", "test_var"]);
   });
 });
 
 describe("getReferences", () => {
-  const feature = {
-    foo: "bar",
-    baz: "qux",
-    obj: {
-      arr: [1, 2, 3],
-      nestedObj: {
-        a: "A",
-        b: "B",
-      },
-    },
-  };
-
-  test("should return references in a single expression", () => {
-    const expression = "${foo}";
-    const result = getReferences(expression, feature);
-    expect(result).toEqual(["foo"]);
+  test("should return references in a string expression", () => {
+    const references = getReferences("color: ${test_var}");
+    expect(references).toEqual(["test_var"]);
   });
 
-  test("should return references in an expression with JSONPath expressions", () => {
-    const expression = "${$.baz}";
-    const result = getReferences(expression, feature);
-    expect(result).toEqual(['["baz"]']);
+  test("should return references in a string expression with quotes", () => {
+    const references = getReferences('color: "${test_var}"');
+    expect(references).toEqual(["test_var"]);
   });
 
-  test("should return references for nested JSONPath expressions", () => {
-    const expression = "${$.obj.nestedObj.a}";
-    const result = getReferences(expression, feature);
-    expect(result).toEqual(['["obj"]["nestedObj"]["a"]']);
+  test("should return references in a string expression with single quotes", () => {
+    const references = getReferences("color: '${test_var}'");
+    expect(references).toEqual(["test_var"]);
   });
 
-  test("should handle JSONPath expressions that return arrays", () => {
-    const expression = "${$.obj.arr[1]}";
-    const result = getReferences(expression, feature);
-    expect(result).toEqual(['["obj"]["arr"]["1"]']);
-  });
-
-  test("should return an empty array if expression has no references", () => {
-    const expression = "some string";
-    const result = getReferences(expression, feature);
-    expect(result).toEqual([]);
+  test("should return JSONPATH_IDENTIFIER for expressions with variable expression syntax", () => {
+    const references = getReferences("color: ${$.['test_var']}");
+    expect(references).toEqual(["REEARTH_JSONPATH"]);
   });
 });
