@@ -3,6 +3,8 @@ import { JSONPath } from "jsonpath-plus";
 import { JPLiteral } from "./expression";
 import { generateRandomString } from "./utils";
 
+export const VARIABLE_PREFIX = "czm_";
+
 export function replaceVariables(expression: string, feature?: any): [string, JPLiteral[]] {
   let exp = expression;
   let result = "";
@@ -34,7 +36,7 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
             return [result, []];
           }
         }
-        if (res.length == 1) {
+        if (res.length !== 0) {
           const placeholderLiteral = generateRandomString(10);
           literalJP.push({
             literalName: placeholderLiteral,
@@ -42,11 +44,11 @@ export function replaceVariables(expression: string, feature?: any): [string, JP
           });
           result += placeholderLiteral;
         } else {
-          return [result, []];
+          return ["false", []];
         }
       } else {
         const replacedVarExp = replaceReservedWord(varExp);
-        result += `czm_${replacedVarExp}`;
+        result += `${VARIABLE_PREFIX}${replacedVarExp}`;
       }
       exp = exp.slice(j + 1);
       i = exp.indexOf("${");
