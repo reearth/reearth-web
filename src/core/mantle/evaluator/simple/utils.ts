@@ -1,12 +1,15 @@
 import { pick } from "lodash-es";
+import LRU from "lru-cache";
 
 import { StyleExpression } from "../../types";
 
 const JSONPATH_IDENTIFIER = "REEARTH_JSONPATH";
+const MAX_CACHE_SIZE = 1000;
 
 export function getCacheableProperties(styleExpression: StyleExpression, feature?: any) {
   const ref = getCombinedReferences(styleExpression);
-  const properties = pick(feature, ref.includes(JSONPATH_IDENTIFIER) ? Object.keys(feature) : ref);
+  const keys = ref.includes(JSONPATH_IDENTIFIER) ? Object.keys(feature) : null;
+  const properties = pick(feature, keys || ref);
   return properties;
 }
 
@@ -22,7 +25,14 @@ export function getCombinedReferences(expression: StyleExpression): string[] {
   }
 }
 
+const cache = new LRU<string, string[]>({ max: MAX_CACHE_SIZE });
+
 export function getReferences(expression: string): string[] {
+  const cachedResult = cache.get(expression);
+  if (cachedResult !== undefined) {
+    return cachedResult;
+  }
+
   const result: string[] = [];
   let exp = expression;
   let i = exp.indexOf("${");
@@ -55,5 +65,7 @@ export function getReferences(expression: string): string[] {
     }
     i = exp.indexOf("${");
   }
+
+  cache.set(expression, result);
   return result;
 }
