@@ -1,15 +1,18 @@
 import { pick } from "lodash-es";
 import LRU from "lru-cache";
 
-import { StyleExpression } from "../../types";
+import { Feature, StyleExpression } from "../../types";
 
 const JSONPATH_IDENTIFIER = "REEARTH_JSONPATH";
+const ID_IDENTIFIER = "REEARTH_ID";
 const MAX_CACHE_SIZE = 1000;
 
-export function getCacheableProperties(styleExpression: StyleExpression, feature?: any) {
+export function getCacheableProperties(styleExpression: StyleExpression, feature?: Feature) {
   const ref = getCombinedReferences(styleExpression);
-  const keys = ref.includes(JSONPATH_IDENTIFIER) ? Object.keys(feature) : null;
-  const properties = pick(feature, keys || ref);
+  const keys = ref.includes(JSONPATH_IDENTIFIER) ? Object.keys(feature?.properties) : null;
+  const properties = ref.includes(ID_IDENTIFIER)
+    ? { id: feature?.id }
+    : pick(feature?.properties, keys || ref);
   return properties;
 }
 
@@ -56,6 +59,9 @@ export function getReferences(expression: string): string[] {
         return result;
       }
       const varExp = exp.slice(i + 2, j);
+      if (varExp === "id") {
+        return [ID_IDENTIFIER];
+      }
       if (varExpRegex.test(varExp)) {
         return [JSONPATH_IDENTIFIER];
       } else {
