@@ -1,14 +1,18 @@
 import { expect, test, describe } from "vitest";
 
-import { StyleExpression } from "../../types";
+import { Feature, StyleExpression } from "../../types";
 
 import { getReferences, getCacheableProperties, getCombinedReferences } from "./utils";
 
 describe("getCacheableProperties", () => {
-  const feature = {
-    name: "Test Feature",
-    description: "This is a test feature",
-    test: "test_path",
+  const feature: Feature = {
+    id: "test",
+    type: "feature",
+    properties: {
+      name: "Test Feature",
+      description: "This is a test feature",
+      test: "test_path",
+    },
   };
 
   const styleExpression: StyleExpression = "color: ${test}";
