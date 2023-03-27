@@ -561,12 +561,12 @@ test.describe("15. Assets Management", () => {
     const p = page.locator("div.css-o7oefs").locator("p", { hasText: "Alphabetical" });
     await p.click();
     await page.waitForTimeout(1000);
-    const firstFind = page.locator("div.css-161lyav");
-    const Infind = firstFind.locator("div.css-18mn1na");
+    const SearchBy = page.locator("div.css-161lyav");
+    const SearchByAlphabet = SearchBy.locator("div.css-18mn1na");
 
     // eslint-disable-next-line playwright/no-conditional-in-test
-    if (Infind) {
-      console.log("1. Find all list by Alphabet : ", await Infind.allTextContents());
+    if (SearchByAlphabet) {
+      console.log("1. Find all list by Alphabet : ", await SearchByAlphabet.allTextContents());
     } else {
       await expect(page.getByText("No assets match your search..")).toBeVisible();
     }
@@ -579,12 +579,12 @@ test.describe("15. Assets Management", () => {
     await page.click("//p[text()='Date']");
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
-    const firstFinds = page.locator("div.css-161lyav");
-    const Infinds = firstFinds.locator("div.css-18mn1na");
+    const date = page.locator("div.css-161lyav");
+    const SearchDate = date.locator("div.css-18mn1na");
 
     // eslint-disable-next-line playwright/no-conditional-in-test
-    if (Infinds) {
-      console.log("2. Find all list by Date : ", (await Infinds.allTextContents()).sort());
+    if (SearchDate) {
+      console.log("2. Find all list by Date : ", (await SearchDate.allTextContents()).sort());
     } else {
       await expect(page.getByText("No assets match your search..")).toBeVisible();
     }
@@ -597,12 +597,12 @@ test.describe("15. Assets Management", () => {
     await page.click("//p[text()='File size']");
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
-    const firstFinder = page.locator("div.css-161lyav");
-    const Infindi = firstFinder.locator("div.css-18mn1na");
+    const Size = page.locator("div.css-161lyav");
+    const SearchSize = Size.locator("div.css-18mn1na");
 
     // eslint-disable-next-line playwright/no-conditional-in-test
-    if (Infindi) {
-      console.log("3. Find all list by size : ", (await Infindi.allTextContents()).sort());
+    if (SearchSize) {
+      console.log("3. Find all list by size : ", (await SearchSize.allTextContents()).sort());
     } else {
       await expect(page.getByText("No assets match your search..")).toBeVisible();
     }
@@ -613,12 +613,15 @@ test.describe("15. Assets Management", () => {
     await inputField.click();
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
-    const table = page.locator("div.css-161lyav");
-    const header = table.locator("div.css-18mn1na");
+    const JapaneseName = page.locator("div.css-161lyav");
+    const SearchJapaneseName = JapaneseName.locator("div.css-18mn1na");
 
     // eslint-disable-next-line playwright/no-conditional-in-test
-    if (header) {
-      console.log("4. Find all list by name: ロボット.jpg ", await header.allTextContents());
+    if (SearchJapaneseName) {
+      console.log(
+        "4. Find all list by name: ロボット.jpg ",
+        await SearchJapaneseName.allTextContents(),
+      );
       await page.getByRole("link", { name: "Account" }).click();
       await page.getByRole("link", { name: "Assets" }).click();
     } else {
@@ -633,12 +636,12 @@ test.describe("15. Assets Management", () => {
       await page.waitForLoadState();
       await page.waitForTimeout(1000);
       const tables = page.locator("div.css-161lyav");
-      const headers = tables.locator("div.css-18mn1na");
+      const dataTables = tables.locator("div.css-18mn1na");
 
       // eslint-disable-next-line playwright/no-conditional-in-test
       if (item) {
-        console.log("1. Find all list by name:", `${item}`);
-        console.log(await headers.allTextContents());
+        console.log("1. Find all lis_t by name:", `${item}`);
+        console.log(await dataTables.allTextContents());
         await page.getByRole("link", { name: "Account" }).click();
         await page.getByRole("link", { name: "Assets" }).click();
       } else {
