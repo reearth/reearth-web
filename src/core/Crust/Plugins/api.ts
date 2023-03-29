@@ -158,6 +158,13 @@ export function exposed({
               overrideSceneProperty?.(plugin ? `${plugin.id}/${plugin.extensionId}` : "", property);
             };
           },
+          get sampleTerrainHeight() {
+            return async (lng: number, lat: number) => {
+              const result = await commonReearth?.scene?.sampleTerrainHeight?.(lng, lat);
+              startEventLoop?.();
+              return result;
+            };
+          },
         }),
         plugin: {
           get id() {
@@ -292,6 +299,7 @@ export function commonReearth({
   layers,
   sceneProperty,
   inEditor,
+  built,
   tags,
   camera,
   clock,
@@ -358,6 +366,7 @@ export function commonReearth({
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
+  built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
   lookHorizontal: GlobalThis["reearth"]["camera"]["lookHorizontal"];
   lookVertical: GlobalThis["reearth"]["camera"]["lookVertical"];
@@ -411,6 +420,9 @@ export function commonReearth({
     scene: {
       get inEditor() {
         return !!inEditor?.();
+      },
+      get built() {
+        return !!built?.();
       },
       get property() {
         return sceneProperty?.();
