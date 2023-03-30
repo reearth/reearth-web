@@ -1,4 +1,4 @@
-import { DataType } from "@reearth/core/mantle";
+import { ComputedFeature, DataType } from "@reearth/core/mantle";
 import { getExtname } from "@reearth/util/path";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
@@ -86,7 +86,7 @@ export default function Feature({
 
   const renderedComponents = new Set<string>(); // Initialize a set to store rendered components
 
-  const renderComponent = (k: keyof AppearanceTypes, f?: any) => {
+  const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature) => {
     const [C, config] = components[k] ?? [];
     if (!C || (f && !f[k]) || (config.noLayer && !f) || (config.noFeature && f)) {
       return null;
