@@ -230,6 +230,7 @@ export default ({
       engineName: engineType || "",
       sceneProperty: overriddenSceneProperty,
       inEditor: !!inEditor,
+      built: !!isBuilt,
       tags,
       camera: innerCamera,
       clock: innerClock,
@@ -462,14 +463,14 @@ function overridenInfoboxBlocks(
   overriddenInfobox: OverriddenInfobox | undefined,
 ): Block[] | undefined {
   if (overriddenInfobox?.content.type === "table") {
-    return Array.isArray(overriddenInfobox?.content)
+    return Array.isArray(overriddenInfobox?.content.value)
       ? [
           {
             id: "content",
             pluginId: "reearth",
             extensionId: "dlblock",
             property: {
-              items: overriddenInfobox.content.map((c, i) => ({
+              items: overriddenInfobox.content.value.map((c, i) => ({
                 id: i,
                 item_title: c.key,
                 item_datastr: String(c.value),
