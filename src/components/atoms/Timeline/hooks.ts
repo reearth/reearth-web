@@ -44,7 +44,6 @@ type InteractionOption = {
   range: Range;
   gapHorizontal: number;
   zoom: number;
-  isRangeLessThanHalfHours: boolean;
   scaleElement: RefObject<HTMLDivElement>;
   setScaleWidth: React.Dispatch<React.SetStateAction<number>>;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
@@ -61,7 +60,6 @@ const useTimelineInteraction = ({
   setZoom,
   onClick,
   onDrag,
-  isRangeLessThanHalfHours,
 }: InteractionOption) => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const handleOnMouseDown = useCallback(() => {
@@ -112,17 +110,13 @@ const useTimelineInteraction = ({
 
   const handleOnWheel: WheelEventHandler = useCallback(
     e => {
-      if (isRangeLessThanHalfHours) {
-        return;
-      }
-
       const { deltaX, deltaY } = e;
       const isHorizontal = Math.abs(deltaX) > 0 || Math.abs(deltaX) < 0;
       if (isHorizontal) return;
 
       setZoom(() => Math.min(Math.max(1, zoom + deltaY * -0.01), MAX_ZOOM_RATIO));
     },
-    [zoom, setZoom, isRangeLessThanHalfHours],
+    [zoom, setZoom],
   );
 
   useEffect(() => {
@@ -268,25 +262,27 @@ export const useTimeline = ({
     }
     return {
       start: truncMinutes(new Date(range.start)).getTime(),
-      end: range.end,
+      end: truncMinutes(new Date(range.end)).getTime(),
     };
   }, [_range]);
   const { start, end } = range;
   const [zoom, setZoom] = useState(1);
   const startDate = useMemo(() => new Date(start), [start]);
-  const gapHorizontal = GAP_HORIZONTAL * (zoom - Math.trunc(zoom) + 1);
+  const zoomedGap = GAP_HORIZONTAL * (zoom - Math.trunc(zoom) + 1);
   const epochDiff = end - start;
 
   const scaleElement = useRef<HTMLDivElement | null>(null);
   const [scaleWidth, setScaleWidth] = useState(0);
 
-  const { scaleInterval, strongScaleMinutes } = useMemo(
-    () => calcScaleInterval(epochDiff, zoom, { gap: gapHorizontal, width: scaleWidth }),
-    [epochDiff, zoom, scaleWidth, gapHorizontal],
+  const {
+    scaleCount,
+    scaleInterval,
+    strongScaleMinutes,
+    gap: gapHorizontal,
+  } = useMemo(
+    () => calcScaleInterval(epochDiff, zoom, { gap: zoomedGap, width: scaleWidth }),
+    [epochDiff, zoom, scaleWidth, zoomedGap],
   );
-
-  // convert epoch diff to minutes.
-  const scaleCount = Math.trunc(epochDiff / EPOCH_SEC / scaleInterval);
 
   // Count hours scale
   const hoursCount = Math.trunc(HOURS_SECS / scaleInterval);
@@ -303,17 +299,6 @@ export const useTimeline = ({
     );
   }, [currentTime, start, scaleCount, gapHorizontal, scaleInterval, strongScaleMinutes]);
 
-  const isRangeLessThanHalfHours = useMemo(
-    () => epochDiff < (DAY_SECS / 4) * EPOCH_SEC,
-    [epochDiff],
-  );
-
-  useEffect(() => {
-    if (isRangeLessThanHalfHours) {
-      setZoom(MAX_ZOOM_RATIO);
-    }
-  }, [isRangeLessThanHalfHours]);
-
   const events = useTimelineInteraction({
     range,
     zoom,
@@ -321,7 +306,6 @@ export const useTimeline = ({
     gapHorizontal,
     onClick,
     onDrag,
-    isRangeLessThanHalfHours,
     scaleElement,
     setScaleWidth,
   });
