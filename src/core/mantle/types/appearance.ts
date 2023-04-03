@@ -106,7 +106,6 @@ export type EllipsoidAppearance = {
   fillColor?: string;
   near?: number;
   far?: number;
-  classificationType?: ClassificationType;
 };
 
 export type ModelAppearance = {
@@ -132,7 +131,6 @@ export type ModelAppearance = {
   silhouetteSize?: number; // default: 1
   near?: number;
   far?: number;
-  classificationType?: ClassificationType;
 };
 
 export type Cesium3DTilesAppearance = {
