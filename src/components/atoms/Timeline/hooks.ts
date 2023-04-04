@@ -123,7 +123,6 @@ const useTimelineInteraction = ({
 
     const obs = new ResizeObserver(m => {
       const target = m[0].target;
-      console.log("First call???", m[0], target.clientWidth);
       setScaleWidth(target.clientWidth);
     });
     obs.observe(elm);
