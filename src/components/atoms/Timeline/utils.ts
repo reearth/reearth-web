@@ -37,7 +37,7 @@ export const formatDateForTimeline = (time: number, options: { detail?: boolean 
   return `${month} ${date} ${year} ${hour}:${minutes}:${seconds}.00`;
 };
 
-const collapseScaleInterval = (interval: number) => {
+const roundScaleInterval = (interval: number) => {
   if (interval < 5) {
     return 1;
   }
@@ -61,22 +61,25 @@ export const calcScaleInterval = (
   const scaleWidth = styles.gap + NORMAL_SCALE_WIDTH;
   // Get number of scale that fits to current timeline width.
   const numberOfScales = Math.round(timelineWidth / scaleWidth) - 1;
-  //
+  // Scale interval to round time like 30 mins, 1 hour
   const scaleInterval =
-    collapseScaleInterval(rangeDiff / (MINUTES_SEC * EPOCH_SEC) / numberOfScales) * MINUTES_SEC;
+    roundScaleInterval(rangeDiff / (MINUTES_SEC * EPOCH_SEC) / numberOfScales) * MINUTES_SEC;
   const zoomedScaleInterval = Math.max(scaleInterval / zoom, MINUTES_SEC);
 
   // convert epoch diff to minutes.
   const scaleCount = rangeDiff / EPOCH_SEC / zoomedScaleInterval;
 
+  // Adjust scale space gap.
   const strongScaleCount = scaleCount / DEFAULT_STRONG_SCALE_MINUTES - 1;
   const initialDisplayedWidth =
     (scaleCount - strongScaleCount) * scaleWidth +
     strongScaleCount * (styles.gap + STRONG_SCALE_WIDTH);
   const initialRemainingGap = (timelineWidth - initialDisplayedWidth) / scaleCount;
 
+  // To fit scale in initial width, adjusted gap is added only when zoom level is 1.
   const nextGap = zoom === 1 ? styles.gap + initialRemainingGap : styles.gap;
 
+  // Adjust strong scale position
   const diffLabelWidth = Math.max(SCALE_LABEL_WIDTH - nextGap * DEFAULT_STRONG_SCALE_MINUTES, 0);
   const strongScaleMinutes =
     DEFAULT_STRONG_SCALE_MINUTES +

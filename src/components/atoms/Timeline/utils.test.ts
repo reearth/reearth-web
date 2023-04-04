@@ -9,8 +9,10 @@ test("calcScaleInterval()", () => {
       width: 300,
     }),
   ).toEqual({
+    gap: 10.358333333333333,
+    scaleCount: 24,
     scaleInterval: 3600,
-    strongScaleMinutes: 5,
+    strongScaleMinutes: 10,
   });
   expect(
     calcScaleInterval(new Date("2023-01-02").getTime() - new Date("2023-01-01").getTime(), 2, {
@@ -18,7 +20,9 @@ test("calcScaleInterval()", () => {
       width: 300,
     }),
   ).toEqual({
+    gap: 10,
+    scaleCount: 48,
     scaleInterval: 1800,
-    strongScaleMinutes: 10,
+    strongScaleMinutes: 15,
   });
 });
