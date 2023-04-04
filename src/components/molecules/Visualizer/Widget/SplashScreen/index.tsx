@@ -42,7 +42,7 @@ const SplashScreen = ({ widget, inEditor }: Props): JSX.Element | null => {
     overlayImageW: imageW,
     overlayImageH: imageH,
     overlayTitle: title,
-  } = (property as Property | undefined)?.overlay ?? {};
+  } = property?.overlay ?? {};
   const camera = (property as Property | undefined)?.camera?.filter(c => !!c.cameraPosition);
 
   const [cameraSequence, setCameraSequence] = useState(0);
@@ -80,7 +80,7 @@ const SplashScreen = ({ widget, inEditor }: Props): JSX.Element | null => {
   }, (delay + transitionDuration + duration) * 1000);
 
   useEffect(() => {
-    if (!inEditor || !currentCamera) return;
+    if (inEditor || !currentCamera) return;
     const t = setTimeout(() => {
       setDelayedCameraSequence(i => i + 1);
     }, (currentCamera?.cameraDelay ?? 0) * 1000);
@@ -88,7 +88,7 @@ const SplashScreen = ({ widget, inEditor }: Props): JSX.Element | null => {
   }, [currentCamera, inEditor]);
 
   useEffect(() => {
-    if (!inEditor || !delayedCurrentCamera) return;
+    if (inEditor || !delayedCurrentCamera) return;
     const t = setTimeout(() => {
       setCameraSequence(i => i + 1);
     }, (delayedCurrentCamera?.cameraDuration ?? 0) * 1000);
