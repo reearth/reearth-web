@@ -91,7 +91,7 @@ const SplashScreen = ({
   }, (delay + transitionDuration + duration) * 1000);
 
   useEffect(() => {
-    if (!inEditor || !currentCamera) return;
+    if (inEditor || !currentCamera) return;
     const t = setTimeout(() => {
       setDelayedCameraSequence(i => i + 1);
     }, (currentCamera?.cameraDelay ?? 0) * 1000);
@@ -99,7 +99,7 @@ const SplashScreen = ({
   }, [currentCamera, inEditor]);
 
   useEffect(() => {
-    if (!inEditor || !delayedCurrentCamera) return;
+    if (inEditor || !delayedCurrentCamera) return;
     const t = setTimeout(() => {
       setCameraSequence(i => i + 1);
     }, (delayedCurrentCamera?.cameraDuration ?? 0) * 1000);
