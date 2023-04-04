@@ -23,7 +23,7 @@ export type EngineProps = {
   style?: CSSProperties;
   isEditable?: boolean;
   isBuilt?: boolean;
-  inEditor: boolean;
+  inEditor?: boolean;
   property?: SceneProperty;
   camera?: Camera;
   clock?: Clock;
