@@ -8,6 +8,7 @@ import { usePick, extractSimpleLayer, generateIDWithMD5 } from "../utils";
 
 import { useData, useImageryProvider } from "./hooks";
 import type { Props } from "./types";
+import { normalizeUrl } from "./utils";
 
 type TileCoords = { x: number; y: number; level: number };
 
@@ -36,7 +37,7 @@ export const useMVT = ({
         minimumLevel,
         maximumLevel,
         credit,
-        urlTemplate: url as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
+        urlTemplate: normalizeUrl(url, "mvt") as `http${"s" | ""}://${string}/{z}/{x}/{y}${string}`,
         layerName: layers,
         onRenderFeature: () => {
           if (!currentTime) {

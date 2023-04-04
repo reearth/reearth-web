@@ -3,6 +3,7 @@ import { useMemo } from "react";
 
 import { useData, useImageryProvider } from "./hooks";
 import type { Props } from "./types";
+import { normalizeUrl } from "./utils";
 
 export const useTiles = ({
   isVisible,
@@ -15,7 +16,7 @@ export const useTiles = ({
   const imageryProvider = useMemo(() => {
     if (!isVisible || !show || !url || type !== "tiles") return;
     return new UrlTemplateImageryProvider({
-      url,
+      url: normalizeUrl(url, "png"),
       minimumLevel,
       maximumLevel,
       credit,
