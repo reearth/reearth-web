@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification } from "@reearth/state";
+import { useTeam, useNotification, useWorkspaceId, useUserId } from "@reearth/state";
 
 export type Mode = "layer" | "widget";
 
@@ -15,10 +15,20 @@ export default () => {
   const [error, isErrorChecked] = useCleanUrl();
   const navigate = useNavigate();
   const [currentTeam, setTeam] = useTeam();
+  const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useWorkspaceId();
 
   const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
-  const teamId = currentTeam?.id || data?.me?.myTeam.id;
+
+  if (isAuthenticated && !currentUserId) {
+    setCurrentUserId(data?.me?.id);
+  }
+
+  let teamId = currentTeam?.id || data?.me?.myTeam.id;
+  if (currentWorkspaceId && currentUserId === data?.me?.id) {
+    teamId = currentWorkspaceId;
+  }
 
   const verifySignup = useCallback(
     async (token: string) => {
@@ -57,7 +67,8 @@ export default () => {
       login();
     } else {
       if (currentTeam || !data || !teamId) return;
-      setTeam(data.me?.myTeam);
+      setTeam(teamId ? data.me?.teams.find(t => t.id === teamId) : data?.me?.myTeam ?? undefined);
+      setCurrentWorkspaceId(teamId);
       navigate(`/dashboard/${teamId}`);
     }
   }, [

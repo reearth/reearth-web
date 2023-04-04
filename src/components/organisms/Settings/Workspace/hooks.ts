@@ -15,7 +15,7 @@ import {
 } from "@reearth/gql";
 import { Team } from "@reearth/gql/graphql-client-api";
 import { useT } from "@reearth/i18n";
-import { useTeam, useProject, useNotification } from "@reearth/state";
+import { useTeam, useProject, useNotification, useWorkspaceId } from "@reearth/state";
 
 type Params = {
   teamId: string;
@@ -24,6 +24,8 @@ type Params = {
 export default (params: Params) => {
   const t = useT();
   const [currentTeam, setTeam] = useTeam();
+  const [, setCurrentWorkspaceId] = useWorkspaceId();
+
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
 
@@ -84,6 +86,7 @@ export default (params: Params) => {
         });
       } else {
         setTeam(team);
+        setCurrentWorkspaceId(team?.id);
         setNotification({
           type: "success",
           text: t("Sucessfully created a workspace!"),
@@ -91,7 +94,7 @@ export default (params: Params) => {
       }
       setModalShown(false);
     },
-    [createTeamMutation, setTeam, t, setNotification],
+    [createTeamMutation, setNotification, t, setTeam, setCurrentWorkspaceId],
   );
 
   const [updateTeamMutation] = useUpdateTeamMutation();
@@ -133,8 +136,9 @@ export default (params: Params) => {
         text: t("Workspace was successfully deleted."),
       });
       setTeam(teams[0]);
+      setCurrentWorkspaceId(teams[0].id);
     }
-  }, [teamId, setTeam, teams, deleteTeamMutation, t, setNotification]);
+  }, [teamId, deleteTeamMutation, setNotification, t, setTeam, teams, setCurrentWorkspaceId]);
 
   const [addMemberToTeamMutation] = useAddMemberToTeamMutation();
 
@@ -223,10 +227,11 @@ export default (params: Params) => {
     (team: Team) => {
       if (team.id) {
         setTeam(team);
+        setCurrentWorkspaceId(team.id);
         navigate(`/settings/workspaces/${team.id}`);
       }
     },
-    [navigate, setTeam],
+    [navigate, setCurrentWorkspaceId, setTeam],
   );
 
   return {

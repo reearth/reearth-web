@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth, useCleanUrl } from "@reearth/auth";
 import { useGetTeamsQuery } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useNotification } from "@reearth/state";
+import { useTeam, useNotification, useWorkspaceId, useUserId } from "@reearth/state";
 
 // TODO: move hooks to molecules (page components should be thin)
 export default () => {
@@ -14,12 +14,21 @@ export default () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentTeam, setTeam] = useTeam();
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useWorkspaceId();
+  const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
   const t = useT();
 
   const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
-  const teamId = currentTeam?.id || data?.me?.myTeam.id;
+
+  if (isAuthenticated && !currentUserId) {
+    setCurrentUserId(data?.me?.id);
+  }
+  let teamId = currentTeam?.id || data?.me?.myTeam.id;
+  if (currentWorkspaceId && currentUserId === data?.me?.id) {
+    teamId = currentWorkspaceId;
+  }
 
   useEffect(() => {
     if (location.pathname === "/login" && !new URLSearchParams(window.location.search).has("id"))
@@ -27,10 +36,20 @@ export default () => {
   }, [login, location.pathname]);
 
   useEffect(() => {
-    if (!isAuthenticated || currentTeam || !data || !teamId) return;
-    setTeam(data.me?.myTeam);
+    if (!isAuthenticated || currentTeam || !data || !teamId || currentWorkspaceId) return;
+    setTeam(teamId ? data.me?.teams.find(t => t.id === teamId) : data?.me?.myTeam ?? undefined);
+    setCurrentWorkspaceId(teamId);
     navigate(`/dashboard/${teamId}`);
-  }, [isAuthenticated, navigate, currentTeam, setTeam, data, teamId]);
+  }, [
+    isAuthenticated,
+    navigate,
+    currentTeam,
+    setTeam,
+    data,
+    teamId,
+    currentWorkspaceId,
+    setCurrentWorkspaceId,
+  ]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {

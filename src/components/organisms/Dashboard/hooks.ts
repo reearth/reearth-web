@@ -15,7 +15,13 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
+import {
+  useTeam,
+  useProject,
+  useUnselectProject,
+  useNotification,
+  useWorkspaceId,
+} from "@reearth/state";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
@@ -23,6 +29,8 @@ const projectsPerPage = 9;
 
 export default (workspaceId?: string) => {
   const [currentTeam, setCurrentTeam] = useTeam();
+  const [, setCurrentWorkspaceId] = useWorkspaceId();
+
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
   const [, setNotification] = useNotification();
@@ -63,10 +71,11 @@ export default (workspaceId?: string) => {
       const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
       if (workspace) {
         setCurrentTeam(workspace);
+        setCurrentWorkspaceId(workspaceId);
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspaces, setCurrentTeam, navigate],
+    [workspaces, setCurrentTeam, setCurrentWorkspaceId, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -82,11 +91,20 @@ export default (workspaceId?: string) => {
           text: t("Successfully created workspace!"),
         });
         setCurrentTeam(results.data.createTeam.team);
+        setCurrentWorkspaceId(results.data.createTeam.team.id);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [createTeamMutation, setCurrentTeam, refetch, navigate, t, setNotification],
+    [
+      createTeamMutation,
+      refetch,
+      setNotification,
+      t,
+      setCurrentTeam,
+      setCurrentWorkspaceId,
+      navigate,
+    ],
   );
 
   useEffect(() => {

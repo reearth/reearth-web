@@ -14,7 +14,7 @@ import {
   useCreateTeamMutation,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import { useSceneId, useTeam, useProject, useNotification } from "@reearth/state";
+import { useSceneId, useTeam, useProject, useNotification, useWorkspaceId } from "@reearth/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");
@@ -25,6 +25,7 @@ export default () => {
   const [sceneId] = useSceneId();
   const [currentTeam, setTeam] = useTeam();
   const [currentProject, setProject] = useProject();
+  const [, setCurrentWorkspaceId] = useWorkspaceId();
 
   const navigate = useNavigate();
 
@@ -88,7 +89,6 @@ export default () => {
     if (currentTeam) return;
     const team = teams?.find(t => t.id === teamId);
     if (!team) return;
-
     setTeam(team);
   }, [teams, currentTeam, teamId, setTeam]);
 
@@ -165,10 +165,11 @@ export default () => {
       const team = teams?.find(team => team.id === teamId);
       if (team && teamId !== currentTeam?.id) {
         setTeam(team);
+        setCurrentWorkspaceId(teamId);
         navigate(`/dashboard/${teamId}`);
       }
     },
-    [teams, currentTeam?.id, setTeam, navigate],
+    [teams, currentTeam?.id, setTeam, setCurrentWorkspaceId, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -180,10 +181,11 @@ export default () => {
       });
       if (results.data?.createTeam) {
         setTeam(results.data.createTeam.team);
+        setCurrentWorkspaceId(results.data.createTeam.team.id);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setTeam, navigate],
+    [createTeamMutation, setTeam, setCurrentWorkspaceId, navigate],
   );
 
   useEffect(() => {
