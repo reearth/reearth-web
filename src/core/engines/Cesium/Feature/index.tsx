@@ -1,5 +1,5 @@
 import { ComputedFeature, DataType } from "@reearth/core/mantle";
-import { getExtname } from "@reearth/util/path";
+import { guessType } from "@reearth/util/path";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
@@ -77,7 +77,7 @@ export default function Feature({
   const data = extractSimpleLayerData(layer);
   const ext =
     !data?.type || (data.type as string) === "auto"
-      ? (getExtname(data?.url) as DataType)
+      ? (guessType(data?.url) as DataType)
       : undefined;
   const displayType = data?.type && displayConfig[ext ?? data.type];
   const areAllDisplayTypeNoFeature =
