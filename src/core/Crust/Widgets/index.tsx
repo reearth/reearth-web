@@ -36,6 +36,7 @@ export type Props = {
   isMobile?: boolean;
   theme?: Theme;
   isEditable?: boolean;
+  inEditor?: boolean;
   isBuilt?: boolean;
   context?: Context;
   renderWidget?: (props: WidgetProps) => ReactNode;
@@ -69,6 +70,7 @@ export default function Widgets({
   layoutConstraint,
   theme,
   isEditable,
+  inEditor,
   isBuilt,
   context,
   renderWidget,
@@ -90,6 +92,7 @@ export default function Widgets({
         layout={layout}
         theme={theme}
         isEditable={isEditable}
+        inEditor={inEditor}
         isBuilt={isBuilt}
         isMobile={isMobile}
         context={context}
@@ -108,7 +111,17 @@ export default function Widgets({
         onExtend={onExtend}
       />
     ),
-    [context, isBuilt, isEditable, isMobile, renderWidget, theme, moveWidget, onVisibilityChange],
+    [
+      theme,
+      isEditable,
+      inEditor,
+      isBuilt,
+      isMobile,
+      context,
+      onVisibilityChange,
+      renderWidget,
+      moveWidget,
+    ],
   );
 
   return (

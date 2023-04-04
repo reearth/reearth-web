@@ -198,6 +198,7 @@ export default function Crust({
         isMobile={isMobile}
         isBuilt={isBuilt}
         isEditable={isEditable}
+        inEditor={inEditor}
         alignSystem={widgetAlignSystem}
         selectedWidgetArea={selectedWidgetArea}
         editing={widgetAlignSystemEditing}

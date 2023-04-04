@@ -29,7 +29,7 @@ export type Property = {
   }[];
 };
 
-const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
+const SplashScreen = ({ widget, inEditor }: Props): JSX.Element | null => {
   const ctx = useContext();
   const { property } = widget ?? {};
   const {
@@ -70,7 +70,7 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
   });
 
   useTimeoutFn(() => {
-    if (isBuilt && enabled) {
+    if (!inEditor && enabled) {
       setActive(true);
     }
   }, delay * 1000);
@@ -80,20 +80,20 @@ const SplashScreen = ({ widget, isBuilt }: Props): JSX.Element | null => {
   }, (delay + transitionDuration + duration) * 1000);
 
   useEffect(() => {
-    if (!isBuilt || !currentCamera) return;
+    if (!inEditor || !currentCamera) return;
     const t = setTimeout(() => {
       setDelayedCameraSequence(i => i + 1);
     }, (currentCamera?.cameraDelay ?? 0) * 1000);
     return () => clearTimeout(t);
-  }, [currentCamera, isBuilt]);
+  }, [currentCamera, inEditor]);
 
   useEffect(() => {
-    if (!isBuilt || !delayedCurrentCamera) return;
+    if (!inEditor || !delayedCurrentCamera) return;
     const t = setTimeout(() => {
       setCameraSequence(i => i + 1);
     }, (delayedCurrentCamera?.cameraDuration ?? 0) * 1000);
     return () => clearTimeout(t);
-  }, [delayedCurrentCamera, isBuilt]);
+  }, [delayedCurrentCamera, inEditor]);
 
   return state === "unmounted" ? null : (
     <Wrapper state={state} bgcolor={bgcolor} duration={transitionDuration}>
