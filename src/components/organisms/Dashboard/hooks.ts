@@ -15,21 +15,14 @@ import {
   GetProjectsQuery,
 } from "@reearth/gql";
 import { useT } from "@reearth/i18n";
-import {
-  useTeam,
-  useProject,
-  useUnselectProject,
-  useNotification,
-  useWorkspaceId,
-} from "@reearth/state";
+import { useTeam, useProject, useUnselectProject, useNotification } from "@reearth/state";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
 
 const projectsPerPage = 9;
 
 export default (workspaceId?: string) => {
-  const [currentTeam, setCurrentTeam] = useTeam();
-  const [, setCurrentWorkspaceId] = useWorkspaceId();
+  const [currentWorkspace, setCurrentWorkspace] = useTeam();
 
   const [currentProject] = useProject();
   const unselectProject = useUnselectProject();
@@ -58,24 +51,23 @@ export default (workspaceId?: string) => {
   const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
-    if (workspace?.id && workspace.id !== currentTeam?.id) {
-      setCurrentTeam({
+    if (workspace?.id && workspace.id !== currentWorkspace?.id) {
+      setCurrentWorkspace({
         personal,
         ...workspace,
       });
     }
-  }, [currentTeam, workspace, setCurrentTeam, personal]);
+  }, [currentWorkspace, workspace, setCurrentWorkspace, personal]);
 
   const handleWorkspaceChange = useCallback(
     (workspaceId: string) => {
       const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
       if (workspace) {
-        setCurrentTeam(workspace);
-        setCurrentWorkspaceId(workspaceId);
+        setCurrentWorkspace(workspace);
         navigate(`/dashboard/${workspaceId}`);
       }
     },
-    [workspaces, setCurrentTeam, setCurrentWorkspaceId, navigate],
+    [workspaces, setCurrentWorkspace, navigate],
   );
 
   const [createTeamMutation] = useCreateTeamMutation();
@@ -90,21 +82,12 @@ export default (workspaceId?: string) => {
           type: "success",
           text: t("Successfully created workspace!"),
         });
-        setCurrentTeam(results.data.createTeam.team);
-        setCurrentWorkspaceId(results.data.createTeam.team.id);
+        setCurrentWorkspace(results.data.createTeam.team);
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
       refetch();
     },
-    [
-      createTeamMutation,
-      refetch,
-      setNotification,
-      t,
-      setCurrentTeam,
-      setCurrentWorkspaceId,
-      navigate,
-    ],
+    [createTeamMutation, refetch, setNotification, t, setCurrentWorkspace, navigate],
   );
 
   useEffect(() => {
@@ -112,7 +95,7 @@ export default (workspaceId?: string) => {
     if (currentProject) {
       unselectProject();
     }
-  }, [currentProject, setCurrentTeam, unselectProject]);
+  }, [currentProject, setCurrentWorkspace, unselectProject]);
 
   const handleModalClose = useCallback(
     (r?: boolean) => {

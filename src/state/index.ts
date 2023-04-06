@@ -94,11 +94,8 @@ export type Team = {
   policy?: Policy | null;
 };
 
-const team = atom<Team | undefined>(undefined);
+const team = atomWithStorage<Team | undefined>("workspace", undefined);
 export const useTeam = () => useAtom(team);
-
-const workspaceId = atomWithStorage<string | undefined>("workspaceId", undefined);
-export const useWorkspaceId = () => useAtom(workspaceId);
 
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
