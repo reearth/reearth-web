@@ -97,7 +97,7 @@ const MAX_NUMBER_OF_CONCURRENT_COMPUTING_FEATURES = 5000;
 
 type StyleProperty<N = string> = {
   name: N;
-  convert?: "color" | "colorFunctionString" | "booleanString" | "vec2" | "vec4";
+  convert?: "color" | "colorFunctionString" | "vec2" | "vec4";
 };
 
 const COMMON_STYLE_PROPERTIES: StyleProperty<"color" | "show">[] = [
@@ -106,7 +106,7 @@ const COMMON_STYLE_PROPERTIES: StyleProperty<"color" | "show">[] = [
 ];
 const MODEL_STYLE_PROPERTIES: StyleProperty<"color" | "show" | "pointSize" | "meta">[] = [
   { name: "color", convert: "colorFunctionString" },
-  { name: "show", convert: "booleanString" },
+  { name: "show" },
   { name: "pointSize" },
   { name: "meta" },
 ];
@@ -126,8 +126,6 @@ const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
     return toColor(val);
   } else if (convert === "colorFunctionString") {
     return `color("${val}")`;
-  } else if (convert === "booleanString") {
-    return typeof val === "boolean" ? (val ? "true" : "false") : val;
   }
 
   return val;
@@ -180,7 +178,7 @@ const useFeature = ({
             // TODO: Convert value if it's necessary
             MODEL_STYLE_PROPERTIES.reduce((res, { name, convert }) => {
               const val = convertStyle(style?.[name as keyof typeof style], convert);
-              if (!val) return res;
+              if (val === undefined) return res;
               return { ...res, [name]: val };
             }, {}),
           );
