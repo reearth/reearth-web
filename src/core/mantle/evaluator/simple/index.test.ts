@@ -453,4 +453,53 @@ describe("Conditional styling", () => {
       },
     });
   });
+
+  test("Expressions with Regex in them", () => {
+    expect(
+      evalLayerAppearances(
+        {
+          marker: {
+            pointColor: {
+              expression: {
+                conditions: [
+                  ["regExp('a') !~ 'bcd'", "#FF0000"],
+                  ["true", "#FFFFFF"],
+                ],
+              },
+            },
+            imageSize: {
+              expression: {
+                conditions: [
+                  ["regExp('a(.)', 'i').exec('Abc') === 'b'", "200"],
+                  ["true", "1"],
+                ],
+              },
+            },
+            pointSize: {
+              expression: {
+                conditions: [
+                  ["regExp('a').test('abc') === true", "100"],
+                  ["true", "1"],
+                ],
+              },
+            },
+          },
+        },
+        {
+          id: "x",
+          type: "simple",
+          properties: {
+            Name: "Building 1",
+            "he[llo]world": "value",
+          },
+        },
+      ),
+    ).toEqual({
+      marker: {
+        pointColor: "#FF0000", // blue
+        imageSize: 200,
+        pointSize: 100,
+      },
+    });
+  });
 });

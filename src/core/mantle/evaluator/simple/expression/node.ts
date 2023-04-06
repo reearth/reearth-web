@@ -10,16 +10,16 @@ import {
 } from "./functions";
 
 export class Node {
-  private _type;
-  private _value;
   private _left;
   private _right;
   private _test;
   evaluate: any;
+  type: any;
+  value: any;
 
   constructor(type: any, value: any, left?: any, right?: any, test?: any) {
-    this._type = type;
-    this._value = value;
+    this.type = type;
+    this.value = value;
     this._left = left;
     this._right = right;
     this._test = test;
@@ -28,8 +28,8 @@ export class Node {
   }
 
   setEvaluateFunction() {
-    const type = this._type;
-    const value = this._value;
+    const type = this.type;
+    const value = this.value;
 
     switch (type) {
       case ExpressionNodeType.CONDITIONAL:
@@ -40,6 +40,12 @@ export class Node {
         switch (value) {
           case "toString":
             this.evaluate = this._evaluateToString;
+            break;
+          case "test":
+            this.evaluate = this._evaluateRegExpTest;
+            break;
+          case "exec":
+            this.evaluate = this._evaluateRegExpExec;
             break;
         }
         break;
@@ -119,6 +125,12 @@ export class Node {
           case "||":
             this.evaluate = this._evaluateOr;
             break;
+          case "=~":
+            this.evaluate = this._evaluateRegExpMatch;
+            break;
+          case "!~":
+            this.evaluate = this._evaluateRegExpNotMatch;
+            break;
           default:
             if (typeof binaryFunctions[value] !== "undefined") {
               this.evaluate = getEvaluateBinaryFunction(value);
@@ -155,6 +167,10 @@ export class Node {
         this.evaluate = this._evaluateLiteralString;
         break;
 
+      case ExpressionNodeType.REGEX:
+        this.evaluate = this._evaluateRegExp;
+        break;
+
       default:
         this.evaluate = this._evaluateLiteral;
         break;
@@ -162,14 +178,14 @@ export class Node {
   }
 
   _evaluateLiteral() {
-    return this._value;
+    return this.value;
   }
   _evaluateLiteralString() {
-    return this._value;
+    return this.value;
   }
   _evaluateVariableString(feature?: Feature) {
     const variableRegex = /\${(.*?)}/g;
-    let result = this._value;
+    let result = this.value;
     let match = variableRegex.exec(result);
     while (match !== null) {
       const placeholder = match[0];
@@ -185,9 +201,9 @@ export class Node {
   }
   _evaluateVariable(feature?: Feature) {
     let property;
-    if (feature && String(this._value) in feature.properties) {
-      property = feature.properties[String(this._value)];
-    } else if (String(this._value) === "id") {
+    if (feature && String(this.value) in feature.properties) {
+      property = feature.properties[String(this.value)];
+    } else if (String(this.value) === "id") {
       property = feature?.id;
     }
     if (typeof property === "undefined") {
@@ -222,8 +238,8 @@ export class Node {
   }
   _evaluateArray(feature?: Feature) {
     const array = [];
-    for (let i = 0; i < this._value.length; i++) {
-      array[i] = this._value[i].evaluate(feature);
+    for (let i = 0; i < this.value.length; i++) {
+      array[i] = this.value[i].evaluate(feature);
     }
     return array;
   }
@@ -438,13 +454,13 @@ export class Node {
     if (left instanceof RegExp) {
       return String(left);
     }
-    throw new Error(`Unexpected function call "${this._value}".`);
+    throw new Error(`Unexpected function call "${this.value}".`);
   }
 
   _evaluateLiteralColor(feature?: Feature) {
     const args = this._left;
     let color = new Color();
-    if (this._value === "color") {
+    if (this.value === "color") {
       if (typeof args === "undefined") {
         color = Color.fromBytes(255, 255, 255, 255);
       } else if (args.length > 1) {
@@ -452,7 +468,7 @@ export class Node {
         if (temp) {
           color = temp;
         } else {
-          throw new Error(`wrong literalColor call "${this._value}, ${args}}"`);
+          throw new Error(`wrong literalColor call "${this.value}, ${args}}"`);
         }
         color.alpha = args[1].evaluate(feature);
       } else {
@@ -460,17 +476,17 @@ export class Node {
         if (temp) {
           color = temp;
         } else {
-          throw new Error(`wrong literalColor call "${this._value}, ${args}}"`);
+          throw new Error(`wrong literalColor call "${this.value}, ${args}}"`);
         }
       }
-    } else if (this._value === "rgb") {
+    } else if (this.value === "rgb") {
       color = Color.fromBytes(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
         args[2].evaluate(feature),
         255,
       );
-    } else if (this._value === "rgba") {
+    } else if (this.value === "rgba") {
       // convert between css alpha (0 to 1) and cesium alpha (0 to 255)
       const a = args[3].evaluate(feature) * 255;
       color = Color.fromBytes(
@@ -479,7 +495,7 @@ export class Node {
         args[2].evaluate(feature),
         a,
       );
-    } else if (this._value === "hsl") {
+    } else if (this.value === "hsl") {
       const hsl = Color.fromHsl(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
@@ -487,7 +503,7 @@ export class Node {
         1.0,
       );
       if (hsl) color = hsl;
-    } else if (this._value === "hsla") {
+    } else if (this.value === "hsla") {
       const hsl = Color.fromHsl(
         args[0].evaluate(feature),
         args[1].evaluate(feature),
@@ -498,8 +514,89 @@ export class Node {
     }
     return color.toCssHexString();
   }
+
+  _evaluateRegExp(feature?: Feature) {
+    const pattern = this.value.evaluate(feature);
+    let flags = "";
+
+    if (typeof this._left !== undefined) {
+      flags = this._left.evaluate(feature);
+    }
+
+    let exp;
+    try {
+      exp = new RegExp(pattern, flags);
+    } catch (e) {
+      throw new Error(`Failed to execuate the Regex, ${e}`);
+    }
+    return exp;
+  }
+
+  _evaluateRegExpTest(feature?: Feature) {
+    const left = this._left.evaluate(feature);
+    const right = this._right.evaluate(feature);
+
+    if (!(left instanceof RegExp && typeof right === "string")) {
+      throw new Error(
+        `RegExp.test requires the first argument to be a RegExp and the second argument to be a string. Arguments are ${left} and ${right}.`,
+      );
+    }
+
+    return left.test(right);
+  }
+
+  _evaluateRegExpMatch(feature?: Feature) {
+    const left = this._left.evaluate(feature);
+    const right = this._right.evaluate(feature);
+
+    if (left instanceof RegExp && typeof right === "string") {
+      return left.test(right);
+    } else if (right instanceof RegExp && typeof left === "string") {
+      return right.test(left);
+    }
+
+    throw new Error(
+      `Operator "=~" requires one RegExp argument and one string argument. Arguments are ${left} and ${right}.`,
+    );
+  }
+
+  _evaluateRegExpNotMatch(feature?: Feature) {
+    console.log("REACHED HERE!!");
+    const left = this._left.evaluate(feature);
+    const right = this._right.evaluate(feature);
+
+    console.log("left: ", left);
+    console.log("right: ", right);
+
+    if (left instanceof RegExp && typeof right === "string") {
+      return !left.test(right);
+    } else if (right instanceof RegExp && typeof left === "string") {
+      return !right.test(left);
+    }
+
+    throw new Error(
+      `Operator "!~" requires one RegExp argument and one string argument. Arguments are ${left} and ${right}.`,
+    );
+  }
+
+  _evaluateRegExpExec(feature?: Feature) {
+    const left = this._left.evaluate(feature);
+    const right = this._right.evaluate(feature);
+
+    if (!(left instanceof RegExp && typeof right === "string")) {
+      throw new Error(
+        `RegExp.exec requires the first argument to be a RegExp and the second argument to be a string. Arguments are ${left} and ${right}.`,
+      );
+    }
+
+    const exec = left.exec(right);
+    if (exec === null) {
+      return null;
+    }
+    return exec[1];
+  }
 }
 
 function checkFeature(ast: any): boolean {
-  return ast._value === "feature";
+  return ast.value === "feature";
 }
