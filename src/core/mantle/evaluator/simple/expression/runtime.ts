@@ -194,9 +194,55 @@ function parseCall(expression: Expression, ast: any): Node | Error {
     }
     const val = createRuntimeAst(expression, args[0]);
     return new Node(ExpressionNodeType.UNARY, call, val);
+  } else if (call === "regExp") {
+    return parseRegex(expression, ast);
   }
 
   throw new Error(`Unexpected function call "${call}".`);
+}
+
+function parseRegex(expression: Expression, ast: any): Node | Error {
+  const args = ast.arguments;
+  // no arguments, return default regex
+  if (args.length === 0) {
+    return new Node(ExpressionNodeType.LITERAL_REGEX, new RegExp("\\d+"));
+  }
+
+  const pattern = createRuntimeAst(expression, args[0]);
+
+  if (pattern instanceof Error) {
+    return new Error(`Error occured while creating AST`);
+  }
+
+  let exp;
+
+  // optional flag argument supplied
+  if (args.length > 1) {
+    const flags = createRuntimeAst(expression, args[1]);
+    if (flags instanceof Error) {
+      return new Error(`Error occured while creating AST`);
+    }
+    if (isLiteralType(pattern) && isLiteralType(flags)) {
+      try {
+        exp = new RegExp(replaceBackslashes(String(pattern.value)), flags.value);
+      } catch (e) {
+        return new Error(`Error occured while parsing Regex`);
+      }
+      return new Node(ExpressionNodeType.LITERAL_REGEX, exp);
+    }
+    return new Node(ExpressionNodeType.REGEX, pattern, flags);
+  }
+
+  // only pattern argument supplied
+  if (isLiteralType(pattern)) {
+    try {
+      exp = new RegExp(replaceBackslashes(String(pattern.value)));
+    } catch (e) {
+      return new Error(`Error occured while parsing Regex`);
+    }
+    return new Node(ExpressionNodeType.LITERAL_REGEX, exp);
+  }
+  return new Node(ExpressionNodeType.REGEX, pattern);
 }
 
 function parseKeywordsAndVariables(ast: any): Node | Error {
@@ -253,6 +299,11 @@ function parseMemberExpression(expression: Expression, ast: any) {
 
   val = new Node(ExpressionNodeType.LITERAL_STRING, ast.property.name);
   return new Node(ExpressionNodeType.MEMBER, "dot", obj, val);
+}
+
+function isLiteralType(node: Node | Error): boolean {
+  if (node instanceof Error) return false;
+  return node.type >= ExpressionNodeType.LITERAL_NULL;
 }
 
 function isVariable(name: string): boolean {
