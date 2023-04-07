@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
@@ -24,33 +24,33 @@ export default () => {
     setCurrentUserId(data?.me?.id);
   }
 
-  const workspaceId = currentWorkspace?.id || data?.me?.myTeam.id;
+  const workspaceId = useMemo(() => {
+    return currentWorkspace?.id || data?.me?.myTeam.id;
+  }, [currentWorkspace?.id, data?.me?.myTeam.id]);
 
-  const handleRedirect = useCallback(
-    (workspaceId: string) => {
-      if (currentUserId == data?.me?.id) {
-        setWorkspace(
-          workspaceId
-            ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
-            : undefined,
-        );
-        navigate(`/dashboard/${workspaceId}`);
-      } else {
-        setCurrentUserId(data?.me?.id);
-        setWorkspace(data?.me?.myTeam);
-        navigate(`/dashboard/${data?.me?.myTeam.id}`);
-      }
-    },
-    [
-      currentUserId,
-      data?.me?.id,
-      data?.me?.teams,
-      data?.me?.myTeam,
-      setWorkspace,
-      navigate,
-      setCurrentUserId,
-    ],
-  );
+  const handleRedirect = useCallback(() => {
+    if (currentUserId == data?.me?.id) {
+      setWorkspace(
+        workspaceId
+          ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
+          : undefined,
+      );
+      navigate(`/dashboard/${workspaceId}`);
+    } else {
+      setCurrentUserId(data?.me?.id);
+      setWorkspace(data?.me?.myTeam);
+      navigate(`/dashboard/${data?.me?.myTeam.id}`);
+    }
+  }, [
+    currentUserId,
+    data?.me?.id,
+    data?.me?.teams,
+    data?.me?.myTeam,
+    setWorkspace,
+    workspaceId,
+    navigate,
+    setCurrentUserId,
+  ]);
 
   const verifySignup = useCallback(
     async (token: string) => {
@@ -89,7 +89,7 @@ export default () => {
       login();
     } else {
       if (!data || !workspaceId) return;
-      handleRedirect(workspaceId);
+      handleRedirect();
     }
   }, [
     isAuthenticated,

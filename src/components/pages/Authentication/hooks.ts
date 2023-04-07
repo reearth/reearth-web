@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth, useCleanUrl } from "@reearth/auth";
@@ -24,41 +24,41 @@ export default () => {
   if (isAuthenticated && !currentUserId) {
     setCurrentUserId(data?.me?.id);
   }
-  const workspaceId = currentWorkspace?.id || data?.me?.myTeam.id;
+  const workspaceId = useMemo(() => {
+    return currentWorkspace?.id || data?.me?.myTeam.id;
+  }, [currentWorkspace?.id, data?.me?.myTeam.id]);
 
   useEffect(() => {
     if (location.pathname === "/login" && !new URLSearchParams(window.location.search).has("id"))
       login();
   }, [login, location.pathname]);
 
-  const handleRedirect = useCallback(
-    (workspaceId: string) => {
-      if (currentUserId == data?.me?.id) {
-        setCurrentWorkspace(
-          workspaceId
-            ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
-            : undefined,
-        );
-        navigate(`/dashboard/${workspaceId}`);
-      } else {
-        setCurrentUserId(data?.me?.id);
-        setCurrentWorkspace(data?.me?.myTeam);
-        navigate(`/dashboard/${data?.me?.myTeam.id}`);
-      }
-    },
-    [
-      currentUserId,
-      data?.me?.id,
-      data?.me?.teams,
-      data?.me?.myTeam,
-      setCurrentWorkspace,
-      navigate,
-      setCurrentUserId,
-    ],
-  );
+  const handleRedirect = useCallback(() => {
+    if (currentUserId == data?.me?.id) {
+      setCurrentWorkspace(
+        workspaceId
+          ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
+          : undefined,
+      );
+      navigate(`/dashboard/${workspaceId}`);
+    } else {
+      setCurrentUserId(data?.me?.id);
+      setCurrentWorkspace(data?.me?.myTeam);
+      navigate(`/dashboard/${data?.me?.myTeam.id}`);
+    }
+  }, [
+    currentUserId,
+    data?.me?.id,
+    data?.me?.teams,
+    data?.me?.myTeam,
+    setCurrentWorkspace,
+    workspaceId,
+    navigate,
+    setCurrentUserId,
+  ]);
   useEffect(() => {
     if (!isAuthenticated || !data || !workspaceId) return;
-    handleRedirect(workspaceId);
+    handleRedirect();
   }, [isAuthenticated, navigate, data, workspaceId, handleRedirect]);
 
   useEffect(() => {
