@@ -428,7 +428,8 @@ export class Node {
     return Boolean(this._left.evaluate(feature));
   }
   _evaluateNumberConversion(feature?: Feature): number {
-    return Number(this._left.evaluate(feature));
+    const cleanedNumberInput = cleanseNumberStringInput(this._left.evaluate(feature));
+    return Number(cleanedNumberInput);
   }
   _evaluateStringConversion(feature?: Feature): string {
     return String(this._left.evaluate(feature));
@@ -498,6 +499,20 @@ export class Node {
     }
     return color.toCssHexString();
   }
+}
+
+function cleanseNumberStringInput(input: any): any {
+  if (typeof input !== "string") return input;
+
+  const reservedWords = ["%"]; // add more reserved words if needed
+
+  for (const word of reservedWords) {
+    if (input.endsWith(word)) {
+      return input.slice(0, -word.length).trim();
+    }
+  }
+
+  return input.trim();
 }
 
 function checkFeature(ast: any): boolean {
