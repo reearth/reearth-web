@@ -34,7 +34,7 @@ export default () => {
   }, [login, location.pathname]);
 
   const handleRedirect = useCallback(() => {
-    if (currentUserId == data?.me?.id) {
+    if (currentUserId === data?.me?.id) {
       setCurrentWorkspace(
         workspaceId
           ? data?.me?.teams.find(t => t.id === workspaceId) ?? data?.me?.myTeam
