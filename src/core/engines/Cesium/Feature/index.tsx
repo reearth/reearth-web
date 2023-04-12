@@ -74,7 +74,7 @@ const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
 };
 
 const CACHED_COMPONENTS = new LRUCache<string, JSX.Element>({ max: 10000 });
-const FEATURE_DELETGATE_THRESHOLD = 6000;
+const FEATURE_DELEGATE_THRESHOLD = 6000;
 
 export default function Feature({
   layer,
@@ -82,7 +82,7 @@ export default function Feature({
   ...props
 }: FeatureComponentProps): JSX.Element | null {
   // Set the displayConfig based on the size of the feature collection array
-  if (layer.features?.length > FEATURE_DELETGATE_THRESHOLD) {
+  if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD) {
     displayConfig.geojson = ["resource"];
   } else {
     displayConfig.geojson = "auto";
