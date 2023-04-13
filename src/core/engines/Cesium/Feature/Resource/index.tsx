@@ -131,9 +131,15 @@ export default function Resource({
   );
 
   // convert hexCodeColorString to ColorValue?s
-  const strokeValue = stroke ? Color.fromCssColorString(stroke) : undefined;
-  const fillValue = fill ? Color.fromCssColorString(fill) : undefined;
-  const markerColorValue = markerColor ? Color.fromCssColorString(markerColor) : undefined;
+  const strokeValue = useMemo(
+    () => (stroke ? Color.fromCssColorString(stroke) : undefined),
+    [stroke],
+  );
+  const fillValue = useMemo(() => (fill ? Color.fromCssColorString(fill) : undefined), [fill]);
+  const markerColorValue = useMemo(
+    () => (markerColor ? Color.fromCssColorString(markerColor) : undefined),
+    [markerColor],
+  );
 
   useEffect(() => {
     if (!viewer) return;

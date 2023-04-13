@@ -41,7 +41,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
 
 // This indicates what component should render for file extension.
 const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
-  geojson: [],
+  geojson: "auto",
   csv: "auto",
   czml: ["resource"],
   kml: ["resource"],
@@ -81,23 +81,21 @@ export default function Feature({
   isHidden,
   ...props
 }: FeatureComponentProps): JSX.Element | null {
-  // Set the displayConfig based on the size of the feature collection array
-  if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD) {
-    displayConfig.geojson = ["resource"];
-  } else {
-    displayConfig.geojson = "auto";
-  }
   const data = extractSimpleLayerData(layer);
   const ext = !data?.type || (data.type as string) === "auto" ? guessType(data?.url) : undefined;
-  const displayType = data?.type && displayConfig[ext ?? data.type];
+  let displayType = data?.type && displayConfig[ext ?? data.type];
+  if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD) {
+    displayType = ["resource"];
+  }
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
+
   const cachedRenderComponent = (
     k: keyof AppearanceTypes,
     f?: ComputedFeature,
   ): JSX.Element | null => {
-    const componentId = `${layer.id}_${f?.id ?? ""}_${k}`;
+    const componentId = `${layer.id}_${f?.id ?? ""}_${k}_${JSON.stringify(f?.[k]) ?? ""}`;
 
     // Check if the component output is already cached
     const cachedComponent = CACHED_COMPONENTS.get(componentId);
@@ -148,7 +146,7 @@ export default function Feature({
   };
 
   const cachedNoFeatureComponents = useMemo(() => {
-    if (!areAllDisplayTypeNoFeature) {
+    if (!areAllDisplayTypeNoFeature || !displayType || !Array.isArray(displayType)) {
       return null;
     }
 
