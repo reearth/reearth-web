@@ -56,6 +56,7 @@ const QuickStart: React.FC<Props> = ({
         </Text>
         {documentationUrl && (
           <LongBannerButton
+            role="button"
             align="center"
             justify="center"
             onClick={() => window.open(documentationUrl, "_blank", "noopener")}>
@@ -67,6 +68,7 @@ const QuickStart: React.FC<Props> = ({
         )}
         <Flex justify="space-between">
           <HeroBannerButton
+            role="button"
             direction="column"
             align="center"
             justify="center"
@@ -78,6 +80,7 @@ const QuickStart: React.FC<Props> = ({
             </Text>
           </HeroBannerButton>
           <BannerButton
+            role="button"
             direction="column"
             align="center"
             justify="center"
