@@ -2,12 +2,27 @@ import { type PlaywrightTestConfig } from "@playwright/test";
 import dotenv from "dotenv";
 
 dotenv.config();
+const localHost = "http://localhost:3000/";
+const isLocal =
+  !process.env.REEARTH_WEB_E2E_BASEURL || process.env.REEARTH_WEB_E2E_BASEURL.includes(localHost);
 
 const config: PlaywrightTestConfig = {
+  ...(isLocal
+    ? {
+        webServer: {
+          command: "yarn start",
+          url: localHost,
+        },
+      }
+    : {}),
   use: {
-    baseURL: process.env.REEARTH_WEB_E2E_BASEURL || "http://localhost:3000/",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    // baseURL: process.env.REEARTH_WEB_E2E_BASEURL || "http://localhost:3000/",
+    baseURL: process.env.REEARTH_WEB_E2E_BASEURL || localHost,
+    headless: false,
+    screenshot: "on",
+    video: "on",
+    // screenshot: "only-on-failure",
+    // video: "retain-on-failure",
   },
   testDir: "e2e",
   globalSetup: "./e2e/utils/setup.ts",

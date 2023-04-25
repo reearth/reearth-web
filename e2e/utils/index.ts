@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { type APIRequestContext, request, test as base, type Page } from "@playwright/test";
+// import Workspace from "@reearth/components/molecules/Dashboard/Workspace";
 
 import { config, getAccessToken, type Config } from "./config";
 
@@ -76,11 +77,11 @@ export async function initUser(
     throw new Error("access token is not initialized");
   }
 
-  const { userName, userId, teamId, api, signUpSecret } = config;
+  const { userName, userId, workspaceId: teamId, api, signUpSecret } = config;
 
   if (!userName || !userId || !teamId || !api) {
     throw new Error(
-      `either userName, userId, teamId and api are missing: ${JSON.stringify({
+      `either userName, userId,teamId and api are missing: ${JSON.stringify({
         userName,
         userId,
         teamId,
@@ -96,7 +97,7 @@ export async function initUser(
     data: {
       query: `mutation($userId: ID!, $teamId: ID!, $lang: Lang, $secret: String) {
         deleteMe(input: { userId: $userId }) { userId }
-        signup(input: { lang: $lang, userId: $userId, teamId: $teamId, secret: $secret }) { user { id } }
+        signup(input: { lang: $lang, userId: $userId,teamId: $teamId, secret: $secret }) { user { id } }
       }`,
       variables: {
         userId,
