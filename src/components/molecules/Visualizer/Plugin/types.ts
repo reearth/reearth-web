@@ -130,6 +130,7 @@ export type Scene = {
     y: number,
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
+  readonly getCurrentLocation: () => LatLngHeight | undefined;
 };
 
 /** You can operate and get data about layers. */

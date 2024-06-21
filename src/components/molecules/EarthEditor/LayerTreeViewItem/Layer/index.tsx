@@ -131,7 +131,6 @@ const Layer: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
   const [handleClick, handleDoubleClick] = useDoubleClick(onClick, startEditing);
 
   const theme = useTheme();
-
   return (
     <Wrapper
       ref={ref}
