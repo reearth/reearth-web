@@ -11,6 +11,7 @@
         "test": "vitest",
         "coverage": "vitest --coverage",
         "e2e": "playwright test",
+        "e2e:codegen": "playwright codegen http://localhost:3000",
         "prepare": "husky install",
         "build": "vite build",
         "build:preview": "run-s build storybook:build",

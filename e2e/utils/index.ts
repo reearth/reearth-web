@@ -69,21 +69,21 @@ export async function initUser(
 ): Promise<{
   token: string;
   userId: string;
-  teamId: string;
+  workspaceId: string;
   userName: string;
 }> {
   if (!token) {
     throw new Error("access token is not initialized");
   }
 
-  const { userName, userId, teamId, api, signUpSecret } = config;
+  const { userName, userId, workspaceId, api, signUpSecret } = config;
 
-  if (!userName || !userId || !teamId || !api) {
+  if (!userName || !userId || !workspaceId || !api) {
     throw new Error(
       `either userName, userId, teamId and api are missing: ${JSON.stringify({
         userName,
         userId,
-        teamId,
+        teamId: workspaceId,
         api,
         signUpSecret: signUpSecret ? "***" : "",
       })}`,
@@ -100,7 +100,7 @@ export async function initUser(
       }`,
       variables: {
         userId,
-        teamId,
+        teamId: workspaceId,
         secret: signUpSecret,
         lang: "en",
       },
@@ -116,7 +116,7 @@ export async function initUser(
       `failed to init an user: ${JSON.stringify(body)} with ${JSON.stringify({
         userName,
         userId,
-        teamId,
+        workspaceId,
         api,
         signUpSecret: signUpSecret ? "***" : "",
       })}`,
@@ -127,6 +127,6 @@ export async function initUser(
     token,
     userName,
     userId: body.data.signup.user.id,
-    teamId,
+    workspaceId,
   };
 }
